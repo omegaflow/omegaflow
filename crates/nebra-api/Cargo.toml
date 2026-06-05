@@ -1,0 +1,16 @@
+[package]
+name = "nebra-api"
+version = "0.3.0"
+edition = "2024"
+authors = ["Nebra Flight Software"]
+description = "HTTP interface for the astrodynamics engine"
+
+[dependencies]
+axum = "0.7"
+nebra-core = { path = "../nebra-core" }
+nebra-trad = { path = "../nebra-trad" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }

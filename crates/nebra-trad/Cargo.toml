@@ -1,0 +1,12 @@
+[package]
+name = "nebra-trad"
+version = "0.3.0"
+edition = "2024"
+authors = ["Nebra Flight Software"]
+description = "Cultural interpretation layer"
+
+[dependencies]
+nebra-core = { path = "../nebra-core" }
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+tracing = "0.1"

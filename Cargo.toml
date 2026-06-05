@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "crates/nebra-core",
+    "crates/nebra-trad",
+    "crates/nebra-api",
+]
+resolver = "2"
