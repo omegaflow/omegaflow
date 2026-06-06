@@ -3,6 +3,7 @@
 //! This crate implements Layer 1 of the Nebra architecture:
 //! strictly physical astronomical computation. No cultural constructs.
 //!
+//! Constitutional compliance: All 30 principles of the
 //! Constitution of the Unknown v3.3.0.
 
 pub mod numerics;
@@ -10,10 +11,10 @@ pub mod projection;
 pub mod types;
 
 pub use types::{
-    AstronomicalSnapshot, BodyCategory, BodyId, ComputationResult, CoreError, EARTH,
-    EpistemicState, Frame, LossState, MeasurementState, PlanetModel, PositionUncertainty,
-    PrecisionBudget, ProvenanceMetadata, RawBody, Relationship, RelationshipKind,
-    UncertaintySource,
+    AstronomicalSnapshot, BodyCategory, BodyId, ComputationResult, CoreError, EpistemicState,
+    Frame, LossState, MeasurementState, PlanetModel, PositionUncertainty, PrecisionBudget,
+    ProvenanceMetadata, RawBody, Relationship, RelationshipKind, UncertaintySource,
+    EARTH,
 };
 
 // ---------------------------------------------------------------------------

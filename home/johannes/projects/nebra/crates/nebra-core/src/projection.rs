@@ -32,8 +32,10 @@ pub fn wgs84_to_mercator(lat: f64, lon: f64) -> ComputationResult<(f64, f64)> {
     }
 
     let lat_rad = lat.to_radians();
-    let x = (lon.to_radians() * EARTH_EQUATORIAL_RADIUS_M).clamp(-ORIGIN_SHIFT_M, ORIGIN_SHIFT_M);
-    let y = (lat_rad.tan().ln() * EARTH_EQUATORIAL_RADIUS_M).clamp(-ORIGIN_SHIFT_M, ORIGIN_SHIFT_M);
+    let x = (lon.to_radians() * EARTH_EQUATORIAL_RADIUS_M)
+        .clamp(-ORIGIN_SHIFT_M, ORIGIN_SHIFT_M);
+    let y = (lat_rad.tan().ln() * EARTH_EQUATORIAL_RADIUS_M)
+        .clamp(-ORIGIN_SHIFT_M, ORIGIN_SHIFT_M);
 
     ComputationResult::ok((x, y))
 }

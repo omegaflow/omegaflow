@@ -47,7 +47,10 @@ async fn main() -> Result<(), PilotError> {
         return Err(PilotError::FileNotFound(args.file.display().to_string()));
     }
 
-    println!("🚀 NEBRA-PILOT: Initiating APPEAL Compiler-Loop for {}", args.file.display());
+    println!(
+        "🚀 NEBRA-PILOT: Initiating APPEAL Compiler-Loop for {}",
+        args.file.display()
+    );
 
     for iteration in 1..=args.max_iters {
         println!("\n--- Iteration {}/{} ---", iteration, args.max_iters);
@@ -69,7 +72,7 @@ async fn main() -> Result<(), PilotError> {
         // 2. TODO: Call LLM API with error + file content + APPEAL rules
         // 3. TODO: Apply LLM fix to file
         println!("⚙️ ANALYZING: API call not yet implemented. Waiting before retry...");
-        
+
         // Prevent terminal spam while API is missing
         std::thread::sleep(std::time::Duration::from_secs(3));
     }

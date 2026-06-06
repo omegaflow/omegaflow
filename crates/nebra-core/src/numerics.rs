@@ -80,7 +80,7 @@ pub fn wrap_360(x: f64) -> ComputationResult<f64> {
     if w < 0.0 {
         w += 360.0;
     }
-    // Honor of Zero (§7): -0.0 becomes 0.0
+    // Honor of Zero: -0.0 becomes 0.0
     if w == 0.0 {
         w = 0.0;
     }
