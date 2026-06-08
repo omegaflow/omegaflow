@@ -1,4 +1,9 @@
 /target
+/data
 **/*.rs.bk
 Cargo.lock
 .env
+archive/
+home/
+docs/*.yaml.bak.*
+docs/*_backup*

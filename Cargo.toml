@@ -1,8 +1,7 @@
 [workspace]
 members = [
     "crates/nebra-core",
-    "crates/nebra-trad",
+    "crates/nebra-render",
     "crates/nebra-api",
-    "crates/nebra-pilot",
 ]
 resolver = "2"

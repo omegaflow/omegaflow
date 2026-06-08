@@ -1,34 +1,33 @@
 [package]
 name = "nebra-core"
-version = "0.3.0"
+version = "3.0.0"
 edition = "2024"
-authors = ["Nebra Flight Software"]
-description = "Strict physical astrodynamics engine"
 
 [lib]
 name = "nebra_core"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
+hifitime = "4.3"
+glam = "0.33"
+nalgebra = "0.35"
 anise = { git = "https://github.com/nyx-space/anise", branch = "master" }
-bincode = "1"
 erfars = "0.2"
+egm96 = "0.2"
+srtm_reader = "0.5"
 geo = "0.33"
 geographiclib-rs = "0.2"
-glam = "0.33"
-hifitime = "4.3"
+world_magnetic_model = "0.4"
+grib = "0.10"
+netcdf-reader = "0.6"
+hdf5-reader = "0.6"
+fitsrs = "0.4"
+cdshealpix = "0.9"
+tobari = "0.2"
+ionotrace = "0.5"
 moka = { version = "0.12", features = ["sync"] }
-nalgebra = "0.35"
-polars = { version = "0.53", features = ["lazy", "dtype-struct"] }
-rayon = "1.12"
-rkyv = { version = "0.8", features = ["bytecheck"] }
 serde = { version = "1", features = ["derive"] }
-strum = "0.28"
-strum_macros = "0.28"
-thiserror = "2"
-tracing = "0.1"
-zerocopy = { version = "0.8", features = ["derive"] }
+bytemuck = "1.25"
 
 [dev-dependencies]
 proptest = "1"
-
