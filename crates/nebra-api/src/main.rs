@@ -18,12 +18,31 @@ async fn masses(Query(params): Query<MassesReq>) -> impl IntoResponse {
     ([(header::CONTENT_TYPE, "application/octet-stream")], bytes)
 }
 
+async fn wmm(Query(params): Query<MassesReq>) -> impl IntoResponse {
+    let t = (params.jd - 2451545.0) * 86400.0;
+    let Some(data) = nebra_core::wmm_at(t) else {
+        return ([(header::CONTENT_TYPE, "application/octet-stream")], Vec::<u8>::new());
+    };
+    let mut out = Vec::with_capacity(364);
+    out.push(data.earth_pos.x as f32);
+    out.push(data.earth_pos.y as f32);
+    out.push(data.earth_pos.z as f32);
+    out.push(data.time_delta);
+    out.extend_from_slice(&data.g_mfc);
+    out.extend_from_slice(&data.h_mfc);
+    out.extend_from_slice(&data.g_svc);
+    out.extend_from_slice(&data.h_svc);
+    let bytes: Vec<u8> = out.iter().flat_map(|f| f.to_le_bytes()).collect();
+    ([(header::CONTENT_TYPE, "application/octet-stream")], bytes)
+}
+
 #[tokio::main]
 async fn main() {
-    println!("Loading ephemeris...");
     tokio::task::spawn_blocking(|| nebra_core::init()).await.ok();
-    println!("Ready. http://localhost:3000");
-    let app = Router::new().route("/", get(index)).route("/masses", get(masses));
+    let app = Router::new()
+        .route("/", get(index))
+        .route("/masses", get(masses))
+        .route("/wmm", get(wmm));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
@@ -53,10 +72,95 @@ const shader=`
 struct VP{center_scale:vec4f,res_count:vec4f};
 @group(0)@binding(0) var<storage,read> masses:array<vec4f>;
 @group(0)@binding(1) var<uniform> vp:VP;
+@group(0)@binding(2) var<storage,read> wmm:array<f32>;
 struct V{@builtin(position) p:vec4f,@location(0) u:vec2f}
 @vertex fn vs(@builtin(vertex_index) i:u32)->V{
   var p=array<vec2f,3>(vec2f(-1,-1),vec2f(3,-1),vec2f(-1,3));
   var o:V;o.p=vec4f(p[i],0,1);o.u=vec2f(p[i].x*0.5+0.5,0.5-p[i].y*0.5);return o;
+}
+fn wmm_idx(n:i32,m:i32)->i32{return n*(n+1)/2+m-1;}
+fn eval_wmm(pixel_pos:vec3f)->f32{
+  if(wmm.length()<364u){return 0.0;}
+  let earth=vec3f(wmm[0],wmm[1],wmm[2]);
+  let td=wmm[3];
+  let rel=pixel_pos-earth;
+  let r=length(rel);
+  let R_E=6371000.0;
+  let alt=r-R_E;
+  if(alt<-1000.0||alt>850000.0){return 0.0;}
+  let lat=asin(rel.z/r);
+  let lon=atan2(rel.y,rel.x);
+  let sin_colat=cos(lat);
+  let A2=6371200.0;
+  let k_ratio=A2/r;
+  var psn=vec4f(0.0,0.0,0.0,0.0);
+  var xp=0.0;var yp=0.0;var zp=0.0;
+  var Pmm=1.0;
+  var Pm1m=0.0;
+  var Pm2m=0.0;
+  for(var m2=0;m2<=12;m2=m2+1){
+    let mm=f32(m2);
+    if(m2>0){
+      Pmm=Pmm*sqrt(1.0-sin_colat*sin_colat)*sqrt(f32(2*m2-1)/f32(2*m2));
+    }
+    if(m2<=12){
+      Pm2m=Pm1m;
+      Pm1m=Pmm;
+      var sn=1.0;
+      if(m2==0){sn=1.0;}else{sn=0.0;}
+      for(var n2=m2+1;n2<=12;n2=n2+1){
+        let nn=f32(n2);
+        var Pnm=0.0;
+        if(n2==m2+1){
+          Pnm=sin_colat*sqrt(f32(2*m2+1)+1.0)*Pm1m;
+        }else{
+          let fnm=f32(n2-m2);
+          Pnm=(sin_colat*f32(2*n2-1)*Pm1m-f32(n2+m2-1)*Pm2m)/fnm;
+        }
+        Pm2m=Pm1m;
+        Pm1m=Pnm;
+      }
+    }
+    Pm1m=Pmm;
+    Pm2m=0.0;
+  }
+  var Bx=0.0;var By=0.0;var Bz=0.0;
+  Pmm=1.0;Pm1m=0.0;
+  for(var m2=0;m2<=12;m2=m2+1){
+    let mm=f32(m2);
+    if(m2>0){Pmm=Pmm*sqrt(1.0-sin_colat*sin_colat)*sqrt(f32(2*m2-1)/f32(2*m2));}
+    Pm2m=0.0;Pm1m=Pmm;
+    for(var n2=max(m2,1);n2<=12;n2=n2+1){
+      let nn=f32(n2);
+      var Pnm=Pm1m;
+      if(n2>m2+1){
+        Pnm=(sin_colat*f32(2*n2-1)*Pm1m-f32(n2+m2-1)*Pm2m)/f32(n2-m2);
+      }else if(n2==m2+1&&m2>0){
+        Pnm=sin_colat*sqrt(f32(2*m2+1)+1.0)*Pmm;
+      }
+      let ix=wmm_idx(n2,m2);
+      if(ix<0||ix>=90){Pm2m=Pm1m;Pm1m=Pnm;continue;}
+      let gt=wmm[f32(4+ix)]+td*wmm[f32(184+ix)];
+      let ht=wmm[f32(94+ix)]+td*wmm[f32(274+ix)];
+      let cosm=cos(f32(m2)*lon);
+      let sinm=sin(f32(m2)*lon);
+      let kr=1.0;
+      var k=1.0;
+      for(var ki=0;ki<n2+2;ki=ki+1){k=k*k_ratio;}
+      let schm=sn_factor(n2,m2);
+      let S=Pnm*schm;
+      let gx=gt*cosm+ht*sinm;
+      let gy=gt*sinm-ht*cosm;
+      Bz=Bz+gx*S*k;
+      Bx=Bx+gy*f32(m2)*S*k;
+      Pm2m=Pm1m;Pm1m=Pnm;
+    }
+  }
+  return sqrt(Bx*Bx+By*By+Bz*Bz);
+}
+fn sn_factor(n:i32,m:i32)->f32{
+  if(m==0){return 1.0;}
+  return 1.0;
 }
 @fragment fn fs(i:V)->@location(0) vec4f{
   let count=u32(vp.res_count.z);
@@ -74,24 +178,41 @@ struct V{@builtin(position) p:vec4f,@location(0) u:vec2f}
     let dist=length(delta);
     if(dist>1.0){omega=omega+m.w/(dist*dist);}
   }
-  if(omega<=0.0){discard;}
-  let t2=clamp((log2(omega)+14.0)/22.0,0.0,1.0);
-  let c=mix(vec3f(0.0,0.02,0.1),vec3f(0.0,0.3,0.8),clamp(t2*4.0,0.0,1.0));
-  let c2=mix(c,vec3f(0.2,0.8,1.0),clamp((t2-0.25)*4.0,0.0,1.0));
-  let c3=mix(c2,vec3f(1.0,0.7,0.1),clamp((t2-0.5)*4.0,0.0,1.0));
-  let c4=mix(c3,vec3f(1.0,1.0,1.0),clamp((t2-0.75)*4.0,0.0,1.0));
-  return vec4f(c4,1.0);
+  let em=eval_wmm(pixel_pos);
+  if(omega<=0.0&&em<=0.0){discard;}
+  var r=0.0;var g=0.0;var b=0.0;var a=1.0;
+  if(omega>0.0){
+    let t2=clamp((log2(omega)+14.0)/22.0,0.0,1.0);
+    let c=mix(vec3f(0.0,0.02,0.1),vec3f(0.0,0.3,0.8),clamp(t2*4.0,0.0,1.0));
+    let c2=mix(c,vec3f(0.2,0.8,1.0),clamp((t2-0.25)*4.0,0.0,1.0));
+    let c3=mix(c2,vec3f(1.0,0.7,0.1),clamp((t2-0.5)*4.0,0.0,1.0));
+    let c4=mix(c3,vec3f(1.0,1.0,1.0),clamp((t2-0.75)*4.0,0.0,1.0));
+    r=c4.x;g=c4.y;b=c4.z;
+  }
+  if(em>1000.0){
+    let et=clamp((em-20000.0)/50000.0,0.0,1.0);
+    g=g+et*0.6;
+    r=r+et*0.1;
+    b=b+et*0.2;
+  }
+  return vec4f(r,g,b,a);
 }`;
 const sm=device.createShaderModule({code:shader});
 const bgl=device.createBindGroupLayout({entries:[
   {binding:0,visibility:GPUShaderStage.FRAGMENT,buffer:{type:'read-only-storage'}},
-  {binding:1,visibility:GPUShaderStage.FRAGMENT,buffer:{type:'uniform'}}
+  {binding:1,visibility:GPUShaderStage.FRAGMENT,buffer:{type:'uniform'}},
+  {binding:2,visibility:GPUShaderStage.FRAGMENT,buffer:{type:'read-only-storage'}}
 ]});
 const pl=device.createPipelineLayout({bindGroupLayouts:[bgl]});
 const pipe=device.createRenderPipeline({layout:pl,vertex:{module:sm,entryPoint:'vs'},fragment:{module:sm,entryPoint:'fs',targets:[{format:fmt}]},primitive:{topology:'triangle-list'}});
-const maxMassBuf=device.createBuffer({size:2048,usage:GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST});
+const massBuf=device.createBuffer({size:2048,usage:GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST});
 const vpBuf=device.createBuffer({size:32,usage:GPUBufferUsage.UNIFORM|GPUBufferUsage.COPY_DST});
-let bg=device.createBindGroup({layout:bgl,entries:[{binding:0,resource:{buffer:maxMassBuf}},{binding:1,resource:{buffer:vpBuf}}]});
+const wmmBuf=device.createBuffer({size:2048,usage:GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST});
+let bg=device.createBindGroup({layout:bgl,entries:[
+  {binding:0,resource:{buffer:massBuf}},
+  {binding:1,resource:{buffer:vpBuf}},
+  {binding:2,resource:{buffer:wmmBuf}}
+]});
 let massCount=0;
 async function fetchMasses(){
   try{
@@ -99,9 +220,18 @@ async function fetchMasses(){
     const b=await r.arrayBuffer();
     const d=new Float32Array(b);
     massCount=d.length/4;
-    device.queue.writeBuffer(maxMassBuf,0,d);
-
-  }catch(e){console.log('fetch error',e);}
+    device.queue.writeBuffer(massBuf,0,d);
+  }catch(e){}
+}
+async function fetchWmm(){
+  try{
+    const r=await fetch('/wmm?jd='+jd);
+    const b=await r.arrayBuffer();
+    if(b.byteLength>0){
+      const d=new Float32Array(b);
+      device.queue.writeBuffer(wmmBuf,0,d);
+    }
+  }catch(e){}
 }
 function render(){
   const vp=new Float32Array([cx,cy,cz,scale,RX,RY,massCount,0]);
@@ -111,12 +241,10 @@ function render(){
   pass.setPipeline(pipe);pass.setBindGroup(0,bg);pass.draw(3);pass.end();
   device.queue.submit([enc.finish()]);
 }
-async function loop(){
-  render();
-  requestAnimationFrame(loop);
-}
-setInterval(()=>{jd+=0.001;fetchMasses();},1000);
+async function loop(){render();requestAnimationFrame(loop);}
+setInterval(()=>{jd+=0.001;fetchMasses();fetchWmm();},1000);
 await fetchMasses();
+await fetchWmm();
 loop();
 })();
 </script></body></html>"#;
