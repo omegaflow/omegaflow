@@ -1,18 +1,13 @@
 [package]
-name = "nebra-api"
+name = "omegaflow-client"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
-
-[package]
-name = "nebra-api"
-version = "3.0.0"
-edition = "2024"
 
 [dependencies]
 axum = "0.8"
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
 glam = "0.33"
-nebra-core = { path = "../nebra-core" }
+omegaflow-server = { path = "../omegaflow-server" }

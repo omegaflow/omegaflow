@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "crates/nebra-core",
-    "crates/nebra-api",
+    "crates/omegaflow-server",
+    "crates/omegaflow-client",
 ]
 resolver = "2"
 
