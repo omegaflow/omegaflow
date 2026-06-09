@@ -1,7 +1,9 @@
 [package]
 name = "nebra-core"
-version = "3.0.0"
-edition = "2024"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
 
 [lib]
 name = "nebra_core"
