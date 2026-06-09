@@ -9,7 +9,8 @@ async fn index() -> impl IntoResponse {
 }
 
 async fn masses(Query(params): Query<MassesReq>) -> impl IntoResponse {
-    let masses = nebra_core::masses_at(params.jd);
+    let t = (params.jd - 2451545.0) * 86400.0;
+    let masses = nebra_core::masses_at(t);
     let data: Vec<f32> = masses.iter().flat_map(|m| {
         [m.pos.x as f32, m.pos.y as f32, m.pos.z as f32, m.gm as f32]
     }).collect();

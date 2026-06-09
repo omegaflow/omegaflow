@@ -1,15 +1,12 @@
 %YAML 1.1
 ---
-universe: (jd: f64, pos: DVec3) -> (f64, DVec3)
+universe: (t: f64, pos: DVec3) -> (f64, DVec3)
 gravity: DE440s, 13 bodies, GM/dist²
 electromagnetism: (0.0, ZERO)
 weak_force: (0.0, ZERO)
-masses_at: jd -> Vec<Mass>
-pipeline: jd -> 752 bytes -> GPU -> shader -> pixel
+masses_at: t -> Vec<Mass>
+pipeline: t -> Vec<Mass> -> GPU -> shader -> pixel
 shader: for each pixel, omega += GM / dist²
-time: Julian Date, J2000 = 2451545.0
-range: JD 1322137.5 to JD 2520008.5
-
 files:
   - crates/nebra-core/src/field.rs
   - crates/nebra-core/src/lib.rs
@@ -21,4 +18,5 @@ dependencies:
              world_magnetic_model, grib, netcdf-reader, hdf5-reader,
              fitsrs, cdshealpix, tobari, ionotrace]
 
-pipeline: jd -> masses_at(jd) -> 752 bytes -> GPU -> shader -> pixel
+pipeline: t -> masses_at(t) -> GPU -> shader -> pixel
+

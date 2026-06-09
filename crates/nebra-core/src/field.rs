@@ -27,10 +27,10 @@ pub fn init() {
     }
 }
 
-pub fn masses_at(jd: f64) -> Vec<Mass> {
+pub fn masses_at(t: f64) -> Vec<Mass> {
     let Some(alm) = ALMANAC.get() else { return Vec::new() };
     let Some(ids) = MASS_IDS.get() else { return Vec::new() };
-    let epoch = Epoch::from_tdb_seconds((jd - 2451545.0) * 86400.0);
+    let epoch = Epoch::from_tdb_seconds(t);
     let mut out = Vec::new();
     for &id in ids {
         let frame = Frame::from_ephem_j2000(id);
@@ -47,15 +47,15 @@ pub fn masses_at(jd: f64) -> Vec<Mass> {
     out
 }
 
-pub fn universe(jd: f64, pos: DVec3) -> (f64, DVec3) {
-    let g = gravity(jd, pos);
-    let e = electromagnetism(jd, pos);
-    let w = weak_force(jd, pos);
+pub fn universe(t: f64, pos: DVec3) -> (f64, DVec3) {
+    let g = gravity(t, pos);
+    let e = electromagnetism(t, pos);
+    let w = weak_force(t, pos);
     (g.0 + e.0 + w.0, g.1 + e.1 + w.1)
 }
 
-pub fn gravity(jd: f64, pos: DVec3) -> (f64, DVec3) {
-    let masses = masses_at(jd);
+pub fn gravity(t: f64, pos: DVec3) -> (f64, DVec3) {
+    let masses = masses_at(t);
     let mut omega = 0.0_f64;
     let mut flow = DVec3::ZERO;
     for m in &masses {
@@ -69,11 +69,10 @@ pub fn gravity(jd: f64, pos: DVec3) -> (f64, DVec3) {
     (omega, flow)
 }
 
-pub fn electromagnetism(_jd: f64, _pos: DVec3) -> (f64, DVec3) {
+pub fn electromagnetism(_t: f64, _pos: DVec3) -> (f64, DVec3) {
     (0.0, DVec3::ZERO)
 }
 
-pub fn weak_force(_jd: f64, _pos: DVec3) -> (f64, DVec3) {
+pub fn weak_force(_t: f64, _pos: DVec3) -> (f64, DVec3) {
     (0.0, DVec3::ZERO)
 }
-
