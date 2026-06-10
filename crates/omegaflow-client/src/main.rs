@@ -30,7 +30,10 @@ async fn masses(Query(params): Query<MassesReq>) -> impl IntoResponse {
 
 async fn wmm(Query(params): Query<WmmReq>) -> impl IntoResponse {
     let t = (params.jd - 2451545.0) * 86400.0;
-    let Some(data) = omegaflow_server::wmm_at(t) else {
+    let Some(alm) = omegaflow_server::almanac() else {
+        return ([(header::CONTENT_TYPE, "application/octet-stream")], Vec::<u8>::new());
+    };
+    let Some(data) = omegaflow_server::wmm_at(t, alm) else {
         return ([(header::CONTENT_TYPE, "application/octet-stream")], Vec::<u8>::new());
     };
     
@@ -39,19 +42,16 @@ async fn wmm(Query(params): Query<WmmReq>) -> impl IntoResponse {
 
     let mut out = Vec::with_capacity(6 + 4 * wmm_coeffs as usize + 9 + 1);
     
-    // wmm[0..2]: Erdzentrum im ICRF
     out.push(data.earth_pos.x as f32);
     out.push(data.earth_pos.y as f32);
     out.push(data.earth_pos.z as f32);
 
-    // wmm[3..5]: Magnetischer Dipol im ICRF (Rotiert aus ITRF)
     let t_ut1 = params.jd - 2451545.0;
     let gmst_deg = 280.46061837 + 360.98564736629 * t_ut1;
     let gmst_rad = gmst_deg.to_radians();
     let cos_g = gmst_rad.cos() as f32;
     let sin_g = gmst_rad.sin() as f32;
 
-    // Dipol in ITRF zeigt genähert nach Süden (Magnetisches Moment)
     let dipole_itrf_x: f32 = 0.0;
     let dipole_itrf_y: f32 = 0.0;
     let dipole_itrf_z: f32 = -1.0; 
@@ -64,7 +64,6 @@ async fn wmm(Query(params): Query<WmmReq>) -> impl IntoResponse {
     out.push(dipole_y);
     out.push(dipole_z);
 
-    // wmm[6]: Zeitdifferenz
     out.push(data.time_delta);
 
     let pad = |v: &Vec<f32>, len: usize| -> Vec<f32> {
@@ -115,6 +114,7 @@ async fn main() {
         .route("/wmm", get(wmm))
         .route("/terrain", get(terrain))
         .route("/time", get(time));
+    println!("Omegaflow running on http://0.0.0.0:3000");
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
@@ -124,16 +124,20 @@ static EVAL_STATE_SHADER: &str = include_str!("../static/eval_state.wgsl");
 static HTML: &str = r#"<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Omegaflow</title>
 <link rel="icon" href="data:,">
-<style>*{margin:0;padding:0}body{background:#000;overflow:hidden}canvas{display:block;width:100vw;height:100vh;cursor:none}</style>
-</head><body><canvas id="c" tabindex="0"></canvas><script>
+<style>*{margin:0;padding:0}body{background:#000;overflow:hidden}canvas{display:block;width:100vw;height:100vh;cursor:none}#splash{color:#fff;font-family:monospace;padding:20px;font-size:14px;position:absolute;z-index:10}#error{color:#000;background:red;font-family:monospace;padding:20px;font-size:20px;position:fixed;z-index:100;display:none;width:100%;height:100%}</style>
+</head><body><div id="splash">Omegaflow starting...</div><div id="error"></div><canvas id="c" tabindex="0"></canvas><script>
 (async()=>{
 try {
+const splash = document.getElementById('splash');
+const errorDiv = document.getElementById('error');
+function showError(msg) { if(errorDiv){errorDiv.style.display='block'; errorDiv.innerText=msg;} if(splash) splash.style.display='none'; }
+
 const canvas=document.getElementById('c');
 canvas.focus();
 const adapter=await navigator.gpu.requestAdapter();
-if(!adapter){document.body.innerText='No GPU';return;}
+if(!adapter){ showError('No WebGPU Adapter. Your device is not supported.'); return; }
 const device=await adapter.requestDevice();
-if(!device){document.body.innerText='No Device';return;}
+if(!device){ showError('No WebGPU Device. Your device is not supported.'); return; }
 device.lost.then(info=>{document.body.innerText='GPU Lost: '+info.message;console.error(info)});
 const ctx=canvas.getContext('webgpu');
 const fmt=navigator.gpu.getPreferredCanvasFormat();
@@ -142,7 +146,7 @@ canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 let RX=canvas.width,RY=canvas.height;
 window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;RX=canvas.width;RY=canvas.height});
-window.cx=0;window.cy=0;window.cz=0;window.scale=1e4;window.jd=2459945.0;
+window.cx=0;window.cy=0;window.cz=0;window.scale=3e8;window.jd=Date.now()/86400000.0+2440587.5;
 window.yaw=0;window.pitch=0;
 window.currentJD=jd; window.currentDwell=0; window.currentTimeScale=1; window.observerTier=0; window.timeMultiplier=1.0; window.observerCapacity=1.0;
 let drag=false,rdrag=false,lx=0,ly=0;
@@ -168,6 +172,7 @@ let initialBeta = null;
 let videoElement = null;
 let observerAwake = false;
 let prev_cx=0, prev_cy=0, prev_cz=0;
+let lastRenderTime = performance.now();
 
 function syncHere() {
     let t_ut1 = jd - 2451545.0;
@@ -221,55 +226,53 @@ window.addEventListener('deviceorientation',e=>{
     pitch = (e.beta - initialBeta) * 0.02;
 });
 
-if('geolocation' in navigator){
-    navigator.geolocation.watchPosition(p=>{
-        obsLat=p.coords.latitude;
-        obsLon=p.coords.longitude;
-        obsAlt=p.coords.altitude||0.0;
-        if(observerAwake) {
-            syncHere();
-            fetchTerrain();
-        }
-    }, e=>{}, {enableHighAccuracy:true, maximumAge:0});
-}
-
-try {
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    const actx = new AudioContext();
-    const source = actx.createMediaStreamSource(stream);
-    const analyser = actx.createAnalyser();
-    source.connect(analyser);
-    const data = new Uint8Array(analyser.frequencyBinCount);
-    setInterval(()=>{
-        analyser.getByteTimeDomainData(data);
-        let sum=0;
-        for(let i=0;i<data.length;i++){let v=(data[i]-128)/128.0;sum+=v*v;}
-        micVolume=Math.sqrt(sum/data.length);
-    },50);
-} catch(e){}
-
-try {
-    const stream = await navigator.mediaDevices.getUserMedia({video:{width:640, height:480}});
-    videoElement = document.createElement('video');
-    videoElement.srcObject = stream;
-    videoElement.play();
-    const vctx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
-    setInterval(()=>{
-        try{
-            vctx.canvas.width=1;vctx.canvas.height=1;
-            vctx.drawImage(videoElement,0,0,1,1);
-            const p=vctx.getImageData(0,0,1,1).data;
-            cameraLux=(p[0]+p[1]+p[2])/765.0;
-        }catch(e){}
-    },100);
-} catch(e){}
-
 async function awaken() {
     if(observerAwake) return;
     observerAwake = true;
+    
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+        const actx = new AudioContext();
+        const source = actx.createMediaStreamSource(stream);
+        const analyser = actx.createAnalyser();
+        source.connect(analyser);
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        setInterval(()=>{
+            analyser.getByteTimeDomainData(data);
+            let sum=0;
+            for(let i=0;i<data.length;i++){let v=(data[i]-128)/128.0;sum+=v*v;}
+            micVolume=Math.sqrt(sum/data.length);
+        },50);
+    } catch(e){console.log("Audio denied");}
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({video:{width:640, height:480, facingMode: 'environment'}});
+        videoElement = document.createElement('video');
+        videoElement.srcObject = stream;
+        videoElement.play();
+        const vctx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+        setInterval(()=>{
+            try{
+                vctx.canvas.width=1;vctx.canvas.height=1;
+                vctx.drawImage(videoElement,0,0,1,1);
+                const p=vctx.getImageData(0,0,1,1).data;
+                cameraLux=(p[0]+p[1]+p[2])/765.0;
+            }catch(e){}
+        },100);
+    } catch(e){console.log("Video denied");}
+
+    if('geolocation' in navigator){
+        navigator.geolocation.watchPosition(p=>{
+            obsLat=p.coords.latitude;
+            obsLon=p.coords.longitude;
+            obsAlt=p.coords.altitude||0.0;
+            fetchTerrain();
+        }, e=>{}, {enableHighAccuracy:true, maximumAge:0});
+    }
+
     if(!document.fullscreenElement){document.documentElement.requestFullscreen().catch(e=>{});}
+    
     await fetchTime();
-    syncHere();
     prev_cx=cx; prev_cy=cy; prev_cz=cz;
     fetchMasses(); fetchWmm(); fetchTerrain();
 }
@@ -336,6 +339,7 @@ window.addEventListener('keydown',e=>{
     if(e.key==='3'){camRot=2;}
     if(e.key==='4'){camRot=3;}
     if(e.key==='h'||e.key==='H'){syncHere();}
+    if(e.key==='t'||e.key==='T'){jd=Date.now()/86400000.0+2440587.5;}
 });
 
 canvas.addEventListener('touchstart',e=>{
@@ -473,7 +477,7 @@ function render(){
 
     if(!observerAwake){
         const enc=device.createCommandEncoder();
-        const pass=enc.beginRenderPass({colorAttachments:[{view:ctx.getCurrentTexture().createView(),clearValue:{r:0,g:0,b:0,a:1},loadOp:'clear',storeOp:'store'}]});
+        const pass=enc.beginRenderPass({colorAttachments:[{view:ctx.getCurrentTexture().createView(),clearValue:{r:0.0,g:0.0,b:0.05,a:1.0},loadOp:'clear',storeOp:'store'}]});
         pass.setPipeline(pipe);pass.setBindGroup(0,bg);pass.draw(3);pass.end();
         device.queue.submit([enc.finish()]);
         return;
@@ -501,12 +505,14 @@ function render(){
     smoothedCapacity += (targetCapacity - smoothedCapacity) * smoothFactor;
     observerCapacity = smoothedCapacity;
 
-    let timeDilation = Math.pow(scale / 1e4, 1.5);
-    jd += timeDilation * 0.000001 * timeScale * timeMultiplier;
+    let nowTime = performance.now();
+    let dtSeconds = (nowTime - lastRenderTime) / 1000.0;
+    lastRenderTime = nowTime;
+    jd += (dtSeconds / 86400.0) * timeMultiplier;
 
     let realNow = Date.now() / 86400000.0 + 2440587.5;
     let deltaT = Math.abs(jd - realNow);
-    let temporalCertainty = Math.exp(-deltaT * 20.0);
+    let temporalCertainty = Math.exp(-deltaT * 0.5);
 
     let dx = cx - prev_cx; let dy = cy - prev_cy; let dz = cz - prev_cz;
     let viewVelocity = Math.sqrt(dx*dx + dy*dy + dz*dz) / scale;
@@ -542,9 +548,9 @@ function render(){
 
 async function loop(){render();requestAnimationFrame(loop);}
 setInterval(()=>{if(observerAwake){fetchMasses();fetchWmm();}},1000);
+if(splash) splash.style.display='none';
 loop();
-} catch(e) { document.body.innerText = e.message; console.error(e); }
+} catch(e) { showError(e.message); console.error(e); }
 })();
 </script></body></html>"#;
-
 

@@ -1,4 +1,3 @@
-```wgsl
 override HARDWARE_TIER: i32 = 0;
 override N_MAX: i32 = 12; 
 const LEGENDRE_ARRAY_SIZE: i32 = 105;
@@ -130,7 +129,14 @@ fn eval_magnetic_state(pos: vec3f) -> vec3f {
     if (cam_rot == 1) { cam_uv = vec2f(1.0 - i.u.y, i.u.x); }
     else if (cam_rot == 2) { cam_uv = vec2f(1.0 - i.u.x, i.u.y); }
     else if (cam_rot == 3) { cam_uv = vec2f(i.u.y, 1.0 - i.u.x); }
-    let cam_color = textureSample(camera_tex, camera_sampler, cam_uv).rgb;
+    let cam_sample = textureSample(camera_tex, camera_sampler, cam_uv).rgb;
+    
+    var cam_color = cam_sample;
+    let cam_lum = dot(cam_sample, vec3f(0.299, 0.587, 0.114));
+    if (cam_lum < 0.01) {
+        cam_color = vec3f(0.02, 0.02, 0.05); // Fallback dark blue if camera is black
+    }
+    
     let cam_alpha = (1.0 - gravity_alpha - atmo_alpha) * certainty;
 
     let final_output = cam_color * cam_alpha + gravity_col * gravity_alpha + atmo_col * atmo_alpha + mag_glow;
