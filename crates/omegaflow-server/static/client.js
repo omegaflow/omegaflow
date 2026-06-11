@@ -66,7 +66,12 @@ export function buildVp(){
 }
 
 export function updateCapacity(dt){
-    S.capacity=1.0/(1.0+dt/16.0);
+    let processing=1.0/(1.0+dt/16.0);
+    let motion=Math.sqrt(S.deviceAccX**2+S.deviceAccY**2+S.deviceAccZ**2);
+    let motion_capacity=Math.exp(-motion);
+    let battery_capacity=S.battery>0?S.battery:1.0;
+    let vitals_capacity=S.spO2>0?Math.min(S.spO2/100.0,1.0):1.0;
+    S.capacity=processing*motion_capacity*battery_capacity*vitals_capacity;
     let tsm=Date.now()-S.lastMoveTime;
     S.dwellTime=clamp(tsm/20,0,100);
     S.jd+=(dt/1000/86400)*S.timeMultiplier;
