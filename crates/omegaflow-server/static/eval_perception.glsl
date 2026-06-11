@@ -39,10 +39,11 @@ vec3 eval_perception(vec2 uv, vec2 res, float scale, vec3 center,
     vec3 cam = CAMERA(cam_uv);
 
     float g_perception = g_energy * capacity * certainty;
+    float redshift = 1.0 - st.time_dilation;
     vec3 gravity = vec3(
-        g_perception,
-        g_perception * 0.4 * (1.0 - g_perception),
-        (1.0 - g_perception * 0.6) * g_perception
+        g_perception * (1.0 + redshift),
+        g_perception * 0.4 * (1.0 - g_perception) * (1.0 - redshift * 0.5),
+        (1.0 - g_perception * 0.6) * g_perception * (1.0 - redshift)
     );
 
     vec3 magnetic = B / max(b, 1e-10) * b_energy * capacity * certainty;

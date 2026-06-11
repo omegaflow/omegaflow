@@ -32,6 +32,8 @@ struct state {
     float cos_lat;
     float lon_rad;
     vec3 earth_center;
+    float potential;
+    float time_dilation;
 };
 
 state eval_state(vec3 pos, float capacity) {
@@ -48,17 +50,24 @@ state eval_state(vec3 pos, float capacity) {
     int mass_limit = int(capacity * 256.0);
     float mass_fade = 1.0 - fract(capacity * 256.0);
     st.acc_gravity = vec3(0.0);
+    st.potential = 0.0;
     for (int i = 0; i < mass_limit; i++) {
         vec4 m = MASS(i);
         vec3 r = m.xyz - pos;
-        float r3 = max(dot(r, r) * length(r), 1.0);
+        float rl = length(r);
+        float r3 = max(dot(r, r) * rl, 1.0);
         vec3 effect = m.w * r / r3;
+        float phi = m.w / max(rl, 1.0);
         if (i == mass_limit - 1 && mass_limit > 0) {
             st.acc_gravity += effect * mass_fade;
+            st.potential -= phi * mass_fade;
         } else {
             st.acc_gravity += effect;
+            st.potential -= phi;
         }
     }
+    float c = 299792458.0;
+    st.time_dilation = sqrt(max(1.0 + 2.0 * st.potential / (c * c), 0.0));
 
     int mag_limit = int(capacity * 133.0);
     float mag_fade = 1.0 - fract(capacity * 133.0);
