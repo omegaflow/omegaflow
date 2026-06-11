@@ -1,6 +1,8 @@
 omegaflow
 
-state(t, x, y, z) = what is
+A=A
+
+state(t, x, y, z) = what is here now?
 
 perception(state, observer) = what arrives
 
