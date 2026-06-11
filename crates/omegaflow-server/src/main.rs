@@ -46,7 +46,8 @@ fn glsl_to_wgsl(glsl: &str) -> String {
 
 async fn eval_state_wgsl() -> impl IntoResponse {
     let logic = glsl_to_wgsl(EVAL_LOGIC);
-    let shader = DICT_WGSL.replace("LOGIC", &logic);
+    let observer = glsl_to_wgsl(EVAL_OBSERVER);
+    let shader = DICT_WGSL.replace("LOGIC", &logic).replace("OBSERVER", &observer);
     ([(header::CONTENT_TYPE, "text/wgsl")], shader)
 }
 
@@ -60,7 +61,7 @@ void main() {
     vUv = vec2(p.x * 0.5 + 0.5, 0.5 - p.y * 0.5);
     gl_Position = vec4(p, 0.0, 1.0);
 }"#;
-    let dict = DICT_GLSL.replace("LOGIC", EVAL_LOGIC);
+    let dict = DICT_GLSL.replace("LOGIC", EVAL_LOGIC).replace("OBSERVER", EVAL_OBSERVER);
     let fragment = format!("{}\n{}", vertex, dict);
     ([(header::CONTENT_TYPE, "text/glsl")], fragment)
 }
@@ -150,6 +151,7 @@ async fn main() {
 }
 
 static EVAL_LOGIC: &str = include_str!("../static/eval_logic.glsl");
+static EVAL_OBSERVER: &str = include_str!("../static/eval_observer.glsl");
 static DICT_GLSL: &str = include_str!("../static/dict_glsl.glsl");
 static DICT_WGSL: &str = include_str!("../static/dict_wgsl.wgsl");
 static MANIFEST: &str = include_str!("../static/manifest.json");

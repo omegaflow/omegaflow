@@ -31,8 +31,10 @@ layout(location=0) in vec2 vUv;
 
 LOGIC
 
+OBSERVER
+
 void main() {
-    vec3 col = eval_frame(vUv, res_count.xy, center_scale.w, center_scale.xyz,
+    vec3 col = eval_observer(vUv, res_count.xy, center_scale.w, center_scale.xyz,
         rotation.xy, observer_state, device_accel, device_mag, device_local, device_geo);
     fragColor = vec4(col, 1.0);
 }

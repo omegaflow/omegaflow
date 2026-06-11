@@ -21,243 +21,144 @@ vec2 df64_scale(vec2 a, float s) {
     return vec2(p + e, e - (p + e - p));
 }
 
-float eval_gravity(vec3 pos, float capacity) {
+struct state {
+    vec3 pos;
+    vec3 acc_gravity;
+    vec3 B_field;
+    float terrain_h;
+    float dist_earth;
+    vec3 r_hat;
+    float sin_lat;
+    float cos_lat;
+    float lon_rad;
+    vec3 earth_center;
+};
+
+state eval_universe(vec3 pos, float capacity) {
+    state s;
+    s.pos = pos;
+    s.earth_center = vec3(WMM(0), WMM(1), WMM(2));
+    vec3 r_vec = pos - s.earth_center;
+    s.dist_earth = length(r_vec);
+    s.r_hat = r_vec / max(s.dist_earth, 1.0);
+    s.sin_lat = s.r_hat.z;
+    s.cos_lat = sqrt(1.0 - s.sin_lat * s.sin_lat);
+    s.lon_rad = atan(s.r_hat.y, s.r_hat.x);
+
     float mass_limit_f = 5.0 + capacity * 251.0;
-    int current_mass_limit = int(mass_limit_f);
-    float limit_fade = 1.0 - fract(mass_limit_f);
-    vec3 acc = vec3(0.0);
-    for (int i = 0; i < current_mass_limit; i++) {
+    int mass_limit = int(mass_limit_f);
+    float mass_fade = 1.0 - fract(mass_limit_f);
+    s.acc_gravity = vec3(0.0);
+    for (int i = 0; i < mass_limit; i++) {
         vec4 m = MASS(i);
-        vec3 r_vec = m.xyz - pos;
-        float r = length(r_vec);
-        float r_cubed = max(r * r * r, 1.0);
-        vec3 effect = m.w * r_vec / r_cubed;
-        if (i == current_mass_limit - 1 && current_mass_limit > 0) {
-            acc += effect * limit_fade;
+        vec3 r = m.xyz - pos;
+        float r3 = max(dot(r, r) * length(r), 1.0);
+        vec3 effect = m.w * r / r3;
+        if (i == mass_limit - 1 && mass_limit > 0) {
+            s.acc_gravity += effect * mass_fade;
         } else {
-            acc += effect;
+            s.acc_gravity += effect;
         }
     }
-    acc += VP_FIELD(device_accel, xyz);
-    return length(acc);
-}
-
-float wmm_at(int idx) { return WMM(idx); }
-
-vec3 eval_magnetic(vec3 pos, vec3 earth_center, float sin_lat, float cos_lat, float lon_rad, float capacity) {
-    vec3 r_vec = pos - earth_center;
-    float r = length(r_vec);
-    if (r < 6378137.0 * 0.9) return vec3(0.0);
-
-    float sin_theta = cos_lat;
-    float cos_theta = sin_lat;
-    float inv_sin_theta = 1.0 / max(sin_theta, 1e-6);
-    float time_delta = wmm_at(3);
-    float a_over_r = 6378137.0 / r;
 
     float mag_limit_f = 1.0 + capacity * 132.0;
-    int current_mag_limit = int(mag_limit_f);
-    float limit_fade = 1.0 - fract(mag_limit_f);
+    int mag_limit = int(mag_limit_f);
+    float mag_fade = 1.0 - fract(mag_limit_f);
+    float sin_theta = s.cos_lat;
+    float cos_theta = s.sin_lat;
+    float inv_sin_theta = 1.0 / max(sin_theta, 1e-6);
+    float time_delta = WMM(3);
+    float a_over_r = 6378137.0 / s.dist_earth;
 
-    if (current_mag_limit <= 12) {
-        float B_r = 0.0; float B_theta = 0.0; float B_phi = 0.0;
-        for (int m = 0; m <= current_mag_limit; m++) {
-            float cos_m_lon = cos(float(m) * lon_rad);
-            float sin_m_lon = sin(float(m) * lon_rad);
+    if (mag_limit <= 12) {
+        float B_r = 0.0; float B_t = 0.0; float B_p = 0.0;
+        for (int mm = 0; mm <= mag_limit; mm++) {
+            float cml = cos(float(mm) * s.lon_rad);
+            float sml = sin(float(mm) * s.lon_rad);
             float p_pp = 0.0; float p_pr = 0.0; float p_cu = 0.0;
-            float a_r_n = pow(a_over_r, float(m + 2));
-            for (int n = m; n <= current_mag_limit; n++) {
-                if (n == m) {
-                    if (m == 0) { p_cu = 1.0; }
-                    else { p_cu = sqrt(1.0 - 1.0 / (4.0 * float(m) * float(m))) * sin_theta * p_pr; }
-                } else if (n == m + 1) {
+            float arn = pow(a_over_r, float(mm + 2));
+            for (int n = mm; n <= mag_limit; n++) {
+                if (n == mm) {
+                    if (mm == 0) { p_cu = 1.0; }
+                    else { p_cu = sqrt(1.0 - 1.0 / (4.0 * float(mm) * float(mm))) * sin_theta * p_pr; }
+                } else if (n == mm + 1) {
                     p_cu = cos_theta * p_pr;
                 } else {
-                    p_cu = (float(2*n-1) * cos_theta * p_pr - float(n+m-1) * p_pp) / float(n-m);
+                    p_cu = (float(2*n-1) * cos_theta * p_pr - float(n+mm-1) * p_pp) / float(n-mm);
                 }
-
-                int idx = n * (n + 1) / 2 + m - 1;
-                int ci = 4 + idx * 4;
-                float g = wmm_at(ci); float h = wmm_at(ci+1);
-                float g_svc = wmm_at(ci+2); float h_svc = wmm_at(ci+3);
-                float g_t = g + time_delta * g_svc; float h_t = h + time_delta * h_svc;
-
-                float ch = g_t * cos_m_lon + h_t * sin_m_lon;
-                float sh = g_t * sin_m_lon - h_t * cos_m_lon;
-
-                float fade = (n < current_mag_limit) ? 1.0 : limit_fade;
-
-                B_r += a_r_n * float(n + 1) * p_cu * ch * fade;
-                float dP = 0.0;
-                if (n > m) { dP = (float(n) * cos_theta * p_cu - float(n+m) * p_pp) * inv_sin_theta; }
-                else { dP = float(n) * cos_theta * p_cu * inv_sin_theta; }
-                B_theta -= a_r_n * dP * ch * fade;
-                B_phi += a_r_n * float(m) * p_cu * sh * inv_sin_theta * fade;
-
+                int ci = 4 + (n*(n+1)/2+mm-1)*4;
+                float gt = WMM(ci) + time_delta * WMM(ci+2);
+                float ht = WMM(ci+1) + time_delta * WMM(ci+3);
+                float ch = gt*cml + ht*sml;
+                float sh = gt*sml - ht*cml;
+                float fd = (n < mag_limit) ? 1.0 : mag_fade;
+                B_r += arn * float(n+1) * p_cu * ch * fd;
+                float dP = (n > mm) ? (float(n)*cos_theta*p_cu - float(n+mm)*p_pp)*inv_sin_theta : float(n)*cos_theta*p_cu*inv_sin_theta;
+                B_t -= arn * dP * ch * fd;
+                B_p += arn * float(mm) * p_cu * sh * inv_sin_theta * fd;
                 p_pp = p_pr; p_pr = p_cu;
-                a_r_n *= a_over_r;
+                arn *= a_over_r;
             }
         }
-        return vec3(
-            B_r * sin_lat * cos(lon_rad) + B_theta * cos_lat * cos(lon_rad) - B_phi * sin(lon_rad),
-            B_r * sin_lat * sin(lon_rad) + B_theta * cos_lat * sin(lon_rad) + B_phi * cos(lon_rad),
-            B_r * cos_lat - B_theta * sin_lat
+        s.B_field = vec3(
+            B_r*s.sin_lat*cos(s.lon_rad) + B_t*s.cos_lat*cos(s.lon_rad) - B_p*sin(s.lon_rad),
+            B_r*s.sin_lat*sin(s.lon_rad) + B_t*s.cos_lat*sin(s.lon_rad) + B_p*cos(s.lon_rad),
+            B_r*s.cos_lat - B_t*s.sin_lat
         );
     } else {
-        vec2 B_r = vec2(0.0); vec2 B_theta = vec2(0.0); vec2 B_phi = vec2(0.0);
-        for (int m = 0; m <= current_mag_limit; m++) {
-            float cos_m_lon = cos(float(m) * lon_rad);
-            float sin_m_lon = sin(float(m) * lon_rad);
+        vec2 B_r = vec2(0.0); vec2 B_t = vec2(0.0); vec2 B_p = vec2(0.0);
+        for (int mm = 0; mm <= mag_limit; mm++) {
+            float cml = cos(float(mm) * s.lon_rad);
+            float sml = sin(float(mm) * s.lon_rad);
             vec2 p_pp = vec2(0.0); vec2 p_pr = vec2(0.0); vec2 p_cu = vec2(0.0);
-            vec2 a_r_n = vec2(pow(a_over_r, float(m + 2)), 0.0);
-            for (int n = m; n <= current_mag_limit; n++) {
-                if (n == m) {
-                    if (m == 0) { p_cu = vec2(1.0, 0.0); }
-                    else { p_cu = df64_mul(df64_scale(p_pr, sqrt(1.0 - 1.0 / (4.0 * float(m) * float(m)))), vec2(sin_theta, 0.0)); }
-                } else if (n == m + 1) {
+            vec2 arn = vec2(pow(a_over_r, float(mm+2)), 0.0);
+            for (int n = mm; n <= mag_limit; n++) {
+                if (n == mm) {
+                    if (mm == 0) { p_cu = vec2(1.0, 0.0); }
+                    else { p_cu = df64_mul(df64_scale(p_pr, sqrt(1.0-1.0/(4.0*float(mm)*float(mm)))), vec2(sin_theta,0.0)); }
+                } else if (n == mm + 1) {
                     p_cu = df64_mul(p_pr, vec2(cos_theta, 0.0));
                 } else {
-                    p_cu = df64_sub(df64_scale(df64_mul(p_pr, vec2(cos_theta, 0.0)), float(2*n-1) / float(n-m)), df64_scale(p_pp, float(n+m-1) / float(n-m)));
+                    p_cu = df64_sub(df64_scale(df64_mul(p_pr, vec2(cos_theta,0.0)), float(2*n-1)/float(n-mm)), df64_scale(p_pp, float(n+mm-1)/float(n-mm)));
                 }
-
-                int idx = n * (n + 1) / 2 + m - 1;
-                int ci = 4 + idx * 4;
-                float g = wmm_at(ci); float h = wmm_at(ci+1);
-                float g_svc = wmm_at(ci+2); float h_svc = wmm_at(ci+3);
-                float g_t = g + time_delta * g_svc; float h_t = h + time_delta * h_svc;
-
-                float ch = g_t * cos_m_lon + h_t * sin_m_lon;
-                float sh = g_t * sin_m_lon - h_t * cos_m_lon;
-
-                float fade = (n < current_mag_limit) ? 1.0 : limit_fade;
-
-                B_r = df64_add(B_r, df64_scale(df64_mul(p_cu, vec2(ch, 0.0)), a_r_n.x * float(n + 1) * fade));
-                vec2 dP = vec2(0.0);
-                if (n > m) { dP = df64_sub(df64_scale(df64_mul(p_cu, vec2(cos_theta, 0.0)), float(n) * inv_sin_theta), df64_scale(p_pp, float(n+m) * inv_sin_theta)); }
-                else { dP = df64_scale(df64_mul(p_cu, vec2(cos_theta, 0.0)), float(n) * inv_sin_theta); }
-                B_theta = df64_sub(B_theta, df64_scale(df64_mul(dP, vec2(ch, 0.0)), a_r_n.x * fade));
-                B_phi = df64_add(B_phi, df64_scale(df64_mul(p_cu, vec2(sh, 0.0)), a_r_n.x * float(m) * inv_sin_theta * fade));
-
+                int ci = 4 + (n*(n+1)/2+mm-1)*4;
+                float gt = WMM(ci) + time_delta * WMM(ci+2);
+                float ht = WMM(ci+1) + time_delta * WMM(ci+3);
+                float ch = gt*cml + ht*sml;
+                float sh = gt*sml - ht*cml;
+                float fd = (n < mag_limit) ? 1.0 : mag_fade;
+                B_r = df64_add(B_r, df64_scale(df64_mul(p_cu, vec2(ch,0.0)), arn.x*float(n+1)*fd));
+                vec2 dP = (n > mm) ? df64_sub(df64_scale(df64_mul(p_cu,vec2(cos_theta,0.0)),float(n)*inv_sin_theta), df64_scale(p_pp,float(n+mm)*inv_sin_theta)) : df64_scale(df64_mul(p_cu,vec2(cos_theta,0.0)),float(n)*inv_sin_theta);
+                B_t = df64_sub(B_t, df64_scale(df64_mul(dP,vec2(ch,0.0)), arn.x*fd));
+                B_p = df64_add(B_p, df64_scale(df64_mul(p_cu,vec2(sh,0.0)), arn.x*float(mm)*inv_sin_theta*fd));
                 p_pp = p_pr; p_pr = p_cu;
-                a_r_n = df64_scale(a_r_n, a_over_r);
+                arn = df64_scale(arn, a_over_r);
             }
         }
-        float b_r_f = B_r.x; float b_theta_f = B_theta.x; float b_phi_f = B_phi.x;
-        return vec3(
-            b_r_f * sin_lat * cos(lon_rad) + b_theta_f * cos_lat * cos(lon_rad) - b_phi_f * sin(lon_rad),
-            b_r_f * sin_lat * sin(lon_rad) + b_theta_f * cos_lat * sin(lon_rad) + b_phi_f * cos(lon_rad),
-            b_r_f * cos_lat - b_theta_f * sin_lat
+        s.B_field = vec3(
+            B_r.x*s.sin_lat*cos(s.lon_rad) + B_t.x*s.cos_lat*cos(s.lon_rad) - B_p.x*sin(s.lon_rad),
+            B_r.x*s.sin_lat*sin(s.lon_rad) + B_t.x*s.cos_lat*sin(s.lon_rad) + B_p.x*cos(s.lon_rad),
+            B_r.x*s.cos_lat - B_t.x*s.sin_lat
         );
     }
-}
-
-float eval_terrain(vec3 pos, vec3 earth_center, vec3 r_hat, float dist) {
-    float earth_radius = 6378137.0;
-    float terrain_fade = smoothstep(earth_radius * 1.5, earth_radius, dist);
-    if (terrain_fade <= 0.0) return 0.0;
-
-    float lat = asin(r_hat.z);
-    float lon = atan(r_hat.y, r_hat.x);
-
-    float local_lat = fract(lat * 57.2957795);
-    float local_lon = fract(lon * 57.2957795);
-
-    float x = local_lon * 1200.0;
-    float y = (1.0 - local_lat) * 1200.0;
-
-    int x0 = int(clamp(floor(x), 0.0, 1199.0));
-    int y0 = int(clamp(floor(y), 0.0, 1199.0));
-    int x1 = min(x0 + 1, 1200);
-    int y1 = min(y0 + 1, 1200);
-
-    float fx = x - float(x0);
-    float fy = y - float(y0);
-
-    float h00 = TERRAIN(x0, y0);
-    float h10 = TERRAIN(x1, y0);
-    float h01 = TERRAIN(x0, y1);
-    float h11 = TERRAIN(x1, y1);
-
-    float h = h00*(1.0-fx)*(1.0-fy) + h10*fx*(1.0-fy) + h01*(1.0-fx)*fy + h11*fx*fy;
-
-    float egm_u = (lon * 57.2957795 + 180.0) * 0.0027777777;
-    float egm_v = (lat * 57.2957795 + 90.0) * 0.0055555555;
-    float undulation = EGM96(egm_u, egm_v);
-
-    return (h + undulation) * terrain_fade;
-}
-
-vec3 eval_frame(vec2 uv, vec2 res, float scale, vec3 center,
-    vec2 rotation, vec4 obs, vec4 accel, vec4 mag, vec4 local, vec4 geo) {
-    float yaw = rotation.x;
-    float pitch = rotation.y;
-    float capacity = obs.w;
-
-    float cosY = cos(yaw); float sinY = sin(yaw);
-    float cosP = cos(pitch); float sinP = sin(pitch);
-
-    vec3 offset = vec3((uv.x - 0.5) * res.x * scale, (uv.y - 0.5) * res.y * scale, 0.0);
-    vec3 ry = vec3(offset.x*cosY + offset.z*sinY, offset.y, -offset.x*sinY + offset.z*cosY);
-    vec3 rotated = vec3(ry.x, ry.y*cosP - ry.z*sinP, ry.y*sinP + ry.z*cosP);
-
-    vec3 pos = center + rotated;
-
-    vec3 earth_center = vec3(wmm_at(0), wmm_at(1), wmm_at(2));
-    vec3 r_vec = pos - earth_center;
-    float dist = length(r_vec);
-    vec3 r_hat = r_vec / max(dist, 1.0);
-    float sin_lat = r_hat.z;
-    float cos_lat = sqrt(1.0 - sin_lat * sin_lat);
-    float lon_rad = atan(r_hat.y, r_hat.x);
-
-    vec3 noise = vec3(sin(pos.x*12.9898+pos.y*78.233), cos(pos.y*43.758+pos.z*39.346), sin(pos.z*23.456+pos.x*93.138));
-    float total_disturbance = obs.y + local.x * 10.0 + (1.0-local.z) * 5.0 + (1.0-local.w) * 5.0;
-    vec3 noisy_pos = pos + noise * total_disturbance * scale * 0.01;
-
-    float g_omega = eval_gravity(noisy_pos, capacity);
-    vec3 B_universe = eval_magnetic(noisy_pos, earth_center, sin_lat, cos_lat, lon_rad, capacity);
-    vec3 B_local = mag.xyz;
-    float total_B = length(B_universe + B_local * 1e-5);
-
-    float total_lux = obs.z + local.y * 100.0;
-    float omega = max(0.0, g_omega - total_lux * 0.001);
-
-    float certainty = local.z * local.w;
-    float luxComp = 1.0 / (1.0 + total_lux * 0.0001);
-
-    float g_norm = clamp(omega / 9.81, 0.0, 10.0);
-    float gravity_alpha = smoothstep(0.5, 5.0, g_norm) * capacity * certainty * luxComp;
-
-    float t = clamp(g_norm / 5.0, 0.0, 1.0);
-    float r_col = smoothstep(0.2, 0.6, t);
-    float g_col = smoothstep(0.0, 0.3, t) * (1.0 - smoothstep(0.6, 0.8, t));
-    float b_col = 1.0 - smoothstep(0.0, 0.4, t);
-    float white_add = smoothstep(0.8, 1.0, t);
-    vec3 gravity_col = (vec3(r_col, g_col, b_col) + white_add) * luxComp;
-
-    float B_norm = clamp(total_B / 6.0e-5, 0.0, 1.0);
-    float mag_brightness = smoothstep(0.1, 0.6, B_norm);
-    vec3 mag_glow = vec3(0.1, 0.9, 1.0) * mag_brightness * capacity * certainty * luxComp * 0.8;
 
     float earth_radius = 6378137.0;
-    float terrain_height = eval_terrain(pos, earth_center, r_hat, dist);
-    float surface_dist = dist - earth_radius - terrain_height;
-    float earth_atmo = smoothstep(10000.0, 0.0, surface_dist);
-    vec3 atmo_col = vec3(0.1, 0.3, 0.8);
-    float atmo_alpha = earth_atmo * capacity * certainty;
+    float terrain_fade = smoothstep(earth_radius * 1.5, earth_radius, s.dist_earth);
+    if (terrain_fade <= 0.0) {
+        s.terrain_h = 0.0;
+    } else {
+        float lat = asin(s.r_hat.z);
+        float lon = atan(s.r_hat.y, s.r_hat.x);
+        float x = fract(lon * 57.2957795) * 1200.0;
+        float y = (1.0 - fract(lat * 57.2957795)) * 1200.0;
+        int x0 = int(clamp(floor(x), 0.0, 1199.0));
+        int y0 = int(clamp(floor(y), 0.0, 1199.0));
+        float fx = x - float(x0); float fy = y - float(y0);
+        float h = TERRAIN(x0,y0)*(1.0-fx)*(1.0-fy) + TERRAIN(min(x0+1,1200),y0)*fx*(1.0-fy)
+                + TERRAIN(x0,min(y0+1,1200))*(1.0-fx)*fy + TERRAIN(min(x0+1,1200),min(y0+1,1200))*fx*fy;
+        float undulation = EGM96((lon*57.2957795+180.0)*0.0027777777, (lat*57.2957795+90.0)*0.0055555555);
+        s.terrain_h = (h + undulation) * terrain_fade;
+    }
 
-    int cam_rot = int(geo.w);
-    vec2 cam_uv = vec2(uv.x, 1.0 - uv.y);
-    if (cam_rot == 1) cam_uv = vec2(1.0 - uv.y, uv.x);
-    else if (cam_rot == 2) cam_uv = vec2(1.0 - uv.x, uv.y);
-    else if (cam_rot == 3) cam_uv = vec2(uv.y, 1.0 - uv.x);
-    vec3 cam_sample = CAMERA(cam_uv);
-
-    vec3 cam_color = cam_sample;
-    float cam_lum = dot(cam_sample, vec3(0.299, 0.587, 0.114));
-    if (cam_lum < 0.01) cam_color = vec3(0.02, 0.02, 0.05);
-
-    float cam_alpha = (1.0 - gravity_alpha - atmo_alpha) * certainty;
-
-    return cam_color * cam_alpha + gravity_col * gravity_alpha + atmo_col * atmo_alpha + mag_glow;
+    return s;
 }
