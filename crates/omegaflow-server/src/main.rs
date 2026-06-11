@@ -76,6 +76,14 @@ async fn time() -> impl IntoResponse {
     ([(header::CONTENT_TYPE, "text/plain")], jd.to_string())
 }
 
+async fn manifest() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "application/json")], MANIFEST)
+}
+
+async fn service_worker() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "application/javascript")], SW)
+}
+
 #[tokio::main]
 async fn main() {
     tokio::task::spawn_blocking(|| omegaflow_core::init()).await.ok();
@@ -83,17 +91,23 @@ async fn main() {
         .route("/", get(index))
         .route("/eval_state.wgsl", get(eval_state_wgsl))
         .route("/stream", get(universe_stream))
-        .route("/time", get(time));
+        .route("/time", get(time))
+        .route("/manifest.json", get(manifest))
+        .route("/sw.js", get(service_worker));
     println!("Omegaflow running on http://0.0.0.0:3000");
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 
 static EVAL_STATE_SHADER: &str = include_str!("../static/eval_state.wgsl");
+static MANIFEST: &str = include_str!("../static/manifest.json");
+static SW: &str = include_str!("../static/sw.js");
 
 static HTML: &str = r#"<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Omegaflow</title>
 <link rel="icon" href="data:,">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="\#000000">
 <style>*{margin:0;padding:0}body{background:#000;overflow:hidden}canvas{display:block;width:100vw;height:100vh;cursor:none}#splash{color:#fff;font-family:monospace;padding:20px;font-size:14px;position:absolute;z-index:10}#error{color:#000;background:red;font-family:monospace;padding:20px;font-size:20px;position:fixed;z-index:100;display:none;width:100%;height:100%}</style>
 </head><body><div id="splash">Omegaflow starting...</div><div id="error"></div><canvas id="c" tabindex="0"></canvas><script>
 (async()=>{
@@ -411,6 +425,7 @@ function render(){
 
 async function loop(){render();requestAnimationFrame(loop);}
 setInterval(fetchUniverse, STREAM_INTERVAL);
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});}
 if(splash) splash.style.display='none';
 loop();
 } catch(e) { showError(e.message); console.error(e); }
