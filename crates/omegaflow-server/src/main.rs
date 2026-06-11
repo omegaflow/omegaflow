@@ -23,7 +23,7 @@ async fn universe_stream(Query(params): Query<StreamReq>) -> impl IntoResponse {
     let t = (params.jd - 2451545.0) * 86400.0;
     let viewport_center = glam::DVec3::new(params.cx, params.cy, params.cz);
     
-    let mut masses = omegaflow_server::masses_at(t, params.cx, params.cy, params.cz, params.scale);
+    let mut masses = omegaflow_core::masses_at(t, params.cx, params.cy, params.cz, params.scale);
     masses.sort_by(|a, b| b.gm.partial_cmp(&a.gm).unwrap_or(std::cmp::Ordering::Equal));
     masses.retain(|m| { let r2 = (m.pos - viewport_center).length_squared().max(1.0); (m.gm / r2) > params.min_g as f64 });
 
@@ -32,7 +32,7 @@ async fn universe_stream(Query(params): Query<StreamReq>) -> impl IntoResponse {
     }).collect();
     let mass_bytes: Vec<u8> = mass_data.iter().flat_map(|f| f.to_le_bytes()).collect();
 
-    let wmm_bytes = match omegaflow_server::almanac().and_then(|alm| omegaflow_server::wmm_at(t, alm)) {
+    let wmm_bytes = match omegaflow_core::almanac().and_then(|alm| omegaflow_core::wmm_at(t, alm)) {
         Some(data) => {
             let effective_n_max = params.n_max.min(data.n_max);
             let wmm_coeffs = (effective_n_max * (effective_n_max + 3)) / 2;
@@ -54,8 +54,8 @@ async fn universe_stream(Query(params): Query<StreamReq>) -> impl IntoResponse {
         None => Vec::new()
     };
 
-    let terrain_bytes = omegaflow_server::raw_hgt_tile(params.lat0, params.lon0);
-    let egm_bytes = omegaflow_server::raw_egm96();
+    let terrain_bytes = omegaflow_core::raw_hgt_tile(params.lat0, params.lon0);
+    let egm_bytes = omegaflow_core::raw_egm96();
 
     let mut stream = Vec::new();
     stream.extend_from_slice(&(mass_bytes.len() as u32).to_le_bytes());
@@ -78,7 +78,7 @@ async fn time() -> impl IntoResponse {
 
 #[tokio::main]
 async fn main() {
-    tokio::task::spawn_blocking(|| omegaflow_server::init()).await.ok();
+    tokio::task::spawn_blocking(|| omegaflow_core::init()).await.ok();
     let app = Router::new()
         .route("/", get(index))
         .route("/eval_state.wgsl", get(eval_state_wgsl))

@@ -17,13 +17,13 @@ async fn index() -> impl IntoResponse {
 }
 
 async fn eval_state_wgsl() -> impl IntoResponse {
-    let shader = include_str!("../../omegaflow-client/static/eval_state.wgsl");
+    let shader = include_str!("../omegaflow-server/static/eval_state.wgsl");
     ([(header::CONTENT_TYPE, "text/wgsl")], shader)
 }
 
 async fn masses(Query(params): Query<MassesReq>) -> impl IntoResponse {
     let t = (params.jd - 2451545.0) * 86400.0;
-    let masses = omegaflow_server::masses_at(t);
+    let masses = omegaflow_core::masses_at(t);
     let data: Vec<f32> = masses.iter().flat_map(|m| {
         [m.pos.x as f32, m.pos.y as f32, m.pos.z as f32, m.gm as f32]
     }).collect();
@@ -33,7 +33,7 @@ async fn masses(Query(params): Query<MassesReq>) -> impl IntoResponse {
 
 async fn wmm(Query(params): Query<MassesReq>) -> impl IntoResponse {
     let t = (params.jd - 2451545.0) * 86400.0;
-    let Some(data) = omegaflow_server::wmm_at(t) else {
+    let Some(data) = omegaflow_core::wmm_at(t) else {
         return ([(header::CONTENT_TYPE, "application/octet-stream")], Vec::<u8>::new());
     };
     let n_max = data.n_max;
@@ -79,7 +79,7 @@ async fn ensure_init() {
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
                 .parent().unwrap().parent().unwrap()
         ).ok();
-        tokio::task::spawn_blocking(|| omegaflow_server::init()).await.ok();
+        tokio::task::spawn_blocking(|| omegaflow_core::init()).await.ok();
     }).await;
 }
 
@@ -199,7 +199,7 @@ async fn test_unknown_route() {
 #[tokio::test]
 async fn test_server_masses_at_j2000() {
     ensure_init().await;
-    let masses = omegaflow_server::masses_at(0.0);
+    let masses = omegaflow_core::masses_at(0.0);
     assert!(!masses.is_empty());
     for (i, m) in masses.iter().enumerate() {
         assert!(m.pos.is_finite(), "mass[{}].pos = {:?}", i, m.pos);
@@ -211,7 +211,7 @@ async fn test_server_masses_at_j2000() {
 async fn test_server_wmm_at_epoch() {
     ensure_init().await;
     let t = (2460000.5 - 2451545.0) * 86400.0;
-    let Some(data) = omegaflow_server::wmm_at(t) else { return; };
+    let Some(data) = omegaflow_core::wmm_at(t) else { return; };
     assert!(data.earth_pos.is_finite());
     assert!(data.time_delta.is_finite());
     assert!(data.n_max > 0);
