@@ -6,7 +6,10 @@ struct VP {
     device_mag: vec4f, 
     rotation: vec4f,
     device_local: vec4f,
-    device_geo: vec4f
+    device_geo: vec4f,
+    device_gyro: vec4f,
+    observer_vitals: vec4f,
+    observer_network: vec4f
 }
 
 @group(0) @binding(0) var<storage, read> masses: array<vec4f>;

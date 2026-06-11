@@ -20,7 +20,12 @@ export const S={
     prev_jd:0,
     lastRenderTime:0,
     egmLoaded:false,
-    streaming:false
+    streaming:false,
+    gyroX:0,gyroY:0,gyroZ:0,
+    battery:1,batteryCharging:false,
+    networkType:'',networkDownlink:0,
+    heartRate:0,spO2:0,
+    pressure:0
 };
 
 export function clamp(v,mn,mx){return Math.max(mn,Math.min(mx,v))}
@@ -45,7 +50,19 @@ export function buildVp(){
     let dx=S.cx-S.prev_cx,dy=S.cy-S.prev_cy,dz=S.cz-S.prev_cz;
     let v=Math.sqrt(dx*dx+dy*dy+dz*dz)/Math.max(S.scale,1.0);
     let spatial_certainty=Math.exp(-v);
-    return new Float32Array([S.cx,S.cy,S.cz,S.scale,0,0,S.massCount,0,S.dwellTime,0,S.ambientLux,S.capacity,S.deviceAccX,S.deviceAccY,S.deviceAccZ,0,S.deviceMagX,S.deviceMagY,S.deviceMagZ,0,S.yaw,S.pitch,0,0,S.micVolume,S.cameraLux,temporal_certainty,spatial_certainty,S.obsLat,S.obsLon,S.obsAlt,S.camRot]);
+    return new Float32Array([
+        S.cx,S.cy,S.cz,S.scale,
+        0,0,S.massCount,0,
+        S.dwellTime,0,S.ambientLux,S.capacity,
+        S.deviceAccX,S.deviceAccY,S.deviceAccZ,0,
+        S.deviceMagX,S.deviceMagY,S.deviceMagZ,0,
+        S.yaw,S.pitch,0,0,
+        S.micVolume,S.cameraLux,temporal_certainty,spatial_certainty,
+        S.obsLat,S.obsLon,S.obsAlt,S.camRot,
+        S.gyroX,S.gyroY,S.gyroZ,0,
+        S.battery,S.heartRate,S.spO2,S.pressure,
+        S.networkDownlink,0,0,0
+    ]);
 }
 
 export function updateCapacity(dt){
@@ -87,6 +104,12 @@ export async function awaken(){
     try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});const actx=new AudioContext();const src=actx.createMediaStreamSource(stream);const an=actx.createAnalyser();src.connect(an);const d=new Uint8Array(an.frequencyBinCount);setInterval(()=>{an.getByteTimeDomainData(d);let s=0;for(let i=0;i<d.length;i++){let v=(d[i]-128)/128;s+=v*v;}S.micVolume=Math.sqrt(s/d.length);},50);}catch(e){}
     try{const stream=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:'environment'}});S.videoElement=document.createElement('video');S.videoElement.srcObject=stream;S.videoElement.play();}catch(e){}
     if('geolocation' in navigator)navigator.geolocation.watchPosition(p=>{S.obsLat=p.coords.latitude;S.obsLon=p.coords.longitude;S.obsAlt=p.coords.altitude||0;},e=>{},{enableHighAccuracy:true,maximumAge:0});
+    if('Gyroscope' in window){try{const g=new Gyroscope({frequency:60});g.addEventListener('reading',()=>{S.gyroX=g.x||0;S.gyroY=g.y||0;S.gyroZ=g.z||0;});g.start();}catch(e){}}
+    if('getBattery' in navigator){try{const b=await navigator.getBattery();S.battery=b.level;S.batteryCharging=b.charging;b.addEventListener('chargingchange',()=>{S.batteryCharging=b.charging;});b.addEventListener('levelchange',()=>{S.battery=b.level;});}catch(e){}}
+    if('connection' in navigator){const c=navigator.connection;S.networkType=c.effectiveType||'';S.networkDownlink=c.downlink||0;c.addEventListener('change',()=>{S.networkType=c.effectiveType||'';S.networkDownlink=c.downlink||0;});}
+    if('AmbientLightSensor' in window){try{const als=new AmbientLightSensor();als.addEventListener('reading',()=>{S.ambientLux=als.illuminance;});als.start();}catch(e){}}
+    if('Magnetometer' in window){try{const mag=new Magnetometer({frequency:60});mag.addEventListener('reading',()=>{S.deviceMagX=mag.x||0;S.deviceMagY=mag.y||0;S.deviceMagZ=mag.z||0;});mag.start();}catch(e){}}
+    if(navigator.bluetooth){try{const dev=await navigator.bluetooth.requestDevice({filters:[{services:['heart_rate']}],optionalServices:['blood_pressure','pulse_oximeter']});const srv=await dev.gatt.connect();try{const hr=await srv.getPrimaryService('heart_rate');const ch=await hr.getCharacteristic('heart_rate_measurement');ch.addEventListener('characteristicvaluechanged',e=>{S.heartRate=e.target.value.getUint8(1);});await ch.startNotifications();}catch(e){}try{const po=await srv.getPrimaryService('pulse_oximeter');const ch=await po.getCharacteristic('spot_check');ch.addEventListener('characteristicvaluechanged',e=>{S.spO2=e.target.value.getUint8(0);});await ch.startNotifications();}catch(e){}}catch(e){}}
     if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});
     await fetchTime();S.prev_cx=S.cx;S.prev_cy=S.cy;S.prev_cz=S.cz;
 }

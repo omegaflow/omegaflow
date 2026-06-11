@@ -18,6 +18,9 @@ layout(std140) uniform VP {
     vec4 rotation;
     vec4 device_local;
     vec4 device_geo;
+    vec4 device_gyro;
+    vec4 observer_vitals;
+    vec4 observer_network;
 };
 
 uniform sampler2D massTex;
