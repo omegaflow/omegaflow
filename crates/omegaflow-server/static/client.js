@@ -5,7 +5,7 @@ export const S={
     timeMultiplier:1.0,
     lastMoveTime:0,
     dwellTime:0,
-    capacity:0,
+    capacity:1,
     massCount:0,
     deviceAccX:0,deviceAccY:0,deviceAccZ:0,
     deviceMagX:0,deviceMagY:0,deviceMagZ:0,
