@@ -8,9 +8,9 @@ vec3 eval_perception(vec2 uv, vec2 res, float scale, vec3 center,
     float acoustic = local.x;
     float camera_lux = local.y;
     float temporal_certainty = local.z;
-    float locality_certainty = local.w;
+    float spatial_certainty = local.w;
 
-    float certainty = temporal_certainty * locality_certainty;
+    float certainty = temporal_certainty * spatial_certainty;
 
     float cosY = cos(rotation.x); float sinY = sin(rotation.x);
     float cosP = cos(rotation.y); float sinP = sin(rotation.y);

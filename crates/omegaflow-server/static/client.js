@@ -17,6 +17,7 @@ export const S={
     videoElement:null,
     awake:false,
     prev_cx:0,prev_cy:0,prev_cz:0,
+    prev_jd:0,
     lastRenderTime:0,
     egmLoaded:false,
     streaming:false
@@ -38,7 +39,13 @@ export function syncHere(){
 }
 
 export function buildVp(){
-    return new Float32Array([S.cx,S.cy,S.cz,S.scale,0,0,S.massCount,0,S.dwellTime,0,S.ambientLux,S.capacity,S.deviceAccX,S.deviceAccY,S.deviceAccZ,0,S.deviceMagX,S.deviceMagY,S.deviceMagZ,0,S.yaw,S.pitch,0,0,S.micVolume,S.cameraLux,0,0,S.obsLat,S.obsLon,S.obsAlt,S.camRot]);
+    let realNow=Date.now()/86400000.0+2440587.5;
+    let dt=Math.abs(S.jd-realNow);
+    let temporal_certainty=Math.exp(-dt);
+    let dx=S.cx-S.prev_cx,dy=S.cy-S.prev_cy,dz=S.cz-S.prev_cz;
+    let v=Math.sqrt(dx*dx+dy*dy+dz*dz)/Math.max(S.scale,1.0);
+    let spatial_certainty=Math.exp(-v);
+    return new Float32Array([S.cx,S.cy,S.cz,S.scale,0,0,S.massCount,0,S.dwellTime,0,S.ambientLux,S.capacity,S.deviceAccX,S.deviceAccY,S.deviceAccZ,0,S.deviceMagX,S.deviceMagY,S.deviceMagZ,0,S.yaw,S.pitch,0,0,S.micVolume,S.cameraLux,temporal_certainty,spatial_certainty,S.obsLat,S.obsLon,S.obsAlt,S.camRot]);
 }
 
 export function updateCapacity(dt){
@@ -47,6 +54,7 @@ export function updateCapacity(dt){
     S.dwellTime=clamp(tsm/20,0,100);
     S.jd+=(dt/1000/86400)*S.timeMultiplier;
     S.prev_cx=S.cx;S.prev_cy=S.cy;S.prev_cz=S.cz;
+    S.prev_jd=S.jd;
 }
 
 export async function fetchStream(upload){
