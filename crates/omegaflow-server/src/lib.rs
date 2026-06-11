@@ -1,6 +1,13 @@
 pub mod ephemerides;
-pub mod terrain;
 pub mod magnetic;
-pub mod state;
+pub mod terrain;
 
-pub use state::{init, masses_at, almanac, terrain_height, wmm_at, Mass, WmmData};
+pub use ephemerides::Mass;
+pub use ephemerides::almanac;
+pub use ephemerides::init;
+pub use ephemerides::masses_at;
+pub use magnetic::WmmData;
+pub use magnetic::wmm_at;
+pub use terrain::raw_egm96;
+pub use terrain::raw_hgt_tile;
+
