@@ -69,12 +69,13 @@ state eval_state(vec3 pos, float capacity) {
     float c = 299792458.0;
     st.time_dilation = sqrt(max(1.0 + 2.0 * st.potential / (c * c), 0.0));
 
-    int mag_limit = int(capacity * 133.0);
+    int mag_limit = min(int(capacity * 133.0), n_max_raw);
     float mag_fade = 1.0 - fract(capacity * 133.0);
     float sin_theta = st.cos_lat;
     float cos_theta = st.sin_lat;
     float inv_sin_theta = 1.0 / max(sin_theta, 1e-6);
     float time_delta = WMM(3);
+    int n_max_raw = int(WMM(4));
     float a_over_r = 6378137.0 / st.dist_earth;
 
     if (mag_limit <= 12) {
@@ -93,7 +94,7 @@ state eval_state(vec3 pos, float capacity) {
                 } else {
                     p_cu = (float(2*n-1) * cos_theta * p_pr - float(n+mm-1) * p_pp) / float(n-mm);
                 }
-                int ci = 4 + (n*(n+1)/2+mm-1)*4;
+                int ci = 5 + (n*(n+1)/2+mm-1)*4;
                 float gt = WMM(ci) + time_delta * WMM(ci+2);
                 float ht = WMM(ci+1) + time_delta * WMM(ci+3);
                 float ch = gt*cml + ht*sml;
@@ -128,7 +129,7 @@ state eval_state(vec3 pos, float capacity) {
                 } else {
                     p_cu = df64_sub(df64_scale(df64_mul(p_pr, vec2(cos_theta,0.0)), float(2*n-1)/float(n-mm)), df64_scale(p_pp, float(n+mm-1)/float(n-mm)));
                 }
-                int ci = 4 + (n*(n+1)/2+mm-1)*4;
+                int ci = 5 + (n*(n+1)/2+mm-1)*4;
                 float gt = WMM(ci) + time_delta * WMM(ci+2);
                 float ht = WMM(ci+1) + time_delta * WMM(ci+3);
                 float ch = gt*cml + ht*sml;

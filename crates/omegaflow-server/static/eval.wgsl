@@ -46,12 +46,13 @@ fn eval_state(pos: vec3f, capacity: f32) -> state {
     let c = 299792458.0;
     st.time_dilation = sqrt(max(1.0 + 2.0 * st.potential / (c * c), 0.0));
 
-    let mag_limit = i32(capacity * 133.0);
+    let mag_limit = min(i32(capacity * 133.0), n_max_raw);
     let mag_fade = 1.0 - fract(capacity * 133.0);
     let sin_theta = st.cos_lat;
     let cos_theta = st.sin_lat;
     let inv_sin_theta = 1.0 / max(sin_theta, 1e-6);
     let time_delta = WMM(3);
+    let n_max_raw = i32(WMM(4));
     let a_over_r:f32 = 6378137.0 / st.dist_earth;
 
     if (mag_limit <= 12) {
@@ -70,7 +71,7 @@ fn eval_state(pos: vec3f, capacity: f32) -> state {
                 } else {
                     p_cu = (f32(2*n-1) * cos_theta * p_pr - f32(n+mm-1) * p_pp) / f32(n-mm);
                 }
-                let ci = 4 + (n*(n+1)/2+mm-1)*4;
+                let ci = 5 + (n*(n+1)/2+mm-1)*4;
                 let gt = WMM(ci) + time_delta * WMM(ci+2);
                 let ht = WMM(ci+1) + time_delta * WMM(ci+3);
                 let ch = gt*cml + ht*sml;
@@ -105,7 +106,7 @@ fn eval_state(pos: vec3f, capacity: f32) -> state {
                 } else {
                     p_cu = (f32(2*n-1) * cos_theta * p_pr - f32(n+mm-1) * p_pp) / f32(n-mm);
                 }
-                let ci = 4 + (n*(n+1)/2+mm-1)*4;
+                let ci = 5 + (n*(n+1)/2+mm-1)*4;
                 let gt = WMM(ci) + time_delta * WMM(ci+2);
                 let ht = WMM(ci+1) + time_delta * WMM(ci+3);
                 let ch = gt*cml + ht*sml;

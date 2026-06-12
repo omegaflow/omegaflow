@@ -8,7 +8,7 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 struct StreamReq { 
     jd: f64, cx: f64, cy: f64, cz: f64, scale: f64, 
-    min_g: f32, n_max: i32, lat0: i32, lon0: i32 
+    lat0: i32, lon0: i32 
 }
 
 async fn index() -> impl IntoResponse {
@@ -66,12 +66,8 @@ async fn eval_state_glsl() -> impl IntoResponse {
 
 async fn universe_stream(Query(params): Query<StreamReq>) -> impl IntoResponse {
     let t = (params.jd - 2451545.0) * 86400.0;
-    let viewport_center = glam::DVec3::new(params.cx, params.cy, params.cz);
-    
-    let mut masses = omegaflow_core::masses_at(t, params.cx, params.cy, params.cz, params.scale);
-    masses.sort_by(|a, b| b.gm.partial_cmp(&a.gm).unwrap_or(std::cmp::Ordering::Equal));
-    masses.retain(|m| { let r2 = (m.pos - viewport_center).length_squared().max(1.0); (m.gm / r2) > params.min_g as f64 });
 
+    let masses = omegaflow_core::masses_at(t, params.cx, params.cy, params.cz, params.scale);
     let mass_data: Vec<f32> = masses.iter().flat_map(|m| {
         [m.pos.x as f32, m.pos.y as f32, m.pos.z as f32, m.gm as f32]
     }).collect();
@@ -79,20 +75,16 @@ async fn universe_stream(Query(params): Query<StreamReq>) -> impl IntoResponse {
 
     let wmm_bytes = match omegaflow_core::almanac().and_then(|alm| omegaflow_core::wmm_at(t, alm)) {
         Some(data) => {
-            let effective_n_max = params.n_max.min(data.n_max);
-            let wmm_coeffs = (effective_n_max * (effective_n_max + 3)) / 2;
+            let wmm_coeffs = (data.n_max * (data.n_max + 3)) / 2;
             let mut out = Vec::new();
             out.extend_from_slice(&[data.earth_pos.x as f32, data.earth_pos.y as f32, data.earth_pos.z as f32].iter().flat_map(|f| f.to_le_bytes()).collect::<Vec<u8>>());
             out.extend_from_slice(&data.time_delta.to_le_bytes());
+            out.extend_from_slice(&(data.n_max as u32).to_le_bytes());
             for i in 0..wmm_coeffs as usize {
-                let g = *data.g_mfc.get(i).unwrap_or(&0.0);
-                let h = *data.h_mfc.get(i).unwrap_or(&0.0);
-                let g_s = *data.g_svc.get(i).unwrap_or(&0.0);
-                let h_s = *data.h_svc.get(i).unwrap_or(&0.0);
-                out.extend_from_slice(&g.to_le_bytes());
-                out.extend_from_slice(&h.to_le_bytes());
-                out.extend_from_slice(&g_s.to_le_bytes());
-                out.extend_from_slice(&h_s.to_le_bytes());
+                out.extend_from_slice(&data.g_mfc.get(i).unwrap_or(&0.0).to_le_bytes());
+                out.extend_from_slice(&data.h_mfc.get(i).unwrap_or(&0.0).to_le_bytes());
+                out.extend_from_slice(&data.g_svc.get(i).unwrap_or(&0.0).to_le_bytes());
+                out.extend_from_slice(&data.h_svc.get(i).unwrap_or(&0.0).to_le_bytes());
             }
             out
         },

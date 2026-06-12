@@ -89,9 +89,8 @@ export async function fetchStream(upload){
     if(S.streaming)return;
     S.streaming=true;
     let fj=S.jd+(0.01*S.timeMultiplier);
-    let mg=1e-8/Math.max(S.capacity,0.01);
     try{
-        const r=await fetch(`/stream?jd=${fj}&cx=${S.cx}&cy=${S.cy}&cz=${S.cz}&scale=${S.scale}&min_g=${mg}&n_max=${Math.floor(1+S.capacity*132)+5}&lat0=${Math.floor(S.obsLat)}&lon0=${Math.floor(S.obsLon)}`);
+        const r=await fetch(`/stream?jd=${fj}&cx=${S.cx}&cy=${S.cy}&cz=${S.cz}&scale=${S.scale}&lat0=${Math.floor(S.obsLat)}&lon0=${Math.floor(S.obsLon)}`);
         const b=await r.arrayBuffer();
         if(b.byteLength>=16){
             const v=new DataView(b);
