@@ -6,7 +6,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
-axum = "0.8"
+axum = { version = "0.8", features = ["ws"] }
 glam = "0.33"
 naga = { version = "29", features = ["wgsl-in", "glsl-out"] }
 omegaflow-core = { path = "../omegaflow-core" }

@@ -1,4 +1,4 @@
-use axum::extract::Query;
+use axum::extract::{Query, WebSocketUpgrade, ws::{Message, WebSocket}};
 use axum::http::header;
 use axum::response::IntoResponse;
 use axum::routing::get;
@@ -129,6 +129,76 @@ async fn service_worker() -> impl IntoResponse {
     ([(header::CONTENT_TYPE, "application/javascript")], SW)
 }
 
+async fn ws_stream(ws: WebSocketUpgrade) -> impl IntoResponse {
+    ws.on_upgrade(handle_ws)
+}
+
+async fn handle_ws(mut socket: WebSocket) {
+    while let Some(Ok(msg)) = socket.recv().await {
+        let bytes = match msg {
+            Message::Binary(b) => b,
+            _ => continue,
+        };
+        if bytes.len() < 64 * 4 { continue; }
+        let vp = bytes.as_ref();
+        let cx = f64::from_le_bytes(vp[0..8].try_into().unwrap_or([0;8]));
+        let cy = f64::from_le_bytes(vp[8..16].try_into().unwrap_or([0;8]));
+        let cz = f64::from_le_bytes(vp[16..24].try_into().unwrap_or([0;8]));
+        let scale = f64::from_le_bytes(vp[24..32].try_into().unwrap_or([0;8]));
+        let capacity = f32::from_le_bytes(vp[44..48].try_into().unwrap_or([0;4]));
+        let obs_lat = f32::from_le_bytes(vp[120..124].try_into().unwrap_or([0;4]));
+        let obs_lon = f32::from_le_bytes(vp[124..128].try_into().unwrap_or([0;4]));
+
+        let jd_now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_secs_f64() / 86400.0 + 2440587.5;
+        let t = (jd_now - 2451545.0) * 86400.0;
+        let viewport_center = glam::DVec3::new(cx, cy, cz);
+        
+        let mut masses = omegaflow_core::masses_at(t, cx, cy, cz, scale);
+        masses.sort_by(|a, b| b.gm.partial_cmp(&a.gm).unwrap_or(std::cmp::Ordering::Equal));
+        let min_g = 1e-8 / capacity.max(0.01) as f64;
+        masses.retain(|m| { let r2 = (m.pos - viewport_center).length_squared().max(1.0); (m.gm / r2) > min_g });
+
+        let mass_data: Vec<f32> = masses.iter().flat_map(|m| {
+            [m.pos.x as f32, m.pos.y as f32, m.pos.z as f32, m.gm as f32]
+        }).collect();
+        let mass_bytes: Vec<u8> = mass_data.iter().flat_map(|f| f.to_le_bytes()).collect();
+
+        let n_max = (1.0 + capacity * 132.0) as i32;
+        let wmm_bytes = match omegaflow_core::almanac().and_then(|alm| omegaflow_core::wmm_at(t, alm)) {
+            Some(data) => {
+                let effective_n_max = n_max.min(data.n_max);
+                let wmm_coeffs = (effective_n_max * (effective_n_max + 3)) / 2;
+                let mut out = Vec::new();
+                out.extend_from_slice(&[data.earth_pos.x as f32, data.earth_pos.y as f32, data.earth_pos.z as f32].iter().flat_map(|f| f.to_le_bytes()).collect::<Vec<u8>>());
+                out.extend_from_slice(&data.time_delta.to_le_bytes());
+                for i in 0..wmm_coeffs as usize {
+                    out.extend_from_slice(&data.g_mfc.get(i).unwrap_or(&0.0).to_le_bytes());
+                    out.extend_from_slice(&data.h_mfc.get(i).unwrap_or(&0.0).to_le_bytes());
+                    out.extend_from_slice(&data.g_svc.get(i).unwrap_or(&0.0).to_le_bytes());
+                    out.extend_from_slice(&data.h_svc.get(i).unwrap_or(&0.0).to_le_bytes());
+                }
+                out
+            },
+            None => Vec::new()
+        };
+
+        let terrain_bytes = omegaflow_core::raw_hgt_tile(obs_lat as i32, obs_lon as i32);
+        let egm_bytes = omegaflow_core::raw_egm96();
+
+        let mut stream = Vec::new();
+        stream.extend_from_slice(&(mass_bytes.len() as u32).to_le_bytes());
+        stream.extend_from_slice(&(wmm_bytes.len() as u32).to_le_bytes());
+        stream.extend_from_slice(&(terrain_bytes.len() as u32).to_le_bytes());
+        stream.extend_from_slice(&(egm_bytes.len() as u32).to_le_bytes());
+        stream.extend(mass_bytes);
+        stream.extend(wmm_bytes);
+        stream.extend(terrain_bytes);
+        stream.extend(egm_bytes);
+
+        if socket.send(Message::Binary(stream.into())).await.is_err() { break; }
+    }
+}
+
 #[tokio::main]
 async fn main() {
     tokio::task::spawn_blocking(|| omegaflow_core::init()).await.ok();
@@ -137,6 +207,7 @@ async fn main() {
         .route("/eval_state.wgsl", get(eval_state_wgsl))
         .route("/eval_state.glsl", get(eval_state_glsl))
         .route("/stream", get(universe_stream))
+        .route("/ws", get(ws_stream))
         .route("/time", get(time))
         .route("/manifest.json", get(manifest))
         .route("/sw.js", get(service_worker))

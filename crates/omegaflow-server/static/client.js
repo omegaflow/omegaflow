@@ -28,7 +28,8 @@ export const S={
     heartRate:0,spO2:0,
     pressure:0,
     touchPressure:0,touchSize:0,touchCount:0,
-    orientationAlpha:0,orientationBeta:0,orientationGamma:0
+    orientationAlpha:0,orientationBeta:0,orientationGamma:0,
+    ws:null
 };
 
 export function clamp(v,mn,mx){return Math.max(mn,Math.min(mx,v))}
@@ -88,22 +89,31 @@ export function updateCapacity(dt){
 export async function fetchStream(upload){
     if(S.streaming)return;
     S.streaming=true;
-    let fj=S.jd+(0.01*S.timeMultiplier);
-    let mg=1e-8/Math.max(S.capacity,0.01);
     try{
-        const r=await fetch(`/stream?jd=${fj}&cx=${S.cx}&cy=${S.cy}&cz=${S.cz}&scale=${S.scale}&min_g=${mg}&n_max=${Math.floor(1+S.capacity*132)+5}&lat0=${Math.floor(S.obsLat)}&lon0=${Math.floor(S.obsLon)}`);
-        const b=await r.arrayBuffer();
-        if(b.byteLength>=16){
-            const v=new DataView(b);
-            const ml=v.getUint32(0,true),wl=v.getUint32(4,true),tl=v.getUint32(8,true),el=v.getUint32(12,true);
-            let off=16;
-            if(ml>0){S.massCount=ml/16;upload.masses(b,off,ml);off+=ml;}
-            if(wl>0){upload.wmm(b,off,wl);off+=wl;}
-            if(tl>0&&!S.egmLoaded){upload.terrain(b,off,tl);off+=tl;}
-            if(el>0&&!S.egmLoaded){upload.egm96(b,off,el);S.egmLoaded=true;}
+        if(!S.ws||S.ws.readyState!==WebSocket.OPEN){
+            const proto=location.protocol==='https:'?'wss:':'ws:';
+            S.ws=new WebSocket(`${proto}//${location.host}/ws`);
+            S.ws.binaryType='arraybuffer';
+            S.ws.onmessage=e=>{
+                const b=e.data;
+                if(b.byteLength>=16){
+                    const v=new DataView(b);
+                    const ml=v.getUint32(0,true),wl=v.getUint32(4,true),tl=v.getUint32(8,true),el=v.getUint32(12,true);
+                    let off=16;
+                    if(ml>0){S.massCount=ml/16;upload.masses(b,off,ml);off+=ml;}
+                    if(wl>0){upload.wmm(b,off,wl);off+=wl;}
+                    if(tl>0&&!S.egmLoaded){upload.terrain(b,off,tl);off+=tl;}
+                    if(el>0&&!S.egmLoaded){upload.egm96(b,off,el);S.egmLoaded=true;}
+                }
+                S.streaming=false;
+            };
+            S.ws.onerror=()=>{S.streaming=false;};
+            S.ws.onclose=()=>{S.ws=null;S.streaming=false;};
+            await new Promise(r=>{S.ws.onopen=()=>r();});
         }
-    }catch(e){console.error(e);}
-    S.streaming=false;
+        let mg=1e-8/Math.max(S.capacity,0.01);
+        S.ws.send(buildVp().buffer);
+    }catch(e){console.error(e);S.streaming=false;}
 }
 
 export async function fetchTime(){
