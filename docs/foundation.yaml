@@ -1,0 +1,6 @@
+foundation: A = A
+equation: state(t, x, y, z) = what is
+perception: perception(state, observer) = what arrives
+gravity: DE440s, 13 bodies, GM/dist²
+electromagnetism: WMM, dynamic N_MAX
+pipeline: Server(t) → Client(t, capacity) → GPU → eval_state → eval_perception → pixel
