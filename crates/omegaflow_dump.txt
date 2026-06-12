@@ -1,0 +1,1510 @@
+========== omegaflow-core/Cargo.toml ==========
+[package]
+name = "omegaflow-core"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "omegaflow_core"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+anise = { git = "https://github.com/nyx-space/anise", branch = "master" }
+bytes = "1"
+glam = "0.33"
+hifitime = "4.3"
+reqwest = { version = "0.12", features = ["blocking"], optional = true }
+world_magnetic_model = { git = "https://github.com/johannestyroller/world_magnetic_model", branch = "expose-wmm-models" }
+
+[features]
+default = ["reqwest"]
+
+========== omegaflow-core/src/ephemerides.rs ==========
+use anise::constants::frames::SSB_J2000;
+use anise::prelude::*;
+use glam::DVec3;
+use hifitime::Epoch;
+use std::sync::OnceLock;
+use bytes::BytesMut;
+
+static ALMANAC: OnceLock<Almanac> = OnceLock::new();
+static MASS_IDS: OnceLock<Vec<i32>> = OnceLock::new();
+
+pub struct Mass { pub pos: DVec3, pub gm: f64 }
+
+pub fn init() {
+    let alm = Almanac::new("data/de440s.bsp").and_then(|a| a.load("data/pck08.pca"));
+    if let Ok(alm) = alm {
+        let ids: Vec<i32> = (0..1000).filter(|&id| { let frame = Frame::from_ephem_j2000(id); alm.frame_info(frame).ok().and_then(|f| f.mu_km3_s2).is_some() }).collect();
+        let _ = MASS_IDS.set(ids);
+        let _ = ALMANAC.set(alm);
+    }
+}
+
+pub fn init_from_bytes(de440s: &[u8], pck08: &[u8]) -> bool {
+    let alm = Almanac::default()
+        .load_from_bytes(BytesMut::from(de440s))
+        .and_then(|a| a.load_from_bytes(BytesMut::from(pck08)));
+    match alm {
+        Ok(alm) => {
+            let ids: Vec<i32> = (0..1000).filter(|&id| { let frame = Frame::from_ephem_j2000(id); alm.frame_info(frame).ok().and_then(|f| f.mu_km3_s2).is_some() }).collect();
+            let _ = MASS_IDS.set(ids);
+            let _ = ALMANAC.set(alm);
+            true
+        }
+        Err(_) => false
+    }
+}
+
+pub fn almanac() -> Option<&'static Almanac> { ALMANAC.get() }
+
+pub fn masses_at(t: f64, cx: f64, cy: f64, cz: f64, scale: f64) -> Vec<Mass> {
+    let Some(alm) = ALMANAC.get() else { return Vec::new() };
+    let Some(ids) = MASS_IDS.get() else { return Vec::new() };
+    let epoch = Epoch::from_tdb_seconds(t);
+    let viewport_center = DVec3::new(cx, cy, cz);
+    let mut out = Vec::new();
+    for &id in ids {
+        let frame = Frame::from_ephem_j2000(id);
+        let gm = match alm.frame_info(frame).ok().and_then(|f| f.mu_km3_s2) { Some(gm) => gm * 1e9, None => continue };
+        let Ok(state) = alm.translate(frame, SSB_J2000, epoch, None) else { continue };
+        let pos = DVec3::new(state.radius_km.x * 1e3, state.radius_km.y * 1e3, state.radius_km.z * 1e3);
+        let dist = (pos - viewport_center).length();
+        let influence_radius = scale * 10.0; 
+        if dist > influence_radius && id != 10 { continue; } 
+        out.push(Mass { pos, gm });
+    }
+    out
+}
+
+========== omegaflow-core/src/lib.rs ==========
+pub mod ephemerides;
+pub mod magnetic;
+pub mod terrain;
+
+pub use ephemerides::Mass;
+pub use ephemerides::almanac;
+pub use ephemerides::init;
+pub use ephemerides::init_from_bytes;
+pub use ephemerides::masses_at;
+pub use magnetic::WmmData;
+pub use magnetic::wmm_at;
+pub use terrain::raw_egm96;
+pub use terrain::raw_hgt_tile;
+
+========== omegaflow-core/src/magnetic.rs ==========
+use anise::constants::frames::SSB_J2000;
+use anise::prelude::*;
+use glam::DVec3;
+use hifitime::Epoch;
+use world_magnetic_model::time::Date;
+use world_magnetic_model::wmm_models::select_models;
+
+pub struct WmmData {
+    pub earth_pos: DVec3,
+    pub time_delta: f32,
+    pub n_max: i32,
+    pub g_mfc: Vec<f32>,
+    pub h_mfc: Vec<f32>,
+    pub g_svc: Vec<f32>,
+    pub h_svc: Vec<f32>,
+}
+
+pub fn wmm_at(t: f64, alm: &Almanac) -> Option<WmmData> {
+    let epoch = Epoch::from_tdb_seconds(t);
+    let year = epoch.year();
+    let day_of_year = epoch.day_of_year() as u16;
+    let date = Date::from_ordinal_date(year, day_of_year).ok()?;
+    let (model, _error_model) = select_models(date).ok()?;
+    let earth_frame = Frame::from_ephem_j2000(3);
+    let state = alm.translate(earth_frame, SSB_J2000, epoch, None).ok()?;
+    let earth_pos = DVec3::new(state.radius_km.x * 1e3, state.radius_km.y * 1e3, state.radius_km.z * 1e3);
+    let n_max = (((8 * model.g_mfc.len() as i32 + 9) as f64).sqrt() as i32 - 3) / 2;
+    let g_mfc: Vec<f32> = model.g_mfc.iter().map(|&x| x as f32).collect();
+    let h_mfc: Vec<f32> = model.h_mfc.iter().map(|&x| x as f32).collect();
+    let g_svc: Vec<f32> = model.g_svc.iter().map(|&x| x as f32).collect();
+    let h_svc: Vec<f32> = model.h_svc.iter().map(|&x| x as f32).collect();
+    let time_delta = ((year - 2020) as f32) + (day_of_year as f32 / 365.0);
+    Some(WmmData { earth_pos, time_delta, n_max, g_mfc, h_mfc, g_svc, h_svc })
+}
+
+========== omegaflow-core/src/terrain.rs ==========
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::Read;
+use std::sync::{Mutex, OnceLock};
+
+static HGT_CACHE: OnceLock<Mutex<HashMap<(i32, i32), Vec<u8>>>> = OnceLock::new();
+static EGM96_RAW: OnceLock<Vec<u8>> = OnceLock::new();
+
+pub fn init() {
+    let _ = HGT_CACHE.set(Mutex::new(HashMap::new()));
+    if let Ok(mut f) = File::open("data/WW15MGH.DAC") {
+        let mut buf = Vec::new();
+        if f.read_to_end(&mut buf).ok() == Some(721 * 1440 * 2) {
+            let mut out = Vec::with_capacity(721 * 1440 * 4);
+            for chunk in buf.chunks_exact(2) {
+                let h = i16::from_be_bytes([chunk[0], chunk[1]]);
+                let undulation = h as f32 * 0.01;
+                out.extend_from_slice(&undulation.to_le_bytes());
+            }
+            let _ = EGM96_RAW.set(out);
+        }
+    }
+}
+
+pub fn raw_hgt_tile(lat0: i32, lon0: i32) -> Vec<u8> {
+    let cache = match HGT_CACHE.get() {
+        Some(c) => c,
+        None => return Vec::new(),
+    };
+    let mut guard = cache.lock().unwrap();
+    
+    if !guard.contains_key(&(lat0, lon0)) {
+        let ns = if lat0 >= 0 { 'N' } else { 'S' };
+        let ew = if lon0 >= 0 { 'E' } else { 'W' };
+        let filename = format!("{}{:02}{}{:03}.hgt", ns, lat0.abs(), ew, lon0.abs());
+        let path = format!("data/{}", filename);
+        
+        let mut data = None;
+        if let Ok(mut f) = File::open(&path) {
+            let mut buf = Vec::new();
+            if f.read_to_end(&mut buf).ok() == Some(2884802) { data = Some(buf); }
+        }
+        
+        #[cfg(feature = "reqwest")]
+        if data.is_none() {
+            let server_url = std::env::var("OMEGAFLOW_DEM_URL").unwrap_or_else(|_| "http://localhost:3001".to_string());
+            let url = format!("{}/{}", server_url, filename);
+            if let Ok(resp) = reqwest::blocking::Client::new().get(&url).send() {
+                if resp.status().is_success() {
+                    if let Ok(buf) = resp.bytes() {
+                        if buf.len() == 2884802 {
+                            let _ = std::fs::write(&path, &buf);
+                            data = Some(buf.to_vec());
+                        }
+                    }
+                }
+            }
+        }
+        guard.insert((lat0, lon0), data.unwrap_or_default());
+    }
+    guard.get(&(lat0, lon0)).cloned().unwrap_or_default()
+}
+
+pub fn raw_egm96() -> Vec<u8> {
+    EGM96_RAW.get().map(|v| v.clone()).unwrap_or_default()
+}
+
+========== omegaflow-server/Cargo.toml ==========
+[package]
+name = "omegaflow-server"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+axum = "0.8"
+glam = "0.33"
+naga = { version = "29", features = ["wgsl-in", "glsl-out"] }
+omegaflow-core = { path = "../omegaflow-core" }
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+
+[dev-dependencies]
+tower = "0.5"
+========== omegaflow-server/src/main.rs ==========
+use axum::extract::Query;
+use axum::http::header;
+use axum::response::IntoResponse;
+use axum::routing::get;
+use axum::Router;
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+struct StreamReq { 
+    jd: f64, cx: f64, cy: f64, cz: f64, scale: f64, 
+    lat0: i32, lon0: i32 
+}
+
+#[derive(Deserialize)]
+struct TileReq {
+    lat0: i32,
+    lon0: i32,
+}
+
+async fn index() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "text/html")], include_str!("../static/index.html"))
+}
+
+async fn client_js() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "application/javascript")], include_str!("../static/client.js"))
+}
+
+async fn webgpu_js() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "application/javascript")], include_str!("../static/webgpu.js"))
+}
+
+async fn webgl_js() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "application/javascript")], include_str!("../static/webgl.js"))
+}
+
+use std::sync::LazyLock;
+
+static EVAL_WGSL: &str = include_str!("../static/eval.wgsl");
+static DICT_WGSL: &str = include_str!("../static/dict_wgsl.wgsl");
+static DICT_GLSL: &str = include_str!("../static/dict_glsl.glsl");
+
+static EVAL_STATE: &str = include_str!("../static/eval_state.glsl");
+static EVAL_PERCEPTION: &str = include_str!("../static/eval_perception.glsl");
+static MANIFEST: &str = include_str!("../static/manifest.json");
+static SW: &str = include_str!("../static/sw.js");
+
+static FULL_WGSL: LazyLock<String> = LazyLock::new(|| {
+    DICT_WGSL.replace("EVAL", EVAL_WGSL)
+});
+
+static FULL_GLSL: LazyLock<String> = LazyLock::new(|| {
+    let vertex = r#"#version 300 es
+precision highp float;
+layout(location=0) out vec2 vUv;
+const vec2 pos[3] = vec2[3](vec2(-1,-1), vec2(3,-1), vec2(-1,3));
+void main() {
+    vec2 p = pos[gl_VertexID];
+    vUv = vec2(p.x * 0.5 + 0.5, 0.5 - p.y * 0.5);
+    gl_Position = vec4(p, 0.0, 1.0);
+}"#;
+    let fragment = DICT_GLSL.replace("STATE", EVAL_STATE).replace("PERCEPTION", EVAL_PERCEPTION);
+    format!("{}\n{}", vertex, fragment)
+});
+
+async fn eval_state_wgsl() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "text/wgsl")], FULL_WGSL.clone())
+}
+
+async fn eval_state_glsl() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "text/glsl")], FULL_GLSL.clone())
+}
+
+async fn universe_stream(Query(params): Query<StreamReq>) -> impl IntoResponse {
+    let t = (params.jd - 2451545.0) * 86400.0;
+
+    let masses = omegaflow_core::masses_at(t, params.cx, params.cy, params.cz, params.scale);
+    let mass_data: Vec<f32> = masses.iter().flat_map(|m| {
+        [m.pos.x as f32, m.pos.y as f32, m.pos.z as f32, m.gm as f32]
+    }).collect();
+    let mass_bytes: Vec<u8> = mass_data.iter().flat_map(|f| f.to_le_bytes()).collect();
+
+    let wmm_bytes = match omegaflow_core::almanac().and_then(|alm| omegaflow_core::wmm_at(t, alm)) {
+        Some(data) => {
+            let wmm_coeffs = (data.n_max * (data.n_max + 3)) / 2;
+            let mut out = Vec::new();
+            out.extend_from_slice(&[data.earth_pos.x as f32, data.earth_pos.y as f32, data.earth_pos.z as f32].iter().flat_map(|f| f.to_le_bytes()).collect::<Vec<u8>>());
+            out.extend_from_slice(&data.time_delta.to_le_bytes());
+            out.extend_from_slice(&(data.n_max as f32).to_le_bytes());
+            for i in 0..wmm_coeffs as usize {
+                out.extend_from_slice(&data.g_mfc.get(i).unwrap_or(&0.0).to_le_bytes());
+                out.extend_from_slice(&data.h_mfc.get(i).unwrap_or(&0.0).to_le_bytes());
+                out.extend_from_slice(&data.g_svc.get(i).unwrap_or(&0.0).to_le_bytes());
+                out.extend_from_slice(&data.h_svc.get(i).unwrap_or(&0.0).to_le_bytes());
+            }
+            out
+        },
+        None => Vec::new()
+    };
+
+    let terrain_bytes = omegaflow_core::raw_hgt_tile(params.lat0, params.lon0);
+    let egm_bytes = omegaflow_core::raw_egm96();
+
+    let mut stream = Vec::new();
+    stream.extend_from_slice(&(mass_bytes.len() as u32).to_le_bytes());
+    stream.extend_from_slice(&(wmm_bytes.len() as u32).to_le_bytes());
+    stream.extend_from_slice(&(terrain_bytes.len() as u32).to_le_bytes());
+    stream.extend_from_slice(&(egm_bytes.len() as u32).to_le_bytes());
+    
+    stream.extend(mass_bytes);
+    stream.extend(wmm_bytes);
+    stream.extend(terrain_bytes);
+    stream.extend(egm_bytes);
+
+    ([(header::CONTENT_TYPE, "application/octet-stream")], stream)
+}
+
+async fn time() -> impl IntoResponse {
+    let jd = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_secs_f64() / 86400.0 + 2440587.5;
+    ([(header::CONTENT_TYPE, "text/plain")], jd.to_string())
+}
+
+async fn manifest() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "application/json")], MANIFEST)
+}
+
+async fn service_worker() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "application/javascript")], SW)
+}
+
+async fn sync_de440s() -> impl IntoResponse {
+    match tokio::task::spawn_blocking(|| std::fs::read("data/de440s.bsp")).await {
+        Ok(Ok(data)) => ([(header::CONTENT_TYPE, "application/octet-stream")], data),
+        _ => ([(header::CONTENT_TYPE, "application/octet-stream")], Vec::new()),
+    }
+}
+
+async fn sync_pck08() -> impl IntoResponse {
+    match tokio::task::spawn_blocking(|| std::fs::read("data/pck08.pca")).await {
+        Ok(Ok(data)) => ([(header::CONTENT_TYPE, "application/octet-stream")], data),
+        _ => ([(header::CONTENT_TYPE, "application/octet-stream")], Vec::new()),
+    }
+}
+
+async fn sync_egm96() -> impl IntoResponse {
+    let data = omegaflow_core::raw_egm96();
+    ([(header::CONTENT_TYPE, "application/octet-stream")], data)
+}
+
+async fn sync_terrain(Query(params): Query<TileReq>) -> impl IntoResponse {
+    let data = tokio::task::spawn_blocking(move || omegaflow_core::raw_hgt_tile(params.lat0, params.lon0)).await.unwrap_or_default();
+    ([(header::CONTENT_TYPE, "application/octet-stream")], data)
+}
+
+async fn sync_wasm() -> impl IntoResponse {
+    match std::fs::read("omegaflow_wasm.wasm") {
+        Ok(data) => ([(header::CONTENT_TYPE, "application/wasm")], data).into_response(),
+        Err(_) => axum::http::StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
+async fn sync_wasm_js() -> impl IntoResponse {
+    match std::fs::read_to_string("omegaflow_wasm.js") {
+        Ok(data) => ([(header::CONTENT_TYPE, "application/javascript")], data).into_response(),
+        Err(_) => axum::http::StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
+#[tokio::main]
+async fn main() {
+    tokio::task::spawn_blocking(|| omegaflow_core::init()).await.ok();
+    let app = Router::new()
+        .route("/", get(index))
+        .route("/eval_state.wgsl", get(eval_state_wgsl))
+        .route("/eval_state.glsl", get(eval_state_glsl))
+        .route("/stream", get(universe_stream))
+        .route("/time", get(time))
+        .route("/manifest.json", get(manifest))
+        .route("/sw.js", get(service_worker))
+        .route("/client.js", get(client_js))
+        .route("/webgpu.js", get(webgpu_js))
+        .route("/webgl.js", get(webgl_js));
+    let port: u16 = std::env::var("PORT").ok().and_then(|s| s.parse().ok()).unwrap_or(80);
+    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{port}")).await.unwrap();
+    axum::serve(listener, app).await.unwrap();
+}
+========== omegaflow-server/static/client.js ==========
+export const S={
+    cx:0,cy:0,cz:0,scale:0,
+    yaw:0,pitch:0,camRot:0,
+    jd:Date.now()/86400000.0+2440587.5,
+    timeMultiplier:1.0,
+    lastMoveTime:0,
+    dwellTime:0,
+    capacity:1,
+    massCount:0,
+    deviceAccX:0,deviceAccY:0,deviceAccZ:0,
+    deviceMagX:0,deviceMagY:0,deviceMagZ:0,
+    ambientLux:0,micVolume:0,
+    audioFreq:new Float32Array(8),
+    obsLat:0,obsLon:0,obsAlt:0,
+    drag:false,rdrag:false,lx:0,ly:0,
+    touches:{},initialPinchDist:0,initialScale:0,
+    initialAlpha:null,initialBeta:null,
+    videoElement:null,
+    awake:false,
+    prev_cx:0,prev_cy:0,prev_cz:0,
+    prev_jd:Date.now()/86400000.0+2440587.5,
+    lastRenderTime:performance.now(),
+    egmLoaded:false,
+    streaming:false,
+    gyroX:0,gyroY:0,gyroZ:0,
+    battery:1,batteryCharging:false,
+    networkType:'',networkDownlink:0,
+    heartRate:0,spO2:0,
+    pressure:0,
+    touchPressure:0,touchSize:0,touchCount:0,
+    orientationAlpha:0,orientationBeta:0,orientationGamma:0
+};
+
+export function clamp(v,mn,mx){return Math.max(mn,Math.min(mx,v))}
+
+export function syncHere(){
+    let t=S.jd-2451545.0;
+    let ex=1.496e11*Math.cos(2*Math.PI*t/365.25);
+    let ey=1.496e11*Math.sin(2*Math.PI*t/365.25);
+    let lr=S.obsLat*Math.PI/180,onr=S.obsLon*Math.PI/180;
+    let R=6378137.0+S.obsAlt;
+    let ox=R*Math.cos(lr)*Math.cos(onr),oy=R*Math.cos(lr)*Math.sin(onr),oz=R*Math.sin(lr);
+    let gmst=(280.46061837+360.98564736629*t)*Math.PI/180;
+    S.cx=ex+Math.cos(gmst)*ox-Math.sin(gmst)*oy;
+    S.cy=ey+Math.sin(gmst)*ox+Math.cos(gmst)*oy;
+    S.cz=oz;S.scale=1e4;
+}
+
+export function buildVp(){
+    let realNow=Date.now()/86400000.0+2440587.5;
+    let dt=Math.abs(S.jd-realNow);
+    let temporal_certainty=Math.exp(-dt);
+    let dx=S.cx-S.prev_cx,dy=S.cy-S.prev_cy,dz=S.cz-S.prev_cz;
+    let v=Math.sqrt(dx*dx+dy*dy+dz*dz)/Math.max(S.scale,1.0);
+    let spatial_certainty=Math.exp(-v);
+    return new Float32Array([
+        S.cx,S.cy,S.cz,S.scale,
+        0,0,S.massCount,0,
+        S.dwellTime,0,S.ambientLux,S.capacity,
+        S.deviceAccX,S.deviceAccY,S.deviceAccZ,0,
+        S.deviceMagX,S.deviceMagY,S.deviceMagZ,0,
+        S.yaw,S.pitch,0,0,
+        S.micVolume,S.touchPressure,temporal_certainty,spatial_certainty,
+        S.obsLat,S.obsLon,S.obsAlt,S.camRot,
+        S.gyroX,S.gyroY,S.gyroZ,0,
+        S.battery,S.heartRate,S.spO2,S.pressure,
+        S.networkDownlink,S.touchSize,S.touchCount,S.orientationAlpha,
+        S.orientationBeta,S.orientationGamma,0,0,
+        S.audioFreq[0],S.audioFreq[1],S.audioFreq[2],S.audioFreq[3],
+        S.audioFreq[4],S.audioFreq[5],S.audioFreq[6],S.audioFreq[7]
+    ]);
+}
+
+export function updateCapacity(dt){
+    let processing=1.0/(1.0+dt/16.0);
+    let motion=Math.sqrt(S.deviceAccX**2+S.deviceAccY**2+S.deviceAccZ**2);
+    let motion_capacity=Math.exp(-motion);
+    let battery_capacity=S.battery>0?S.battery:1.0;
+    let vitals_capacity=S.spO2>0?Math.min(S.spO2/100.0,1.0):1.0;
+    S.capacity=processing*motion_capacity*battery_capacity*vitals_capacity;
+    let tsm=Date.now()-S.lastMoveTime;
+    S.dwellTime=clamp(tsm/20,0,100);
+    S.jd+=(dt/1000/86400)*S.timeMultiplier;
+    S.prev_cx=S.cx;S.prev_cy=S.cy;S.prev_cz=S.cz;
+    S.prev_jd=S.jd;
+}
+
+export async function fetchStream(upload){
+    if(S.streaming)return;
+    S.streaming=true;
+    let fj=S.jd+(0.01*S.timeMultiplier);
+    try{
+        const r=await fetch(`/stream?jd=${fj}&cx=${S.cx}&cy=${S.cy}&cz=${S.cz}&scale=${S.scale}&lat0=${Math.floor(S.obsLat)}&lon0=${Math.floor(S.obsLon)}`);
+        const b=await r.arrayBuffer();
+        if(b.byteLength>=16){
+            const v=new DataView(b);
+            const ml=v.getUint32(0,true),wl=v.getUint32(4,true),tl=v.getUint32(8,true),el=v.getUint32(12,true);
+            let off=16;
+            if(ml>0){S.massCount=ml/16;upload.masses(b,off,ml);off+=ml;}
+            if(wl>0){upload.wmm(b,off,wl);off+=wl;}
+            if(tl>0&&!S.egmLoaded){upload.terrain(b,off,tl);off+=tl;}
+            if(el>0&&!S.egmLoaded){upload.egm96(b,off,el);S.egmLoaded=true;}
+        }
+    }catch(e){console.error(e);}
+    S.streaming=false;
+}
+
+export async function fetchTime(){
+    try{const r=await fetch('/time');const t=await r.text();S.jd=parseFloat(t);}catch(e){}
+}
+
+export async function awaken(){
+    if(S.awake)return;S.awake=true;
+    try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});const actx=new AudioContext();const src=actx.createMediaStreamSource(stream);const an=actx.createAnalyser();an.fftSize=256;src.connect(an);const td=new Uint8Array(an.fftSize);const fd=new Uint8Array(an.frequencyBinCount);const bins=8;const binSize=Math.floor(an.frequencyBinCount/bins);setInterval(()=>{an.getByteTimeDomainData(td);let s=0;for(let i=0;i<td.length;i++){let v=(td[i]-128)/128;s+=v*v;}S.micVolume=Math.sqrt(s/td.length);an.getByteFrequencyData(fd);for(let b=0;b<bins;b++){let sum=0;for(let j=0;j<binSize;j++)sum+=fd[b*binSize+j];S.audioFreq[b]=sum/binSize/255.0;}},50);}catch(e){}
+    try{const stream=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:'environment'}});S.videoElement=document.createElement('video');S.videoElement.srcObject=stream;S.videoElement.play();}catch(e){}
+    if('geolocation' in navigator)navigator.geolocation.watchPosition(p=>{S.obsLat=p.coords.latitude;S.obsLon=p.coords.longitude;S.obsAlt=p.coords.altitude||0;},e=>{},{enableHighAccuracy:true,maximumAge:0});
+    if('Gyroscope' in window){try{const g=new Gyroscope({frequency:60});g.addEventListener('reading',()=>{S.gyroX=g.x||0;S.gyroY=g.y||0;S.gyroZ=g.z||0;});g.start();}catch(e){}}
+    if('getBattery' in navigator){try{const b=await navigator.getBattery();S.battery=b.level;S.batteryCharging=b.charging;b.addEventListener('chargingchange',()=>{S.batteryCharging=b.charging;});b.addEventListener('levelchange',()=>{S.battery=b.level;});}catch(e){}}
+    if('connection' in navigator){const c=navigator.connection;S.networkType=c.effectiveType||'';S.networkDownlink=c.downlink||0;c.addEventListener('change',()=>{S.networkType=c.effectiveType||'';S.networkDownlink=c.downlink||0;});}
+    if('AmbientLightSensor' in window){try{const als=new AmbientLightSensor();als.addEventListener('reading',()=>{S.ambientLux=als.illuminance;});als.start();}catch(e){}}
+    if('Magnetometer' in window){try{const mag=new Magnetometer({frequency:60});mag.addEventListener('reading',()=>{S.deviceMagX=mag.x||0;S.deviceMagY=mag.y||0;S.deviceMagZ=mag.z||0;});mag.start();}catch(e){}}
+    if(navigator.bluetooth){try{const dev=await navigator.bluetooth.requestDevice({filters:[{services:['heart_rate']}],optionalServices:['blood_pressure','pulse_oximeter']});const srv=await dev.gatt.connect();try{const hr=await srv.getPrimaryService('heart_rate');const ch=await hr.getCharacteristic('heart_rate_measurement');ch.addEventListener('characteristicvaluechanged',e=>{S.heartRate=e.target.value.getUint8(1);});await ch.startNotifications();}catch(e){}try{const po=await srv.getPrimaryService('pulse_oximeter');const ch=await po.getCharacteristic('spot_check');ch.addEventListener('characteristicvaluechanged',e=>{S.spO2=e.target.value.getUint8(0);});await ch.startNotifications();}catch(e){}}catch(e){}}
+    if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});
+    window.addEventListener('pointerdown',e=>{S.touchPressure=e.pressure;S.touchSize=Math.max(e.width,e.height);S.touchCount++;});
+    window.addEventListener('pointerup',()=>{S.touchPressure=0;S.touchSize=0;});
+    window.addEventListener('pointercancel',()=>{S.touchPressure=0;S.touchSize=0;});
+    if('DeviceOrientationEvent' in window){try{const perm=await DeviceOrientationEvent.requestPermission();if(perm==='granted')window.addEventListener('deviceorientation',e=>{S.orientationAlpha=e.alpha||0;S.orientationBeta=e.beta||0;S.orientationGamma=e.gamma||0;});}catch(e){window.addEventListener('deviceorientation',e=>{S.orientationAlpha=e.alpha||0;S.orientationBeta=e.beta||0;S.orientationGamma=e.gamma||0;});}}
+    await fetchTime();S.prev_cx=S.cx;S.prev_cy=S.cy;S.prev_cz=S.cz;
+}
+
+export function initInput(canvas){
+    canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+    window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+    canvas.addEventListener('contextmenu',e=>e.preventDefault());
+    canvas.addEventListener('mousedown',e=>{S.lastMoveTime=Date.now();canvas.focus();awaken();S.lx=e.clientX;S.ly=e.clientY;if(e.button===0)S.drag=true;if(e.button===2)S.rdrag=true;});
+    canvas.addEventListener('mousemove',e=>{S.lastMoveTime=Date.now();if(S.drag){S.cx-=(e.clientX-S.lx)*S.scale;S.cy-=(e.clientY-S.ly)*S.scale;}if(S.rdrag){S.yaw-=(e.clientX-S.lx)*0.01;S.pitch+=(e.clientY-S.ly)*0.01;}S.lx=e.clientX;S.ly=e.clientY;});
+    canvas.addEventListener('mouseup',e=>{if(e.button===0)S.drag=false;if(e.button===2)S.rdrag=false;});
+    canvas.addEventListener('dblclick',()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});else document.exitFullscreen();});
+    canvas.addEventListener('wheel',e=>{e.preventDefault();if(e.shiftKey)S.jd+=e.deltaY*0.0001*S.timeMultiplier;else if(e.ctrlKey){S.scale*=e.deltaY>0?1.01:1/1.01;}else{let z=e.deltaMode===1?1.1:1.05;S.scale*=e.deltaY>0?z:1/z;}},{passive:false});
+    window.addEventListener('keydown',e=>{S.lastMoveTime=Date.now();awaken();const st=S.scale*0.1,ts=0.01*S.timeMultiplier;
+        if(e.key==='a'||e.key==='A')S.cx+=st;if(e.key==='d'||e.key==='D')S.cx-=st;
+        if(e.key==='ArrowUp')S.cy-=st;if(e.key==='ArrowDown')S.cy+=st;
+        if(e.key==='ArrowLeft')S.cx+=st;if(e.key==='ArrowRight')S.cx-=st;
+        if(e.key==='q'||e.key==='Q')S.jd-=ts;if(e.key==='e'||e.key==='E')S.jd+=ts;
+        if(e.key==='z'||e.key==='Z')S.timeMultiplier=Math.max(0.1,S.timeMultiplier/1.5);
+        if(e.key==='x'||e.key==='X')S.timeMultiplier=Math.min(1e10,S.timeMultiplier*1.5);
+        if(e.key==='c'||e.key==='C')S.yaw-=0.1;if(e.key==='v'||e.key==='V')S.yaw+=0.1;
+        if(e.key==='b'||e.key==='B')S.pitch-=0.1;if(e.key==='n'||e.key==='N')S.pitch+=0.1;
+        if(e.key==='f'||e.key==='F'){if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});else document.exitFullscreen();}
+        if(e.key==='1')S.camRot=0;if(e.key==='2')S.camRot=1;if(e.key==='3')S.camRot=2;if(e.key==='4')S.camRot=3;
+        if(e.key==='h'||e.key==='H')syncHere();
+        if(e.key==='t'||e.key==='T')S.jd=Date.now()/86400000.0+2440587.5;
+    });
+    canvas.addEventListener('touchstart',e=>{e.preventDefault();canvas.focus();S.lastMoveTime=Date.now();awaken();for(let t of e.changedTouches)S.touches[t.identifier]={x:t.clientX,y:t.clientY};if(e.touches.length===2){let t1=e.touches[0],t2=e.touches[1];S.initialPinchDist=Math.hypot(t1.clientX-t2.clientX,t1.clientY-t2.clientY);S.initialScale=S.scale;}},{passive:false});
+    canvas.addEventListener('touchmove',e=>{e.preventDefault();S.lastMoveTime=Date.now();if(e.touches.length===1){let t=e.touches[0],p=S.touches[t.identifier];if(p){S.cx-=(t.clientX-p.x)*S.scale;S.cy-=(t.clientY-p.y)*S.scale;}S.touches[t.identifier]={x:t.clientX,y:t.clientY};}else if(e.touches.length===2){let t1=e.touches[0],t2=e.touches[1],p1=S.touches[t1.identifier],p2=S.touches[t2.identifier],cd=Math.hypot(t1.clientX-t2.clientX,t1.clientY-t2.clientY);if(S.initialPinchDist>0)S.scale=S.initialScale*(S.initialPinchDist/cd);if(p1&&p2){S.jd+=(t1.clientX-p1.x+t2.clientX-p2.x)/2*0.00005*S.timeMultiplier;let dy=(t1.clientY-p1.y+t2.clientY-p2.y)/2;S.timeMultiplier*=Math.pow(1.05,-dy);S.timeMultiplier=Math.max(0.1,Math.min(S.timeMultiplier,1e10));}S.touches[t1.identifier]={x:t1.clientX,y:t1.clientY};S.touches[t2.identifier]={x:t2.clientX,y:t2.clientY};}},{passive:false});
+    canvas.addEventListener('touchend',e=>{for(let t of e.changedTouches)delete S.touches[t.identifier];});
+    if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+========== omegaflow-server/static/dict_glsl.glsl ==========
+#version 300 es
+precision highp float;
+precision highp int;
+
+#define MASS(i) texelFetch(massTex, ivec2(i, 0), 0)
+#define WMM(i) texelFetch(wmmTex, ivec2(i, 0), 0).r
+#define TERRAIN(x,y) texelFetch(terrainTex, ivec2(x, y), 0).r
+#define EGM96(u,v) texture(egm96Tex, vec2(u, v)).r
+#define CAMERA(uv) texture(cameraTex, uv).rgb
+#define VP_FIELD(f, swizzle) f.swizzle
+
+layout(std140) uniform VP {
+    vec4 center_scale;
+    vec4 res_count;
+    vec4 observer_state;
+    vec4 device_accel;
+    vec4 device_mag;
+    vec4 rotation;
+    vec4 device_local;
+    vec4 device_geo;
+    vec4 device_gyro;
+    vec4 observer_vitals;
+    vec4 observer_network;
+};
+
+uniform sampler2D massTex;
+uniform sampler2D wmmTex;
+uniform sampler2D terrainTex;
+uniform sampler2D egm96Tex;
+uniform sampler2D cameraTex;
+
+layout(location=0) out vec4 fragColor;
+layout(location=0) in vec2 vUv;
+
+STATE
+
+PERCEPTION
+
+void main() {
+    vec3 perception = eval_perception(vUv, res_count.xy, center_scale.w, center_scale.xyz,
+        rotation.xy, observer_state, device_accel, device_mag, device_local, device_geo);
+    fragColor = vec4(perception, 1.0);
+}
+========== omegaflow-server/static/dict_wgsl.wgsl ==========
+struct VP { 
+    center_scale: vec4f, 
+    res_count: vec4f, 
+    observer_state: vec4f, 
+    device_accel: vec4f, 
+    device_mag: vec4f, 
+    rotation: vec4f,
+    device_local: vec4f,
+    device_geo: vec4f,
+    device_gyro: vec4f,
+    observer_vitals: vec4f,
+    observer_network: vec4f
+}
+
+@group(0) @binding(0) var<storage, read> masses: array<vec4f>;
+@group(0) @binding(1) var<uniform> vp: VP;
+@group(0) @binding(2) var<storage, read> wmm: array<f32>;
+@group(0) @binding(3) var terrain_raw: texture_2d<i32>;
+@group(0) @binding(4) var egm96_tex: texture_2d<f32>;
+@group(0) @binding(5) var camera_tex: texture_2d<f32>;
+@group(0) @binding(6) var camera_sampler: sampler;
+
+fn MASS(i: i32) -> vec4f { return masses[i]; }
+fn WMM(i: i32) -> f32 { return wmm[i]; }
+fn TERRAIN(x: i32, y: i32) -> f32 { return f32(textureLoad(terrain_raw, vec2u(u32(x), u32(y)), 0).x); }
+fn EGM96(u: f32, v: f32) -> f32 { return f32(textureLoad(egm96_tex, vec2u(u32(clamp(u * 1440.0, 0.0, 1439.0)), u32(clamp(v * 721.0, 0.0, 720.0))), 0).r); }
+fn CAMERA(uv: vec2f) -> vec3f { return textureSample(camera_tex, camera_sampler, uv).rgb; }
+
+struct V { @builtin(position) p: vec4f, @location(0) u: vec2f }
+
+@vertex fn vs(@builtin(vertex_index) i: u32) -> V {
+    var p = array<vec2f, 3>(vec2f(-1.0, -1.0), vec2f(3.0, -1.0), vec2f(-1.0, 3.0));
+    var o: V;
+    o.p = vec4f(p[i], 0.0, 1.0);
+    o.u = vec2f(p[i].x * 0.5 + 0.5, 0.5 - p[i].y * 0.5);
+    return o;
+}
+
+EVAL
+
+@fragment fn fs(i: V) -> @location(0) vec4f {
+    let perception = eval_perception(i.u, vp.res_count.xy, vp.center_scale.w, vp.center_scale.xyz,
+        vp.rotation.xy, vp.observer_state, vp.device_accel, vp.device_mag, vp.device_local, vp.device_geo);
+    return vec4f(perception, 1.0);
+}
+========== omegaflow-server/static/eval.wgsl ==========
+struct state {
+    pos: vec3f,
+    acc_gravity: vec3f,
+    B_field: vec3f,
+    terrain_h: f32,
+    dist_earth: f32,
+    r_hat: vec3f,
+    sin_lat: f32,
+    cos_lat: f32,
+    lon_rad: f32,
+    earth_center: vec3f,
+    potential: f32,
+    time_dilation: f32,
+}
+
+fn eval_state(pos: vec3f, capacity: f32) -> state {
+    var st: state;
+    st.pos = pos;
+    st.earth_center = vec3f(WMM(0), WMM(1), WMM(2));
+    let r_vec = pos - st.earth_center;
+    st.dist_earth = length(r_vec);
+    st.r_hat = r_vec / max(st.dist_earth, 1.0);
+    st.sin_lat = st.r_hat.z;
+    st.cos_lat = sqrt(1.0 - st.sin_lat * st.sin_lat);
+    st.lon_rad = atan2(st.r_hat.y, st.r_hat.x);
+
+    let mass_limit = i32(capacity * 256.0);
+    let mass_fade = 1.0 - fract(capacity * 256.0);
+    st.acc_gravity = vec3f(0.0);
+    st.potential = 0.0;
+    for (var i:i32 = 0; i < mass_limit; i = i + 1) {
+        let m = MASS(i);
+        let r = m.xyz - pos;
+        let rl = length(r);
+        let r3 = max(dot(r, r) * rl, 1.0);
+        let effect = m.w * r / r3;
+        let phi = m.w / max(rl, 1.0);
+        if (i == mass_limit - 1 && mass_limit > 0) {
+            st.acc_gravity = st.acc_gravity + effect * mass_fade;
+            st.potential = st.potential - phi * mass_fade;
+        } else {
+            st.acc_gravity = st.acc_gravity + effect;
+            st.potential = st.potential - phi;
+        }
+    }
+    let c = 299792458.0;
+    st.time_dilation = sqrt(max(1.0 + 2.0 * st.potential / (c * c), 0.0));
+
+    let time_delta = WMM(3);
+    let n_max_raw = i32(WMM(4));
+    let mag_limit = min(i32(capacity * 133.0), n_max_raw);
+    let mag_fade = 1.0 - fract(capacity * 133.0);
+    let sin_theta = st.cos_lat;
+    let cos_theta = st.sin_lat;
+    let inv_sin_theta = 1.0 / max(sin_theta, 1e-6);
+    let a_over_r:f32 = 6378137.0 / st.dist_earth;
+
+    if (mag_limit <= 12) {
+        var B_r:f32 = 0.0; var B_t:f32 = 0.0; var B_p:f32 = 0.0;
+        for (var mm:i32 = 0; mm <= mag_limit; mm = mm + 1) {
+            let cml = cos(f32(mm) * st.lon_rad);
+            let sml = sin(f32(mm) * st.lon_rad);
+            var p_pp:f32 = 0.0; var p_pr:f32 = 0.0; var p_cu:f32 = 0.0;
+            var arn:f32 = pow(a_over_r, f32(mm + 2));
+            for (var n:i32 = mm; n <= mag_limit; n = n + 1) {
+                if (n == mm) {
+                    if (mm == 0) { p_cu = 1.0; }
+                    else { p_cu = sqrt(1.0 - 1.0 / (4.0 * f32(mm) * f32(mm))) * sin_theta * p_pr; }
+                } else if (n == mm + 1) {
+                    p_cu = cos_theta * p_pr;
+                } else {
+                    p_cu = (f32(2*n-1) * cos_theta * p_pr - f32(n+mm-1) * p_pp) / f32(n-mm);
+                }
+                let ci = 5 + (n*(n+1)/2+mm-1)*4;
+                let gt = WMM(ci) + time_delta * WMM(ci+2);
+                let ht = WMM(ci+1) + time_delta * WMM(ci+3);
+                let ch = gt*cml + ht*sml;
+                let sh = gt*sml - ht*cml;
+                let fd = select(mag_fade, 1.0, n < mag_limit);
+                B_r = B_r + arn * f32(n+1) * p_cu * ch * fd;
+                let dP = select(f32(n)*cos_theta*p_cu*inv_sin_theta, (f32(n)*cos_theta*p_cu - f32(n+mm)*p_pp)*inv_sin_theta, n > mm);
+                B_t = B_t - arn * dP * ch * fd;
+                B_p = B_p + arn * f32(mm) * p_cu * sh * inv_sin_theta * fd;
+                p_pp = p_pr; p_pr = p_cu;
+                arn = arn * a_over_r;
+            }
+        }
+        st.B_field = vec3f(
+            B_r*st.sin_lat*cos(st.lon_rad) + B_t*st.cos_lat*cos(st.lon_rad) - B_p*sin(st.lon_rad),
+            B_r*st.sin_lat*sin(st.lon_rad) + B_t*st.cos_lat*sin(st.lon_rad) + B_p*cos(st.lon_rad),
+            B_r*st.cos_lat - B_t*st.sin_lat
+        );
+    } else {
+        var B_r:f32 = 0.0; var B_t:f32 = 0.0; var B_p:f32 = 0.0;
+        for (var mm:i32 = 0; mm <= mag_limit; mm = mm + 1) {
+            let cml = cos(f32(mm) * st.lon_rad);
+            let sml = sin(f32(mm) * st.lon_rad);
+            var p_pp:f32 = 0.0; var p_pr:f32 = 0.0; var p_cu:f32 = 0.0;
+            var arn:f32 = pow(a_over_r, f32(mm+2));
+            for (var n:i32 = mm; n <= mag_limit; n = n + 1) {
+                if (n == mm) {
+                    if (mm == 0) { p_cu = 1.0; }
+                    else { p_cu = sqrt(1.0 - 1.0 / (4.0 * f32(mm) * f32(mm))) * sin_theta * p_pr; }
+                } else if (n == mm + 1) {
+                    p_cu = cos_theta * p_pr;
+                } else {
+                    p_cu = (f32(2*n-1) * cos_theta * p_pr - f32(n+mm-1) * p_pp) / f32(n-mm);
+                }
+                let ci = 5 + (n*(n+1)/2+mm-1)*4;
+                let gt = WMM(ci) + time_delta * WMM(ci+2);
+                let ht = WMM(ci+1) + time_delta * WMM(ci+3);
+                let ch = gt*cml + ht*sml;
+                let sh = gt*sml - ht*cml;
+                let fd = select(mag_fade, 1.0, n < mag_limit);
+                B_r = B_r + arn * f32(n+1) * p_cu * ch * fd;
+                let dP = select(f32(n)*cos_theta*p_cu*inv_sin_theta, (f32(n)*cos_theta*p_cu - f32(n+mm)*p_pp)*inv_sin_theta, n > mm);
+                B_t = B_t - arn * dP * ch * fd;
+                B_p = B_p + arn * f32(mm) * p_cu * sh * inv_sin_theta * fd;
+                p_pp = p_pr; p_pr = p_cu;
+                arn = arn * a_over_r;
+            }
+        }
+        st.B_field = vec3f(
+            B_r*st.sin_lat*cos(st.lon_rad) + B_t*st.cos_lat*cos(st.lon_rad) - B_p*sin(st.lon_rad),
+            B_r*st.sin_lat*sin(st.lon_rad) + B_t*st.cos_lat*sin(st.lon_rad) + B_p*cos(st.lon_rad),
+            B_r*st.cos_lat - B_t*st.sin_lat
+        );
+    }
+
+    let earth_radius = 6378137.0;
+    let terrain_fade = smoothstep(earth_radius * 1.3, earth_radius, st.dist_earth);
+    if (terrain_fade <= 0.0) {
+        st.terrain_h = 0.0;
+    } else {
+        let lat = asin(st.r_hat.z);
+        let lon = atan2(st.r_hat.y, st.r_hat.x);
+        let x = fract(lon * 57.2957795) * 1200.0;
+        let y = (1.0 - fract(lat * 57.2957795)) * 1200.0;
+        let x0 = i32(clamp(floor(x), 0.0, 1199.0));
+        let y0 = i32(clamp(floor(y), 0.0, 1199.0));
+        let fx = x - f32(x0); let fy = y - f32(y0);
+        let h = TERRAIN(x0,y0)*(1.0-fx)*(1.0-fy) + TERRAIN(min(x0+1,1200),y0)*fx*(1.0-fy)
+                + TERRAIN(x0,min(y0+1,1200))*(1.0-fx)*fy + TERRAIN(min(x0+1,1200),min(y0+1,1200))*fx*fy;
+        let undulation = EGM96((lon*57.2957795+180.0)*0.0027777777, (lat*57.2957795+90.0)*0.0055555555);
+        st.terrain_h = (h + undulation) * terrain_fade;
+    }
+
+    return st;
+}
+
+fn eval_perception(uv: vec2f, res: vec2f, scale: f32, center: vec3f,
+    rotation: vec2f, obs: vec4f, accel: vec4f, mag: vec4f, local: vec4f, geo: vec4f) -> vec3f {
+
+    let capacity = obs.w;
+    let dwell = obs.x;
+    let motion = obs.y;
+    let lux = obs.z;
+    let acoustic = local.x;
+    let camera_lux = local.y;
+    let temporal_certainty = local.z;
+    let spatial_certainty = local.w;
+
+    let certainty = temporal_certainty * spatial_certainty;
+
+    let cosY = cos(rotation.x); let sinY = sin(rotation.x);
+    let cosP = cos(rotation.y); let sinP = sin(rotation.y);
+
+    let offset = vec3f((uv.x - 0.5) * res.x * scale, (uv.y - 0.5) * res.y * scale, 0.0);
+    let ry = vec3f(offset.x*cosY + offset.z*sinY, offset.y, -offset.x*sinY + offset.z*cosY);
+    let pos = center + vec3f(ry.x, ry.y*cosP - ry.z*sinP, ry.y*sinP + ry.z*cosP);
+
+    let st = eval_state(pos, capacity);
+
+    let g = length(st.acc_gravity);
+    let B = st.B_field + mag.xyz * 1e-5;
+    let b = length(B);
+
+    let g_energy = g / 9.81;
+    let b_energy = b / 6.0e-5;
+
+    let surface_dist = st.dist_earth - 6378137.0 - st.terrain_h;
+    let atmo = clamp(1.0 - surface_dist / 100000.0, 0.0, 1.0);
+
+    let cam_rot = i32(geo.w);
+    var cam_uv = vec2f(uv.x, 1.0 - uv.y);
+    if (cam_rot == 1) { cam_uv = vec2f(1.0 - uv.y, uv.x); }
+    else if (cam_rot == 2) { cam_uv = vec2f(1.0 - uv.x, uv.y); }
+    else if (cam_rot == 3) { cam_uv = vec2f(uv.y, 1.0 - uv.x); }
+    let photon = CAMERA(cam_uv);
+
+    let photon_intensity = dot(photon, vec3f(0.2126, 0.7152, 0.0722));
+    let photon_r = photon.r / max(photon_intensity, 1e-6);
+    let photon_b = photon.b / max(photon_intensity, 1e-6);
+
+    let g_perception = g_energy * capacity * certainty;
+    let redshift = 1.0 - st.time_dilation;
+    let gravity = vec3f(
+        g_perception * (1.0 + redshift),
+        g_perception * 0.4 * (1.0 - g_perception) * (1.0 - redshift * 0.5),
+        (1.0 - g_perception * 0.6) * g_perception * (1.0 - redshift)
+    );
+
+    let magnetic = B / max(b, 1e-10) * b_energy * capacity * certainty;
+
+    let atmosphere = vec3f(0.1, 0.3, 0.8) * atmo * capacity * certainty;
+
+    let field_weight = length(gravity) + length(atmosphere);
+    let photon_weight = max(0.0, 1.0 - field_weight) * certainty;
+
+    return photon * photon_weight + gravity + atmosphere + magnetic;
+}
+========== omegaflow-server/static/eval_perception.glsl ==========
+vec3 eval_perception(vec2 uv, vec2 res, float scale, vec3 center,
+    vec2 rotation, vec4 obs, vec4 accel, vec4 mag, vec4 local, vec4 geo) {
+
+    float capacity = obs.w;
+    float dwell = obs.x;
+    float motion = obs.y;
+    float lux = obs.z;
+    float acoustic = local.x;
+    float camera_lux = local.y;
+    float temporal_certainty = local.z;
+    float spatial_certainty = local.w;
+
+    float certainty = temporal_certainty * spatial_certainty;
+
+    float cosY = cos(rotation.x); float sinY = sin(rotation.x);
+    float cosP = cos(rotation.y); float sinP = sin(rotation.y);
+
+    vec3 offset = vec3((uv.x - 0.5) * res.x * scale, (uv.y - 0.5) * res.y * scale, 0.0);
+    vec3 ry = vec3(offset.x*cosY + offset.z*sinY, offset.y, -offset.x*sinY + offset.z*cosY);
+    vec3 pos = center + vec3(ry.x, ry.y*cosP - ry.z*sinP, ry.y*sinP + ry.z*cosP);
+
+    state st = eval_state(pos, capacity);
+
+    float g = length(st.acc_gravity);
+    vec3 B = st.B_field + mag.xyz * 1e-5;
+    float b = length(B);
+
+    float g_energy = g / 9.81;
+    float b_energy = b / 6.0e-5;
+
+    float surface_dist = st.dist_earth - 6378137.0 - st.terrain_h;
+    float atmo = clamp(1.0 - surface_dist / 100000.0, 0.0, 1.0);
+
+    int cam_rot = int(geo.w);
+    vec2 cam_uv = vec2(uv.x, 1.0 - uv.y);
+    if (cam_rot == 1) cam_uv = vec2(1.0 - uv.y, uv.x);
+    else if (cam_rot == 2) cam_uv = vec2(1.0 - uv.x, uv.y);
+    else if (cam_rot == 3) cam_uv = vec2(uv.y, 1.0 - uv.x);
+    vec3 photon = CAMERA(cam_uv);
+
+    float photon_intensity = dot(photon, vec3(0.2126, 0.7152, 0.0722));
+
+    float g_perception = g_energy * capacity * certainty;
+    float redshift = 1.0 - st.time_dilation;
+    vec3 gravity = vec3(
+        g_perception * (1.0 + redshift),
+        g_perception * 0.4 * (1.0 - g_perception) * (1.0 - redshift * 0.5),
+        (1.0 - g_perception * 0.6) * g_perception * (1.0 - redshift)
+    );
+
+    vec3 magnetic = B / max(b, 1e-10) * b_energy * capacity * certainty;
+
+    vec3 atmosphere = vec3(0.1, 0.3, 0.8) * atmo * capacity * certainty;
+
+    float field_weight = length(gravity) + length(atmosphere);
+    float photon_weight = max(0.0, 1.0 - field_weight) * certainty;
+
+    return photon * photon_weight + gravity + atmosphere + magnetic;
+}
+========== omegaflow-server/static/eval_state.glsl ==========
+vec2 df64_add(vec2 a, vec2 b) {
+    float s = a.x + b.x;
+    float v = s - a.x;
+    float e = (a.x - (s - v)) + (b.x - v) + a.y + b.y;
+    return vec2(s + e, e - (s + e - s));
+}
+vec2 df64_sub(vec2 a, vec2 b) {
+    float s = a.x - b.x;
+    float v = s - a.x;
+    float e = (a.x - (s - v)) - (b.x + v) + a.y - b.y;
+    return vec2(s + e, e - (s + e - s));
+}
+vec2 df64_mul(vec2 a, vec2 b) {
+    float p = a.x * b.x;
+    float e = ((a.x * b.x - p) + a.y * b.x + a.x * b.y) + a.y * b.y;
+    return vec2(p + e, e - (p + e - p));
+}
+vec2 df64_scale(vec2 a, float s) {
+    float p = a.x * s;
+    float e = (a.x * s - p) + a.y * s;
+    return vec2(p + e, e - (p + e - p));
+}
+
+struct state {
+    vec3 pos;
+    vec3 acc_gravity;
+    vec3 B_field;
+    float terrain_h;
+    float dist_earth;
+    vec3 r_hat;
+    float sin_lat;
+    float cos_lat;
+    float lon_rad;
+    vec3 earth_center;
+    float potential;
+    float time_dilation;
+};
+
+state eval_state(vec3 pos, float capacity) {
+    state st;
+    st.pos = pos;
+    st.earth_center = vec3(WMM(0), WMM(1), WMM(2));
+    vec3 r_vec = pos - st.earth_center;
+    st.dist_earth = length(r_vec);
+    st.r_hat = r_vec / max(st.dist_earth, 1.0);
+    st.sin_lat = st.r_hat.z;
+    st.cos_lat = sqrt(1.0 - st.sin_lat * st.sin_lat);
+    st.lon_rad = atan(st.r_hat.y, st.r_hat.x);
+
+    int mass_limit = int(capacity * 256.0);
+    float mass_fade = 1.0 - fract(capacity * 256.0);
+    st.acc_gravity = vec3(0.0);
+    st.potential = 0.0;
+    for (int i = 0; i < mass_limit; i++) {
+        vec4 m = MASS(i);
+        vec3 r = m.xyz - pos;
+        float rl = length(r);
+        float r3 = max(dot(r, r) * rl, 1.0);
+        vec3 effect = m.w * r / r3;
+        float phi = m.w / max(rl, 1.0);
+        if (i == mass_limit - 1 && mass_limit > 0) {
+            st.acc_gravity += effect * mass_fade;
+            st.potential -= phi * mass_fade;
+        } else {
+            st.acc_gravity += effect;
+            st.potential -= phi;
+        }
+    }
+    float c = 299792458.0;
+    st.time_dilation = sqrt(max(1.0 + 2.0 * st.potential / (c * c), 0.0));
+
+    int mag_limit = min(int(capacity * 133.0), n_max_raw);
+    float mag_fade = 1.0 - fract(capacity * 133.0);
+    float sin_theta = st.cos_lat;
+    float cos_theta = st.sin_lat;
+    float inv_sin_theta = 1.0 / max(sin_theta, 1e-6);
+    float time_delta = WMM(3);
+    int n_max_raw = int(WMM(4));
+    float a_over_r = 6378137.0 / st.dist_earth;
+
+    if (mag_limit <= 12) {
+        float B_r = 0.0; float B_t = 0.0; float B_p = 0.0;
+        for (int mm = 0; mm <= mag_limit; mm++) {
+            float cml = cos(float(mm) * st.lon_rad);
+            float sml = sin(float(mm) * st.lon_rad);
+            float p_pp = 0.0; float p_pr = 0.0; float p_cu = 0.0;
+            float arn = pow(a_over_r, float(mm + 2));
+            for (int n = mm; n <= mag_limit; n++) {
+                if (n == mm) {
+                    if (mm == 0) { p_cu = 1.0; }
+                    else { p_cu = sqrt(1.0 - 1.0 / (4.0 * float(mm) * float(mm))) * sin_theta * p_pr; }
+                } else if (n == mm + 1) {
+                    p_cu = cos_theta * p_pr;
+                } else {
+                    p_cu = (float(2*n-1) * cos_theta * p_pr - float(n+mm-1) * p_pp) / float(n-mm);
+                }
+                int ci = 5 + (n*(n+1)/2+mm-1)*4;
+                float gt = WMM(ci) + time_delta * WMM(ci+2);
+                float ht = WMM(ci+1) + time_delta * WMM(ci+3);
+                float ch = gt*cml + ht*sml;
+                float sh = gt*sml - ht*cml;
+                float fd = (n < mag_limit) ? 1.0 : mag_fade;
+                B_r += arn * float(n+1) * p_cu * ch * fd;
+                float dP = (n > mm) ? (float(n)*cos_theta*p_cu - float(n+mm)*p_pp)*inv_sin_theta : float(n)*cos_theta*p_cu*inv_sin_theta;
+                B_t -= arn * dP * ch * fd;
+                B_p += arn * float(mm) * p_cu * sh * inv_sin_theta * fd;
+                p_pp = p_pr; p_pr = p_cu;
+                arn *= a_over_r;
+            }
+        }
+        st.B_field = vec3(
+            B_r*st.sin_lat*cos(st.lon_rad) + B_t*st.cos_lat*cos(st.lon_rad) - B_p*sin(st.lon_rad),
+            B_r*st.sin_lat*sin(st.lon_rad) + B_t*st.cos_lat*sin(st.lon_rad) + B_p*cos(st.lon_rad),
+            B_r*st.cos_lat - B_t*st.sin_lat
+        );
+    } else {
+        vec2 B_r = vec2(0.0); vec2 B_t = vec2(0.0); vec2 B_p = vec2(0.0);
+        for (int mm = 0; mm <= mag_limit; mm++) {
+            float cml = cos(float(mm) * st.lon_rad);
+            float sml = sin(float(mm) * st.lon_rad);
+            vec2 p_pp = vec2(0.0); vec2 p_pr = vec2(0.0); vec2 p_cu = vec2(0.0);
+            vec2 arn = vec2(pow(a_over_r, float(mm+2)), 0.0);
+            for (int n = mm; n <= mag_limit; n++) {
+                if (n == mm) {
+                    if (mm == 0) { p_cu = vec2(1.0, 0.0); }
+                    else { p_cu = df64_mul(df64_scale(p_pr, sqrt(1.0-1.0/(4.0*float(mm)*float(mm)))), vec2(sin_theta,0.0)); }
+                } else if (n == mm + 1) {
+                    p_cu = df64_mul(p_pr, vec2(cos_theta, 0.0));
+                } else {
+                    p_cu = df64_sub(df64_scale(df64_mul(p_pr, vec2(cos_theta,0.0)), float(2*n-1)/float(n-mm)), df64_scale(p_pp, float(n+mm-1)/float(n-mm)));
+                }
+                int ci = 5 + (n*(n+1)/2+mm-1)*4;
+                float gt = WMM(ci) + time_delta * WMM(ci+2);
+                float ht = WMM(ci+1) + time_delta * WMM(ci+3);
+                float ch = gt*cml + ht*sml;
+                float sh = gt*sml - ht*cml;
+                float fd = (n < mag_limit) ? 1.0 : mag_fade;
+                B_r = df64_add(B_r, df64_scale(df64_mul(p_cu, vec2(ch,0.0)), arn.x*float(n+1)*fd));
+                vec2 dP = (n > mm) ? df64_sub(df64_scale(df64_mul(p_cu,vec2(cos_theta,0.0)),float(n)*inv_sin_theta), df64_scale(p_pp,float(n+mm)*inv_sin_theta)) : df64_scale(df64_mul(p_cu,vec2(cos_theta,0.0)),float(n)*inv_sin_theta);
+                B_t = df64_sub(B_t, df64_scale(df64_mul(dP,vec2(ch,0.0)), arn.x*fd));
+                B_p = df64_add(B_p, df64_scale(df64_mul(p_cu,vec2(sh,0.0)), arn.x*float(mm)*inv_sin_theta*fd));
+                p_pp = p_pr; p_pr = p_cu;
+                arn = df64_scale(arn, a_over_r);
+            }
+        }
+        st.B_field = vec3(
+            B_r.x*st.sin_lat*cos(st.lon_rad) + B_t.x*st.cos_lat*cos(st.lon_rad) - B_p.x*sin(st.lon_rad),
+            B_r.x*st.sin_lat*sin(st.lon_rad) + B_t.x*st.cos_lat*sin(st.lon_rad) + B_p.x*cos(st.lon_rad),
+            B_r.x*st.cos_lat - B_t.x*st.sin_lat
+        );
+    }
+
+    float earth_radius = 6378137.0;
+    float terrain_fade = smoothstep(earth_radius * 1.3, earth_radius, st.dist_earth);
+    if (terrain_fade <= 0.0) {
+        st.terrain_h = 0.0;
+    } else {
+        float lat = asin(st.r_hat.z);
+        float lon = atan(st.r_hat.y, st.r_hat.x);
+        float x = fract(lon * 57.2957795) * 1200.0;
+        float y = (1.0 - fract(lat * 57.2957795)) * 1200.0;
+        int x0 = int(clamp(floor(x), 0.0, 1199.0));
+        int y0 = int(clamp(floor(y), 0.0, 1199.0));
+        float fx = x - float(x0); float fy = y - float(y0);
+        float h = TERRAIN(x0,y0)*(1.0-fx)*(1.0-fy) + TERRAIN(min(x0+1,1200),y0)*fx*(1.0-fy)
+                + TERRAIN(x0,min(y0+1,1200))*(1.0-fx)*fy + TERRAIN(min(x0+1,1200),min(y0+1,1200))*fx*fy;
+        float undulation = EGM96((lon*57.2957795+180.0)*0.0027777777, (lat*57.2957795+90.0)*0.0055555555);
+        st.terrain_h = (h + undulation) * terrain_fade;
+    }
+
+    return st;
+}
+========== omegaflow-server/static/index.html ==========
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>omegaflow</title>
+<link rel="icon" href="data:,">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#000000">
+<style>*{margin:0;padding:0}body{background:#000;overflow:hidden}canvas{display:block;width:100vw;height:100vh;cursor:none}</style>
+</head><body><canvas id="c" tabindex="0"></canvas>
+<script type="module">
+try{
+const a=await navigator.gpu?.requestAdapter();
+if(a)await import('/webgpu.js');
+else{
+const gl=document.getElementById('c').getContext('webgl2');
+if(gl)await import('/webgl.js');
+}
+}catch(e){console.error(e);}
+</script></body></html>
+========== omegaflow-server/static/manifest.json ==========
+{
+  "name": "omegaflow",
+  "short_name": "omegaflow",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#000000"
+}========== omegaflow-server/static/sw.js ==========
+self.addEventListener('install', e => {
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(clients.claim());
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(fetch(e.request));
+});
+========== omegaflow-server/static/webgl.js ==========
+import{S,clamp,buildVp,updateCapacity,fetchStream,fetchTime,awaken,initInput} from'/client.js';
+const canvas=document.getElementById('c');
+canvas.focus();
+const gl=canvas.getContext('webgl2');
+const glslSrc=await(await fetch('/eval_state.glsl')).text();
+const vsSrc=glslSrc.substring(0,glslSrc.indexOf('// --- FRAGMENT'));
+const fsSrc=glslSrc.substring(glslSrc.indexOf('// --- FRAGMENT'));
+function cs(s,t){const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)){console.error(gl.getShaderInfoLog(sh));return null;}return sh;}
+const vs=cs(vsSrc,gl.VERTEX_SHADER),fs=cs(fsSrc,gl.FRAGMENT_SHADER);
+const prog=gl.createProgram();gl.attachShader(prog,vs);gl.attachShader(prog,fs);gl.linkProgram(prog);
+if(!gl.getProgramParameter(prog,gl.LINK_STATUS)){console.error(gl.getProgramInfoLog(prog));throw new Error('link');}
+gl.useProgram(prog);
+initInput(canvas);
+const vpLoc=gl.getUniformBlockIndex(prog,'VP');gl.uniformBlockBinding(prog,vpLoc,0);
+const vpBuf=gl.createBuffer();gl.bindBufferBase(gl.UNIFORM_BUFFER,0,vpBuf);
+function mt(u,w,h,i,f,t){const tx=gl.createTexture();gl.activeTexture(gl.TEXTURE0+u);gl.bindTexture(gl.TEXTURE_2D,tx);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D,0,i,w,h,0,f,t,null);
+    gl.uniform1i(gl.getUniformLocation(prog,['massTex','wmmTex','terrainTex','egm96Tex','cameraTex'][u]),u);return tx;}
+const massTex=mt(0,4096,1,gl.RGBA32F,gl.RGBA,gl.FLOAT);
+const wmmTex=mt(1,4096,1,gl.RGBA32F,gl.RGBA,gl.FLOAT);
+const terrainTex=mt(2,1201,1201,gl.R32F,gl.RED,gl.FLOAT);
+const egm96Tex=mt(3,1440,721,gl.R32F,gl.RED,gl.FLOAT);
+const camTex=mt(4,640,480,gl.RGBA,gl.UNSIGNED_BYTE);
+gl.createVertexArray();gl.bindVertexArray(gl.createVertexArray());
+const upload={
+    masses(b,o,n){gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,massTex);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,n/16,1,gl.RGBA,gl.FLOAT,new Float32Array(b,o,n/4));},
+    wmm(b,o,n){gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,wmmTex);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,n/16,1,gl.RGBA,gl.FLOAT,new Float32Array(b,o,n/4));},
+    terrain(b,o,n){gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,terrainTex);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,1201,1201,gl.RED,gl.FLOAT,new Float32Array(b,o,n/4));},
+    egm96(b,o,n){gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,egm96Tex);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,1440,721,gl.RED,gl.FLOAT,new Float32Array(b,o,n/4));}
+};
+function render(){
+    try{
+        if(S.videoElement&&S.videoElement.readyState>=S.videoElement.HAVE_CURRENT_DATA){gl.activeTexture(gl.TEXTURE4);gl.bindTexture(gl.TEXTURE_2D,camTex);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,640,480,gl.RGBA,gl.UNSIGNED_BYTE,S.videoElement);}
+        if(!S.awake){gl.clearColor(0,0,0.05,1);gl.clear(gl.COLOR_BUFFER_BIT);return;}
+        const now=performance.now();const dt=now-S.lastRenderTime;S.lastRenderTime=now;
+        updateCapacity(dt);
+        gl.bindBuffer(gl.UNIFORM_BUFFER,vpBuf);gl.bufferData(gl.UNIFORM_BUFFER,buildVp(),gl.DYNAMIC_DRAW);
+        gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES,0,3);
+        fetchStream(upload);
+    }catch(e){console.error(e);}
+}
+await fetchTime();
+function loop(){render();requestAnimationFrame(loop);}
+loop();
+========== omegaflow-server/static/webgpu.js ==========
+import{S,clamp,buildVp,updateCapacity,fetchStream,fetchTime,awaken,initInput} from'/client.js';
+const canvas=document.getElementById('c');
+canvas.focus();
+const adapter=await navigator.gpu.requestAdapter();
+const device=await adapter.requestDevice();
+const ctx=canvas.getContext('webgpu');
+const fmt=navigator.gpu.getPreferredCanvasFormat();
+ctx.configure({device,format:fmt,alphaMode:'opaque'});
+device.lost.then(i=>console.error(i));
+initInput(canvas);
+const sm=device.createShaderModule({code:await(await fetch('/eval_state.wgsl')).text()});
+const pipe=await device.createRenderPipelineAsync({layout:'auto',vertex:{module:sm,entryPoint:'vs'},fragment:{module:sm,entryPoint:'fs',targets:[{format:fmt}]},primitive:{topology:'triangle-list'}});
+const massBuf=device.createBuffer({size:65536,usage:GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST});
+const vpBuf=device.createBuffer({size:192,usage:GPUBufferUsage.UNIFORM|GPUBufferUsage.COPY_DST});
+const wmmBuf=device.createBuffer({size:65536,usage:GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST});
+const terrainTex=device.createTexture({size:[1201,1201],format:'r16sint',usage:GPUTextureUsage.TEXTURE_BINDING|GPUTextureUsage.COPY_DST});
+const egm96Tex=device.createTexture({size:[1440,721],format:'r32float',usage:GPUTextureUsage.TEXTURE_BINDING|GPUTextureUsage.COPY_DST});
+const cameraTex=device.createTexture({size:[640,480],format:'rgba8unorm',usage:GPUTextureUsage.TEXTURE_BINDING|GPUTextureUsage.COPY_DST|GPUTextureUsage.RENDER_ATTACHMENT});
+const camSamp=device.createSampler({magFilter:'linear',minFilter:'linear'});
+const bg=device.createBindGroup({layout:pipe.getBindGroupLayout(0),entries:[
+    {binding:0,resource:{buffer:massBuf}},{binding:1,resource:{buffer:vpBuf}},{binding:2,resource:{buffer:wmmBuf}},
+    {binding:3,resource:terrainTex.createView()},{binding:4,resource:egm96Tex.createView()},
+    {binding:5,resource:cameraTex.createView()},{binding:6,resource:camSamp}]});
+const upload={
+    masses(b,o,n){device.queue.writeBuffer(massBuf,0,new Uint8Array(b,o,n));},
+    wmm(b,o,n){device.queue.writeBuffer(wmmBuf,0,new Uint8Array(b,o,n));},
+    terrain(b,o,n){device.queue.writeTexture({texture:terrainTex},new Uint8Array(b,o,n),{bytesPerRow:2402},{width:1201,height:1201});},
+    egm96(b,o,n){device.queue.writeTexture({texture:egm96Tex},new Uint8Array(b,o,n),{bytesPerRow:5760},{width:1440,height:721});}
+};
+function render(){
+    try{
+        if(S.videoElement&&S.videoElement.readyState>=S.videoElement.HAVE_CURRENT_DATA)
+            device.queue.copyExternalImageToTexture({source:S.videoElement},{texture:cameraTex},{width:640,height:480});
+        if(!S.observerAwake){const e=device.createCommandEncoder();const p=e.beginRenderPass({colorAttachments:[{view:ctx.getCurrentTexture().createView(),clearValue:{r:0,g:0,b:0.05,a:1},loadOp:'clear',storeOp:'store'}]});p.setPipeline(pipe);p.setBindGroup(0,bg);p.draw(3);p.end();device.queue.submit([e.finish()]);return;}
+        const now=performance.now();const dt=now-S.lastRenderTime;S.lastRenderTime=now;
+        updateCapacity(dt);
+        device.queue.writeBuffer(vpBuf,0,buildVp());
+        const e=device.createCommandEncoder();
+        const p=e.beginRenderPass({colorAttachments:[{view:ctx.getCurrentTexture().createView(),clearValue:{r:0,g:0,b:0,a:1},loadOp:'clear',storeOp:'store'}]});
+        p.setPipeline(pipe);p.setBindGroup(0,bg);p.draw(3);p.end();
+        device.queue.submit([e.finish()]);
+        fetchStream(upload);
+    }catch(e){console.error(e);}
+}
+await fetchTime();
+function loop(){render();requestAnimationFrame(loop);}
+loop();
+========== omegaflow-server/tests/integration_tests.rs ==========
+use axum::{
+    body::Body,
+    http::{Request, StatusCode, header},
+    Router,
+    extract::Query,
+    response::IntoResponse,
+    routing::get,
+};
+use serde::Deserialize;
+use tower::ServiceExt;
+
+#[derive(Deserialize)]
+struct MassesReq { jd: f64 }
+
+async fn index() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "text/html")], "")
+}
+
+async fn eval_state_wgsl() -> impl IntoResponse {
+    let shader = include_str!("../omegaflow-server/static/eval_state.wgsl");
+    ([(header::CONTENT_TYPE, "text/wgsl")], shader)
+}
+
+async fn masses(Query(params): Query<MassesReq>) -> impl IntoResponse {
+    let t = (params.jd - 2451545.0) * 86400.0;
+    let masses = omegaflow_core::masses_at(t);
+    let data: Vec<f32> = masses.iter().flat_map(|m| {
+        [m.pos.x as f32, m.pos.y as f32, m.pos.z as f32, m.gm as f32]
+    }).collect();
+    let bytes: Vec<u8> = data.iter().flat_map(|f| f.to_le_bytes()).collect();
+    ([(header::CONTENT_TYPE, "application/octet-stream")], bytes)
+}
+
+async fn wmm(Query(params): Query<MassesReq>) -> impl IntoResponse {
+    let t = (params.jd - 2451545.0) * 86400.0;
+    let Some(data) = omegaflow_core::wmm_at(t) else {
+        return ([(header::CONTENT_TYPE, "application/octet-stream")], Vec::<u8>::new());
+    };
+    let n_max = data.n_max;
+    let wmm_coeffs = (n_max * (n_max + 3)) / 2;
+    let mut out = Vec::with_capacity(4 + 4 * wmm_coeffs as usize + 9);
+    out.push(data.earth_pos.x as f32);
+    out.push(data.earth_pos.y as f32);
+    out.push(data.earth_pos.z as f32);
+    out.push(data.time_delta);
+    let pad = |v: &Vec<f32>, len: usize| -> Vec<f32> {
+        let mut p = v.clone();
+        p.resize(len, 0.0);
+        p
+    };
+    out.extend(pad(&data.g_mfc, wmm_coeffs as usize));
+    out.extend(pad(&data.h_mfc, wmm_coeffs as usize));
+    out.extend(pad(&data.g_svc, wmm_coeffs as usize));
+    out.extend(pad(&data.h_svc, wmm_coeffs as usize));
+    let t_ut1 = params.jd - 2451545.0;
+    let gmst_deg = 280.46061837 + 360.98564736629 * t_ut1;
+    let gmst_rad = gmst_deg.to_radians();
+    let cos_g = gmst_rad.cos() as f32;
+    let sin_g = gmst_rad.sin() as f32;
+    out.push(cos_g); out.push(sin_g); out.push(0.0);
+    out.push(-sin_g); out.push(cos_g); out.push(0.0);
+    out.push(0.0); out.push(0.0); out.push(1.0);
+    let bytes: Vec<u8> = out.iter().flat_map(|f| f.to_le_bytes()).collect();
+    ([(header::CONTENT_TYPE, "application/octet-stream")], bytes)
+}
+
+fn app() -> Router {
+    Router::new()
+        .route("/", get(index))
+        .route("/eval_state.wgsl", get(eval_state_wgsl))
+        .route("/masses", get(masses))
+        .route("/wmm", get(wmm))
+}
+
+async fn ensure_init() {
+    static INIT: std::sync::LazyLock<tokio::sync::OnceCell<()>> = std::sync::LazyLock::new(tokio::sync::OnceCell::new);
+    INIT.get_or_init(|| async {
+        std::env::set_current_dir(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent().unwrap().parent().unwrap()
+        ).ok();
+        tokio::task::spawn_blocking(|| omegaflow_core::init()).await.ok();
+    }).await;
+}
+
+#[tokio::test]
+async fn test_index_status() {
+    ensure_init().await;
+    let resp = app().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
+    assert_eq!(resp.status(), StatusCode::OK);
+    let ct = resp.headers().get(header::CONTENT_TYPE).unwrap().to_str().unwrap();
+    assert!(ct.contains("text/html"));
+}
+
+#[tokio::test]
+async fn test_eval_state_wgsl_status() {
+    ensure_init().await;
+    let resp = app().oneshot(Request::builder().uri("/eval_state.wgsl").body(Body::empty()).unwrap()).await.unwrap();
+    assert_eq!(resp.status(), StatusCode::OK);
+    let ct = resp.headers().get(header::CONTENT_TYPE).unwrap().to_str().unwrap();
+    assert!(ct.contains("text/wgsl"));
+}
+
+#[tokio::test]
+async fn test_masses_status() {
+    ensure_init().await;
+    let resp = app().oneshot(Request::builder().uri("/masses?jd=2460000.5").body(Body::empty()).unwrap()).await.unwrap();
+    assert_eq!(resp.status(), StatusCode::OK);
+    let ct = resp.headers().get(header::CONTENT_TYPE).unwrap().to_str().unwrap();
+    assert!(ct.contains("application/octet-stream"));
+}
+
+#[tokio::test]
+async fn test_masses_body_alignment() {
+    ensure_init().await;
+    let resp = app().oneshot(Request::builder().uri("/masses?jd=2460000.5").body(Body::empty()).unwrap()).await.unwrap();
+    let body = axum::body::to_bytes(resp.into_body(), 1_000_000).await.unwrap();
+    assert!(!body.is_empty());
+    assert_eq!(body.len() % 16, 0, "body len {} not multiple of 16", body.len());
+}
+
+#[tokio::test]
+async fn test_masses_gm_positive() {
+    ensure_init().await;
+    let resp = app().oneshot(Request::builder().uri("/masses?jd=2460000.5").body(Body::empty()).unwrap()).await.unwrap();
+    let body = axum::body::to_bytes(resp.into_body(), 1_000_000).await.unwrap();
+    let floats: Vec<f32> = body.chunks_exact(4).map(|c| f32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect();
+    let count = floats.len() / 4;
+    assert!(count > 0);
+    for i in 0..count {
+        let gm = floats[i * 4 + 3];
+        assert!(gm.is_finite() && gm > 0.0, "mass[{}].gm = {}", i, gm);
+    }
+}
+
+#[tokio::test]
+async fn test_masses_different_epochs() {
+    ensure_init().await;
+    async fn fetch(jd: &str) -> Vec<u8> {
+        let resp = app().oneshot(Request::builder().uri(&format!("/masses?jd={jd}")).body(Body::empty()).unwrap()).await.unwrap();
+        axum::body::to_bytes(resp.into_body(), 1_000_000).await.unwrap().to_vec()
+    }
+    let a = fetch("2460000.5").await;
+    let b = fetch("2460100.5").await;
+    assert_ne!(a, b);
+}
+
+#[tokio::test]
+async fn test_masses_missing_jd() {
+    ensure_init().await;
+    let resp = app().oneshot(Request::builder().uri("/masses").body(Body::empty()).unwrap()).await.unwrap();
+    assert!(resp.status() == StatusCode::BAD_REQUEST || resp.status() == StatusCode::UNPROCESSABLE_ENTITY);
+}
+
+#[tokio::test]
+async fn test_wmm_status() {
+    ensure_init().await;
+    let resp = app().oneshot(Request::builder().uri("/wmm?jd=2460000.5").body(Body::empty()).unwrap()).await.unwrap();
+    assert_eq!(resp.status(), StatusCode::OK);
+}
+
+#[tokio::test]
+async fn test_wmm_body_structure() {
+    ensure_init().await;
+    let resp = app().oneshot(Request::builder().uri("/wmm?jd=2460000.5").body(Body::empty()).unwrap()).await.unwrap();
+    let body = axum::body::to_bytes(resp.into_body(), 1_000_000).await.unwrap();
+    if body.is_empty() { return; }
+    assert_eq!(body.len() % 4, 0);
+    let floats: Vec<f32> = body.chunks_exact(4).map(|c| f32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect();
+    assert!(floats[0].is_finite());
+    assert!(floats[1].is_finite());
+    assert!(floats[2].is_finite());
+    assert!(floats[3].is_finite());
+    assert!(floats.len() >= 13);
+    let len = floats.len();
+    let rot = &floats[len - 9..];
+    let r0 = (rot[0]*rot[0] + rot[1]*rot[1] + rot[2]*rot[2]).sqrt();
+    let r1 = (rot[3]*rot[3] + rot[4]*rot[4] + rot[5]*rot[5]).sqrt();
+    let r2 = (rot[6]*rot[6] + rot[7]*rot[7] + rot[8]*rot[8]).sqrt();
+    assert!((r0 - 1.0).abs() < 0.01, "row0 len = {}", r0);
+    assert!((r1 - 1.0).abs() < 0.01, "row1 len = {}", r1);
+    assert!((r2 - 1.0).abs() < 0.01, "row2 len = {}", r2);
+}
+
+#[tokio::test]
+async fn test_wmm_missing_jd() {
+    ensure_init().await;
+    let resp = app().oneshot(Request::builder().uri("/wmm").body(Body::empty()).unwrap()).await.unwrap();
+    assert!(resp.status() == StatusCode::BAD_REQUEST || resp.status() == StatusCode::UNPROCESSABLE_ENTITY);
+}
+
+#[tokio::test]
+async fn test_unknown_route() {
+    ensure_init().await;
+    let resp = app().oneshot(Request::builder().uri("/nonexistent").body(Body::empty()).unwrap()).await.unwrap();
+    assert_eq!(resp.status(), StatusCode::NOT_FOUND);
+}
+
+#[tokio::test]
+async fn test_server_masses_at_j2000() {
+    ensure_init().await;
+    let masses = omegaflow_core::masses_at(0.0);
+    assert!(!masses.is_empty());
+    for (i, m) in masses.iter().enumerate() {
+        assert!(m.pos.is_finite(), "mass[{}].pos = {:?}", i, m.pos);
+        assert!(m.gm.is_finite() && m.gm > 0.0, "mass[{}].gm = {}", i, m.gm);
+    }
+}
+
+#[tokio::test]
+async fn test_server_wmm_at_epoch() {
+    ensure_init().await;
+    let t = (2460000.5 - 2451545.0) * 86400.0;
+    let Some(data) = omegaflow_core::wmm_at(t) else { return; };
+    assert!(data.earth_pos.is_finite());
+    assert!(data.time_delta.is_finite());
+    assert!(data.n_max > 0);
+    assert!(!data.g_mfc.is_empty());
+}
+========== omegaflow-wasm/Cargo.toml ==========
+[package]
+name = "omegaflow-wasm"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+glam = "0.33"
+omegaflow-core = { path = "../omegaflow-core", default-features = false }
+wasm-bindgen = "0.2.100"
+js-sys = "0.3.77"
+
+[dependencies.web-sys]
+version = "0.3.77"
+features = ["Window", "Performance"]
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.50"
+========== omegaflow-wasm/src/lib.rs ==========
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn init(de440s: &[u8], pck08: &[u8]) -> bool {
+    omegaflow_core::init_from_bytes(de440s, pck08)
+}
+
+#[wasm_bindgen]
+pub fn masses_at(t: f64, cx: f64, cy: f64, cz: f64, scale: f64) -> Vec<f32> {
+    let masses = omegaflow_core::masses_at(t, cx, cy, cz, scale);
+    masses.iter().flat_map(|m| {
+        [m.pos.x as f32, m.pos.y as f32, m.pos.z as f32, m.gm as f32]
+    }).collect()
+}
+
+#[wasm_bindgen]
+pub fn wmm_at(t: f64) -> Vec<f32> {
+    let Some(alm) = omegaflow_core::almanac() else { return Vec::new() };
+    let Some(data) = omegaflow_core::wmm_at(t, alm) else { return Vec::new() };
+    let n_max = data.n_max;
+    let wmm_coeffs = (n_max * (n_max + 3)) / 2;
+    let mut out = vec![data.earth_pos.x as f32, data.earth_pos.y as f32, data.earth_pos.z as f32, data.time_delta, n_max as f32];
+    for i in 0..wmm_coeffs as usize {
+        out.push(*data.g_mfc.get(i).unwrap_or(&0.0));
+        out.push(*data.h_mfc.get(i).unwrap_or(&0.0));
+        out.push(*data.g_svc.get(i).unwrap_or(&0.0));
+        out.push(*data.h_svc.get(i).unwrap_or(&0.0));
+    }
+    out
+}
+
+#[wasm_bindgen]
+pub fn jd_now() -> f64 {
+    js_sys::Date::now() / 86400000.0 + 2440587.5
+}

@@ -3,6 +3,7 @@ use anise::prelude::*;
 use glam::DVec3;
 use hifitime::Epoch;
 use std::sync::OnceLock;
+use bytes::BytesMut;
 
 static ALMANAC: OnceLock<Almanac> = OnceLock::new();
 static MASS_IDS: OnceLock<Vec<i32>> = OnceLock::new();
@@ -15,6 +16,21 @@ pub fn init() {
         let ids: Vec<i32> = (0..1000).filter(|&id| { let frame = Frame::from_ephem_j2000(id); alm.frame_info(frame).ok().and_then(|f| f.mu_km3_s2).is_some() }).collect();
         let _ = MASS_IDS.set(ids);
         let _ = ALMANAC.set(alm);
+    }
+}
+
+pub fn init_from_bytes(de440s: &[u8], pck08: &[u8]) -> bool {
+    let alm = Almanac::default()
+        .load_from_bytes(BytesMut::from(de440s))
+        .and_then(|a| a.load_from_bytes(BytesMut::from(pck08)));
+    match alm {
+        Ok(alm) => {
+            let ids: Vec<i32> = (0..1000).filter(|&id| { let frame = Frame::from_ephem_j2000(id); alm.frame_info(frame).ok().and_then(|f| f.mu_km3_s2).is_some() }).collect();
+            let _ = MASS_IDS.set(ids);
+            let _ = ALMANAC.set(alm);
+            true
+        }
+        Err(_) => false
     }
 }
 

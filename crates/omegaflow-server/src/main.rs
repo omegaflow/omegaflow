@@ -11,6 +11,12 @@ struct StreamReq {
     lat0: i32, lon0: i32 
 }
 
+#[derive(Deserialize)]
+struct TileReq {
+    lat0: i32,
+    lon0: i32,
+}
+
 async fn index() -> impl IntoResponse {
     ([(header::CONTENT_TYPE, "text/html")], include_str!("../static/index.html"))
 }
@@ -121,6 +127,44 @@ async fn service_worker() -> impl IntoResponse {
     ([(header::CONTENT_TYPE, "application/javascript")], SW)
 }
 
+async fn sync_de440s() -> impl IntoResponse {
+    match tokio::task::spawn_blocking(|| std::fs::read("data/de440s.bsp")).await {
+        Ok(Ok(data)) => ([(header::CONTENT_TYPE, "application/octet-stream")], data),
+        _ => ([(header::CONTENT_TYPE, "application/octet-stream")], Vec::new()),
+    }
+}
+
+async fn sync_pck08() -> impl IntoResponse {
+    match tokio::task::spawn_blocking(|| std::fs::read("data/pck08.pca")).await {
+        Ok(Ok(data)) => ([(header::CONTENT_TYPE, "application/octet-stream")], data),
+        _ => ([(header::CONTENT_TYPE, "application/octet-stream")], Vec::new()),
+    }
+}
+
+async fn sync_egm96() -> impl IntoResponse {
+    let data = omegaflow_core::raw_egm96();
+    ([(header::CONTENT_TYPE, "application/octet-stream")], data)
+}
+
+async fn sync_terrain(Query(params): Query<TileReq>) -> impl IntoResponse {
+    let data = tokio::task::spawn_blocking(move || omegaflow_core::raw_hgt_tile(params.lat0, params.lon0)).await.unwrap_or_default();
+    ([(header::CONTENT_TYPE, "application/octet-stream")], data)
+}
+
+async fn sync_wasm() -> impl IntoResponse {
+    match std::fs::read("omegaflow_wasm.wasm") {
+        Ok(data) => ([(header::CONTENT_TYPE, "application/wasm")], data).into_response(),
+        Err(_) => axum::http::StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
+async fn sync_wasm_js() -> impl IntoResponse {
+    match std::fs::read_to_string("omegaflow_wasm.js") {
+        Ok(data) => ([(header::CONTENT_TYPE, "application/javascript")], data).into_response(),
+        Err(_) => axum::http::StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
 #[tokio::main]
 async fn main() {
     tokio::task::spawn_blocking(|| omegaflow_core::init()).await.ok();
@@ -129,6 +173,12 @@ async fn main() {
         .route("/eval_state.wgsl", get(eval_state_wgsl))
         .route("/eval_state.glsl", get(eval_state_glsl))
         .route("/stream", get(universe_stream))
+        .route("/sync/de440s", get(sync_de440s))
+        .route("/sync/pck08", get(sync_pck08))
+        .route("/sync/egm96", get(sync_egm96))
+        .route("/sync/terrain", get(sync_terrain))
+        .route("/omegaflow_wasm.wasm", get(sync_wasm))
+        .route("/omegaflow_wasm.js", get(sync_wasm_js))
         .route("/time", get(time))
         .route("/manifest.json", get(manifest))
         .route("/sw.js", get(service_worker))
