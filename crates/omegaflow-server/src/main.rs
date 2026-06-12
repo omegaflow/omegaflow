@@ -27,77 +27,22 @@ async fn webgl_js() -> impl IntoResponse {
     ([(header::CONTENT_TYPE, "application/javascript")], include_str!("../static/webgl.js"))
 }
 
-use regex::Regex;
-fn glsl_to_wgsl(glsl: &str) -> String {
-    let mut s = glsl.to_string();
-    s = s.replace("float ", "f32 ");
-    s = s.replace("float(", "f32(");
-    s = s.replace("vec2 ", "vec2f ");
-    s = s.replace("vec2(", "vec2f(");
-    s = s.replace("vec3 ", "vec3f ");
-    s = s.replace("vec3(", "vec3f(");
-    s = s.replace("vec4 ", "vec4f ");
-    s = s.replace("vec4(", "vec4f(");
-    s = s.replace("int ", "i32 ");
-    s = s.replace("int(", "i32(");
-    s = s.replace("uint(", "u32(");
-    s = s.replace("const ", "let ");
-    // GLSL function: type name(params) { → fn name(params) -> type {
-    // matches primitive types and custom struct types (not 'struct' keyword)
-    let fn_re = Regex::new(r"(?m)^(?!struct\b)(\w+)\s+(\w+)\s*\(([^)]*)\)\s*\{").unwrap();
-    s = fn_re.replace_all(&s, |caps: &regex::Captures| {
-        let ret = caps.get(1).unwrap().as_str();
-        let name = caps.get(2).unwrap().as_str();
-        let params = caps.get(3).unwrap().as_str();
-        let wgsl_params = convert_params(params);
-        if ret == "void" {
-            format!("fn {}({}) {{", name, wgsl_params)
-        } else {
-            format!("fn {}({}) -> {} {{", name, wgsl_params, ret)
-        }
-    }).to_string();
-    // struct field: type name; → name: type,
-    let struct_field_re = Regex::new(r"(?m)^\s+(vec2f|vec3f|vec4f|f32|i32|u32|bool)\s+(\w+)\s*;").unwrap();
-    s = struct_field_re.replace_all(&s, |caps: &regex::Captures| {
-        let ty = caps.get(1).unwrap().as_str();
-        let name = caps.get(2).unwrap().as_str();
-        format!("    {}: {},", name, ty)
-    }).to_string();
-    // GLSL var decl: type name = → let name: type =
-    let var_re = Regex::new(r"(?m)^\s+(vec2f|vec3f|vec4f|f32|i32|u32|bool)\s+(\w+)\s*=").unwrap();
-    s = var_re.replace_all(&s, |caps: &regex::Captures| {
-        let ty = caps.get(1).unwrap().as_str();
-        let name = caps.get(2).unwrap().as_str();
-        format!("let {}:{}=", name, ty)
-    }).to_string();
-    s
-}
+use std::sync::LazyLock;
 
-fn convert_params(params: &str) -> String {
-    if params.trim().is_empty() { return String::new(); }
-    params.split(',').map(|p| {
-        let p = p.trim();
-        let mut parts: Vec<&str> = p.splitn(2, ' ').collect();
-        if parts.len() == 2 {
-            let ty = parts[0].trim();
-            let name = parts[1].trim();
-            format!("{}: {}", name, ty)
-        } else {
-            p.to_string()
-        }
-    }).collect::<Vec<_>>().join(", ")
-}
+static EVAL_WGSL: &str = include_str!("../static/eval.wgsl");
+static DICT_WGSL: &str = include_str!("../static/dict_wgsl.wgsl");
+static DICT_GLSL: &str = include_str!("../static/dict_glsl.glsl");
 
-async fn eval_state_wgsl() -> impl IntoResponse {
+static EVAL_STATE: &str = include_str!("../static/eval_state.glsl");
+static EVAL_PERCEPTION: &str = include_str!("../static/eval_perception.glsl");
+static MANIFEST: &str = include_str!("../static/manifest.json");
+static SW: &str = include_str!("../static/sw.js");
 
+static FULL_WGSL: LazyLock<String> = LazyLock::new(|| {
+    DICT_WGSL.replace("EVAL", EVAL_WGSL)
+});
 
-    let state = glsl_to_wgsl(EVAL_STATE);
-    let perception = glsl_to_wgsl(EVAL_PERCEPTION);
-    let shader = DICT_WGSL.replace("STATE", &state).replace("PERCEPTION", &perception);
-    ([(header::CONTENT_TYPE, "text/wgsl")], shader)
-}
-
-async fn eval_state_glsl() -> impl IntoResponse {
+static FULL_GLSL: LazyLock<String> = LazyLock::new(|| {
     let vertex = r#"#version 300 es
 precision highp float;
 layout(location=0) out vec2 vUv;
@@ -107,9 +52,16 @@ void main() {
     vUv = vec2(p.x * 0.5 + 0.5, 0.5 - p.y * 0.5);
     gl_Position = vec4(p, 0.0, 1.0);
 }"#;
-    let dict = DICT_GLSL.replace("STATE", EVAL_STATE).replace("PERCEPTION", EVAL_PERCEPTION);
-    let fragment = format!("{}\n{}", vertex, dict);
-    ([(header::CONTENT_TYPE, "text/glsl")], fragment)
+    let fragment = DICT_GLSL.replace("STATE", EVAL_STATE).replace("PERCEPTION", EVAL_PERCEPTION);
+    format!("{}\n{}", vertex, fragment)
+});
+
+async fn eval_state_wgsl() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "text/wgsl")], FULL_WGSL.clone())
+}
+
+async fn eval_state_glsl() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "text/glsl")], FULL_GLSL.clone())
 }
 
 async fn universe_stream(Query(params): Query<StreamReq>) -> impl IntoResponse {
@@ -195,10 +147,3 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{port}")).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
-
-static EVAL_STATE: &str = include_str!("../static/eval_state.glsl");
-static EVAL_PERCEPTION: &str = include_str!("../static/eval_perception.glsl");
-static DICT_GLSL: &str = include_str!("../static/dict_glsl.glsl");
-static DICT_WGSL: &str = include_str!("../static/dict_wgsl.wgsl");
-static MANIFEST: &str = include_str!("../static/manifest.json");
-static SW: &str = include_str!("../static/sw.js");
