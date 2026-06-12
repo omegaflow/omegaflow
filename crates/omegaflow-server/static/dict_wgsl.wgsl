@@ -23,7 +23,7 @@ struct VP {
 fn MASS(i: i32) -> vec4f { return masses[i]; }
 fn WMM(i: i32) -> f32 { return wmm[i]; }
 fn TERRAIN(x: i32, y: i32) -> f32 { return f32(textureLoad(terrain_raw, vec2u(u32(x), u32(y)), 0).x); }
-fn EGM96(u: f32, v: f32) -> f32 { return textureSample(egm96_tex, camera_sampler, vec2f(u, v)).r; }
+fn EGM96(u: f32, v: f32) -> f32 { return f32(textureLoad(egm96_tex, vec2u(u32(clamp(u * 1440.0, 0.0, 1439.0)), u32(clamp(v * 721.0, 0.0, 720.0))), 0).r); }
 fn CAMERA(uv: vec2f) -> vec3f { return textureSample(camera_tex, camera_sampler, uv).rgb; }
 
 struct V { @builtin(position) p: vec4f, @location(0) u: vec2f }
