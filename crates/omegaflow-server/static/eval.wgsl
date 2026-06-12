@@ -181,7 +181,6 @@ fn eval_perception(uv: vec2f, res: vec2f, scale: f32, center: vec3f,
     let surface_dist = st.dist_earth - 6378137.0 - st.terrain_h;
     let atmo = clamp(1.0 - surface_dist / 100000.0, 0.0, 1.0);
 
-    // camera is a photon sensor, not a display
     let cam_rot = i32(geo.w);
     var cam_uv = vec2f(uv.x, 1.0 - uv.y);
     if (cam_rot == 1) { cam_uv = vec2f(1.0 - uv.y, uv.x); }
@@ -189,12 +188,10 @@ fn eval_perception(uv: vec2f, res: vec2f, scale: f32, center: vec3f,
     else if (cam_rot == 3) { cam_uv = vec2f(uv.y, 1.0 - uv.x); }
     let photon = CAMERA(cam_uv);
 
-    // photon becomes measurement: intensity, frequency, direction
     let photon_intensity = dot(photon, vec3f(0.2126, 0.7152, 0.0722));
     let photon_r = photon.r / max(photon_intensity, 1e-6);
     let photon_b = photon.b / max(photon_intensity, 1e-6);
 
-    // perception: what arrives at the observer through the field
     let g_perception = g_energy * capacity * certainty;
     let redshift = 1.0 - st.time_dilation;
     let gravity = vec3f(
@@ -207,7 +204,6 @@ fn eval_perception(uv: vec2f, res: vec2f, scale: f32, center: vec3f,
 
     let atmosphere = vec3f(0.1, 0.3, 0.8) * atmo * capacity * certainty;
 
-    // the observer sees the field + what the photon sensor measured
     let field_weight = length(gravity) + length(atmosphere);
     let photon_weight = max(0.0, 1.0 - field_weight) * certainty;
 
