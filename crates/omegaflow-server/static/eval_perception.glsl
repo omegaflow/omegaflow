@@ -31,13 +31,18 @@ vec3 eval_perception(vec2 uv, vec2 res, float scale, vec3 center,
     float surface_dist = st.dist_earth - 6378137.0 - st.terrain_h;
     float atmo = clamp(1.0 - surface_dist / 100000.0, 0.0, 1.0);
 
+    // camera is a photon sensor, not a display
     int cam_rot = int(geo.w);
     vec2 cam_uv = vec2(uv.x, 1.0 - uv.y);
     if (cam_rot == 1) cam_uv = vec2(1.0 - uv.y, uv.x);
     else if (cam_rot == 2) cam_uv = vec2(1.0 - uv.x, uv.y);
     else if (cam_rot == 3) cam_uv = vec2(uv.y, 1.0 - uv.x);
-    vec3 cam = CAMERA(cam_uv);
+    vec3 photon = CAMERA(cam_uv);
 
+    // photon becomes measurement
+    float photon_intensity = dot(photon, vec3(0.2126, 0.7152, 0.0722));
+
+    // perception: what arrives at the observer through the field
     float g_perception = g_energy * capacity * certainty;
     float redshift = 1.0 - st.time_dilation;
     vec3 gravity = vec3(
@@ -50,7 +55,9 @@ vec3 eval_perception(vec2 uv, vec2 res, float scale, vec3 center,
 
     vec3 atmosphere = vec3(0.1, 0.3, 0.8) * atmo * capacity * certainty;
 
-    float cam_weight = max(0.0, 1.0 - length(gravity) - length(atmosphere));
+    // the observer sees the field + what the photon sensor measured
+    float field_weight = length(gravity) + length(atmosphere);
+    float photon_weight = max(0.0, 1.0 - field_weight) * certainty;
 
-    return cam * cam_weight * certainty + gravity + atmosphere + magnetic;
+    return photon * photon_weight + gravity + atmosphere + magnetic;
 }
