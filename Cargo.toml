@@ -2,6 +2,7 @@
 members = [
     "crates/omegaflow-core",
     "crates/omegaflow-server",
+    "crates/omegaflow-wasm",
 ]
 resolver = "2"
 
