@@ -9,7 +9,8 @@ export const S={
     massCount:0,
     deviceAccX:0,deviceAccY:0,deviceAccZ:0,
     deviceMagX:0,deviceMagY:0,deviceMagZ:0,
-    ambientLux:0,micVolume:0,cameraLux:0,
+    ambientLux:0,micVolume:0,
+    audioFreq:new Float32Array(8),
     obsLat:0,obsLon:0,obsAlt:0,
     drag:false,rdrag:false,lx:0,ly:0,
     touches:{},initialPinchDist:0,initialScale:0,
@@ -25,7 +26,9 @@ export const S={
     battery:1,batteryCharging:false,
     networkType:'',networkDownlink:0,
     heartRate:0,spO2:0,
-    pressure:0
+    pressure:0,
+    touchPressure:0,touchSize:0,touchCount:0,
+    orientationAlpha:0,orientationBeta:0,orientationGamma:0
 };
 
 export function clamp(v,mn,mx){return Math.max(mn,Math.min(mx,v))}
@@ -57,11 +60,14 @@ export function buildVp(){
         S.deviceAccX,S.deviceAccY,S.deviceAccZ,0,
         S.deviceMagX,S.deviceMagY,S.deviceMagZ,0,
         S.yaw,S.pitch,0,0,
-        S.micVolume,S.cameraLux,temporal_certainty,spatial_certainty,
+        S.micVolume,S.touchPressure,temporal_certainty,spatial_certainty,
         S.obsLat,S.obsLon,S.obsAlt,S.camRot,
         S.gyroX,S.gyroY,S.gyroZ,0,
         S.battery,S.heartRate,S.spO2,S.pressure,
-        S.networkDownlink,0,0,0
+        S.networkDownlink,S.touchSize,S.touchCount,S.orientationAlpha,
+        S.orientationBeta,S.orientationGamma,0,0,
+        S.audioFreq[0],S.audioFreq[1],S.audioFreq[2],S.audioFreq[3],
+        S.audioFreq[4],S.audioFreq[5],S.audioFreq[6],S.audioFreq[7]
     ]);
 }
 
@@ -106,7 +112,7 @@ export async function fetchTime(){
 
 export async function awaken(){
     if(S.awake)return;S.awake=true;
-    try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});const actx=new AudioContext();const src=actx.createMediaStreamSource(stream);const an=actx.createAnalyser();src.connect(an);const d=new Uint8Array(an.frequencyBinCount);setInterval(()=>{an.getByteTimeDomainData(d);let s=0;for(let i=0;i<d.length;i++){let v=(d[i]-128)/128;s+=v*v;}S.micVolume=Math.sqrt(s/d.length);},50);}catch(e){}
+    try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});const actx=new AudioContext();const src=actx.createMediaStreamSource(stream);const an=actx.createAnalyser();an.fftSize=256;src.connect(an);const td=new Uint8Array(an.fftSize);const fd=new Uint8Array(an.frequencyBinCount);const bins=8;const binSize=Math.floor(an.frequencyBinCount/bins);setInterval(()=>{an.getByteTimeDomainData(td);let s=0;for(let i=0;i<td.length;i++){let v=(td[i]-128)/128;s+=v*v;}S.micVolume=Math.sqrt(s/td.length);an.getByteFrequencyData(fd);for(let b=0;b<bins;b++){let sum=0;for(let j=0;j<binSize;j++)sum+=fd[b*binSize+j];S.audioFreq[b]=sum/binSize/255.0;}},50);}catch(e){}
     try{const stream=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:'environment'}});S.videoElement=document.createElement('video');S.videoElement.srcObject=stream;S.videoElement.play();}catch(e){}
     if('geolocation' in navigator)navigator.geolocation.watchPosition(p=>{S.obsLat=p.coords.latitude;S.obsLon=p.coords.longitude;S.obsAlt=p.coords.altitude||0;},e=>{},{enableHighAccuracy:true,maximumAge:0});
     if('Gyroscope' in window){try{const g=new Gyroscope({frequency:60});g.addEventListener('reading',()=>{S.gyroX=g.x||0;S.gyroY=g.y||0;S.gyroZ=g.z||0;});g.start();}catch(e){}}
@@ -116,6 +122,10 @@ export async function awaken(){
     if('Magnetometer' in window){try{const mag=new Magnetometer({frequency:60});mag.addEventListener('reading',()=>{S.deviceMagX=mag.x||0;S.deviceMagY=mag.y||0;S.deviceMagZ=mag.z||0;});mag.start();}catch(e){}}
     if(navigator.bluetooth){try{const dev=await navigator.bluetooth.requestDevice({filters:[{services:['heart_rate']}],optionalServices:['blood_pressure','pulse_oximeter']});const srv=await dev.gatt.connect();try{const hr=await srv.getPrimaryService('heart_rate');const ch=await hr.getCharacteristic('heart_rate_measurement');ch.addEventListener('characteristicvaluechanged',e=>{S.heartRate=e.target.value.getUint8(1);});await ch.startNotifications();}catch(e){}try{const po=await srv.getPrimaryService('pulse_oximeter');const ch=await po.getCharacteristic('spot_check');ch.addEventListener('characteristicvaluechanged',e=>{S.spO2=e.target.value.getUint8(0);});await ch.startNotifications();}catch(e){}}catch(e){}}
     if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});
+    window.addEventListener('pointerdown',e=>{S.touchPressure=e.pressure;S.touchSize=Math.max(e.width,e.height);S.touchCount++;});
+    window.addEventListener('pointerup',()=>{S.touchPressure=0;S.touchSize=0;});
+    window.addEventListener('pointercancel',()=>{S.touchPressure=0;S.touchSize=0;});
+    if('DeviceOrientationEvent' in window){try{const perm=await DeviceOrientationEvent.requestPermission();if(perm==='granted')window.addEventListener('deviceorientation',e=>{S.orientationAlpha=e.alpha||0;S.orientationBeta=e.beta||0;S.orientationGamma=e.gamma||0;});}catch(e){window.addEventListener('deviceorientation',e=>{S.orientationAlpha=e.alpha||0;S.orientationBeta=e.beta||0;S.orientationGamma=e.gamma||0;});}}
     await fetchTime();S.prev_cx=S.cx;S.prev_cy=S.cy;S.prev_cz=S.cz;
 }
 
