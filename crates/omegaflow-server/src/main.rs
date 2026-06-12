@@ -55,7 +55,13 @@ fn glsl_to_wgsl(glsl: &str) -> String {
             format!("fn {}({}) -> {} {{", name, wgsl_params, ret)
         }
     }).to_string();
-    // GLSL struct: struct name { → struct name {
+    // struct field: type name; → name: type,
+    let struct_field_re = Regex::new(r"(?m)^\s+(vec2f|vec3f|vec4f|f32|i32|u32|bool)\s+(\w+)\s*;").unwrap();
+    s = struct_field_re.replace_all(&s, |caps: &regex::Captures| {
+        let ty = caps.get(1).unwrap().as_str();
+        let name = caps.get(2).unwrap().as_str();
+        format!("    {}: {},", name, ty)
+    }).to_string();
     // GLSL var decl: type name = → let name: type =
     let var_re = Regex::new(r"(?m)^\s+(vec2f|vec3f|vec4f|f32|i32|u32|bool)\s+(\w+)\s*=").unwrap();
     s = var_re.replace_all(&s, |caps: &regex::Captures| {
@@ -63,8 +69,6 @@ fn glsl_to_wgsl(glsl: &str) -> String {
         let name = caps.get(2).unwrap().as_str();
         format!("let {}:{}=", name, ty)
     }).to_string();
-    // struct field: type name; → name: type,
-    // (handled by keeping GLSL struct syntax which is close enough)
     s
 }
 
