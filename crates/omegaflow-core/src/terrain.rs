@@ -41,7 +41,6 @@ pub fn raw_hgt_tile(lat0: i32, lon0: i32) -> Vec<u8> {
             if f.read_to_end(&mut buf).ok() == Some(2884802) { data = Some(buf); }
         }
         
-        #[cfg(feature = "reqwest")]
         if data.is_none() {
             let server_url = std::env::var("OMEGAFLOW_DEM_URL").unwrap_or_else(|_| "http://localhost:3001".to_string());
             let url = format!("{}/{}", server_url, filename);

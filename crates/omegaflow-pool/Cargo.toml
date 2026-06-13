@@ -1,0 +1,13 @@
+[package]
+name = "omegaflow-pool"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+omegaflow-core = { path = "../omegaflow-core" }
+
+[[bin]]
+name = "omegaflow-pool"
+path = "src/main.rs"

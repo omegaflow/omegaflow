@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "crates/omegaflow-core",
+    "crates/omegaflow-pool",
     "crates/omegaflow-server",
     "crates/omegaflow-wasm",
 ]
