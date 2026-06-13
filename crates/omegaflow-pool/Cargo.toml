@@ -6,7 +6,11 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
-omegaflow-core = { path = "../omegaflow-core" }
+anise = { git = "https://github.com/nyx-space/anise", branch = "master" }
+bytes = "1"
+glam = "0.33"
+hifitime = "4.3"
+world_magnetic_model = { git = "https://github.com/johannestyroller/world_magnetic_model", branch = "expose-wmm-models" }
 
 [[bin]]
 name = "omegaflow-pool"

@@ -32,10 +32,8 @@ fn compile_spk(data: &[u8], out: &mut Vec<u8>) {
     let ni = r32i(data, 12) as usize;
     let sb = nd * 8 + ni * 4;
     let sb = sb + (8 - sb % 8) % 8;
-
     let fsum = r32i(data, 76) as usize;
     let base = (fsum - 1) * 1024 + 104;
-
     let mut sums = Vec::new();
     let mut off = base;
     for _ in 0..200 {
@@ -53,7 +51,6 @@ fn compile_spk(data: &[u8], out: &mut Vec<u8>) {
         }
         off += sb;
     }
-
     struct Seg { target: i32, center: i32, start: f64, end: f64, recs: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> }
     let mut segs = Vec::new();
     for &(target, center, start, end, si, ei) in &sums {
@@ -78,14 +75,13 @@ fn compile_spk(data: &[u8], out: &mut Vec<u8>) {
         }
         segs.push(Seg { target, center, start, end, recs });
     }
-
     w32(out, segs.len() as u32);
     for seg in &segs {
         w32(out, seg.target as u32);
         w32(out, seg.center as u32);
         wf64(out, seg.start);
         wf64(out, seg.end);
-        wf64(out, 0.0); // domain_radius: filled by client, 0 = infinite for now
+        wf64(out, 0.0);
         w32(out, seg.recs.len() as u32);
         for (mid, rad, cx, cy, cz) in &seg.recs {
             wf64(out, *mid);
@@ -101,21 +97,45 @@ fn compile_spk(data: &[u8], out: &mut Vec<u8>) {
 }
 
 fn compile_wmm(out: &mut Vec<u8>) {
-    omegaflow_core::init();
-    let alm = omegaflow_core::almanac().expect("almanac");
-    let wmm = omegaflow_core::wmm_at(0.0, alm).expect("wmm");
+    use world_magnetic_model::wmm_models::select_models;
+    use world_magnetic_model::time::Date;
+    use hifitime::Epoch;
+    use anise::prelude::*;
+    use anise::constants::frames::SSB_J2000;
+
+    let alm = anise::almanac::Almanac::default()
+        .load("data/de440s.bsp")
+        .and_then(|a| a.load("data/pck08.pca"))
+        .expect("load almanac");
+
+    let t = 0.0_f64;
+    let epoch = Epoch::from_tdb_seconds(t);
+    let year = epoch.year();
+    let doy = epoch.day_of_year() as u16;
+    let date = Date::from_ordinal_date(year, doy).expect("date");
+    let (model, _) = select_models(date).expect("select models");
+
+    let earth_frame = Frame::from_ephem_j2000(3);
+    let state = alm.translate(earth_frame, SSB_J2000, epoch, None).expect("earth pos");
+
+    let n_max = (((8 * model.g_mfc.len() as i32 + 9) as f64).sqrt() as i32 - 3) / 2;
+    let time_delta = ((year - 2020) as f32) + (doy as f32 / 365.0);
+
     out.push(b'w');
-    w32(out, wmm.n_max as u32);
-    wf32(out, wmm.time_delta);
-    wf32(out, wmm.earth_pos.x as f32); wf32(out, wmm.earth_pos.y as f32); wf32(out, wmm.earth_pos.z as f32);
-    let n = (wmm.n_max * (wmm.n_max + 3)) / 2;
+    w32(out, n_max as u32);
+    wf32(out, time_delta);
+    wf32(out, state.radius_km.x as f32 * 1e3);
+    wf32(out, state.radius_km.y as f32 * 1e3);
+    wf32(out, state.radius_km.z as f32 * 1e3);
+
+    let n = (n_max * (n_max + 3)) / 2;
     for i in 0..n as usize {
-        wf32(out, wmm.g_mfc.get(i).copied().unwrap_or(0.0));
-        wf32(out, wmm.h_mfc.get(i).copied().unwrap_or(0.0));
-        wf32(out, wmm.g_svc.get(i).copied().unwrap_or(0.0));
-        wf32(out, wmm.h_svc.get(i).copied().unwrap_or(0.0));
+        wf32(out, model.g_mfc.get(i).copied().unwrap_or(0.0) as f32);
+        wf32(out, model.h_mfc.get(i).copied().unwrap_or(0.0) as f32);
+        wf32(out, model.g_svc.get(i).copied().unwrap_or(0.0) as f32);
+        wf32(out, model.h_svc.get(i).copied().unwrap_or(0.0) as f32);
     }
-    eprintln!("wmm: n_max={}", wmm.n_max);
+    eprintln!("wmm: n_max={}, {} coeffs", n_max, n);
 }
 
 fn compile_egm96(data: &[u8], out: &mut Vec<u8>) {

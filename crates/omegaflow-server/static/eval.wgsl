@@ -13,6 +13,60 @@ struct state {
     time_dilation: f32,
 }
 
+fn df64_add(a: vec2f, b: vec2f) -> vec2f {
+    let s = a.x + b.x;
+    let v = s - a.x;
+    let e = (a.x - (s - v)) + (b.x - v) + a.y + b.y;
+    return vec2f(s + e, e - (s + e - s));
+}
+
+fn df64_sub(a: vec2f, b: vec2f) -> vec2f {
+    let s = a.x - b.x;
+    let v = s - a.x;
+    let e = (a.x - (s - v)) - (b.x + v) + a.y - b.y;
+    return vec2f(s + e, e - (s + e - s));
+}
+
+fn df64_mul(a: vec2f, b: vec2f) -> vec2f {
+    let p = a.x * b.x;
+    let e = ((a.x * b.x - p) + a.y * b.x + a.x * b.y) + a.y * b.y;
+    return vec2f(p + e, e - (p + e - p));
+}
+
+fn df64_scale(a: vec2f, s: f32) -> vec2f {
+    let p = a.x * s;
+    let e = (a.x * s - p) + a.y * s;
+    return vec2f(p + e, e - (p + e - p));
+}
+
+fn eval_gravity_potential(pos: vec3f, capacity: f32) -> f32 {
+    let mass_limit = i32(capacity * 256.0);
+    let mass_fade = 1.0 - fract(capacity * 256.0);
+    if (capacity < 0.5) {
+        var phi: f32 = 0.0;
+        for (var i: i32 = 0; i < mass_limit; i = i + 1) {
+            let m = MASS(i);
+            let r = m.xyz - pos;
+            let rl = max(length(r), 1.0);
+            let fd = select(mass_fade, 1.0, i < mass_limit - 1);
+            phi -= m.w / rl * fd;
+        }
+        return phi;
+    }
+    var phi: vec2f = vec2f(0.0, 0.0);
+    for (var i: i32 = 0; i < mass_limit; i = i + 1) {
+        let m = MASS(i);
+        let r = m.xyz - pos;
+        let rl = max(length(r), 1.0);
+        let gm = vec2f(m.w, 0.0);
+        let inv_r = vec2f(1.0 / rl, 0.0);
+        let phi_i = df64_mul(gm, inv_r);
+        let fd = select(mass_fade, 1.0, i < mass_limit - 1);
+        phi = df64_sub(phi, df64_scale(phi_i, fd));
+    }
+    return phi.x + phi.y;
+}
+
 fn eval_state(pos: vec3f, capacity: f32) -> state {
     var st: state;
     st.pos = pos;
@@ -27,22 +81,19 @@ fn eval_state(pos: vec3f, capacity: f32) -> state {
     let mass_limit = i32(capacity * 256.0);
     let mass_fade = 1.0 - fract(capacity * 256.0);
     st.acc_gravity = vec3f(0.0);
-    st.potential = 0.0;
     for (var i:i32 = 0; i < mass_limit; i = i + 1) {
         let m = MASS(i);
         let r = m.xyz - pos;
         let rl = length(r);
         let r3 = max(dot(r, r) * rl, 1.0);
         let effect = m.w * r / r3;
-        let phi = m.w / max(rl, 1.0);
         if (i == mass_limit - 1 && mass_limit > 0) {
             st.acc_gravity = st.acc_gravity + effect * mass_fade;
-            st.potential = st.potential - phi * mass_fade;
         } else {
             st.acc_gravity = st.acc_gravity + effect;
-            st.potential = st.potential - phi;
         }
     }
+    st.potential = eval_gravity_potential(pos, capacity);
     let c = 299792458.0;
     st.time_dilation = sqrt(max(1.0 + 2.0 * st.potential / (c * c), 0.0));
 
