@@ -1,21 +1,10 @@
 const C = 299792458.0;
-const EPOCH_J2000 = 2451545.0;
-const J2000_YEAR = 2000.0;
-const TROPICAL_YEAR = 365.24219;
 
 export const live = {};
 export const pulse = { ws: null, pending: new Map(), seq: 0 };
 
-let localPck = null;
-let localRecords = null;
-let localWmm = null;
-
-function drain(p, t, x, y, z, result) {
-    if ('mid' in p && 'rad' in p) {
-        if (Math.abs(t - p.mid) > p.rad) return;
-    }
+function drain(p, result) {
     for (const key in p) {
-        if (key === 'mid' || key === 'rad' || key === 'nc' || key === 'coeffs') continue;
         const val = p[key];
         if (typeof val === 'number') {
             if (result[key] === undefined) result[key] = 0;
@@ -30,64 +19,40 @@ function drain(p, t, x, y, z, result) {
 }
 
 let _last_t = NaN, _last_x = NaN, _last_y = NaN, _last_z = NaN, _last_result = null;
+let _fetch_pending = null;
+let _fetch_time = 0;
+let _last_is_data = null;
+const _FETCH_MAX_AGE_MS = 30000;
 
 export async function get(t, x, y, z) {
-    if (t === _last_t && x === _last_x && y === _last_y && z === _last_z) {
+    if (t === _last_t && x === _last_x && y === _last_y && z === _last_z && _last_result) {
         return _last_result;
     }
 
-    let needFetch = false;
-    if (!localRecords) {
-        needFetch = true;
-    } else {
-        let covered = false;
-        for (const r of localRecords) {
-            if ('mid' in r && 'rad' in r) {
-                if (Math.abs(t - r.mid) <= r.rad) { covered = true; break; }
-            }
+    const now = performance.now();
+    let needFetch = !_last_is_data
+        || (now - _fetch_time) > _FETCH_MAX_AGE_MS
+        || Math.abs(t - _last_t) > 0.01
+        || Math.abs(x - _last_x) > 1e3
+        || Math.abs(y - _last_y) > 1e3
+        || Math.abs(z - _last_z) > 1e3;
+
+    if (needFetch) {
+        if (_fetch_pending) {
+            await _fetch_pending;
+        } else {
+            _fetch_pending = _doFetch(t, x, y, z);
+            await _fetch_pending;
+            _fetch_pending = null;
+            _fetch_time = now;
         }
-        if (!covered) needFetch = true;
-    }
-
-    let egm96Value = null;
-
-    if (needFetch || !localWmm || !localPck) {
-        const buf = new ArrayBuffer(33);
-        const dv = new DataView(buf);
-        dv.setFloat64(0, t, true);
-        dv.setFloat64(8, x, true);
-        dv.setFloat64(16, y, true);
-        dv.setFloat64(24, z, true);
-        let flags = 0;
-        if (localWmm) flags |= 1;
-        if (localPck) flags |= 2;
-        dv.setUint8(32, flags);
-        const id = ++pulse.seq;
-        const promise = new Promise((resolve, reject) => {
-            pulse.pending.set(id, { resolve, reject });
-        });
-        const frame = new Uint8Array(37);
-        new DataView(frame.buffer).setUint32(33, id, true);
-        frame.set(new Uint8Array(buf), 0);
-        pulse.ws.send(frame);
-        const buffer = await promise;
-        const parsed = parsePayload(new Uint8Array(buffer));
-
-        if (parsed.records && parsed.records.length > 0) localRecords = parsed.records;
-        if (parsed.wmm) localWmm = parsed.wmm;
-        if (parsed.pck) localPck = parsed.pck;
-        if (parsed.egm96) egm96Value = parsed.egm96;
     }
 
     const result = {};
-
-    const items = [];
-    if (localRecords) items.push(...localRecords);
-    if (localWmm) items.push(localWmm);
-    if (egm96Value) items.push(egm96Value);
-
-    for (const p of items) {
-        drain(p, t, x, y, z, result);
+    if (_last_is_data) {
+        for (const p of _last_is_data) {
+            drain(p, result);
+        }
     }
 
     let g = result.grav_time_dilation !== undefined ? result.grav_time_dilation : 1.0;
@@ -117,26 +82,40 @@ export async function get(t, x, y, z) {
     return result;
 }
 
-function matVec(m, v) {
-    return [
-        m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2],
-        m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
-        m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2]
-    ];
+async function _doFetch(t, x, y, z) {
+    const buf = new ArrayBuffer(33);
+    const dv = new DataView(buf);
+    dv.setFloat64(0, t, true);
+    dv.setFloat64(8, x, true);
+    dv.setFloat64(16, y, true);
+    dv.setFloat64(24, z, true);
+    dv.setUint8(32, 0);
+    const id = ++pulse.seq;
+    const promise = new Promise((resolve, reject) => {
+        pulse.pending.set(id, { resolve, reject });
+    });
+    const frame = new Uint8Array(37);
+    new DataView(frame.buffer).setUint32(33, id, true);
+    frame.set(new Uint8Array(buf), 0);
+    if (pulse.ws && pulse.ws.readyState === WebSocket.OPEN) {
+        pulse.ws.send(frame);
+        const buffer = await promise;
+        _last_is_data = parsePayload(new Uint8Array(buffer));
+    }
 }
 
 function parsePayload(bytes) {
-    const dv = new DataView(bytes.buffer);
+    const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     const td = new TextDecoder();
     let o = 0;
 
-    if (bytes.length < 4 || bytes[0] !== 73 || bytes[1] !== 83 || bytes[2] !== 2) {
-        return {};
+    if (bytes.length < 7 || bytes[0] !== 73 || bytes[1] !== 83 || bytes[2] !== 2) {
+        return [];
     }
     o = 3;
     const objCount = dv.getUint32(o, true); o += 4;
 
-    const payload = { egm96: null, pck: null, records: [], wmm: null };
+    const records = [];
 
     for (let oi = 0; oi < objCount; oi++) {
         const sfCount = bytes[o++];
@@ -163,9 +142,7 @@ function parsePayload(bytes) {
         const recCount = dv.getUint32(o, true); o += 4;
 
         if (recCount === 0) {
-            if ('g' in base && 'h' in base) payload.wmm = base;
-            else if ('ra' in base && 'dec' in base) payload.pck = base;
-            else if ('value' in base && 'min' in base) payload.egm96 = base;
+            records.push(base);
         } else {
             const rfCount = bytes[o++];
             const recordFields = [];
@@ -188,10 +165,10 @@ function parsePayload(bytes) {
                         p[f.name] = arr;
                     }
                 }
-                payload.records.push(p);
+                records.push(p);
             }
         }
     }
 
-    return payload;
+    return records;
 }
