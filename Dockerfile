@@ -4,6 +4,7 @@ WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 COPY crates/ crates/
 COPY constants.is .
+COPY is/ is/
 
 RUN cargo build --release
 
