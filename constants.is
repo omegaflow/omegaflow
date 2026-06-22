@@ -1,0 +1,13 @@
+constant phi 1.618033988749895
+constant c 299792458.0
+constant G 6.67430e-11
+constant h 6.62607015e-34
+constant k_b 1.380649e-23
+constant e 1.602176634e-19
+constant Na 6.02214076e23
+constant au 1.495978707e11
+constant epoch_j2000 2451545.0
+constant j2000_year 2000.0
+constant unix_offset 946728000.0
+constant seconds_per_day 86400.0
+constant tropical_year 365.24219

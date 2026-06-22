@@ -1,14 +1,15 @@
 [workspace]
 members = [
-    "crates/omegaflow-core",
-    "crates/omegaflow-pool",
-    "crates/omegaflow-server",
-    "crates/omegaflow-wasm",
+    "crates/compiler",
+    "crates/server",
 ]
 resolver = "2"
 
 [workspace.package]
 version = "3.0.0"
-authors = ["Johannes"]
+authors = ["omegaflow"]
 edition = "2024"
 license = "CC-BY-NC-SA-4.0"
+description = "is(t, x, y, z)"
+repository = "https://github.com/omegaflow/omegaflow"
+homepage = "https://omegaflow.space"

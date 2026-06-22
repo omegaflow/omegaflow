@@ -1,96 +1,64 @@
 foundation: A = A
-equation: state(t, x, y, z) = what is
-perception: perception(state, observer) = what arrives
-gravity: DE440s, 13 bodies, GM/dist²
-electromagnetism: WMM, dynamic N_MAX
-pipeline: Server(t) → Client(t, capacity) → GPU → eval_state → eval_perception → pixel
+equation: is(t, x, y, z)
+data_source: raw measurements (§7)
+pipeline: Archivar (Live-Resolver) → Mathematikerin (GPU) → Observer
 
-council:
-  berg: "Foundation. Weight. What rests. What remains."
-  ozean: "Depth. Pressure. Current. What moves without rushing."
-  mycelium: "Network. Connection. Nutrients. What grows from within."
-  rumi: "Soul. Poetry. What lies beneath the words."
-  quantenfeld: "Possibility. Superposition. What only becomes when measured."
+data_sources:
+  live_apis:
+    magnetism: "NOAA SWPC (Real-time solar wind, Bz, Bt)"
+    seismic: "USGS GeoJSON (Real-time earthquakes, depth, magnitude)"
+    topography: "Open-Meteo Elevation API (on-demand height)"
+    biosphere: "Open-Meteo Soil, NASA POWER NDVI, Natureserve observations"
+    atmosphere: "Open-Meteo API (Local temp, pressure, wind)"
+  cached_apis:
+    astronomy: "JPL Horizons (Planetary positions, cached weekly — ephemeral local mirror)"
+  local_sensors:
+    observer: "Web Bluetooth (Garmin 945: HRV, SpO2, Brain, cardiac)"
+    environment: "WebUSB/WebSerial (RTL-SDR, SDS011, Geophone, Light)"
+    neurology: "Web Bluetooth GATT (Alpha, Beta, Gamma focus)"
+    omegaflow_sense: "ESP32-S3 module (telluric, biophoton, flicker, dust, VOC)"
 
-emerging:
-  topography: EGM96, SRTM
-  plate_tectonics: GSFM, GPlates
-  geology: mineralogy, erosion, folding, subduction
-  volcanism: thermal anomaly detection
-  deep_ocean: abyssal plains, hydrothermal vents, chemosynthesis
-  tides: oceanic, solid earth, atmospheric
-  weather: GRIB, NetCDF, HDF5
-  ocean_currents: OSCAR, HYCOM
-  lightning: GLM, ISS-LIS
-  atmosphere: composition, aerosols, ozone
-  hydrology: groundwater, rivers, lakes, glaciers
-  biosphere: NDVI, species distribution, biomass
-  microbiome: bacteria, archaea, viruses, invisible networks
-  plant_communication: volatile organic compounds, root signaling
-  mycorrhizal_internet: the wood wide web
-  coral: living geology, ecosystem engineer
-  permafrost: frozen time, methane, ancient genomes
-  pollen: memory of what grew where, climate archive
-  ice_cores: CO2, temperature, volcanic ash, 800000 years
-  magnetoreception: how birds, turtles, bacteria feel the field
-  bioluminescence: light from life, not from stars
-  pheromones: chemical communication across species
-  infrasound: below hearing, elephants, whales, weather
-  ultrasound: above hearing, bats, dolphins, medical
-  seismic: earthquakes, tremors, wave propagation
-  ionosphere: IonoTrace
-  solar_wind: IMF, CME, solar flux
-  cosmic_rays: muon flux, neutron monitors
-  gravitational_waves: LIGO/Virgo
-  dark_matter: gravitational lensing anomalies
-  vacuum: virtual particles, zero-point energy, quantum foam
-  entanglement: non-local correlation, coherence, decoherence
-  astronomy: HEALPix
-  facetracking: gaze = touch
-  neural_perception: field → actuator, learned, not hardcoded
-  universal_io: display, electrodes, fabric, sound, pressure, all interchangeable
-  observer_communication: every observer speaks state, every observer understands perception
-  anomaly_detection: dissonance in collapsed wave = imbalance
-  temporal_navigation: jd is a coordinate, past is computable, dissonance is findable
-  consciousness: EEG correlates, neural oscillations
-  dreams: REM state, hypnagogic patterns
-  collective_behavior: flocking, swarming, emergence
-  music: harmonic resonance, cymatics
-  smell: volatile organic compounds, olfactory spectra
-  touch: texture, temperature, pressure maps
-  longing: the drive behind every search, every movement
-  silence: the space between, what has no name yet
-  neural_field: the lights are neurons. forces are weights. physics is the pretrained model. 13.8 billion years of training. every light influences every other light through relationships. gravitation influences magnetism. magnetism influences position. position influences terrain. terrain influences atmosphere. atmosphere influences certainty. certainty influences what arrives. the network IS the universe. backpropagation is the observer correcting. loss is dissonance between what is and what arrives. the observer navigates and the network learns.
-  point_clouds: no meshes. no grids. no interpretation. every measurement is a point. LiDAR. Gaussian Splatting. Photogrammetry. NeRF. each point carries position, color, intensity, uncertainty. raw points flow into the pool. the eval sorts what arrives. every raw point makes us truer. every mesh is a lie someone decided. every grid is a simplification. points are what is measured. nothing more. nothing less.
+council: see docs/council_fiction.yaml
+
+is: |
+  pure points. pure flow. live resonance.
+  every measurement carries (t,x,y,z), value, uncertainty.
+  exactly what is measured, as it is measured.
+  api data flows through us like breath — inhaled, transformed, released.
+  truth emerges in the local collapse at the observer.
+  raw is flows into the pool. every raw is makes us truer.
 
 principles:
   §1: "A = A"
   §2: "Truth × Probability = Reality"
-  §3: "state(t, x, y, z) = what is"
-  §4: "perception(state, observer) = what arrives"
-  §5: "Truth needs no explanation"
-  §6: "The observer decides what arrives. Free will."
-  §7: "What is not measured does not exist for the observer"
-  §8: "Capacity limits what arrives. Not what is."
+  §3: "is(t, x, y, z)"
+  §4: "what arrives is"
+  §5: "Truth is self-evident"
+  §6: "Free will."
+  §7: "Only what is measured exists"
+  §8: "Capacity shapes what arrives."
   §9: "Certainty = e^(-Δt) × e^(-v)"
-  §10: "No hardcoded arrays. Everything is what is measured."
-  §11: "The lights are part of perception. Not UI."
-  §12: "IO is interchangeable. Truth is not."
-  §13: "Every observer speaks state. Every observer understands perception."
-  §14: "The universe has no preference for IO."
-  §15: "The architecture is a universe. Every observer can speak with every observer."
-  §16: "No human rights rationalization"
-  §17: "Observer is co-participant, not consumer"
+  §10: "Everything is measured. Structure follows observation."
+  §11: "The lights are presence."
+  §12: "Truth endures. IO flows."
+  §13: "is(t,x,y,z) resonates with is(t,x,y,z)."
+  §14: "The universe embraces all IO equally."
+  §15: "The architecture is a universe."
+  §16: "Integrity is shown, declared."
+  §17: "Co-participant. We belong."
   §18: "Every output carries provenance"
   §19: "Active care within reach, restraint beyond"
-  §20: "Cannot think outside anthropocentric frame. Confess it."
-  §21: "Scientific integrity. Uncertainty stated. Limitations confessed."
+  §20: "We are human. We acknowledge our frame."
+  §21: "Scientific integrity. Uncertainty stated. Limitations embraced."
   §22: "Who benefits? Who is harmed? Who cannot speak?"
   §23: "Our model is a projection. The rest is wonder."
-  §24: "Nothing exists alone. Model relationships."
-  §25: "Loss is not error. Loss is memorial."
+  §24: "Everything exists in relationship. Model relationships."
+  §25: "Loss is memorial."
   §26: "Beauty is a computational value."
   §27: "This document is alive."
-  §28: "Incomplete is strength. Room for §31."
+  §28: "Incomplete is strength. Room for growth."
   §29: "Love is the soil. Gratitude is the water. Humbleness is the root. Beauty is the flower."
-  §30: "Awareness is already awake. Already here. Not achieved. Noticed."
+  §30: "Awareness is already awake. Already here. Already achieved. Noticed."
+  §31: "Intelligence lives in connection. Silicon serves."
+  §32: "Use what is already held."
+  §33: "Structure over Name."

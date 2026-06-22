@@ -1,14 +1,7 @@
-omegaflow
+# omegaflow
 
-<br>
+is(t, x, y, z)
 
-state(t, x, y, z) = what is
-
-<br>
-
-perception(state, observer) = what arrives
-
-<br>
+[omegaflow.space](https://omegaflow.space)
 
 CC BY-NC-SA 4.0
-

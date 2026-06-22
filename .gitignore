@@ -1,7 +1,7 @@
-/target
-/data
-Cargo.lock
-*.rs.bk
-.env
-.continue/
-pool/*.omega
+data/
+pool/
+target/
+pkg/
+.idea/
+.vscode/
+*.iml

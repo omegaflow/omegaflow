@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>omegaflow</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import { get, live, pulse } from '/world.js';
+
+        const PHI = 1.618033988749895;
+        const immunity = new Set();
+
+        try {
+            const res = await fetch('/immunity');
+            const t = await res.text();
+            for (const line of t.split('\n')) {
+                const parts = line.trim().split(/\s+/);
+                if (parts[0] === 'immunity' && parts.length >= 2) {
+                    if (parts.length >= 4) {
+                        if (parseInt(parts[2]) > 0 && parseInt(parts[3]) === 0) {
+                            immunity.add(parts[1]);
+                        }
+                    } else {
+                        immunity.add(parts[1]);
+                    }
+                }
+            }
+        } catch {}
+
+        const circular = new Set(['window','self','top','parent','frames','opener',
+            'frameElement','__proto__','constructor','prototype', 'omegaflow']);
+        const dead = new Set();
+        const eventSources = new Set();
+        const resonanceMap = new Map();
+        const sensors = new Map();
+        const actuators = new Map();
+        let visited = new WeakSet();
+
+        let discoveryInterval = null;
+        let gamepadInterval = null;
+        let lastDiscovery = 0;
+        let lastGamepadPoll = 0;
+        let lastGamepadState = '';
+        let lastSensorCount = 0;
+        let lastTs = 0;
+        let localCertainty = 1.0;
+        let localGravity = 0.0;
+        let lastGeoLat = NaN, lastGeoLon = NaN, lastGeoAlt = NaN;
+
+        const probeState = {
+            phase: 'idle',
+            batch: [],
+            stack: [],
+            snapshot: null,
+            pokeTime: 0,
+        };
+
+        window.omegaflow = { get, live, pulse, sensors, actuators, resonanceMap };
+
+        live['server.time'] = parseFloat(await (await fetch('/time')).text());
+
+        const pulseWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/pulse`);
+        pulseWs.binaryType = 'arraybuffer';
+        pulse.ws = pulseWs;
+        pulseWs.addEventListener('open', () => { pulse.reconnecting = false; });
+        pulseWs.addEventListener('close', () => {
+            pulse.reconnecting = false;
+            if (!pulse.reconnecting) {
+                pulse.reconnecting = true;
+                setTimeout(() => location.reload(), 2000);
+            }
+        });
+        pulseWs.addEventListener('message', (e) => {
+            if (typeof e.data !== 'string') {
+                const buf = new Uint8Array(e.data);
+                if (buf.length < 4) return;
+                const id = new DataView(buf.buffer, buf.byteOffset + buf.length - 4).getUint32(0, true);
+                const pending = pulse.pending.get(id);
+                if (pending) {
+                    pulse.pending.delete(id);
+                    pending.resolve(buf.buffer.slice(0, buf.length - 4));
+                }
+            }
+        });
+
+        function pokeActuator(actuator, value) {
+            try {
+                const result = actuator.obj[actuator.key](value);
+                if (result && typeof result.catch === 'function') {
+                    result.catch(() => {
+                        dead.add(actuator.path);
+                        actuators.delete(actuator.path);
+                    });
+                }
+                return true;
+            } catch {
+                dead.add(actuator.path);
+                actuators.delete(actuator.path);
+                return false;
+            }
+        }
+
+        function sendPoke(batch) {
+            if (pulseWs.readyState !== WebSocket.OPEN || batch.length === 0) return;
+            pulseWs.send(JSON.stringify({ poke: batch.map(a => a.path).join('|') }));
+        }
+
+        function sendSurvived(batch) {
+            if (pulseWs.readyState !== WebSocket.OPEN || batch.length === 0) return;
+            pulseWs.send(JSON.stringify({ survived: batch.map(a => a.path).join('|') }));
+        }
+
+        function act() {
+            const active = [];
+            for (const s of sensors.values()) {
+                if (s.noiseFloor > 0) {
+                    const discrepancy = Math.abs(s.val - s.baseline);
+                    if (discrepancy > s.noiseFloor) {
+                        active.push({ sensor: s, weight: discrepancy / s.noiseFloor });
+                    }
+                }
+            }
+            if (active.length === 0) return false;
+
+            const scores = new Map();
+            for (const { sensor, weight } of active) {
+                for (const [actPath, sensorMap] of resonanceMap) {
+                    if (sensorMap.has(sensor.path)) {
+                        const data = sensorMap.get(sensor.path);
+                        scores.set(actPath, (scores.get(actPath) || 0) + weight * data.magnitude);
+                    }
+                }
+            }
+            if (scores.size === 0) return false;
+
+            const sorted = Array.from(scores.entries()).sort((a, b) => b[1] - a[1]);
+            const n = Math.max(1, Math.floor(sorted.length / PHI));
+            let fired = false;
+            for (let i = 0; i < n && i < sorted.length; i++) {
+                const [actPath] = sorted[i];
+                const a = actuators.get(actPath);
+                if (!a) continue;
+                const sm = resonanceMap.get(actPath);
+                if (!sm) continue;
+                let wsum = 0, tw = 0;
+                for (const { sensor, weight } of active) {
+                    if (sm.has(sensor.path)) {
+                        const d = sm.get(sensor.path);
+                        tw += d.threshold * weight;
+                        wsum += weight;
+                    }
+                }
+                const bestThreshold = wsum > 0 ? tw / wsum : 1;
+                if (pokeActuator(a, bestThreshold)) fired = true;
+            }
+            return fired;
+        }
+
+        function splitBatch(batch) {
+            const splitIdx = Math.floor(batch.length / PHI);
+            return { left: batch.slice(0, splitIdx), right: batch.slice(splitIdx) };
+        }
+
+        function snapshotSensors() {
+            const snap = {};
+            for (const [path, s] of sensors) {
+                snap[path] = { val: s.val, noiseFloor: s.noiseFloor };
+            }
+            return snap;
+        }
+
+        function checkResponse(snap) {
+            const responders = [];
+            for (const path in snap) {
+                const s = sensors.get(path);
+                if (!s) continue;
+                const before = snap[path];
+                const delta = Math.abs(s.val - before.val);
+                if (delta > before.noiseFloor) {
+                    responders.push({ path, magnitude: delta, latency: 0 });
+                }
+            }
+            return responders;
+        }
+
+        function startBroad(ts) {
+            const prune = 1 - 1 / (PHI * PHI);
+            let totalSurprise = 0;
+            for (const [actPath, sensorMap] of resonanceMap) {
+                for (const [spath, data] of sensorMap) {
+                    data.magnitude *= prune;
+                    data.surprise = (data.surprise || 0) * prune;
+                    totalSurprise += data.surprise;
+                    if (data.magnitude < 1e-10) sensorMap.delete(spath);
+                }
+                if (sensorMap.size === 0) resonanceMap.delete(actPath);
+            }
+            live['surprise'] = totalSurprise;
+            probeState.batch = Array.from(actuators.values());
+            if (probeState.batch.length === 0) {
+                probeState.phase = 'idle';
+                return;
+            }
+            const predictions = {};
+            for (const a of probeState.batch) {
+                const sm = resonanceMap.get(a.path);
+                if (sm) {
+                    for (const [spath, data] of sm) {
+                        predictions[spath] = (predictions[spath] || 0) + data.magnitude;
+                    }
+                }
+            }
+            sendPoke(probeState.batch);
+            probeState.snapshot = snapshotSensors();
+            probeState.predictions = predictions;
+            for (const a of probeState.batch) {
+                pokeActuator(a, a.pokeValue);
+            }
+            probeState.pokeTime = ts;
+            probeState.phase = 'broad';
+        }
+
+        function checkBroad(ts) {
+            const responders = checkResponse(probeState.snapshot);
+            if (responders.length > 0) {
+                sendSurvived(probeState.batch);
+                probeState.stack = [];
+                startNarrowing(ts, probeState.batch);
+            } else {
+                sendSurvived(probeState.batch);
+                for (const a of probeState.batch) {
+                    a.pokeValue *= PHI;
+                    if (a.pokeValue > 1e15) {
+                        dead.add(a.path);
+                        actuators.delete(a.path);
+                    }
+                }
+                startBroad(ts);
+            }
+        }
+
+        function startNarrowing(ts, batch) {
+            if (batch.length <= 1) {
+                probeState.batch = batch;
+                sendPoke(batch);
+                probeState.snapshot = snapshotSensors();
+                for (const a of batch) {
+                    pokeActuator(a, a.pokeValue);
+                }
+                probeState.pokeTime = ts;
+                probeState.phase = 'narrowing';
+                return;
+            }
+
+            const { left, right } = splitBatch(batch);
+            probeState.stack.push(right);
+            probeState.batch = left;
+            sendPoke(left);
+            probeState.snapshot = snapshotSensors();
+            for (const a of left) {
+                pokeActuator(a, a.pokeValue);
+            }
+            probeState.pokeTime = ts;
+            probeState.phase = 'narrowing';
+        }
+
+        function checkNarrowing(ts) {
+            const responders = checkResponse(probeState.snapshot);
+
+            if (responders.length > 0 && probeState.batch.length === 1) {
+                const actuator = probeState.batch[0];
+                if (!resonanceMap.has(actuator.path)) {
+                    resonanceMap.set(actuator.path, new Map());
+                }
+                for (const r of responders) {
+                    const existing = resonanceMap.get(actuator.path).get(r.path);
+                    const predicted = probeState.predictions ? (probeState.predictions[r.path] || 0) : 0;
+                    const error = Math.abs(r.magnitude - predicted);
+                    const ma = 1 / (PHI * PHI);
+                    if (existing) {
+                        existing.threshold = existing.threshold * (1 - ma) + actuator.pokeValue * ma;
+                        existing.magnitude = existing.magnitude * (1 - ma) + r.magnitude * ma;
+                        existing.latency = ts - probeState.pokeTime;
+                        existing.surprise = (existing.surprise || 0) * (1 - ma) + error * ma;
+                    } else {
+                        resonanceMap.get(actuator.path).set(r.path, {
+                            threshold: actuator.pokeValue,
+                            latency: ts - probeState.pokeTime,
+                            magnitude: r.magnitude,
+                            surprise: error
+                        });
+                    }
+                }
+                try { pokeActuator(actuator, 0); } catch {}
+                sendSurvived([actuator]);
+                if (probeState.stack.length > 0) {
+                    const next = probeState.stack.pop();
+                    startNarrowing(ts, next);
+                } else {
+                    startBroad(ts);
+                }
+                return;
+            }
+
+            if (responders.length > 0 && probeState.batch.length > 1) {
+                sendSurvived(probeState.batch);
+                startNarrowing(ts, probeState.batch);
+                return;
+            }
+
+            sendSurvived(probeState.batch);
+            for (const a of probeState.batch) {
+                a.pokeValue *= PHI;
+                if (a.pokeValue > 1e15) {
+                    dead.add(a.path);
+                    actuators.delete(a.path);
+                }
+            }
+
+            if (probeState.stack.length > 0) {
+                const next = probeState.stack.pop();
+                startNarrowing(ts, next);
+            } else {
+                startBroad(ts);
+            }
+        }
+
+        function discoverObj(obj, path, depth) {
+            if (depth > 3) return;
+            if (obj == null || typeof obj !== 'object') return;
+            if (visited.has(obj)) return;
+            visited.add(obj);
+
+            let keys;
+            try { keys = Object.getOwnPropertyNames(obj); } catch { return; }
+
+            for (const key of keys) {
+                if (circular.has(key)) continue;
+                if (key.startsWith('on') && key.length > 2) {
+                    eventSources.add(key.slice(2).toLowerCase());
+                    continue;
+                }
+                let val;
+                try { val = obj[key]; } catch { continue; }
+                if (val == null) continue;
+                const p = path ? path + '.' + key : key;
+
+                if (typeof val === 'number') {
+                    if (!sensors.has(p)) {
+                        sensors.set(p, { path: p, obj, key, val, interval: null, lastPoll: 0, noiseFloor: 0, baseline: 0 });
+                        live[p] = val;
+                    }
+                } else if (typeof val === 'boolean') {
+                    if (!sensors.has(p)) {
+                        sensors.set(p, { path: p, obj, key, val: val ? 1 : 0, interval: null, lastPoll: 0, noiseFloor: 0, baseline: 0 });
+                        live[p] = val ? 1 : 0;
+                    }
+                } else if (typeof val === 'function') {
+                    if (!immunity.has(key) && !dead.has(p) && !actuators.has(p)) {
+                        actuators.set(p, { path: p, obj, key, pokeValue: 1 });
+                    }
+                } else if (typeof val === 'object') {
+                    if (!immunity.has(key) && !dead.has(p)) {
+                        discoverObj(val, p, depth + 1);
+                    }
+                }
+            }
+        }
+
+        function discoverSensors() {
+            try {
+                const wn = Object.getOwnPropertyNames(window);
+                for (const k of wn) {
+                    if (circular.has(k) || immunity.has(k) || k.startsWith('on')) continue;
+                    try {
+                        const v = window[k];
+                        if (typeof v === 'number') {
+                            if (!sensors.has(k)) {
+                                sensors.set(k, { path: k, obj: window, key: k, val: v, interval: null, lastPoll: 0, noiseFloor: 0, baseline: 0 });
+                                live[k] = v;
+                            }
+                        } else if (typeof v === 'boolean') {
+                            if (!sensors.has(k)) {
+                                sensors.set(k, { path: k, obj: window, key: k, val: v ? 1 : 0, interval: null, lastPoll: 0, noiseFloor: 0, baseline: 0 });
+                                live[k] = v ? 1 : 0;
+                            }
+                        } else if (typeof v === 'function') {
+                            if (!immunity.has(k) && !dead.has(k) && !actuators.has(k)) {
+                                actuators.set(k, { path: k, obj: window, key: k, pokeValue: 1 });
+                            }
+                        } else if (typeof v === 'object' && v !== null) {
+                            if (!dead.has(k)) discoverObj(v, k, 0);
+                        }
+                    } catch {}
+                }
+            } catch {}
+        }
+
+        function pollGamepads() {
+            const gps = navigator.getGamepads();
+            let state = 0;
+            for (let i = 0; i < gps.length; i++) {
+                if (gps[i]) {
+                    const gp = gps[i];
+                    live['gamepad[' + i + '].connected'] = gp.connected ? 1 : 0;
+                    live['gamepad[' + i + '].timestamp'] = gp.timestamp;
+                    for (let a = 0; a < gp.axes.length; a++) {
+                        live['gamepad[' + i + '].axes[' + a + ']'] = gp.axes[a];
+                        state = state * 31 + (gp.axes[a] * 1e4 | 0);
+                    }
+                    for (let b = 0; b < gp.buttons.length; b++) {
+                        live['gamepad[' + i + '].buttons[' + b + '].pressed'] = gp.buttons[b].pressed ? 1 : 0;
+                        live['gamepad[' + i + '].buttons[' + b + '].value'] = gp.buttons[b].value;
+                        state = state * 31 + (gp.buttons[b].value * 1e4 | 0);
+                    }
+                }
+            }
+            return state;
+        }
+
+        function processSensorReading(s, val, tickTime) {
+            const absDelta = Math.abs(val - s.val);
+            const ma = 1 / (PHI * PHI);
+            s.baseline = s.baseline * (1 - ma) + val * ma;
+            
+            if (s.noiseFloor === 0 || absDelta <= s.noiseFloor) {
+                s.noiseFloor = s.noiseFloor * (1 - ma) + absDelta * ma;
+            }
+            
+            if (absDelta > s.noiseFloor) {
+                s.interval = tickTime;
+                live[s.path] = val;
+            } else {
+                if (s.interval !== null) {
+                    s.interval *= PHI;
+                }
+            }
+            
+            s.val = val;
+        }
+
+        function readSensorVal(s, tickTime) {
+            try {
+                const v = s.obj[s.key];
+                if (typeof v === 'number') processSensorReading(s, v, tickTime);
+                else if (typeof v === 'boolean') processSensorReading(s, v ? 1 : 0, tickTime);
+            } catch {}
+        }
+
+        function registerEvents() {
+            for (const evName of eventSources) {
+                window.addEventListener(evName, (e) => {
+                    const prefix = 'event.' + evName;
+                    live[prefix] = performance.now();
+                    for (const k of Object.getOwnPropertyNames(e)) {
+                        const v = e[k];
+                        if (typeof v === 'number') live[prefix + '.' + k] = v;
+                    }
+                    if (e.touches) {
+                        live[prefix + '.touches'] = e.touches.length;
+                        for (let ti = 0; ti < e.touches.length; ti++) {
+                            const tch = e.touches[ti];
+                            const tp = prefix + '.touch[' + ti + ']';
+                            for (const k of Object.getOwnPropertyNames(tch)) {
+                                const v = tch[k];
+                                if (typeof v === 'number') live[tp + '.' + k] = v;
+                            }
+                        }
+                    }
+                }, { passive: true });
+            }
+        }
+
+        function tick(ts) {
+            const tickTime = lastTs > 0 ? ts - lastTs : 1;
+            lastTs = ts;
+
+            const lat = live['geolocation.latitude'];
+            const lon = live['geolocation.longitude'];
+            const alt = live['geolocation.altitude'];
+            if (lat !== undefined && lon !== undefined && (lat !== lastGeoLat || lon !== lastGeoLon || alt !== lastGeoAlt)) {
+                lastGeoLat = lat;
+                lastGeoLon = lon;
+                lastGeoAlt = alt;
+                const t_j2000 = (live['server.time'] / 86400.0) + 2440587.5 - 2451545.0;
+                const a = 6378137.0;
+                const f = 1 / 298.257223563;
+                const e2 = f * (2 - f);
+                const latR = lat * Math.PI / 180;
+                const lonR = lon * Math.PI / 180;
+                const n = a / Math.sqrt(1 - e2 * Math.sin(latR) * Math.sin(latR));
+                const x = (n + (alt || 0)) * Math.cos(latR) * Math.cos(lonR);
+                const y = (n + (alt || 0)) * Math.cos(latR) * Math.sin(lonR);
+                const z = (n * (1 - e2) + (alt || 0)) * Math.sin(latR);
+                get(t_j2000, x, y, z).then(r => {
+                    if (r.certainty !== undefined) localCertainty = r.certainty;
+                    if (r.gravity !== undefined) localGravity = r.gravity;
+                }).catch(() => {});
+            }
+
+            let nextDelay = Infinity;
+
+            for (const s of sensors.values()) {
+                if (s.interval === null) s.interval = tickTime;
+                const due = s.lastPoll + s.interval - ts;
+                if (due <= 0) {
+                    s.lastPoll = ts;
+                    readSensorVal(s, tickTime);
+                    nextDelay = 0;
+                } else if (due < nextDelay) {
+                    nextDelay = due;
+                }
+            }
+
+            if (navigator.getGamepads) {
+                if (gamepadInterval === null) gamepadInterval = tickTime;
+                const gpDue = lastGamepadPoll + gamepadInterval - ts;
+                if (gpDue <= 0) {
+                    lastGamepadPoll = ts;
+                    const state = pollGamepads();
+                    if (state !== lastGamepadState) {
+                        gamepadInterval = tickTime;
+                        lastGamepadState = state;
+                    } else {
+                        gamepadInterval *= PHI;
+                    }
+                    nextDelay = 0;
+                } else if (gpDue < nextDelay) {
+                    nextDelay = gpDue;
+                }
+            }
+
+            if (discoveryInterval === null) discoveryInterval = tickTime;
+            const dDue = lastDiscovery + discoveryInterval - ts;
+            if (dDue <= 0) {
+                lastDiscovery = ts;
+                visited = new WeakSet();
+                discoverSensors();
+                if (sensors.size !== lastSensorCount) {
+                    discoveryInterval = tickTime;
+                    lastSensorCount = sensors.size;
+                } else {
+                    discoveryInterval *= PHI;
+                }
+                nextDelay = 0;
+            } else if (dDue < nextDelay) {
+                nextDelay = dDue;
+            }
+
+            if (probeState.phase === 'idle') {
+                const surprise = live['surprise'] || 0;
+                const curiosity = surprise / (localCertainty + 1e-15);
+                const shouldExplore = curiosity > sensors.size * 0.5;
+                if (!act()) {
+                    if (actuators.size > 0 && sensors.size > 0) {
+                        if (shouldExplore || Math.random() < 0.1) {
+                            startBroad(ts);
+                        }
+                    }
+                }
+            } else if (probeState.phase === 'broad') {
+                checkBroad(ts);
+            } else if (probeState.phase === 'narrowing') {
+                checkNarrowing(ts);
+            }
+
+            if (document.hidden) {
+                nextDelay = Math.max(nextDelay, 1000);
+            }
+
+            setTimeout(() => {
+                try { tick(performance.now()); } catch (e) { console.error(e); setTimeout(() => tick(performance.now()), 1000); }
+            }, nextDelay);
+        }
+
+        function tryStartBattery() {
+            if (navigator.getBattery) {
+                navigator.getBattery().then(b => {
+                    const push = () => {
+                        live['battery.charging'] = b.charging ? 1 : 0;
+                        live['battery.chargingTime'] = b.chargingTime;
+                        live['battery.dischargingTime'] = b.dischargingTime;
+                        live['battery.level'] = b.level;
+                    };
+                    push();
+                    b.addEventListener('chargingchange', push, { passive: true });
+                    b.addEventListener('levelchange', push, { passive: true });
+                }).catch(() => {});
+            }
+        }
+
+        function tryStartGeolocation() {
+            if (navigator.geolocation && navigator.geolocation.watchPosition) {
+                navigator.geolocation.watchPosition(pos => {
+                    const cc = pos.coords;
+                    live['geolocation.latitude'] = cc.latitude;
+                    live['geolocation.longitude'] = cc.longitude;
+                    live['geolocation.accuracy'] = cc.accuracy;
+                    if (cc.altitude !== null) live['geolocation.altitude'] = cc.altitude;
+                    if (cc.heading !== null) live['geolocation.heading'] = cc.heading;
+                    if (cc.speed !== null) live['geolocation.speed'] = cc.speed;
+                }, () => {}, { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 });
+            }
+        }
+
+        function tryStartSensors() {
+            for (const name of Object.getOwnPropertyNames(window)) {
+                if (!name.endsWith('Sensor')) continue;
+                if (typeof window[name] !== 'function') continue;
+                try {
+                    const sensor = new window[name]({ frequency: 60 });
+                    sensor.addEventListener('reading', () => {
+                        for (const prop of Object.getOwnPropertyNames(sensor)) {
+                            const v = sensor[prop];
+                            if (typeof v === 'number') {
+                                live[name + '.' + prop] = v;
+                            } else if (v && typeof v === 'object' && typeof v.length === 'number') {
+                                for (let qi = 0; qi < v.length; qi++) {
+                                    live[name + '.' + prop + '[' + qi + ']'] = v[qi];
+                                }
+                            }
+                }
+                    }, { passive: true });
+                    sensor.start();
+                } catch {}
+            }
+        }
+
+        discoverSensors();
+        registerEvents();
+        tryStartBattery();
+        tryStartGeolocation();
+        tryStartSensors();
+        setTimeout(() => tick(performance.now()), 0);
+    </script>
+</body>
+</html>
