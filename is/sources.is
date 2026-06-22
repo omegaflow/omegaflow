@@ -1,0 +1,28 @@
+# omegaflow sources — declarative live API resolver
+# The Archivar reads this file at startup. No hardcoded APIs in Rust.
+# §33: Structure over Name.
+
+source atmosphere on_earth
+    host api.open-meteo.com
+    path /v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m,surface_pressure&elevation=yes
+    field temperature_2m atmosphere_temp
+    field wind_speed_10m atmosphere_wind
+    field surface_pressure atmosphere_pressure
+    field elevation topography_elevation
+
+source biosphere on_earth
+    host api.open-meteo.com
+    path /v1/forecast?latitude={lat}&longitude={lon}&hourly=soil_temperature_0cm,soil_moisture_0_to_1cm
+    first soil_temperature_0cm biosphere_soil_temp
+    first soil_moisture_0_to_1cm biosphere_soil_moisture
+
+source seismic on_earth
+    host earthquake.usgs.gov
+    path /earthquakes/feed/v1.0/summary/all_hour.geojson
+    geojson nearby 500000 mag 2.0 seismic_magnitude seismic_depth seismic_distance
+
+source magnetism
+    host services.swpc.noaa.gov
+    path /json/products/summary/solar-wind-mag-1-day.json
+    field bz magnetism_bz
+    field bt magnetism_bt
