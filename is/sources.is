@@ -66,11 +66,11 @@ source protons
     last_obj energy ">=100 MeV" flux cosmic_protons_100mev
 
 source sun_vectors
-    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='10'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='2026-06-22'&STOP_TIME='2026-06-23'&STEP_SIZE='1%20d'
+    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-06-22%27&STOP_TIME=%272026-06-23%27&STEP_SIZE=%271%20d%27
     vector sun_x sun_y sun_z
 
 source mars_vectors
-    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='2026-06-22'&STOP_TIME='2026-06-23'&STEP_SIZE='1%20d'
+    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-06-22%27&STOP_TIME=%272026-06-23%27&STEP_SIZE=%271%20d%27
     vector mars_x mars_y mars_z
 
 source iss_tle
@@ -96,33 +96,33 @@ source aviation on_earth
     count states aviation_aircraft
 
 source mercury_vectors
-    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='199'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='2026-06-22'&STOP_TIME='2026-06-23'&STEP_SIZE='1%20d'
+    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-06-22%27&STOP_TIME=%272026-06-23%27&STEP_SIZE=%271%20d%27
     vector mercury_x mercury_y mercury_z
 
 source venus_vectors
-    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='299'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='2026-06-22'&STOP_TIME='2026-06-23'&STEP_SIZE='1%20d'
+    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27299%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-06-22%27&STOP_TIME=%272026-06-23%27&STEP_SIZE=%271%20d%27
     vector venus_x venus_y venus_z
 
 source moon_vectors
-    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='301'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='2026-06-22'&STOP_TIME='2026-06-23'&STEP_SIZE='1%20d'
+    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-06-22%27&STOP_TIME=%272026-06-23%27&STEP_SIZE=%271%20d%27
     vector moon_x moon_y moon_z
 
 source jupiter_vectors
-    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='2026-06-22'&STOP_TIME='2026-06-23'&STEP_SIZE='1%20d'
+    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-06-22%27&STOP_TIME=%272026-06-23%27&STEP_SIZE=%271%20d%27
     vector jupiter_x jupiter_y jupiter_z
 
 source saturn_vectors
-    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='2026-06-22'&STOP_TIME='2026-06-23'&STEP_SIZE='1%20d'
+    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27699%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-06-22%27&STOP_TIME=%272026-06-23%27&STEP_SIZE=%271%20d%27
     vector saturn_x saturn_y saturn_z
 
 source uranus_vectors
-    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='799'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='2026-06-22'&STOP_TIME='2026-06-23'&STEP_SIZE='1%20d'
+    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27799%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-06-22%27&STOP_TIME=%272026-06-23%27&STEP_SIZE=%271%20d%27
     vector uranus_x uranus_y uranus_z
 
 source neptune_vectors
-    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='899'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='2026-06-22'&STOP_TIME='2026-06-23'&STEP_SIZE='1%20d'
+    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-06-22%27&STOP_TIME=%272026-06-23%27&STEP_SIZE=%271%20d%27
     vector neptune_x neptune_y neptune_z
 
 source pluto_vectors
-    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='999'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='2026-06-22'&STOP_TIME='2026-06-23'&STEP_SIZE='1%20d'
+    url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27999%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-06-22%27&STOP_TIME=%272026-06-23%27&STEP_SIZE=%271%20d%27
     vector pluto_x pluto_y pluto_z
