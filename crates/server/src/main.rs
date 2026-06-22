@@ -463,7 +463,7 @@ fn main() {
     let port: u16 = std::env::var("PORT")
         .ok()
         .and_then(|s| s.parse().ok())
-        .unwrap_or(0);
+        .unwrap_or(8080);
     let archive = Arc::new(Archive {
         idx: std::fs::read("is/measured.idx").unwrap_or_default(),
         dat: std::fs::read("is/measured.dat").unwrap_or_default(),
