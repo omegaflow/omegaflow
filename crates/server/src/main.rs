@@ -1,29 +1,29 @@
 use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
+use std::process::Command;
 use std::sync::{Arc, Mutex};
 use std::thread;
-use std::time::{SystemTime, UNIX_EPOCH, Duration};
+use std::time::{SystemTime, UNIX_EPOCH};
 
-// ─── Source config (parsed from is/sources.is) ───
 
 #[derive(Clone)]
 enum Extract {
-    Field(String, String),      // json_key, out_name
-    First(String, String),      // json_key (array), out_name
-    Geojson {                   // nearby earthquake search
+    Field(String, String),      // json_key → out_name
+    First(String, String),      // first element of json array
+    Count(String, String),      // count items in json array
+    Geojson {                   // nearby geojson search
         max_dist: f64,
         mag_key: String,
         min_mag: f64,
-        outputs: Vec<String>,   // magnitude, depth, distance
+        outputs: Vec<String>,
     },
 }
 
 struct SourceConfig {
     _name: String,
     on_earth: bool,
-    host: String,
-    path: String,
+    url: String,                // full URL template
     extracts: Vec<Extract>,
 }
 
@@ -32,8 +32,7 @@ fn load_sources() -> Vec<SourceConfig> {
     let content = std::fs::read_to_string("is/sources.is").unwrap_or_default();
     let mut cur_name = String::new();
     let mut cur_on_earth = false;
-    let mut cur_host = String::new();
-    let mut cur_path = String::new();
+    let mut cur_url = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
     let mut active = false;
 
@@ -47,21 +46,17 @@ fn load_sources() -> Vec<SourceConfig> {
                 sources.push(SourceConfig {
                     _name: cur_name.clone(),
                     on_earth: cur_on_earth,
-                    host: cur_host.clone(),
-                    path: cur_path.clone(),
+                    url: cur_url.clone(),
                     extracts: cur_extracts.clone(),
                 });
             }
             cur_name = parts.get(1).unwrap_or(&"").to_string();
             cur_on_earth = parts.iter().any(|&p| p == "on_earth");
-            cur_host.clear();
-            cur_path.clear();
+            cur_url.clear();
             cur_extracts.clear();
             active = true;
-        } else if parts[0] == "host" {
-            cur_host = parts.get(1).unwrap_or(&"").to_string();
-        } else if parts[0] == "path" {
-            cur_path = parts[1..].join(" ");
+        } else if parts[0] == "url" {
+            cur_url = parts[1..].join(" ");
         } else if parts[0] == "field" {
             cur_extracts.push(Extract::Field(
                 parts.get(1).unwrap_or(&"").to_string(),
@@ -72,8 +67,12 @@ fn load_sources() -> Vec<SourceConfig> {
                 parts.get(1).unwrap_or(&"").to_string(),
                 parts.get(2).unwrap_or(&"").to_string(),
             ));
+        } else if parts[0] == "count" {
+            cur_extracts.push(Extract::Count(
+                parts.get(1).unwrap_or(&"").to_string(),
+                parts.get(2).unwrap_or(&"").to_string(),
+            ));
         } else if parts[0] == "geojson" {
-            // geojson nearby <dist> <mag_key> <min_mag> <out_mag> <out_depth> <out_dist>
             cur_extracts.push(Extract::Geojson {
                 max_dist: parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(500000.0),
                 mag_key: parts.get(3).unwrap_or(&"mag").to_string(),
@@ -86,8 +85,7 @@ fn load_sources() -> Vec<SourceConfig> {
         sources.push(SourceConfig {
             _name: cur_name,
             on_earth: cur_on_earth,
-            host: cur_host,
-            path: cur_path,
+            url: cur_url,
             extracts: cur_extracts,
         });
     }
@@ -95,7 +93,24 @@ fn load_sources() -> Vec<SourceConfig> {
     sources
 }
 
-// ─── JSON helpers ───
+
+fn fetch(url: &str) -> Option<String> {
+    let output = Command::new("curl")
+        .arg("-s")
+        .arg("-m")
+        .arg("8")
+        .arg("--connect-timeout")
+        .arg("4")
+        .arg(url)
+        .output()
+        .ok()?;
+    if output.status.success() {
+        Some(String::from_utf8_lossy(&output.stdout).to_string())
+    } else {
+        None
+    }
+}
+
 
 fn jnum(json: &str, key: &str) -> Option<f64> {
     let pat = format!("\"{}\":", key);
@@ -115,7 +130,17 @@ fn jarr_first(json: &str, key: &str) -> Option<f64> {
     inner.split(',').next().and_then(|p| p.trim().parse().ok())
 }
 
-// ─── IS binary format ───
+fn jarr_count(json: &str, key: &str) -> Option<f64> {
+    let pat = format!("\"{}\":", key);
+    let start = json.find(&pat)? + pat.len();
+    let rest = &json[start..];
+    let as_ = rest.find('[')?;
+    let ae = rest[as_..].find(']')?;
+    let inner = &rest[as_ + 1..ae];
+    let count = inner.split(',').filter(|p| !p.trim().is_empty()).count();
+    Some(count as f64)
+}
+
 
 fn is_obj(out: &mut Vec<u8>, fields: &[(&str, f64)]) {
     out.push(fields.len() as u8);
@@ -128,7 +153,6 @@ fn is_obj(out: &mut Vec<u8>, fields: &[(&str, f64)]) {
     out.extend_from_slice(&0u32.to_le_bytes());
 }
 
-// ─── Archive ───
 
 struct Archive {
     sources: Vec<SourceConfig>,
@@ -153,24 +177,16 @@ fn ecef_to_geodetic(x: f64, y: f64, z: f64) -> (f64, f64, f64) {
     (lat.to_degrees(), lon.to_degrees(), alt)
 }
 
-fn http_get(host: &str, path: &str) -> Option<String> {
-    let mut stream = TcpStream::connect((host, 80)).ok()?;
-    stream.set_read_timeout(Some(Duration::from_secs(5))).ok();
-    let req = format!("GET {} HTTP/1.1\r\nHost: {}\r\nConnection: close\r\n\r\n", path, host);
-    stream.write_all(req.as_bytes()).ok()?;
-    let mut buf = Vec::new();
-    stream.read_to_end(&mut buf).ok()?;
-    let s = String::from_utf8_lossy(&buf);
-    if let Some(pos) = s.find("\r\n\r\n") { Some(s[pos + 4..].to_string()) } else { None }
-}
-
-fn render_path(template: &str, lat: f64, lon: f64) -> String {
+fn render_url(template: &str, lat: f64, lon: f64) -> String {
     template
         .replace("{lat}", &format!("{:.4}", lat))
         .replace("{lon}", &format!("{:.4}", lon))
+        .replace("{lat_min}", &format!("{:.2}", lat - 0.5))
+        .replace("{lat_max}", &format!("{:.2}", lat + 0.5))
+        .replace("{lon_min}", &format!("{:.2}", lon - 0.5))
+        .replace("{lon_max}", &format!("{:.2}", lon + 0.5))
 }
 
-// ─── Generic weave — data-driven resolver ───
 
 fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
     if payload.len() < 33 { return Vec::new(); }
@@ -200,13 +216,13 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
     for src in &archive.sources {
         if src.on_earth && !on_earth { continue; }
 
-        let path = if lat.is_some() {
-            render_path(&src.path, lat.unwrap(), lon.unwrap())
+        let url = if lat.is_some() {
+            render_url(&src.url, lat.unwrap(), lon.unwrap())
         } else {
-            src.path.clone()
+            src.url.clone()
         };
 
-        let body = match http_get(&src.host, &path) {
+        let body = match fetch(&url) {
             Some(b) => b,
             None => continue,
         };
@@ -221,6 +237,12 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
                 }
                 Extract::First(json_key, out_name) => {
                     if let Some(v) = jarr_first(&body, json_key) {
+                        is_obj(&mut out, &[(out_name, v)]);
+                        obj_count += 1;
+                    }
+                }
+                Extract::Count(json_key, out_name) => {
+                    if let Some(v) = jarr_count(&body, json_key) {
                         is_obj(&mut out, &[(out_name, v)]);
                         obj_count += 1;
                     }
@@ -350,7 +372,6 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
     out
 }
 
-// ─── HTTP server + WebSocket (unchanged) ───
 
 fn base64_encode(input: &[u8]) -> String {
     const TABLE: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -507,9 +528,9 @@ fn format_immunity_snapshot(counts: &HashMap<String, (u32, u32)>) -> String {
     let mut keys: Vec<&String> = counts.keys().collect();
     keys.sort();
     for key in keys {
-        let (deaths, survived) = counts[key];
-        if deaths == 0 && survived == 0 { out.push_str(&format!("immunity {}\n", key)); }
-        else { out.push_str(&format!("immunity {} {} {}\n", key, deaths, survived)); }
+        let (d, s) = counts[key];
+        if d == 0 && s == 0 { out.push_str(&format!("immunity {}\n", key)); }
+        else { out.push_str(&format!("immunity {} {} {}\n", key, d, s)); }
     }
     out
 }
@@ -534,9 +555,9 @@ fn rewrite_immunity(counts: &HashMap<String, (u32, u32)>) {
     let mut keys: Vec<&String> = counts.keys().collect();
     keys.sort();
     for key in keys {
-        let (deaths, survived) = counts[key];
-        if deaths == 0 && survived == 0 { out.push_str(&format!("immunity {}\n", key)); }
-        else { out.push_str(&format!("immunity {} {} {}\n", key, deaths, survived)); }
+        let (d, s) = counts[key];
+        if d == 0 && s == 0 { out.push_str(&format!("immunity {}\n", key)); }
+        else { out.push_str(&format!("immunity {} {} {}\n", key, d, s)); }
     }
     let _ = std::fs::write("is/immunity.is", out);
 }
