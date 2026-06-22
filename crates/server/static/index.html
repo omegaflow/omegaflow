@@ -625,11 +625,58 @@
                                     live[name + '.' + prop + '[' + qi + ']'] = v[qi];
                                 }
                             }
-                }
+                        }
                     }, { passive: true });
                     sensor.start();
                 } catch {}
             }
+        }
+
+        function tryStartInteroception() {
+            live['system.cpu'] = navigator.hardwareConcurrency || 0;
+            if (performance.memory) {
+                live['system.memory'] = performance.memory.usedJSHeapSize;
+                live['system.memoryTotal'] = performance.memory.totalJSHeapSize;
+            }
+            setInterval(() => {
+                live['system.cpu'] = navigator.hardwareConcurrency || 0;
+                if (performance.memory) {
+                    live['system.memory'] = performance.memory.usedJSHeapSize;
+                    live['system.memoryTotal'] = performance.memory.totalJSHeapSize;
+                }
+                const t0 = performance.now();
+                fetch('/time').then(() => {
+                    live['system.latency'] = performance.now() - t0;
+                }).catch(() => {});
+            }, 10000);
+        }
+
+        async function tryStartWebGPU() {
+            try {
+                const adapter = await navigator.gpu.requestAdapter();
+                if (adapter) {
+                    const device = await adapter.requestDevice();
+                    window.omegaflow.gpu = device;
+                    live['system.gpu'] = 1;
+                }
+            } catch {}
+        }
+
+        let _audioCtx = null;
+        function tryStartWebAudio() {
+            const start = () => {
+                if (_audioCtx) return;
+                try {
+                    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const panner = _audioCtx.createPanner();
+                    panner.panningModel = 'HRTF';
+                    panner.connect(_audioCtx.destination);
+                    window.omegaflow.audio = { ctx: _audioCtx, panner };
+                    live['system.audio'] = 1;
+                } catch {}
+            };
+            document.addEventListener('click', start, { once: true, passive: true });
+            document.addEventListener('touchstart', start, { once: true, passive: true });
         }
 
         discoverSensors();
@@ -637,6 +684,9 @@
         tryStartBattery();
         tryStartGeolocation();
         tryStartSensors();
+        tryStartInteroception();
+        tryStartWebGPU();
+        tryStartWebAudio();
         setTimeout(() => tick(performance.now()), 0);
     </script>
 </body>
