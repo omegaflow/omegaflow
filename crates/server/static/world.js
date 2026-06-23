@@ -6,24 +6,22 @@ export const pulse = { ws: null, pending: new Map(), seq: 0 };
 const _SHADER = `
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> cert: array<f32>;
-@group(0) @binding(2) var<uniform> params: vec4<f32>;
+@group(0) @binding(2) var<uniform> params0: vec4<f32>;
+@group(0) @binding(3) var<uniform> params1: vec4<f32>;
 
 @compute @workgroup_size(64)
 fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     let i = gid.x;
-    let n = u32(params.z);
+    let n = u32(params0.z);
     if (i >= n) { return; }
     let base = i * 5u;
     let dt = abs(data[base]);
-    let dx = data[base + 1u];
-    let dy = data[base + 2u];
-    let dz = data[base + 3u];
-    let dist = length(vec3<f32>(dx, dy, dz));
-    let g = params.x;
-    let v_c = params.y;
-    let epig = params.w;
-    let c_q = data[base + 4u];
-    cert[i] = exp(-dt * g) * exp(-v_c / (g + 0.0000001)) * c_q * epig;
+    let g = params0.x;
+    let v_c = params0.y;
+    let epig = params0.w;
+    let decay = params1.x;
+    let quantum = params1.y;
+    cert[i] = exp(-dt * g) * exp(-v_c / (g + 0.0000001)) * quantum * decay * epig;
 }
 `;
 
@@ -43,6 +41,7 @@ async function _initGPU() {
                 { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
                 { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
                 { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
+                { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
             ]
         });
         const pipelineLayout = gpu.createPipelineLayout({ bindGroupLayouts: [_gpuBindLayout] });
@@ -86,7 +85,7 @@ function _collectPoints(result, observerT, observerX, observerY, observerZ) {
     return { buf: buf.slice(0, idx * 5), count: idx };
 }
 
-async function _gpuEvaluate(points, g, v_c, epig) {
+async function _gpuEvaluate(points, g, v_c, epig, decay, quantum) {
     if (!_gpuDevice) await _initGPU();
     if (!_gpuDevice || !_gpuPipeline) return null;
     try {
@@ -101,16 +100,24 @@ async function _gpuEvaluate(points, g, v_c, epig) {
             size: n * 4,
             usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
         });
-        const paramData = new Float32Array(4);
-        paramData[0] = g;
-        paramData[1] = v_c;
-        paramData[2] = n;
-        paramData[3] = epig;
-        const paramBuf = device.createBuffer({
+        const paramData0 = new Float32Array(4);
+        paramData0[0] = g;
+        paramData0[1] = v_c;
+        paramData0[2] = n;
+        paramData0[3] = epig;
+        const paramBuf0 = device.createBuffer({
             size: 16,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
         });
-        device.queue.writeBuffer(paramBuf, 0, paramData);
+        device.queue.writeBuffer(paramBuf0, 0, paramData0);
+        const paramData1 = new Float32Array(4);
+        paramData1[0] = decay;
+        paramData1[1] = quantum;
+        const paramBuf1 = device.createBuffer({
+            size: 16,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+        });
+        device.queue.writeBuffer(paramBuf1, 0, paramData1);
         const readBuf = device.createBuffer({
             size: n * 4,
             usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST
@@ -120,7 +127,8 @@ async function _gpuEvaluate(points, g, v_c, epig) {
             entries: [
                 { binding: 0, resource: { buffer: inBuf } },
                 { binding: 1, resource: { buffer: outBuf } },
-                { binding: 2, resource: { buffer: paramBuf } },
+                { binding: 2, resource: { buffer: paramBuf0 } },
+                { binding: 3, resource: { buffer: paramBuf1 } },
             ]
         });
         const encoder = device.createCommandEncoder();
@@ -136,7 +144,8 @@ async function _gpuEvaluate(points, g, v_c, epig) {
         readBuf.unmap();
         inBuf.destroy();
         outBuf.destroy();
-        paramBuf.destroy();
+        paramBuf0.destroy();
+        paramBuf1.destroy();
         readBuf.destroy();
         return result;
     } catch { return null; }
@@ -162,6 +171,44 @@ let _fetch_pending = null;
 let _fetch_time = 0;
 let _last_is_data = null;
 const _FETCH_MAX_AGE_MS = 30000;
+
+
+function _measureG(live) {
+    const ax = live['AccelerometerSensor.x'];
+    const ay = live['AccelerometerSensor.y'];
+    const az = live['AccelerometerSensor.z'];
+    if (ax !== undefined && ay !== undefined && az !== undefined) {
+        return Math.sqrt(ax*ax + ay*ay + az*az);
+    }
+    return 1.0;
+}
+
+function _measureVC(live) {
+    const speed = live['geolocation.speed'];
+    if (typeof speed === 'number' && speed >= 0) {
+        return speed / C;
+    }
+    return 0.0;
+}
+
+function _measureDecay(result) {
+    const flux = result['cosmic_protons_100mev'];
+    if (typeof flux === 'number' && flux >= 0) {
+        return 1.0 / (1.0 + flux);
+    }
+    return 1.0;
+}
+
+function _measureQuantum() {
+    const sensors = window.omegaflow?.sensors;
+    if (!sensors || sensors.size === 0) return 1.0;
+    let sum = 0, count = 0;
+    for (const s of sensors.values()) {
+        if (s.noiseFloor > 0) { sum += s.noiseFloor; count++; }
+    }
+    if (count === 0) return 1.0;
+    return Math.exp(-sum / count);
+}
 
 export async function get(t, x, y, z) {
     if (t === _last_t && x === _last_x && y === _last_y && z === _last_z && _last_result) {
@@ -194,36 +241,30 @@ export async function get(t, x, y, z) {
         }
     }
 
-    let g = result.grav_time_dilation !== undefined ? result.grav_time_dilation : 1.0;
-    let phi = Math.abs(result.gravity || 0);
-    let v_c = Math.sqrt(2 * phi) / C;
+    let g = _measureG(live);
+    let v_c = _measureVC(live);
+    let decay = _measureDecay(result);
+    let quantum = _measureQuantum();
+    let epig = 1.0;
     let t_now = live['server.time'] !== undefined
         ? (live['server.time'] / 86400.0) + 2440587.5 - 2451545.0
         : t;
-    let dt_s = Math.abs(t - t_now) * 86400.0;
-    let dt_eff = dt_s / 86400.0;
-    let c_q = result.quantum !== undefined ? result.quantum : 1.0;
-    let decay = result.decay_probability !== undefined ? result.decay_probability : 1.0;
-    let epig = live['epigenetic_factor'] !== undefined ? live['epigenetic_factor'] : 1.0;
+    let dt_eff = Math.abs(t - t_now);
 
     const points = _collectPoints(result, t_now, x, y, z);
     if (points && points.count > 0) {
-        const gpuResult = await _gpuEvaluate(points, g, v_c, epig);
+        const gpuResult = await _gpuEvaluate(points, g, v_c, epig, decay, quantum);
         if (gpuResult) {
             result.certainty = gpuResult[0];
         } else {
             result.certainty = Math.exp(-dt_eff * g)
                              * Math.exp(-v_c / (g + 1e-15))
-                             * c_q
-                             * decay
-                             * epig;
+                             * quantum * decay * epig;
         }
     } else {
         result.certainty = Math.exp(-dt_eff * g)
                          * Math.exp(-v_c / (g + 1e-15))
-                         * c_q
-                         * decay
-                         * epig;
+                         * quantum * decay * epig;
     }
 
     for (const key in live) {
