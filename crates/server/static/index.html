@@ -424,6 +424,10 @@
             return state;
         }
 
+        const RING_SIZE = 128;
+        const _signalBuffers = new Map();
+        let _topologyTimer = 0;
+
         function processSensorReading(s, val, tickTime) {
             const absDelta = Math.abs(val - s.val);
             const ma = 1 / (PHI * PHI);
@@ -432,7 +436,15 @@
             if (s.noiseFloor === 0 || absDelta <= s.noiseFloor) {
                 s.noiseFloor = s.noiseFloor * (1 - ma) + absDelta * ma;
             }
-            
+
+            if (!_signalBuffers.has(s.path)) {
+                _signalBuffers.set(s.path, { buf: new Float32Array(RING_SIZE), idx: 0, filled: 0 });
+            }
+            const sb = _signalBuffers.get(s.path);
+            sb.buf[sb.idx] = val;
+            sb.idx = (sb.idx + 1) % RING_SIZE;
+            if (sb.filled < RING_SIZE) sb.filled++;
+
             if (absDelta > s.noiseFloor) {
                 s.interval = tickTime;
                 live[s.path] = val;
@@ -443,6 +455,93 @@
             }
             
             s.val = val;
+        }
+
+        function runSignalTopology(ts) {
+            if (ts - _topologyTimer < 5000) return;
+            _topologyTimer = ts;
+            if (!window.omegaflow?.gpu) return;
+
+            const activeBuffers = [];
+            const activeNames = [];
+            for (const [path, sb] of _signalBuffers) {
+                if (sb.filled === RING_SIZE) {
+                    activeBuffers.push(sb.buf);
+                    activeNames.push(path);
+                }
+            }
+            if (activeBuffers.length < 2) return;
+
+            const gpu = window.omegaflow.gpu;
+            const n = activeBuffers.length;
+            const flat = new Float32Array(n * RING_SIZE);
+            for (let i = 0; i < n; i++) {
+                flat.set(activeBuffers[i], i * RING_SIZE);
+            }
+
+            const inBuf = gpu.createBuffer({ size: flat.byteLength, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+            gpu.queue.writeBuffer(inBuf, 0, flat);
+            const outBuf = gpu.createBuffer({ size: n * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+            const paramBuf = gpu.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+            gpu.queue.writeBuffer(paramBuf, 0, new Float32Array([n, RING_SIZE, 0, 0]));
+
+            const shader = gpu.createShaderModule({ code: `
+@group(0) @binding(0) var<storage, read> data: array<f32>;
+@group(0) @binding(1) var<storage, read_write> complexity: array<f32>;
+@group(0) @binding(2) var<uniform> params: vec4<f32>;
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let s = gid.x;
+    let n = u32(params.x);
+    let rs = u32(params.y);
+    if (s >= n) { return; }
+    let base = s * rs;
+    var repeats: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) {
+        let vi = data[base + i];
+        for (var j = i + 1u; j < rs; j++) {
+            if (abs(vi - data[base + j]) < 0.001) { repeats += 1.0; }
+        }
+    }
+    let total = f32(rs * (rs - 1u) / 2u);
+    complexity[s] = 1.0 - (repeats / total);
+}
+`});
+            const bl = gpu.createBindGroupLayout({ entries: [
+                { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+                { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+                { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
+            ]});
+            const pl = gpu.createPipelineLayout({ bindGroupLayouts: [bl] });
+            const p = gpu.createComputePipeline({ layout: pl, compute: { module: shader, entryPoint: 'main' } });
+            const bg = gpu.createBindGroup({ layout: bl, entries: [
+                { binding: 0, resource: { buffer: inBuf } },
+                { binding: 1, resource: { buffer: outBuf } },
+                { binding: 2, resource: { buffer: paramBuf } },
+            ]});
+
+            const rb = gpu.createBuffer({ size: n * 4, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+            const enc = gpu.createCommandEncoder();
+            const pass = enc.beginComputePass();
+            pass.setPipeline(p);
+            pass.setBindGroup(0, bg);
+            pass.dispatchWorkgroups(Math.ceil(n / 64));
+            pass.end();
+            enc.copyBufferToBuffer(outBuf, 0, rb, 0, n * 4);
+            gpu.queue.submit([enc.finish()]);
+
+            rb.mapAsync(GPUMapMode.READ).then(() => {
+                const res = new Float32Array(rb.getMappedRange());
+                for (let i = 0; i < n; i++) {
+                    live['complexity.' + activeNames[i]] = res[i];
+                    const sens = sensors.get(activeNames[i]);
+                    if (sens) {
+                        sens.noiseFloor = sens.noiseFloor * 0.9 + res[i] * 0.1;
+                    }
+                }
+                rb.unmap();
+                inBuf.destroy(); outBuf.destroy(); paramBuf.destroy(); rb.destroy();
+            });
         }
 
         function readSensorVal(s, tickTime) {
@@ -569,6 +668,8 @@
             } else if (probeState.phase === 'narrowing') {
                 checkNarrowing(ts);
             }
+
+            runSignalTopology(ts);
 
             if (document.hidden) {
                 nextDelay = Math.max(nextDelay, 1000);

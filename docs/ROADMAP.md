@@ -509,18 +509,20 @@ Water droplets store history in their atomic structure (δ¹⁸O). Matter itself
 - Initialize WebGPU
 - Interoception
 
-### Step 5: Point Cloud & TDA (Phase 4)
-- WebGL/WebGPU Point Cloud Renderer
-- Topological Data Analysis (Persistent Homology)
+### Step 5: Expression (Phase 4) DONE
+- Organism discovers all actuators and expresses itself
+- No separate renderer needed — the organism IS the expression
 
-### Step 6: Certainty from Measurements (Phase 5)
-- GPS time dilation, acceleration sensor, HRV, RMSSD
+### Step 6: Certainty from Measurements (Phase 5) DONE
+- GPS time dilation, acceleration sensor, GOES protons, sensor noiseFloor
+- WebGPU compute shader for parallel certainty evaluation
 
-### Step 7: Advanced Signal Topology (Phase 6)
-- Takens' Embedding Theorem (WGSL shader)
-- Transfer-Entropy (WGSL shader)
-- Blind Source Separation / ICA (WGSL shader)
-- Kolmogorov Complexity (compression rate)
+### Step 7: Signal Topology (Phase 4.3 + Phase 6)
+- Ring-Buffer (128 floats) per sensor
+- TDA: Persistent Homology on point clouds (WGSL shader)
+- Kolmogorov Complexity: compression rate replaces noiseFloor heuristic (WGSL shader)
+- Takens' Embedding: 1D time series to 3D attractor (WGSL shader)
+- Transfer-Entropy: proven causality replaces trial-and-error (WGSL shader)
 
 ### Step 8: Epigenetics (Phase 7)
 - `epigenome.is`, `generation_count`, `epigenetic_weight`, Traumatization beyond deletion, `epigenetic_factor` in certainty
