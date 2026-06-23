@@ -8,8 +8,8 @@ data_sources:
     magnetism: "NOAA SWPC (Real-time solar wind, Bz, Bt)"
     seismic: "USGS GeoJSON (Real-time earthquakes, depth, magnitude)"
     topography: "Open-Meteo Elevation API (on-demand height)"
-    biosphere: "Open-Meteo Soil, NASA POWER NDVI, Natureserve observations"
-    atmosphere: "Open-Meteo API (Local temp, pressure, wind)"
+    biosphere: "Open-Meteo Soil, iNaturalist, GBIF"
+    atmosphere: "Open-Meteo API (Local temp, pressure, wind, air quality)"
   cached_apis:
     astronomy: "JPL Horizons (Planetary positions, cached weekly — ephemeral local mirror)"
   local_sensors:

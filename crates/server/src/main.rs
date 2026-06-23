@@ -4,7 +4,7 @@ use std::net::{TcpListener, TcpStream};
 use std::process::Command;
 use std::sync::{Arc, Mutex};
 use std::thread;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{SystemTime, UNIX_EPOCH, Duration};
 
 #[derive(Clone)]
 enum Extract {
@@ -20,6 +20,7 @@ enum Extract {
 
 struct SourceConfig {
     on_earth: bool,
+    ttl: u64,
     url: String,
     extracts: Vec<Extract>,
 }
@@ -28,6 +29,7 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
     let content = std::fs::read_to_string("is/sources.is").unwrap_or_default();
     let mut cur_on_earth = false;
+    let mut cur_ttl: u64 = 300;
     let mut cur_url = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
     let mut active = false;
@@ -38,11 +40,12 @@ fn load_sources() -> Vec<SourceConfig> {
         let parts: Vec<&str> = line.split_whitespace().collect();
         match parts[0] {
             "source" => {
-                if active { sources.push(SourceConfig { on_earth: cur_on_earth, url: cur_url.clone(), extracts: cur_extracts.clone() }); }
+                if active { sources.push(SourceConfig { on_earth: cur_on_earth, ttl: cur_ttl, url: cur_url.clone(), extracts: cur_extracts.clone() }); }
                 cur_on_earth = parts.iter().any(|&p| p == "on_earth");
-                cur_url.clear(); cur_extracts.clear(); active = true;
+                cur_ttl = 300; cur_url.clear(); cur_extracts.clear(); active = true;
             }
             "url" => cur_url = parts[1..].join(" "),
+            "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(300),
             "field" => cur_extracts.push(Extract::Field(parts[1].to_string(), parts[2].to_string())),
             "first" => cur_extracts.push(Extract::First(parts[1].to_string(), parts[2].to_string())),
             "last" => cur_extracts.push(Extract::Last(parts[1].to_string(), parts[2].to_string())),
@@ -59,7 +62,7 @@ fn load_sources() -> Vec<SourceConfig> {
             _ => {}
         }
     }
-    if active { sources.push(SourceConfig { on_earth: cur_on_earth, url: cur_url, extracts: cur_extracts }); }
+    if active { sources.push(SourceConfig { on_earth: cur_on_earth, ttl: cur_ttl, url: cur_url, extracts: cur_extracts }); }
     eprintln!("loaded {} sources", sources.len());
     sources
 }
@@ -172,6 +175,7 @@ struct Archive {
     dat: Vec<u8>,
     index_html: Vec<u8>,
     world_js: Vec<u8>,
+    cache: Mutex<HashMap<String, (u64, String)>>,
 }
 
 fn ecef_to_geodetic(x: f64, y: f64, z: f64) -> (f64, f64, f64) {
@@ -187,10 +191,17 @@ fn ecef_to_geodetic(x: f64, y: f64, z: f64) -> (f64, f64, f64) {
 }
 
 fn render_url(template: &str, lat: f64, lon: f64) -> String {
+    let secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
+    let days = secs / 86400;
+    let today_days = days + 40587;
+    let today = format!("{}-{:02}-{:02}", 1970 + (today_days / 146097) * 400 + ((today_days % 146097) / 36524) * 100 + (((today_days % 146097) % 36524) / 1461) * 4 + ((((today_days % 146097) % 36524) % 1461) / 365), 0, 0);
+    let tomorrow_days = days + 40588;
+    let tomorrow = format!("{}-{:02}-{:02}", 1970 + (tomorrow_days / 146097) * 400 + ((tomorrow_days % 146097) / 36524) * 100 + (((tomorrow_days % 146097) % 36524) / 1461) * 4 + ((((tomorrow_days % 146097) % 36524) % 1461) / 365), 0, 0);
     template
         .replace("{lat}", &format!("{:.4}", lat)).replace("{lon}", &format!("{:.4}", lon))
         .replace("{lat_min}", &format!("{:.2}", lat-0.5)).replace("{lat_max}", &format!("{:.2}", lat+0.5))
         .replace("{lon_min}", &format!("{:.2}", lon-0.5)).replace("{lon_max}", &format!("{:.2}", lon+0.5))
+        .replace("{today}", &today).replace("{tomorrow}", &tomorrow)
 }
 
 fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
@@ -213,7 +224,20 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
     for src in &archive.sources {
         if src.on_earth && !on_earth { continue; }
         let url = if lat.is_some() { render_url(&src.url, lat.unwrap(), lon.unwrap()) } else { src.url.clone() };
-        let body = match fetch(&url) { Some(b) => b, None => continue };
+        let now_secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
+        let cache_key = if lat.is_some() { format!("{}_{:.4}_{:.4}", src.url.split('?').next().unwrap_or(&src.url), lat.unwrap(), lon.unwrap()) } else { src.url.split('?').next().unwrap_or(&src.url).to_string() };
+        let body = {
+            let cache = archive.cache.lock().unwrap();
+            if let Some((ts, data)) = cache.get(&cache_key) {
+                if now_secs.saturating_sub(*ts) < src.ttl { data.clone() } else { String::new() }
+            } else { String::new() }
+        };
+        let body = if body.is_empty() {
+            let fetched = match fetch(&url) { Some(b) => b, None => continue };
+            let mut cache = archive.cache.lock().unwrap();
+            cache.insert(cache_key, (now_secs, fetched.clone()));
+            fetched
+        } else { body };
 
         for ext in &src.extracts {
             match ext {
@@ -475,6 +499,7 @@ fn main() {
         dat: std::fs::read("is/measured.dat").unwrap_or_default(),
         index_html: std::fs::read("crates/server/static/index.html").unwrap_or_default(),
         world_js: std::fs::read("crates/server/static/world.js").unwrap_or_default(),
+        cache: Mutex::new(HashMap::new()),
     });
     let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
