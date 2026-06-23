@@ -496,11 +496,17 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     let rs = u32(params.y);
     if (s >= n) { return; }
     let base = s * rs;
+    var sum: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { sum += data[base + i]; }
+    let mean = sum / f32(rs);
+    var var_sum: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { let d = data[base + i] - mean; var_sum += d * d; }
+    let threshold = sqrt(var_sum / f32(rs)) / (1.618033988749895 * 1.618033988749895);
     var repeats: f32 = 0.0;
     for (var i = 0u; i < rs; i++) {
         let vi = data[base + i];
         for (var j = i + 1u; j < rs; j++) {
-            if (abs(vi - data[base + j]) < 0.001) { repeats += 1.0; }
+            if (abs(vi - data[base + j]) < threshold) { repeats += 1.0; }
         }
     }
     let total = f32(rs * (rs - 1u) / 2u);
@@ -536,7 +542,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                     live['complexity.' + activeNames[i]] = res[i];
                     const sens = sensors.get(activeNames[i]);
                     if (sens) {
-                        sens.noiseFloor = sens.noiseFloor * 0.9 + res[i] * 0.1;
+                        const ma = 1 / (PHI * PHI);
+                    sens.noiseFloor = sens.noiseFloor * (1 - ma) + res[i] * ma;
                     }
                 }
                 rb.unmap();
@@ -669,7 +676,17 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 checkNarrowing(ts);
             }
 
-            runSignalTopology(ts);
+            if (_topologyInterval === null) _topologyInterval = tickTime;
+            const topoDue = _lastTopology + _topologyInterval - ts;
+            if (topoDue <= 0) {
+                _lastTopology = ts;
+                runSignalTopology(ts);
+                const surprise = live['surprise'] || 0;
+                _topologyInterval = surprise > sensors.size * 0.1 ? tickTime : _topologyInterval * PHI;
+                nextDelay = 0;
+            } else if (topoDue < nextDelay) {
+                nextDelay = topoDue;
+            }
 
             if (document.hidden) {
                 nextDelay = Math.max(nextDelay, 1000);
