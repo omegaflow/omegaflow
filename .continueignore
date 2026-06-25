@@ -1,8 +1,4 @@
-data/
 target/
 node_modules/
 .env
-.env.local
 *.log
-*.lock
-omegaflow_dump.txt
