@@ -1,4 +1,4 @@
-# omegaflow
+omegaflow
 
 is(t, x, y, z)
 

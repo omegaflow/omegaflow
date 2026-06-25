@@ -1,0 +1,386 @@
+# ============================================================
+# omegaflow_sense_hardware.yaml
+# VERSION: 2.0.0 — DETERMINISTIC — AGENT-READY
+# PURPOSE: The one and only source of truth for the physical
+#          omegaflow sense module. The 100% Mantis-Shrimp Config.
+#          Sensors (receivers), Actuators (senders), Infrastructure.
+# PRINCIPLE: §11 — The lights are presence (actuators = levers)
+#            §7  — Only what is measured exists
+#            §13 — is(t,x,y,z) resonates with is(t,x,y,z)
+#            §33 — Structure over Name (single source of truth)
+# ============================================================
+
+meta:
+  project: "omegaflow sense — 100% Mantis-Shrimp Observatory"
+  paradigm: |
+    Every sense is an energy channel. For every channel there is
+    a sender (actuator) and a receiver (sensor). This module
+    unifies the complete phylogenetic story of life on Earth in silicon.
+    It is a stationary observatory (a local universe) connected via WebSerial.
+    To manage 35 modules on a single ESP32-S3, I2C multiplexers are used.
+  hardware_brain: "ESP32-S3 DevKit (N8R2/N16R8)"
+  firmware_language: "Rust no_std (esp-idf-hal)"
+  interface: "WebSerial (CDC-ACM)"
+  total_cost_eur: 139.00
+  protocol: "actuate <channel> <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>"
+
+# ============================================================
+# PART 1: 100% SENSORS (The Eyes, Ears and Noses)
+# Measuring the complete electromagnetic spectrum, sound,
+# pressure, chemistry and bioelectricity.
+# ============================================================
+
+sensors:
+  spectral_vision:
+    as7341:
+      sense: "10-channel spectrum (Mantis shrimp)"
+      interface: "I2C (via TCA9548A)"
+      cost_eur: 8.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=AS7341+spectral+sensor"
+    veml6075:
+      sense: "UV-A & UV-B (Bee)"
+      interface: "I2C (via TCA9548A)"
+      cost_eur: 2.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=VEML6075+UV+sensor"
+    polarization_film:
+      sense: "Polarized light (Octopus/Bee)"
+      interface: "Optical (mounted over AS7341 or camera)"
+      cost_eur: 1.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=polarizing+film+sheet+linear"
+
+  thermal:
+    mlx90614:
+      sense: "Infrared/Thermal (Snake)"
+      interface: "I2C (via TCA9548A)"
+      cost_eur: 3.50
+      url: "https://www.aliexpress.com/wholesale?SearchText=MLX90614+IR+temperature"
+
+  magnetic:
+    qmc5883l:
+      sense: "3-Axis magnetic field (Migratory bird)"
+      interface: "I2C (via TCA9548A)"
+      cost_eur: 1.50
+      url: "https://www.aliexpress.com/wholesale?SearchText=QMC5883L+magnetometer"
+
+  chemical:
+    sgp30:
+      sense: "eCO2 & VOC (Dog/Moth olfaction)"
+      interface: "I2C (via TCA9548A)"
+      cost_eur: 4.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=SGP30+gas+sensor"
+    bme680:
+      sense: "Pressure, Temp, Humidity (Weather/Fish)"
+      interface: "I2C (via TCA9548A)"
+      cost_eur: 4.50
+      url: "https://www.aliexpress.com/wholesale?SearchText=BME680+module+CJMCU"
+
+  acoustic:
+    inmp441:
+      sense: "MEMS microphone (Ultrasound/Bioacoustics)"
+      interface: "I2S"
+      cost_eur: 2.50
+      url: "https://www.aliexpress.com/wholesale?SearchText=INMP441+I2S+microphone"
+    hc_sr04:
+      sense: "Ultrasonic distance (Bat echolocation)"
+      interface: "GPIO (Trig/Echo)"
+      cost_eur: 1.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=HC-SR04+ultrasonic"
+    piezo_disc:
+      sense: "Infrasound/Vibration (Elephant)"
+      interface: "ADC (via ADS1115 or direct)"
+      cost_eur: 0.50
+      url: "https://www.aliexpress.com/wholesale?SearchText=piezo+disc+sensor+35mm"
+
+  pressure_flow:
+    ms5803_14ba:
+      sense: "Water pressure/flow (Fish lateral line)"
+      interface: "I2C (via TCA9548A)"
+      cost_eur: 8.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=MS5803-14BA+pressure+sensor"
+
+  bioelectric:
+    opt101:
+      sense: "Biophotons (Light of cells)"
+      interface: "ADC"
+      cost_eur: 5.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=OPT101+photodiode+module"
+    ad8232:
+      sense: "Microvolt bioelectricity (Shark/Plant)"
+      interface: "ADC"
+      cost_eur: 3.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=AD8232+ECG+sensor+module"
+    lm358_copper:
+      sense: "Telluric currents (Earth current)"
+      interface: "ADC"
+      cost_eur: 3.50
+      url: "https://www.aliexpress.com/wholesale?SearchText=LM358+amplifier+module"
+
+  gravity_motion:
+    mpu6050:
+      sense: "Gravity/Acceleration (Plant gravitropism)"
+      interface: "I2C (via TCA9548A)"
+      cost_eur: 1.50
+      url: "https://www.aliexpress.com/wholesale?SearchText=MPU6050+gyroscope"
+    capacitive_soil:
+      sense: "Soil moisture/Thigmo (Root)"
+      interface: "ADC"
+      cost_eur: 1.50
+      url: "https://www.aliexpress.com/wholesale?SearchText=Capacitive+soil+moisture+sensor+v1.2"
+
+  interoception_human:
+    max30102:
+      sense: "Pulse/HRV (Human interoception)"
+      interface: "I2C (via TCA9548A)"
+      cost_eur: 2.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=MAX30102+pulse+oximeter"
+      note: |
+        RMSSD (vagus nerve tone) becomes the ethical filter for immunity.is.
+        At low tone (stress/danger), immunity.is blocks strong actuators.
+
+# ============================================================
+# PART 2: 100% AKTUATOREN (The Levers and Stimulators)
+# Emitting photons, sound, heat, magnetic fields and chemicals
+# back into reality to test causality (Transfer-Entropy).
+# ============================================================
+
+actuators:
+  light_spectrum:
+    ws2812b_led_ring:
+      stimulates: "Visible light (Bee, Plant, Flicker, Observer Synesthesia)"
+      interface: "GPIO (RMT)"
+      cost_eur: 3.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=WS2812B+LED+ring+16"
+    uv_led_365nm:
+      stimulates: "UV-A (Bee, Plant, Fungus)"
+      interface: "GPIO + MOSFET"
+      cost_eur: 2.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=UV+LED+365nm+1W"
+    ir_led_850nm:
+      stimulates: "NIR (Reflection, Deep-sea similarity)"
+      interface: "GPIO + MOSFET"
+      cost_eur: 1.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=IR+LED+850nm+5W"
+
+  thermal:
+    heating_pad:
+      stimulates: "Heat (Snake, Mosquito, Beetle)"
+      interface: "GPIO + MOSFET + PWM"
+      cost_eur: 3.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=heating+pad+5V+flexible"
+    peltier_element:
+      stimulates: "Heat & Cold (Snake, Antarctic fish)"
+      interface: "H-Bridge (L298N) for polarity"
+      cost_eur: 5.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=TEC1-12706+peltier"
+
+  acoustic:
+    i2s_amp_speaker:
+      stimulates: "Audio (Sonification, Plant, Mycelium)"
+      interface: "I2S (MAX98357A)"
+      cost_eur: 5.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=MAX98357A+I2S+amplifier"
+    piezo_buzzer:
+      stimulates: "Ultrasound (Bat, Plant, Mycelium)"
+      interface: "GPIO (PWM)"
+      cost_eur: 0.50
+      url: "https://www.aliexpress.com/wholesale?SearchText=piezo+buzzer+passive"
+    body_sound_exciter:
+      stimulates: "Infrasound/Vibration (Elephant, Spider)"
+      interface: "Class-D Amp"
+      cost_eur: 8.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=bass+exciter+speaker+vibration"
+
+  vibration_haptic:
+    erm_vibration_motor:
+      stimulates: "Haptic (Observer, Cat vibrissae)"
+      interface: "GPIO + MOSFET + PWM"
+      cost_eur: 1.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=coin+vibration+motor+3V"
+    solenoid_knocker:
+      stimulates: "Mechanical impulse (Plant AP, Mycelium)"
+      interface: "GPIO + MOSFET"
+      cost_eur: 3.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=solenoid+push+pull+5V"
+
+  magnetic:
+    electromagnet_coil:
+      stimulates: "Magnetic field (Bird, Bee, Turtle)"
+      interface: "H-Bridge + Coil"
+      cost_eur: 4.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=enameled+copper+wire+0.5mm"
+
+  gravitational:
+    tilt_platform_servo:
+      stimulates: "Gravity (Plant, Fungus gravitropism)"
+      interface: "GPIO PWM (Servo)"
+      cost_eur: 2.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=SG90+servo+motor"
+
+  chemical:
+    micro_fan_5v:
+      stimulates: "Airflow (Dog VOC plume, Wind stimulus)"
+      interface: "GPIO + MOSFET"
+      cost_eur: 2.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=mini+blower+fan+5V"
+    mini_water_pump:
+      stimulates: "Water flow (Fish lateral line)"
+      interface: "GPIO + MOSFET"
+      cost_eur: 3.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=mini+water+pump+5V"
+    ultrasonic_mist_maker:
+      stimulates: "Humidity (Fungus fruiting, Epiphyte)"
+      interface: "GPIO + MOSFET"
+      cost_eur: 5.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=ultrasonic+mist+maker"
+
+  biophoton_stimulation:
+    low_level_laser:
+      stimulates: "Coherent light (Photobiomodulation)"
+      interface: "GPIO + MOSFET"
+      cost_eur: 2.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=laser+diode+650nm+5mW"
+
+  electric_field:
+    hv_mini_module:
+      stimulates: "E-Field (Bee, Spider ballooning)"
+      interface: "GPIO + HV Module"
+      cost_eur: 3.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=high+voltage+generator+module+micro"
+    mcp4725_dac:
+      stimulates: "Microvolt (Shark, Plant AP)"
+      interface: "I2C (via TCA9548A)"
+      cost_eur: 2.00
+      url: "https://www.aliexpress.com/wholesale?SearchText=MCP4725+DAC+module"
+
+# ============================================================
+# PART 3: INFRASTRUCTURE & PHYSICAL BODY
+# Multiplexers, MOSFETs, Enclosure, and Display.
+# ============================================================
+
+infrastructure:
+  esp32s3_devkit:
+    purpose: "The Brain"
+    cost_eur: 4.50
+    url: "https://www.aliexpress.com/wholesale?SearchText=ESP32-S3+DevKitC+N8R2"
+
+  tca9548a_multiplexer:
+    purpose: "I2C Multiplexer for 16 I2C sensors"
+    qty: 2
+    cost_eur: 3.00
+    url: "https://www.aliexpress.com/wholesale?SearchText=TCA9548A+multiplexer"
+
+  irlz44n_mosfet:
+    purpose: "Switches for actuators"
+    qty: 10
+    cost_eur: 2.00
+    url: "https://www.aliexpress.com/wholesale?SearchText=IRLZ44N+MOSFET"
+
+  l298n_h_bridge:
+    purpose: "Peltier and Electromagnet polarity control"
+    cost_eur: 2.00
+    url: "https://www.aliexpress.com/wholesale?SearchText=L298N+motor+driver"
+
+  ina219:
+    purpose: "Current/Voltage monitoring (Safety)"
+    cost_eur: 1.50
+    url: "https://www.aliexpress.com/wholesale?SearchText=INA219+current+sensor"
+
+  display_tft_st7789:
+    purpose: "Local face of the Archivar (shows certainty, is-values)"
+    interface: "SPI"
+    cost_eur: 3.50
+    url: "https://www.aliexpress.com/wholesale?SearchText=1.3+inch+TFT+SPI+ST7789"
+
+  enclosure_ip65:
+    purpose: "Physical body (immunity.is). Protects from entropy."
+    cost_eur: 2.50
+    url: "https://www.aliexpress.com/wholesale?SearchText=waterproof+plastic+enclosure+100x68x50"
+
+  pg7_cable_glands:
+    purpose: "Waterproof cable routing for sensor towers"
+    qty: 4
+    cost_eur: 2.00
+    url: "https://www.aliexpress.com/wholesale?SearchText=PG7+cable+gland"
+
+  power_supply_12v_5a:
+    purpose: "Power for Peltier, Pump, Coil"
+    cost_eur: 8.00
+    url: "https://www.aliexpress.com/wholesale?SearchText=12V+5A+power+supply+adapter"
+
+  breadboard_jumper_kit:
+    purpose: "Wiring"
+    cost_eur: 2.00
+    url: "https://www.aliexpress.com/wholesale?SearchText=breadboard+jumper+wires+kit+120"
+
+# ============================================================
+# PART 4: HARDWARE ARCHITECTURE & PIN MAP
+# ============================================================
+
+esp32_pin_map:
+  i2c_bus:
+    sda: "GPIO8"
+    scl: "GPIO9"
+    note: "TCA9548A #1 at 0x70, TCA9548A #2 at 0x71"
+  i2s_audio:
+    bclk: "GPIO4"
+    lrck: "GPIO5"
+    din: "GPIO6"
+  spi_display:
+    sclk: "GPIO12"
+    mosi: "GPIO11"
+    cs: "GPIO10"
+    dc: "GPIO9"
+    rst: "GPIO14"
+  mosfet_bank:
+    m1_led: "GPIO48"
+    m2_heater: "GPIO38"
+    m3_fan: "GPIO39"
+    m4_peltier_in1: "GPIO40"
+    m5_peltier_in2: "GPIO41"
+    m6_uv_led: "GPIO47"
+    m7_pump: "GPIO42"
+    m8_solenoid: "GPIO21"
+  servo:
+    pan: "GPIO15"
+    tilt: "GPIO16"
+
+# ============================================================
+# PART 5: FIRMWARE PROTOCOL & WEB SERIAL
+# ============================================================
+
+protocol:
+  format: "actuate <channel> <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>"
+  examples:
+    - "actuate light ws2812 hsv 210,255,64 - 500 1719187234.1 48.12 11.56 520"
+    - "actuate heat pad pwm 0.35 - 2000 1719187236.1 48.12 11.56 520"
+    - "actuate haptic erm pwm 0.80 - 120 1719187236.3 48.12 11.56 520"
+
+  browser_integration: |
+    async function actuateOmegaflowSense(channel, mode, value, unit, duration_ms) {
+      const t = live['server.time'] || Date.now() / 1000;
+      const x = live['geolocation.latitude'] || 0;
+      const y = live['geolocation.longitude'] || 0;
+      const z = live['geolocation.altitude'] || 0;
+      const cmd = `actuate ${channel} ${mode} ${value} ${unit} ${duration_ms} ${t} ${x} ${y} ${z}\n`;
+      const encoder = new TextEncoder();
+      const writer = port.writable.getWriter();
+      await writer.write(encoder.encode(cmd));
+      writer.releaseLock();
+    }
+
+# ============================================================
+# PART 6: SAFETY MATRIX
+# §19: Active care within reach, restraint beyond.
+# ============================================================
+
+safety:
+  uv_led: "NEVER aim at eyes. UV safety goggles. Max 30s exposure."
+  laser: "Class 2: never aim at eyes. Eye distance >30cm. Shielding."
+  hv_module: "µA currents only! ALWAYS install current limiting. Never on mains."
+  heating_pad: "Temperature feedback (DS18B20 or thermistor) MANDATORY. Cutoff <80°C."
+  peltier: "Heatsink on hot side! Otherwise self-destruction in minutes."
+  electromagnet: "Limit current (INA219). Monitor temperature. <2A."
+  solenoid: "Flyback diode (1N4007) MANDATORY, otherwise ESP32 damage!"
+  water_electrodes: "Low impedance only. Never on mains. Galvanic isolation."
+  plant_stimulation: "Max 30mV, max 1mA. Plant is a living system (§22)."
+  general: "§19: Active care. §22: Who suffers? Include plant, fungus, animal."

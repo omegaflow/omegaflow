@@ -1,7 +1,8 @@
-is/de440s.is
-is/egm96.is
-is/de440s.dat
-is/egm96.dat
 data/
 target/
+node_modules/
+.env
+.env.local
+*.log
+*.lock
 omegaflow_dump.txt

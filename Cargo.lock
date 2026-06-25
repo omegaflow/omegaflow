@@ -3,9 +3,5 @@
 version = 4
 
 [[package]]
-name = "compiler"
-version = "3.0.0"
-
-[[package]]
-name = "server"
+name = "omegaflow"
 version = "3.0.0"

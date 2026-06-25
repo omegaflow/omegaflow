@@ -1,4 +1,5 @@
 const C = 299792458.0;
+const PHI = 1.618033988749895;
 
 export const live = {};
 export const pulse = { ws: null, pending: new Map(), seq: 0 };
@@ -367,3 +368,5 @@ function parsePayload(bytes) {
 
     return records;
 }
+
+

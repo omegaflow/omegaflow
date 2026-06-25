@@ -1,7 +1,4 @@
-data/
-pool/
 target/
-pkg/
-.idea/
-.vscode/
-*.iml
+.env
+is/immunity.is
+is/epigenome.is

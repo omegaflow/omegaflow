@@ -3,20 +3,7 @@ equation: is(t, x, y, z)
 data_source: raw measurements (§7)
 pipeline: Archivar (Live-Resolver) → Mathematikerin (GPU) → Observer
 
-data_sources:
-  live_apis:
-    magnetism: "NOAA SWPC (Real-time solar wind, Bz, Bt)"
-    seismic: "USGS GeoJSON (Real-time earthquakes, depth, magnitude)"
-    topography: "Open-Meteo Elevation API (on-demand height)"
-    biosphere: "Open-Meteo Soil, iNaturalist, GBIF"
-    atmosphere: "Open-Meteo API (Local temp, pressure, wind, air quality)"
-  cached_apis:
-    astronomy: "JPL Horizons (Planetary positions, cached weekly — ephemeral local mirror)"
-  local_sensors:
-    observer: "Web Bluetooth (Garmin 945: HRV, SpO2, Brain, cardiac)"
-    environment: "WebUSB/WebSerial (RTL-SDR, SDS011, Geophone, Light)"
-    neurology: "Web Bluetooth GATT (Alpha, Beta, Gamma focus)"
-    omegaflow_sense: "ESP32-S3 module (telluric, biophoton, flicker, dust, VOC)"
+data_sources: is/sources.is
 
 council: see docs/council_fiction.yaml
 
