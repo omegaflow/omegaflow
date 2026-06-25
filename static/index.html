@@ -53,6 +53,9 @@
         let localGravity = 0.0;
         let lastGeoLat = NaN, lastGeoLon = NaN, lastGeoAlt = NaN;
 
+        let _topologyInterval = null;
+        let _lastTopology = 0;
+
         const probeState = {
             phase: 'idle',
             batch: [],
@@ -68,13 +71,9 @@
         const pulseWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/pulse`);
         pulseWs.binaryType = 'arraybuffer';
         pulse.ws = pulseWs;
-        pulseWs.addEventListener('open', () => { pulse.reconnecting = false; });
+        pulseWs.addEventListener('open', () => {});
         pulseWs.addEventListener('close', () => {
-            pulse.reconnecting = false;
-            if (!pulse.reconnecting) {
-                pulse.reconnecting = true;
-                setTimeout(() => location.reload(), 2000);
-            }
+            location.reload();
         });
         pulseWs.addEventListener('message', (e) => {
             if (typeof e.data !== 'string') {
@@ -183,7 +182,7 @@
                 const before = snap[path];
                 const delta = Math.abs(s.val - before.val);
                 if (delta > before.noiseFloor) {
-                    responders.push({ path, magnitude: delta, latency: 0 });
+                    responders.push({ path, magnitude: delta });
                 }
             }
             return responders;
@@ -197,7 +196,7 @@
                     data.magnitude *= prune;
                     data.surprise = (data.surprise || 0) * prune;
                     totalSurprise += data.surprise;
-                    if (data.magnitude < 1e-10) sensorMap.delete(spath);
+                    if (data.magnitude < 1 / RING_SIZE) sensorMap.delete(spath);
                 }
                 if (sensorMap.size === 0) resonanceMap.delete(actPath);
             }
@@ -236,9 +235,9 @@
                 sendSurvived(probeState.batch);
                 for (const a of probeState.batch) {
                     a.pokeValue *= PHI;
-                    if (a.pokeValue > 1e15) {
-                        dead.add(a.path);
-                        actuators.delete(a.path);
+                    if (a.pokeValue > sensors.size * PHI) {
+                    dead.add(a.path);
+                    actuators.delete(a.path);
                     }
                 }
                 startBroad(ts);
@@ -286,12 +285,10 @@
                     if (existing) {
                         existing.threshold = existing.threshold * (1 - ma) + actuator.pokeValue * ma;
                         existing.magnitude = existing.magnitude * (1 - ma) + r.magnitude * ma;
-                        existing.latency = ts - probeState.pokeTime;
                         existing.surprise = (existing.surprise || 0) * (1 - ma) + error * ma;
                     } else {
                         resonanceMap.get(actuator.path).set(r.path, {
                             threshold: actuator.pokeValue,
-                            latency: ts - probeState.pokeTime,
                             magnitude: r.magnitude,
                             surprise: error
                         });
@@ -317,7 +314,7 @@
             sendSurvived(probeState.batch);
             for (const a of probeState.batch) {
                 a.pokeValue *= PHI;
-                if (a.pokeValue > 1e15) {
+                if (a.pokeValue > sensors.size * PHI) {
                     dead.add(a.path);
                     actuators.delete(a.path);
                 }
@@ -411,13 +408,13 @@
                     live['gamepad[' + i + '].connected'] = gp.connected ? 1 : 0;
                     live['gamepad[' + i + '].timestamp'] = gp.timestamp;
                     for (let a = 0; a < gp.axes.length; a++) {
-                        live['gamepad[' + i + '].axes[' + a + ']'] = gp.axes[a];
-                        state = state * 31 + (gp.axes[a] * 1e4 | 0);
+                    live['gamepad[' + i + '].axes[' + a + ']'] = gp.axes[a];
+                    state = state * 31 + (gp.axes[a] * Math.pow(2, 16) | 0);
                     }
                     for (let b = 0; b < gp.buttons.length; b++) {
-                        live['gamepad[' + i + '].buttons[' + b + '].pressed'] = gp.buttons[b].pressed ? 1 : 0;
-                        live['gamepad[' + i + '].buttons[' + b + '].value'] = gp.buttons[b].value;
-                        state = state * 31 + (gp.buttons[b].value * 1e4 | 0);
+                    live['gamepad[' + i + '].buttons[' + b + '].pressed'] = gp.buttons[b].pressed ? 1 : 0;
+                    live['gamepad[' + i + '].buttons[' + b + '].value'] = gp.buttons[b].value;
+                    state = state * 31 + (gp.buttons[b].value * Math.pow(2, 16) | 0);
                     }
                 }
             }
@@ -426,7 +423,250 @@
 
         const RING_SIZE = 128;
         const _signalBuffers = new Map();
-        let _topologyTimer = 0;
+
+        const KOLMOGOROV_SHADER = `
+@group(0) @binding(0) var<storage, read> data: array<f32>;
+@group(0) @binding(1) var<storage, read_write> complexity: array<f32>;
+@group(0) @binding(2) var<uniform> params: vec4<f32>;
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let s = gid.x;
+    let n = u32(params.x);
+    let rs = u32(params.y);
+    if (s >= n) { return; }
+    let base = s * rs;
+    var sum: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { sum += data[base + i]; }
+    let mean = sum / f32(rs);
+    var var_sum: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { let d = data[base + i] - mean; var_sum += d * d; }
+    let threshold = sqrt(var_sum / f32(rs)) / (1.618033988749895 * 1.618033988749895);
+    var repeats: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) {
+        let vi = data[base + i];
+        for (var j = i + 1u; j < rs; j++) {
+            if (abs(vi - data[base + j]) < threshold) { repeats += 1.0; }
+        }
+    }
+    let total = f32(rs * (rs - 1u) / 2u);
+    complexity[s] = 1.0 - (repeats / total);
+}
+`;
+
+        const TAKENS_SHADER = `
+@group(0) @binding(0) var<storage, read> data: array<f32>;
+@group(0) @binding(1) var<storage, read_write> out: array<f32>;
+@group(0) @binding(2) var<uniform> params: vec4<f32>;
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let s = gid.x;
+    let n = u32(params.x);
+    let rs = u32(params.y);
+    if (s >= n) { return; }
+    let base = s * rs;
+    var sum: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { sum += data[base + i]; }
+    let mean = sum / f32(rs);
+    var best_tau: u32 = 1u;
+    var mi_prev: f32 = data[base];
+    var mi_prev2: f32 = data[base];
+    let max_lag = u32(f32(rs) / 1.618033988749895);
+    for (var lag = 1u; lag <= max_lag; lag++) {
+    var mn: f32 = data[base]; var mx: f32 = data[base];
+        for (var i = 0u; i < rs - lag; i++) {
+            mn = min(mn, data[base + i]); mx = max(mx, data[base + i]);
+        }
+        let range = mx - mn + (1.0 / 86400.0);
+        var h00: f32 = 0.0; var h01: f32 = 0.0; var h10: f32 = 0.0; var h11: f32 = 0.0;
+        for (var i = 0u; i < rs - lag; i++) {
+            let b1 = select(0u, 1u, data[base + i] > mn + range * 0.5);
+            let b2 = select(0u, 1u, data[base + i + lag] > mn + range * 0.5);
+            if (b1 == 0u && b2 == 0u) { h00 += 1.0; }
+            else if (b1 == 0u && b2 == 1u) { h01 += 1.0; }
+            else if (b1 == 1u && b2 == 0u) { h10 += 1.0; }
+            else { h11 += 1.0; }
+        }
+        let total = f32(rs - lag);
+        let p0 = (h00 + h01) / total; let p1 = (h10 + h11) / total;
+        let q0 = (h00 + h10) / total; let q1 = (h01 + h11) / total;
+        var mi: f32 = 0.0;
+        let eps = 1.0 / 86400.0;
+        if (h00 > 0.0) { mi += (h00/total) * log2((h00/total) / (p0*q0 + eps) + eps); }
+        if (h01 > 0.0) { mi += (h01/total) * log2((h01/total) / (p0*q1 + eps) + eps); }
+        if (h10 > 0.0) { mi += (h10/total) * log2((h10/total) / (p1*q0 + eps) + eps); }
+        if (h11 > 0.0) { mi += (h11/total) * log2((h11/total) / (p1*q1 + eps) + eps); }
+        if (lag >= 3u && mi_prev2 > mi_prev && mi_prev <= mi) {
+            best_tau = lag - 1u; break;
+        }
+        mi_prev2 = mi_prev; mi_prev = mi;
+    }
+    let max_pts = rs - 2u * best_tau;
+    let out_base = s * 4u;
+    var cx: f32 = 0.0; var cy: f32 = 0.0; var cz: f32 = 0.0;
+    for (var i = 0u; i < max_pts; i++) {
+        cx += data[base + i]; cy += data[base + i + best_tau]; cz += data[base + i + 2u * best_tau];
+    }
+    cx = cx / f32(max_pts); cy = cy / f32(max_pts); cz = cz / f32(max_pts);
+    var spread: f32 = 0.0;
+    for (var i = 0u; i < max_pts; i++) {
+        let dx = data[base + i] - cx;
+        let dy = data[base + i + best_tau] - cy;
+        let dz = data[base + i + 2u * best_tau] - cz;
+        spread += sqrt(dx*dx + dy*dy + dz*dz);
+    }
+    spread = spread / f32(max_pts);
+    out[out_base] = cx; out[out_base + 1u] = cy; out[out_base + 2u] = cz; out[out_base + 3u] = spread;
+}
+`;
+
+        const TE_SHADER = `
+@group(0) @binding(0) var<storage, read> data: array<f32>;
+@group(0) @binding(1) var<storage, read_write> te: array<f32>;
+@group(0) @binding(2) var<uniform> params: vec4<f32>;
+fn to_bin(v: f32, mn: f32, mx: f32) -> u32 {
+    if (mx <= mn) { return 1u; }
+    let t = (v - mn) / (mx - mn);
+    if (t < (1.0 / 3.0)) { return 0u; }
+    if (t < (2.0 / 3.0)) { return 1u; }
+    return 2u;
+}
+@compute @workgroup_size(8, 8)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let a = gid.x; let b = gid.y;
+    let n = u32(params.x); let rs = u32(params.y);
+    if (a >= n || b >= n || a == b) { return; }
+    var a_min: f32 = data[a * rs]; var a_max: f32 = data[a * rs];
+    var b_min: f32 = data[b * rs]; var b_max: f32 = data[b * rs];
+    for (var i = 0u; i < rs; i++) {
+        a_min = min(a_min, data[a * rs + i]); a_max = max(a_max, data[a * rs + i]);
+        b_min = min(b_min, data[b * rs + i]); b_max = max(b_max, data[b * rs + i]);
+    }
+    var hist: array<f32, 27>;
+    for (var i = 0u; i < rs - 1u; i++) {
+        let ab = to_bin(data[a * rs + i], a_min, a_max);
+        let bb = to_bin(data[b * rs + i], b_min, b_max);
+        let bn = to_bin(data[b * rs + i + 1u], b_min, b_max);
+        hist[ab * 9u + bb * 3u + bn] += 1.0;
+    }
+    var p_bn_bb: array<f32, 9>;
+    for (var ab = 0u; ab < 3u; ab++) {
+        for (var bb = 0u; bb < 3u; bb++) {
+            for (var bn = 0u; bn < 3u; bn++) {
+                p_bn_bb[bb * 3u + bn] += hist[ab * 9u + bb * 3u + bn];
+            }
+        }
+    }
+    let total = f32(rs - 1u);
+    var te_val: f32 = 0.0;
+    for (var ab = 0u; ab < 3u; ab++) {
+        for (var bb = 0u; bb < 3u; bb++) {
+            for (var bn = 0u; bn < 3u; bn++) {
+                let p_joint = hist[ab * 9u + bb * 3u + bn] / total;
+                if (p_joint > 0.0) {
+                    let eps = 1.0 / 86400.0;
+                    let denom_joint = hist[ab * 9u + bb * 3u] + hist[ab * 9u + bb * 3u + 1u] + hist[ab * 9u + bb * 3u + 2u] + eps;
+                    let p_bn_given_abb = hist[ab * 9u + bb * 3u + bn] / denom_joint;
+                    let p_bb_sum = p_bn_bb[bb * 3u] + p_bn_bb[bb * 3u + 1u] + p_bn_bb[bb * 3u + 2u];
+                    let p_bn_given_bb = (p_bn_bb[bb * 3u + bn] + eps) / (p_bb_sum + eps);
+          te_val += p_joint * log2(p_bn_given_abb / (p_bn_given_bb + eps));
+                }
+            }
+        }
+    }
+    te[a * n + b] = max(0.0, te_val);
+}
+`;
+
+        const TDA_SHADER = `
+@group(0) @binding(0) var<storage, read> data: array<f32>;
+@group(0) @binding(1) var<storage, read_write> out: array<f32>;
+@group(0) @binding(2) var<uniform> params: vec4<f32>;
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let s = gid.x;
+    let n = u32(params.x);
+    let rs = u32(params.y);
+    if (s >= n) { return; }
+    let base = s * rs;
+    let sub = u32(f32(rs) / (1.618033988749895 * 1.618033988749895));
+    let tau = u32(1.0 + 1.0 / 1.618033988749895);
+    var parent: array<u32, 48>;
+    for (var i = 0u; i < 48u; i++) { if (i < sub) { parent[i] = i; } }
+    var dists: array<f32, 48>;
+    for (var i = 0u; i < sub; i++) {
+        var min_d: f32 = abs(data[base] - data[base + tau]);
+        let p1 = base + i * tau;
+        for (var j = 0u; j < sub; j++) {
+            if (i == j) { continue; }
+            let p2 = base + j * tau;
+            let d = abs(data[p1] - data[p2]);
+            if (d < min_d) { min_d = d; }
+        }
+        dists[i] = min_d;
+    }
+    for (var i = 1u; i < sub; i++) {
+        let key = dists[i]; var j = i;
+        while (j > 0u && dists[j - 1u] > key) { dists[j] = dists[j - 1u]; j = j - 1u; }
+        dists[j] = key;
+    }
+    var life_sum: f32 = 0.0; var prev_d: f32 = 0.0; var comps: f32 = f32(sub);
+    for (var i = 0u; i < sub; i++) {
+        let d = dists[i];
+        life_sum += (d - prev_d) * comps;
+        comps -= 1.0;
+        prev_d = d;
+    }
+    let out_base = s * 2u;
+    out[out_base] = life_sum / f32(sub);
+    out[out_base + 1u] = comps;
+}
+`;
+
+        const ICA_SHADER = `
+@group(0) @binding(0) var<storage, read> data: array<f32>;
+@group(0) @binding(1) var<storage, read_write> out: array<f32>;
+@group(0) @binding(2) var<uniform> params: vec4<f32>;
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let src = gid.x;
+    let n = u32(params.x);
+    let rs = u32(params.y);
+    if (src >= n) { return; }
+    var sum: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { sum += data[src * rs + i]; }
+    let mean = sum / f32(rs);
+    var var_sum: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { let d = data[src * rs + i] - mean; var_sum += d * d; }
+    let variance = var_sum / f32(rs);
+    var w: array<f32, 128>;
+    for (var i = 0u; i < rs; i++) { w[i] = data[src * rs + i]; }
+    for (var iter = 0u; iter < 3u; iter++) {
+        var wx_sum: array<f32, 128>; var g_sum: array<f32, 128>; var gp_sum: f32 = 0.0;
+        for (var i = 0u; i < rs; i++) {
+            var proj: f32 = 0.0;
+            for (var k = 0u; k < n; k++) { proj += w[i] * data[k * rs + i]; }
+            let g = tanh(proj); let gp = 1.0 - g * g;
+            for (var k = 0u; k < n; k++) { g_sum[k] += data[k * rs + i] * g; }
+            gp_sum += gp;
+        }
+        var w_norm: f32 = 0.0;
+        for (var i = 0u; i < rs; i++) { w[i] = (g_sum[src] / f32(rs)) - (gp_sum / f32(rs)) * w[i]; w_norm += w[i] * w[i]; }
+        let norm = sqrt(w_norm) + (1.0 / 86400.0);
+        for (var i = 0u; i < rs; i++) { w[i] = w[i] / norm; }
+    }
+    var amp: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { amp += abs(w[i]); }
+    let out_base = src * 2u;
+    out[out_base] = variance;
+    out[out_base + 1u] = amp / f32(rs);
+}
+`;
+
+        let _kolmogorovPipeline = null;
+        let _takensPipeline = null;
+        let _tePipeline = null;
+        let _tdaPipeline = null;
+        let _icaPipeline = null;
 
         function processSensorReading(s, val, tickTime) {
             const absDelta = Math.abs(val - s.val);
@@ -458,8 +698,6 @@
         }
 
         function runSignalTopology(ts) {
-            if (ts - _topologyTimer < 5000) return;
-            _topologyTimer = ts;
             if (!window.omegaflow?.gpu) return;
 
             const activeBuffers = [];
@@ -479,75 +717,178 @@
                 flat.set(activeBuffers[i], i * RING_SIZE);
             }
 
+            const layout = {
+                entries: [
+                    { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+                    { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+                    { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
+                ]
+            };
+            
+            if (!_kolmogorovPipeline) {
+                const bl = gpu.createBindGroupLayout(layout);
+                const pl = gpu.createPipelineLayout({ bindGroupLayouts: [bl] });
+                _kolmogorovPipeline = gpu.createComputePipeline({ layout: pl, compute: { module: gpu.createShaderModule({ code: KOLMOGOROV_SHADER }), entryPoint: 'main' } });
+                _takensPipeline = gpu.createComputePipeline({ layout: pl, compute: { module: gpu.createShaderModule({ code: TAKENS_SHADER }), entryPoint: 'main' } });
+            }
+            
+            if (!_tePipeline) {
+                const teLayout = { entries: layout.entries };
+                const teBl = gpu.createBindGroupLayout(teLayout);
+                const tePl = gpu.createPipelineLayout({ bindGroupLayouts: [teBl] });
+                _tePipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: TE_SHADER }), entryPoint: 'main' } });
+                _tdaPipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: TDA_SHADER }), entryPoint: 'main' } });
+                _icaPipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: ICA_SHADER }), entryPoint: 'main' } });
+            }
+
             const inBuf = gpu.createBuffer({ size: flat.byteLength, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
             gpu.queue.writeBuffer(inBuf, 0, flat);
-            const outBuf = gpu.createBuffer({ size: n * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
             const paramBuf = gpu.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
             gpu.queue.writeBuffer(paramBuf, 0, new Float32Array([n, RING_SIZE, 0, 0]));
 
-            const shader = gpu.createShaderModule({ code: `
-@group(0) @binding(0) var<storage, read> data: array<f32>;
-@group(0) @binding(1) var<storage, read_write> complexity: array<f32>;
-@group(0) @binding(2) var<uniform> params: vec4<f32>;
-@compute @workgroup_size(64)
-fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-    let s = gid.x;
-    let n = u32(params.x);
-    let rs = u32(params.y);
-    if (s >= n) { return; }
-    let base = s * rs;
-    var sum: f32 = 0.0;
-    for (var i = 0u; i < rs; i++) { sum += data[base + i]; }
-    let mean = sum / f32(rs);
-    var var_sum: f32 = 0.0;
-    for (var i = 0u; i < rs; i++) { let d = data[base + i] - mean; var_sum += d * d; }
-    let threshold = sqrt(var_sum / f32(rs)) / (1.618033988749895 * 1.618033988749895);
-    var repeats: f32 = 0.0;
-    for (var i = 0u; i < rs; i++) {
-        let vi = data[base + i];
-        for (var j = i + 1u; j < rs; j++) {
-            if (abs(vi - data[base + j]) < threshold) { repeats += 1.0; }
-        }
-    }
-    let total = f32(rs * (rs - 1u) / 2u);
-    complexity[s] = 1.0 - (repeats / total);
-}
-`});
-            const bl = gpu.createBindGroupLayout({ entries: [
-                { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
-                { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
-                { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
-            ]});
-            const pl = gpu.createPipelineLayout({ bindGroupLayouts: [bl] });
-            const p = gpu.createComputePipeline({ layout: pl, compute: { module: shader, entryPoint: 'main' } });
-            const bg = gpu.createBindGroup({ layout: bl, entries: [
+            const kOutBuf = gpu.createBuffer({ size: n * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+            const tOutBuf = gpu.createBuffer({ size: n * 4 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+            const teOutBuf = gpu.createBuffer({ size: n * n * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+            const tdaOutBuf = gpu.createBuffer({ size: n * 2 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+            const icaOutBuf = gpu.createBuffer({ size: n * 2 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+
+            const bl = _kolmogorovPipeline.getBindGroupLayout(0);
+            const teBl = _tePipeline.getBindGroupLayout(0);
+            
+            const kBg = gpu.createBindGroup({ layout: bl, entries: [
                 { binding: 0, resource: { buffer: inBuf } },
-                { binding: 1, resource: { buffer: outBuf } },
+                { binding: 1, resource: { buffer: kOutBuf } },
+                { binding: 2, resource: { buffer: paramBuf } },
+            ]});
+            const tBg = gpu.createBindGroup({ layout: bl, entries: [
+                { binding: 0, resource: { buffer: inBuf } },
+                { binding: 1, resource: { buffer: tOutBuf } },
+                { binding: 2, resource: { buffer: paramBuf } },
+            ]});
+            const teBg = gpu.createBindGroup({ layout: teBl, entries: [
+                { binding: 0, resource: { buffer: inBuf } },
+                { binding: 1, resource: { buffer: teOutBuf } },
+                { binding: 2, resource: { buffer: paramBuf } },
+            ]});
+            const tdaBg = gpu.createBindGroup({ layout: teBl, entries: [
+                { binding: 0, resource: { buffer: inBuf } },
+                { binding: 1, resource: { buffer: tdaOutBuf } },
+                { binding: 2, resource: { buffer: paramBuf } },
+            ]});
+            const icaBg = gpu.createBindGroup({ layout: teBl, entries: [
+                { binding: 0, resource: { buffer: inBuf } },
+                { binding: 1, resource: { buffer: icaOutBuf } },
                 { binding: 2, resource: { buffer: paramBuf } },
             ]});
 
-            const rb = gpu.createBuffer({ size: n * 4, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+            const totalReadSize = n * 4 + n * 4 * 4 + n * n * 4 + n * 2 * 4 + n * 2 * 4;
+            const readBuf = gpu.createBuffer({ size: totalReadSize, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
             const enc = gpu.createCommandEncoder();
-            const pass = enc.beginComputePass();
-            pass.setPipeline(p);
-            pass.setBindGroup(0, bg);
-            pass.dispatchWorkgroups(Math.ceil(n / 64));
-            pass.end();
-            enc.copyBufferToBuffer(outBuf, 0, rb, 0, n * 4);
+            
+            const kPass = enc.beginComputePass();
+            kPass.setPipeline(_kolmogorovPipeline);
+            kPass.setBindGroup(0, kBg);
+            kPass.dispatchWorkgroups(Math.ceil(n / 64));
+            kPass.end();
+
+            const tPass = enc.beginComputePass();
+            tPass.setPipeline(_takensPipeline);
+            tPass.setBindGroup(0, tBg);
+            tPass.dispatchWorkgroups(Math.ceil(n / 64));
+            tPass.end();
+
+            const tePass = enc.beginComputePass();
+            tePass.setPipeline(_tePipeline);
+            tePass.setBindGroup(0, teBg);
+            tePass.dispatchWorkgroups(Math.ceil(n / 8), Math.ceil(n / 8));
+            tePass.end();
+
+            const tdaPass = enc.beginComputePass();
+            tdaPass.setPipeline(_tdaPipeline);
+            tdaPass.setBindGroup(0, tdaBg);
+            tdaPass.dispatchWorkgroups(Math.ceil(n / 64));
+            tdaPass.end();
+
+            const icaPass = enc.beginComputePass();
+            icaPass.setPipeline(_icaPipeline);
+            icaPass.setBindGroup(0, icaBg);
+            icaPass.dispatchWorkgroups(Math.ceil(n / 64));
+            icaPass.end();
+
+            let readOffset = 0;
+            enc.copyBufferToBuffer(kOutBuf, 0, readBuf, readOffset, n * 4); readOffset += n * 4;
+            enc.copyBufferToBuffer(tOutBuf, 0, readBuf, readOffset, n * 4 * 4); readOffset += n * 4 * 4;
+            enc.copyBufferToBuffer(teOutBuf, 0, readBuf, readOffset, n * n * 4); readOffset += n * n * 4;
+            enc.copyBufferToBuffer(tdaOutBuf, 0, readBuf, readOffset, n * 2 * 4); readOffset += n * 2 * 4;
+            enc.copyBufferToBuffer(icaOutBuf, 0, readBuf, readOffset, n * 2 * 4);
+
             gpu.queue.submit([enc.finish()]);
 
-            rb.mapAsync(GPUMapMode.READ).then(() => {
-                const res = new Float32Array(rb.getMappedRange());
+            readBuf.mapAsync(GPUMapMode.READ).then(() => {
+                const res = new Float32Array(readBuf.getMappedRange());
+                let off = 0;
+                const kRes = res.subarray(off, off + n); off += n;
+                const tRes = res.subarray(off, off + n * 4); off += n * 4;
+                const teRes = res.subarray(off, off + n * n); off += n * n;
+                const tdaRes = res.subarray(off, off + n * 2); off += n * 2;
+                const icaRes = res.subarray(off, off + n * 2);
+
+                const allTE = [];
+                for (let a = 0; a < n; a++) {
+                    for (let b = 0; b < n; b++) {
+                        if (a !== b && teRes[a * n + b] > 0) allTE.push(teRes[a * n + b]);
+                    }
+                }
+
+                const variances = [];
+                for (let i = 0; i < n; i++) variances.push(icaRes[i * 2]);
+
                 for (let i = 0; i < n; i++) {
-                    live['complexity.' + activeNames[i]] = res[i];
+                    live['complexity.' + activeNames[i]] = kRes[i];
                     const sens = sensors.get(activeNames[i]);
                     if (sens) {
                         const ma = 1 / (PHI * PHI);
-                    sens.noiseFloor = sens.noiseFloor * (1 - ma) + res[i] * ma;
+                        sens.noiseFloor = sens.noiseFloor * (1 - ma) + kRes[i] * ma;
+                    }
+
+                    const tBase = i * 4;
+                    live['takens.' + activeNames[i] + '.cx'] = tRes[tBase];
+                    live['takens.' + activeNames[i] + '.cy'] = tRes[tBase + 1];
+                    live['takens.' + activeNames[i] + '.cz'] = tRes[tBase + 2];
+                    live['takens.' + activeNames[i] + '.spread'] = tRes[tBase + 3];
+
+                    live['tda.' + activeNames[i] + '.persistence'] = tdaRes[i * 2];
+                    live['tda.' + activeNames[i] + '.betti0'] = tdaRes[i * 2 + 1];
+                }
+
+                if (allTE.length > 0) {
+                    const mu = allTE.reduce((s, v) => s + v, 0) / allTE.length;
+                    const sigma = Math.sqrt(allTE.reduce((s, v) => s + (v - mu) ** 2, 0) / allTE.length);
+                    const threshold = mu + sigma / PHI;
+                    for (let a = 0; a < n; a++) {
+                        for (let b = 0; b < n; b++) {
+                            if (a === b) continue;
+                            const v = teRes[a * n + b];
+                            if (v > threshold) {
+                                live['transfer.' + activeNames[a] + '>' + activeNames[b]] = v;
+                            }
+                        }
                     }
                 }
-                rb.unmap();
-                inBuf.destroy(); outBuf.destroy(); paramBuf.destroy(); rb.destroy();
+
+                const varMean = variances.reduce((s, v) => s + v, 0) / variances.length;
+                const cutoff = varMean / PHI;
+                let sourceCount = 0;
+                for (let i = 0; i < n; i++) {
+                    if (variances[i] > cutoff) {
+                        live['ica.source' + sourceCount] = icaRes[i * 2 + 1];
+                        sourceCount++;
+                    }
+                }
+                live['ica.count'] = sourceCount;
+
+                readBuf.unmap();
+                inBuf.destroy(); kOutBuf.destroy(); tOutBuf.destroy(); teOutBuf.destroy(); tdaOutBuf.destroy(); icaOutBuf.destroy(); paramBuf.destroy(); readBuf.destroy();
             });
         }
 
@@ -661,11 +1002,11 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
             if (probeState.phase === 'idle') {
                 const surprise = live['surprise'] || 0;
-                const curiosity = surprise / (localCertainty + 1e-15);
-                const shouldExplore = curiosity > sensors.size * 0.5;
+                const curiosity = surprise / (localCertainty + (1 / 299792458.0));
+                const shouldExplore = curiosity > sensors.size * (1 / PHI);
                 if (!act()) {
                     if (actuators.size > 0 && sensors.size > 0) {
-                        if (shouldExplore || Math.random() < 0.1) {
+                        if (shouldExplore || Math.random() < curiosity) {
                             startBroad(ts);
                         }
                     }
@@ -682,18 +1023,35 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 _lastTopology = ts;
                 runSignalTopology(ts);
                 const surprise = live['surprise'] || 0;
-                _topologyInterval = surprise > sensors.size * 0.1 ? tickTime : _topologyInterval * PHI;
+                _topologyInterval = surprise > sensors.size ? tickTime : _topologyInterval * PHI;
                 nextDelay = 0;
             } else if (topoDue < nextDelay) {
                 nextDelay = topoDue;
             }
 
+            const icDue = _lastInteroception + (tickTime * PHI) - ts;
+            if (icDue <= 0) {
+                _lastInteroception = ts;
+                live['system.cpu'] = navigator.hardwareConcurrency || 0;
+                if (performance.memory) {
+                    live['system.memory'] = performance.memory.usedJSHeapSize;
+                    live['system.memoryTotal'] = performance.memory.totalJSHeapSize;
+                }
+                const t0 = performance.now();
+                fetch('/time').then(() => {
+                    live['system.latency'] = performance.now() - t0;
+                }).catch(() => {});
+                nextDelay = 0;
+            } else if (icDue < nextDelay) {
+                nextDelay = icDue;
+            }
+
             if (document.hidden) {
-                nextDelay = Math.max(nextDelay, 1000);
+                nextDelay = Math.max(nextDelay, tickTime * PHI);
             }
 
             setTimeout(() => {
-                try { tick(performance.now()); } catch (e) { console.error(e); setTimeout(() => tick(performance.now()), 1000); }
+                try { tick(performance.now()); } catch (e) { console.error(e); setTimeout(() => tick(performance.now()), 0); }
             }, nextDelay);
         }
 
@@ -723,7 +1081,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                     if (cc.altitude !== null) live['geolocation.altitude'] = cc.altitude;
                     if (cc.heading !== null) live['geolocation.heading'] = cc.heading;
                     if (cc.speed !== null) live['geolocation.speed'] = cc.speed;
-                }, () => {}, { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 });
+                }, () => {}, { enableHighAccuracy: true, maximumAge: 0 });
             }
         }
 
@@ -732,7 +1090,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 if (!name.endsWith('Sensor')) continue;
                 if (typeof window[name] !== 'function') continue;
                 try {
-                    const sensor = new window[name]({ frequency: 60 });
+                    const sensor = new window[name]({});
                     sensor.addEventListener('reading', () => {
                         for (const prop of Object.getOwnPropertyNames(sensor)) {
                             const v = sensor[prop];
@@ -750,24 +1108,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             }
         }
 
-        function tryStartInteroception() {
-            live['system.cpu'] = navigator.hardwareConcurrency || 0;
-            if (performance.memory) {
-                live['system.memory'] = performance.memory.usedJSHeapSize;
-                live['system.memoryTotal'] = performance.memory.totalJSHeapSize;
-            }
-            setInterval(() => {
-                live['system.cpu'] = navigator.hardwareConcurrency || 0;
-                if (performance.memory) {
-                    live['system.memory'] = performance.memory.usedJSHeapSize;
-                    live['system.memoryTotal'] = performance.memory.totalJSHeapSize;
-                }
-                const t0 = performance.now();
-                fetch('/time').then(() => {
-                    live['system.latency'] = performance.now() - t0;
-                }).catch(() => {});
-            }, 10000);
-        }
+        let _lastInteroception = 0;
 
         async function tryStartWebGPU() {
             try {

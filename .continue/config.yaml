@@ -1,0 +1,306 @@
+%YAML 1.1
+---
+name: omegaflow
+version: 1.0.0
+schema: v1
+
+# ===========================================================================
+# UI SETTINGS
+# ===========================================================================
+ui:
+  codeBlockWrap: true
+  showSessionTabs: true
+  showChatScrollbar: true
+  generateSessionTitles: true
+  markdown: true
+  fontSize: 14
+  multilineAutocomplete: auto
+  disableAutocompleteInFiles:
+    - "*.is"
+    - "*.dat"
+    - "*.idx"
+    - "immunity.is"
+    - "epigenome.is"
+  addCurrentFileToContext: true
+  useToolsForCodebaseRetrieval: true
+  streamAfterToolRejection: true
+  experimental:
+    allTools: false
+    systemMessageToolsOnly: false
+    modelContextProtocol: true
+
+# ===========================================================================
+# RULES
+# ===========================================================================
+rules:
+  - "CRITICAL: NEVER write thinking, reasoning, or explanatory text into files. Only write actual code or configuration. Explanations go in the chat response ONLY."
+  - "CRITICAL: When editing files, output ONLY the changed lines with surrounding context. Never dump full file contents."
+  - "CRITICAL: NEVER create subdirectories. The project is FLAT. All Rust in src/main.rs. All client JS in static/index.html and static/world.js. All source definitions in is/sources.is."
+  - "CRITICAL: The Rust server uses ZERO external dependencies. No serde, no reqwest. All HTTP via curl CLI subprocess. All JSON via manual string parsing (jnum, jarr_*, jpath). Cargo.toml [dependencies] stays empty."
+  - "CRITICAL: The frontend uses Vanilla JavaScript ES Modules only. No npm, no bundler, no framework, no TypeScript, no node_modules."
+  - "CRITICAL: API key placeholders like {nasa_key} in is/sources.is are substituted at runtime by render_url() via environment variables. NEVER replace them with actual keys."
+  - "Rust: dense code, single-letter variables where clear. Minimal comments. Physics-inspired naming in JS (certainty, weave, pulse). PHI (1.618...) as adaptive scaling."
+  - "WGSL shaders: workgroup_size(64) default, snake_case naming, no external shader libraries."
+  - "The is/sources.is DSL supports: source, ttl, url, field, first, last, count, last_row, vector, last_obj, geojson, path, sum, header, format."
+
+# ===========================================================================
+# YAML ANCHORS
+# ===========================================================================
+z_api_coding: &z_api_coding
+  provider: openai
+  apiBase: https://api.z.ai/api/coding/paas/v4
+  apiKey: 4234918b1ebb4ab5897a9cd071c7dda8.01y0sPhRyOm2x4Sy
+
+z_api_general: &z_api_general
+  provider: openai
+  apiBase: https://api.z.ai/api/paas/v4
+  apiKey: 4234918b1ebb4ab5897a9cd071c7dda8.01y0sPhRyOm2x4Sy
+
+z_chat: &z_chat
+  roles: [chat, edit, apply, summarize]
+
+# ===========================================================================
+# MODELS
+# ===========================================================================
+models:
+  - name: "🦀 Qwen2.5-Coder │ ⚡ Autocomplete [LOCAL]"
+    provider: ollama
+    model: qwen2.5-coder:1.5b
+    roles: [autocomplete]
+    autocompleteOptions:
+      debounceDelay: 150
+      maxPromptTokens: 1024
+      prefixPercentage: 0.5
+      maxSuffixPercentage: 0.3
+      modelTimeout: 300
+
+  - name: "⚡ GLM-5.2 │ No-Think 🔧 [200K]"
+    <<: [*z_api_coding, *z_chat]
+    model: glm-5.2
+    capabilities: [tool_use, image_input]
+    defaultCompletionOptions:
+      contextLength: 200000
+      maxTokens: 8192
+    requestOptions:
+      extraBodyProperties:
+        thinking:
+          type: disabled
+        reasoning_effort: none
+
+  - name: "🧠 GLM-5.2 │ High 🔧 [200K]"
+    <<: [*z_api_coding, *z_chat]
+    model: glm-5.2
+    capabilities: [tool_use, image_input]
+    defaultCompletionOptions:
+      contextLength: 200000
+      maxTokens: 8192
+    requestOptions:
+      extraBodyProperties:
+        thinking:
+          type: enabled
+        reasoning_effort: high
+
+  - name: "🧬 GLM-5.2 │ Max 🌐 [1M] ⚠️"
+    <<: [*z_api_coding, *z_chat]
+    model: glm-5.2
+    capabilities: [tool_use, image_input]
+    defaultCompletionOptions:
+      contextLength: 1000000
+      maxTokens: 16384
+    requestOptions:
+      extraBodyProperties:
+        thinking:
+          type: enabled
+        reasoning_effort: max
+
+  - name: "🧬 Embedding-3 │ Embed [8K]"
+    <<: *z_api_general
+    model: embedding-3
+    roles: [embed]
+
+  - name: "🧬 nomic-embed-text │ Embed [LOCAL]"
+    provider: ollama
+    model: nomic-embed-text
+    roles: [embed]
+
+# ===========================================================================
+# CONTEXT PROVIDERS
+# ===========================================================================
+context:
+  - provider: currentFile
+  - provider: code
+    params:
+      languages:
+        - rust
+        - html
+        - javascript
+        - toml
+  - provider: file
+  - provider: open
+    params:
+      onlyPinned: true
+  - provider: diff
+  - provider: terminal
+  - provider: repo-map
+    params:
+      includeSignatures: true
+  - provider: problems
+  - provider: os
+  - provider: docs
+    params:
+      search: true
+
+# ===========================================================================
+# MCP SERVERS (Optimized Tool Permissions)
+# ===========================================================================
+mcpServers:
+  - name: zai-mcp
+    command: /usr/bin/npx
+    args:
+      - -y
+      - "@z_ai/mcp-server@latest"
+    env:
+      ZAI_API_KEY: 4234918b1ebb4ab5897a9cd071c7dda8.01y0sPhRyOm2x4Sy
+    alwaysAllow:
+      - extract_text_from_screenshot
+      - diagnose_error_screenshot
+      - analyze_image
+
+  - name: filesystem
+    command: /usr/bin/npx
+    args:
+      - -y
+      - "@modelcontextprotocol/server-filesystem@latest"
+      - "/home/johannes/projects/omegaflow"
+    alwaysAllow:
+      - read_file
+      - write_file
+      - list_directory
+      - search_files
+
+# ===========================================================================
+# PROMPTS / SLASH COMMANDS
+# ===========================================================================
+prompts:
+  - name: source
+    description: Add API source to sources.is
+    prompt: |
+      Help me add a new source to is/sources.is.
+      Ask me for: source name, URL, format, and which fields to extract.
+      Use the exact DSL syntax from the existing sources in that file.
+
+  - name: certainty
+    description: Debug certainty calculation
+    prompt: |
+      Analyze the certainty formula in static/world.js.
+      Check all inputs (g, v_c, decay, quantum, dt, epig).
+      Explain what's flowing and what's broken.
+
+  - name: weave
+    description: Debug weave() data flow
+    prompt: |
+      Trace weave() in src/main.rs. For each source in is/sources.is,
+      check: Is the URL reachable? Is the extract pattern correct?
+      Is the JSON key present in the response?
+
+  - name: protocol
+    description: IS Binary Protocol reference
+    prompt: |
+      Display the IS Binary Protocol specification.
+      Header: "IS" + version(1B) + obj_count(4B LE).
+      Per object: field_count(1B), fields (name_len + name + type), record_count(4B LE).
+      Types: 0=f64, 1=u32, 2=f64 array.
+
+# ===========================================================================
+# DOCS
+# ===========================================================================
+docs:
+  # --- Core Language & Platform ---
+  - name: Rust std
+    startUrl: https://doc.rust-lang.org/std/
+    favicon: https://doc.rust-lang.org/favicon.ico
+  - name: MDN Web APIs
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API
+    favicon: https://developer.mozilla.org/favicon.ico
+
+  # --- Graphics & Compute ---
+  - name: WebGPU
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: WGSL Spec
+    startUrl: https://www.w3.org/TR/WGSL/
+    favicon: https://www.w3.org/favicon.ico
+
+  # --- Hardware & Device APIs ---
+  - name: WebXR Device API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Immersive Web
+    startUrl: https://immersive-web.github.io/
+    favicon: https://www.w3.org/favicon.ico
+  - name: Web Bluetooth
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Web Serial
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: WebUSB API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/WebUSB_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Generic Sensor API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Sensor_APIs
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Web Audio API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Geolocation API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Gamepad API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Vibration API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Vibration_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Device Orientation Events
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Device_orientation_events
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Screen Orientation API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Screen_Orientation_API
+    favicon: https://developer.mozilla.org/favicon.ico
+
+  # --- Performance & System ---
+  - name: Performance API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Performance_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Network Information API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Network_Information_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Device Memory API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Device_Memory_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Page Visibility API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Screen Wake Lock API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API
+    favicon: https://developer.mozilla.org/favicon.ico
+
+  # --- Network & Protocols ---
+  - name: WebSocket API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: Fetch API
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+    favicon: https://developer.mozilla.org/favicon.ico
+  - name: HTTP Protocol
+    startUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP
+    favicon: https://developer.mozilla.org/favicon.ico
+
+  # --- Tooling ---
+  - name: z.ai API
+    startUrl: https://docs.z.ai/guides/overview/concept-param
+    favicon: https://docs.z.ai/favicon.ico
+  - name: Continue.dev
+    startUrl: https://docs.continue.dev/intro
+    favicon: https://docs.continue.dev/favicon.ico

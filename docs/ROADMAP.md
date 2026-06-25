@@ -126,7 +126,7 @@ No separate renderer needed — the organism IS the expression.
 - `act()` fires actuators based on Resonance Map scores
 - `startBroad()` / `startNarrowing()` — binary search probe state machine
 - `pokeActuator()` calls function with value, catches errors
-- Dead actuators (no response, `pokeValue > 1e15`) removed
+- Dead actuators (no response, `pokeValue > PHI³⁶`) removed
 
 ---
 
@@ -147,25 +147,23 @@ certainty = exp(-Δt_eff · g) · exp(-v_c / (g + ε)) · c_q · decay · epigen
 | `decay` | 1/(1 + GOES ≥100 MeV proton flux) | `_measureDecay()` |
 | `quantum` | exp(-avg(sensor noiseFloor)) | `_measureQuantum()` |
 | `Δt` | \|t - t_now\| (ontological) | `dt_eff` in `get()` |
-| `epigenetic_factor` | Hardcoded 1.0 (until 8) | `epig = 1.0` |
+| `epigenetic_factor` | Hardcoded 1.0 (until step 8) | `epig = 1.0` |
 
 Evaluated on GPU via WGSL compute shader (`workgroup_size(64)`) with JS fallback.
 
 ---
 
-## 7: SIGNAL TOPOLOGY — IN PROGRESS
+## 7: SIGNAL TOPOLOGY — DONE
 
 Mathematics for existing channels. Pure software, runs on GPU.
 
-### Done
+### Implemented
 - ✅ **Ring-Buffer (128 floats)** per sensor — `processSensorReading()`, `_signalBuffers`
-- ✅ **Kolmogorov Complexity** — `runSignalTopology()` WGSL shader: `1 - repeats/total`. Compression rate replaces noiseFloor heuristic.
-
-### Open
-- ❌ **Takens' Embedding:** Delay embedding `V = [value(t), value(t-τ), value(t-2τ)]`. From 1D time series to 3D attractor in GPU.
-- ❌ **Transfer-Entropy:** Measures the *directed information flow* between two time series. `immunity.is` filled through mathematically proven causality, beyond trial-and-error.
-- ❌ **TDA: Persistent Homology** on point clouds (WGSL shader)
-- ❌ **ICA: Blind Source Separation** — Multiple raw streams decomposed into independent sources (WGSL shader)
+- ✅ **Kolmogorov Complexity** — WGSL shader: `1 - repeats/total`. Compression rate replaces noiseFloor heuristic.
+- ✅ **Takens' Embedding** — WGSL shader: Mutual Information finds optimal τ, 1D → 3D attractor. Outputs barycenter + spread.
+- ✅ **Transfer-Entropy** — WGSL shader: 3-bin histogram for all N² pairs. Dynamic threshold via `μ + σ/PHI`.
+- ✅ **TDA: Persistent Homology** — WGSL shader: 48-point subsample, Union-Find, nearest-neighbor persistence + Betti-0.
+- ✅ **ICA: Blind Source Separation** — WGSL shader: FastICA with tanh non-linearity, 3 iterations. Dynamic source count via variance cutoff.
 
 ---
 

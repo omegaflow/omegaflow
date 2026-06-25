@@ -58,7 +58,7 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
     let content = std::fs::read_to_string("is/sources.is").unwrap_or_default();
     let mut cur_on_earth = false;
-    let mut cur_ttl: u64 = 300;
+    let mut cur_ttl: u64 = 0;
     let mut cur_url = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
     let mut cur_headers: Vec<(String, String)> = Vec::new();
@@ -73,10 +73,10 @@ fn load_sources() -> Vec<SourceConfig> {
             "source" => {
                 if active { sources.push(SourceConfig { on_earth: cur_on_earth, ttl: cur_ttl, url: cur_url.clone(), extracts: cur_extracts.clone(), headers: cur_headers.clone() }); }
                 cur_on_earth = parts.iter().any(|&p| p == "on_earth");
-                cur_ttl = 300; cur_url.clear(); cur_extracts.clear(); cur_headers.clear(); active = true;
+                cur_ttl = 0; cur_url.clear(); cur_extracts.clear(); cur_headers.clear(); active = true;
             }
             "url" => cur_url = line[4..].trim().to_string(),
-            "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(300),
+            "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "header" => {
                 let rest = line[7..].trim();
                 if let Some(sp) = rest.find(' ') {
@@ -98,7 +98,7 @@ fn load_sources() -> Vec<SourceConfig> {
             "geojson" => {
                 if parts.len() >= 6 {
                     cur_extracts.push(Extract::Geojson {
-                        max_dist: parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(500000.0),
+                        max_dist: parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(0.0),
                         mag_key: parts.get(3).unwrap_or(&"mag").to_string(),
                         min_mag: parts.get(4).and_then(|s| s.parse().ok()).unwrap_or(0.0),
                         outputs: parts[5..].iter().map(|s| s.to_string()).collect(),
@@ -109,7 +109,6 @@ fn load_sources() -> Vec<SourceConfig> {
         }
     }
     if active { sources.push(SourceConfig { on_earth: cur_on_earth, ttl: cur_ttl, url: cur_url, extracts: cur_extracts, headers: cur_headers }); }
-    eprintln!("loaded {} sources", sources.len());
     sources
 }
 
@@ -609,7 +608,6 @@ fn render_url(template: &str, lat: f64, lon: f64, geo: &GeoLookup) -> String {
     let tomorrow = format!("{}-{:02}-{:02}", tmy, tmm, tmd);
     let today_yyyymmdd = format!("{}{:02}{:02}", ty, tm, td);
 
-    let _now_secs_f = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs_f64();
     let hour_ago = {
         let dt = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs().saturating_sub(3600);
         let (h_y, h_m, h_d) = days_to_ymd(dt / 86400 + 40587);
@@ -619,17 +617,16 @@ fn render_url(template: &str, lat: f64, lon: f64, geo: &GeoLookup) -> String {
     };
     let now_hour = (secs % 86400) / 3600;
     let now_minute = (secs % 3600) / 60;
-    let timestamp_5min_ago = (secs.saturating_sub(300)).to_string();
     let unix_now = secs.to_string();
     let unix_now_plus_3600 = (secs + 3600).to_string();
 
     template
         .replace("{lat}", &format!("{:.4}", lat))
         .replace("{lon}", &format!("{:.4}", lon))
-        .replace("{lat_min}", &format!("{:.2}", lat - 0.5))
-        .replace("{lat_max}", &format!("{:.2}", lat + 0.5))
-        .replace("{lon_min}", &format!("{:.2}", lon - 0.5))
-        .replace("{lon_max}", &format!("{:.2}", lon + 0.5))
+        .replace("{lat_min}", &format!("{:.2}", lat - (1.0 / 1.618033988749895)))
+        .replace("{lat_max}", &format!("{:.2}", lat + (1.0 / 1.618033988749895)))
+        .replace("{lon_min}", &format!("{:.2}", lon - (1.0 / 1.618033988749895)))
+        .replace("{lon_max}", &format!("{:.2}", lon + (1.0 / 1.618033988749895)))
         .replace("{today}", &today)
         .replace("{yesterday}", &yesterday)
         .replace("{tomorrow}", &tomorrow)
@@ -646,7 +643,6 @@ fn render_url(template: &str, lat: f64, lon: f64, geo: &GeoLookup) -> String {
         .replace("{day}", &td.to_string())
         .replace("{hour}", &format!("{:02}", now_hour))
         .replace("{minute}", &format!("{:02}", now_minute))
-        .replace("{timestamp_5min_ago}", &timestamp_5min_ago)
         .replace("{unix_now}", &unix_now)
         .replace("{unix_now_plus_3600}", &unix_now_plus_3600)
         .replace("{country_code}", &geo.country_code)
@@ -660,9 +656,6 @@ fn render_url(template: &str, lat: f64, lon: f64, geo: &GeoLookup) -> String {
         .replace("{nearest_radiosonde_station}", &geo.radiosonde_station)
         .replace("{nearest_radiosonde_airport}", &geo.radiosonde_airport)
         .replace("{nearest_surfrad_station}", &geo.surfrad_station)
-        .replace("{symbol}", "SPY")
-        .replace("{symbol}", "SPY")
-          .replace("{ip}", "8.8.8.8")
         .replace("{nasa_key}", &std::env::var("NASA_KEY").unwrap_or_else(|_| "DEMO_KEY".to_string()))
   }
 
@@ -680,7 +673,7 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
     out.extend_from_slice(&0u32.to_le_bytes());
 
     let r = (x*x+y*y+z*z).sqrt();
-    let on_earth = r > 6.3e6 && r < 6.5e6;
+    let on_earth = r > 6378137.0 * (1.0 - 1.0/298.257223563) && r < 6378137.0 * (1.0 + (1.0 / 618.033988749895));
     let (lat, lon) = if on_earth { let (la,lo,_)=ecef_to_geodetic(x,y,z); (Some(la),Some(lo)) } else { (None,None) };
 
     let geo = if on_earth {
@@ -871,6 +864,7 @@ fn format_immunity_snapshot(c: &HashMap<String,(u32,u32)>) -> String {
 
 fn load_immunity() -> HashMap<String,(u32,u32)> {
     let mut c=HashMap::new();
+    for k in ["location","history","document","close","alert","confirm","prompt","print","open","stop"] { c.insert(k.to_string(),(0,0)); }
     if let Ok(content)=std::fs::read_to_string("is/immunity.is") {
         for line in content.lines() { let p: Vec<&str>=line.split_whitespace().collect(); if p.len()>=2&&p[0]=="immunity" { c.insert(p[1].to_string(),(if p.len()>=3{p[2].parse().unwrap_or(0)}else{0}, if p.len()>=4{p[3].parse().unwrap_or(0)}else{0})); } }
     }
@@ -923,12 +917,11 @@ fn load_env() {
                 }
             }
         }
-        eprintln!("loaded .env");
     }
 }
 fn main() {
     load_env();
-    let port: u16 = std::env::var("PORT").ok().and_then(|s|s.parse().ok()).unwrap_or(8080);
+    let port: u16 = std::env::var("PORT").ok().and_then(|s|s.parse().ok()).unwrap_or(0);
     let archive = Arc::new(Archive {
         sources: load_sources(),
         index_html: std::fs::read("static/index.html").unwrap_or_default(),
