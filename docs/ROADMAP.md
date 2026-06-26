@@ -16,7 +16,7 @@ Theory removed. System now only measures.
 
 - `drain()` is pure accumulation of measured values (world.js)
 - All model evaluation functions deleted (clenshaw, xyz, WMM, EGM96, etc.)
-- Compiler crate deleted entirely — all data is live via `is/sources.is`
+- All data is live via `is/sources.is`.
 - `weave()` is the Live-Resolver — reads `is/sources.is`, fetches live via curl, parses on-the-fly
 - Binary index lookup code deleted from `weave()`
 - `constants.is` deleted — values hardcoded where needed (`c` in world.js, `phi` in index.html)
@@ -172,7 +172,7 @@ Mathematics for existing channels. Pure software, runs on GPU.
 The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the logarithmic magnitude of the measured phenomenon.
 
 ### Implementation
-- **`sources.is`:** Every source declares `scale <exponent>` (raw 10^n, human-readable). `on_earth` boolean deleted entirely.
+- **`sources.is`:** Every source declares `scale <exponent>` (raw 10^n, human-readable). 
 - **Sorting:** Sources are sorted ascending by scale (subatomic → cosmic), then alphabetically within each scale tier.
 - **Archivar (`main.rs`):** `SourceConfig.on_earth: bool` → `SourceConfig.scale: i8`. Parser reads `scale` directive.
 - **PHI-Filtering in `weave()`:** Raw 10^n scale is converted to PHI-scale internally: `phi_scale = n * ln(10)/ln(φ)`. The observer's distance from Earth center gives `observer_scale = log10(r)`. Local sources (scale < 10) are only delivered if `|phi_source - phi_observer| ≤ φ³ ≈ 4.24` PHI-steps. Cosmic sources (scale ≥ 10) are always delivered.
