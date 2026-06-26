@@ -5,7 +5,6 @@
 #          omegaflow sense module. The 100% Mantis-Shrimp Config.
 #          Sensors (receivers), Actuators (senders), Infrastructure.
 # PRINCIPLE: §11 — Resonance needs presence (actuators = levers)
-#            §7  — Only what is measured exists
 #            §13 — is(t,x,y,z,s) resonates with is(t,x,y,z,s)
 #            §33 — Structure over Name (single source of truth)
 # ============================================================

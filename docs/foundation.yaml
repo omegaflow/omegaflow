@@ -1,6 +1,6 @@
 foundation: A = A
 equation: is(t,x,y,z,s)
-data_source: raw measurements (§7)
+data_source: raw measurements
 pipeline: Archivar (Live-Resolver) → Mathematikerin (GPU) → Observer
 
 data_sources: is/sources.is
@@ -22,7 +22,6 @@ principles:
   §4: "what arrives is"
   §5: "Truth is self-evident"
   §6: "Free will."
-  §7: "Only what is measured exists"
   §8: "Capacity shapes what arrives."
   §9: "Certainty = e^(-Δt) × e^(-v)"
   §10: "Everything is measured. Structure follows observation."
@@ -38,8 +37,8 @@ principles:
   §20: "We are human. We acknowledge our frame."
   §21: "Scientific integrity. Uncertainty stated. Limitations embraced."
   §22: "Who benefits? Who is harmed? Who cannot speak?"
-  §23: "Our model is a projection. The rest is wonder."
-  §24: "Everything exists in relationship. Model relationships."
+  §23: "Embrace wonder."
+  §24: "Everything exists in relationship."
   §25: "Loss is memorial."
   §26: "Beauty is a computational value."
   §27: "This document is alive."

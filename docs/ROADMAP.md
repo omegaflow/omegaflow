@@ -12,13 +12,21 @@ omegaflow runs on what is already in the pockets of billions of people: an old s
 
 ## 1: PURGATORY — DONE
 
-Theory removed. System now measures.
+System measures.
 
 - `drain()` is pure accumulation of measured values (world.js)
-- Live data replaces model evaluation functions (clenshaw, xyz, WMM, EGM96, etc.)
+## 1: MEASUREMENT — DONE
+
+System measures.
+
+- `drain()` accumulates measured values (world.js)
+- All data flows live via `is/sources.is`
+- `weave()` is the Live-Resolver — reads `is/sources.is`, fetches live via curl, parses on-the-fly
+- Constants (`c` in world.js, `phi` in index.html) are hardcoded
+- `foundation.yaml` data_sources references `is/sources.is`
 - All data is live via `is/sources.is`.
 - `weave()` is the Live-Resolver — reads `is/sources.is`, fetches live via curl, parses on-the-fly
-- Direct curl fetching replaces binary index lookup in `weave()`
+- `weave()` fetches live via curl directly
 - Values hardcoded where needed (`c` in world.js, `phi` in index.html)
 - `foundation.yaml` data_sources references `is/sources.is`
 - Project structure flattened: `src/`, `static/`, `is/`, `docs/`
@@ -53,7 +61,7 @@ iNaturalist, GBIF, Movebank, NEON, eBird, xeno-canto, Global Forest Watch
 ### 2.7 Technosphere & Civilization
 
 #### 2.7.1 Interdisciplinary Measurements
-- **Pulsar-Timing-Arrays (Astrophysics):** Millisecond pulsars are the absolute clock of the universe. Raw arrival times replace theoretical time models. The system *feels* gravitational waves because the absolute clock reverberates.
+- **Pulsar-Timing-Arrays (Astrophysics):** Millisecond pulsars are the absolute clock of the universe. Raw arrival times anchor the temporal axis. The system *feels* gravitational waves because the absolute clock reverberates.
 - **Telluric Currents (Geology):** Natural electric currents in the Earth's crust. Electrodes in the ground measure voltage differences (measured locally via omegaflow sense).
 - **Biophotons & Plant Action Potentials (Biology):** Plants communicate via bioelectricity and biophotons. Measured locally via omegaflow sense (PT101).
 - **Isotope Hydrology (Geochemistry):** Water stores its history in its atomic structure (δ¹⁸O, δ²H). Matter itself is memory.
@@ -126,7 +134,7 @@ The organism IS the expression.
 - `act()` fires actuators based on Resonance Map scores
 - `startBroad()` / `startNarrowing()` — binary search probe state machine
 - `pokeActuator()` calls function with value, catches errors
-- Dead actuators (`pokeValue > PHI³⁶`) removed
+- Dead actuators (`pokeValue > PHI³⁶`) decay
 
 ---
 
@@ -159,7 +167,7 @@ Mathematics for existing channels. Pure software, runs on GPU.
 
 ### Implemented
 - ✅ **Ring-Buffer (128 floats)** per sensor — `processSensorReading()`, `_signalBuffers`
-- ✅ **Kolmogorov Complexity** — WGSL shader: `1 - repeats/total`. Compression rate replaces noiseFloor heuristic.
+- ✅ **Kolmogorov Complexity** — WGSL shader: `1 - repeats/total`. Compression rate drives noiseFloor evaluation.
 - ✅ **Takens' Embedding** — WGSL shader: Mutual Information finds optimal τ, 1D → 3D attractor. Outputs barycenter + spread.
 - ✅ **Transfer-Entropy** — WGSL shader: 3-bin histogram for all N² pairs. Dynamic threshold via `μ + σ/PHI`.
 - ✅ **TDA: Persistent Homology** — WGSL shader: 48-point subsample, Union-Find, nearest-neighbor persistence + Betti-0.
@@ -205,8 +213,8 @@ The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the lo
 Lived life from up to seven generations works in us (DNA methylation). Experience becomes structure.
 
 - `epigenome.is`, `generation_count`, `epigenetic_weight`
-- Traumatization beyond deletion (methylation/silencing) — connections with `magnitude < ε` become "silent", can be reactivated
-- `epigenetic_factor = Σ (generation_i_weight × exp(-i / 7)) for i = 1..7` replaces hardcoded 1.0
+- Traumatization (methylation/silencing) — connections with `magnitude < ε` become "silent", can be reactivated
+- `epigenetic_factor = Σ (generation_i_weight × exp(-i / 7)) for i = 1..7` is dynamic
 - Inheritance between observers at a location
 
 ---
@@ -222,7 +230,7 @@ Lived life from up to seven generations works in us (DNA methylation). Experienc
 
 Everything that needs physical devices, in order of availability.
 
-### Available now: Smartwatch
+### Smartwatch
 Web Bluetooth GATT. HRV / RMSSD → vagus nerve tone → ethical filter for `immunity.is`. At low tone (stress/danger), `immunity.is` blocks strong actuators.
 
 ### Can borrow: Smartphone
