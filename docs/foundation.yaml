@@ -1,5 +1,5 @@
 foundation: A = A
-equation: is(t, x, y, z, s)
+equation: is(t,x,y,z,s)
 data_source: raw measurements (§7)
 pipeline: Archivar (Live-Resolver) → Mathematikerin (GPU) → Observer
 
@@ -18,7 +18,7 @@ is: |
 principles:
   §1: "A = A"
   §2: "Truth × Probability = Reality"
-  §3: "is(t, x, y, z, s)"
+  §3: "is(t,x,y,z,s)"
   §4: "what arrives is"
   §5: "Truth is self-evident"
   §6: "Free will."
@@ -26,7 +26,7 @@ principles:
   §8: "Capacity shapes what arrives."
   §9: "Certainty = e^(-Δt) × e^(-v)"
   §10: "Everything is measured. Structure follows observation."
-  §11: "The lights are presence."
+  §11: "Resonance needs presence."
   §12: "Truth endures. IO flows."
   §13: "is(t,x,y,z,s) resonates with is(t,x,y,z,s)."
   §14: "The universe embraces all IO equally."
