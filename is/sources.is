@@ -1,1443 +1,1236 @@
 source pdg_w_boson_mass
-scale -18
-ttl 31536000
-url https://pdgapi.lbl.gov/summaries/S043
-field value particle_w_boson_mass_gev
-
 source pdg_z_boson_mass
-scale -18
-ttl 31536000
-url https://pdgapi.lbl.gov/summaries/S044
-field value particle_z_boson_mass_gev
-
 source drand_quantum_entropy
-scale -15
-ttl 60
-url https://api.drand.sh/public/latest
-field round quantum_entropy_generation_round
-
 source pdg_proton_mass
-scale -15
-ttl 31536000
-url https://pdgapi.lbl.gov/summaries/S008M
-field value particle_proton_mass_mev
-
 source cern_alice_pbpb
-scale -10
-ttl 86400
-url http://opendata.cern.ch/api/records/?type=dataset&experiment=ALICE&size=1
-field hits.total cern_alice_qgp_datasets
-
 source cern_cms_data
-scale -10
-ttl 31536000
-url http://opendata.cern.ch/api/records/?type=dataset&experiment=CMS&size=1
-field hits.total cern_cms_datasets
-
 source cern_open_data
-scale -10
-ttl 31536000
-url http://opendata.cern.ch/api/records/?type=dataset&size=0
-field hits.total cosmic_cern_datasets
-
 source crystallography_xrd
-scale -10
-ttl 2592000
-url https://www.crystallography.net/cod/result.php?format=json&el=Si&limit=1
-field a lattice_constant_angstrom
-
 source pdg_alpha_s
-scale -10
-ttl 31536000
-url https://pdgapi.lbl.gov/summaries/S059
-field value particle_alpha_s
-
 source pdg_higgs_mass
-scale -10
-ttl 31536000
-url https://pdgapi.lbl.gov/summaries/S003M
-field value particle_higgs_mass_gev
-
 source pdg_particle_list
-scale -10
-ttl 31536000
-url https://pdgapi.lbl.gov/summaries?property=Mass&limit=1
-field meta count cosmic_pdg_measured_particles
-
 source lapis_covid_genomics
-scale -9
-ttl 86400
-url https://lapis.cov-spectrum.org/open/v2/sample/aggregated?fields=variant&limit=5
-count data biosphere_covid_variant_count
-
 source protein_structures
-scale -9
-ttl 86400
-url https://data.rcsb.org/rest/v1/holdings/statistics/
-field released_structures biosphere_protein_structures_total
-
 source microbe_census
-scale -6
-ttl 3600
-url https://www.ebi.ac.uk/metagenomics/api/v1/studies?page_size=1
-field meta.pagination.count biosphere_metagenomic_studies
-
-source aeronet_aod
-scale 3
-ttl 900
-url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth
-field current.aerosol_optical_depth atmosphere_aerosol_optical_depth_500nm
-
-source aviation
-scale 3
-ttl 30
-header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
-url https://opensky-network.org/api/states/all?lamin={lat_min}&lomin={lon_min}&lamax={lat_max}&lomax={lon_max}
-count states aviation_aircraft
-
-source aviation_weather_metar
-scale 3
-ttl 900
-url https://aviationweather.gov/api/data/metar?ids={nearest_airport}&format=json
-field 0.temp weather_airport_temp_c
-field 0.wspd weather_airport_wind_speed_kt
 field 0.altim weather_airport_altimeter_hpa
-
-source coral_bleaching
-scale 3
-ttl 86400
-url https://coralreefwatch.noaa.gov/product/vs/data/vs_gauges_latest.txt
-format csv
-last_row dhw ocean_degree_heating_weeks_max
-last_row alert ocean_coral_bleaching_alert_level
-
-source digitraffic_ais
-scale 3
-ttl 30
-url https://meri.digitraffic.fi/api/ais/v1/locations
-count features maritime_vessels_finland
-
-source digitraffic_vessels
-scale 3
-ttl 300
-url https://meri.digitraffic.fi/api/ais/v1/vessels
-count features maritime_vessel_count_finland
-
-source ebird_hotspots
-scale 3
-ttl 86400
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
-field count biosphere_birding_hotspots
-
-source ebird_recent
-scale 3
-ttl 3600
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
-field count biosphere_bird_count
-
-source effis_fires
-scale 3
-ttl 3600
-url https://ies-ows.jrc.ec.europa.eu/effis?SERVICE=WFS&REQUEST=GetFeature&VERSION=1.1.0&TYPENAME=ms:modis.ba.world.bytime&outputFormat=application/json&BBOX={lon_min},{lat_min},{lon_max},{lat_max}
-count features environmental_effis_fire_count
-
-source elevation
-scale 3
-ttl 604800
-url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
-first elevation topography_elevation
-
-source emodnet_vessel_density
-scale 3
-ttl 3600
-url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
-count features maritime_vessel_density_emodnet
-
-source emsc_earthquakes
-scale 3
-ttl 60
-url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&starttime={hour_ago}&lat={lat}&lon={lon}&maxradius=5&minmag=2.0
-count earthquakes seismic_count_emsc
-field mag seismic_magnitude_emsc
-
-source fungi_observations
-scale 3
-ttl 86400
-url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
-field total_results fungi_observations
-field species_count fungi_diversity
-
-source gbif_migrations
-scale 3
-ttl 86400
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
-field count biosphere_migratory_bird_records_this_month
-
-source gdelt_conflicts
-scale 3
-ttl 3600
-url https://api.gdeltproject.org/api/v2/doc/doc?query=conflict%20protest%20strike&mode=ArtList&maxrecords=250&format=json&timespan=24h
-count articles social_conflict_event_count
-
-source geopages
-scale 3
-ttl 604800
-url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
-count query.geosearch geopages_nearby
-
-source inaturalist
-scale 3
-ttl 86400
-url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
-field total_results biosphere_observations
-
-source inaturalist_verified
-scale 3
-ttl 3600
-url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
-field total_results biosphere_verified_observations
-
-source irail_belgium
-scale 3
-ttl 60
-url https://api.irail.be/occupancy/
-count occupancy technosphere_train_occupancy_belgium
-
-source iris_seismic
-scale 3
-ttl 60
-url https://service.iris.edu/fdsnws/event/1/query?format=json&starttime={hour_ago}&maxradius=5&latitude={lat}&longitude={lon}&minmagnitude=2.0
-count earthquakes seismic_iris_count
-
-source lightning_open_meteo
-scale 3
-ttl 600
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto
-field minutely_15.lightning_potential atmosphere_lightning_potential
-
-source met_norway_sun
-scale 3
-ttl 86400
-header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
-url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00
-field properties.sunrise.time ephemeris_sunrise_time
-field properties.solar_noon.elevation ephemeris_solar_elevation_max
-
-source nasa_eonet_fires
-scale 3
-ttl 1800
-url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=wildfires&limit=100
-count events environmental_active_wildfires
-
-source ndbc_buoy
-scale 3
-ttl 600
-url https://www.ndbc.noaa.gov/data/realtime2/{nearest_buoy}.txt
-format csv
-last_row WTMP ocean_water_temp
-last_row WVHT ocean_wave_height_buoy
-last_row WSPD ocean_wind_speed_buoy
-last_row BARO ocean_pressure_buoy
-last_row ATMP ocean_air_temp
-last_row APD ocean_wave_period
-last_row MWD ocean_wave_direction
-
-source nifc_fires
-scale 3
-ttl 3600
-url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json
-count features environmental_active_fires_us
-
-source noaa_coops_predictions
-scale 3
-ttl 3600
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={nearest_tide_station}&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
-first v tide_next_high_m
-first t tide_next_high_time
-
-source noaa_coops_tides
-scale 3
-ttl 300
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={nearest_tide_station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest
-first v tide_observed_height_m
-first t tide_observation_time
-
-source noaa_sst
-scale 3
-ttl 3600
-url https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplMURSST41.json?analysed_sst[(last)][(last)][({lat})][({lon})]
-field analysed_sst ocean_sst_celsius
-
-source openmeteo_air_quality_full
-scale 3
-ttl 600
-url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto
-field current.pm2_5 atmosphere_pm25_station
-field current.pm10 atmosphere_pm10_station
-field current.nitrogen_dioxide atmosphere_no2_station
-field current.carbon_monoxide atmosphere_co_station
-field current.sulphur_dioxide atmosphere_so2_station
-field current.ozone atmosphere_o3_station
-
-source openmeteo_air_quality_us
-scale 3
-ttl 600
-url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
-field current.us_aqi atmosphere_epa_aqi
-
-source openmeteo_marine
-scale 3
-ttl 3600
-url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period&timezone=auto
-field current.wave_height ocean_wave_height_m
-field current.wave_direction ocean_wave_direction_deg
-field current.wave_period ocean_wave_period_s
-
-source openmeteo_weather
-scale 3
-ttl 600
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto
-field current.temperature_2m weather_temp_c
-field current.relative_humidity_2m weather_humidity_pct
-field current.pressure_msl weather_pressure_hpa
-field current.wind_speed_10m weather_wind_speed_ms
-field current.wind_direction_10m weather_wind_direction_deg
-field current.cloud_cover weather_cloud_cover_pct
-field current.precipitation weather_precipitation_mm
-
-source overpass_mobile_antennas
-scale 3
-ttl 86400
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["telecom"="antenna"](around:10000,{lat},{lon});out%20count;
-count nodes technosphere_mobile_antennas_10km
-
-source overpass_pois
-scale 3
-ttl 86400
-url https://overpass.kumi.systems/api/interpreter?data=[out:json][timeout:10];node(around:1000,{lat},{lon});out%20count;
-count total technosphere_poi_count
-count nodes technosphere_osm_nodes
-count ways technosphere_osm_ways
-
-source overpass_wifi_hotspots
-scale 3
-ttl 86400
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count;
-count nodes technosphere_public_wlan_5km
-
-source pegelonline_water_level
-scale 3
-ttl 900
-url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
-field 0.water.currentMeasurement.value hydrosphere_water_level_cm
-
-source rain_radar
-scale 3
-ttl 300
-url https://api.rainviewer.com/public/weather-maps.json
-field host technosphere_rain_radar_host
-count past technosphere_rain_radar_frames
-
-source seismic
-scale 3
-ttl 60
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
-geojson nearby 500000 mag 2.0 seismic_magnitude seismic_depth seismic_distance
-
-source sensor_community_air
-scale 3
-ttl 300
-url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
+path 0.n cosmic_exoplanet_total_confirmed
+path 0.n cosmic_hot_jupiters
+path 0.Rows.0.n cosmic_galaxies_mid_redshift_count
 field 0.sensordatavalues.0.value atmosphere_pm10_sensorcommunity
 field 0.sensordatavalues.1.value atmosphere_pm25_sensorcommunity
-
-source smithsonian_volcanoes
-scale 3
-ttl 3600
-url https://volcano.si.edu/news/WeeklyVolcanoRSS.jsp
-count items geosphere_volcano_eruptions
-
-source usgs_earthquake_detail
-scale 3
-ttl 60
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
-geojson properties.mag seismic_magnitude
-geojson geometry.coordinates[2] seismic_depth_km
-geojson properties.gap seismic_azimuthal_gap
-geojson properties.rms seismic_rms
-geojson properties.sig seismic_significance
-
-source usgs_streamflow
-scale 3
-ttl 300
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000&parameterCd=00060&siteStatus=all
-path value.timeSeries.0.values.0.value.0.value river_flow_cfs
-
-source usgs_volcano_alerts
-scale 3
+field 0.temp weather_airport_temp_c
+field 0.water.currentMeasurement.value hydrosphere_water_level_cm
+field 0.wspd weather_airport_wind_speed_kt
+scale -10
+scale -10
+scale -10
+scale -10
+scale -10
+scale -10
+scale -10
+ttl 10
+field 1.0.value climate_global_co2_emissions_kt
+field 1.0.value technosphere_global_population
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale 11
+scale -15
+scale -15
+scale 17
+scale 17
+scale 17
+scale 17
+scale 17
+scale 17
+scale 17
+scale 17
+scale 17
+scale -18
+scale -18
 ttl 1800
-url https://volcanoes.usgs.gov/vhp/updates.json
-count volcanoes volcanic_alert_count
+ttl 1800
+ttl 1800
+ttl 1800
+ttl 1800
+ttl 1800
+ttl 1800
+scale 21
+scale 21
+scale 21
+scale 21
+scale 21
+scale 21
+scale 24
+scale 24
+scale 25
+scale 25
+scale 25
+scale 25
+scale 25
+scale 25
+scale 25
+scale 25
+scale 25
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+ttl 2592000
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+scale 3
+ttl 30
+ttl 30
+ttl 30
+ttl 30
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 300
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 31536000
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+ttl 3600
+scale 5
+scale 5
+scale 5
+scale 5
+scale 5
+scale 5
+scale 5
+scale -6
+scale 6
+scale 6
+scale 6
+scale 6
+scale 6
+scale 6
+scale 6
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 60
+ttl 600
+ttl 600
+ttl 600
+ttl 600
+ttl 600
+ttl 604800
+ttl 604800
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 7
+scale 8
+scale 8
+scale 8
+scale 8
+scale 8
+scale 8
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+ttl 86400
+scale -9
+scale -9
+ttl 900
+ttl 900
+ttl 900
+ttl 900
+ttl 900
+field a lattice_constant_angstrom
+last_obj activityID activityID solar_cme_id
+last adjusted solar_f107_adjusted_sfu
+field age_bp paleoclimate_age_bp
+last_row age_bp paleoclimate_domefuji_age_bp
+last_row age_bp paleoclimate_vostok_age_bp
+last_row age_bp paleoclimate_wais_age_bp
+field age_flame cosmology_oldest_star_age_gyr
+last_row age_yb1950 paleoclimate_lead_pollution_age_yr
+last a_index ap_index
+last_row alert ocean_coral_bleaching_alert_level
 field alert_level volcanic_max_alert_level
-
-source viirs_nighttime_lights
-scale 3
-ttl 2592000
-url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdVH2018nldmday.json?nLD_filled[(last)][(last)][({lat})][({lon})]
-field nLD_filled technosphere_nighttime_light_radiance
-
-source waqi_air_quality
-scale 3
-ttl 300
-url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
-field data.aqi atmosphere_waqi_aqi
-field data.pm25 atmosphere_pm25_waqi
-field data.pm10 atmosphere_pm10_waqi
-
-source xenocanto_birds
-scale 3
-ttl 86400
-url https://xeno-canto.org/api/2/recordings?query=box:{lat_min},{lon_min},{lat_max},{lon_max}
-field numRecordings biosphere_bird_sound_recordings
-field numSpecies biosphere_bird_species_recorded
-
-source argo_floats
-scale 5
-ttl 3600
-url https://argovis-api.colorado.edu/argo?date_range={today}T00:00:00Z,{today}T23:59:59Z&box=[{lon_min},{lat_min},{lon_max},{lat_max}]
-field measurements.temperature ocean_argo_temp
-field measurements.salinity ocean_argo_salinity
-field measurements.pressure ocean_argo_pressure
-
-source erddap_ocean_pco2
-scale 5
-ttl 86400
-url https://coastwatch.pfeg.noaa.gov/erddap/tabledap/scrippsco2.json?time,pco2_sw&time>={today}&orderByMax=%22time%22
-field pco2_sw ocean_co2_partial_pressure_uatm
-
-source erddap_socat_gridded
-scale 5
-ttl 2592000
-url https://coastwatch.pfeg.noaa.gov/erddap/griddap/socat_v2022_clim.json?fco2_ave_unwtd[(last)][(last)][({lat})][({lon})]
-field fco2_ave_unwtd ocean_co2_climatology_uatm
-
-source motus_species
-scale 5
-ttl 86400
-url https://motus.org/api/species?fmt=json
-count data biosphere_motus_tracked_species
-
-source noaa_marine_chlorophyll
-scale 5
-ttl 86400
-url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdMH1chlamday.json?chlorophyll[(last)][(last)][({lat})][({lon})]
-field chlorophyll biosphere_marine_chlorophyll_mg_m3
-
-source obis_species
-scale 5
-ttl 86400
-url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
-field total biosphere_ocean_occurrences_50km
-
-source obis_statistics
-scale 5
-ttl 86400
-url https://api.obis.org/v3/statistics
-field taxa biosphere_ocean_species_known
-field records biosphere_ocean_records_total
-field datasets biosphere_ocean_datasets_count
-
-source cdc_covid_variants
-scale 6
-ttl 86400
-url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=5&$order=week_ending_date+DESC
-count data biosphere_circulating_variants
-field modeled_share biosphere_dominant_variant_proportion
-
-source gbif
-scale 6
-ttl 86400
-url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
-field count biosphere_species_count
-
-source nsidc_sea_ice
-scale 6
-ttl 3600
-url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
-format csv
-last_row extent climate_sea_ice_extent_north
+field altitude iss_alt
+field analysed_sst ocean_sst_celsius
+last_row Anomaly climate_hadcrut5_temp_anomaly_c
+last_row AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
+last_row APD ocean_wave_period
+vector apophis_x apophis_y apophis_z
 last_row area climate_sea_ice_area_north
-
-source psmsl_sea_level
-scale 6
-ttl 86400
-url https://www.star.nesdis.noaa.gov/socd/lsa/MSL/data/msletopo_ts.txt
-format csv
-last_row msl ocean_sea_level_global_mm
-
-source scripps_co2_station
-scale 6
-ttl 86400
-url https://scrippsco2.ucsd.edu/assets/data/atmospheric/stations/flask_co2/daily/daily_flask_co2_mlo.csv
-format csv
-last_row value co2_scripps_mauna_loa_ppm
-
-source who_gho_tuberculosis
-scale 6
-ttl 2592000
-url https://ghoapi.azureedge.net/api/MDG_0000000020
-field value.0.NumericValue biosphere_tuberculosis_incidence_rate
-
-source who_influenza
-scale 6
-ttl 86400
-url https://xmart-api-public.who.int/FLUMART/V_FLUNET?$format=json&$top=5&$orderby=ISO_YEAR%20desc,ISO_WEEK%20desc
-field value.0.ALL_INF biosphere_influenza_positive_global
-field value.0.SPEC_PROCESSED_NB biosphere_influenza_specimens_global
-
-source aurora_forecast
-scale 7
-ttl 900
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
-field forecast_time aurora_forecast_time
-
-source aurora_nowcast_north
-scale 7
-ttl 900
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
-field north_intensity aurora_intensity_north
-
-source bgs_global_seismology
-scale 7
-ttl 3600
-url https://quakes.bgs.ac.uk/fdsnws/event/1/query?format=json&starttime={yesterday}&minmag=4.0
-count features seismic_global_count_bgs
-
-source coingecko_crypto
-scale 7
-ttl 300
-url https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true
+count articles social_conflict_event_count
+last_row ATMP ocean_air_temp
+last_row average climate_cfc12_global
+last_row average climate_methane_global
+last_row average climate_n2o_global
+last_row average climate_sf6_global
+last_row BARO ocean_pressure_buoy
+last begin_time solar_flare_latest_time
+vector bennu_x bennu_y bennu_z
 field bitcoin.usd economic_bitcoin_price_usd
 field bitcoin.usd_24h_change economic_bitcoin_change_24h
-field ethereum.usd economic_ethereum_price_usd
-
-source crdb_cosmic_rays
-scale 7
-ttl 2592000
-url https://lpsc.in2p3.fr/crdb/rest/?request=GET&num=208&energy_convert_level=rigidity&combo_level=0&output=json
-count data cosmic_ray_measurements_crdb
-
-source crossref_dois
-scale 7
-ttl 3600
-url https://api.crossref.org/works?rows=0
-field message.total-results technosphere_registered_dois
-
-source dome_fuji_co2
-scale 7
-ttl 2592000
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/domefuji2017co2.txt
-format csv
-last_row age_bp paleoclimate_domefuji_age_bp
-last_row co2 paleoclimate_domefuji_co2_ppm
-
-source dst_index
-scale 7
-ttl 60
-url https://services.swpc.noaa.gov/products/kyoto-dst.json
-last dst dst_index
-
-source energy_charts_renewable
-scale 7
-ttl 300
-url https://api.energy-charts.info/ren_share
-last data energy_renewable_share_pct
-
-source entsoe_energy
-scale 7
-ttl 3600
-url https://api.energy-charts.info/price?country=DE
-last price energy_electricity_price_eur_mwh
-
-source exchangerate_api
-scale 7
-ttl 3600
-url https://api.exchangerate-api.com/v4/latest/USD
-field rates.EUR economic_usd_eur_rate
-field rates.GBP economic_usd_gbp_rate
-field rates.JPY economic_usd_jpy_rate
-
-source fbi_wanted
-scale 7
-ttl 3600
-url https://api.fbi.gov/wanted/v1/list
-field total technosphere_fbi_wanted_count
-
-source gdacs_disasters
-scale 7
-ttl 1800
-url https://www.gdacs.org/gdacsapi/api/events/getmacromap.json
-count features environmental_global_disaster_alerts
-
-source global_temp_anomaly
-scale 7
-ttl 86400
-url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
-format csv
-last_row J-D climate_global_temp_anomaly_c
-
-source goes_euv
-scale 7
-ttl 300
-url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
-last_obj wavelength "0.05-0.4nm" flux solar_euv_flux_short
-last_obj wavelength "0.1-0.8nm" flux solar_euv_flux_long
-
-source goes_seiss_protons
-scale 7
-ttl 60
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
-last_obj energy ">=10 MeV" flux proton_flux_measured_10mev
-last_obj energy ">=100 MeV" flux proton_flux_measured_100mev
-
-source govtrack_votes
-scale 7
-ttl 3600
-url https://www.govtrack.us/api/v2/vote?created__gt={yesterday}&limit=0
-field meta.total_count political_legislation_votes
-
-source hadcrut5_temp
-scale 7
-ttl 86400
-url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/analysis/diagnostics/HadCRUT.5.0.2.0.analysis.summary_series.global.annual.csv
-format csv
-last_row Anomaly climate_hadcrut5_temp_anomaly_c
-
-source ice_core_lead_pollution
-scale 7
-ttl 2592000
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/greenland/summit/gisp2/chem/pb.txt
-format csv
-last_row age_yb1950 paleoclimate_lead_pollution_age_yr
-last_row pb_ng_g paleoclimate_lead_concentration_ppb
-
-source iers_earth_rotation
-scale 7
-ttl 86400
-url https://datacenter.iers.org/products/eop/rapid/daily/csv/finals2000A.all.csv
-format csv
-last_row LOD earth_length_of_day_ms
-last_row Xp earth_pole_x_arcsec
-last_row Yp earth_pole_y_arcsec
-
-source intermagnet_bou
-scale 7
-ttl 300
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
-field X geomag_x_nt_bou
-field Y geomag_y_nt_bou
-field Z geomag_z_nt_bou
-
-source intermagnet_kan
-scale 7
-ttl 300
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=KAN&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
-field X geomag_x_nt_kan
-field Y geomag_y_nt_kan
-field Z geomag_z_nt_kan
-
-source intermagnet_ngk
-scale 7
-ttl 300
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=NGK&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
-field X geomag_x_nt
-field Y geomag_y_nt
-field Z geomag_z_nt
-
-source ionosphere_tec
-scale 7
-ttl 300
-url https://services.swpc.noaa.gov/text/us-tec-summary.txt
-format csv
-last_row vtec ionosphere_tec_vertical
-
-source jpl_atmospheric_fireballs
-scale 7
-ttl 86400
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
-field count cosmos_atmospheric_fireballs_recorded
-
-source kp_index
-scale 7
-ttl 60
-url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
-last kp_index kp_index
-last a_index ap_index
-
-source lasp_tsi
-scale 7
-ttl 86400
-url https://lasp.colorado.edu/lisird/latis/dap/sorce_tsi_24hr_l3.json?time>=2020-01-01
-last irradiance solar_total_irradiance_wm2
-
-source launch_library
-scale 7
-ttl 3600
-url https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1
-field count technosphere_upcoming_launches
-
-source macrostrat_ages
-scale 7
-ttl 2592000
-url https://macrostrat.org/api/v2/units?age_top=0&age_bottom=4600&format=json&response=long
-field total geology_macrostrat_unit_count
-
-source macrostrat_timescale
-scale 7
-ttl 2592000
-url https://macrostrat.org/api/v2/timescales?timescale_id=11
-field intervals geology_ics_timescale_units
-
-source magnetism
-scale 7
-ttl 60
-url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
-last_row bz_gsm magnetism_bz
 last_row bt magnetism_bt
 last_row by_gsm magnetism_by
-
-source nasa_donki_cme
-scale 7
-ttl 3600
-url https://api.nasa.gov/DONKI/CME?startDate={yesterday}&api_key=DEMO_KEY
-count cme solar_cme_count_24h
-last_obj speed speed solar_cme_speed_latest
-last_obj activityID activityID solar_cme_id
-
-source nasa_donki_flares
-scale 7
-ttl 3600
-url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&api_key=DEMO_KEY
-count flares solar_flare_count_24h
+last_row bz_gsm magnetism_bz
+vector callisto_x callisto_y callisto_z
+vector ceres_x ceres_y ceres_z
+field chart.result.0.meta.chartPreviousClose economic_stock_prev_close
+field chart.result.0.meta.regularMarketPrice economic_stock_price
+field chlorophyll biosphere_marine_chlorophyll_mg_m3
+count circulars cosmic_gcn_alert_count
+count circulars cosmic_grb_count_recent
+count circulars gravitational_wave_gcn_alerts
+count circulars neutrino_icecube_alert_count
+last class_type solar_flare_latest_class
 last classType solar_flare_class_latest
-last peakTime solar_flare_peak_time
-
-source nasa_donki_gstorms
-scale 7
-ttl 3600
-url https://api.nasa.gov/DONKI/GST?startDate={yesterday}&api_key=DEMO_KEY
-count gst solar_gstorm_count_24h
-last_obj kpIndex kpIndex solar_gstorm_kp_peak
-
-source nasa_donki_hss
-scale 7
-ttl 3600
-url https://api.nasa.gov/DONKI/HSS?startDate={yesterday}&api_key=DEMO_KEY
-count hss high_speed_stream_count_24h
-
-source nasa_donki_ips
-scale 7
-ttl 3600
-url https://api.nasa.gov/DONKI/IPS?startDate={yesterday}&api_key=DEMO_KEY
-count ips solar_shock_count_24h
-
-source nasa_donki_mpc
-scale 7
-ttl 3600
-url https://api.nasa.gov/DONKI/MPC?startDate={yesterday}&api_key=DEMO_KEY
-count mpc magnetopause_crossing_count_24h
-
-source nasa_donki_rbe
-scale 7
-ttl 3600
-url https://api.nasa.gov/DONKI/RBE?startDate={yesterday}&api_key=DEMO_KEY
-count rbe radiation_belt_enhancement_count_24h
-
-source nasa_donki_sep
-scale 7
-ttl 3600
-url https://api.nasa.gov/DONKI/SEP?startDate={yesterday}&api_key=DEMO_KEY
-count sep solar_sep_count_24h
-
-source nasa_eonet
-scale 7
-ttl 1800
-url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=100
-count events technosphere_natural_events
-
-source neotoma_paleoecology
-scale 7
-ttl 86400
-url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
-field total paleoclimate_neotoma_occurrences
-
-source nmdb_neutron_monitor
-scale 7
-ttl 300
-url https://www.nmdb.eu/nest/api/get_data.php?stations=OULU&start={hour_ago}&end={now}&output=json
+count cme solar_cme_count_24h
+last_row co2 paleoclimate_domefuji_co2_ppm
+last_row co2 paleoclimate_wais_co2_ppm
+last_row CO2 paleoclimate_vostok_co2_ppm
+field count biosphere_bird_count
+field count biosphere_birding_hotspots
+field count biosphere_migratory_bird_records_this_month
+field count biosphere_species_count
+field count cosmos_atmospheric_fireballs_recorded
+field count orbital_asteroids_closer_than_moon
+field count orbital_neo_close_approaches_today
+field count technosphere_upcoming_launches
 last count cosmic_neutron_count_ground
-
-source noaa_cfc12
-scale 7
-ttl 3600
-url https://gml.noaa.gov/webdata/ccgg/trends/cfc12/cfc12_mm_gl.txt
 format csv
-last_row average climate_cfc12_global
-
-source noaa_co2_mauna_loa
-scale 7
-ttl 3600
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
 format csv
-last_row (ppm) co2_atmospheric_weekly
-
-source noaa_goes_electrons
-scale 7
-ttl 60
-url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
-last_obj energy ">=2 MeV" flux electron_flux_2mev
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+format csv
+field current.aerosol_optical_depth atmosphere_aerosol_optical_depth_500nm
+field current.carbon_monoxide atmosphere_co_station
+field current.cloud_cover weather_cloud_cover_pct
+field current.nitrogen_dioxide atmosphere_no2_station
+field current.ozone atmosphere_o3_station
+field current.pm10 atmosphere_pm10_station
+field current.pm2_5 atmosphere_pm25_station
+field current.precipitation weather_precipitation_mm
+field current.pressure_msl weather_pressure_hpa
+field current.relative_humidity_2m weather_humidity_pct
+field current.sulphur_dioxide atmosphere_so2_station
+field current.temperature_2m weather_temp_c
+field current.us_aqi atmosphere_epa_aqi
+field current.wave_direction ocean_wave_direction_deg
+field current.wave_height ocean_wave_height_m
+field current.wave_period ocean_wave_period_s
+field current.wind_direction_10m weather_wind_direction_deg
+field current.wind_speed_10m weather_wind_speed_ms
+count data biosphere_circulating_variants
+count data biosphere_covid_variant_count
+count data biosphere_motus_tracked_species
+count data cosmic_bright_stars_count
+count data cosmic_exoplanet_count
+count data cosmic_fast_radio_burst_frbstats_count
+count data cosmic_ray_measurements_crdb
+last data energy_renewable_share_pct
+path data.0.0 cosmic_fast_radio_burst_count
+path data.0.0 cosmic_galaxy_cluster_count
+path data.0.0 cosmic_measured_galaxies
+path data.0.0 cosmic_measured_pulsars
+path data.0.0 cosmic_measured_quasars
+path data.0.0 cosmic_millisecond_pulsar_count
+path data.0.0 cosmic_nearby_stars_10pc
+path data.0.0 cosmic_simbad_total_objects
+path data.0.0 cosmic_total_measured_stars
+path data.0.0 cosmic_variable_stars_count
+path data.0.0 cosmology_galaxies_z_gt5
+path data.0.0 cosmology_white_dwarf_count_gaia
+path data.0.dec cosmic_star_dec
+path data.0.intensity.actual technosphere_uk_grid_carbon_intensity
+path data.0.parallax cosmic_star_parallax_mas
+path data.0.phot_g_mean_mag cosmic_star_magnitude
+path data.0.ra cosmic_star_ra
+field data.aqi atmosphere_waqi_aqi
+field data.pm10 atmosphere_pm10_waqi
+field data.pm25 atmosphere_pm25_waqi
+field datasets biosphere_ocean_datasets_count
+last_row density solar_wind_density
+last_row dhw ocean_degree_heating_weeks_max
+last dst dst_index
+count earthquakes seismic_count_emsc
+count earthquakes seismic_iris_count
+first elevation topography_elevation
+vector enceladus_x enceladus_y enceladus_z
+vector encke_x encke_y encke_z
+last energy xray_wavelength
 last_obj energy ">=0.8 MeV" flux electron_flux_800kev
-
-source noaa_goes_magnetosphere
-scale 7
-ttl 60
-url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
-last_obj satellite "GOES-16" Hp geomag_hp_nt
-last_obj satellite "GOES-16" He geomag_he_nt
-last_obj satellite "GOES-16" Hn geomag_hn_nt
-last_obj satellite "GOES-16" Ht geomag_ht_nt
-
-source noaa_methane
-scale 7
-ttl 3600
-url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
-format csv
-last_row average climate_methane_global
-
-source noaa_n2o
-scale 7
-ttl 3600
-url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
-format csv
-last_row average climate_n2o_global
-
-source noaa_paleoclimate_co2
-scale 7
-ttl 2592000
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc3deuttemp2007.txt
-format csv
-field age_bp paleoclimate_age_bp
-field temperature paleoclimate_temp_anomaly_c
-
-source noaa_proton_flux
-scale 7
-ttl 60
-url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+last_obj energy ">=100 MeV" flux cosmic_protons_100mev
+last_obj energy ">=100 MeV" flux proton_flux_measured_100mev
+last_obj energy ">=10 MeV" flux cosmic_protons_10mev
+last_obj energy ">=10 MeV" flux proton_flux_measured_10mev
+last_obj energy ">=1 MeV" flux cosmic_protons_1mev
+last_obj energy ">=2 MeV" flux electron_flux_2mev
 last_obj energy "40300-73400 keV" flux cosmic_proton_flux_40mev
 last_obj energy "83700-98500 keV" flux cosmic_proton_flux_80mev
-
-source noaa_sf6
-scale 7
-ttl 3600
-url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
-format csv
-last_row average climate_sf6_global
-
-source noaa_solar_indices
-scale 7
-ttl 3600
-url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
-last ssn solar_sunspot_number
-last f10.7 solar_f107_index
-
-source noaa_solar_radio_measured
-scale 7
-ttl 3600
-url https://services.swpc.noaa.gov/json/solar-radio-flux.json
-last observed solar_f107_observed_sfu
-last adjusted solar_f107_adjusted_sfu
-
-source noaa_sunspots
-scale 7
-ttl 3600
-url https://services.swpc.noaa.gov/json/solar_regions.json
-count regions solar_sunspot_region_count
-sum spot_count solar_total_sunspots
-
-source openalex_works
-scale 7
-ttl 3600
-url https://api.openalex.org/works?per_page=1
-field meta.count technosphere_scholarly_works_total
-
-source pbdb_paleobiology
-scale 7
-ttl 86400
-url https://paleobiodb.org/data1.2/occs/list.json?max_ma=540&min_ma=538&show=full&limit=1
-field records_found paleoclimate_cambrian_fossils
-
-source plasma
-scale 7
-ttl 60
-url https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json
-last_row speed solar_wind_speed
-last_row density solar_wind_density
-last_row temperature solar_wind_temp
-
-source protons
-scale 7
-ttl 60
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
-last_obj energy ">=100 MeV" flux cosmic_protons_100mev
-last_obj energy ">=10 MeV" flux cosmic_protons_10mev
-last_obj energy ">=1 MeV" flux cosmic_protons_1mev
-
-source radio_flux
-scale 7
-ttl 3600
-url https://services.swpc.noaa.gov/json/solar-radio-flux.json
-last flux solar_radio_flux_sfu
-
-source ripe_bgp_updates
-scale 7
-ttl 60
-url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={now}
-field nr_updates technosphere_bgp_updates_per_hour
-
-source satnogs_radio_observations
-scale 7
-ttl 300
-url https://db.satnogs.org/api/observations/?format=json&limit=1
-count items technosphere_satellite_radio_bursts
-
-source silso_sunspot
-scale 7
-ttl 3600
-url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
-last observed_swpc_ssn solar_sunspot_number_silso
-
-source swpc_geomag_forecast
-scale 7
-ttl 3600
-url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
-format csv
-last_row kp ionosphere_forecast_kp_max
-
-source swpc_solar_events
-scale 7
-ttl 300
-url https://services.swpc.noaa.gov/json/edited_events.json
-count events solar_event_count
-
-source uk_carbon_intensity
-scale 7
-ttl 30
-url https://api.carbonintensity.org.uk/intensity
-path data.0.intensity.actual technosphere_uk_grid_carbon_intensity
-
-source usgs_geomag
-scale 7
-ttl 300
-url https://geomag.usgs.gov/ws/data/?id={nearest_geomag_station}&starttime={today}T00:00:00&endtime={today}T23:59:59&format=json&elements=X,Y,Z,F
-field X geomag_x_nt_usgs
-field Y geomag_y_nt_usgs
-field Z geomag_z_nt_usgs
-field F geomag_total_nt_usgs
-
-source vostok_icecore
-scale 7
-ttl 2592000
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt
-format csv
-last_row age_bp paleoclimate_vostok_age_bp
-last_row CO2 paleoclimate_vostok_co2_ppm
-
-source wais_divide_co2
-scale 7
-ttl 2592000
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/wais-divide/WDC_CO2_68ka_2015.txt
-format csv
-last_row age_bp paleoclimate_wais_age_bp
-last_row co2 paleoclimate_wais_co2_ppm
-
-source wikimedia_stats
-scale 7
-ttl 3600
-url https://wikimedia.org/api/rest_v1/metrics/edits/aggregate/en.wikipedia/all-editor-types/all-page-types/daily/{yesterday}/{today}
-count items technosphere_wikipedia_daily_edits
-field results.0.edits technosphere_wikipedia_edits_yesterday
-
-source worldbank_co2_emissions
-scale 7
-ttl 2592000
-url https://api.worldbank.org/v2/country/WLD/indicator/EN.ATM.CO2E.KT?format=json&per_page=1&date=2023
-field 1.0.value climate_global_co2_emissions_kt
-
-source worldbank_population
-scale 7
-ttl 2592000
-url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.TOTL?format=json&per_page=1&date=2023
-field 1.0.value technosphere_global_population
-
-source xray
-scale 7
-ttl 60
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
-last flux xray_flux
-last energy xray_wavelength
-
-source xray_flares_7day
-scale 7
-ttl 300
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
-count flares solar_flare_count_7d
-last class_type solar_flare_latest_class
-last begin_time solar_flare_latest_time
-
-source yahoo_finance_markets
-scale 7
-ttl 60
-header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
-url https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=1d
-field chart.result.0.meta.regularMarketPrice economic_stock_price
-field chart.result.0.meta.chartPreviousClose economic_stock_prev_close
-
-source celestrak_debris
-scale 8
-ttl 3600
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=iridium-33-debris&FORMAT=json
-count objects orbital_debris_iridium33
-
-source celestrak_gps
-scale 8
-ttl 1800
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=json
-count objects orbital_gps_count
-
-source celestrak_satellites
-scale 8
-ttl 1800
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json
-count objects orbital_active_satellites
-
-source celestrak_starlink
-scale 8
-ttl 1800
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=json
-count objects orbital_starlink_count
-
-source iss_position
-scale 8
-ttl 10
-url https://api.wheretheiss.at/v1/satellites/25544
-field latitude iss_lat
-field longitude iss_lon
-field altitude iss_alt
-
-source open_notify_astros
-scale 8
-ttl 3600
-url http://api.open-notify.org/astros.json
-field number orbital_humans_in_space
-
-source apophis_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector apophis_x apophis_y apophis_z
-
-source bennu_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector bennu_x bennu_y bennu_z
-
-source callisto_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27504%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector callisto_x callisto_y callisto_z
-
-source ceres_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector ceres_x ceres_y ceres_z
-
-source cneos_asteroids_inside_lunar_orbit
-scale 11
-ttl 86400
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
-field count orbital_asteroids_closer_than_moon
-
-source cneos_close_approaches
-scale 11
-ttl 86400
-url https://ssd-api.jpl.nasa.gov/cad.api?date-min={today}&date-max={tomorrow}
-field count orbital_neo_close_approaches_today
-
-source enceladus_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector enceladus_x enceladus_y enceladus_z
-
-source encke_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector encke_x encke_y encke_z
-
-source eris_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 vector eris_x eris_y eris_z
-
-source europa_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+field ethereum.usd economic_ethereum_price_usd
 vector europa_x europa_y europa_z
-
-source ganymede_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+count events environmental_active_wildfires
+count events gravitational_wave_total_events
+count events solar_event_count
+count events technosphere_natural_events
+last_row extent climate_sea_ice_extent_north
+field F geomag_total_nt_usgs
+last f10.7 solar_f107_index
+field fco2_ave_unwtd ocean_co2_climatology_uatm
+count features environmental_active_fires_us
+count features environmental_effis_fire_count
+count features environmental_global_disaster_alerts
+count features maritime_vessel_count_finland
+count features maritime_vessel_density_emodnet
+count features maritime_vessels_finland
+count features seismic_global_count_bgs
+count flares solar_flare_count_24h
+count flares solar_flare_count_7d
+last flux solar_radio_flux_sfu
+last flux xray_flux
+field forecast_time aurora_forecast_time
+field frequenz technosphere_grid_frequency_eu_hz
 vector ganymede_x ganymede_y ganymede_z
-
-source halley_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000001%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+geojson geometry.coordinates[2] seismic_depth_km
+count gst solar_gstorm_count_24h
 vector halley_x halley_y halley_z
-
-source haumea_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 vector haumea_x haumea_y haumea_z
-
-source io_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27501%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector io_x io_y io_z
-
-source juno_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector juno_x juno_y juno_z
-
-source jupiter_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector jupiter_x jupiter_y jupiter_z
-
-source jwst_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector jwst_x jwst_y jwst_z
-
-source makemake_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector makemake_x makemake_y makemake_z
-
-source mars_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector mars_x mars_y mars_z
-
-source mercury_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector mercury_x mercury_y mercury_z
-
-source moon_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector moon_x moon_y moon_z
-
-source nasa_neo_browse
-scale 11
-ttl 86400
-url https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=DEMO_KEY
-field page.total_elements solar_neo_total_known
-
-source nasa_neows
-scale 11
-ttl 3600
+field hits.hits.0.metadata.citation_count cosmology_proton_decay_citations
+field hits.total cern_alice_qgp_datasets
+field hits.total cern_cms_datasets
+field hits.total cosmic_cern_datasets
+field host technosphere_rain_radar_host
+count hss high_speed_stream_count_24h
+url http://api.open-notify.org/astros.json
+url http://opendata.cern.ch/api/records/?type=dataset&experiment=ALICE&size=1
+url http://opendata.cern.ch/api/records/?type=dataset&experiment=CMS&size=1
+url http://opendata.cern.ch/api/records/?type=dataset&size=0
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
+url https://api.carbonintensity.org.uk/intensity
+url https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true
+url https://api.crossref.org/works?rows=0
+url https://api.drand.sh/public/latest
+url https://api.energy-charts.info/price?country=DE
+url https://api.energy-charts.info/ren_share
+url https://api.exchangerate-api.com/v4/latest/USD
+url https://api.fbi.gov/wanted/v1/list
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
+url https://api.gdeltproject.org/api/v2/doc/doc?query=conflict%20protest%20strike&mode=ArtList&maxrecords=250&format=json&timespan=24h
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+url https://api.irail.be/occupancy/
+url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00
+url https://api.nasa.gov/DONKI/CME?startDate={yesterday}&api_key=DEMO_KEY
+url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&api_key=DEMO_KEY
+url https://api.nasa.gov/DONKI/GST?startDate={yesterday}&api_key=DEMO_KEY
+url https://api.nasa.gov/DONKI/HSS?startDate={yesterday}&api_key=DEMO_KEY
+url https://api.nasa.gov/DONKI/IPS?startDate={yesterday}&api_key=DEMO_KEY
+url https://api.nasa.gov/DONKI/MPC?startDate={yesterday}&api_key=DEMO_KEY
+url https://api.nasa.gov/DONKI/RBE?startDate={yesterday}&api_key=DEMO_KEY
+url https://api.nasa.gov/DONKI/SEP?startDate={yesterday}&api_key=DEMO_KEY
 url https://api.nasa.gov/neo/rest/v1/feed?start_date={today}&end_date={today}&api_key=DEMO_KEY
-count near_earth_objects.{today} solar_asteroid_count_today
-path near_earth_objects.{today}.0.estimated_diameter.kilometers.estimated_diameter_max solar_neo_diameter_max_km
-path near_earth_objects.{today}.0.close_approach_data.0.miss_distance.kilometers solar_neo_distance_km
-
-source nasa_sentry
-scale 11
-ttl 86400
-url https://ssd-api.jpl.nasa.gov/sentry.api
-field summary.total_objects solar_sentry_object_count
-field summary.max_ps solar_sentry_max_palermo
-field summary.max_ts solar_sentry_max_torino
-
-source neptune_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector neptune_x neptune_y neptune_z
-
-source new_horizons_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector nh_x nh_y nh_z
-
-source parker_solar_probe_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector parker_x parker_y parker_z
-
-source pluto_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27999%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector pluto_x pluto_y pluto_z
-
-source saturn_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27699%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector saturn_x saturn_y saturn_z
-
-source solar_orbiter_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector solo_x solo_y solo_z
-
-source sun_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector sun_x sun_y sun_z
-
-source titan_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27606%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector titan_x titan_y titan_z
-
-source triton_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector triton_x triton_y triton_z
-
-source uranus_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27799%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector uranus_x uranus_y uranus_z
-
-source venus_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27299%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector venus_x venus_y venus_z
-
-source vesta_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector vesta_x vesta_y vesta_z
-
-source voyager1_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector voyager1_x voyager1_y voyager1_z
-
-source voyager2_vectors
-scale 11
-ttl 86400
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-vector voyager2_x voyager2_y voyager2_z
-
-source esa_gaia_stars
-scale 17
-ttl 31536000
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50+source_id,ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+3.0+ORDER+BY+phot_g_mean_mag
-count data cosmic_bright_stars_count
-path data.0.ra cosmic_star_ra
-path data.0.dec cosmic_star_dec
-path data.0.phot_g_mean_mag cosmic_star_magnitude
-path data.0.parallax cosmic_star_parallax_mas
-
-source gaia_nearby_stars
-scale 17
-ttl 31536000
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
-path data.0.0 cosmic_nearby_stars_10pc
-
-source gaia_stellar_ages
-scale 17
-ttl 31536000
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5+source_id,age_flame,mass_flame,teff_gspphot+FROM+gaiadr3.astrophysical_parameters+WHERE+age_flame+IS+NOT+NULL+ORDER+BY+age_flame+DESC
-field age_flame cosmology_oldest_star_age_gyr
-field teff_gspphot cosmology_oldest_star_temp_k
-
-source gaia_total_measured_stars
-scale 17
-ttl 31536000
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax>0
-path data.0.0 cosmic_total_measured_stars
-
-source gaia_variable_stars
-scale 17
-ttl 31536000
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.vari_classifier_result
-path data.0.0 cosmic_variable_stars_count
-
-source gaia_white_dwarfs
-scale 17
-ttl 31536000
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.astrophysical_parameters+WHERE+classprob_dsc_combmod_wd+%3E+0.8
-path data.0.0 cosmology_white_dwarf_count_gaia
-
-source nasa_exoplanet_total
-scale 17
-ttl 31536000
+url https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=DEMO_KEY
+url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
+url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+url https://api.obis.org/v3/statistics
+url https://api.openalex.org/works?per_page=1
+url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto
+url https://api.rainviewer.com/public/weather-maps.json
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={nearest_tide_station}&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={nearest_tide_station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest
+url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
+url https://api.wheretheiss.at/v1/satellites/25544
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.ATM.CO2E.KT?format=json&per_page=1&date=2023
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.TOTL?format=json&per_page=1&date=2023
+url https://argovis-api.colorado.edu/argo?date_range={today}T00:00:00Z,{today}T23:59:59Z&box=[{lon_min},{lat_min},{lon_max},{lat_max}]
+url https://aviationweather.gov/api/data/metar?ids={nearest_airport}&format=json
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=json
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=iridium-33-debris&FORMAT=json
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=json
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdMH1chlamday.json?chlorophyll[(last)][(last)][({lat})][({lon})]
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdVH2018nldmday.json?nLD_filled[(last)][(last)][({lat})][({lon})]
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplMURSST41.json?analysed_sst[(last)][(last)][({lat})][({lon})]
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/socat_v2022_clim.json?fco2_ave_unwtd[(last)][(last)][({lat})][({lon})]
+url https://coastwatch.pfeg.noaa.gov/erddap/tabledap/scrippsco2.json?time,pco2_sw&time>={today}&orderByMax=%22time%22
+url https://coralreefwatch.noaa.gov/product/vs/data/vs_gauges_latest.txt
+url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=5&$order=week_ending_date+DESC
+url https://datacenter.iers.org/products/eop/rapid/daily/csv/finals2000A.all.csv
+url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
+url https://data.rcsb.org/rest/v1/holdings/statistics/
+url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
+url https://db.satnogs.org/api/observations/?format=json&limit=1
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
+url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
+url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=wildfires&limit=100
+url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=100
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+as+n+FROM+ps+WHERE+pl_orbper<1&format=json
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+as+n+FROM+ps+WHERE+pl_rade+IS+NOT+NULL&format=json
-path 0.n cosmic_exoplanet_total_confirmed
-
-source nasa_exoplanets
-scale 17
-ttl 31536000
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+20+pl_name,pl_orbper,pl_rade,pl_eqt+FROM+pscomppars+WHERE+pl_eqt+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
-count data cosmic_exoplanet_count
+url https://gcn.nasa.gov/circulars.json?limit=10
+url https://gcn.nasa.gov/circulars.json?limit=10&subject=Fermi
+url https://gcn.nasa.gov/circulars.json?limit=10&subject=IceCube
+url https://gcn.nasa.gov/circulars.json?limit=5&subject=GW
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.astrophysical_parameters+WHERE+classprob_dsc_combmod_wd+%3E+0.8
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax>0
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.vari_classifier_result
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50+source_id,ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+3.0+ORDER+BY+phot_g_mean_mag
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5+source_id,age_flame,mass_flame,teff_gspphot+FROM+gaiadr3.astrophysical_parameters+WHERE+age_flame+IS+NOT+NULL+ORDER+BY+age_flame+DESC
+url https://geomag.usgs.gov/ws/data/?id={nearest_geomag_station}&starttime={today}T00:00:00&endtime={today}T23:59:59&format=json&elements=X,Y,Z,F
+url https://ghoapi.azureedge.net/api/MDG_0000000020
+url https://gml.noaa.gov/webdata/ccgg/trends/cfc12/cfc12_mm_gl.txt
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+url https://gracedb.ligo.org/api/superevents/?count=10&category=production
+url https://gwosc.org/eventapi/json/allevents/
+url https://ies-ows.jrc.ec.europa.eu/effis?SERVICE=WFS&REQUEST=GetFeature&VERSION=1.1.0&TYPENAME=ms:modis.ba.world.bytime&outputFormat=application/json&BBOX={lon_min},{lat_min},{lon_max},{lat_max}
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=KAN&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=NGK&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
+url https://lapis.cov-spectrum.org/open/v2/sample/aggregated?fields=variant&limit=5
+url https://lasp.colorado.edu/lisird/latis/dap/sorce_tsi_24hr_l3.json?time>=2020-01-01
+url https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1
+url https://lpsc.in2p3.fr/crdb/rest/?request=GET&num=208&energy_convert_level=rigidity&combo_level=0&output=json
+url https://macrostrat.org/api/v2/timescales?timescale_id=11
+url https://macrostrat.org/api/v2/units?age_top=0&age_bottom=4600&format=json&response=long
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period&timezone=auto
+url https://meri.digitraffic.fi/api/ais/v1/locations
+url https://meri.digitraffic.fi/api/ais/v1/vessels
+url https://motus.org/api/species?fmt=json
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+url https://opensky-network.org/api/states/all?lamin={lat_min}&lomin={lon_min}&lamax={lat_max}&lomax={lon_max}
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count;
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["telecom"="antenna"](around:10000,{lat},{lon});out%20count;
+url https://overpass.kumi.systems/api/interpreter?data=[out:json][timeout:10];node(around:1000,{lat},{lon});out%20count;
+url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+url https://paleobiodb.org/data1.2/occs/list.json?max_ma=540&min_ma=538&show=full&limit=1
+url https://pdgapi.lbl.gov/summaries?property=Mass&limit=1
+url https://pdgapi.lbl.gov/summaries/S003M
+url https://pdgapi.lbl.gov/summaries/S008M
+url https://pdgapi.lbl.gov/summaries/S043
+url https://pdgapi.lbl.gov/summaries/S044
+url https://pdgapi.lbl.gov/summaries/S059
+url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
+url https://quakes.bgs.ac.uk/fdsnws/event/1/query?format=json&starttime={yesterday}&minmag=4.0
+url https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=1d
+url https://scrippsco2.ucsd.edu/assets/data/atmospheric/stations/flask_co2/daily/daily_flask_co2_mlo.csv
+url https://service.iris.edu/fdsnws/event/1/query?format=json&starttime={hour_ago}&maxradius=5&latitude={lat}&longitude={lon}&minmagnitude=2.0
+url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json
+url https://services.swpc.noaa.gov/json/edited_events.json
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
+url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
+url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+url https://services.swpc.noaa.gov/json/solar_regions.json
+url https://services.swpc.noaa.gov/products/kyoto-dst.json
+url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
+url https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json
+url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
+url https://services.swpc.noaa.gov/text/us-tec-summary.txt
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='ClG'
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Galaxy'
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Galaxy'+AND+rvz_redshift+%3E+5
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='ms*'
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Pulsar'
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='QSO'
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+1+COUNT(*)+as+n+FROM+SpecObj+WHERE+class='GALAXY'+AND+z+BETWEEN+0.1+AND+0.2
+url https://ssd-api.jpl.nasa.gov/cad.api?date-min={today}&date-max={tomorrow}
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
+url https://ssd-api.jpl.nasa.gov/sentry.api
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27299%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27501%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27504%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27606%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27699%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27799%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000001%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27999%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={now}
+url https://vizier.cds.unistra.fr/viz-bin/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+%22J/ApJS/257/59/chimeFRB%22
+url https://volcanoes.usgs.gov/vhp/updates.json
+url https://volcano.si.edu/news/WeeklyVolcanoRSS.jsp
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000&parameterCd=00060&siteStatus=all
+url https://wikimedia.org/api/rest_v1/metrics/edits/aggregate/en.wikipedia/all-editor-types/all-page-types/daily/{yesterday}/{today}
+url https://www.crystallography.net/cod/result.php?format=json&el=Si&limit=1
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?page_size=1
+url https://www.gdacs.org/gdacsapi/api/events/getmacromap.json
+url https://www.govtrack.us/api/v2/vote?created__gt={yesterday}&limit=0
+url https://www.herta-experiment.org/frbstats/catalogue.json
+url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/analysis/diagnostics/HadCRUT.5.0.2.0.analysis.summary_series.global.annual.csv
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/domefuji2017co2.txt
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc3deuttemp2007.txt
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/wais-divide/WDC_CO2_68ka_2015.txt
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/greenland/summit/gisp2/chem/pb.txt
+url https://www.ndbc.noaa.gov/data/realtime2/{nearest_buoy}.txt
+url https://www.netzfrequenzmessung.de/frequenz.json
+url https://www.nmdb.eu/nest/api/get_data.php?stations=OULU&start={hour_ago}&end={now}&output=json
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&starttime={hour_ago}&lat={lat}&lon={lon}&maxradius=5&minmag=2.0
+url https://www.star.nesdis.noaa.gov/socd/lsa/MSL/data/msletopo_ts.txt
+url https://xeno-canto.org/api/2/recordings?query=box:{lat_min},{lon_min},{lat_max},{lon_max}
+url https://xmart-api-public.who.int/FLUMART/V_FLUNET?$format=json&$top=5&$orderby=ISO_YEAR%20desc,ISO_WEEK%20desc
+field intervals geology_ics_timescale_units
+vector io_x io_y io_z
+count ips solar_shock_count_24h
+last irradiance solar_total_irradiance_wm2
+count items geosphere_volcano_eruptions
+count items technosphere_satellite_radio_bursts
+count items technosphere_wikipedia_daily_edits
+last_row J-D climate_global_temp_anomaly_c
+vector juno_x juno_y juno_z
+vector jupiter_x jupiter_y jupiter_z
+vector jwst_x jwst_y jwst_z
+last_row kp ionosphere_forecast_kp_max
+last kp_index kp_index
+last_obj kpIndex kpIndex solar_gstorm_kp_peak
+field latitude iss_lat
+last_row LOD earth_length_of_day_ms
+field longitude iss_lon
+field mag seismic_magnitude_emsc
+vector makemake_x makemake_y makemake_z
+vector mars_x mars_y mars_z
+field measurements.pressure ocean_argo_pressure
+field measurements.salinity ocean_argo_salinity
+field measurements.temperature ocean_argo_temp
+vector mercury_x mercury_y mercury_z
+field message.total-results technosphere_registered_dois
+field meta count cosmic_pdg_measured_particles
+field meta.count technosphere_scholarly_works_total
+field meta.pagination.count biosphere_metagenomic_studies
+field meta.total_count political_legislation_votes
+field minutely_15.lightning_potential atmosphere_lightning_potential
+field modeled_share biosphere_dominant_variant_proportion
+vector moon_x moon_y moon_z
+count mpc magnetopause_crossing_count_24h
+last_row msl ocean_sea_level_global_mm
+last_row MWD ocean_wave_direction
+first name gravitational_wave_catalog_latest
+geojson nearby 500000 mag 2.0 seismic_magnitude seismic_depth seismic_distance
+count near_earth_objects.{today} solar_asteroid_count_today
+path near_earth_objects.{today}.0.close_approach_data.0.miss_distance.kilometers solar_neo_distance_km
+path near_earth_objects.{today}.0.estimated_diameter.kilometers.estimated_diameter_max solar_neo_diameter_max_km
+vector neptune_x neptune_y neptune_z
+vector nh_x nh_y nh_z
+field nLD_filled technosphere_nighttime_light_radiance
+count nodes technosphere_mobile_antennas_10km
+count nodes technosphere_osm_nodes
+count nodes technosphere_public_wlan_5km
+field north_intensity aurora_intensity_north
+field nr_updates technosphere_bgp_updates_per_hour
+field number orbital_humans_in_space
+field numRecordings biosphere_bird_sound_recordings
+field numSpecies biosphere_bird_species_recorded
+count objects orbital_active_satellites
+count objects orbital_debris_iridium33
+count objects orbital_gps_count
+count objects orbital_starlink_count
+last observed solar_f107_observed_sfu
+last observed_swpc_ssn solar_sunspot_number_silso
+count occupancy technosphere_train_occupancy_belgium
+field page.total_elements solar_neo_total_known
+vector parker_x parker_y parker_z
+count past technosphere_rain_radar_frames
+last_row pb_ng_g paleoclimate_lead_concentration_ppb
+field pco2_sw ocean_co2_partial_pressure_uatm
+last peakTime solar_flare_peak_time
 field pl_eqt cosmic_exoplanet_temp_k
 field pl_orbper cosmic_exoplanet_period_days
 field pl_rade cosmic_exoplanet_radius_earth
-
-source nasa_hot_jupiters
-scale 17
-ttl 31536000
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+as+n+FROM+ps+WHERE+pl_orbper<1&format=json
-path 0.n cosmic_hot_jupiters
-
-source simbad_galaxies
-scale 21
-ttl 31536000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Galaxy'
-path data.0.0 cosmic_measured_galaxies
-
-source simbad_high_z_galaxies
-scale 21
-ttl 31536000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Galaxy'+AND+rvz_redshift+%3E+5
-path data.0.0 cosmology_galaxies_z_gt5
-
-source simbad_millisecond_pulsars
-scale 21
-ttl 31536000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='ms*'
-path data.0.0 cosmic_millisecond_pulsar_count
-
-source simbad_pulsars
-scale 21
-ttl 31536000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Pulsar'
-path data.0.0 cosmic_measured_pulsars
-
-source simbad_quasars
-scale 21
-ttl 31536000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='QSO'
-path data.0.0 cosmic_measured_quasars
-
-source simbad_total_objects
-scale 21
-ttl 31536000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic
-path data.0.0 cosmic_simbad_total_objects
-
-source sdss_cosmic_web_galaxies
-scale 24
-ttl 31536000
-url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+1+COUNT(*)+as+n+FROM+SpecObj+WHERE+class='GALAXY'+AND+z+BETWEEN+0.1+AND+0.2
-path 0.Rows.0.n cosmic_galaxies_mid_redshift_count
-
-source simbad_galaxy_clusters
-scale 24
-ttl 31536000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='ClG'
-path data.0.0 cosmic_galaxy_cluster_count
-
-source chime_frb_catalog
-scale 25
-ttl 86400
-url https://vizier.cds.unistra.fr/viz-bin/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+%22J/ApJS/257/59/chimeFRB%22
-path data.0.0 cosmic_fast_radio_burst_count
-
-source fermi_grb
-scale 25
-ttl 300
-url https://gcn.nasa.gov/circulars.json?limit=10&subject=Fermi
-count circulars cosmic_grb_count_recent
-
-source frbstats
-scale 25
-ttl 86400
-url https://www.herta-experiment.org/frbstats/catalogue.json
-count data cosmic_fast_radio_burst_frbstats_count
-
-source gcn_cosmic_events
-scale 25
-ttl 300
-url https://gcn.nasa.gov/circulars.json?limit=10
-count circulars cosmic_gcn_alert_count
+vector pluto_x pluto_y pluto_z
+last_row (ppm) co2_atmospheric_weekly
+last price energy_electricity_price_eur_mwh
+geojson properties.gap seismic_azimuthal_gap
+geojson properties.mag seismic_magnitude
+geojson properties.rms seismic_rms
+geojson properties.sig seismic_significance
+field properties.solar_noon.elevation ephemeris_solar_elevation_max
+field properties.sunrise.time ephemeris_sunrise_time
+count query.geosearch geopages_nearby
+field rates.EUR economic_usd_eur_rate
+field rates.GBP economic_usd_gbp_rate
+field rates.JPY economic_usd_jpy_rate
+count rbe radiation_belt_enhancement_count_24h
+field records biosphere_ocean_records_total
+field records_found paleoclimate_cambrian_fossils
+count regions solar_sunspot_region_count
+field released_structures biosphere_protein_structures_total
+field results.0.edits technosphere_wikipedia_edits_yesterday
+field round quantum_entropy_generation_round
+last_obj satellite "GOES-16" He geomag_he_nt
+last_obj satellite "GOES-16" Hn geomag_hn_nt
+last_obj satellite "GOES-16" Hp geomag_hp_nt
+last_obj satellite "GOES-16" Ht geomag_ht_nt
+vector saturn_x saturn_y saturn_z
+count sep solar_sep_count_24h
+vector solo_x solo_y solo_z
+field species_count fungi_diversity
+last_obj speed speed solar_cme_speed_latest
+last_row speed solar_wind_speed
+sum spot_count solar_total_sunspots
+last ssn solar_sunspot_number
+count states aviation_aircraft
 first subject cosmic_gcn_latest_subject
-
-source gcn_ligo_alerts
-scale 25
-ttl 60
-url https://gcn.nasa.gov/circulars.json?limit=5&subject=GW
-count circulars gravitational_wave_gcn_alerts
 first subject gravitational_wave_gcn_latest
-
-source gwosc_strain
-scale 25
-ttl 3600
-url https://gwosc.org/eventapi/json/allevents/
-count events gravitational_wave_total_events
-first name gravitational_wave_catalog_latest
-
-source icecube_neutrino_alerts
-scale 25
-ttl 60
-url https://gcn.nasa.gov/circulars.json?limit=10&subject=IceCube
-count circulars neutrino_icecube_alert_count
 first subject neutrino_latest_event
-
-source ligo_gracedb_events
-scale 25
-ttl 60
-url https://gracedb.ligo.org/api/superevents/?count=10&category=production
+field summary.max_ps solar_sentry_max_palermo
+field summary.max_ts solar_sentry_max_torino
+field summary.total_objects solar_sentry_object_count
+vector sun_x sun_y sun_z
 count superevents gravitational_wave_event_count
 first superevents.0.superevent_id gravitational_wave_latest_id
-
+first t tide_next_high_time
+first t tide_observation_time
+field taxa biosphere_ocean_species_known
+field teff_gspphot cosmology_oldest_star_temp_k
+field temperature paleoclimate_temp_anomaly_c
+last_row temperature solar_wind_temp
+vector titan_x titan_y titan_z
+count total technosphere_poi_count
+field total biosphere_ocean_occurrences_50km
+field total geology_macrostrat_unit_count
+field total paleoclimate_neotoma_occurrences
+field total technosphere_fbi_wanted_count
+field total_results biosphere_observations
+field total_results biosphere_verified_observations
+field total_results fungi_observations
+vector triton_x triton_y triton_z
+vector uranus_x uranus_y uranus_z
+header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
+header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
+header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
+first v tide_next_high_m
+first v tide_observed_height_m
+field value particle_alpha_s
+field value particle_higgs_mass_gev
+field value particle_proton_mass_mev
+field value particle_w_boson_mass_gev
+field value particle_z_boson_mass_gev
+last_row value co2_scripps_mauna_loa_ppm
+field value.0.ALL_INF biosphere_influenza_positive_global
+field value.0.NumericValue biosphere_tuberculosis_incidence_rate
+field value.0.SPEC_PROCESSED_NB biosphere_influenza_specimens_global
+path value.timeSeries.0.values.0.value.0.value river_flow_cfs
+vector venus_x venus_y venus_z
+vector vesta_x vesta_y vesta_z
+count volcanoes volcanic_alert_count
+vector voyager1_x voyager1_y voyager1_z
+vector voyager2_x voyager2_y voyager2_z
+last_row vtec ionosphere_tec_vertical
+last_obj wavelength "0.05-0.4nm" flux solar_euv_flux_short
+last_obj wavelength "0.1-0.8nm" flux solar_euv_flux_long
+count ways technosphere_osm_ways
+last_row WSPD ocean_wind_speed_buoy
+last_row WTMP ocean_water_temp
+last_row WVHT ocean_wave_height_buoy
+field X geomag_x_nt
+field X geomag_x_nt_bou
+field X geomag_x_nt_kan
+field X geomag_x_nt_usgs
+last_row Xp earth_pole_x_arcsec
+field Y geomag_y_nt
+field Y geomag_y_nt_bou
+field Y geomag_y_nt_kan
+field Y geomag_y_nt_usgs
+last_row Yp earth_pole_y_arcsec
+field Z geomag_z_nt
+field Z geomag_z_nt_bou
+field Z geomag_z_nt_kan
+field Z geomag_z_nt_usgs
+source aeronet_aod
+source aeronet_gsfc_aod
+source aviation
+source aviation_weather_metar
+source coral_bleaching
+source digitraffic_ais
+source digitraffic_vessels
+source ebird_hotspots
+source ebird_recent
+source effis_fires
+source elevation
+source emodnet_vessel_density
+source emsc_earthquakes
+source fungi_observations
+source gbif_migrations
+source gdelt_conflicts
+source geopages
+source inaturalist
+source inaturalist_verified
+source irail_belgium
+source iris_seismic
+source lightning_open_meteo
+source met_norway_sun
+source nasa_eonet_fires
+source ndbc_buoy
+source nifc_fires
+source noaa_coops_predictions
+source noaa_coops_tides
+source noaa_sst
+source openmeteo_air_quality_full
+source openmeteo_air_quality_us
+source openmeteo_marine
+source openmeteo_weather
+source overpass_mobile_antennas
+source overpass_pois
+source overpass_wifi_hotspots
+source pegelonline_water_level
+source rain_radar
+source seismic
+source sensor_community_air
+source smithsonian_volcanoes
+source usgs_earthquake_detail
+source usgs_streamflow
+source usgs_volcano_alerts
+source viirs_nighttime_lights
+source waqi_air_quality
+source xenocanto_birds
+source argo_floats
+source erddap_ocean_pco2
+source erddap_socat_gridded
+source motus_species
+source noaa_marine_chlorophyll
+source obis_species
+source obis_statistics
+source cdc_covid_variants
+source gbif
+source nsidc_sea_ice
+source psmsl_sea_level
+source scripps_co2_station
+source who_gho_tuberculosis
+source who_influenza
+source aurora_forecast
+source aurora_nowcast_north
+source bgs_global_seismology
+source coingecko_crypto
+source crdb_cosmic_rays
+source crossref_dois
+source dome_fuji_co2
+source dst_index
+source energy_charts_renewable
+source entsoe_energy
+source exchangerate_api
+source fbi_wanted
+source gdacs_disasters
+source global_temp_anomaly
+source goes_euv
+source goes_seiss_protons
+source govtrack_votes
+source hadcrut5_temp
+source ice_core_lead_pollution
+source iers_earth_rotation
+source intermagnet_bou
+source intermagnet_kan
+source intermagnet_ngk
+source ionosphere_tec
+source jpl_atmospheric_fireballs
+source kp_index
+source lasp_tsi
+source launch_library
+source macrostrat_ages
+source macrostrat_timescale
+source magnetism
+source nasa_donki_cme
+source nasa_donki_flares
+source nasa_donki_gstorms
+source nasa_donki_hss
+source nasa_donki_ips
+source nasa_donki_mpc
+source nasa_donki_rbe
+source nasa_donki_sep
+source nasa_eonet
+source neotoma_paleoecology
+source netzfrequenz_eu
+source nmdb_neutron_monitor
+source noaa_cfc12
+source noaa_co2_mauna_loa
+source noaa_goes_electrons
+source noaa_goes_magnetosphere
+source noaa_methane
+source noaa_n2o
+source noaa_paleoclimate_co2
+source noaa_proton_flux
+source noaa_sf6
+source noaa_solar_indices
+source noaa_solar_radio_measured
+source noaa_sunspots
+source openalex_works
+source pbdb_paleobiology
+source plasma
+source protons
+source radio_flux
+source ripe_bgp_updates
+source satnogs_radio_observations
+source silso_sunspot
+source swpc_geomag_forecast
+source swpc_solar_events
+source uk_carbon_intensity
+source usgs_geomag
+source vostok_icecore
+source wais_divide_co2
+source wikimedia_stats
+source worldbank_co2_emissions
+source worldbank_population
+source xray
+source xray_flares_7day
+source yahoo_finance_markets
+source celestrak_debris
+source celestrak_gps
+source celestrak_satellites
+source celestrak_starlink
+source iss_position
+source open_notify_astros
+source apophis_vectors
+source bennu_vectors
+source callisto_vectors
+source ceres_vectors
+source cneos_asteroids_inside_lunar_orbit
+source cneos_close_approaches
+source enceladus_vectors
+source encke_vectors
+source eris_vectors
+source europa_vectors
+source ganymede_vectors
+source halley_vectors
+source haumea_vectors
+source io_vectors
+source juno_vectors
+source jupiter_vectors
+source jwst_vectors
+source makemake_vectors
+source mars_vectors
+source mercury_vectors
+source moon_vectors
+source nasa_neo_browse
+source nasa_neows
+source nasa_sentry
+source neptune_vectors
+source new_horizons_vectors
+source parker_solar_probe_vectors
+source pluto_vectors
+source saturn_vectors
+source solar_orbiter_vectors
+source sun_vectors
+source titan_vectors
+source triton_vectors
+source uranus_vectors
+source venus_vectors
+source vesta_vectors
+source voyager1_vectors
+source voyager2_vectors
+source esa_gaia_stars
+source gaia_nearby_stars
+source gaia_stellar_ages
+source gaia_total_measured_stars
+source gaia_variable_stars
+source gaia_white_dwarfs
+source nasa_exoplanets
+source nasa_exoplanet_total
+source nasa_hot_jupiters
+source simbad_galaxies
+source simbad_high_z_galaxies
+source simbad_millisecond_pulsars
+source simbad_pulsars
+source simbad_quasars
+source simbad_total_objects
+source sdss_cosmic_web_galaxies
+source simbad_galaxy_clusters
+source chime_frb_catalog
+source fermi_grb
+source frbstats
+source gcn_cosmic_events
+source gcn_ligo_alerts
+source gwosc_strain
+source icecube_neutrino_alerts
+source ligo_gracedb_events
 source superk_proton_decay
-scale 25
-ttl 31536000
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
-field hits.hits.0.metadata.citation_count cosmology_proton_decay_citations
-

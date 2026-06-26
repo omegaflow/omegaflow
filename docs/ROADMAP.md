@@ -1,6 +1,6 @@
 # ROADMAP
 
-## 1: MEASUREMENT — DONE
+## 1: MEASUREMENT
 
 - `drain()` accumulates measured values (world.js)
 - Data flows live via `is/sources.is`
@@ -10,15 +10,15 @@
 
 ---
 
-## 2: LIVE RESOLVER — DONE
+## 2: LIVE RESOLVER
 
 The Archivar fetches live measurements on observer request `(t,x,y,z,s)`. API data flows in, collapses, is forgotten (§12).
-Scale coverage: 10⁻¹⁰ m (Crystallography) to 10²⁶ m (CMB / GW-Events). Time coverage: 10⁻⁶ s (CERN ALICE proxies) to 10³⁴ years (Super-K Proton Decay limits).
+Scale coverage: 10⁻¹⁸ m (Electroweak) to 10²⁵ m (CMB / GW-Events). Time coverage: 10⁻⁶ s (CERN ALICE proxies) to 10³⁴ years (Super-K Proton Decay limits).
 
 Sources in `is/sources.is` across:
 
 ### 2.1 Atmosphere & Climate
-NOAA GML (CO2, Methane, N2O — measured), OpenAQ (air quality stations), EPA AirNow (AQI)
+NOAA GML (CO2, Methane, N2O), OpenAQ (air quality stations), EPA AirNow (AQI)
 
 ### 2.2 Ocean, Hydrology & Cryosphere
 USGS Streamflow, NDBC Buoys, Argo Floats, NSIDC Sea Ice
@@ -27,10 +27,10 @@ USGS Streamflow, NDBC Buoys, Argo Floats, NSIDC Sea Ice
 Open-Meteo Elevation (SRTM), USGS Earthquakes, IRIS FDSN, Smithsonian Volcanoes, INTERMAGNET
 
 ### 2.4 Space Weather & Heliophysics
-NOAA SWPC (17 endpoints: mag, plasma, Kp, X-ray, radio flux, protons, electrons, TEC, magnetosphere, sunspots, solar cycle), NASA DONKI (flares, CME, storms)
+NOAA SWPC (mag, plasma, Kp, X-ray, radio flux, protons, electrons, TEC, magnetosphere, sunspots, solar cycle), NASA DONKI (flares, CME, storms)
 
 ### 2.5 Orbital Dynamics & Astrophysics
-JPL Horizons (Sun, Moon, 8 planets, Pluto, Ceres, Vesta, Pallas, Halley, Encke), ISS, CelesTrak, NASA NeoWs, ESA Gaia, NASA InSight (Mars), GCN, EONET, OpenNotify, WorldTimeAPI, NASA FIRMS
+JPL Horizons (Sun, Moon, planets, Pluto, Ceres, Vesta, Pallas, Halley, Encke), ISS, CelesTrak, NASA NeoWs, ESA Gaia, NASA InSight (Mars), GCN, EONET, OpenNotify, WorldTimeAPI, NASA FIRMS
 
 ### 2.6 Biosphere & Ecology
 iNaturalist, GBIF, Movebank, NEON, eBird, xeno-canto, Global Forest Watch
@@ -38,25 +38,27 @@ iNaturalist, GBIF, Movebank, NEON, eBird, xeno-canto, Global Forest Watch
 ### 2.7 Technosphere & Civilization
 
 #### 2.7.1 Interdisciplinary Measurements
-- **Pulsar-Timing-Arrays (Astrophysics):** Millisecond pulsars. Raw arrival times as temporal reference.
-- **Telluric Currents (Geology):** Electric currents in the Earth's crust. Electrodes measure voltage differences.
-- **Biophotons & Plant Action Potentials (Biology):** Plants communicate via bioelectricity and biophotons.
-- **Isotope Hydrology (Geochemistry):** Water stores history in its atomic structure (δ¹⁸O, δ²H). Matter is memory.
-- **Acoustic Oceanography:** Sound propagates depending on temperature. Hydrophones measure sound speed → temperature.
-- **Folding@Home (Quantum Biology):** Protein atom coordinates flow as point clouds into the GPU.
+- **Pulsar-Timing-Arrays:** Millisecond pulsars. Arrival times.
+- **Telluric Currents:** Electric currents in the Earth's crust. Electrodes measure voltage.
+- **Biophotons & Plant Action Potentials:** Bioelectricity and biophotons in plants.
+- **Isotope Hydrology:** Water isotope ratios (δ¹⁸O, δ²H).
+- **Acoustic Oceanography:** Sound speed depends on temperature. Hydrophones measure temperature.
+- **Folding@Home:** Protein atom coordinates as point clouds.
 
-#### 2.7.2 API Philosophy — The Collective Mycelium
+#### 2.7.2 API Philosophy
 API data flows through the system, collapses at the observer, is forgotten.
 
 Alpha Vantage, ACLED, GovTrack, EIA, OpenSky, Marine Cadastre AIS, RIPE Stat, CAIDA IODA, OSM (buildings, lighting, roads, amenities), Wikipedia GeoSearch
 
 ---
 
-## 3: SCALE & TIME AXIS COVERAGE — DONE
+## 3: SCALE & TIME AXIS COVERAGE
 
-Continuous measurement coverage across 36 orders of magnitude in space and time.
+Continuous measurement coverage across 43 orders of magnitude in space and time.
 
-### Spatial Scale (10⁻¹⁰ m to 10²⁶ m)
+### Spatial Scale (10⁻¹⁸ m to 10²⁵ m)
+- **Electroweak (10⁻¹⁸ m):** PDG (W- and Z-Boson masses)
+- **Hadronic (10⁻¹⁵ m):** PDG (Proton mass)
 - **Subatomic / Nuclear (10⁻¹⁰ m):** Crystallography (XRD lattice constants), PDG (Particle Data Group)
 - **Molecular / Protein (10⁻⁹ m):** RCSB PDB (Protein Data Bank structures)
 - **Microbiology (10⁻⁶ m):** EBI Metagenomics (Microbiome census)
@@ -64,7 +66,8 @@ Continuous measurement coverage across 36 orders of magnitude in space and time.
 - **Planetary (10⁶ to 10⁷ m):** Sea Ice, SST, GNSS (Crust deformation)
 - **Solar System (10⁹ to 10¹³ m):** JPL Horizons (Planets, Moons, Asteroids, Comets, Probes)
 - **Stellar / Galactic (10¹⁶ to 10²² m):** Gaia (Stellar ages, White Dwarfs), SIMBAD (High-z Galaxies)
-- **Cosmic (10²⁴ to 10²⁶ m):** Planck Cosmological Parameters, GWOSC (Gravitational Waves), GCN (GRBs, FRBs)
+- **Cosmic Web (10²⁴ m):** SDSS (Galaxy counts), SIMBAD (Galaxy clusters)
+- **Cosmic (10²⁵ m):** Planck Cosmological Parameters, GWOSC (Gravitational Waves), GCN (GRBs, FRBs)
 
 ### Temporal Axis (10⁻⁶ s to 10³⁴ years)
 - **Early Universe (10⁻⁶ s):** CERN ALICE (QGP proxies), PDG (Higgs, Alpha-s)
@@ -78,7 +81,7 @@ Continuous measurement coverage across 36 orders of magnitude in space and time.
 
 ---
 
-## 4: THE OBSERVER AS SENSOR (SOFTWARE) — DONE
+## 4: THE OBSERVER AS SENSOR (SOFTWARE)
 
 The system dynamically explores `window` and `navigator`.
 
@@ -88,7 +91,7 @@ The system iterates over `Object.getOwnPropertyNames(navigator)` and `window`. I
 - **Actuators (levers):** Functions that take arguments.
 - **Gateways (like Bluetooth/VR):** Objects with `requestDevice`, `requestSession`, etc.
 
-**§33: Structure over Name.**
+The observer's device is discovered dynamically. **§33: Structure over Name.**
 
 ### Implemented
 - `discoverSensors()` + `discoverObj()` — dynamic walk of `window`/`navigator`
@@ -103,9 +106,7 @@ The system iterates over `Object.getOwnPropertyNames(navigator)` and `window`. I
 
 ---
 
-## 5: EXPRESSION — DONE
-
-The organism IS the expression.
+## 5: EXPRESSION
 
 - `act()` fires actuators based on Resonance Map scores
 - `startBroad()` / `startNarrowing()` — binary search probe state machine
@@ -114,7 +115,7 @@ The organism IS the expression.
 
 ---
 
-## 6: CERTAINTY — DONE
+## 6: CERTAINTY
 
 ### The Formula
 
@@ -137,33 +138,35 @@ Evaluated on GPU via WGSL compute shader (`workgroup_size(64)`) with JS fallback
 
 ---
 
-## 7: SIGNAL TOPOLOGY — DONE
+## 7: SIGNAL TOPOLOGY
 
-Mathematics for existing channels. Runs on GPU.
+Runs on GPU.
 
 ### Implemented
-- ✅ **Ring-Buffer (128 floats)** per sensor — `processSensorReading()`, `_signalBuffers`
-- ✅ **Kolmogorov Complexity** — WGSL shader: `1 - repeats/total`. Compression rate drives noiseFloor evaluation.
-- ✅ **Takens' Embedding** — WGSL shader: Mutual Information finds optimal τ, 1D → 3D attractor. Outputs barycenter + spread.
-- ✅ **Transfer-Entropy** — WGSL shader: 3-bin histogram for all N² pairs. Dynamic threshold via `μ + σ/PHI`.
-- ✅ **TDA: Persistent Homology** — WGSL shader: 48-point subsample, Union-Find, nearest-neighbor persistence + Betti-0.
-- ✅ **ICA: Blind Source Separation** — WGSL shader: FastICA with tanh non-linearity, 3 iterations. Dynamic source count via variance cutoff.
+- **Ring-Buffer (128 floats)** per sensor — `processSensorReading()`, `_signalBuffers`
+- **Kolmogorov Complexity** — WGSL shader: `1 - repeats/total`. Compression rate drives noiseFloor evaluation.
+- **Takens' Embedding** — WGSL shader: Mutual Information finds optimal τ, 1D → 3D attractor. Outputs barycenter + spread.
+- **Transfer-Entropy** — WGSL shader: 3-bin histogram for N² pairs. Dynamic threshold via `μ + σ/PHI`.
+- **TDA: Persistent Homology** — WGSL shader: 48-point subsample, Union-Find, nearest-neighbor persistence + Betti-0.
+- **ICA: Blind Source Separation** — WGSL shader: FastICA with tanh non-linearity, 3 iterations. Dynamic source count via variance cutoff.
 
 ---
 
-## 8: UNIVERSAL SCALE AXIS — DONE
+## 8: UNIVERSAL SCALE AXIS
 
 The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the logarithmic magnitude of the measured phenomenon.
 
 ### Implementation
 - **`sources.is`:** Sources declare `scale <exponent>` (raw 10^n, human-readable). 
 - **Sorting:** Sources are sorted ascending by scale (subatomic → cosmic), then alphabetically within each scale tier.
-- **Archivar (`main.rs`):** `SourceConfig.on_earth: bool` → `SourceConfig.scale: i8`. Parser reads `scale` directive.
-- **PHI-Filtering in `weave()`:** Raw 10^n scale is converted to PHI-scale internally: `phi_scale = n * ln(10)/ln(φ)`. The observer's distance from Earth center gives `observer_scale = log10(r)`. Local sources (scale < 10) are delivered if `|phi_source - phi_observer| ≤ φ³ ≈ 4.24` PHI-steps. Cosmic sources (scale ≥ 10) are always delivered.
+- **Archivar (`main.rs`):** `SourceConfig` uses `scale: i8`. Parser reads `scale` directive.
+- **PHI-Filtering in `weave()`:** Raw 10^n scale is converted to PHI-scale internally: `phi_scale = n * ln(10)/ln(φ)`. The observer's distance from Earth center gives `observer_scale = log10(r)`. Local sources (scale < 10) are delivered if `|phi_source - phi_observer| ≤ φ³ ≈ 4.24` PHI-steps. Cosmic sources (scale ≥ 10) are delivered universally.
 
-### Scale Distribution (173 sources)
+### Scale Distribution
 | Scale | Tier | Examples |
 |---|---|---|
+| -18 | Electroweak | PDG (W- and Z-Boson masses) |
+| -15 | Hadronic | PDG (Proton mass) |
 | -10 | Subatomic / Nuclear | CERN, PDG, Crystallography |
 | -9 | Molecular | Protein structures |
 | -6 | Microbial | Microbiome |
@@ -175,11 +178,12 @@ The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the lo
 | 11 | Solar System | Planets, Moons, Asteroids, Probes |
 | 17 | Stellar | Gaia stars, Exoplanets |
 | 21 | Galactic | SIMBAD, Cosmic Rays |
+| 24 | Cosmic Web | SDSS, Galaxy clusters |
 | 25 | Cosmic | Gravitational Waves, CMB, GRBs, Neutrinos |
 
 ### Future
-- **Temporal scale:** `ttl` is the temporal scale axis. Certainty formula normalizes decay by `Δt / ttl`.
-- **Actuator scales:** HTTP-based actuators (API calls) declare their scale — the system can act locally (vibration motor, scale 0) or globally (API request, scale 7).
+- **Temporal scale:** `ttl` is the temporal scale axis. Certainty formula normalizes decay by `Δt / ttl` (skalenbewusster Zerfall).
+- **Actuator scales:** HTTP-based actuators (API calls) declare their scale — the system acts locally (vibration motor, scale 0) or globally (API request, scale 7).
 - **Scale-aware certainty:** The Mathematikerin groups measurements by PHI-proximity on the scale axis before computing transfer-entropy.
 
 ---
@@ -207,10 +211,10 @@ Lived life from up to seven generations works in us (DNA methylation). Experienc
 Physical devices.
 
 ### Smartwatch
-Web Bluetooth GATT. HRV / RMSSD → vagus nerve tone → ethical filter for `immunity.is`.
+Web Bluetooth GATT. HRV / RMSSD → vagus nerve tone → ethical filter for `immunity.is`. At low tone (stress/danger), `immunity.is` blocks strong actuators.
 
 ### Smartphone
-Magnetometer, camera (photometer), microphone (FFT seismograph), ambient light, battery — via Web APIs.
+Magnetometer, camera (photometer), microphone (FFT seismograph), ambient light, battery — via Web APIs. As secondary observer node.
 
 ### VR Headsets (Quest 1 / Rift)
 Controller position as `(x,y,z)`, haptics as actuator, eye direction as awareness vector.
