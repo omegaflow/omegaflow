@@ -2,7 +2,7 @@
 
 ## The Paradigm
 
-§31: *"Intelligence is in the connection, not the silicon."*
+§31: *"Intelligence lives in connection. Silicon serves."*
 §32: *"Use what is already held."*
 §33: *"Structure over Name."*
 
@@ -21,13 +21,13 @@ Theory removed. System now only measures.
 - Binary index lookup code deleted from `weave()`
 - `constants.is` deleted — values hardcoded where needed (`c` in world.js, `phi` in index.html)
 - `foundation.yaml` data_sources replaced with reference to `is/sources.is`
-- Project structure flattened: `src/`, `static/`, `is/`, `docs/` — no workspace, no crates/
+- Project structure flattened: `src/`, `static/`, `is/`, `docs/`
 
 ---
 
 ## 2: LIVE RESOLVER — DONE
 
-The Archivar fetches live measurements from the net on observer request `(t,x,y,z)`. API data is fetched, computed, forgotten (§12). Only direct measurements — no models, no predictions, no catalogs.
+The Archivar fetches live measurements from the net on observer request `(t,x,y,z,s)`. API data is fetched, computed, forgotten (§12). Direct measurements.
 Scale coverage achieved: 10⁻¹⁰ m (Crystallography) to 10²⁶ m (CMB / GW-Events). Time coverage: 10⁻⁶ s (CERN ALICE proxies) to 10³⁴ years (Super-K Proton Decay limits).
 
 **173 sources** in `is/sources.is` across:
@@ -61,7 +61,7 @@ iNaturalist, GBIF, Movebank, NEON, eBird, xeno-canto, Global Forest Watch
 - **Folding@Home (Quantum Biology):** Live calculated protein atom coordinates flow as raw point clouds into the GPU.
 
 #### 2.7.2 API Philosophy — The Collective Mycelium
-The Internet is not a "Cloud dependency". It is a global network of fiber-optic nerves fed by thousands of local sensors. When omegaflow queries an API, it taps into the collective mycelium of humanity. API data is ephemeral — it flows through us, collapses locally at the observer, and is forgotten.
+The Internet is a global network of fiber-optic nerves fed by thousands of local sensors. When omegaflow queries an API, it taps into the collective mycelium of humanity. API data is ephemeral — it flows through us, collapses locally at the observer, and is forgotten.
 
 Alpha Vantage, ACLED, GovTrack, EIA, OpenSky, Marine Cadastre AIS, RIPE Stat, CAIDA IODA, OSM (buildings, lighting, roads, amenities), Wikipedia GeoSearch
 
@@ -95,7 +95,7 @@ Achieved continuous measurement coverage across 36 orders of magnitude in space 
 
 ## 4: THE OBSERVER AS SENSOR (SOFTWARE) — DONE
 
-The system never writes hardcoded device checks. It dynamically explores `window` and `navigator`.
+The system dynamically explores `window` and `navigator`.
 
 ### Dynamic Topological Discovery — §33
 The system iterates over `Object.getOwnPropertyNames(navigator)` and `window`. It searches for **structures**:
@@ -121,12 +121,12 @@ A €50 Android phone with cheap light sensor is found. A €2000 iPhone with Li
 ## 5: EXPRESSION — DONE
 
 The organism discovers all actuators and expresses itself.
-No separate renderer needed — the organism IS the expression.
+The organism IS the expression.
 
 - `act()` fires actuators based on Resonance Map scores
 - `startBroad()` / `startNarrowing()` — binary search probe state machine
 - `pokeActuator()` calls function with value, catches errors
-- Dead actuators (no response, `pokeValue > PHI³⁶`) removed
+- Dead actuators (`pokeValue > PHI³⁶`) removed
 
 ---
 
@@ -169,7 +169,7 @@ Mathematics for existing channels. Pure software, runs on GPU.
 
 ## 8: UNIVERSAL SCALE AXIS — DONE
 
-The universe is not 4-dimensional `is(t,x,y,z)`. It is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the logarithmic magnitude of the measured phenomenon. A protein and a thermometer are at the same `(x,y,z)` but on entirely different reality layers. The scale axis makes this explicit.
+The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the logarithmic magnitude of the measured phenomenon.
 
 ### Implementation
 - **`sources.is`:** Every source declares `scale <exponent>` (raw 10^n, human-readable). `on_earth` boolean deleted entirely.
@@ -231,7 +231,7 @@ Magnetometer, camera (photometer), microphone (FFT seismograph), ambient light, 
 ### Coming soon (used VR headsets): Quest 1 / Rift
 Controller position as `(x,y,z)`, haptics as actuator, eye direction as awareness vector.
 
-### Not yet ordered (AliExpress): omegaflow sense
+### Future: omegaflow sense (AliExpress)
 
 **Core Module (~25 EUR):**
 | Sensor | Measurement | Interface |
