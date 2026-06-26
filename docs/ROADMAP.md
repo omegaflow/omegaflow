@@ -2,8 +2,6 @@
 
 ## 1: MEASUREMENT — DONE
 
-System measures.
-
 - `drain()` accumulates measured values (world.js)
 - Data flows live via `is/sources.is`
 - `weave()` is the Live-Resolver — reads `is/sources.is`, fetches live via curl, parses on-the-fly
@@ -17,7 +15,7 @@ System measures.
 The Archivar fetches live measurements on observer request `(t,x,y,z,s)`. API data flows in, collapses, is forgotten (§12).
 Scale coverage: 10⁻¹⁰ m (Crystallography) to 10²⁶ m (CMB / GW-Events). Time coverage: 10⁻⁶ s (CERN ALICE proxies) to 10³⁴ years (Super-K Proton Decay limits).
 
-**173 sources** in `is/sources.is` across:
+Sources in `is/sources.is` across:
 
 ### 2.1 Atmosphere & Climate
 NOAA GML (CO2, Methane, N2O — measured), OpenAQ (air quality stations), EPA AirNow (AQI)
