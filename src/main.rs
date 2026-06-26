@@ -21,7 +21,7 @@ enum Extract {
 }
 
 struct SourceConfig {
-    on_earth: bool,
+    scale: i8,
     ttl: u64,
     url: String,
     extracts: Vec<Extract>,
@@ -397,7 +397,7 @@ fn load_immunity() -> HashMap<String,(u32,u32)> {
 fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
     let content = std::fs::read_to_string("is/sources.is").unwrap_or_default();
-    let mut cur_on_earth = false;
+    let mut cur_scale: i8 = 0;
     let mut cur_ttl: u64 = 0;
     let mut cur_url = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
@@ -411,10 +411,10 @@ fn load_sources() -> Vec<SourceConfig> {
         if parts.is_empty() { continue; }
         match parts[0] {
             "source" => {
-                if active { sources.push(SourceConfig { on_earth: cur_on_earth, ttl: cur_ttl, url: cur_url.clone(), extracts: cur_extracts.clone(), headers: cur_headers.clone() }); }
-                cur_on_earth = parts.iter().any(|&p| p == "on_earth");
-                cur_ttl = 0; cur_url.clear(); cur_extracts.clear(); cur_headers.clear(); active = true;
+                if active { sources.push(SourceConfig { scale: cur_scale, ttl: cur_ttl, url: cur_url.clone(), extracts: cur_extracts.clone(), headers: cur_headers.clone() }); }
+                cur_scale = 0; cur_ttl = 0; cur_url.clear(); cur_extracts.clear(); cur_headers.clear(); active = true;
             }
+            "scale" => cur_scale = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "url" => cur_url = line[4..].trim().to_string(),
             "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "header" => {
@@ -448,7 +448,7 @@ fn load_sources() -> Vec<SourceConfig> {
             _ => {}
         }
     }
-    if active { sources.push(SourceConfig { on_earth: cur_on_earth, ttl: cur_ttl, url: cur_url, extracts: cur_extracts, headers: cur_headers }); }
+    if active { sources.push(SourceConfig { scale: cur_scale, ttl: cur_ttl, url: cur_url, extracts: cur_extracts, headers: cur_headers }); }
     sources
 }
 
@@ -824,7 +824,10 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
     out.extend_from_slice(&0u32.to_le_bytes());
 
     let r = (x*x+y*y+z*z).sqrt();
-    let on_earth = r > 6378137.0 * (1.0 - 1.0/298.257223563) && r < 6378137.0 * (1.0 + (1.0 / 618.033988749895));
+    let observer_scale = if r > 0.0 { r.log10() } else { 0.0 };
+    let on_earth = observer_scale > 6.0 && observer_scale < 7.1;
+    let phi = 1.618033988749895_f64;
+    let phi_obs = observer_scale * (10.0_f64.ln() / phi.ln());
     let (lat, lon) = if on_earth { let (la,lo,_)=ecef_to_geodetic(x,y,z); (Some(la),Some(lo)) } else { (None,None) };
 
     let geo = if on_earth {
@@ -834,7 +837,10 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
     };
 
     for src in &archive.sources {
-        if src.on_earth && !on_earth { continue; }
+        if src.scale < 10 {
+            let phi_src = src.scale as f64 * (10.0_f64.ln() / phi.ln());
+            if (phi_src - phi_obs).abs() > phi * phi * phi { continue; }
+        }
         let url = if lat.is_some() { render_url(&src.url, lat.unwrap(), lon.unwrap(), &geo) } else { render_url(&src.url, 0.0, 0.0, &geo) };
         let now_secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
         let cache_key = if lat.is_some() { format!("{}_{:.4}_{:.4}", src.url.split('?').next().unwrap_or(&src.url), lat.unwrap(), lon.unwrap()) } else { src.url.split('?').next().unwrap_or(&src.url).to_string() };

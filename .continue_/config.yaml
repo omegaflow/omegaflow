@@ -141,17 +141,6 @@ mcpServers:
       - extract_text_from_screenshot
       - diagnose_error_screenshot
       - analyze_image
-  - name: filesystem
-    command: /usr/bin/npx
-    args:
-      - "-y"
-      - "@modelcontextprotocol/server-filesystem@latest"
-      - "/home/johannes/projects/omegaflow"
-    alwaysAllow:
-      - read_file
-      - write_file
-      - list_directory
-      - search_files
 # ===========================================================================
 # PROMPTS / SLASH COMMANDS
 # ===========================================================================
