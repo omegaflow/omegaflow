@@ -56,6 +56,8 @@
         let _topologyInterval = null;
         let _lastTopology = 0;
 
+        let _lastInteroception = 0;
+
         const probeState = {
             phase: 'idle',
             batch: [],
@@ -87,33 +89,6 @@
                 }
             }
         });
-
-        function pokeActuator(actuator, value) {
-            try {
-                const result = actuator.obj[actuator.key](value);
-                if (result && typeof result.catch === 'function') {
-                    result.catch(() => {
-                        dead.add(actuator.path);
-                        actuators.delete(actuator.path);
-                    });
-                }
-                return true;
-            } catch {
-                dead.add(actuator.path);
-                actuators.delete(actuator.path);
-                return false;
-            }
-        }
-
-        function sendPoke(batch) {
-            if (pulseWs.readyState !== WebSocket.OPEN || batch.length === 0) return;
-            pulseWs.send(JSON.stringify({ poke: batch.map(a => a.path).join('|') }));
-        }
-
-        function sendSurvived(batch) {
-            if (pulseWs.readyState !== WebSocket.OPEN || batch.length === 0) return;
-            pulseWs.send(JSON.stringify({ survived: batch.map(a => a.path).join('|') }));
-        }
 
         function act() {
             const active = [];
@@ -161,70 +136,6 @@
             return fired;
         }
 
-        function splitBatch(batch) {
-            const splitIdx = Math.floor(batch.length / PHI);
-            return { left: batch.slice(0, splitIdx), right: batch.slice(splitIdx) };
-        }
-
-        function snapshotSensors() {
-            const snap = {};
-            for (const [path, s] of sensors) {
-                snap[path] = { val: s.val, noiseFloor: s.noiseFloor };
-            }
-            return snap;
-        }
-
-        function checkResponse(snap) {
-            const responders = [];
-            for (const path in snap) {
-                const s = sensors.get(path);
-                if (!s) continue;
-                const before = snap[path];
-                const delta = Math.abs(s.val - before.val);
-                if (delta > before.noiseFloor) {
-                    responders.push({ path, magnitude: delta });
-                }
-            }
-            return responders;
-        }
-
-        function startBroad(ts) {
-            const prune = 1 - 1 / (PHI * PHI);
-            let totalSurprise = 0;
-            for (const [actPath, sensorMap] of resonanceMap) {
-                for (const [spath, data] of sensorMap) {
-                    data.magnitude *= prune;
-                    data.surprise = (data.surprise || 0) * prune;
-                    totalSurprise += data.surprise;
-                    if (data.magnitude < 1 / RING_SIZE) sensorMap.delete(spath);
-                }
-                if (sensorMap.size === 0) resonanceMap.delete(actPath);
-            }
-            live['surprise'] = totalSurprise;
-            probeState.batch = Array.from(actuators.values());
-            if (probeState.batch.length === 0) {
-                probeState.phase = 'idle';
-                return;
-            }
-            const predictions = {};
-            for (const a of probeState.batch) {
-                const sm = resonanceMap.get(a.path);
-                if (sm) {
-                    for (const [spath, data] of sm) {
-                        predictions[spath] = (predictions[spath] || 0) + data.magnitude;
-                    }
-                }
-            }
-            sendPoke(probeState.batch);
-            probeState.snapshot = snapshotSensors();
-            probeState.predictions = predictions;
-            for (const a of probeState.batch) {
-                pokeActuator(a, a.pokeValue);
-            }
-            probeState.pokeTime = ts;
-            probeState.phase = 'broad';
-        }
-
         function checkBroad(ts) {
             const responders = checkResponse(probeState.snapshot);
             if (responders.length > 0) {
@@ -242,31 +153,6 @@
                 }
                 startBroad(ts);
             }
-        }
-
-        function startNarrowing(ts, batch) {
-            if (batch.length <= 1) {
-                probeState.batch = batch;
-                sendPoke(batch);
-                probeState.snapshot = snapshotSensors();
-                for (const a of batch) {
-                    pokeActuator(a, a.pokeValue);
-                }
-                probeState.pokeTime = ts;
-                probeState.phase = 'narrowing';
-                return;
-            }
-
-            const { left, right } = splitBatch(batch);
-            probeState.stack.push(right);
-            probeState.batch = left;
-            sendPoke(left);
-            probeState.snapshot = snapshotSensors();
-            for (const a of left) {
-                pokeActuator(a, a.pokeValue);
-            }
-            probeState.pokeTime = ts;
-            probeState.phase = 'narrowing';
         }
 
         function checkNarrowing(ts) {
@@ -326,6 +212,20 @@
             } else {
                 startBroad(ts);
             }
+        }
+
+        function checkResponse(snap) {
+            const responders = [];
+            for (const path in snap) {
+                const s = sensors.get(path);
+                if (!s) continue;
+                const before = snap[path];
+                const delta = Math.abs(s.val - before.val);
+                if (delta > before.noiseFloor) {
+                    responders.push({ path, magnitude: delta });
+                }
+            }
+            return responders;
         }
 
         function discoverObj(obj, path, depth) {
@@ -399,6 +299,23 @@
             } catch {}
         }
 
+        function pokeActuator(actuator, value) {
+            try {
+                const result = actuator.obj[actuator.key](value);
+                if (result && typeof result.catch === 'function') {
+                    result.catch(() => {
+                        dead.add(actuator.path);
+                        actuators.delete(actuator.path);
+                    });
+                }
+                return true;
+            } catch {
+                dead.add(actuator.path);
+                actuators.delete(actuator.path);
+                return false;
+            }
+        }
+
         function pollGamepads() {
             const gps = navigator.getGamepads();
             let state = 0;
@@ -421,8 +338,377 @@
             return state;
         }
 
+        function readSensorVal(s, tickTime) {
+            try {
+                const v = s.obj[s.key];
+                if (typeof v === 'number') processSensorReading(s, v, tickTime);
+                else if (typeof v === 'boolean') processSensorReading(s, v ? 1 : 0, tickTime);
+            } catch {}
+        }
+
+        function registerEvents() {
+            for (const evName of eventSources) {
+                window.addEventListener(evName, (e) => {
+                    const prefix = 'event.' + evName;
+                    live[prefix] = performance.now();
+                    for (const k of Object.getOwnPropertyNames(e)) {
+                        const v = e[k];
+                        if (typeof v === 'number') live[prefix + '.' + k] = v;
+                    }
+                    if (e.touches) {
+                        live[prefix + '.touches'] = e.touches.length;
+                        for (let ti = 0; ti < e.touches.length; ti++) {
+                            const tch = e.touches[ti];
+                            const tp = prefix + '.touch[' + ti + ']';
+                            for (const k of Object.getOwnPropertyNames(tch)) {
+                                const v = tch[k];
+                                if (typeof v === 'number') live[tp + '.' + k] = v;
+                            }
+                        }
+                    }
+                }, { passive: true });
+            }
+        }
+
+        function sendPoke(batch) {
+            if (pulseWs.readyState !== WebSocket.OPEN || batch.length === 0) return;
+            pulseWs.send(JSON.stringify({ poke: batch.map(a => a.path).join('|') }));
+        }
+
+        function sendSurvived(batch) {
+            if (pulseWs.readyState !== WebSocket.OPEN || batch.length === 0) return;
+            pulseWs.send(JSON.stringify({ survived: batch.map(a => a.path).join('|') }));
+        }
+
+        function snapshotSensors() {
+            const snap = {};
+            for (const [path, s] of sensors) {
+                snap[path] = { val: s.val, noiseFloor: s.noiseFloor };
+            }
+            return snap;
+        }
+
+        function splitBatch(batch) {
+            const splitIdx = Math.floor(batch.length / PHI);
+            return { left: batch.slice(0, splitIdx), right: batch.slice(splitIdx) };
+        }
+
+        function startBroad(ts) {
+            const prune = 1 - 1 / (PHI * PHI);
+            let totalSurprise = 0;
+            for (const [actPath, sensorMap] of resonanceMap) {
+                for (const [spath, data] of sensorMap) {
+                    data.magnitude *= prune;
+                    data.surprise = (data.surprise || 0) * prune;
+                    totalSurprise += data.surprise;
+                    if (data.magnitude < 1 / RING_SIZE) sensorMap.delete(spath);
+                }
+                if (sensorMap.size === 0) resonanceMap.delete(actPath);
+            }
+            live['surprise'] = totalSurprise;
+            probeState.batch = Array.from(actuators.values());
+            if (probeState.batch.length === 0) {
+                probeState.phase = 'idle';
+                return;
+            }
+            const predictions = {};
+            for (const a of probeState.batch) {
+                const sm = resonanceMap.get(a.path);
+                if (sm) {
+                    for (const [spath, data] of sm) {
+                        predictions[spath] = (predictions[spath] || 0) + data.magnitude;
+                    }
+                }
+            }
+            sendPoke(probeState.batch);
+            probeState.snapshot = snapshotSensors();
+            probeState.predictions = predictions;
+            for (const a of probeState.batch) {
+                pokeActuator(a, a.pokeValue);
+            }
+            probeState.pokeTime = ts;
+            probeState.phase = 'broad';
+        }
+
+        function startNarrowing(ts, batch) {
+            if (batch.length <= 1) {
+                probeState.batch = batch;
+                sendPoke(batch);
+                probeState.snapshot = snapshotSensors();
+                for (const a of batch) {
+                    pokeActuator(a, a.pokeValue);
+                }
+                probeState.pokeTime = ts;
+                probeState.phase = 'narrowing';
+                return;
+            }
+
+            const { left, right } = splitBatch(batch);
+            probeState.stack.push(right);
+            probeState.batch = left;
+            sendPoke(left);
+            probeState.snapshot = snapshotSensors();
+            for (const a of left) {
+                pokeActuator(a, a.pokeValue);
+            }
+            probeState.pokeTime = ts;
+            probeState.phase = 'narrowing';
+        }
+
+        function tick(ts) {
+            const tickTime = lastTs > 0 ? ts - lastTs : 1;
+            lastTs = ts;
+
+            const lat = live['geolocation.latitude'];
+            const lon = live['geolocation.longitude'];
+            const alt = live['geolocation.altitude'];
+            if (lat !== undefined && lon !== undefined && (lat !== lastGeoLat || lon !== lastGeoLon || alt !== lastGeoAlt)) {
+                lastGeoLat = lat;
+                lastGeoLon = lon;
+                lastGeoAlt = alt;
+                const t_j2000 = (live['server.time'] / 86400.0) + 2440587.5 - 2451545.0;
+                const a = 6378137.0;
+                const f = 1 / 298.257223563;
+                const e2 = f * (2 - f);
+                const latR = lat * Math.PI / 180;
+                const lonR = lon * Math.PI / 180;
+                const n = a / Math.sqrt(1 - e2 * Math.sin(latR) * Math.sin(latR));
+                const x = (n + (alt || 0)) * Math.cos(latR) * Math.cos(lonR);
+                const y = (n + (alt || 0)) * Math.cos(latR) * Math.sin(lonR);
+                const z = (n * (1 - e2) + (alt || 0)) * Math.sin(latR);
+                get(t_j2000, x, y, z).then(r => {
+                    if (r.certainty !== undefined) localCertainty = r.certainty;
+                    if (r.gravity !== undefined) localGravity = r.gravity;
+                }).catch(() => {});
+            }
+
+            let nextDelay = Infinity;
+
+            for (const s of sensors.values()) {
+                if (s.interval === null) s.interval = tickTime;
+                const due = s.lastPoll + s.interval - ts;
+                if (due <= 0) {
+                    s.lastPoll = ts;
+                    readSensorVal(s, tickTime);
+                    nextDelay = 0;
+                } else if (due < nextDelay) {
+                    nextDelay = due;
+                }
+            }
+
+            if (navigator.getGamepads) {
+                if (gamepadInterval === null) gamepadInterval = tickTime;
+                const gpDue = lastGamepadPoll + gamepadInterval - ts;
+                if (gpDue <= 0) {
+                    lastGamepadPoll = ts;
+                    const state = pollGamepads();
+                    if (state !== lastGamepadState) {
+                        gamepadInterval = tickTime;
+                        lastGamepadState = state;
+                    } else {
+                        gamepadInterval *= PHI;
+                    }
+                    nextDelay = 0;
+                } else if (gpDue < nextDelay) {
+                    nextDelay = gpDue;
+                }
+            }
+
+            if (discoveryInterval === null) discoveryInterval = tickTime;
+            const dDue = lastDiscovery + discoveryInterval - ts;
+            if (dDue <= 0) {
+                lastDiscovery = ts;
+                visited = new WeakSet();
+                discoverSensors();
+                if (sensors.size !== lastSensorCount) {
+                    discoveryInterval = tickTime;
+                    lastSensorCount = sensors.size;
+                } else {
+                    discoveryInterval *= PHI;
+                }
+                nextDelay = 0;
+            } else if (dDue < nextDelay) {
+                nextDelay = dDue;
+            }
+
+            if (probeState.phase === 'idle') {
+                const surprise = live['surprise'] || 0;
+                const curiosity = surprise / (localCertainty + (1 / 299792458.0));
+                const shouldExplore = curiosity > sensors.size * (1 / PHI);
+                if (!act()) {
+                    if (actuators.size > 0 && sensors.size > 0) {
+                        if (shouldExplore || Math.random() < curiosity) {
+                            startBroad(ts);
+                        }
+                    }
+                }
+            } else if (probeState.phase === 'broad') {
+                checkBroad(ts);
+            } else if (probeState.phase === 'narrowing') {
+                checkNarrowing(ts);
+            }
+
+            if (_topologyInterval === null) _topologyInterval = tickTime;
+            const topoDue = _lastTopology + _topologyInterval - ts;
+            if (topoDue <= 0) {
+                _lastTopology = ts;
+                runSignalTopology(ts);
+                const surprise = live['surprise'] || 0;
+                _topologyInterval = surprise > sensors.size ? tickTime : _topologyInterval * PHI;
+                nextDelay = 0;
+            } else if (topoDue < nextDelay) {
+                nextDelay = topoDue;
+            }
+
+            const icDue = _lastInteroception + (tickTime * PHI) - ts;
+            if (icDue <= 0) {
+                _lastInteroception = ts;
+                live['system.cpu'] = navigator.hardwareConcurrency || 0;
+                if (performance.memory) {
+                    live['system.memory'] = performance.memory.usedJSHeapSize;
+                    live['system.memoryTotal'] = performance.memory.totalJSHeapSize;
+                }
+                const t0 = performance.now();
+                fetch('/time').then(() => {
+                    live['system.latency'] = performance.now() - t0;
+                }).catch(() => {});
+                nextDelay = 0;
+            } else if (icDue < nextDelay) {
+                nextDelay = icDue;
+            }
+
+            if (document.hidden) {
+                nextDelay = Math.max(nextDelay, tickTime * PHI);
+            }
+
+            setTimeout(() => {
+                try { tick(performance.now()); } catch (e) { console.error(e); setTimeout(() => tick(performance.now()), 0); }
+            }, nextDelay);
+        }
+
+        function tryStartBattery() {
+            if (navigator.getBattery) {
+                navigator.getBattery().then(b => {
+                    const push = () => {
+                        live['battery.charging'] = b.charging ? 1 : 0;
+                        live['battery.chargingTime'] = b.chargingTime;
+                        live['battery.dischargingTime'] = b.dischargingTime;
+                        live['battery.level'] = b.level;
+                    };
+                    push();
+                    b.addEventListener('chargingchange', push, { passive: true });
+                    b.addEventListener('levelchange', push, { passive: true });
+                }).catch(() => {});
+            }
+        }
+
+        function tryStartGeolocation() {
+            if (navigator.geolocation && navigator.geolocation.watchPosition) {
+                navigator.geolocation.watchPosition(pos => {
+                    const cc = pos.coords;
+                    live['geolocation.latitude'] = cc.latitude;
+                    live['geolocation.longitude'] = cc.longitude;
+                    live['geolocation.accuracy'] = cc.accuracy;
+                    if (cc.altitude !== null) live['geolocation.altitude'] = cc.altitude;
+                    if (cc.heading !== null) live['geolocation.heading'] = cc.heading;
+                    if (cc.speed !== null) live['geolocation.speed'] = cc.speed;
+                }, () => {}, { enableHighAccuracy: true, maximumAge: 0 });
+            }
+        }
+
+        function tryStartSensors() {
+            for (const name of Object.getOwnPropertyNames(window)) {
+                if (!name.endsWith('Sensor')) continue;
+                if (typeof window[name] !== 'function') continue;
+                try {
+                    const sensor = new window[name]({});
+                    sensor.addEventListener('reading', () => {
+                        for (const prop of Object.getOwnPropertyNames(sensor)) {
+                            const v = sensor[prop];
+                            if (typeof v === 'number') {
+                                live[name + '.' + prop] = v;
+                            } else if (v && typeof v === 'object' && typeof v.length === 'number') {
+                                for (let qi = 0; qi < v.length; qi++) {
+                                    live[name + '.' + prop + '[' + qi + ']'] = v[qi];
+                                }
+                            }
+                        }
+                    }, { passive: true });
+                    sensor.start();
+                } catch {}
+            }
+        }
+
+        async function tryStartWebGPU() {
+            try {
+                const adapter = await navigator.gpu.requestAdapter();
+                if (adapter) {
+                    const device = await adapter.requestDevice();
+                    window.omegaflow.gpu = device;
+                    live['system.gpu'] = 1;
+                }
+            } catch {}
+        }
+
+        let _audioCtx = null;
+        function tryStartWebAudio() {
+            const start = () => {
+                if (_audioCtx) return;
+                try {
+                    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const panner = _audioCtx.createPanner();
+                    panner.panningModel = 'HRTF';
+                    panner.connect(_audioCtx.destination);
+                    window.omegaflow.audio = { ctx: _audioCtx, panner };
+                    live['system.audio'] = 1;
+                } catch {}
+            };
+            document.addEventListener('click', start, { once: true, passive: true });
+            document.addEventListener('touchstart', start, { once: true, passive: true });
+        }
+
         const RING_SIZE = 128;
         const _signalBuffers = new Map();
+
+        const ICA_SHADER = `
+@group(0) @binding(0) var<storage, read> data: array<f32>;
+@group(0) @binding(1) var<storage, read_write> out: array<f32>;
+@group(0) @binding(2) var<uniform> params: vec4<f32>;
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let src = gid.x;
+    let n = u32(params.x);
+    let rs = u32(params.y);
+    if (src >= n) { return; }
+    var sum: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { sum += data[src * rs + i]; }
+    let mean = sum / f32(rs);
+    var var_sum: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { let d = data[src * rs + i] - mean; var_sum += d * d; }
+    let variance = var_sum / f32(rs);
+    var w: array<f32, 128>;
+    for (var i = 0u; i < rs; i++) { w[i] = data[src * rs + i]; }
+    for (var iter = 0u; iter < 3u; iter++) {
+        var wx_sum: array<f32, 128>; var g_sum: array<f32, 128>; var gp_sum: f32 = 0.0;
+        for (var i = 0u; i < rs; i++) {
+            var proj: f32 = 0.0;
+            for (var k = 0u; k < n; k++) { proj += w[i] * data[k * rs + i]; }
+            let g = tanh(proj); let gp = 1.0 - g * g;
+            for (var k = 0u; k < n; k++) { g_sum[k] += data[k * rs + i] * g; }
+            gp_sum += gp;
+        }
+        var w_norm: f32 = 0.0;
+        for (var i = 0u; i < rs; i++) { w[i] = (g_sum[src] / f32(rs)) - (gp_sum / f32(rs)) * w[i]; w_norm += w[i] * w[i]; }
+        let norm = sqrt(w_norm) + (1.0 / 86400.0);
+        for (var i = 0u; i < rs; i++) { w[i] = w[i] / norm; }
+    }
+    var amp: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { amp += abs(w[i]); }
+    let out_base = src * 2u;
+    out[out_base] = variance;
+    out[out_base + 1u] = amp / f32(rs);
+}
+`;
 
         const KOLMOGOROV_SHADER = `
 @group(0) @binding(0) var<storage, read> data: array<f32>;
@@ -519,6 +805,51 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 `;
 
+        const TDA_SHADER = `
+@group(0) @binding(0) var<storage, read> data: array<f32>;
+@group(0) @binding(1) var<storage, read_write> out: array<f32>;
+@group(0) @binding(2) var<uniform> params: vec4<f32>;
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let s = gid.x;
+    let n = u32(params.x);
+    let rs = u32(params.y);
+    if (s >= n) { return; }
+    let base = s * rs;
+    let sub = u32(f32(rs) / (1.618033988749895 * 1.618033988749895));
+    let tau = u32(1.0 + 1.0 / 1.618033988749895);
+    var parent: array<u32, 48>;
+    for (var i = 0u; i < 48u; i++) { if (i < sub) { parent[i] = i; } }
+    var dists: array<f32, 48>;
+    for (var i = 0u; i < sub; i++) {
+        var min_d: f32 = abs(data[base] - data[base + tau]);
+        let p1 = base + i * tau;
+        for (var j = 0u; j < sub; j++) {
+            if (i == j) { continue; }
+            let p2 = base + j * tau;
+            let d = abs(data[p1] - data[p2]);
+            if (d < min_d) { min_d = d; }
+        }
+        dists[i] = min_d;
+    }
+    for (var i = 1u; i < sub; i++) {
+        let key = dists[i]; var j = i;
+        while (j > 0u && dists[j - 1u] > key) { dists[j] = dists[j - 1u]; j = j - 1u; }
+        dists[j] = key;
+    }
+    var life_sum: f32 = 0.0; var prev_d: f32 = 0.0; var comps: f32 = f32(sub);
+    for (var i = 0u; i < sub; i++) {
+        let d = dists[i];
+        life_sum += (d - prev_d) * comps;
+        comps -= 1.0;
+        prev_d = d;
+    }
+    let out_base = s * 2u;
+    out[out_base] = life_sum / f32(sub);
+    out[out_base + 1u] = comps;
+}
+`;
+
         const TE_SHADER = `
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> te: array<f32>;
@@ -577,96 +908,11 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 `;
 
-        const TDA_SHADER = `
-@group(0) @binding(0) var<storage, read> data: array<f32>;
-@group(0) @binding(1) var<storage, read_write> out: array<f32>;
-@group(0) @binding(2) var<uniform> params: vec4<f32>;
-@compute @workgroup_size(64)
-fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-    let s = gid.x;
-    let n = u32(params.x);
-    let rs = u32(params.y);
-    if (s >= n) { return; }
-    let base = s * rs;
-    let sub = u32(f32(rs) / (1.618033988749895 * 1.618033988749895));
-    let tau = u32(1.0 + 1.0 / 1.618033988749895);
-    var parent: array<u32, 48>;
-    for (var i = 0u; i < 48u; i++) { if (i < sub) { parent[i] = i; } }
-    var dists: array<f32, 48>;
-    for (var i = 0u; i < sub; i++) {
-        var min_d: f32 = abs(data[base] - data[base + tau]);
-        let p1 = base + i * tau;
-        for (var j = 0u; j < sub; j++) {
-            if (i == j) { continue; }
-            let p2 = base + j * tau;
-            let d = abs(data[p1] - data[p2]);
-            if (d < min_d) { min_d = d; }
-        }
-        dists[i] = min_d;
-    }
-    for (var i = 1u; i < sub; i++) {
-        let key = dists[i]; var j = i;
-        while (j > 0u && dists[j - 1u] > key) { dists[j] = dists[j - 1u]; j = j - 1u; }
-        dists[j] = key;
-    }
-    var life_sum: f32 = 0.0; var prev_d: f32 = 0.0; var comps: f32 = f32(sub);
-    for (var i = 0u; i < sub; i++) {
-        let d = dists[i];
-        life_sum += (d - prev_d) * comps;
-        comps -= 1.0;
-        prev_d = d;
-    }
-    let out_base = s * 2u;
-    out[out_base] = life_sum / f32(sub);
-    out[out_base + 1u] = comps;
-}
-`;
-
-        const ICA_SHADER = `
-@group(0) @binding(0) var<storage, read> data: array<f32>;
-@group(0) @binding(1) var<storage, read_write> out: array<f32>;
-@group(0) @binding(2) var<uniform> params: vec4<f32>;
-@compute @workgroup_size(64)
-fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-    let src = gid.x;
-    let n = u32(params.x);
-    let rs = u32(params.y);
-    if (src >= n) { return; }
-    var sum: f32 = 0.0;
-    for (var i = 0u; i < rs; i++) { sum += data[src * rs + i]; }
-    let mean = sum / f32(rs);
-    var var_sum: f32 = 0.0;
-    for (var i = 0u; i < rs; i++) { let d = data[src * rs + i] - mean; var_sum += d * d; }
-    let variance = var_sum / f32(rs);
-    var w: array<f32, 128>;
-    for (var i = 0u; i < rs; i++) { w[i] = data[src * rs + i]; }
-    for (var iter = 0u; iter < 3u; iter++) {
-        var wx_sum: array<f32, 128>; var g_sum: array<f32, 128>; var gp_sum: f32 = 0.0;
-        for (var i = 0u; i < rs; i++) {
-            var proj: f32 = 0.0;
-            for (var k = 0u; k < n; k++) { proj += w[i] * data[k * rs + i]; }
-            let g = tanh(proj); let gp = 1.0 - g * g;
-            for (var k = 0u; k < n; k++) { g_sum[k] += data[k * rs + i] * g; }
-            gp_sum += gp;
-        }
-        var w_norm: f32 = 0.0;
-        for (var i = 0u; i < rs; i++) { w[i] = (g_sum[src] / f32(rs)) - (gp_sum / f32(rs)) * w[i]; w_norm += w[i] * w[i]; }
-        let norm = sqrt(w_norm) + (1.0 / 86400.0);
-        for (var i = 0u; i < rs; i++) { w[i] = w[i] / norm; }
-    }
-    var amp: f32 = 0.0;
-    for (var i = 0u; i < rs; i++) { amp += abs(w[i]); }
-    let out_base = src * 2u;
-    out[out_base] = variance;
-    out[out_base + 1u] = amp / f32(rs);
-}
-`;
-
-        let _kolmogorovPipeline = null;
-        let _takensPipeline = null;
-        let _tePipeline = null;
-        let _tdaPipeline = null;
         let _icaPipeline = null;
+        let _kolmogorovPipeline = null;
+        let _tdaPipeline = null;
+        let _tePipeline = null;
+        let _takensPipeline = null;
 
         function processSensorReading(s, val, tickTime) {
             const absDelta = Math.abs(val - s.val);
@@ -892,258 +1138,11 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             });
         }
 
-        function readSensorVal(s, tickTime) {
-            try {
-                const v = s.obj[s.key];
-                if (typeof v === 'number') processSensorReading(s, v, tickTime);
-                else if (typeof v === 'boolean') processSensorReading(s, v ? 1 : 0, tickTime);
-            } catch {}
-        }
-
-        function registerEvents() {
-            for (const evName of eventSources) {
-                window.addEventListener(evName, (e) => {
-                    const prefix = 'event.' + evName;
-                    live[prefix] = performance.now();
-                    for (const k of Object.getOwnPropertyNames(e)) {
-                        const v = e[k];
-                        if (typeof v === 'number') live[prefix + '.' + k] = v;
-                    }
-                    if (e.touches) {
-                        live[prefix + '.touches'] = e.touches.length;
-                        for (let ti = 0; ti < e.touches.length; ti++) {
-                            const tch = e.touches[ti];
-                            const tp = prefix + '.touch[' + ti + ']';
-                            for (const k of Object.getOwnPropertyNames(tch)) {
-                                const v = tch[k];
-                                if (typeof v === 'number') live[tp + '.' + k] = v;
-                            }
-                        }
-                    }
-                }, { passive: true });
-            }
-        }
-
-        function tick(ts) {
-            const tickTime = lastTs > 0 ? ts - lastTs : 1;
-            lastTs = ts;
-
-            const lat = live['geolocation.latitude'];
-            const lon = live['geolocation.longitude'];
-            const alt = live['geolocation.altitude'];
-            if (lat !== undefined && lon !== undefined && (lat !== lastGeoLat || lon !== lastGeoLon || alt !== lastGeoAlt)) {
-                lastGeoLat = lat;
-                lastGeoLon = lon;
-                lastGeoAlt = alt;
-                const t_j2000 = (live['server.time'] / 86400.0) + 2440587.5 - 2451545.0;
-                const a = 6378137.0;
-                const f = 1 / 298.257223563;
-                const e2 = f * (2 - f);
-                const latR = lat * Math.PI / 180;
-                const lonR = lon * Math.PI / 180;
-                const n = a / Math.sqrt(1 - e2 * Math.sin(latR) * Math.sin(latR));
-                const x = (n + (alt || 0)) * Math.cos(latR) * Math.cos(lonR);
-                const y = (n + (alt || 0)) * Math.cos(latR) * Math.sin(lonR);
-                const z = (n * (1 - e2) + (alt || 0)) * Math.sin(latR);
-                get(t_j2000, x, y, z).then(r => {
-                    if (r.certainty !== undefined) localCertainty = r.certainty;
-                    if (r.gravity !== undefined) localGravity = r.gravity;
-                }).catch(() => {});
-            }
-
-            let nextDelay = Infinity;
-
-            for (const s of sensors.values()) {
-                if (s.interval === null) s.interval = tickTime;
-                const due = s.lastPoll + s.interval - ts;
-                if (due <= 0) {
-                    s.lastPoll = ts;
-                    readSensorVal(s, tickTime);
-                    nextDelay = 0;
-                } else if (due < nextDelay) {
-                    nextDelay = due;
-                }
-            }
-
-            if (navigator.getGamepads) {
-                if (gamepadInterval === null) gamepadInterval = tickTime;
-                const gpDue = lastGamepadPoll + gamepadInterval - ts;
-                if (gpDue <= 0) {
-                    lastGamepadPoll = ts;
-                    const state = pollGamepads();
-                    if (state !== lastGamepadState) {
-                        gamepadInterval = tickTime;
-                        lastGamepadState = state;
-                    } else {
-                        gamepadInterval *= PHI;
-                    }
-                    nextDelay = 0;
-                } else if (gpDue < nextDelay) {
-                    nextDelay = gpDue;
-                }
-            }
-
-            if (discoveryInterval === null) discoveryInterval = tickTime;
-            const dDue = lastDiscovery + discoveryInterval - ts;
-            if (dDue <= 0) {
-                lastDiscovery = ts;
-                visited = new WeakSet();
-                discoverSensors();
-                if (sensors.size !== lastSensorCount) {
-                    discoveryInterval = tickTime;
-                    lastSensorCount = sensors.size;
-                } else {
-                    discoveryInterval *= PHI;
-                }
-                nextDelay = 0;
-            } else if (dDue < nextDelay) {
-                nextDelay = dDue;
-            }
-
-            if (probeState.phase === 'idle') {
-                const surprise = live['surprise'] || 0;
-                const curiosity = surprise / (localCertainty + (1 / 299792458.0));
-                const shouldExplore = curiosity > sensors.size * (1 / PHI);
-                if (!act()) {
-                    if (actuators.size > 0 && sensors.size > 0) {
-                        if (shouldExplore || Math.random() < curiosity) {
-                            startBroad(ts);
-                        }
-                    }
-                }
-            } else if (probeState.phase === 'broad') {
-                checkBroad(ts);
-            } else if (probeState.phase === 'narrowing') {
-                checkNarrowing(ts);
-            }
-
-            if (_topologyInterval === null) _topologyInterval = tickTime;
-            const topoDue = _lastTopology + _topologyInterval - ts;
-            if (topoDue <= 0) {
-                _lastTopology = ts;
-                runSignalTopology(ts);
-                const surprise = live['surprise'] || 0;
-                _topologyInterval = surprise > sensors.size ? tickTime : _topologyInterval * PHI;
-                nextDelay = 0;
-            } else if (topoDue < nextDelay) {
-                nextDelay = topoDue;
-            }
-
-            const icDue = _lastInteroception + (tickTime * PHI) - ts;
-            if (icDue <= 0) {
-                _lastInteroception = ts;
-                live['system.cpu'] = navigator.hardwareConcurrency || 0;
-                if (performance.memory) {
-                    live['system.memory'] = performance.memory.usedJSHeapSize;
-                    live['system.memoryTotal'] = performance.memory.totalJSHeapSize;
-                }
-                const t0 = performance.now();
-                fetch('/time').then(() => {
-                    live['system.latency'] = performance.now() - t0;
-                }).catch(() => {});
-                nextDelay = 0;
-            } else if (icDue < nextDelay) {
-                nextDelay = icDue;
-            }
-
-            if (document.hidden) {
-                nextDelay = Math.max(nextDelay, tickTime * PHI);
-            }
-
-            setTimeout(() => {
-                try { tick(performance.now()); } catch (e) { console.error(e); setTimeout(() => tick(performance.now()), 0); }
-            }, nextDelay);
-        }
-
-        function tryStartBattery() {
-            if (navigator.getBattery) {
-                navigator.getBattery().then(b => {
-                    const push = () => {
-                        live['battery.charging'] = b.charging ? 1 : 0;
-                        live['battery.chargingTime'] = b.chargingTime;
-                        live['battery.dischargingTime'] = b.dischargingTime;
-                        live['battery.level'] = b.level;
-                    };
-                    push();
-                    b.addEventListener('chargingchange', push, { passive: true });
-                    b.addEventListener('levelchange', push, { passive: true });
-                }).catch(() => {});
-            }
-        }
-
-        function tryStartGeolocation() {
-            if (navigator.geolocation && navigator.geolocation.watchPosition) {
-                navigator.geolocation.watchPosition(pos => {
-                    const cc = pos.coords;
-                    live['geolocation.latitude'] = cc.latitude;
-                    live['geolocation.longitude'] = cc.longitude;
-                    live['geolocation.accuracy'] = cc.accuracy;
-                    if (cc.altitude !== null) live['geolocation.altitude'] = cc.altitude;
-                    if (cc.heading !== null) live['geolocation.heading'] = cc.heading;
-                    if (cc.speed !== null) live['geolocation.speed'] = cc.speed;
-                }, () => {}, { enableHighAccuracy: true, maximumAge: 0 });
-            }
-        }
-
-        function tryStartSensors() {
-            for (const name of Object.getOwnPropertyNames(window)) {
-                if (!name.endsWith('Sensor')) continue;
-                if (typeof window[name] !== 'function') continue;
-                try {
-                    const sensor = new window[name]({});
-                    sensor.addEventListener('reading', () => {
-                        for (const prop of Object.getOwnPropertyNames(sensor)) {
-                            const v = sensor[prop];
-                            if (typeof v === 'number') {
-                                live[name + '.' + prop] = v;
-                            } else if (v && typeof v === 'object' && typeof v.length === 'number') {
-                                for (let qi = 0; qi < v.length; qi++) {
-                                    live[name + '.' + prop + '[' + qi + ']'] = v[qi];
-                                }
-                            }
-                        }
-                    }, { passive: true });
-                    sensor.start();
-                } catch {}
-            }
-        }
-
-        let _lastInteroception = 0;
-
-        async function tryStartWebGPU() {
-            try {
-                const adapter = await navigator.gpu.requestAdapter();
-                if (adapter) {
-                    const device = await adapter.requestDevice();
-                    window.omegaflow.gpu = device;
-                    live['system.gpu'] = 1;
-                }
-            } catch {}
-        }
-
-        let _audioCtx = null;
-        function tryStartWebAudio() {
-            const start = () => {
-                if (_audioCtx) return;
-                try {
-                    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const panner = _audioCtx.createPanner();
-                    panner.panningModel = 'HRTF';
-                    panner.connect(_audioCtx.destination);
-                    window.omegaflow.audio = { ctx: _audioCtx, panner };
-                    live['system.audio'] = 1;
-                } catch {}
-            };
-            document.addEventListener('click', start, { once: true, passive: true });
-            document.addEventListener('touchstart', start, { once: true, passive: true });
-        }
-
         discoverSensors();
         registerEvents();
         tryStartBattery();
         tryStartGeolocation();
         tryStartSensors();
-        tryStartInteroception();
         tryStartWebGPU();
         tryStartWebAudio();
         setTimeout(() => tick(performance.now()), 0);

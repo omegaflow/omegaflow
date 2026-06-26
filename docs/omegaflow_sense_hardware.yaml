@@ -1,6 +1,6 @@
 # ============================================================
 # omegaflow_sense_hardware.yaml
-# VERSION: 2.0.0 — DETERMINISTIC — AGENT-READY
+# STATUS: PLAN (Phase 10) — NOT YET IMPLEMENTED
 # PURPOSE: The one and only source of truth for the physical
 #          omegaflow sense module. The 100% Mantis-Shrimp Config.
 #          Sensors (receivers), Actuators (senders), Infrastructure.

@@ -4,6 +4,11 @@ const PHI = 1.618033988749895;
 export const live = {};
 export const pulse = { ws: null, pending: new Map(), seq: 0 };
 
+let _last_t = NaN, _last_x = NaN, _last_y = NaN, _last_z = NaN, _last_result = null;
+let _fetch_pending = null;
+let _fetch_time = 0;
+let _last_is_data = null;
+
 function drain(p, result) {
     const ma = 1 / (PHI * PHI);
     for (const key in p) {
@@ -17,50 +22,6 @@ function drain(p, result) {
             result[key][2] = result[key][2] * (1 - ma) + val[2] * ma;
         }
     }
-}
-
-let _last_t = NaN, _last_x = NaN, _last_y = NaN, _last_z = NaN, _last_result = null;
-let _fetch_pending = null;
-let _fetch_time = 0;
-let _last_is_data = null;
-
-
-
-function _measureG(live) {
-    const ax = live['AccelerometerSensor.x'];
-    const ay = live['AccelerometerSensor.y'];
-    const az = live['AccelerometerSensor.z'];
-    if (ax !== undefined && ay !== undefined && az !== undefined) {
-        return Math.sqrt(ax*ax + ay*ay + az*az);
-    }
-    return 1.0;
-}
-
-function _measureVC(live) {
-    const speed = live['geolocation.speed'];
-    if (typeof speed === 'number' && speed >= 0) {
-        return speed / C;
-    }
-    return 0.0;
-}
-
-function _measureDecay(result) {
-    const flux = result['cosmic_protons_100mev'];
-    if (typeof flux === 'number' && flux >= 0) {
-        return 1.0 / (1.0 + flux);
-    }
-    return 1.0;
-}
-
-function _measureQuantum() {
-    const sensors = window.omegaflow?.sensors;
-    if (!sensors || sensors.size === 0) return 1.0;
-    let sum = 0, count = 0;
-    for (const s of sensors.values()) {
-        if (s.noiseFloor > 0) { sum += s.noiseFloor; count++; }
-    }
-    if (count === 0) return 1.0;
-    return Math.exp(-sum / count);
 }
 
 export async function get(t, x, y, z) {
@@ -115,28 +76,6 @@ export async function get(t, x, y, z) {
     _last_result = result;
 
     return result;
-}
-
-async function _doFetch(t, x, y, z) {
-    const buf = new ArrayBuffer(33);
-    const dv = new DataView(buf);
-    dv.setFloat64(0, t, true);
-    dv.setFloat64(8, x, true);
-    dv.setFloat64(16, y, true);
-    dv.setFloat64(24, z, true);
-    dv.setUint8(32, 0);
-    const id = ++pulse.seq;
-    const promise = new Promise((resolve, reject) => {
-        pulse.pending.set(id, { resolve, reject });
-    });
-    const frame = new Uint8Array(37);
-    new DataView(frame.buffer).setUint32(33, id, true);
-    frame.set(new Uint8Array(buf), 0);
-    if (pulse.ws && pulse.ws.readyState === WebSocket.OPEN) {
-        pulse.ws.send(frame);
-        const buffer = await promise;
-        _last_is_data = parsePayload(new Uint8Array(buffer));
-    }
 }
 
 function parsePayload(bytes) {
@@ -208,4 +147,61 @@ function parsePayload(bytes) {
     return records;
 }
 
+async function _doFetch(t, x, y, z) {
+    const buf = new ArrayBuffer(33);
+    const dv = new DataView(buf);
+    dv.setFloat64(0, t, true);
+    dv.setFloat64(8, x, true);
+    dv.setFloat64(16, y, true);
+    dv.setFloat64(24, z, true);
+    dv.setUint8(32, 0);
+    const id = ++pulse.seq;
+    const promise = new Promise((resolve, reject) => {
+        pulse.pending.set(id, { resolve, reject });
+    });
+    const frame = new Uint8Array(37);
+    new DataView(frame.buffer).setUint32(33, id, true);
+    frame.set(new Uint8Array(buf), 0);
+    if (pulse.ws && pulse.ws.readyState === WebSocket.OPEN) {
+        pulse.ws.send(frame);
+        const buffer = await promise;
+        _last_is_data = parsePayload(new Uint8Array(buffer));
+    }
+}
 
+function _measureDecay(result) {
+    const flux = result['cosmic_protons_100mev'];
+    if (typeof flux === 'number' && flux >= 0) {
+        return 1.0 / (1.0 + flux);
+    }
+    return 1.0;
+}
+
+function _measureG(live) {
+    const ax = live['AccelerometerSensor.x'];
+    const ay = live['AccelerometerSensor.y'];
+    const az = live['AccelerometerSensor.z'];
+    if (ax !== undefined && ay !== undefined && az !== undefined) {
+        return Math.sqrt(ax*ax + ay*ay + az*az);
+    }
+    return 1.0;
+}
+
+function _measureQuantum() {
+    const sensors = window.omegaflow?.sensors;
+    if (!sensors || sensors.size === 0) return 1.0;
+    let sum = 0, count = 0;
+    for (const s of sensors.values()) {
+        if (s.noiseFloor > 0) { sum += s.noiseFloor; count++; }
+    }
+    if (count === 0) return 1.0;
+    return Math.exp(-sum / count);
+}
+
+function _measureVC(live) {
+    const speed = live['geolocation.speed'];
+    if (typeof speed === 'number' && speed >= 0) {
+        return speed / C;
+    }
+    return 0.0;
+}
