@@ -6,7 +6,7 @@
 #          Sensors (receivers), Actuators (senders), Infrastructure.
 # PRINCIPLE: §11 — The lights are presence (actuators = levers)
 #            §7  — Only what is measured exists
-#            §13 — is(t,x,y,z) resonates with is(t,x,y,z)
+#            §13 — is(t,x,y,z,s) resonates with is(t,x,y,z,s)
 #            §33 — Structure over Name (single source of truth)
 # ============================================================
 

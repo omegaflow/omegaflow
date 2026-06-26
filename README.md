@@ -1,6 +1,6 @@
 omegaflow
 
-is(t, x, y, z)
+is(t, x, y, z, s)
 
 [omegaflow.space](https://omegaflow.space)
 

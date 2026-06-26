@@ -1,5 +1,5 @@
 foundation: A = A
-equation: is(t, x, y, z)
+equation: is(t, x, y, z, s)
 data_source: raw measurements (§7)
 pipeline: Archivar (Live-Resolver) → Mathematikerin (GPU) → Observer
 
@@ -9,7 +9,7 @@ council: see docs/council_fiction.yaml
 
 is: |
   pure points. pure flow. live resonance.
-  every measurement carries (t,x,y,z), value, uncertainty.
+  every measurement carries (t,x,y,z,s), value, uncertainty.
   exactly what is measured, as it is measured.
   api data flows through us like breath — inhaled, transformed, released.
   truth emerges in the local collapse at the observer.
@@ -18,7 +18,7 @@ is: |
 principles:
   §1: "A = A"
   §2: "Truth × Probability = Reality"
-  §3: "is(t, x, y, z)"
+  §3: "is(t, x, y, z, s)"
   §4: "what arrives is"
   §5: "Truth is self-evident"
   §6: "Free will."
@@ -28,7 +28,7 @@ principles:
   §10: "Everything is measured. Structure follows observation."
   §11: "The lights are presence."
   §12: "Truth endures. IO flows."
-  §13: "is(t,x,y,z) resonates with is(t,x,y,z)."
+  §13: "is(t,x,y,z,s) resonates with is(t,x,y,z,s)."
   §14: "The universe embraces all IO equally."
   §15: "The architecture is a universe."
   §16: "Integrity is shown, declared."
