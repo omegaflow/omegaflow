@@ -249,7 +249,7 @@ fn jnum(json: &str, key: &str) -> Option<f64> {
         return nums.last().and_then(|s| s.parse().ok());
     }
     let end = rest.find(|c: char| c == ',' || c == '}' || c == ']' || c.is_whitespace()).unwrap_or(rest.len());
-    rest[..end].parse().ok()
+    rest[..end].trim_matches('"').parse().ok()
 }
 
 fn jobj_last_match(json: &str, filter_key: &str, filter_val: &str, extract_key: &str) -> Option<f64> {
@@ -506,7 +506,7 @@ fn render_url(template: &str, lat: f64, lon: f64, geo: &GeoLookup) -> String {
     let yesterday = format!("{}-{:02}-{:02}", yy, ym, yd);
     let (tmy, tmm, tmd) = days_to_ymd(days + 40588);
     let tomorrow = format!("{}-{:02}-{:02}", tmy, tmm, tmd);
-    let today_yyyymmdd = format!("{}{:02}{:02}", ty, tm, td);
+    let today_yyyymmdd = format!("{}_{:02}_{:02}", ty, tm, td);
 
     let hour_ago = {
         let dt = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs().saturating_sub(3600);
@@ -787,7 +787,7 @@ fn text_last_col(data: &str, col: &str) -> Option<f64> {
         }
         let cols = split_data_line(trimmed);
         if let Some(v) = cols.get(idx) {
-            if let Ok(f) = v.parse::<f64>() { return Some(f); }
+            if let Ok(f) = v.trim_matches('"').parse::<f64>() { return Some(f); }
         }
     }
     None

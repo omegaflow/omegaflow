@@ -1,17 +1,5 @@
-source pdg_w_boson_mass
-source pdg_z_boson_mass
-source drand_quantum_entropy
-source pdg_proton_mass
-source cern_alice_pbpb
-source cern_cms_data
-source cern_open_data
-source crystallography_xrd
-source pdg_alpha_s
-source pdg_higgs_mass
-source pdg_particle_list
-source lapis_covid_genomics
-source protein_structures
 source microbe_census
+scale 0
 field 0.altim weather_airport_altimeter_hpa
 path 0.n cosmic_exoplanet_total_confirmed
 path 0.n cosmic_hot_jupiters
@@ -120,6 +108,8 @@ ttl 2592000
 ttl 2592000
 ttl 2592000
 ttl 2592000
+scale 3
+scale 3
 scale 3
 scale 3
 scale 3
@@ -299,6 +289,9 @@ ttl 60
 ttl 60
 ttl 60
 ttl 60
+ttl 60
+ttl 60
+ttl 600
 ttl 600
 ttl 600
 ttl 600
@@ -466,6 +459,8 @@ ttl 900
 field a lattice_constant_angstrom
 last_obj activityID activityID solar_cme_id
 last adjusted solar_f107_adjusted_sfu
+source aeronet_aod
+source aeronet_gsfc_aod
 field age_bp paleoclimate_age_bp
 last_row age_bp paleoclimate_domefuji_age_bp
 last_row age_bp paleoclimate_vostok_age_bp
@@ -480,26 +475,45 @@ field analysed_sst ocean_sst_celsius
 last_row Anomaly climate_hadcrut5_temp_anomaly_c
 last_row AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
 last_row APD ocean_wave_period
+source apophis_vectors
 vector apophis_x apophis_y apophis_z
 last_row area climate_sea_ice_area_north
+source argo_floats
 count articles social_conflict_event_count
 last_row ATMP ocean_air_temp
+source aurora_forecast
+source aurora_nowcast_north
 last_row average climate_cfc12_global
 last_row average climate_methane_global
 last_row average climate_n2o_global
 last_row average climate_sf6_global
+source aviation
+source aviation_weather_metar
 last_row BARO ocean_pressure_buoy
 last begin_time solar_flare_latest_time
+source bennu_vectors
 vector bennu_x bennu_y bennu_z
+source bgs_global_seismology
 field bitcoin.usd economic_bitcoin_price_usd
 field bitcoin.usd_24h_change economic_bitcoin_change_24h
 last_row bt magnetism_bt
 last_row by_gsm magnetism_by
 last_row bz_gsm magnetism_bz
+source callisto_vectors
 vector callisto_x callisto_y callisto_z
+source cdc_covid_variants
+source celestrak_debris
+source celestrak_gps
+source celestrak_satellites
+source celestrak_starlink
+source ceres_vectors
 vector ceres_x ceres_y ceres_z
+source cern_alice_pbpb
+source cern_cms_data
+source cern_open_data
 field chart.result.0.meta.chartPreviousClose economic_stock_prev_close
 field chart.result.0.meta.regularMarketPrice economic_stock_price
+source chime_frb_catalog
 field chlorophyll biosphere_marine_chlorophyll_mg_m3
 count circulars cosmic_gcn_alert_count
 count circulars cosmic_grb_count_recent
@@ -508,9 +522,13 @@ count circulars neutrino_icecube_alert_count
 last class_type solar_flare_latest_class
 last classType solar_flare_class_latest
 count cme solar_cme_count_24h
+source cneos_asteroids_inside_lunar_orbit
+source cneos_close_approaches
 last_row co2 paleoclimate_domefuji_co2_ppm
 last_row co2 paleoclimate_wais_co2_ppm
 last_row CO2 paleoclimate_vostok_co2_ppm
+source coingecko_crypto
+source coral_bleaching
 field count biosphere_bird_count
 field count biosphere_birding_hotspots
 field count biosphere_migratory_bird_records_this_month
@@ -520,6 +538,10 @@ field count orbital_asteroids_closer_than_moon
 field count orbital_neo_close_approaches_today
 field count technosphere_upcoming_launches
 last count cosmic_neutron_count_ground
+source crdb_cosmic_rays
+source crossref_dois
+source crystallography_xrd
+format csv
 format csv
 format csv
 format csv
@@ -590,11 +612,24 @@ field data.pm25 atmosphere_pm25_waqi
 field datasets biosphere_ocean_datasets_count
 last_row density solar_wind_density
 last_row dhw ocean_degree_heating_weeks_max
+source digitraffic_ais
+source digitraffic_vessels
+source dome_fuji_co2
+source drand_quantum_entropy
 last dst dst_index
+source dst_index
 count earthquakes seismic_count_emsc
 count earthquakes seismic_iris_count
+source ebird_hotspots
+source ebird_recent
+source effis_fires
+source elevation
 first elevation topography_elevation
+source emodnet_vessel_density
+source emsc_earthquakes
+source enceladus_vectors
 vector enceladus_x enceladus_y enceladus_z
+source encke_vectors
 vector encke_x encke_y encke_z
 last energy xray_wavelength
 last_obj energy ">=0.8 MeV" flux electron_flux_800kev
@@ -606,16 +641,25 @@ last_obj energy ">=1 MeV" flux cosmic_protons_1mev
 last_obj energy ">=2 MeV" flux electron_flux_2mev
 last_obj energy "40300-73400 keV" flux cosmic_proton_flux_40mev
 last_obj energy "83700-98500 keV" flux cosmic_proton_flux_80mev
+source energy_charts_renewable
+source entsoe_energy
+source erddap_ocean_pco2
+source erddap_socat_gridded
+source eris_vectors
 vector eris_x eris_y eris_z
+source esa_gaia_stars
 field ethereum.usd economic_ethereum_price_usd
+source europa_vectors
 vector europa_x europa_y europa_z
 count events environmental_active_wildfires
 count events gravitational_wave_total_events
 count events solar_event_count
 count events technosphere_natural_events
+source exchangerate_api
 last_row extent climate_sea_ice_extent_north
 field F geomag_total_nt_usgs
 last f10.7 solar_f107_index
+source fbi_wanted
 field fco2_ave_unwtd ocean_co2_climatology_uatm
 count features environmental_active_fires_us
 count features environmental_effis_fire_count
@@ -624,16 +668,41 @@ count features maritime_vessel_count_finland
 count features maritime_vessel_density_emodnet
 count features maritime_vessels_finland
 count features seismic_global_count_bgs
+source fermi_grb
+field field1 biosphere_plant_voltage_mv
 count flares solar_flare_count_24h
 count flares solar_flare_count_7d
 last flux solar_radio_flux_sfu
 last flux xray_flux
 field forecast_time aurora_forecast_time
+source frbstats
 field frequenz technosphere_grid_frequency_eu_hz
+source fungi_observations
+source gaia_nearby_stars
+source gaia_stellar_ages
+source gaia_total_measured_stars
+source gaia_variable_stars
+source gaia_white_dwarfs
+source ganymede_vectors
 vector ganymede_x ganymede_y ganymede_z
+source gbif
+source gbif_migrations
+source gcn_cosmic_events
+source gcn_ligo_alerts
+source gdacs_disasters
+source gdelt_conflicts
 geojson geometry.coordinates[2] seismic_depth_km
+source geopages
+source global_temp_anomaly
+source goes_euv
+source goes_seiss_protons
+source govtrack_votes
 count gst solar_gstorm_count_24h
+source gwosc_strain
+source hadcrut5_temp
+source halley_vectors
 vector halley_x halley_y halley_z
+source haumea_vectors
 vector haumea_x haumea_y haumea_z
 field hits.hits.0.metadata.citation_count cosmology_proton_decay_citations
 field hits.total cern_alice_qgp_datasets
@@ -685,6 +754,8 @@ url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto
 url https://api.rainviewer.com/public/weather-maps.json
+url https://api.safecast.org/measurements.json?limit=1
+url https://api.thingspeak.com/channels/705404/feeds/last.json
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={nearest_tide_station}&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={nearest_tide_station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest
 url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
@@ -714,6 +785,7 @@ url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={h
 url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
 url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=wildfires&limit=100
 url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=100
+url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+as+n+FROM+ps+WHERE+pl_orbper<1&format=json
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+as+n+FROM+ps+WHERE+pl_rade+IS+NOT+NULL&format=json
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+20+pl_name,pl_orbper,pl_rade,pl_eqt+FROM+pscomppars+WHERE+pl_eqt+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
@@ -861,265 +933,74 @@ url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&starttime={hou
 url https://www.star.nesdis.noaa.gov/socd/lsa/MSL/data/msletopo_ts.txt
 url https://xeno-canto.org/api/2/recordings?query=box:{lat_min},{lon_min},{lat_max},{lon_max}
 url https://xmart-api-public.who.int/FLUMART/V_FLUNET?$format=json&$top=5&$orderby=ISO_YEAR%20desc,ISO_WEEK%20desc
+source ice_core_lead_pollution
+source icecube_neutrino_alerts
+source iers_earth_rotation
+source inaturalist
+source inaturalist_verified
+source intermagnet_bou
+source intermagnet_kan
+source intermagnet_ngk
 field intervals geology_ics_timescale_units
+source ionosphere_tec
+source io_vectors
 vector io_x io_y io_z
 count ips solar_shock_count_24h
+source irail_belgium
+source iris_seismic
 last irradiance solar_total_irradiance_wm2
+source iss_position
 count items geosphere_volcano_eruptions
 count items technosphere_satellite_radio_bursts
 count items technosphere_wikipedia_daily_edits
 last_row J-D climate_global_temp_anomaly_c
+source jpl_atmospheric_fireballs
+source juno_vectors
 vector juno_x juno_y juno_z
+source jupiter_vectors
 vector jupiter_x jupiter_y jupiter_z
+source jwst_vectors
 vector jwst_x jwst_y jwst_z
 last_row kp ionosphere_forecast_kp_max
+source kp_index
 last kp_index kp_index
 last_obj kpIndex kpIndex solar_gstorm_kp_peak
+source lapis_covid_genomics
+source lasp_tsi
 field latitude iss_lat
+source launch_library
+source lightning_open_meteo
+source ligo_gracedb_events
 last_row LOD earth_length_of_day_ms
 field longitude iss_lon
+source macrostrat_ages
+source macrostrat_timescale
 field mag seismic_magnitude_emsc
+source magnetism
+source makemake_vectors
 vector makemake_x makemake_y makemake_z
+source mars_vectors
 vector mars_x mars_y mars_z
 field measurements.pressure ocean_argo_pressure
 field measurements.salinity ocean_argo_salinity
 field measurements.temperature ocean_argo_temp
+source mercury_vectors
 vector mercury_x mercury_y mercury_z
 field message.total-results technosphere_registered_dois
 field meta count cosmic_pdg_measured_particles
 field meta.count technosphere_scholarly_works_total
 field meta.pagination.count biosphere_metagenomic_studies
 field meta.total_count political_legislation_votes
+source met_norway_sun
 field minutely_15.lightning_potential atmosphere_lightning_potential
 field modeled_share biosphere_dominant_variant_proportion
+source moon_vectors
 vector moon_x moon_y moon_z
+source motus_species
 count mpc magnetopause_crossing_count_24h
 last_row msl ocean_sea_level_global_mm
 last_row MWD ocean_wave_direction
 first name gravitational_wave_catalog_latest
-geojson nearby 500000 mag 2.0 seismic_magnitude seismic_depth seismic_distance
-count near_earth_objects.{today} solar_asteroid_count_today
-path near_earth_objects.{today}.0.close_approach_data.0.miss_distance.kilometers solar_neo_distance_km
-path near_earth_objects.{today}.0.estimated_diameter.kilometers.estimated_diameter_max solar_neo_diameter_max_km
-vector neptune_x neptune_y neptune_z
-vector nh_x nh_y nh_z
-field nLD_filled technosphere_nighttime_light_radiance
-count nodes technosphere_mobile_antennas_10km
-count nodes technosphere_osm_nodes
-count nodes technosphere_public_wlan_5km
-field north_intensity aurora_intensity_north
-field nr_updates technosphere_bgp_updates_per_hour
-field number orbital_humans_in_space
-field numRecordings biosphere_bird_sound_recordings
-field numSpecies biosphere_bird_species_recorded
-count objects orbital_active_satellites
-count objects orbital_debris_iridium33
-count objects orbital_gps_count
-count objects orbital_starlink_count
-last observed solar_f107_observed_sfu
-last observed_swpc_ssn solar_sunspot_number_silso
-count occupancy technosphere_train_occupancy_belgium
-field page.total_elements solar_neo_total_known
-vector parker_x parker_y parker_z
-count past technosphere_rain_radar_frames
-last_row pb_ng_g paleoclimate_lead_concentration_ppb
-field pco2_sw ocean_co2_partial_pressure_uatm
-last peakTime solar_flare_peak_time
-field pl_eqt cosmic_exoplanet_temp_k
-field pl_orbper cosmic_exoplanet_period_days
-field pl_rade cosmic_exoplanet_radius_earth
-vector pluto_x pluto_y pluto_z
-last_row (ppm) co2_atmospheric_weekly
-last price energy_electricity_price_eur_mwh
-geojson properties.gap seismic_azimuthal_gap
-geojson properties.mag seismic_magnitude
-geojson properties.rms seismic_rms
-geojson properties.sig seismic_significance
-field properties.solar_noon.elevation ephemeris_solar_elevation_max
-field properties.sunrise.time ephemeris_sunrise_time
-count query.geosearch geopages_nearby
-field rates.EUR economic_usd_eur_rate
-field rates.GBP economic_usd_gbp_rate
-field rates.JPY economic_usd_jpy_rate
-count rbe radiation_belt_enhancement_count_24h
-field records biosphere_ocean_records_total
-field records_found paleoclimate_cambrian_fossils
-count regions solar_sunspot_region_count
-field released_structures biosphere_protein_structures_total
-field results.0.edits technosphere_wikipedia_edits_yesterday
-field round quantum_entropy_generation_round
-last_obj satellite "GOES-16" He geomag_he_nt
-last_obj satellite "GOES-16" Hn geomag_hn_nt
-last_obj satellite "GOES-16" Hp geomag_hp_nt
-last_obj satellite "GOES-16" Ht geomag_ht_nt
-vector saturn_x saturn_y saturn_z
-count sep solar_sep_count_24h
-vector solo_x solo_y solo_z
-field species_count fungi_diversity
-last_obj speed speed solar_cme_speed_latest
-last_row speed solar_wind_speed
-sum spot_count solar_total_sunspots
-last ssn solar_sunspot_number
-count states aviation_aircraft
-first subject cosmic_gcn_latest_subject
-first subject gravitational_wave_gcn_latest
-first subject neutrino_latest_event
-field summary.max_ps solar_sentry_max_palermo
-field summary.max_ts solar_sentry_max_torino
-field summary.total_objects solar_sentry_object_count
-vector sun_x sun_y sun_z
-count superevents gravitational_wave_event_count
-first superevents.0.superevent_id gravitational_wave_latest_id
-first t tide_next_high_time
-first t tide_observation_time
-field taxa biosphere_ocean_species_known
-field teff_gspphot cosmology_oldest_star_temp_k
-field temperature paleoclimate_temp_anomaly_c
-last_row temperature solar_wind_temp
-vector titan_x titan_y titan_z
-count total technosphere_poi_count
-field total biosphere_ocean_occurrences_50km
-field total geology_macrostrat_unit_count
-field total paleoclimate_neotoma_occurrences
-field total technosphere_fbi_wanted_count
-field total_results biosphere_observations
-field total_results biosphere_verified_observations
-field total_results fungi_observations
-vector triton_x triton_y triton_z
-vector uranus_x uranus_y uranus_z
-header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
-header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
-header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
-first v tide_next_high_m
-first v tide_observed_height_m
-field value particle_alpha_s
-field value particle_higgs_mass_gev
-field value particle_proton_mass_mev
-field value particle_w_boson_mass_gev
-field value particle_z_boson_mass_gev
-last_row value co2_scripps_mauna_loa_ppm
-field value.0.ALL_INF biosphere_influenza_positive_global
-field value.0.NumericValue biosphere_tuberculosis_incidence_rate
-field value.0.SPEC_PROCESSED_NB biosphere_influenza_specimens_global
-path value.timeSeries.0.values.0.value.0.value river_flow_cfs
-vector venus_x venus_y venus_z
-vector vesta_x vesta_y vesta_z
-count volcanoes volcanic_alert_count
-vector voyager1_x voyager1_y voyager1_z
-vector voyager2_x voyager2_y voyager2_z
-last_row vtec ionosphere_tec_vertical
-last_obj wavelength "0.05-0.4nm" flux solar_euv_flux_short
-last_obj wavelength "0.1-0.8nm" flux solar_euv_flux_long
-count ways technosphere_osm_ways
-last_row WSPD ocean_wind_speed_buoy
-last_row WTMP ocean_water_temp
-last_row WVHT ocean_wave_height_buoy
-field X geomag_x_nt
-field X geomag_x_nt_bou
-field X geomag_x_nt_kan
-field X geomag_x_nt_usgs
-last_row Xp earth_pole_x_arcsec
-field Y geomag_y_nt
-field Y geomag_y_nt_bou
-field Y geomag_y_nt_kan
-field Y geomag_y_nt_usgs
-last_row Yp earth_pole_y_arcsec
-field Z geomag_z_nt
-field Z geomag_z_nt_bou
-field Z geomag_z_nt_kan
-field Z geomag_z_nt_usgs
-source aeronet_aod
-source aeronet_gsfc_aod
-source aviation
-source aviation_weather_metar
-source coral_bleaching
-source digitraffic_ais
-source digitraffic_vessels
-source ebird_hotspots
-source ebird_recent
-source effis_fires
-source elevation
-source emodnet_vessel_density
-source emsc_earthquakes
-source fungi_observations
-source gbif_migrations
-source gdelt_conflicts
-source geopages
-source inaturalist
-source inaturalist_verified
-source irail_belgium
-source iris_seismic
-source lightning_open_meteo
-source met_norway_sun
-source nasa_eonet_fires
-source ndbc_buoy
-source nifc_fires
-source noaa_coops_predictions
-source noaa_coops_tides
-source noaa_sst
-source openmeteo_air_quality_full
-source openmeteo_air_quality_us
-source openmeteo_marine
-source openmeteo_weather
-source overpass_mobile_antennas
-source overpass_pois
-source overpass_wifi_hotspots
-source pegelonline_water_level
-source rain_radar
-source seismic
-source sensor_community_air
-source smithsonian_volcanoes
-source usgs_earthquake_detail
-source usgs_streamflow
-source usgs_volcano_alerts
-source viirs_nighttime_lights
-source waqi_air_quality
-source xenocanto_birds
-source argo_floats
-source erddap_ocean_pco2
-source erddap_socat_gridded
-source motus_species
-source noaa_marine_chlorophyll
-source obis_species
-source obis_statistics
-source cdc_covid_variants
-source gbif
-source nsidc_sea_ice
-source psmsl_sea_level
-source scripps_co2_station
-source who_gho_tuberculosis
-source who_influenza
-source aurora_forecast
-source aurora_nowcast_north
-source bgs_global_seismology
-source coingecko_crypto
-source crdb_cosmic_rays
-source crossref_dois
-source dome_fuji_co2
-source dst_index
-source energy_charts_renewable
-source entsoe_energy
-source exchangerate_api
-source fbi_wanted
-source gdacs_disasters
-source global_temp_anomaly
-source goes_euv
-source goes_seiss_protons
-source govtrack_votes
-source hadcrut5_temp
-source ice_core_lead_pollution
-source iers_earth_rotation
-source intermagnet_bou
-source intermagnet_kan
-source intermagnet_ngk
-source ionosphere_tec
-source jpl_atmospheric_fireballs
-source kp_index
-source lasp_tsi
-source launch_library
-source macrostrat_ages
-source macrostrat_timescale
-source magnetism
 source nasa_donki_cme
 source nasa_donki_flares
 source nasa_donki_gstorms
@@ -1129,13 +1010,34 @@ source nasa_donki_mpc
 source nasa_donki_rbe
 source nasa_donki_sep
 source nasa_eonet
+source nasa_eonet_fires
+source nasa_exoplanets
+source nasa_exoplanet_total
+source nasa_hot_jupiters
+source nasa_neo_browse
+source nasa_neows
+source nasa_sentry
+source ndbc_buoy
+geojson nearby 500000 mag 2.0 seismic_magnitude seismic_depth seismic_distance
+count near_earth_objects.{today} solar_asteroid_count_today
+path near_earth_objects.{today}.0.close_approach_data.0.miss_distance.kilometers solar_neo_distance_km
+path near_earth_objects.{today}.0.estimated_diameter.kilometers.estimated_diameter_max solar_neo_diameter_max_km
 source neotoma_paleoecology
+source neptune_vectors
+vector neptune_x neptune_y neptune_z
 source netzfrequenz_eu
+source new_horizons_vectors
+vector nh_x nh_y nh_z
+source nifc_fires
+field nLD_filled technosphere_nighttime_light_radiance
 source nmdb_neutron_monitor
 source noaa_cfc12
 source noaa_co2_mauna_loa
+source noaa_coops_predictions
+source noaa_coops_tides
 source noaa_goes_electrons
 source noaa_goes_magnetosphere
+source noaa_marine_chlorophyll
 source noaa_methane
 source noaa_n2o
 source noaa_paleoclimate_co2
@@ -1143,94 +1045,208 @@ source noaa_proton_flux
 source noaa_sf6
 source noaa_solar_indices
 source noaa_solar_radio_measured
+source noaa_sst
 source noaa_sunspots
+count nodes technosphere_mobile_antennas_10km
+count nodes technosphere_osm_nodes
+count nodes technosphere_public_wlan_5km
+field north_intensity aurora_intensity_north
+field nr_updates technosphere_bgp_updates_per_hour
+source nsidc_sea_ice
+field number orbital_humans_in_space
+field numRecordings biosphere_bird_sound_recordings
+field numSpecies biosphere_bird_species_recorded
+source obis_species
+source obis_statistics
+count objects orbital_active_satellites
+count objects orbital_debris_iridium33
+count objects orbital_gps_count
+count objects orbital_starlink_count
+last observed solar_f107_observed_sfu
+last observed_swpc_ssn solar_sunspot_number_silso
+count occupancy technosphere_train_occupancy_belgium
 source openalex_works
-source pbdb_paleobiology
-source plasma
-source protons
-source radio_flux
-source ripe_bgp_updates
-source satnogs_radio_observations
-source silso_sunspot
-source swpc_geomag_forecast
-source swpc_solar_events
-source uk_carbon_intensity
-source usgs_geomag
-source vostok_icecore
-source wais_divide_co2
-source wikimedia_stats
-source worldbank_co2_emissions
-source worldbank_population
-source xray
-source xray_flares_7day
-source yahoo_finance_markets
-source celestrak_debris
-source celestrak_gps
-source celestrak_satellites
-source celestrak_starlink
-source iss_position
+source openmeteo_air_quality_full
+source openmeteo_air_quality_us
+source openmeteo_marine
+source openmeteo_weather
 source open_notify_astros
-source apophis_vectors
-source bennu_vectors
-source callisto_vectors
-source ceres_vectors
-source cneos_asteroids_inside_lunar_orbit
-source cneos_close_approaches
-source enceladus_vectors
-source encke_vectors
-source eris_vectors
-source europa_vectors
-source ganymede_vectors
-source halley_vectors
-source haumea_vectors
-source io_vectors
-source juno_vectors
-source jupiter_vectors
-source jwst_vectors
-source makemake_vectors
-source mars_vectors
-source mercury_vectors
-source moon_vectors
-source nasa_neo_browse
-source nasa_neows
-source nasa_sentry
-source neptune_vectors
-source new_horizons_vectors
+source overpass_mobile_antennas
+source overpass_pois
+source overpass_wifi_hotspots
+field page.total_elements solar_neo_total_known
 source parker_solar_probe_vectors
+vector parker_x parker_y parker_z
+count past technosphere_rain_radar_frames
+source pbdb_paleobiology
+last_row pb_ng_g paleoclimate_lead_concentration_ppb
+field pco2_sw ocean_co2_partial_pressure_uatm
+source pdg_alpha_s
+source pdg_higgs_mass
+source pdg_particle_list
+source pdg_proton_mass
+source pdg_w_boson_mass
+source pdg_z_boson_mass
+last peakTime solar_flare_peak_time
+source pegelonline_water_level
+source plasma
+field pl_eqt cosmic_exoplanet_temp_k
+field pl_orbper cosmic_exoplanet_period_days
+field pl_rade cosmic_exoplanet_radius_earth
 source pluto_vectors
+vector pluto_x pluto_y pluto_z
+last_row (ppm) co2_atmospheric_weekly
+last price energy_electricity_price_eur_mwh
+geojson properties.gap seismic_azimuthal_gap
+geojson properties.mag seismic_magnitude
+geojson properties.rms seismic_rms
+geojson properties.sig seismic_significance
+field properties.solar_noon.elevation ephemeris_solar_elevation_max
+field properties.sunrise.time ephemeris_sunrise_time
+source protein_structures
+source protons
+source psmsl_sea_level
+count query.geosearch geopages_nearby
+source radio_flux
+source rain_radar
+field rates.EUR economic_usd_eur_rate
+field rates.GBP economic_usd_gbp_rate
+field rates.JPY economic_usd_jpy_rate
+count rbe radiation_belt_enhancement_count_24h
+field records biosphere_ocean_records_total
+field records_found paleoclimate_cambrian_fossils
+count regions solar_sunspot_region_count
+field released_structures biosphere_protein_structures_total
+field results.0.edits technosphere_wikipedia_edits_yesterday
+source ripe_bgp_updates
+field round quantum_entropy_generation_round
+last_obj satellite "GOES-16" He geomag_he_nt
+last_obj satellite "GOES-16" Hn geomag_hn_nt
+last_obj satellite "GOES-16" Hp geomag_hp_nt
+last_obj satellite "GOES-16" Ht geomag_ht_nt
+source satnogs_radio_observations
 source saturn_vectors
-source solar_orbiter_vectors
-source sun_vectors
-source titan_vectors
-source triton_vectors
-source uranus_vectors
-source venus_vectors
-source vesta_vectors
-source voyager1_vectors
-source voyager2_vectors
-source esa_gaia_stars
-source gaia_nearby_stars
-source gaia_stellar_ages
-source gaia_total_measured_stars
-source gaia_variable_stars
-source gaia_white_dwarfs
-source nasa_exoplanets
-source nasa_exoplanet_total
-source nasa_hot_jupiters
+vector saturn_x saturn_y saturn_z
+source scripps_co2_station
+source sdss_cosmic_web_galaxies
+source seismic
+source sensor_community_air
+count sep solar_sep_count_24h
+source silso_sunspot
 source simbad_galaxies
+source simbad_galaxy_clusters
 source simbad_high_z_galaxies
 source simbad_millisecond_pulsars
 source simbad_pulsars
 source simbad_quasars
 source simbad_total_objects
-source sdss_cosmic_web_galaxies
-source simbad_galaxy_clusters
-source chime_frb_catalog
-source fermi_grb
-source frbstats
-source gcn_cosmic_events
-source gcn_ligo_alerts
-source gwosc_strain
-source icecube_neutrino_alerts
-source ligo_gracedb_events
+source smithsonian_volcanoes
+source solar_orbiter_vectors
+vector solo_x solo_y solo_z
+field species_count fungi_diversity
+last_obj speed speed solar_cme_speed_latest
+last_row speed solar_wind_speed
+last_row spl_full ocean_sound_pressure_db
+sum spot_count solar_total_sunspots
+last ssn solar_sunspot_number
+count states aviation_aircraft
+first subject cosmic_gcn_latest_subject
+first subject gravitational_wave_gcn_latest
+first subject neutrino_latest_event
+field summary.max_ps solar_sentry_max_palermo
+field summary.max_ts solar_sentry_max_torino
+field summary.total_objects solar_sentry_object_count
+source sun_vectors
+vector sun_x sun_y sun_z
+count superevents gravitational_wave_event_count
+first superevents.0.superevent_id gravitational_wave_latest_id
 source superk_proton_decay
+source swpc_geomag_forecast
+source swpc_solar_events
+first t tide_next_high_time
+first t tide_observation_time
+field taxa biosphere_ocean_species_known
+field teff_gspphot cosmology_oldest_star_temp_k
+field temperature paleoclimate_temp_anomaly_c
+last_row temperature solar_wind_temp
+source thingspeak_plant_voltage
+source titan_vectors
+vector titan_x titan_y titan_z
+count total technosphere_poi_count
+field total biosphere_ocean_occurrences_50km
+field total geology_macrostrat_unit_count
+field total paleoclimate_neotoma_occurrences
+field total technosphere_fbi_wanted_count
+field total_results biosphere_observations
+field total_results biosphere_verified_observations
+field total_results fungi_observations
+source triton_vectors
+vector triton_x triton_y triton_z
+source uk_carbon_intensity
+source uranus_vectors
+vector uranus_x uranus_y uranus_z
+header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
+header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
+header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
+source usgs_earthquake_detail
+source usgs_geomag
+source usgs_streamflow
+source usgs_volcano_alerts
+first v tide_next_high_m
+first v tide_observed_height_m
+field value particle_alpha_s
+field value particle_higgs_mass_gev
+field value particle_proton_mass_mev
+field value particle_w_boson_mass_gev
+field value particle_z_boson_mass_gev
+field value radiation_cpm_safecast
+last_row value co2_scripps_mauna_loa_ppm
+field value.0.ALL_INF biosphere_influenza_positive_global
+field value.0.NumericValue biosphere_tuberculosis_incidence_rate
+field value.0.SPEC_PROCESSED_NB biosphere_influenza_specimens_global
+path value.timeSeries.0.values.0.value.0.value river_flow_cfs
+source venus_vectors
+vector venus_x venus_y venus_z
+source vesta_vectors
+vector vesta_x vesta_y vesta_z
+source viirs_nighttime_lights
+count volcanoes volcanic_alert_count
+source vostok_icecore
+source voyager1_vectors
+vector voyager1_x voyager1_y voyager1_z
+source voyager2_vectors
+vector voyager2_x voyager2_y voyager2_z
+last_row vtec ionosphere_tec_vertical
+source wais_divide_co2
+source waqi_air_quality
+last_obj wavelength "0.05-0.4nm" flux solar_euv_flux_short
+last_obj wavelength "0.1-0.8nm" flux solar_euv_flux_long
+count ways technosphere_osm_ways
+source who_gho_tuberculosis
+source who_influenza
+source wikimedia_stats
+source worldbank_co2_emissions
+source worldbank_population
+last_row WSPD ocean_wind_speed_buoy
+last_row WTMP ocean_water_temp
+last_row WVHT ocean_wave_height_buoy
+field X geomag_x_nt
+field X geomag_x_nt_bou
+field X geomag_x_nt_kan
+field X geomag_x_nt_usgs
+source xenocanto_birds
+last_row Xp earth_pole_x_arcsec
+source xray
+source xray_flares_7day
+field Y geomag_y_nt
+field Y geomag_y_nt_bou
+field Y geomag_y_nt_kan
+field Y geomag_y_nt_usgs
+source yahoo_finance_markets
+last_row Yp earth_pole_y_arcsec
+field Z geomag_z_nt
+field Z geomag_z_nt_bou
+field Z geomag_z_nt_kan
+field Z geomag_z_nt_usgs
+source erddap_smartbay_spl
+source safecast_radiation
