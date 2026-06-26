@@ -96,6 +96,14 @@ format csv
 last_row pCO2_sw seawater_pCO2_uatm
 last_row pH_sw seawater_pH
 
+source ooi_ga01sumo_pco2
+scale 2
+ttl 86400
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+format csv
+last_row surface_partial_pressure_of_carbon_dioxide_in_sea_water seawater_pCO2_oOi_uatm
+last_row sea_surface_temperature seawater_SST_ooi_celsius
+
 source aeronet_aod
 scale 3
 ttl 900
