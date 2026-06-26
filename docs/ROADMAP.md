@@ -279,3 +279,27 @@ Full specification (sensors, actuators, infrastructure, pin maps, safety matrix)
 - **Quantum Biology:** Cross-referencing magnetometer data with camera pixel data — the system *sees* the magnetic field as a bird does (Radical Pair Mechanism).
 - **Atmospheric Optics:** Atmospheric refraction bends light. Local refraction index shifts a star's light on screen exactly as the local atmosphere bends it.
 - **Animal Senses:** Ultrasound microphone (bat) via Web Audio, infrared sensor (viper) via Web Serial, VOC sensor (dog) via Web Bluetooth, ground vibration (spider) via accelerometer.
+
+---
+
+## 12: MYCELIUM — The P2P Observer Network
+
+The network scales thermodynamically. Every Archivar instance acts as a local HTTP API provider. Observers connect directly.
+
+### Architecture
+- **Local API:** The Archivar (`main.rs`) exposes a `GET /is` route. Returns the live 33-byte `(t,x,y,z,s)` payload as flat JSON.
+- **Bootstrap Phonebook:** A static tracker (hosted on Fly.io) stores active IP addresses and geolocation hashes. Stores zero measurement data.
+- **Dynamic Resolution:** When an observer shifts the virtual window `(x,y,z)`, the Archivar queries the Phonebook for active peers at that location.
+- **Ephemeral Sources:** Peer IPs load into RAM as dynamic `sources.is` entries. The Archivar fetches data directly from peer devices.
+
+### Connection
+- **WebRTC:** Browsers establish direct, encrypted UDP connections between observers. The server acts as a signaling node.
+- **Local Mesh:** Devices in physical proximity (Bluetooth Low Energy, WiFi Direct) exchange `is`-points without routing through the global internet.
+
+### Integrity
+- **Thermodynamic Firewall:** The network requires zero authentication. The GPU Mathematikerin evaluates incoming peer data via Transfer-Entropy and Topological Data Analysis (TDA).
+- **Dissonance Rejection:** Data points that fail to resonate with the local API context (weather, magnetism, biology) register as topological anomalies. The system discards dissonant peers automatically. Truth purifies the network.
+
+### Stigmergy
+- Edge devices write measurements locally as `is`-points. Other devices read them later.
+- The environment acts as memory. Matter stores history in atomic structure (δ¹⁸O).
