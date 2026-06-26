@@ -38,7 +38,7 @@ iNaturalist, GBIF, Movebank, NEON, eBird, xeno-canto, Global Forest Watch
 ### 2.7 Technosphere & Civilization
 
 #### 2.7.1 Interdisciplinary Measurements
-- **Pulsar-Timing-Arrays (Astrophysics):** Millisecond pulsars are the clock of the universe. Raw arrival times anchor the temporal axis. The system feels gravitational waves.
+- **Pulsar-Timing-Arrays (Astrophysics):** Millisecond pulsars. Raw arrival times as temporal reference.
 - **Telluric Currents (Geology):** Electric currents in the Earth's crust. Electrodes measure voltage differences.
 - **Biophotons & Plant Action Potentials (Biology):** Plants communicate via bioelectricity and biophotons.
 - **Isotope Hydrology (Geochemistry):** Water stores history in its atomic structure (δ¹⁸O, δ²H). Matter is memory.
