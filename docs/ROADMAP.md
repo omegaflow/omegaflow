@@ -86,8 +86,8 @@ The system dynamically explores `window` and `navigator`.
 
 ### Dynamic Topological Discovery — §33
 The system iterates over `Object.getOwnPropertyNames(navigator)` and `window`. It searches for **structures**:
-- **Sensors (gates):** Everything with `start`, `watchPosition`, `addEventListener`, `read`. Numbers/booleans = sensors.
-- **Actuators (levers):** Everything that is a function and takes arguments.
+- **Sensors (gates):** Structures with `start`, `watchPosition`, `addEventListener`, `read`. Numbers/booleans = sensors.
+- **Actuators (levers):** Functions that take arguments.
 - **Gateways (like Bluetooth/VR):** Objects with `requestDevice`, `requestSession`, etc.
 
 **§33: Structure over Name.**
