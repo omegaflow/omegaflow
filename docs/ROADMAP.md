@@ -147,7 +147,7 @@ certainty = exp(-Δt_eff · g) · exp(-v_c / (g + ε)) · c_q · decay · epigen
 | `decay` | 1/(1 + GOES ≥100 MeV proton flux) | `_measureDecay()` |
 | `quantum` | exp(-avg(sensor noiseFloor)) | `_measureQuantum()` |
 | `Δt` | \|t - t_now\| (ontological) | `dt_eff` in `get()` |
-| `epigenetic_factor` | Hardcoded 1.0 (until step 8) | `epig = 1.0` |
+| `epigenetic_factor` | Hardcoded 1.0 (until step 9) | `epig = 1.0` |
 
 Evaluated on GPU via WGSL compute shader (`workgroup_size(64)`) with JS fallback.
 
@@ -167,7 +167,40 @@ Mathematics for existing channels. Pure software, runs on GPU.
 
 ---
 
-## 8: EPIGENETICS
+## 8: UNIVERSAL SCALE AXIS — DONE
+
+The universe is not 4-dimensional `is(t,x,y,z)`. It is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the logarithmic magnitude of the measured phenomenon. A protein and a thermometer are at the same `(x,y,z)` but on entirely different reality layers. The scale axis makes this explicit.
+
+### Implementation
+- **`sources.is`:** Every source declares `scale <exponent>` (raw 10^n, human-readable). `on_earth` boolean deleted entirely.
+- **Sorting:** Sources are sorted ascending by scale (subatomic → cosmic), then alphabetically within each scale tier.
+- **Archivar (`main.rs`):** `SourceConfig.on_earth: bool` → `SourceConfig.scale: i8`. Parser reads `scale` directive.
+- **PHI-Filtering in `weave()`:** Raw 10^n scale is converted to PHI-scale internally: `phi_scale = n * ln(10)/ln(φ)`. The observer's distance from Earth center gives `observer_scale = log10(r)`. Local sources (scale < 10) are only delivered if `|phi_source - phi_observer| ≤ φ³ ≈ 4.24` PHI-steps. Cosmic sources (scale ≥ 10) are always delivered.
+
+### Scale Distribution (173 sources)
+| Scale | Tier | Examples |
+|---|---|---|
+| -10 | Subatomic / Nuclear | CERN, PDG, Crystallography |
+| -9 | Molecular | Protein structures |
+| -6 | Microbial | Microbiome |
+| 3 | Local (km) | Weather, Air Quality, Lightning, iNaturalist |
+| 5 | Sub-continental | Argo floats, Forest Watch |
+| 6 | Continental | Earthquakes, Sea Ice, GBIF |
+| 7 | Planetary | CO2, Magnetism, Space Weather, Solar Indices |
+| 8 | Near-Earth Space | ISS, Satellites |
+| 11 | Solar System | Planets, Moons, Asteroids, Probes |
+| 17 | Stellar | Gaia stars, Exoplanets |
+| 21 | Galactic | SIMBAD, Cosmic Rays |
+| 25 | Cosmic | Gravitational Waves, CMB, GRBs, Neutrinos |
+
+### Future
+- **Temporal scale:** `ttl` is already the temporal scale axis. Future certainty formula will normalize decay by `Δt / ttl` (skalenbewusster Zerfall).
+- **Actuator scales:** HTTP-based actuators (API calls) declare their scale — the system can act locally (vibration motor, scale 0) or globally (API request, scale 7).
+- **Scale-aware certainty:** The Mathematikerin groups measurements by PHI-proximity on the scale axis before computing transfer-entropy.
+
+---
+
+## 9: EPIGENETICS
 
 Lived life from up to seven generations works in us (DNA methylation). Experience becomes structure.
 
@@ -178,14 +211,14 @@ Lived life from up to seven generations works in us (DNA methylation). Experienc
 
 ---
 
-## 9: STIGMERGY — The Environment as Memory
+## 10: STIGMERGY — The Environment as Memory
 
 - Edge devices write measurements locally as `is`-points. Other devices read them later.
 - Matter as memory (Isotopes) — water stores history in atomic structure (δ¹⁸O)
 
 ---
 
-## 10: HARDWARE
+## 11: HARDWARE
 
 Everything that needs physical devices, in order of availability.
 
