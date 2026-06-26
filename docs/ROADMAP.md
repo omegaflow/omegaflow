@@ -180,7 +180,7 @@ The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the lo
 | 25 | Cosmic | Gravitational Waves, CMB, GRBs, Neutrinos |
 
 ### Future
-- **Temporal scale:** `ttl` is already the temporal scale axis. Future certainty formula will normalize decay by `Δt / ttl` (skalenbewusster Zerfall).
+- **Temporal scale:** `ttl` is the temporal scale axis. Certainty formula normalizes decay by `Δt / ttl`.
 - **Actuator scales:** HTTP-based actuators (API calls) declare their scale — the system can act locally (vibration motor, scale 0) or globally (API request, scale 7).
 - **Scale-aware certainty:** The Mathematikerin groups measurements by PHI-proximity on the scale axis before computing transfer-entropy.
 
