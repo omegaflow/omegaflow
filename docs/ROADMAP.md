@@ -12,15 +12,15 @@ omegaflow runs on what is already in the pockets of billions of people: an old s
 
 ## 1: PURGATORY — DONE
 
-Theory removed. System now only measures.
+Theory removed. System now measures.
 
 - `drain()` is pure accumulation of measured values (world.js)
-- All model evaluation functions deleted (clenshaw, xyz, WMM, EGM96, etc.)
+- Live data replaces model evaluation functions (clenshaw, xyz, WMM, EGM96, etc.)
 - All data is live via `is/sources.is`.
 - `weave()` is the Live-Resolver — reads `is/sources.is`, fetches live via curl, parses on-the-fly
-- Binary index lookup code deleted from `weave()`
-- `constants.is` deleted — values hardcoded where needed (`c` in world.js, `phi` in index.html)
-- `foundation.yaml` data_sources replaced with reference to `is/sources.is`
+- Direct curl fetching replaces binary index lookup in `weave()`
+- Values hardcoded where needed (`c` in world.js, `phi` in index.html)
+- `foundation.yaml` data_sources references `is/sources.is`
 - Project structure flattened: `src/`, `static/`, `is/`, `docs/`
 
 ---
@@ -69,7 +69,7 @@ Alpha Vantage, ACLED, GovTrack, EIA, OpenSky, Marine Cadastre AIS, RIPE Stat, CA
 
 ## 3: SCALE & TIME AXIS COVERAGE — DONE
 
-Achieved continuous measurement coverage across 36 orders of magnitude in space and time using only real, public API data.
+Achieved continuous measurement coverage across 36 orders of magnitude in space and time using real, public API data.
 
 ### Spatial Scale (10⁻¹⁰ m to 10²⁶ m)
 - **Subatomic / Nuclear (10⁻¹⁰ m):** Crystallography (XRD lattice constants), PDG (Particle Data Group)
@@ -175,7 +175,7 @@ The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the lo
 - **`sources.is`:** Every source declares `scale <exponent>` (raw 10^n, human-readable). 
 - **Sorting:** Sources are sorted ascending by scale (subatomic → cosmic), then alphabetically within each scale tier.
 - **Archivar (`main.rs`):** `SourceConfig.on_earth: bool` → `SourceConfig.scale: i8`. Parser reads `scale` directive.
-- **PHI-Filtering in `weave()`:** Raw 10^n scale is converted to PHI-scale internally: `phi_scale = n * ln(10)/ln(φ)`. The observer's distance from Earth center gives `observer_scale = log10(r)`. Local sources (scale < 10) are only delivered if `|phi_source - phi_observer| ≤ φ³ ≈ 4.24` PHI-steps. Cosmic sources (scale ≥ 10) are always delivered.
+- **PHI-Filtering in `weave()`:** Raw 10^n scale is converted to PHI-scale internally: `phi_scale = n * ln(10)/ln(φ)`. The observer's distance from Earth center gives `observer_scale = log10(r)`. Local sources (scale < 10) are delivered if `|phi_source - phi_observer| ≤ φ³ ≈ 4.24` PHI-steps. Cosmic sources (scale ≥ 10) are always delivered.
 
 ### Scale Distribution (173 sources)
 | Scale | Tier | Examples |

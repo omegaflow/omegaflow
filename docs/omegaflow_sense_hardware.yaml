@@ -1,7 +1,7 @@
 # ============================================================
 # omegaflow_sense_hardware.yaml
 # STATUS: PLAN (Phase 10) — NOT YET IMPLEMENTED
-# PURPOSE: The one and only source of truth for the physical
+# PURPOSE: The single source of truth for the physical
 #          omegaflow sense module. The 100% Mantis-Shrimp Config.
 #          Sensors (receivers), Actuators (senders), Infrastructure.
 # PRINCIPLE: §11 — Resonance needs presence (actuators = levers)
