@@ -1,20 +1,5 @@
-# ROADMAP: From Theory to Measurement
+# ROADMAP
 
-## The Paradigm
-
-§31: *"Intelligence lives in connection. Silicon serves."*
-§32: *"Use what is already held."*
-§33: *"Structure over Name."*
-
-omegaflow runs on what is already in the pockets of billions of people: an old smartphone, a cheap laptop. Intelligence lives in connection and mathematics, beyond expensive sensors.
-
----
-
-## 1: PURGATORY — DONE
-
-System measures.
-
-- `drain()` is pure accumulation of measured values (world.js)
 ## 1: MEASUREMENT — DONE
 
 System measures.
@@ -23,20 +8,14 @@ System measures.
 - All data flows live via `is/sources.is`
 - `weave()` is the Live-Resolver — reads `is/sources.is`, fetches live via curl, parses on-the-fly
 - Constants (`c` in world.js, `phi` in index.html) are hardcoded
-- `foundation.yaml` data_sources references `is/sources.is`
-- All data is live via `is/sources.is`.
-- `weave()` is the Live-Resolver — reads `is/sources.is`, fetches live via curl, parses on-the-fly
-- `weave()` fetches live via curl directly
-- Values hardcoded where needed (`c` in world.js, `phi` in index.html)
-- `foundation.yaml` data_sources references `is/sources.is`
-- Project structure flattened: `src/`, `static/`, `is/`, `docs/`
+- Project structure: `src/`, `static/`, `is/`, `docs/`
 
 ---
 
 ## 2: LIVE RESOLVER — DONE
 
-The Archivar fetches live measurements from the net on observer request `(t,x,y,z,s)`. API data is fetched, computed, forgotten (§12). Direct measurements.
-Scale coverage achieved: 10⁻¹⁰ m (Crystallography) to 10²⁶ m (CMB / GW-Events). Time coverage: 10⁻⁶ s (CERN ALICE proxies) to 10³⁴ years (Super-K Proton Decay limits).
+The Archivar fetches live measurements on observer request `(t,x,y,z,s)`. API data flows in, collapses, is forgotten (§12).
+Scale coverage: 10⁻¹⁰ m (Crystallography) to 10²⁶ m (CMB / GW-Events). Time coverage: 10⁻⁶ s (CERN ALICE proxies) to 10³⁴ years (Super-K Proton Decay limits).
 
 **173 sources** in `is/sources.is` across:
 
@@ -61,15 +40,15 @@ iNaturalist, GBIF, Movebank, NEON, eBird, xeno-canto, Global Forest Watch
 ### 2.7 Technosphere & Civilization
 
 #### 2.7.1 Interdisciplinary Measurements
-- **Pulsar-Timing-Arrays (Astrophysics):** Millisecond pulsars are the absolute clock of the universe. Raw arrival times anchor the temporal axis. The system *feels* gravitational waves because the absolute clock reverberates.
-- **Telluric Currents (Geology):** Natural electric currents in the Earth's crust. Electrodes in the ground measure voltage differences (measured locally via omegaflow sense).
-- **Biophotons & Plant Action Potentials (Biology):** Plants communicate via bioelectricity and biophotons. Measured locally via omegaflow sense (PT101).
-- **Isotope Hydrology (Geochemistry):** Water stores its history in its atomic structure (δ¹⁸O, δ²H). Matter itself is memory.
-- **Acoustic Oceanography:** Sound propagates differently depending on temperature. Hydrophones measure sound speed → direct temperature measurement without thermodynamic formulas.
-- **Folding@Home (Quantum Biology):** Live calculated protein atom coordinates flow as raw point clouds into the GPU.
+- **Pulsar-Timing-Arrays (Astrophysics):** Millisecond pulsars are the clock of the universe. Raw arrival times anchor the temporal axis. The system feels gravitational waves.
+- **Telluric Currents (Geology):** Electric currents in the Earth's crust. Electrodes measure voltage differences.
+- **Biophotons & Plant Action Potentials (Biology):** Plants communicate via bioelectricity and biophotons.
+- **Isotope Hydrology (Geochemistry):** Water stores history in its atomic structure (δ¹⁸O, δ²H). Matter is memory.
+- **Acoustic Oceanography:** Sound propagates depending on temperature. Hydrophones measure sound speed → temperature.
+- **Folding@Home (Quantum Biology):** Protein atom coordinates flow as point clouds into the GPU.
 
 #### 2.7.2 API Philosophy — The Collective Mycelium
-The Internet is a global network of fiber-optic nerves fed by thousands of local sensors. When omegaflow queries an API, it taps into the collective mycelium of humanity. API data is ephemeral — it flows through us, collapses locally at the observer, and is forgotten.
+API data flows through the system, collapses at the observer, is forgotten.
 
 Alpha Vantage, ACLED, GovTrack, EIA, OpenSky, Marine Cadastre AIS, RIPE Stat, CAIDA IODA, OSM (buildings, lighting, roads, amenities), Wikipedia GeoSearch
 
@@ -77,7 +56,7 @@ Alpha Vantage, ACLED, GovTrack, EIA, OpenSky, Marine Cadastre AIS, RIPE Stat, CA
 
 ## 3: SCALE & TIME AXIS COVERAGE — DONE
 
-Achieved continuous measurement coverage across 36 orders of magnitude in space and time using real, public API data.
+Continuous measurement coverage across 36 orders of magnitude in space and time.
 
 ### Spatial Scale (10⁻¹⁰ m to 10²⁶ m)
 - **Subatomic / Nuclear (10⁻¹⁰ m):** Crystallography (XRD lattice constants), PDG (Particle Data Group)
@@ -111,7 +90,7 @@ The system iterates over `Object.getOwnPropertyNames(navigator)` and `window`. I
 - **Actuators (levers):** Everything that is a function and takes arguments.
 - **Gateways (like Bluetooth/VR):** Objects with `requestDevice`, `requestSession`, etc.
 
-A €50 Android phone with cheap light sensor is found. A €2000 iPhone with LiDAR is found. The code is exactly the same. **§33: Structure over Name.**
+**§33: Structure over Name.**
 
 ### Implemented
 - `discoverSensors()` + `discoverObj()` — dynamic walk of `window`/`navigator`
@@ -128,7 +107,6 @@ A €50 Android phone with cheap light sensor is found. A €2000 iPhone with Li
 
 ## 5: EXPRESSION — DONE
 
-The organism discovers all actuators and expresses itself.
 The organism IS the expression.
 
 - `act()` fires actuators based on Resonance Map scores
@@ -163,7 +141,7 @@ Evaluated on GPU via WGSL compute shader (`workgroup_size(64)`) with JS fallback
 
 ## 7: SIGNAL TOPOLOGY — DONE
 
-Mathematics for existing channels. Pure software, runs on GPU.
+Mathematics for existing channels. Runs on GPU.
 
 ### Implemented
 - ✅ **Ring-Buffer (128 floats)** per sensor — `processSensorReading()`, `_signalBuffers`
@@ -228,18 +206,18 @@ Lived life from up to seven generations works in us (DNA methylation). Experienc
 
 ## 11: HARDWARE
 
-Everything that needs physical devices, in order of availability.
+Physical devices.
 
 ### Smartwatch
-Web Bluetooth GATT. HRV / RMSSD → vagus nerve tone → ethical filter for `immunity.is`. At low tone (stress/danger), `immunity.is` blocks strong actuators.
+Web Bluetooth GATT. HRV / RMSSD → vagus nerve tone → ethical filter for `immunity.is`.
 
-### Can borrow: Smartphone
-Magnetometer, camera (photometer), microphone (FFT seismograph), ambient light, battery — all via Web APIs. As secondary observer node.
+### Smartphone
+Magnetometer, camera (photometer), microphone (FFT seismograph), ambient light, battery — via Web APIs.
 
-### Coming soon (used VR headsets): Quest 1 / Rift
+### VR Headsets (Quest 1 / Rift)
 Controller position as `(x,y,z)`, haptics as actuator, eye direction as awareness vector.
 
-### Future: omegaflow sense (AliExpress)
+### omegaflow sense
 
 **Core Module (~25 EUR):**
 | Sensor | Measurement | Interface |
