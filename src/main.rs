@@ -229,7 +229,7 @@ fn jarr_last(json: &str, key: &str) -> Option<f64> {
         let rest = &search[pos + pat.len()..];
         let trimmed = rest.trim_start();
         let end = trimmed.find(|c: char| c == ',' || c == '}' || c == ']' || c.is_whitespace()).unwrap_or(trimmed.len());
-        if let Ok(v) = trimmed[..end].parse::<f64>() { last_val = Some(v); }
+        if let Ok(v) = trimmed[..end].trim_matches('"').parse::<f64>() { last_val = Some(v); }
         search = &search[pos + pat.len()..];
     }
     last_val
@@ -273,7 +273,7 @@ fn jobj_last_match(json: &str, filter_key: &str, filter_val: &str, extract_key: 
             let rest = &chunk[ek_pos + ek_pat.len()..];
             let trimmed = rest.trim_start();
             let end = trimmed.find(|c: char| c == ',' || c == '}').unwrap_or(trimmed.len());
-            if let Ok(v) = trimmed[..end].parse::<f64>() { last_val = Some(v); }
+            if let Ok(v) = trimmed[..end].trim_matches('"').parse::<f64>() { last_val = Some(v); }
         }
         search_start = abs_pos + fv_quoted.len();
     }

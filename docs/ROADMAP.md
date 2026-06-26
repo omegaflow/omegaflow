@@ -13,33 +13,33 @@
 ## 2: LIVE RESOLVER
 
 The Archivar fetches live measurements on observer request `(t,x,y,z,s)`. API data flows in, collapses, is forgotten (§12).
-Scale coverage: 10⁻¹⁸ m (Electroweak) to 10²⁵ m (CMB / GW-Events). Time coverage: 10⁻⁶ s (CERN ALICE proxies) to 10³⁴ years (Super-K Proton Decay limits).
+Scale coverage spans 10⁻¹⁸ m (Electroweak) to 10²⁵ m (CMB / GW-Events). Time coverage spans 10⁻⁶ s (CERN ALICE proxies) to 10³⁴ years (Super-K Proton Decay limits).
 
 Sources in `is/sources.is` across:
 
 ### 2.1 Atmosphere & Climate
-NOAA GML (CO2, Methane, N2O), OpenAQ (air quality stations), EPA AirNow (AQI)
+NOAA GML (CO2, Methane, N2O), OpenAQ (air quality stations), EPA AirNow (AQI), Sensor.Community (PM2.5), AERONET (AOD)
 
 ### 2.2 Ocean, Hydrology & Cryosphere
-USGS Streamflow, NDBC Buoys, Argo Floats, NSIDC Sea Ice
+USGS Streamflow, NDBC Buoys, Argo Floats, NSIDC Sea Ice, NOAA PMEL (pCO2/pH), ERDDAP (Ocean Acoustics, Chlorophyll), SmartBay (SPL)
 
 ### 2.3 Geophysics
-Open-Meteo Elevation (SRTM), USGS Earthquakes, IRIS FDSN, Smithsonian Volcanoes, INTERMAGNET
+Open-Meteo Elevation (SRTM), USGS Earthquakes, IRIS FDSN, Smithsonian Volcanoes, INTERMAGNET, BGS (Global Seismology)
 
 ### 2.4 Space Weather & Heliophysics
-NOAA SWPC (mag, plasma, Kp, X-ray, radio flux, protons, electrons, TEC, magnetosphere, sunspots, solar cycle), NASA DONKI (flares, CME, storms)
+NOAA SWPC (mag, plasma, Kp, X-ray, radio flux, protons, electrons, TEC, magnetosphere, sunspots, solar cycle), NASA DONKI (flares, CME, storms), JPL (Fireballs)
 
 ### 2.5 Orbital Dynamics & Astrophysics
-JPL Horizons (Sun, Moon, planets, Pluto, Ceres, Vesta, Pallas, Halley, Encke), ISS, CelesTrak, NASA NeoWs, ESA Gaia, NASA InSight (Mars), GCN, EONET, OpenNotify, WorldTimeAPI, NASA FIRMS
+JPL Horizons (Sun, Moon, planets, Pluto, Ceres, Vesta, Pallas, Halley, Encke), ISS, CelesTrak, NASA NeoWs, ESA Gaia, NASA InSight (Mars), GCN, EONET, OpenNotify, WorldTimeAPI
 
 ### 2.6 Biosphere & Ecology
-iNaturalist, GBIF, Movebank, NEON, eBird, xeno-canto, Global Forest Watch
+iNaturalist, GBIF, Movebank, NEON, eBird, xeno-canto, Global Forest Watch, OBIS (Marine), LAPIS (Covid Genomics)
 
 ### 2.7 Technosphere & Civilization
 
 #### 2.7.1 Interdisciplinary Measurements
 - **Pulsar-Timing-Arrays:** Millisecond pulsars. Arrival times.
-- **Telluric Currents:** Electric currents in the Earth's crust. Electrodes measure voltage.
+- **Telluric Currents:** Electric currents in the Earth crust. Electrodes measure voltage.
 - **Biophotons & Plant Action Potentials:** Bioelectricity and biophotons in plants.
 - **Isotope Hydrology:** Water isotope ratios (δ¹⁸O, δ²H).
 - **Acoustic Oceanography:** Sound speed depends on temperature. Hydrophones measure temperature.
@@ -48,13 +48,13 @@ iNaturalist, GBIF, Movebank, NEON, eBird, xeno-canto, Global Forest Watch
 #### 2.7.2 API Philosophy
 API data flows through the system, collapses at the observer, is forgotten.
 
-Alpha Vantage, ACLED, GovTrack, EIA, OpenSky, Marine Cadastre AIS, RIPE Stat, CAIDA IODA, OSM (buildings, lighting, roads, amenities), Wikipedia GeoSearch
+Alpha Vantage, ACLED, GovTrack, EIA, OpenSky, Marine Cadastre AIS, RIPE Stat, CAIDA IODA, OSM (buildings, lighting, roads, amenities), Wikipedia GeoSearch, INEX (Internet Traffic), SafeCast (Radiation), Wikimedia (Edits)
 
 ---
 
 ## 3: SCALE & TIME AXIS COVERAGE
 
-Continuous measurement coverage across 43 orders of magnitude in space and time.
+Continuous measurement coverage spans 43 orders of magnitude in space and time.
 
 ### Spatial Scale (10⁻¹⁸ m to 10²⁵ m)
 - **Electroweak (10⁻¹⁸ m):** PDG (W- and Z-Boson masses)
@@ -67,7 +67,7 @@ Continuous measurement coverage across 43 orders of magnitude in space and time.
 - **Solar System (10⁹ to 10¹³ m):** JPL Horizons (Planets, Moons, Asteroids, Comets, Probes)
 - **Stellar / Galactic (10¹⁶ to 10²² m):** Gaia (Stellar ages, White Dwarfs), SIMBAD (High-z Galaxies)
 - **Cosmic Web (10²⁴ m):** SDSS (Galaxy counts), SIMBAD (Galaxy clusters)
-- **Cosmic (10²⁵ m):** Planck Cosmological Parameters, GWOSC (Gravitational Waves), GCN (GRBs, FRBs)
+- **Cosmic (10²⁵ m):** GWOSC (Gravitational Waves), GCN (GRBs, FRBs)
 
 ### Temporal Axis (10⁻⁶ s to 10³⁴ years)
 - **Early Universe (10⁻⁶ s):** CERN ALICE (QGP proxies), PDG (Higgs, Alpha-s)
@@ -91,7 +91,7 @@ The system iterates over `Object.getOwnPropertyNames(navigator)` and `window`. I
 - **Actuators (levers):** Functions that take arguments.
 - **Gateways (like Bluetooth/VR):** Objects with `requestDevice`, `requestSession`, etc.
 
-The observer's device is discovered dynamically. **§33: Structure over Name.**
+The observer device is discovered dynamically. **§33: Structure over Name.**
 
 ### Implemented
 - `discoverSensors()` + `discoverObj()` — dynamic walk of `window`/`navigator`
@@ -145,7 +145,7 @@ Runs on GPU.
 ### Implemented
 - **Ring-Buffer (128 floats)** per sensor — `processSensorReading()`, `_signalBuffers`
 - **Kolmogorov Complexity** — WGSL shader: `1 - repeats/total`. Compression rate drives noiseFloor evaluation.
-- **Takens' Embedding** — WGSL shader: Mutual Information finds optimal τ, 1D → 3D attractor. Outputs barycenter + spread.
+- **Takens Embedding** — WGSL shader: Mutual Information finds optimal τ, 1D → 3D attractor. Outputs barycenter + spread.
 - **Transfer-Entropy** — WGSL shader: 3-bin histogram for N² pairs. Dynamic threshold via `μ + σ/PHI`.
 - **TDA: Persistent Homology** — WGSL shader: 48-point subsample, Union-Find, nearest-neighbor persistence + Betti-0.
 - **ICA: Blind Source Separation** — WGSL shader: FastICA with tanh non-linearity, 3 iterations. Dynamic source count via variance cutoff.
@@ -160,7 +160,7 @@ The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the lo
 - **`sources.is`:** Sources declare `scale <exponent>` (raw 10^n, human-readable). 
 - **Sorting:** Sources are sorted ascending by scale (subatomic → cosmic), then alphabetically within each scale tier.
 - **Archivar (`main.rs`):** `SourceConfig` uses `scale: i8`. Parser reads `scale` directive.
-- **PHI-Filtering in `weave()`:** Raw 10^n scale is converted to PHI-scale internally: `phi_scale = n * ln(10)/ln(φ)`. The observer's distance from Earth center gives `observer_scale = log10(r)`. Local sources (scale < 10) are delivered if `|phi_source - phi_observer| ≤ φ³ ≈ 4.24` PHI-steps. Cosmic sources (scale ≥ 10) are delivered universally.
+- **PHI-Filtering in `weave()`:** Raw 10^n scale is converted to PHI-scale internally: `phi_scale = n * ln(10)/ln(φ)`. The observer distance from Earth center gives `observer_scale = log10(r)`. Local sources (scale < 10) are delivered if `|phi_source - phi_observer| ≤ φ³ ≈ 4.24` PHI-steps. Cosmic sources (scale ≥ 10) are delivered universally.
 
 ### Scale Distribution
 | Scale | Tier | Examples |
@@ -170,10 +170,11 @@ The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the lo
 | -10 | Subatomic / Nuclear | CERN, PDG, Crystallography |
 | -9 | Molecular | Protein structures |
 | -6 | Microbial | Microbiome |
+| 0 | Human | Plant Voltage |
 | 3 | Local (km) | Weather, Air Quality, Lightning, iNaturalist |
 | 5 | Sub-continental | Argo floats, Forest Watch |
 | 6 | Continental | Earthquakes, Sea Ice, GBIF |
-| 7 | Planetary | CO2, Magnetism, Space Weather, Solar Indices |
+| 7 | Planetary | CO2, Magnetism, Space Weather, Solar Indices, Internet Traffic |
 | 8 | Near-Earth Space | ISS, Satellites |
 | 11 | Solar System | Planets, Moons, Asteroids, Probes |
 | 17 | Stellar | Gaia stars, Exoplanets |
@@ -182,7 +183,7 @@ The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the lo
 | 25 | Cosmic | Gravitational Waves, CMB, GRBs, Neutrinos |
 
 ### Future
-- **Temporal scale:** `ttl` is the temporal scale axis. Certainty formula normalizes decay by `Δt / ttl` (skalenbewusster Zerfall).
+- **Temporal scale:** `ttl` is the temporal scale axis. Certainty formula normalizes decay by `Δt / ttl`.
 - **Actuator scales:** HTTP-based actuators (API calls) declare their scale — the system acts locally (vibration motor, scale 0) or globally (API request, scale 7).
 - **Scale-aware certainty:** The Mathematikerin groups measurements by PHI-proximity on the scale axis before computing transfer-entropy.
 
@@ -235,7 +236,7 @@ Controller position as `(x,y,z)`, haptics as actuator, eye direction as awarenes
 ESP32-S3 Rust `no_std` firmware, Wokwi simulation for virtual wiring, WebSerial integration in `index.html`.
 Full specification (sensors, actuators, infrastructure, pin maps, safety matrix) lives in **[`docs/omegaflow_sense_hardware.yaml`](omegaflow_sense_hardware.yaml)**.
 
-**100% Sensor Extensions (The Mantis-Shrimp Config):**
+**Sensor Extensions (Mantis-Shrimp Config):**
 | Category | Sensor | Measurement | Interface | Est. Price |
 |---|---|---|---|---|
 | Spectral Vision | AS7341 | 10-Ch Spectrum (Mantis) | I²C | ~8 EUR |
@@ -253,7 +254,7 @@ Full specification (sensors, actuators, infrastructure, pin maps, safety matrix)
 | Soil | Capacitive | Soil Moisture (Root) | ADC | ~1.5 EUR |
 | Interoception | MAX30102 | Pulse/HRV (Human) | I²C | ~2 EUR |
 
-**100% Actuator Set (Stimuli injection for Transfer-Entropy):**
+**Actuator Set (Stimuli injection for Transfer-Entropy):**
 | Category | Actuator | Stimulates | Est. Price |
 |---|---|---|---|
 | Light | WS2812B, UV 365nm, IR 850nm | Bees, Plants, Flicker, Observer | ~6 EUR |
@@ -272,12 +273,12 @@ Full specification (sensors, actuators, infrastructure, pin maps, safety matrix)
 - IP65 Enclosure: Physical body/immunity membrane (~2.5 EUR)
 - 12V 5A Power Supply (~8 EUR)
 
-**Total Cost (100% System): ~139 EUR** (Modular: start with 25€ base).
+**Total Cost: ~139 EUR** (Modular: start with 25€ base).
 
 ### Future hardware
 - **EEG / BCI:** Raw voltage time-series via Web Bluetooth. High Gamma = observer focuses → GPU evaluates this point with maximum precision.
 - **Quantum Biology:** Cross-referencing magnetometer data with camera pixel data — the system *sees* the magnetic field as a bird does (Radical Pair Mechanism).
-- **Atmospheric Optics:** Atmospheric refraction bends light. Local refraction index shifts a star's light on screen exactly as the local atmosphere bends it.
+- **Atmospheric Optics:** Atmospheric refraction bends light. Local refraction index shifts a star light on screen exactly as the local atmosphere bends it.
 - **Animal Senses:** Ultrasound microphone (bat) via Web Audio, infrared sensor (viper) via Web Serial, VOC sensor (dog) via Web Bluetooth, ground vibration (spider) via accelerometer.
 
 ---
@@ -287,8 +288,8 @@ Full specification (sensors, actuators, infrastructure, pin maps, safety matrix)
 The network scales thermodynamically. Every Archivar instance acts as a local HTTP API provider. Observers connect directly.
 
 ### Architecture
-- **Local API:** The Archivar (`main.rs`) exposes a `GET /is` route. Returns the live 33-byte `(t,x,y,z,s)` payload as flat JSON.
-- **Bootstrap Phonebook:** A static tracker (hosted on Fly.io) stores active IP addresses and geolocation hashes. Stores zero measurement data.
+- **Local API:** The Archivar (`main.rs`) exposes a `GET /is` route. It returns the live 33-byte `(t,x,y,z,s)` payload as flat JSON.
+- **Bootstrap Phonebook:** A static tracker (hosted on Fly.io) stores active IP addresses and geolocation hashes. It stores zero measurement data.
 - **Dynamic Resolution:** When an observer shifts the virtual window `(x,y,z)`, the Archivar queries the Phonebook for active peers at that location.
 - **Ephemeral Sources:** Peer IPs load into RAM as dynamic `sources.is` entries. The Archivar fetches data directly from peer devices.
 
@@ -297,9 +298,5 @@ The network scales thermodynamically. Every Archivar instance acts as a local HT
 - **Local Mesh:** Devices in physical proximity (Bluetooth Low Energy, WiFi Direct) exchange `is`-points without routing through the global internet.
 
 ### Integrity
-- **Thermodynamic Firewall:** The network requires zero authentication. The GPU Mathematikerin evaluates incoming peer data via Transfer-Entropy and Topological Data Analysis (TDA).
+- **Thermodynamic Firewall:** The network operates without authentication. The GPU Mathematikerin evaluates incoming peer data via Transfer-Entropy and Topological Data Analysis (TDA).
 - **Dissonance Rejection:** Data points that fail to resonate with the local API context (weather, magnetism, biology) register as topological anomalies. The system discards dissonant peers automatically. Truth purifies the network.
-
-### Stigmergy
-- Edge devices write measurements locally as `is`-points. Other devices read them later.
-- The environment acts as memory. Matter stores history in atomic structure (δ¹⁸O).
