@@ -5,7 +5,7 @@
 System measures.
 
 - `drain()` accumulates measured values (world.js)
-- All data flows live via `is/sources.is`
+- Data flows live via `is/sources.is`
 - `weave()` is the Live-Resolver — reads `is/sources.is`, fetches live via curl, parses on-the-fly
 - Constants (`c` in world.js, `phi` in index.html) are hardcoded
 - Project structure: `src/`, `static/`, `is/`, `docs/`
@@ -99,7 +99,7 @@ The system iterates over `Object.getOwnPropertyNames(navigator)` and `window`. I
 - Battery (`tryStartBattery()`) — charging, level, time
 - Interoception (`tryStartInteroception()`) — CPU cores, memory, latency
 - Gamepad polling (`pollGamepads()`) — axes, buttons, partial VR controller support
-- Event registration (`registerEvents()`) — all `on*` events become sensors
+- Event registration (`registerEvents()`) — `on*` events become sensors
 - WebGPU (`tryStartWebGPU()`) — `navigator.gpu.requestAdapter()`, WGSL certainty shader
 - Web Audio (`tryStartWebAudio()`) — `PannerNode` HRTF spatial audio as actuator
 
@@ -124,7 +124,7 @@ The organism IS the expression.
 certainty = exp(-Δt_eff · g) · exp(-v_c / (g + ε)) · c_q · decay · epigenetic_factor
 ```
 
-### The Inputs (all measured)
+### The Inputs (measured)
 
 | Factor | Source | Code |
 |---|---|---|
@@ -158,7 +158,7 @@ Mathematics for existing channels. Runs on GPU.
 The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the logarithmic magnitude of the measured phenomenon.
 
 ### Implementation
-- **`sources.is`:** Every source declares `scale <exponent>` (raw 10^n, human-readable). 
+- **`sources.is`:** Sources declare `scale <exponent>` (raw 10^n, human-readable). 
 - **Sorting:** Sources are sorted ascending by scale (subatomic → cosmic), then alphabetically within each scale tier.
 - **Archivar (`main.rs`):** `SourceConfig.on_earth: bool` → `SourceConfig.scale: i8`. Parser reads `scale` directive.
 - **PHI-Filtering in `weave()`:** Raw 10^n scale is converted to PHI-scale internally: `phi_scale = n * ln(10)/ln(φ)`. The observer's distance from Earth center gives `observer_scale = log10(r)`. Local sources (scale < 10) are delivered if `|phi_source - phi_observer| ≤ φ³ ≈ 4.24` PHI-steps. Cosmic sources (scale ≥ 10) are always delivered.
