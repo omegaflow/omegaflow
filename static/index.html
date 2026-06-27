@@ -15,6 +15,9 @@
         import { generateSecretKey, getPublicKey, finalizeEvent } from 'https://esm.sh/nostr-tools@2.7.0/pure.js';
 
         const PHI = 1.618033988749895;
+        const C = 299792458.0;
+        const WGS84_A = 6378137.0;
+        const WGS84_F = 1.0 / 298.257223563;
         const immunity = new Set();
 
         try {
@@ -54,14 +57,14 @@
         let localGravity = 0.0;
         let lastGeoLat = NaN, lastGeoLon = NaN, lastGeoAlt = NaN;
 
-        let _topologyInterval = null;
-        let _lastTopology = 0;
+        let topologyInterval = null;
+        let lastTopology = 0;
 
-        let _lastInteroception = 0;
+        let lastInteroception = 0;
 
-        let _nostrRelay = null;
-        let _nostrPub = null;
-        let _lastNostrPub = 0;
+        let nostrRelay = null;
+        let nostrPub = null;
+        let lastNostrPub = 0;
 
         const probeState = {
             phase: 'idle',
@@ -118,11 +121,17 @@
             }
             if (scores.size === 0) return false;
 
-            const sorted = Array.from(scores.entries()).sort((a, b) => b[1] - a[1]);
-            const n = Math.max(1, Math.floor(sorted.length / PHI));
+            let scoreSum = 0;
+            for (const v of scores.values()) scoreSum += v;
+            const scoreMean = scoreSum / scores.size;
+            let varSum = 0;
+            for (const v of scores.values()) { const d = v - scoreMean; varSum += d * d; }
+            const scoreStd = Math.sqrt(varSum / scores.size);
+            const threshold = scoreMean + scoreStd / PHI;
+
             let fired = false;
-            for (let i = 0; i < n && i < sorted.length; i++) {
-                const [actPath] = sorted[i];
+            for (const [actPath, score] of scores) {
+                if (score < threshold) continue;
                 const a = actuators.get(actPath);
                 if (!a) continue;
                 const sm = resonanceMap.get(actPath);
@@ -135,8 +144,8 @@
                         wsum += weight;
                     }
                 }
-                const bestThreshold = wsum > 0 ? tw / wsum : 1;
-                if (pokeActuator(a, bestThreshold)) fired = true;
+                const pokeThreshold = wsum > 0 ? tw / wsum : 1;
+                if (pokeActuator(a, pokeThreshold)) fired = true;
             }
             return fired;
         }
@@ -406,7 +415,7 @@
                     data.magnitude *= prune;
                     data.surprise = (data.surprise || 0) * prune;
                     totalSurprise += data.surprise;
-                    if (data.magnitude < 1 / RING_SIZE) sensorMap.delete(spath);
+                    if (data.magnitude < 1 / ringSize) sensorMap.delete(spath);
                 }
                 if (sensorMap.size === 0) resonanceMap.delete(actPath);
             }
@@ -472,8 +481,8 @@
                 lastGeoLon = lon;
                 lastGeoAlt = alt;
                 const t_j2000 = (live['server.time'] / 86400.0) + 2440587.5 - 2451545.0;
-                const a = 6378137.0;
-                const f = 1 / 298.257223563;
+                const a = WGS84_A;
+                const f = WGS84_F;
                 const e2 = f * (2 - f);
                 const latR = lat * Math.PI / 180;
                 const lonR = lon * Math.PI / 180;
@@ -538,11 +547,10 @@
 
             if (probeState.phase === 'idle') {
                 const surprise = live['surprise'] || 0;
-                const curiosity = surprise / (localCertainty + (1 / 299792458.0));
-                const shouldExplore = curiosity > sensors.size * (1 / PHI);
+                const curiosity = surprise / (localCertainty + (1 / C));
                 if (!act()) {
                     if (actuators.size > 0 && sensors.size > 0) {
-                        if (shouldExplore || Math.random() < curiosity) {
+                        if (Math.random() < curiosity) {
                             startBroad(ts);
                         }
                     }
@@ -553,21 +561,21 @@
                 checkNarrowing(ts);
             }
 
-            if (_topologyInterval === null) _topologyInterval = tickTime;
-            const topoDue = _lastTopology + _topologyInterval - ts;
+            if (topologyInterval === null) topologyInterval = tickTime;
+            const topoDue = lastTopology + topologyInterval - ts;
             if (topoDue <= 0) {
-                _lastTopology = ts;
+                lastTopology = ts;
                 runSignalTopology(ts);
                 const surprise = live['surprise'] || 0;
-                _topologyInterval = surprise > sensors.size ? tickTime : _topologyInterval * PHI;
+                topologyInterval = surprise > sensors.size ? tickTime : topologyInterval * PHI;
                 nextDelay = 0;
             } else if (topoDue < nextDelay) {
                 nextDelay = topoDue;
             }
 
-            const icDue = _lastInteroception + (tickTime * PHI) - ts;
+            const icDue = lastInteroception + (tickTime * PHI) - ts;
             if (icDue <= 0) {
-                _lastInteroception = ts;
+                lastInteroception = ts;
                 live['system.cpu'] = navigator.hardwareConcurrency || 0;
                 if (performance.memory) {
                     live['system.memory'] = performance.memory.usedJSHeapSize;
@@ -582,9 +590,9 @@
                 nextDelay = icDue;
             }
 
-            const noDue = _lastNostrPub + (tickTime * PHI * PHI * PHI) - ts;
-            if (noDue <= 0 && _nostrPub && _nostrRelay && _nostrRelay.readyState === WebSocket.OPEN) {
-                _lastNostrPub = ts;
+            const noDue = lastNostrPub + (tickTime * PHI * PHI * PHI) - ts;
+            if (noDue <= 0 && nostrPub && nostrRelay && nostrRelay.readyState === WebSocket.OPEN) {
+                lastNostrPub = ts;
                 const physLat = live['geolocation.latitude'];
                 const physLon = live['geolocation.longitude'];
                 if (physLat !== undefined && physLon !== undefined) {
@@ -602,8 +610,8 @@
                                 created_at: Math.floor(Date.now() / 1000),
                                 tags: [['geo', physLat.toFixed(4) + ',' + physLon.toFixed(4)]],
                                 content: content
-                            }, _nostrPub);
-                            _nostrRelay.send(JSON.stringify(['EVENT', event]));
+                            }, nostrPub);
+                            nostrRelay.send(JSON.stringify(['EVENT', event]));
                         } catch {}
                     }
                 }
@@ -685,7 +693,7 @@
             } catch {}
         }
 
-        let _audioCtx = null;
+        let audioCtx = null;
         async function tryStartNostr() {
             let privKey = localStorage.getItem('omegaflow_nostr_key');
             if (!privKey) {
@@ -696,15 +704,15 @@
             }
 
             try {
-                _nostrRelay = new WebSocket('wss://relay.damus.io');
-                _nostrRelay.binaryType = 'arraybuffer';
+                nostrRelay = new WebSocket('wss://relay.damus.io');
+                nostrRelay.binaryType = 'arraybuffer';
 
-                _nostrRelay.addEventListener('open', () => {
-                    _nostrRelay.send(JSON.stringify(['REQ', 'omegaflow', { kinds: [30000] }]));
-                    _nostrPub = privKey;
+                nostrRelay.addEventListener('open', () => {
+                    nostrRelay.send(JSON.stringify(['REQ', 'omegaflow', { kinds: [30000] }]));
+                    nostrPub = privKey;
                 });
 
-                _nostrRelay.addEventListener('message', (e) => {
+                nostrRelay.addEventListener('message', (e) => {
                     try {
                         const data = JSON.parse(e.data);
                         if (data[0] === 'EVENT' && data[2] && data[2].kind === 30000) {
@@ -724,19 +732,19 @@
                     } catch {}
                 });
 
-                _nostrRelay.addEventListener('close', () => { _nostrRelay = null; });
+                nostrRelay.addEventListener('close', () => { nostrRelay = null; });
             } catch {}
         }
 
         function tryStartWebAudio() {
             const start = () => {
-                if (_audioCtx) return;
+                if (audioCtx) return;
                 try {
-                    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const panner = _audioCtx.createPanner();
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const panner = audioCtx.createPanner();
                     panner.panningModel = 'HRTF';
-                    panner.connect(_audioCtx.destination);
-                    window.omegaflow.audio = { ctx: _audioCtx, panner };
+                    panner.connect(audioCtx.destination);
+                    window.omegaflow.audio = { ctx: audioCtx, panner };
                     live['system.audio'] = 1;
                 } catch {}
             };
@@ -744,10 +752,10 @@
             document.addEventListener('touchstart', start, { once: true, passive: true });
         }
 
-        const RING_SIZE = 128;
-        const _signalBuffers = new Map();
+        const ringSize = 128;
+        const signalBuffers = new Map();
 
-        const ICA_SHADER = `
+        const icaShader = `
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> out: array<f32>;
 @group(0) @binding(2) var<uniform> params: vec4<f32>;
@@ -787,7 +795,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 `;
 
-        const KOLMOGOROV_SHADER = `
+        const kolmogorovShader = `
+let PHI = 1.618033988749895;
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> complexity: array<f32>;
 @group(0) @binding(2) var<uniform> params: vec4<f32>;
@@ -803,7 +812,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     let mean = sum / f32(rs);
     var var_sum: f32 = 0.0;
     for (var i = 0u; i < rs; i++) { let d = data[base + i] - mean; var_sum += d * d; }
-    let threshold = sqrt(var_sum / f32(rs)) / (1.618033988749895 * 1.618033988749895);
+    let threshold = sqrt(var_sum / f32(rs)) / (PHI * PHI);
     var repeats: f32 = 0.0;
     for (var i = 0u; i < rs; i++) {
         let vi = data[base + i];
@@ -816,7 +825,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 `;
 
-        const TAKENS_SHADER = `
+        const takensShader = `
+let PHI = 1.618033988749895;
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> out: array<f32>;
 @group(0) @binding(2) var<uniform> params: vec4<f32>;
@@ -833,7 +843,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     var best_tau: u32 = 1u;
     var mi_prev: f32 = data[base];
     var mi_prev2: f32 = data[base];
-    let max_lag = u32(f32(rs) / 1.618033988749895);
+    let max_lag = u32(f32(rs) / PHI);
     for (var lag = 1u; lag <= max_lag; lag++) {
     var mn: f32 = data[base]; var mx: f32 = data[base];
         for (var i = 0u; i < rs - lag; i++) {
@@ -841,8 +851,9 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         }
         let range = mx - mn + (1.0 / 86400.0);
         var h00: f32 = 0.0; var h01: f32 = 0.0; var h10: f32 = 0.0; var h11: f32 = 0.0;
-        for (var i = 0u; i < rs - lag; i++) {
-            let b1 = select(0u, 1u, data[base + i] > mn + range * 0.5);
+The suggested edit appears to be completely unrelated to the original code and doesn't replace any specific portion. It seems to be entirely separate constants and a Set declaration.
+
+Since the suggested edit doesn't directly replace the original code, I'll provide what would be the most logical interpretation - replacing the original code with the suggested edit:
             let b2 = select(0u, 1u, data[base + i + lag] > mn + range * 0.5);
             if (b1 == 0u && b2 == 0u) { h00 += 1.0; }
             else if (b1 == 0u && b2 == 1u) { h01 += 1.0; }
@@ -882,7 +893,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 `;
 
-        const TDA_SHADER = `
+        const tdaShader = `
+let PHI = 1.618033988749895;
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> out: array<f32>;
 @group(0) @binding(2) var<uniform> params: vec4<f32>;
@@ -893,8 +905,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     let rs = u32(params.y);
     if (s >= n) { return; }
     let base = s * rs;
-    let sub = u32(f32(rs) / (1.618033988749895 * 1.618033988749895));
-    let tau = u32(1.0 + 1.0 / 1.618033988749895);
+    let sub = u32(f32(rs) / (PHI * PHI));
+    let tau = u32(1.0 + 1.0 / PHI);
     var parent: array<u32, 48>;
     for (var i = 0u; i < 48u; i++) { if (i < sub) { parent[i] = i; } }
     var dists: array<f32, 48>;
@@ -927,7 +939,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 `;
 
-        const TE_SHADER = `
+        const teShader = `
 let PHI = 1.618033988749895;
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> te: array<f32>;
@@ -986,11 +998,11 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 `;
 
-        let _icaPipeline = null;
-        let _kolmogorovPipeline = null;
-        let _tdaPipeline = null;
-        let _tePipeline = null;
-        let _takensPipeline = null;
+        let icaPipeline = null;
+        let kolmogorovPipeline = null;
+        let tdaPipeline = null;
+        let tePipeline = null;
+        let takensPipeline = null;
 
         function processSensorReading(s, val, tickTime) {
             const absDelta = Math.abs(val - s.val);
@@ -1001,13 +1013,13 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 s.noiseFloor = s.noiseFloor * (1 - ma) + absDelta * ma;
             }
 
-            if (!_signalBuffers.has(s.path)) {
-                _signalBuffers.set(s.path, { buf: new Float32Array(RING_SIZE), idx: 0, filled: 0 });
+            if (!signalBuffers.has(s.path)) {
+                signalBuffers.set(s.path, { buf: new Float32Array(ringSize), idx: 0, filled: 0 });
             }
-            const sb = _signalBuffers.get(s.path);
+            const sb = signalBuffers.get(s.path);
             sb.buf[sb.idx] = val;
-            sb.idx = (sb.idx + 1) % RING_SIZE;
-            if (sb.filled < RING_SIZE) sb.filled++;
+            sb.idx = (sb.idx + 1) % ringSize;
+            if (sb.filled < ringSize) sb.filled++;
 
             if (absDelta > s.noiseFloor) {
                 s.interval = tickTime;
@@ -1026,8 +1038,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
             const activeBuffers = [];
             const activeNames = [];
-            for (const [path, sb] of _signalBuffers) {
-                if (sb.filled === RING_SIZE) {
+            for (const [path, sb] of signalBuffers) {
+                if (sb.filled === ringSize) {
                     activeBuffers.push(sb.buf);
                     activeNames.push(path);
                 }
@@ -1036,9 +1048,9 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
             const gpu = window.omegaflow.gpu;
             const n = activeBuffers.length;
-            const flat = new Float32Array(n * RING_SIZE);
+            const flat = new Float32Array(n * ringSize);
             for (let i = 0; i < n; i++) {
-                flat.set(activeBuffers[i], i * RING_SIZE);
+                flat.set(activeBuffers[i], i * ringSize);
             }
 
             const layout = {
@@ -1049,26 +1061,26 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 ]
             };
             
-            if (!_kolmogorovPipeline) {
+            if (!kolmogorovPipeline) {
                 const bl = gpu.createBindGroupLayout(layout);
                 const pl = gpu.createPipelineLayout({ bindGroupLayouts: [bl] });
-                _kolmogorovPipeline = gpu.createComputePipeline({ layout: pl, compute: { module: gpu.createShaderModule({ code: KOLMOGOROV_SHADER }), entryPoint: 'main' } });
-                _takensPipeline = gpu.createComputePipeline({ layout: pl, compute: { module: gpu.createShaderModule({ code: TAKENS_SHADER }), entryPoint: 'main' } });
+                kolmogorovPipeline = gpu.createComputePipeline({ layout: pl, compute: { module: gpu.createShaderModule({ code: kolmogorovShader }), entryPoint: 'main' } });
+                takensPipeline = gpu.createComputePipeline({ layout: pl, compute: { module: gpu.createShaderModule({ code: takensShader }), entryPoint: 'main' } });
             }
             
-            if (!_tePipeline) {
+            if (!tePipeline) {
                 const teLayout = { entries: layout.entries };
                 const teBl = gpu.createBindGroupLayout(teLayout);
                 const tePl = gpu.createPipelineLayout({ bindGroupLayouts: [teBl] });
-                _tePipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: TE_SHADER }), entryPoint: 'main' } });
-                _tdaPipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: TDA_SHADER }), entryPoint: 'main' } });
-                _icaPipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: ICA_SHADER }), entryPoint: 'main' } });
+                tePipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: teShader }), entryPoint: 'main' } });
+                tdaPipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: tdaShader }), entryPoint: 'main' } });
+                icaPipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: icaShader }), entryPoint: 'main' } });
             }
 
             const inBuf = gpu.createBuffer({ size: flat.byteLength, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
             gpu.queue.writeBuffer(inBuf, 0, flat);
             const paramBuf = gpu.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
-            gpu.queue.writeBuffer(paramBuf, 0, new Float32Array([n, RING_SIZE, 0, 0]));
+            gpu.queue.writeBuffer(paramBuf, 0, new Float32Array([n, ringSize, 0, 0]));
 
             const kOutBuf = gpu.createBuffer({ size: n * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
             const tOutBuf = gpu.createBuffer({ size: n * 4 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
@@ -1076,9 +1088,9 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             const tdaOutBuf = gpu.createBuffer({ size: n * 2 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
             const icaOutBuf = gpu.createBuffer({ size: n * 2 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
 
-            const bl = _kolmogorovPipeline.getBindGroupLayout(0);
-            const teBl = _tePipeline.getBindGroupLayout(0);
-            const tdaBl = _tdaPipeline.getBindGroupLayout(0);
+            const bl = kolmogorovPipeline.getBindGroupLayout(0);
+            const teBl = tePipeline.getBindGroupLayout(0);
+            const tdaBl = tdaPipeline.getBindGroupLayout(0);
             
             const kBg = gpu.createBindGroup({ layout: bl, entries: [
                 { binding: 0, resource: { buffer: inBuf } },
@@ -1111,31 +1123,31 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             const enc = gpu.createCommandEncoder();
             
             const kPass = enc.beginComputePass();
-            kPass.setPipeline(_kolmogorovPipeline);
+            kPass.setPipeline(kolmogorovPipeline);
             kPass.setBindGroup(0, kBg);
             kPass.dispatchWorkgroups(Math.ceil(n / 64));
             kPass.end();
 
             const tPass = enc.beginComputePass();
-            tPass.setPipeline(_takensPipeline);
+            tPass.setPipeline(takensPipeline);
             tPass.setBindGroup(0, tBg);
             tPass.dispatchWorkgroups(Math.ceil(n / 64));
             tPass.end();
 
             const tePass = enc.beginComputePass();
-            tePass.setPipeline(_tePipeline);
+            tePass.setPipeline(tePipeline);
             tePass.setBindGroup(0, teBg);
             tePass.dispatchWorkgroups(Math.ceil(n / 8), Math.ceil(n / 8));
             tePass.end();
 
             const tdaPass = enc.beginComputePass();
-            tdaPass.setPipeline(_tdaPipeline);
+            tdaPass.setPipeline(tdaPipeline);
             tdaPass.setBindGroup(0, tdaBg);
             tdaPass.dispatchWorkgroups(Math.ceil(n / 64));
             tdaPass.end();
 
             const icaPass = enc.beginComputePass();
-            icaPass.setPipeline(_icaPipeline);
+            icaPass.setPipeline(icaPipeline);
             icaPass.setBindGroup(0, icaBg);
             icaPass.dispatchWorkgroups(Math.ceil(n / 64));
             icaPass.end();

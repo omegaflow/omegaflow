@@ -6,6 +6,10 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+const PHI: f64 = 1.618033988749895;
+const WGS84_A: f64 = 6378137.0;
+const WGS84_F: f64 = 1.0 / 298.257223563;
+
 #[derive(Clone)]
 enum Extract {
     Field(String, String),
@@ -80,7 +84,7 @@ fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
 }
 
 fn ecef_to_geodetic(x: f64, y: f64, z: f64) -> (f64, f64, f64) {
-    let a = 6378137.0_f64; let f = 1.0/298.257223563; let b = a*(1.0-f);
+    let a = WGS84_A; let f = WGS84_F; let b = a*(1.0-f);
     let e2 = f*(2.0-f); let ep2 = (a*a-b*b)/(b*b);
     let p = (x*x+y*y).sqrt();
     let theta = (z*a/(p*b)).atan2(1.0);
@@ -180,7 +184,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, immunity: Arc<Mutex<HashMap
 }
 
 fn haversine(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
-    let r = 6371000.0_f64;
+    let r = WGS84_A;
     let la1 = lat1.to_radians(); let la2 = lat2.to_radians();
     let dla = (lat2 - lat1).to_radians(); let dlo = (lon2 - lon1).to_radians();
     let a = (dla / 2.0).sin().powi(2) + la1.cos() * la2.cos() * (dlo / 2.0).sin().powi(2);
@@ -554,10 +558,10 @@ fn render_url(template: &str, lat: f64, lon: f64, geo: &GeoLookup) -> String {
     template
         .replace("{lat}", &format!("{:.4}", lat))
         .replace("{lon}", &format!("{:.4}", lon))
-        .replace("{lat_min}", &format!("{:.2}", lat - (1.0 / 1.618033988749895)))
-        .replace("{lat_max}", &format!("{:.2}", lat + (1.0 / 1.618033988749895)))
-        .replace("{lon_min}", &format!("{:.2}", lon - (1.0 / 1.618033988749895)))
-        .replace("{lon_max}", &format!("{:.2}", lon + (1.0 / 1.618033988749895)))
+        .replace("{lat_min}", &format!("{:.2}", lat - (1.0 / PHI)))
+        .replace("{lat_max}", &format!("{:.2}", lat + (1.0 / PHI)))
+        .replace("{lon_min}", &format!("{:.2}", lon - (1.0 / PHI)))
+        .replace("{lon_max}", &format!("{:.2}", lon + (1.0 / PHI)))
         .replace("{today}", &today)
         .replace("{yesterday}", &yesterday)
         .replace("{tomorrow}", &tomorrow)
@@ -843,7 +847,6 @@ fn text_vector(text: &str) -> Option<(f64, f64, f64)> {
 
 fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
     if payload.len() < 32 { return Vec::new(); }
-    let _t = f64::from_le_bytes(payload[0..8].try_into().unwrap_or([0u8;8]));
     let x = f64::from_le_bytes(payload[8..16].try_into().unwrap_or([0u8;8]));
     let y = f64::from_le_bytes(payload[16..24].try_into().unwrap_or([0u8;8]));
     let z = f64::from_le_bytes(payload[24..32].try_into().unwrap_or([0u8;8]));
@@ -934,7 +937,7 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
                             let (elo,ela,ed) = (parts[0].trim().parse().unwrap_or(0.0), parts[1].trim().parse().unwrap_or(0.0), parts[2].trim().parse().unwrap_or(0.0));
                             let dlat = (ela-lv).to_radians(); let dlon = (elo-ln).to_radians();
                             let h = dlat.sin()*dlat.sin() + lv.to_radians().cos()*ela.to_radians().cos()*dlon.sin()*dlon.sin();
-                            let dist = 6371000.0*2.0*h.sqrt().atan2((1.0-h).sqrt());
+                            let dist = WGS84_A*2.0*h.sqrt().atan2((1.0-h).sqrt());
                             if dist < *max_dist {
                                 let ac = &search[cei..];
                                 if let Some(ms) = ac.find(&format!("\"{}\":", mag_key)) {

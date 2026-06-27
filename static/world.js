@@ -4,12 +4,12 @@ const PHI = 1.618033988749895;
 export const live = {};
 export const pulse = { ws: null, pending: new Map(), seq: 0 };
 
-let _last_t = NaN, _last_x = NaN, _last_y = NaN, _last_z = NaN, _last_result = null;
-let _fetch_pending = null;
-let _fetch_time = 0;
-let _last_is_data = null;
+let lastT = NaN, lastX = NaN, lastY = NaN, lastZ = NaN, lastResult = null;
+let fetchPending = null;
+let fetchTime = 0;
+let lastIsData = null;
 
-function drain(p, result) {
+function blend(p, result) {
     const ma = 1 / (PHI * PHI);
     for (const key in p) {
         const val = p[key];
@@ -25,55 +25,55 @@ function drain(p, result) {
 }
 
 export async function get(t, x, y, z) {
-    if (t === _last_t && x === _last_x && y === _last_y && z === _last_z && _last_result) {
-        return _last_result;
+    if (t === lastT && x === lastX && y === lastY && z === lastZ && lastResult) {
+        return lastResult;
     }
 
     const now = performance.now();
-    let needFetch = !_last_is_data
-    || Math.abs(t - _last_t) > (1.0 / 128.0)
-    || Math.abs(x - _last_x) > (live['geolocation.accuracy'] || 0) * PHI
-    || Math.abs(y - _last_y) > (live['geolocation.accuracy'] || 0) * PHI
-    || Math.abs(z - _last_z) > (live['geolocation.accuracy'] || 0) * PHI;
+    let needFetch = !lastIsData
+    || Math.abs(t - lastT) > (1.0 / 128.0)
+    || Math.abs(x - lastX) > (live['geolocation.accuracy'] || 0) * PHI
+    || Math.abs(y - lastY) > (live['geolocation.accuracy'] || 0) * PHI
+    || Math.abs(z - lastZ) > (live['geolocation.accuracy'] || 0) * PHI;
 
     if (needFetch) {
-        if (_fetch_pending) {
-            await _fetch_pending;
+        if (fetchPending) {
+            await fetchPending;
         } else {
-            _fetch_pending = _doFetch(t, x, y, z);
-            await _fetch_pending;
-            _fetch_pending = null;
-            _fetch_time = now;
+            fetchPending = doFetch(t, x, y, z);
+            await fetchPending;
+            fetchPending = null;
+            fetchTime = now;
         }
     }
 
     const result = {};
-    if (_last_is_data) {
-        for (const p of _last_is_data) {
-            drain(p, result);
+    if (lastIsData) {
+        for (const p of lastIsData) {
+            blend(p, result);
         }
     }
 
-    let g = _measureG(live);
-    let v_c = _measureVC(live);
-    let decay = _measureDecay(result);
-    let quantum = _measureQuantum();
-    let epig = _measureEpigenetics(result);
-    let t_now = live['server.time'] !== undefined
+    let g = measureG(live);
+    let vC = measureVC(live);
+    let decay = measureDecay(result);
+    let quantum = measureQuantum();
+    let epig = measureEpigenetics(result);
+    let tNow = live['server.time'] !== undefined
         ? (live['server.time'] / 86400.0) + 2440587.5 - 2451545.0
         : t;
-    let dt_eff = Math.abs(t - t_now);
+    let dtEff = Math.abs(t - tNow);
 
-    result.certainty = Math.exp(-dt_eff * g)
-                    * Math.exp(-v_c / (g + (1.0 / 299792458.0)))
+    result.certainty = Math.exp(-dtEff * g)
+                    * Math.exp(-vC / (g + (1.0 / C)))
                     * quantum * decay * epig;
 
     for (const key in live) {
         result[key] = live[key];
     }
 
-    _last_t = t; _last_x = x; _last_y = y; _last_z = z;
-    _last_result = result;
+    lastT = t; lastX = x; lastY = y; lastZ = z;
+    lastResult = result;
 
     return result;
 }
@@ -147,7 +147,7 @@ function parsePayload(bytes) {
     return records;
 }
 
-async function _doFetch(t, x, y, z) {
+async function doFetch(t, x, y, z) {
     const buf = new ArrayBuffer(32);
     const dv = new DataView(buf);
     dv.setFloat64(0, t, true);
@@ -164,11 +164,11 @@ async function _doFetch(t, x, y, z) {
     if (pulse.ws && pulse.ws.readyState === WebSocket.OPEN) {
         pulse.ws.send(frame);
         const buffer = await promise;
-        _last_is_data = parsePayload(new Uint8Array(buffer));
+        lastIsData = parsePayload(new Uint8Array(buffer));
     }
 }
 
-function _measureDecay(result) {
+function measureDecay(result) {
     const flux = result['cosmic_protons_100mev'];
     if (typeof flux === 'number' && flux >= 0) {
         return 1.0 / (1.0 + flux);
@@ -176,7 +176,7 @@ function _measureDecay(result) {
     return 1.0;
 }
 
-function _measureG(live) {
+function measureG(live) {
     const ax = live['AccelerometerSensor.x'];
     const ay = live['AccelerometerSensor.y'];
     const az = live['AccelerometerSensor.z'];
@@ -186,7 +186,7 @@ function _measureG(live) {
     return 1.0;
 }
 
-function _measureQuantum() {
+function measureQuantum() {
     const sensors = window.omegaflow?.sensors;
     if (!sensors || sensors.size === 0) return 1.0;
     let sum = 0, count = 0;
@@ -197,7 +197,7 @@ function _measureQuantum() {
     return Math.exp(-sum / count);
 }
 
-function _measureVC(live) {
+function measureVC(live) {
     const speed = live['geolocation.speed'];
     if (typeof speed === 'number' && speed >= 0) {
         return speed / C;
