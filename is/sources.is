@@ -11,12 +11,6 @@ header User-Agent "omegaflow"
 url https://opensky-network.org/api/states/all?lamin={lat_min}&lomin={lon_min}&lamax={lat_max}&lomax={lon_max}
 count states technosphere_aircraft_count
 
-source digitraffic_ais
-ttl 30
-header Accept "application/json"
-url https://meri.digitraffic.fi/api/ais/v1/locations
-count features technosphere_vessels_finland_count
-
 source uk_carbon_intensity
 ttl 30
 url https://api.carbonintensity.org.uk/intensity
@@ -61,8 +55,8 @@ field statistics.curout technosphere_traffic_bits_out_per_s
 
 source irail_belgium
 ttl 60
-url https://api.irail.be/liveboard/?format=json
-count timestamps technosphere_train_departures_belgium
+url https://api.irail.be/liveboard/?station=Brussels&format=json
+count departures.departure technosphere_train_departures_belgium
 
 source kp_index
 ttl 60
@@ -330,7 +324,8 @@ url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json
 count objects orbital_active_satellites
 
 source celestrak_starlink
-ttl 1800
+ttl 7200
+header User-Agent "omegaflow"
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=json
 count objects orbital_starlink_count
 
@@ -351,8 +346,8 @@ count events geosphere_wildfires_active
 
 source usgs_volcano_alerts
 ttl 1800
-url https://volcanoes.usgs.gov/vhp/updates.json
-count volcanoes geosphere_volcano_alert_count
+url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
+count features geosphere_volcano_total
 field alert_level geosphere_volcano_max_alert
 
 source aeronet_gsfc_aod
@@ -660,7 +655,7 @@ last_row J-D atmosphere_temp_anomaly_giss_c
 
 source hadcrut5_temp
 ttl 86400
-url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
+url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
 format csv
 last_row Anomaly atmosphere_hadcrut5_anomaly_c
 
@@ -781,7 +776,7 @@ last_row sea_surface_temperature hydrosphere_sst_ooi_c
 
 source overpass_mobile_antennas
 ttl 86400
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["telecom"="antenna"](around:10000,{lat},{lon});out%20count;
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:60];node["telecom"="antenna"](around:10000,{lat},{lon});out%20count;
 count nodes technosphere_mobile_antennas_10km
 
 source overpass_wifi_hotspots
@@ -806,8 +801,8 @@ vector pluto_x pluto_y pluto_z
 
 source protein_structures
 ttl 86400
-url https://data.rcsb.org/rest/v1/holdings/statistics/
-field released_structures biosphere_protein_structures_total
+url https://data.rcsb.org/rest/v1/core/entry/1UBQ
+field rcsb_entry_info.deposited_atom_count biosphere_protein_atoms_ubiquitin
 
 source saturn_vectors
 ttl 86400
@@ -882,7 +877,7 @@ last_row ANOM atmosphere_enso_oni_c
 
 source crystallography_xrd
 ttl 2592000
-url https://www.crystallography.net/cod/result.php?format=json&el=Si&limit=1
+url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
 field a molecular_lattice_constant_a
 
 source dome_fuji_co2
@@ -899,7 +894,7 @@ path success.total geosphere_macrostrat_unit_count
 
 source macrostrat_timescale
 ttl 2592000
-url https://macrostrat.org/api/v2/timescales?timescale_id=11&format=json
+url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
 path success.data.0.n_intervals geosphere_ics_timescale_units
 
 source noaa_paleoclimate_co2
@@ -1059,7 +1054,6 @@ ttl 31536000
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
 field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
 
-
 source simbad_supernovae
 ttl 2592000
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='SN'
@@ -1112,8 +1106,8 @@ field rvz_redshift cosmic_highest_redshift_z
 field ra cosmic_highest_redshift_ra
 field dec cosmic_highest_redshift_dec
 
-
 source esa_cci_datasets
 ttl 2592000
-url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=0&format=application/solr+json
+url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1
 path response.numFound climate_esa_cci_datasets
+
