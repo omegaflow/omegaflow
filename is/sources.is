@@ -593,8 +593,8 @@ vector ceres_x ceres_y ceres_z
 
 source cern_alice_pbpb
 ttl 86400
-url http://opendata.cern.ch/api/records?type=dataset&experiment=ALICE&size=0
-field hits.total cosmic_alice_datasets
+url https://opendata.cern.ch/api/records/?experiment=ALICE&size=1
+path aggregations.type.buckets.0.doc_count cosmic_alice_datasets
 
 source cneos_asteroids_inside_lunar_orbit
 ttl 86400
@@ -933,12 +933,12 @@ field 1.0.value social_global_population
 
 source cern_cms_data
 ttl 31536000
-url http://opendata.cern.ch/api/records/?type=dataset&experiment=CMS&size=1
-field hits.total cosmic_cms_datasets
+url https://opendata.cern.ch/api/records/?experiment=CMS&size=1
+path aggregations.type.buckets.0.doc_count cosmic_cms_datasets
 
 source cern_open_data
 ttl 31536000
-url http://opendata.cern.ch/api/records/?type=dataset&size=0
+url https://opendata.cern.ch/api/records/?size=1
 field hits.total cosmic_cern_datasets
 
 source esa_gaia_stars
@@ -1111,3 +1111,9 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 field rvz_redshift cosmic_highest_redshift_z
 field ra cosmic_highest_redshift_ra
 field dec cosmic_highest_redshift_dec
+
+
+source esa_cci_datasets
+ttl 2592000
+url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=0&format=application/solr+json
+path response.numFound climate_esa_cci_datasets
