@@ -202,7 +202,7 @@ count past atmosphere_rain_radar_frames
 
 source satnogs_radio_observations
 ttl 300
-url https://db.satnogs.org/api/observations/?format=json&limit=1
+url https://network.satnogs.org/api/observations/?format=json&limit=1
 count items technosphere_satnogs_observations
 
 source sensor_community_air
