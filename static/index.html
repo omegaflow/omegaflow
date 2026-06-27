@@ -605,7 +605,7 @@
                     if (content !== '{}') {
                         try {
                             const event = finalizeEvent({
-                                kind: 30000,
+                                kind: 39603,
                                 created_at: Math.floor(Date.now() / 1000),
                                 tags: [['geo', physLat.toFixed(4) + ',' + physLon.toFixed(4)]],
                                 content: content
@@ -707,14 +707,14 @@
                 nostrRelay.binaryType = 'arraybuffer';
 
                 nostrRelay.addEventListener('open', () => {
-                    nostrRelay.send(JSON.stringify(['REQ', 'omegaflow', { kinds: [30000] }]));
+                    nostrRelay.send(JSON.stringify(['REQ', 'omegaflow', { kinds: [39603] }]));
                     nostrPub = privKey;
                 });
 
                 nostrRelay.addEventListener('message', (e) => {
                     try {
                         const data = JSON.parse(e.data);
-                        if (data[0] === 'EVENT' && data[2] && data[2].kind === 30000) {
+                        if (data[0] === 'EVENT' && data[2] && data[2].kind === 39603) {
                             const event = data[2];
                             const geoTag = event.tags.find(t => t[0] === 'geo');
                             if (!geoTag) return;

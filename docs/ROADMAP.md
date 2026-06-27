@@ -122,8 +122,8 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 
 ### `index.html` — Nostr (Stigmergy)
 - Connects `wss://relay.damus.io`
-- Subscribes `kind: 30000`
-- Publishes `kind: 30000`: `content` = flat JSON of `is` values, `geo` tag = `lat,lon`
+- Subscribes `kind: 39603`
+- Publishes `kind: 39603`: `content` = flat JSON of `is` values, `geo` tag = `lat,lon`
 - Publish interval: `tickTime * PHI³`
 - On receive: forwards `{"pulse":"lat|lon|json"}` to Rust via pulse WebSocket
 
