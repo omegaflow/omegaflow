@@ -12,6 +12,7 @@
 <body>
     <script type="module">
         import { get, live, pulse } from '/world.js';
+        import { generateSecretKey, getPublicKey, finalizeEvent } from 'https://esm.sh/nostr-tools@2.7.0/pure.js';
 
         const PHI = 1.618033988749895;
         const immunity = new Set();
@@ -57,6 +58,10 @@
         let _lastTopology = 0;
 
         let _lastInteroception = 0;
+
+        let _nostrRelay = null;
+        let _nostrPub = null;
+        let _lastNostrPub = 0;
 
         const probeState = {
             phase: 'idle',
@@ -577,6 +582,36 @@
                 nextDelay = icDue;
             }
 
+            const noDue = _lastNostrPub + (tickTime * PHI * PHI * PHI) - ts;
+            if (noDue <= 0 && _nostrPub && _nostrRelay && _nostrRelay.readyState === WebSocket.OPEN) {
+                _lastNostrPub = ts;
+                const physLat = live['geolocation.latitude'];
+                const physLon = live['geolocation.longitude'];
+                if (physLat !== undefined && physLon !== undefined) {
+                    const values = {};
+                    for (const key in live) {
+                        if (key.startsWith('server.') || key.startsWith('system.') || key.startsWith('omega_flow.')) continue;
+                        const val = live[key];
+                        if (typeof val === 'number') values[key] = val;
+                    }
+                    const content = JSON.stringify(values);
+                    if (content !== '{}') {
+                        try {
+                            const event = finalizeEvent({
+                                kind: 30000,
+                                created_at: Math.floor(Date.now() / 1000),
+                                tags: [['geo', physLat.toFixed(4) + ',' + physLon.toFixed(4)]],
+                                content: content
+                            }, _nostrPub);
+                            _nostrRelay.send(JSON.stringify(['EVENT', event]));
+                        } catch {}
+                    }
+                }
+                nextDelay = 0;
+            } else if (noDue < nextDelay) {
+                nextDelay = noDue;
+            }
+
             if (document.hidden) {
                 nextDelay = Math.max(nextDelay, tickTime * PHI);
             }
@@ -651,6 +686,48 @@
         }
 
         let _audioCtx = null;
+        async function tryStartNostr() {
+            let privKey = localStorage.getItem('omegaflow_nostr_key');
+            if (!privKey) {
+                privKey = generateSecretKey();
+                localStorage.setItem('omegaflow_nostr_key', JSON.stringify(Array.from(privKey)));
+            } else {
+                privKey = new Uint8Array(JSON.parse(privKey));
+            }
+
+            try {
+                _nostrRelay = new WebSocket('wss://relay.damus.io');
+                _nostrRelay.binaryType = 'arraybuffer';
+
+                _nostrRelay.addEventListener('open', () => {
+                    _nostrRelay.send(JSON.stringify(['REQ', 'omegaflow', { kinds: [30000] }]));
+                    _nostrPub = privKey;
+                });
+
+                _nostrRelay.addEventListener('message', (e) => {
+                    try {
+                        const data = JSON.parse(e.data);
+                        if (data[0] === 'EVENT' && data[2] && data[2].kind === 30000) {
+                            const event = data[2];
+                            const geoTag = event.tags.find(t => t[0] === 'geo');
+                            if (!geoTag) return;
+                            const [latStr, lonStr] = geoTag[1].split(',');
+                            const lat = parseFloat(latStr);
+                            const lon = parseFloat(lonStr);
+                            if (isNaN(lat) || isNaN(lon)) return;
+                            if (pulseWs.readyState === WebSocket.OPEN) {
+                                pulseWs.send(JSON.stringify({
+                                    stigmergy: lat.toFixed(4) + '|' + lon.toFixed(4) + '|' + event.content
+                                }));
+                            }
+                        }
+                    } catch {}
+                });
+
+                _nostrRelay.addEventListener('close', () => { _nostrRelay = null; });
+            } catch {}
+        }
+
         function tryStartWebAudio() {
             const start = () => {
                 if (_audioCtx) return;
@@ -851,6 +928,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 `;
 
         const TE_SHADER = `
+let PHI = 1.618033988749895;
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> te: array<f32>;
 @group(0) @binding(2) var<uniform> params: vec4<f32>;
@@ -1000,6 +1078,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
             const bl = _kolmogorovPipeline.getBindGroupLayout(0);
             const teBl = _tePipeline.getBindGroupLayout(0);
+            const tdaBl = _tdaPipeline.getBindGroupLayout(0);
             
             const kBg = gpu.createBindGroup({ layout: bl, entries: [
                 { binding: 0, resource: { buffer: inBuf } },
@@ -1016,12 +1095,12 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 { binding: 1, resource: { buffer: teOutBuf } },
                 { binding: 2, resource: { buffer: paramBuf } },
             ]});
-            const tdaBg = gpu.createBindGroup({ layout: teBl, entries: [
+            const tdaBg = gpu.createBindGroup({ layout: tdaBl, entries: [
                 { binding: 0, resource: { buffer: inBuf } },
                 { binding: 1, resource: { buffer: tdaOutBuf } },
                 { binding: 2, resource: { buffer: paramBuf } },
             ]});
-            const icaBg = gpu.createBindGroup({ layout: teBl, entries: [
+            const icaBg = gpu.createBindGroup({ layout: tdaBl, entries: [
                 { binding: 0, resource: { buffer: inBuf } },
                 { binding: 1, resource: { buffer: icaOutBuf } },
                 { binding: 2, resource: { buffer: paramBuf } },
@@ -1145,6 +1224,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         tryStartSensors();
         tryStartWebGPU();
         tryStartWebAudio();
+        tryStartNostr();
         setTimeout(() => tick(performance.now()), 0);
     </script>
 </body>

@@ -58,7 +58,7 @@ export async function get(t, x, y, z) {
     let v_c = _measureVC(live);
     let decay = _measureDecay(result);
     let quantum = _measureQuantum();
-    let epig = 1.0;
+    let epig = _measureEpigenetics(result);
     let t_now = live['server.time'] !== undefined
         ? (live['server.time'] / 86400.0) + 2440587.5 - 2451545.0
         : t;
@@ -83,7 +83,7 @@ function parsePayload(bytes) {
     const td = new TextDecoder();
     let o = 0;
 
-    if (bytes.length < 7 || bytes[0] !== 73 || bytes[1] !== 83 || bytes[2] !== 2) {
+    if (bytes.length < 7 || bytes[0] !== 73 || bytes[1] !== 83 || bytes[2] !== 4) {
         return [];
     }
     o = 3;
@@ -148,19 +148,18 @@ function parsePayload(bytes) {
 }
 
 async function _doFetch(t, x, y, z) {
-    const buf = new ArrayBuffer(33);
+    const buf = new ArrayBuffer(32);
     const dv = new DataView(buf);
     dv.setFloat64(0, t, true);
     dv.setFloat64(8, x, true);
     dv.setFloat64(16, y, true);
     dv.setFloat64(24, z, true);
-    dv.setUint8(32, 0);
     const id = ++pulse.seq;
     const promise = new Promise((resolve, reject) => {
         pulse.pending.set(id, { resolve, reject });
     });
-    const frame = new Uint8Array(37);
-    new DataView(frame.buffer).setUint32(33, id, true);
+    const frame = new Uint8Array(36);
+    new DataView(frame.buffer).setUint32(32, id, true);
     frame.set(new Uint8Array(buf), 0);
     if (pulse.ws && pulse.ws.readyState === WebSocket.OPEN) {
         pulse.ws.send(frame);

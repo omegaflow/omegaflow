@@ -1,302 +1,212 @@
-# ROADMAP
+# SPECS
 
-## 1: MEASUREMENT
+## 1: PROTOCOL (IS v4)
 
-- `drain()` accumulates measured values (world.js)
-- Data flows live via `is/sources.is`
-- `weave()` is the Live-Resolver — reads `is/sources.is`, fetches live via curl, parses on-the-fly
-- Constants (`c` in world.js, `phi` in index.html) are hardcoded
-- Project structure: `src/`, `static/`, `is/`, `docs/`
-
----
-
-## 2: LIVE RESOLVER
-
-The Archivar fetches live measurements on observer request `(t,x,y,z,s)`. API data flows in, collapses, is forgotten (§12).
-Scale coverage spans 10⁻¹⁸ m (Electroweak) to 10²⁵ m (CMB / GW-Events). Time coverage spans 10⁻⁶ s (CERN ALICE proxies) to 10³⁴ years (Super-K Proton Decay limits).
-
-Sources in `is/sources.is` across:
-
-### 2.1 Atmosphere & Climate
-NOAA GML (CO2, Methane, N2O), OpenAQ (air quality stations), EPA AirNow (AQI), Sensor.Community (PM2.5), AERONET (AOD)
-
-### 2.2 Ocean, Hydrology & Cryosphere
-USGS Streamflow, NDBC Buoys, Argo Floats, NSIDC Sea Ice, NOAA PMEL (pCO2/pH), ERDDAP (Ocean Acoustics, Chlorophyll), SmartBay (SPL)
-
-### 2.3 Geophysics
-Open-Meteo Elevation (SRTM), USGS Earthquakes, IRIS FDSN, Smithsonian Volcanoes, INTERMAGNET, BGS (Global Seismology)
-
-### 2.4 Space Weather & Heliophysics
-NOAA SWPC (mag, plasma, Kp, X-ray, radio flux, protons, electrons, TEC, magnetosphere, sunspots, solar cycle), NASA DONKI (flares, CME, storms), JPL (Fireballs)
-
-### 2.5 Orbital Dynamics & Astrophysics
-JPL Horizons (Sun, Moon, planets, Pluto, Ceres, Vesta, Pallas, Halley, Encke), ISS, CelesTrak, NASA NeoWs, ESA Gaia, NASA InSight (Mars), GCN, EONET, OpenNotify, WorldTimeAPI
-
-### 2.6 Biosphere & Ecology
-iNaturalist, GBIF, Movebank, NEON, eBird, xeno-canto, Global Forest Watch, OBIS (Marine), LAPIS (Covid Genomics)
-
-### 2.7 Technosphere & Civilization
-
-#### 2.7.1 Interdisciplinary Measurements
-- **Pulsar-Timing-Arrays:** Millisecond pulsars. Arrival times.
-- **Telluric Currents:** Electric currents in the Earth crust. Electrodes measure voltage.
-- **Biophotons & Plant Action Potentials:** Bioelectricity and biophotons in plants.
-- **Isotope Hydrology:** Water isotope ratios (δ¹⁸O, δ²H).
-- **Acoustic Oceanography:** Sound speed depends on temperature. Hydrophones measure temperature.
-- **Folding@Home:** Protein atom coordinates as point clouds.
-
-#### 2.7.2 API Philosophy
-API data flows through the system, collapses at the observer, is forgotten.
-
-Alpha Vantage, ACLED, GovTrack, EIA, OpenSky, Marine Cadastre AIS, RIPE Stat, CAIDA IODA, OSM (buildings, lighting, roads, amenities), Wikipedia GeoSearch, INEX (Internet Traffic), SafeCast (Radiation), Wikimedia (Edits)
-
----
-
-## 3: SCALE & TIME AXIS COVERAGE
-
-Continuous measurement coverage spans 43 orders of magnitude in space and time.
-
-### Spatial Scale (10⁻¹⁸ m to 10²⁵ m)
-- **Electroweak (10⁻¹⁸ m):** PDG (W- and Z-Boson masses)
-- **Hadronic (10⁻¹⁵ m):** PDG (Proton mass)
-- **Subatomic / Nuclear (10⁻¹⁰ m):** Crystallography (XRD lattice constants), PDG (Particle Data Group)
-- **Molecular / Protein (10⁻⁹ m):** RCSB PDB (Protein Data Bank structures)
-- **Microbiology (10⁻⁶ m):** EBI Metagenomics (Microbiome census)
-- **Human / Local (10⁰ to 10³ m):** Weather, Air Quality, Seismic, Hydrology, Lightning
-- **Planetary (10⁶ to 10⁷ m):** Sea Ice, SST, GNSS (Crust deformation)
-- **Solar System (10⁹ to 10¹³ m):** JPL Horizons (Planets, Moons, Asteroids, Comets, Probes)
-- **Stellar / Galactic (10¹⁶ to 10²² m):** Gaia (Stellar ages, White Dwarfs), SIMBAD (High-z Galaxies)
-- **Cosmic Web (10²⁴ m):** SDSS (Galaxy counts), SIMBAD (Galaxy clusters)
-- **Cosmic (10²⁵ m):** GWOSC (Gravitational Waves), GCN (GRBs, FRBs)
-
-### Temporal Axis (10⁻⁶ s to 10³⁴ years)
-- **Early Universe (10⁻⁶ s):** CERN ALICE (QGP proxies), PDG (Higgs, Alpha-s)
-- **BBN / Recombination:** Planck CMB Parameters, VizieR (Primordial Helium)
-- **Galaxy Formation:** SIMBAD (High-z Galaxies), Gaia (Oldest Stars)
-- **Earth Formation (10⁹ years):** EarthChem (U-Pb Zircons), Macrostrat (Timescale)
-- **Paleoclimate (10³ to 10⁶ years):** NOAA NCEI (Vostok, Dome Fuji, WAIS Divide Ice Cores)
-- **Modern Era (10² years):** NASA GISS, Berkeley Earth, Mauna Loa CO2
-- **Real-time:** Full system integration
-- **Future Limits (10³⁴ years):** Super-Kamiokande (Proton Decay limits), Gaia (White Dwarfs)
-
----
-
-## 4: THE OBSERVER AS SENSOR (SOFTWARE)
-
-The system dynamically explores `window` and `navigator`.
-
-### Dynamic Topological Discovery — §33
-The system iterates over `Object.getOwnPropertyNames(navigator)` and `window`. It searches for **structures**:
-- **Sensors (gates):** Structures with `start`, `watchPosition`, `addEventListener`, `read`. Numbers/booleans = sensors.
-- **Actuators (levers):** Functions that take arguments.
-- **Gateways (like Bluetooth/VR):** Objects with `requestDevice`, `requestSession`, etc.
-
-The observer device is discovered dynamically. **§33: Structure over Name.**
-
-### Implemented
-- `discoverSensors()` + `discoverObj()` — dynamic walk of `window`/`navigator`
-- Generic Sensor API (`tryStartSensors()`) — Accelerometer, Gyroscope, Magnetometer, AmbientLightSensor, etc.
-- Geolocation (`tryStartGeolocation()`) — GPS lat/lon/alt/accuracy/heading/speed
-- Battery (`tryStartBattery()`) — charging, level, time
-- Interoception (`tryStartInteroception()`) — CPU cores, memory, latency
-- Gamepad polling (`pollGamepads()`) — axes, buttons, partial VR controller support
-- Event registration (`registerEvents()`) — `on*` events become sensors
-- WebGPU (`tryStartWebGPU()`) — `navigator.gpu.requestAdapter()`, WGSL certainty shader
-- Web Audio (`tryStartWebAudio()`) — `PannerNode` HRTF spatial audio as actuator
-
----
-
-## 5: EXPRESSION
-
-- `act()` fires actuators based on Resonance Map scores
-- `startBroad()` / `startNarrowing()` — binary search probe state machine
-- `pokeActuator()` calls function with value, catches errors
-- Dead actuators (`pokeValue > PHI³⁶`) decay
-
----
-
-## 6: CERTAINTY
-
-### The Formula
-
-```text
-certainty = exp(-Δt_eff · g) · exp(-v_c / (g + ε)) · c_q · decay · epigenetic_factor
+### Request (Browser → Rust)
+36 byte WebSocket binary frame:
+```
+f64 t          (8 bytes)
+f64 x          (8 bytes)
+f64 y          (8 bytes)
+f64 z          (8 bytes)
+u32 request_id (4 bytes)
 ```
 
-### The Inputs (measured)
+### Response (Rust → Browser)
+```
+"IS"           (2 bytes magic)
+u8 version     (4)
+u32 obj_count
+```
 
-| Factor | Source | Code |
+### Object
+```
+u8 field_count
+[field_name: u8 len, utf8 bytes, 0x00 terminator]
+[f64 value per field]
+u32 record_count
+```
+
+## 2: CPU (RUST)
+
+Entry: `src/main.rs`. Rust std. Flat hierarchy.
+
+### Bindings
+- `sources.is` → parsed at boot into `Vec<SourceConfig>`
+- WebSocket listener → `handle_pulse()` receives request, calls `weave()`, returns response
+- `curl` subprocess → `fetch_with_headers()`, 8s timeout, 4s connect
+
+### `weave(payload, archive) -> Vec<u8>`
+1. Extract `(t, x, y, z)` from first 32 bytes
+2. Calculate ECEF distance `r = sqrt(x²+y²+z²)`
+3. `on_earth = r > 6e6 && r < 7.5e6`
+4. If `on_earth`: convert ECEF → geodetic (WGS84), resolve nearest geo lookups
+5. Deliver stigmergy cache (`stig_{lat:.1}_{lon:.1}`) as `omega_flow.*` fields if data exists and age < 60s
+6. Iterate `archive.sources` (sorted by TTL ascending, then alphabetically):
+   - Skip `nostr://` URLs
+   - Render URL templates (`{lat}`, `{lon}`, etc.)
+   - Check cache (`Mutex<HashMap>`): if age < `ttl`, use cached body
+   - Else: fetch via curl, store in cache
+   - Run extractors on body, emit `is_obj`
+7. Write `obj_count` into output
+
+### Extractors
+| Keyword | Syntax | Output |
 |---|---|---|
-| `g` | Accelerometer (magnitude of proper acceleration) | `_measureG()` |
-| `v_c` | GPS speed / c | `_measureVC()` |
-| `decay` | 1/(1 + GOES ≥100 MeV proton flux) | `_measureDecay()` |
-| `quantum` | exp(-avg(sensor noiseFloor)) | `_measureQuantum()` |
-| `Δt` | \|t - t_now\| (ontological) | `dt_eff` in `get()` |
-| `epigenetic_factor` | Hardcoded 1.0 (until step 9) | `epig = 1.0` |
+| `field` | `field <json_key> <name>` | `jnum()` |
+| `first` | `first <arr_key> <name>` | `jarr_first()` |
+| `last` | `last <arr_key> <name>` | `jarr_last()` |
+| `count` | `count <arr_key> <name>` | `jarr_count()` |
+| `sum` | `sum <key> <name>` | `jsum()` |
+| `last_row` | `last_row <col> <name>` | `j2d_last_row()` or `text_last_col()` |
+| `path` | `path <dotted.path> <name>` | `jpath()` |
+| `vector` | `vector <nx> <ny> <nz>` | `text_vector()` |
+| `last_obj` | `last_obj "fk" "fv" "ek" "name"` | `jobj_last_match()` |
+| `geojson` | `geojson nearby <max_dist_m> <mag_key> <min_mag> <o1> <o2> <o3>` | Haversine filter |
 
-Evaluated on GPU via WGSL compute shader (`workgroup_size(64)`) with JS fallback.
+### `sources.is` format
+```
+source <name>
+ttl <seconds>
+url <url_with_{templates}>
+header <Name> "value"
+field <key> <name>
+```
 
----
+Sorted by TTL ascending, then alphabetically.
 
-## 7: SIGNAL TOPOLOGY
+### Cache
+`Mutex<HashMap<String, (u64 timestamp, String body)>>`. Keyed by URL path + lat/lon.
 
-Runs on GPU.
+### Stigmergy
+`Mutex<HashMap<String, (u64 timestamp, String json)>>`. Keyed by `stig_{lat:.1}_{lon:.1}`. Fed by browser WebSocket text messages: `{"stigmergy":"lat|lon|json"}`.
 
-### Implemented
-- **Ring-Buffer (128 floats)** per sensor — `processSensorReading()`, `_signalBuffers`
-- **Kolmogorov Complexity** — WGSL shader: `1 - repeats/total`. Compression rate drives noiseFloor evaluation.
-- **Takens Embedding** — WGSL shader: Mutual Information finds optimal τ, 1D → 3D attractor. Outputs barycenter + spread.
-- **Transfer-Entropy** — WGSL shader: 3-bin histogram for N² pairs. Dynamic threshold via `μ + σ/PHI`.
-- **TDA: Persistent Homology** — WGSL shader: 48-point subsample, Union-Find, nearest-neighbor persistence + Betti-0.
-- **ICA: Blind Source Separation** — WGSL shader: FastICA with tanh non-linearity, 3 iterations. Dynamic source count via variance cutoff.
+## 3: CPU (JS)
 
----
+Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 
-## 8: UNIVERSAL SCALE AXIS
+### `world.js`
+- `get(t, x, y, z)` → sends 36-byte request, parses IS v4 response
+- `parsePayload(bytes)` → reads objects, populates `live` object
+- `drain(p, result)` → moving average blend with `1/PHI²`
+- `_doFetch()` → WebSocket binary frame, Promise-based with `request_id` tracking
+- Certainty factors: `_measureG()`, `_measureVC()`, `_measureDecay()`, `_measureQuantum()`
 
-The universe is 5-dimensional: `is(t,x,y,z,s)` where `s` is the scale — the logarithmic magnitude of the measured phenomenon.
+### `index.html` — Sensor Discovery
+- `discoverSensors()` / `discoverObj()` → walks `Object.getOwnPropertyNames(window)`, depth 3
+- Circular set guard, `WeakSet` for visited objects
+- Sensors: numbers/booleans. Actuators: functions taking arguments.
+- `on*` properties → event sources → `addEventListener`
 
-### Implementation
-- **`sources.is`:** Sources declare `scale <exponent>` (raw 10^n, human-readable). 
-- **Sorting:** Sources are sorted ascending by scale (subatomic → cosmic), then alphabetically within each scale tier.
-- **Archivar (`main.rs`):** `SourceConfig` uses `scale: i8`. Parser reads `scale` directive.
-- **PHI-Filtering in `weave()`:** Raw 10^n scale is converted to PHI-scale internally: `phi_scale = n * ln(10)/ln(φ)`. The observer distance from Earth center gives `observer_scale = log10(r)`. Local sources (scale < 10) are delivered if `|phi_source - phi_observer| ≤ φ³ ≈ 4.24` PHI-steps. Cosmic sources (scale ≥ 10) are delivered universally.
+### `index.html` — Probe State Machine
+- `startBroad(ts)` → poke all actuators, snapshot sensors
+- `checkBroad(ts)` → if responders: narrow. Else: decay `pokeValue *= PHI`
+- `startNarrowing(ts, batch)` → binary split via `splitBatch()` (`PHI` ratio)
+- `checkNarrowing(ts)` → if single actuator responds: store in `resonanceMap`
+- `resonanceMap`: `Map<actuatorPath, Map<sensorPath, {threshold, magnitude, surprise}>>`
+- `act()` → fires top `N/PHI` actuators by resonance score
+- Dead threshold: `pokeValue > sensors.size * PHI`
 
-### Scale Distribution
-| Scale | Tier | Examples |
-|---|---|---|
-| -18 | Electroweak | PDG (W- and Z-Boson masses) |
-| -15 | Hadronic | PDG (Proton mass) |
-| -10 | Subatomic / Nuclear | CERN, PDG, Crystallography |
-| -9 | Molecular | Protein structures |
-| -6 | Microbial | Microbiome |
-| 0 | Human | Plant Voltage |
-| 3 | Local (km) | Weather, Air Quality, Lightning, iNaturalist |
-| 5 | Sub-continental | Argo floats, Forest Watch |
-| 6 | Continental | Earthquakes, Sea Ice, GBIF |
-| 7 | Planetary | CO2, Magnetism, Space Weather, Solar Indices, Internet Traffic |
-| 8 | Near-Earth Space | ISS, Satellites |
-| 11 | Solar System | Planets, Moons, Asteroids, Probes |
-| 17 | Stellar | Gaia stars, Exoplanets |
-| 21 | Galactic | SIMBAD, Cosmic Rays |
-| 24 | Cosmic Web | SDSS, Galaxy clusters |
-| 25 | Cosmic | Gravitational Waves, CMB, GRBs, Neutrinos |
+### `index.html` — Interoception
+- `navigator.hardwareConcurrency` → `system.cpu`
+- `performance.memory` → `system.memory`, `system.memoryTotal`
+- `fetch('/time')` round-trip → `system.latency`
 
-### Future
-- **Temporal scale:** `ttl` is the temporal scale axis. Certainty formula normalizes decay by `Δt / ttl`.
-- **Actuator scales:** HTTP-based actuators (API calls) declare their scale — the system acts locally (vibration motor, scale 0) or globally (API request, scale 7).
-- **Scale-aware certainty:** The Mathematikerin groups measurements by PHI-proximity on the scale axis before computing transfer-entropy.
+### `index.html` — Nostr (Stigmergy)
+- Connects `wss://relay.damus.io`
+- Subscribes `kind: 30000`
+- Publishes `kind: 30000`: `content` = flat JSON of `live` values, `geo` tag = `lat,lon`
+- Publish interval: `tickTime * PHI³`
+- On receive: forwards `{"stigmergy":"lat|lon|json"}` to Rust via pulse WebSocket
 
----
+## 4: GPU (WGSL)
 
-## 9: EPIGENETICS
+### Ring Buffer
+128 floats per sensor. `processSensorReading()` fills `_signalBuffers`.
 
-Lived life from up to seven generations works in us (DNA methylation). Experience becomes structure.
+### Shaders
 
-- `epigenome.is`, `generation_count`, `epigenetic_weight`
-- Traumatization (methylation/silencing) — connections with `magnitude < ε` become "silent", can be reactivated
-- `epigenetic_factor = Σ (generation_i_weight × exp(-i / 7)) for i = 1..7` is dynamic
-- Inheritance between observers at a location
+#### Kolmogorov Complexity (`KOLMOGOROV_SHADER`)
+- `workgroup_size(64)`
+- Input: `data[n * 128]`, `params(n, ring_size)`
+- Output: `complexity[n]` = `1 - repeats/total`
+- Threshold: `sqrt(variance/ring_size) / PHI²`
 
----
+#### Takens Embedding (`TAKENS_SHADER`)
+- `workgroup_size(64)`
+- Mutual Information finds optimal `τ` (first local minimum)
+- 3D attractor reconstruction: `x[t], x[t+τ], x[t+2τ]`
+- Output per signal: `cx, cy, cz, spread`
 
-## 10: STIGMERGY — The Environment as Memory
+#### Transfer Entropy (`TE_SHADER`)
+- `workgroup_size(8, 8)`
+- 3-bin histogram: `to_bin(v, min, max)` → 0, 1, or 2
+- `P(bn+1 | bn, an)` vs `P(bn+1 | bn)` for all N² pairs
+- Output: `te[a*n+b] = max(0, te_val)`
+- Dynamic threshold in JS: `μ + σ/PHI`
 
-- Edge devices write measurements locally as `is`-points. Other devices read them later.
-- Matter as memory (Isotopes) — water stores history in atomic structure (δ¹⁸O)
+#### TDA: Persistent Homology (`TDA_SHADER`)
+- `workgroup_size(64)`
+- 48-point subsample, `τ = 1 + 1/PHI`
+- Insertion sort of nearest-neighbor distances
+- Union-Find parent tracking
+- Output: persistence lifetime, Betti-0
 
----
+#### ICA: Blind Source Separation (`ICA_SHADER`)
+- `workgroup_size(64)`
+- FastICA: `tanh` non-linearity, 3 iterations
+- Weight update + normalization per iteration
+- Output per signal: variance, amplitude
+- Dynamic source count via variance cutoff in JS
 
-## 11: HARDWARE
+### GPU Bindings
+All pipelines share 3-entry bind group layout:
+```
+binding 0: storage (read)  — input data
+binding 1: storage (write) — output
+binding 2: uniform         — params vec4(n, ring_size, 0, 0)
+```
 
-Physical devices.
+## 5: SOURCES
 
-### Smartwatch
-Web Bluetooth GATT. HRV / RMSSD → vagus nerve tone → ethical filter for `immunity.is`. At low tone (stress/danger), `immunity.is` blocks strong actuators.
+`is/sources.is`. 187 sources. TTL range: 10s (ISS position) to 31536000s (Gaia star catalog).
 
-### Smartphone
-Magnetometer, camera (photometer), microphone (FFT seismograph), ambient light, battery — via Web APIs. As secondary observer node.
+### Geo Templates
+```
+{lat} {lon} {lat_min} {lat_max} {lon_min} {lon_max}
+{today} {yesterday} {tomorrow} {hour_ago} {year} {month} {day}
+{nearest_buoy} {nearest_tide_station} {nearest_geomag_station}
+{nearest_airport} {nearest_site} {nearest_observatory}
+```
 
-### VR Headsets (Quest 1 / Rift)
-Controller position as `(x,y,z)`, haptics as actuator, eye direction as awareness vector.
+### Geo Resolution
+- USGS site lookup via `waterservices.usgs.gov`
+- NDBC buoy lookup via `ndbcmapstations.json`
+- Tide station via `tidesandcurrents.noaa.gov`
+- Airport/radiosonde via `ourairports-data`
+- Intermagnet, NMDB, AERONET, SURFRAD via `is/lookups.is`
+- Country code via `bigdatacloud.net`
+- Cached 24h in `Mutex<HashMap>`
 
-### omegaflow sense
+## 6: DEVICES
 
-**Core Module (~25 EUR):**
-| Sensor | Measurement | Interface |
-|---|---|---|
-| LM358 + Cu-Plates | Telluric currents | ADC |
-| PT101 (OPT101) | Biophotons | ADC |
-| GL5528 LDR | 50/60Hz flicker | ADC |
-| PMS5003 | PM2.5 dust | UART |
-| BME680 | VOC, Temp, Press, Humid | I²C |
-| Induction Coil | EMF / Schumann | ADC + FFT |
-| I2S Mic | Bioacoustics | I2S |
+### Browser-accessible
+- Generic Sensor API: Accelerometer, Gyroscope, Magnetometer, AmbientLightSensor
+- Geolocation: lat/lon/alt/accuracy/heading/speed
+- Battery: charging/level/time
+- Gamepad: axes/buttons
+- Web Audio: `PannerNode` HRTF
 
-ESP32-S3 Rust `no_std` firmware, Wokwi simulation for virtual wiring, WebSerial integration in `index.html`.
-Full specification (sensors, actuators, infrastructure, pin maps, safety matrix) lives in **[`docs/omegaflow_sense_hardware.yaml`](omegaflow_sense_hardware.yaml)**.
+### ESP32-S3 (omegaflow sense)
+Specification: `docs/omegaflow_sense_hardware.yaml`
 
-**Sensor Extensions (Mantis-Shrimp Config):**
-| Category | Sensor | Measurement | Interface | Est. Price |
-|---|---|---|---|---|
-| Spectral Vision | AS7341 | 10-Ch Spectrum (Mantis) | I²C | ~8 EUR |
-| Spectral Vision | VEML6075 | UV-A & UV-B (Bee) | I²C | ~2 EUR |
-| Spectral Vision | Polarisationsfolie | Polarized Light (Octopus) | Optical | ~1 EUR |
-| Thermal | MLX90614 | IR / Thermal (Snake) | I²C | ~3.5 EUR |
-| Magnetic | QMC5883L | 3-Axis Magnetic (Bird) | I²C | ~1.5 EUR |
-| Chemical | SGP30 | eCO2 & VOC (Dog) | I²C | ~4 EUR |
-| Acoustic | INMP441 | MEMS Mic / Ultrasound (Bat) | I2S | ~2.5 EUR |
-| Acoustic | HC-SR04 | Ultrasonic Distance (Bat) | GPIO | ~1 EUR |
-| Acoustic | Piezo Disc | Infrasound (Elephant) | ADC | ~0.5 EUR |
-| Pressure/Flow | MS5803-14BA | Water Pressure (Fish) | I²C | ~8 EUR |
-| Bioelectric | AD8232 | µV Bioelectricity (Shark/Plant) | ADC | ~3 EUR |
-| Gravity | MPU6050 | Acceleration (Plant gravitropism) | I²C | ~1.5 EUR |
-| Soil | Capacitive | Soil Moisture (Root) | ADC | ~1.5 EUR |
-| Interoception | MAX30102 | Pulse/HRV (Human) | I²C | ~2 EUR |
+Core sensors: Telluric currents, Biophotons, 50/60Hz flicker, PM2.5, VOC/Temp/Press/Humid, EMF/Schumann, Bioacoustics.
 
-**Actuator Set (Stimuli injection for Transfer-Entropy):**
-| Category | Actuator | Stimulates | Est. Price |
-|---|---|---|---|
-| Light | WS2812B, UV 365nm, IR 850nm | Bees, Plants, Flicker, Observer | ~6 EUR |
-| Thermal | Heating Pad, Peltier TEC1 | Snakes, Mosquitos, Fish | ~8 EUR |
-| Acoustic | MAX98357A, Piezo, Exciter | Bats, Plants, Elephants | ~13.5 EUR |
-| Vibration | ERM Motor, Solenoid | Cats, Mycelium, Wood | ~4 EUR |
-| Magnetic | Copper Coil + H-Bridge | Birds, Bees, Turtles | ~6 EUR |
-| Gravitational | SG90 Servo (Tilt) | Plants, Fungi | ~2 EUR |
-| Chemical | Fan, Water Pump, Mist Maker | Dogs, Fungi, Fish | ~10 EUR |
-| Biophoton | Laser 650nm 5mW | Photobiomodulation | ~2 EUR |
-| Electric | HV Mini, MCP4725 DAC | Bees, Sharks, Plants | ~5 EUR |
+## 7: CONSTANTS
 
-**Infrastructure:**
-- TCA9548A (x2): I²C Multiplexer for 16 I2C sensors (~3 EUR)
-- 1.3" TFT ST7789: Local display of certainty/is-values (~3.5 EUR)
-- IP65 Enclosure: Physical body/immunity membrane (~2.5 EUR)
-- 12V 5A Power Supply (~8 EUR)
-
-**Total Cost: ~139 EUR** (Modular: start with 25€ base).
-
-### Future hardware
-- **EEG / BCI:** Raw voltage time-series via Web Bluetooth. High Gamma = observer focuses → GPU evaluates this point with maximum precision.
-- **Quantum Biology:** Cross-referencing magnetometer data with camera pixel data — the system *sees* the magnetic field as a bird does (Radical Pair Mechanism).
-- **Atmospheric Optics:** Atmospheric refraction bends light. Local refraction index shifts a star light on screen exactly as the local atmosphere bends it.
-- **Animal Senses:** Ultrasound microphone (bat) via Web Audio, infrared sensor (viper) via Web Serial, VOC sensor (dog) via Web Bluetooth, ground vibration (spider) via accelerometer.
-
----
-
-## 12: MYCELIUM — The P2P Observer Network
-
-The network scales thermodynamically. Every Archivar instance acts as a local HTTP API provider. Observers connect directly.
-
-### Architecture
-- **Local API:** The Archivar (`main.rs`) exposes a `GET /is` route. It returns the live 33-byte `(t,x,y,z,s)` payload as flat JSON.
-- **Bootstrap Phonebook:** A static tracker (hosted on Fly.io) stores active IP addresses and geolocation hashes. It stores zero measurement data.
-- **Dynamic Resolution:** When an observer shifts the virtual window `(x,y,z)`, the Archivar queries the Phonebook for active peers at that location.
-- **Ephemeral Sources:** Peer IPs load into RAM as dynamic `sources.is` entries. The Archivar fetches data directly from peer devices.
-
-### Connection
-- **WebRTC:** Browsers establish direct, encrypted UDP connections between observers. The server acts as a signaling node.
-- **Local Mesh:** Devices in physical proximity (Bluetooth Low Energy, WiFi Direct) exchange `is`-points without routing through the global internet.
-
-### Integrity
-- **Thermodynamic Firewall:** The network operates without authentication. The GPU Mathematikerin evaluates incoming peer data via Transfer-Entropy and Topological Data Analysis (TDA).
-- **Dissonance Rejection:** Data points that fail to resonate with the local API context (weather, magnetism, biology) register as topological anomalies. The system discards dissonant peers automatically. Truth purifies the network.
+```
+c   = 299792458.0
+PHI = 1.618033988749895
+a   = 6378137.0      (WGS84 semi-major)
+f   = 1/298.257223563 (WGS84 flattening)
+```

@@ -1,5 +1,0 @@
-source pdg_w_boson_mass
-scale -18
-ttl 31536000
-url https://pdgapi.lbl.gov/summaries/S043
-field value particle_w_boson_mass_gev

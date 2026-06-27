@@ -21,7 +21,6 @@ enum Extract {
 }
 
 struct SourceConfig {
-    scale: i8,
     ttl: u64,
     url: String,
     extracts: Vec<Extract>,
@@ -34,6 +33,7 @@ struct Archive {
     world_js: Vec<u8>,
     cache: Mutex<HashMap<String, (u64, String)>>,
     geo_lookups: HashMap<String, Vec<(String, f64, f64)>>,
+    stigmergy: Mutex<HashMap<String, (u64, String)>>,
 }
 
 struct GeoLookup {
@@ -152,9 +152,9 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, immunity: Arc<Mutex<HashMap
     while let Some(frame) = read_ws_frame_raw(&mut stream) {
         if frame.opcode==0x8 { break; }
         if frame.opcode==0x2 {
-            if frame.payload.len()<37 { continue; }
-            let id=u32::from_le_bytes(frame.payload[33..37].try_into().unwrap_or([0u8;4]));
-            let resp=weave(&frame.payload[0..33], &archive);
+            if frame.payload.len()<36 { continue; }
+            let id=u32::from_le_bytes(frame.payload[32..36].try_into().unwrap_or([0u8;4]));
+            let resp=weave(&frame.payload[0..32], &archive);
             let mut out=Vec::with_capacity(resp.len()+4); out.extend_from_slice(&resp); out.extend_from_slice(&id.to_le_bytes());
             write_ws_binary(&mut stream, &out);
         } else if frame.opcode==0x1 {
@@ -164,6 +164,16 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, immunity: Arc<Mutex<HashMap
                 for p in survived.split('|') { c.entry(p.to_string()).or_insert((0,0)).1+=1; }
                 rewrite_immunity(&c); *immunity_str.lock().unwrap()=format_immunity_snapshot(&c); last_poke.clear();
             } else if let Some(poke)=extract_json_value(&msg,"poke") { last_poke=poke.split('|').map(|s|s.to_string()).collect(); }
+            else if let Some(stig)=extract_json_value(&msg,"stigmergy") {
+                let parts: Vec<&str>=stig.splitn(3,'|').collect();
+                if parts.len()==3 {
+                    let lat_q: f64 = parts[0].parse().unwrap_or(0.0);
+                    let lon_q: f64 = parts[1].parse().unwrap_or(0.0);
+                    let key=format!("stig_{:.1}_{:.1}", lat_q, lon_q);
+                    let now=SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
+                    archive.stigmergy.lock().unwrap().insert(key, (now, parts[2].to_string()));
+                }
+            }
         }
     }
     if last_poke.len()==1 { let mut c=immunity.lock().unwrap(); c.entry(last_poke[0].clone()).or_insert((0,0)).0+=1; rewrite_immunity(&c); *immunity_str.lock().unwrap()=format_immunity_snapshot(&c); }
@@ -352,6 +362,29 @@ fn jsum(json: &str, key: &str) -> Option<f64> {
     if found { Some(sum) } else { None }
 }
 
+fn jflat(json: &str, prefix: &str) -> Vec<(String, f64)> {
+    let mut result = Vec::new();
+    let mut search = json;
+    while let Some(qpos) = search.find('"') {
+        let kstart = qpos + 1;
+        if let Some(qend) = search[kstart..].find('"') {
+            let key = &search[kstart..kstart+qend];
+            let after = &search[kstart+qend..];
+            if let Some(colon) = after.find(':') {
+                let rest = after[colon+1..].trim_start();
+                let end = rest.find(|c: char| c==','||c=='}'||c==']'||c.is_whitespace()).unwrap_or(rest.len());
+                if let Ok(v) = rest[..end].parse::<f64>() {
+                    result.push((format!("{}.{}", prefix, key), v));
+                }
+                search = &rest[end..];
+                continue;
+            }
+        }
+        search = &search[kstart..];
+    }
+    result
+}
+
 fn load_env() {
     if let Ok(content) = std::fs::read_to_string(".env") {
         for line in content.lines() {
@@ -397,7 +430,6 @@ fn load_immunity() -> HashMap<String,(u32,u32)> {
 fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
     let content = std::fs::read_to_string("is/sources.is").unwrap_or_default();
-    let mut cur_scale: i8 = 0;
     let mut cur_ttl: u64 = 0;
     let mut cur_url = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
@@ -411,10 +443,9 @@ fn load_sources() -> Vec<SourceConfig> {
         if parts.is_empty() { continue; }
         match parts[0] {
             "source" => {
-                if active { sources.push(SourceConfig { scale: cur_scale, ttl: cur_ttl, url: cur_url.clone(), extracts: cur_extracts.clone(), headers: cur_headers.clone() }); }
-                cur_scale = 0; cur_ttl = 0; cur_url.clear(); cur_extracts.clear(); cur_headers.clear(); active = true;
+                if active { sources.push(SourceConfig { ttl: cur_ttl, url: cur_url.clone(), extracts: cur_extracts.clone(), headers: cur_headers.clone() }); }
+                cur_ttl = 0; cur_url.clear(); cur_extracts.clear(); cur_headers.clear(); active = true;
             }
-            "scale" => cur_scale = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "url" => cur_url = line[4..].trim().to_string(),
             "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "header" => {
@@ -448,7 +479,7 @@ fn load_sources() -> Vec<SourceConfig> {
             _ => {}
         }
     }
-    if active { sources.push(SourceConfig { scale: cur_scale, ttl: cur_ttl, url: cur_url, extracts: cur_extracts, headers: cur_headers }); }
+    if active { sources.push(SourceConfig { ttl: cur_ttl, url: cur_url, extracts: cur_extracts, headers: cur_headers }); }
     sources
 }
 
@@ -811,23 +842,21 @@ fn text_vector(text: &str) -> Option<(f64, f64, f64)> {
 }
 
 fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
-    if payload.len() < 33 { return Vec::new(); }
+    if payload.len() < 32 { return Vec::new(); }
     let _t = f64::from_le_bytes(payload[0..8].try_into().unwrap_or([0u8;8]));
     let x = f64::from_le_bytes(payload[8..16].try_into().unwrap_or([0u8;8]));
     let y = f64::from_le_bytes(payload[16..24].try_into().unwrap_or([0u8;8]));
     let z = f64::from_le_bytes(payload[24..32].try_into().unwrap_or([0u8;8]));
 
     let mut out = Vec::new();
-    out.extend_from_slice(b"IS"); out.push(2u8);
+    out.extend_from_slice(b"IS"); out.push(4u8);
     let mut obj_count: u32 = 0;
     let obj_count_pos = out.len();
     out.extend_from_slice(&0u32.to_le_bytes());
 
     let r = (x*x+y*y+z*z).sqrt();
-    let observer_scale = if r > 0.0 { r.log10() } else { 0.0 };
-    let on_earth = observer_scale > 6.0 && observer_scale < 7.1;
-    let phi = 1.618033988749895_f64;
-    let phi_obs = observer_scale * (10.0_f64.ln() / phi.ln());
+    let on_earth = r > 6.0e6 && r < 7.5e6;
+    
     let (lat, lon) = if on_earth { let (la,lo,_)=ecef_to_geodetic(x,y,z); (Some(la),Some(lo)) } else { (None,None) };
 
     let geo = if on_earth {
@@ -836,11 +865,22 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
         GeoLookup { usgs_site: String::new(), ndbc_buoy: String::new(), intermagnet: String::new(), nmdb: String::new(), tide_station: String::new(), geomag_station: String::new(), aeronet_site: String::new(), radiosonde_station: String::new(), radiosonde_airport: String::new(), surfrad_station: String::new(), country_code: String::new() }
     };
 
-    for src in &archive.sources {
-        if src.scale < 10 {
-            let phi_src = src.scale as f64 * (10.0_f64.ln() / phi.ln());
-            if (phi_src - phi_obs).abs() > phi * phi * phi { continue; }
+    if lat.is_some() {
+        let key = format!("stig_{:.1}_{:.1}", lat.unwrap(), lon.unwrap());
+        let stig = archive.stigmergy.lock().unwrap();
+        if let Some((ts, values_json)) = stig.get(&key) {
+            let now_secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
+            if now_secs.saturating_sub(*ts) <= 60 {
+                for (name, val) in jflat(values_json, "omega_flow") {
+                    is_obj(&mut out, &[(name.as_str(), val)]);
+                    obj_count += 1;
+                }
+            }
         }
+    }
+
+    for src in &archive.sources {
+        if src.url.starts_with("nostr://") { continue; }
         let url = if lat.is_some() { render_url(&src.url, lat.unwrap(), lon.unwrap(), &geo) } else { render_url(&src.url, 0.0, 0.0, &geo) };
         let now_secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
         let cache_key = if lat.is_some() { format!("{}_{:.4}_{:.4}", src.url.split('?').next().unwrap_or(&src.url), lat.unwrap(), lon.unwrap()) } else { src.url.split('?').next().unwrap_or(&src.url).to_string() };
@@ -937,6 +977,7 @@ fn main() {
         world_js: std::fs::read("static/world.js").unwrap_or_default(),
         cache: Mutex::new(HashMap::new()),
         geo_lookups: load_geo_lookups(),
+        stigmergy: Mutex::new(HashMap::new()),
     });
     let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
