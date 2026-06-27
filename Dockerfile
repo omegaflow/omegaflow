@@ -16,5 +16,5 @@ COPY --from=builder /app/target/release/server /app/server
 COPY --from=builder /app/crates/server/static/ /app/crates/server/static/
 COPY --from=builder /app/is/ /app/is/
 
-EXPOSE 8080
+EXPOSE 3571
 CMD ["./server"]

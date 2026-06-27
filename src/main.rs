@@ -973,7 +973,7 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
 
 fn main() {
     load_env();
-    let port: u16 = std::env::var("PORT").ok().and_then(|s|s.parse().ok()).unwrap_or(0);
+    let port: u16 = std::env::var("PORT").ok().and_then(|s|s.parse().ok()).unwrap_or(3571);
     let archive = Arc::new(Archive {
         sources: load_sources(),
         index_html: std::fs::read("static/index.html").unwrap_or_default(),
