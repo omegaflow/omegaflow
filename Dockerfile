@@ -2,19 +2,16 @@ FROM rust:1.87-slim AS builder
 
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
-COPY crates/ crates/
-COPY constants.is .
-COPY is/ is/
-
+COPY src/ src/
 RUN cargo build --release
 
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY --from=builder /app/target/release/server /app/server
-COPY --from=builder /app/crates/server/static/ /app/crates/server/static/
-COPY --from=builder /app/is/ /app/is/
-
+COPY --from=builder /app/target/release/omegaflow /app/server
+COPY static/ static/
+COPY is/ is/
 EXPOSE 3571
 CMD ["./server"]
+
