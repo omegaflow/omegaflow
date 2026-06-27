@@ -31,6 +31,13 @@ u32 record_count
 
 Entry: `src/main.rs`. Rust std. Flat hierarchy.
 
+### Constants
+```
+PHI     = 1.618033988749895
+WGS84_A = 6378137.0
+WGS84_F = 1.0 / 298.257223563
+```
+
 ### Bindings
 - `sources.is` → parsed at boot into `Vec<SourceConfig>`
 - WebSocket listener → `handle_pulse()` receives request, calls `weave()`, returns response
@@ -79,7 +86,7 @@ Sorted by TTL ascending, then alphabetically.
 `Mutex<HashMap<String, (u64 timestamp, String body)>>`. Keyed by URL path + lat/lon.
 
 ### Stigmergy
-`Mutex<HashMap<String, (u64 timestamp, String json)>>`. Keyed by `stig_{lat:.1}_{lon:.1}`. Fed by browser WebSocket text messages: `{"stigmergy":"lat|lon|json"}`.
+`Mutex<HashMap<String, (u64 timestamp, String json)>>`. Keyed by `stig_{lat:.1}_{lon:.1}`. Fed by browser WebSocket text messages: `{"pulse":"lat|lon|json"}`.
 
 ## 3: CPU (JS)
 
@@ -87,10 +94,10 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 
 ### `world.js`
 - `get(t, x, y, z)` → sends 36-byte request, parses IS v4 response
-- `parsePayload(bytes)` → reads objects, populates `live` object
-- `drain(p, result)` → moving average blend with `1/PHI²`
-- `_doFetch()` → WebSocket binary frame, Promise-based with `request_id` tracking
-- Certainty factors: `_measureG()`, `_measureVC()`, `_measureDecay()`, `_measureQuantum()`
+- `parsePayload(bytes)` → reads objects, populates `is` object
+- `weave(p, result)` → moving average blend with `1/PHI²`
+- `doFetch()` → WebSocket binary frame, Promise-based with `request_id` tracking
+- Certainty factors: `measureG()`, `measureVC()`, `measureDecay()`, `measureQuantum()`, `measureEpigenetics()`
 
 ### `index.html` — Sensor Discovery
 - `discoverSensors()` / `discoverObj()` → walks `Object.getOwnPropertyNames(window)`, depth 3
@@ -99,13 +106,14 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 - `on*` properties → event sources → `addEventListener`
 
 ### `index.html` — Probe State Machine
-- `startBroad(ts)` → poke all actuators, snapshot sensors
-- `checkBroad(ts)` → if responders: narrow. Else: decay `pokeValue *= PHI`
-- `startNarrowing(ts, batch)` → binary split via `splitBatch()` (`PHI` ratio)
-- `checkNarrowing(ts)` → if single actuator responds: store in `resonanceMap`
-- `resonanceMap`: `Map<actuatorPath, Map<sensorPath, {threshold, magnitude, surprise}>>`
-- `act()` → fires top `N/PHI` actuators by resonance score
-- Dead threshold: `pokeValue > sensors.size * PHI`
+- Phases: `waiting` → `probing` → `resolving`
+- `startProbing(ts)` → pulse all actuators, snapshot sensors
+- `checkProbing(ts)` → if resonators: resolve. Else: decay `pulse *= PHI`
+- `startResolving(ts, batch)` → binary split via `splitBatch()` (`PHI` ratio)
+- `checkResolving(ts)` → if single actuator resonates: store in `resonanceMap`
+- `resonanceMap`: `Map<actuatorPath, Map<sensorPath, {pulseTone, magnitude, divergence}>>`
+- `express()` → fires actuators above `μ + σ/PHI` threshold
+- Silent threshold: `pulse > sensors.size * PHI`
 
 ### `index.html` — Interoception
 - `navigator.hardwareConcurrency` → `system.cpu`
@@ -115,44 +123,44 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 ### `index.html` — Nostr (Stigmergy)
 - Connects `wss://relay.damus.io`
 - Subscribes `kind: 30000`
-- Publishes `kind: 30000`: `content` = flat JSON of `live` values, `geo` tag = `lat,lon`
+- Publishes `kind: 30000`: `content` = flat JSON of `is` values, `geo` tag = `lat,lon`
 - Publish interval: `tickTime * PHI³`
-- On receive: forwards `{"stigmergy":"lat|lon|json"}` to Rust via pulse WebSocket
+- On receive: forwards `{"pulse":"lat|lon|json"}` to Rust via pulse WebSocket
 
 ## 4: GPU (WGSL)
 
 ### Ring Buffer
-128 floats per sensor. `processSensorReading()` fills `_signalBuffers`.
+`ringSize = 128`. `processSensorReading()` fills `signalBuffers`.
 
 ### Shaders
 
-#### Kolmogorov Complexity (`KOLMOGOROV_SHADER`)
+#### Kolmogorov Complexity (`kolmogorovShader`)
 - `workgroup_size(64)`
-- Input: `data[n * 128]`, `params(n, ring_size)`
+- Input: `data[n * 128]`, `params(n, ringSize)`
 - Output: `complexity[n]` = `1 - repeats/total`
-- Threshold: `sqrt(variance/ring_size) / PHI²`
+- Threshold: `sqrt(variance/ringSize) / PHI²`
 
-#### Takens Embedding (`TAKENS_SHADER`)
+#### Takens Embedding (`takensShader`)
 - `workgroup_size(64)`
 - Mutual Information finds optimal `τ` (first local minimum)
 - 3D attractor reconstruction: `x[t], x[t+τ], x[t+2τ]`
 - Output per signal: `cx, cy, cz, spread`
 
-#### Transfer Entropy (`TE_SHADER`)
+#### Transfer Entropy (`teShader`)
 - `workgroup_size(8, 8)`
 - 3-bin histogram: `to_bin(v, min, max)` → 0, 1, or 2
 - `P(bn+1 | bn, an)` vs `P(bn+1 | bn)` for all N² pairs
 - Output: `te[a*n+b] = max(0, te_val)`
 - Dynamic threshold in JS: `μ + σ/PHI`
 
-#### TDA: Persistent Homology (`TDA_SHADER`)
+#### TDA: Persistent Homology (`tdaShader`)
 - `workgroup_size(64)`
 - 48-point subsample, `τ = 1 + 1/PHI`
 - Insertion sort of nearest-neighbor distances
 - Union-Find parent tracking
 - Output: persistence lifetime, Betti-0
 
-#### ICA: Blind Source Separation (`ICA_SHADER`)
+#### ICA: Blind Source Separation (`icaShader`)
 - `workgroup_size(64)`
 - FastICA: `tanh` non-linearity, 3 iterations
 - Weight update + normalization per iteration
@@ -164,12 +172,12 @@ All pipelines share 3-entry bind group layout:
 ```
 binding 0: storage (read)  — input data
 binding 1: storage (write) — output
-binding 2: uniform         — params vec4(n, ring_size, 0, 0)
+binding 2: uniform         — params vec4(n, ringSize, 0, 0)
 ```
 
 ## 5: SOURCES
 
-`is/sources.is`. 187 sources. TTL range: 10s (ISS position) to 31536000s (Gaia star catalog).
+`is/sources.is`. 229 sources. TTL range: 10s (ISS position) to 31536000s (Gaia star catalog).
 
 ### Geo Templates
 ```
@@ -205,7 +213,7 @@ Core sensors: Telluric currents, Biophotons, 50/60Hz flicker, PM2.5, VOC/Temp/Pr
 ## 7: CONSTANTS
 
 ```
-c   = 299792458.0
+C   = 299792458.0
 PHI = 1.618033988749895
 a   = 6378137.0      (WGS84 semi-major)
 f   = 1/298.257223563 (WGS84 flattening)
