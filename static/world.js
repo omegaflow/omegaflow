@@ -169,7 +169,7 @@ async function doFetch(t, x, y, z) {
 }
 
 function measureDecay(result) {
-    const flux = result['cosmic_protons_100mev'];
+    const flux = result['radiation_proton_flux_100mev'];
     if (typeof flux === 'number' && flux >= 0) {
         return 1.0 / (1.0 + flux);
     }

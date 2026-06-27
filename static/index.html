@@ -54,7 +54,7 @@
         let lastSensorCount = 0;
         let lastTs = 0;
         let localCertainty = 1.0;
-        let localGravity = 0.0;
+
         let lastGeoLat = NaN, lastGeoLon = NaN, lastGeoAlt = NaN;
 
         let topologyInterval = null;
@@ -492,7 +492,6 @@
                 const z = (n * (1 - e2) + (alt || 0)) * Math.sin(latR);
                 get(t_j2000, x, y, z).then(r => {
                     if (r.certainty !== undefined) localCertainty = r.certainty;
-                    if (r.gravity !== undefined) localGravity = r.gravity;
                 }).catch(() => {});
             }
 
