@@ -1059,3 +1059,55 @@ ttl 31536000
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
 field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
 
+
+source simbad_supernovae
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='SN'
+path data.0.0 cosmic_simbad_supernovae
+
+source simbad_novae
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Nova'
+path data.0.0 cosmic_simbad_novae
+
+source simbad_white_dwarfs
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WD*'
+path data.0.0 cosmic_simbad_white_dwarfs
+
+source simbad_brown_dwarfs
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='BD*'
+path data.0.0 cosmic_simbad_brown_dwarfs
+
+source simbad_wolf_rayet
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WR*'
+path data.0.0 cosmic_simbad_wolf_rayet_stars
+
+source simbad_carbon_stars
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='C*'
+path data.0.0 cosmic_simbad_carbon_stars
+
+source simbad_young_stellar_objects
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='S*Y'
+path data.0.0 cosmic_simbad_young_stellar_objects
+
+source simbad_eclipsing_binaries
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='EB*'
+path data.0.0 cosmic_simbad_eclipsing_binaries
+
+source simbad_symbiotic_stars
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Sy*'
+path data.0.0 cosmic_simbad_symbiotic_stars
+
+source simbad_highest_redshift_quasar
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1+main_id,ra,dec,rvz_redshift+FROM+basic+WHERE+otype='QSO'+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
+field rvz_redshift cosmic_highest_redshift_z
+field ra cosmic_highest_redshift_ra
+field dec cosmic_highest_redshift_dec
