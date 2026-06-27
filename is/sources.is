@@ -26,16 +26,6 @@ ttl 60
 url https://api.drand.sh/public/latest
 field round quantum_entropy_generation_round
 
-source ldr_quantum_entropy
-ttl 60
-url https://lfdr.de/qrng_api/qrng?length=1&format=HEX
-field qrn quantum_entropy_lfdr
-
-source nist_randomness_beacon
-ttl 60
-url https://beacon.nist.gov/beacon/2.0/pulse/last
-path pulse.outputValue quantum_entropy_nist_beacon
-
 source dst_index
 ttl 60
 url https://services.swpc.noaa.gov/products/kyoto-dst.json
@@ -64,6 +54,11 @@ url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
 last kp_index magnetosphere_kp_index
 last a_index magnetosphere_ap_index
 
+source ldr_quantum_entropy
+ttl 60
+url https://lfdr.de/qrng_api/qrng?length=1&format=HEX
+field qrn quantum_entropy_lfdr
+
 source ligo_gracedb_events
 ttl 60
 url https://gracedb.ligo.org/api/superevents/?count=10&category=production
@@ -76,6 +71,11 @@ url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
 last_row bz_gsm magnetosphere_imf_bz_nt
 last_row bt magnetosphere_imf_bt_nt
 last_row by_gsm magnetosphere_imf_by_nt
+
+source nist_randomness_beacon
+ttl 60
+url https://beacon.nist.gov/beacon/2.0/pulse/last
+path pulse.outputValue quantum_entropy_nist_beacon
 
 source noaa_goes_electrons
 ttl 60
@@ -323,12 +323,6 @@ ttl 1800
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json
 count objects orbital_active_satellites
 
-source celestrak_starlink
-ttl 7200
-header User-Agent "omegaflow"
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=json
-count objects orbital_starlink_count
-
 source gdacs_disasters
 ttl 1800
 url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=EQ;TC;FL;VO;WF&fromDate={yesterday}&limit=10
@@ -555,10 +549,11 @@ url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
 format csv
 last_row kp magnetosphere_forecast_kp_max
 
-source woudc_total_ozone
-ttl 86400
-url https://api.woudc.org/collections/totalozone/items?f=json&limit=1
-path features.0.properties.daily_columno3 atmosphere_total_ozone_du
+source celestrak_starlink
+ttl 7200
+header User-Agent "omegaflow"
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=json
+count objects orbital_starlink_count
 
 source apophis_vectors
 ttl 86400
@@ -860,6 +855,11 @@ url https://xmart-api-public.who.int/FLUMART/V_FLUNET?$format=json&$top=5&$order
 field value.0.ALL_INF biosphere_influenza_positive_global
 field value.0.SPEC_PROCESSED_NB biosphere_influenza_specimens_global
 
+source woudc_total_ozone
+ttl 86400
+url https://api.woudc.org/collections/totalozone/items?f=json&limit=1
+path features.0.properties.daily_columno3 atmosphere_total_ozone_du
+
 source elevation
 ttl 604800
 url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
@@ -869,11 +869,6 @@ source geopages
 ttl 604800
 url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
 count query.geosearch technosphere_geopages_nearby
-
-source noaa_enso_oni
-ttl 2592000
-url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
-last_row ANOM atmosphere_enso_oni_c
 
 source crystallography_xrd
 ttl 2592000
@@ -887,6 +882,11 @@ format csv
 last_row age_bp paleoclimate_domefuji_age_bp
 last_row co2 paleoclimate_domefuji_co2_ppm
 
+source esa_cci_datasets
+ttl 2592000
+url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1
+path response.numFound climate_esa_cci_datasets
+
 source macrostrat_ages
 ttl 2592000
 url https://macrostrat.org/api/v2/units?age_top=0&age_bottom=4600&format=json
@@ -897,12 +897,69 @@ ttl 2592000
 url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
 path success.data.0.n_intervals geosphere_ics_timescale_units
 
+source noaa_enso_oni
+ttl 2592000
+url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+last_row ANOM atmosphere_enso_oni_c
+
 source noaa_paleoclimate_co2
 ttl 2592000
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc3deuttemp2007.txt
 format csv
 field age_bp paleoclimate_age_bp
 field temperature paleoclimate_temp_anomaly_c
+
+source simbad_brown_dwarfs
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='BD*'
+path data.0.0 cosmic_simbad_brown_dwarfs
+
+source simbad_carbon_stars
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='C*'
+path data.0.0 cosmic_simbad_carbon_stars
+
+source simbad_eclipsing_binaries
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='EB*'
+path data.0.0 cosmic_simbad_eclipsing_binaries
+
+source simbad_highest_redshift_quasar
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1+main_id,ra,dec,rvz_redshift+FROM+basic+WHERE+otype='QSO'+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
+field rvz_redshift cosmic_highest_redshift_z
+field ra cosmic_highest_redshift_ra
+field dec cosmic_highest_redshift_dec
+
+source simbad_novae
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Nova'
+path data.0.0 cosmic_simbad_novae
+
+source simbad_supernovae
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='SN'
+path data.0.0 cosmic_simbad_supernovae
+
+source simbad_symbiotic_stars
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Sy*'
+path data.0.0 cosmic_simbad_symbiotic_stars
+
+source simbad_white_dwarfs
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WD*'
+path data.0.0 cosmic_simbad_white_dwarfs
+
+source simbad_wolf_rayet
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WR*'
+path data.0.0 cosmic_simbad_wolf_rayet_stars
+
+source simbad_young_stellar_objects
+ttl 2592000
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='S*Y'
+path data.0.0 cosmic_simbad_young_stellar_objects
 
 source vostok_icecore
 ttl 2592000
@@ -1053,61 +1110,3 @@ source superk_proton_decay
 ttl 31536000
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
 field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
-
-source simbad_supernovae
-ttl 2592000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='SN'
-path data.0.0 cosmic_simbad_supernovae
-
-source simbad_novae
-ttl 2592000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Nova'
-path data.0.0 cosmic_simbad_novae
-
-source simbad_white_dwarfs
-ttl 2592000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WD*'
-path data.0.0 cosmic_simbad_white_dwarfs
-
-source simbad_brown_dwarfs
-ttl 2592000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='BD*'
-path data.0.0 cosmic_simbad_brown_dwarfs
-
-source simbad_wolf_rayet
-ttl 2592000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WR*'
-path data.0.0 cosmic_simbad_wolf_rayet_stars
-
-source simbad_carbon_stars
-ttl 2592000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='C*'
-path data.0.0 cosmic_simbad_carbon_stars
-
-source simbad_young_stellar_objects
-ttl 2592000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='S*Y'
-path data.0.0 cosmic_simbad_young_stellar_objects
-
-source simbad_eclipsing_binaries
-ttl 2592000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='EB*'
-path data.0.0 cosmic_simbad_eclipsing_binaries
-
-source simbad_symbiotic_stars
-ttl 2592000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Sy*'
-path data.0.0 cosmic_simbad_symbiotic_stars
-
-source simbad_highest_redshift_quasar
-ttl 2592000
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1+main_id,ra,dec,rvz_redshift+FROM+basic+WHERE+otype='QSO'+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
-field rvz_redshift cosmic_highest_redshift_z
-field ra cosmic_highest_redshift_ra
-field dec cosmic_highest_redshift_dec
-
-source esa_cci_datasets
-ttl 2592000
-url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1
-path response.numFound climate_esa_cci_datasets
-
