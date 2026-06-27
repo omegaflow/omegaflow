@@ -7,7 +7,7 @@ field altitude orbital_iss_alt_km
 
 source aviation
 ttl 30
-header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
+header User-Agent "omegaflow"
 url https://opensky-network.org/api/states/all?lamin={lat_min}&lomin={lon_min}&lamax={lat_max}&lomax={lon_max}
 count states technosphere_aircraft_count
 
@@ -179,7 +179,7 @@ last energy solar_xray_wavelength_a
 
 source yahoo_finance_markets
 ttl 60
-header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
+header User-Agent "omegaflow"
 url https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_stock_price
 field chart.result.0.meta.chartPreviousClose economic_stock_prev_close
@@ -863,7 +863,7 @@ vector mercury_x mercury_y mercury_z
 
 source met_norway_sun
 ttl 86400
-header User-Agent "Mozilla/5.0 (X11; Linux x86_64) omegaflow/1.0"
+header User-Agent "omegaflow"
 url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00
 field properties.sunrise.time atmosphere_sunrise_time
 field properties.solar_noon.elevation atmosphere_solar_elevation_max_deg

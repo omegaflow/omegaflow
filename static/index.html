@@ -11,27 +11,27 @@
 </head>
 <body>
     <script type="module">
-        import { get, live, pulse } from '/world.js';
+        import { get, is, pulse } from '/world.js';
         import { generateSecretKey, getPublicKey, finalizeEvent } from 'https://esm.sh/nostr-tools@2.7.0/pure.js';
 
         const PHI = 1.618033988749895;
         const C = 299792458.0;
         const WGS84_A = 6378137.0;
         const WGS84_F = 1.0 / 298.257223563;
-        const immunity = new Set();
+        const dormant = new Set();
 
         try {
-            const res = await fetch('/immunity');
+            const res = await fetch('/dormant');
             const t = await res.text();
             for (const line of t.split('\n')) {
                 const parts = line.trim().split(/\s+/);
-                if (parts[0] === 'immunity' && parts.length >= 2) {
+                if (parts[0] === 'dormant' && parts.length >= 2) {
                     if (parts.length >= 4) {
                         if (parseInt(parts[2]) > 0 && parseInt(parts[3]) === 0) {
-                            immunity.add(parts[1]);
+                            dormant.add(parts[1]);
                         }
                     } else {
-                        immunity.add(parts[1]);
+                        dormant.add(parts[1]);
                     }
                 }
             }
@@ -39,7 +39,7 @@
 
         const circular = new Set(['window','self','top','parent','frames','opener',
             'frameElement','__proto__','constructor','prototype', 'omegaflow']);
-        const dead = new Set();
+        const silent = new Set();
         const eventSources = new Set();
         const resonanceMap = new Map();
         const sensors = new Map();
@@ -53,9 +53,9 @@
         let lastGamepadState = '';
         let lastSensorCount = 0;
         let lastTs = 0;
-        let localCertainty = 1.0;
+        let certainty = 1.0;
 
-        let lastGeoLat = NaN, lastGeoLon = NaN, lastGeoAlt = NaN;
+        let geoLatCache = NaN, geoLonCache = NaN, geoAltCache = NaN;
 
         let topologyInterval = null;
         let lastTopology = 0;
@@ -67,16 +67,16 @@
         let lastNostrPub = 0;
 
         const probeState = {
-            phase: 'idle',
+            phase: 'waiting',
             batch: [],
             stack: [],
             snapshot: null,
-            pokeTime: 0,
+            pulseTime: 0,
         };
 
-        window.omegaflow = { get, live, pulse, sensors, actuators, resonanceMap };
+        window.omegaflow = { get, is, pulse, sensors, actuators, resonanceMap };
 
-        live['server.time'] = parseFloat(await (await fetch('/time')).text());
+        is['server.time'] = parseFloat(await (await fetch('/time')).text());
 
         const pulseWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/pulse`);
         pulseWs.binaryType = 'arraybuffer';
@@ -98,13 +98,13 @@
             }
         });
 
-        function act() {
+        function express() {
             const active = [];
             for (const s of sensors.values()) {
-                if (s.noiseFloor > 0) {
-                    const discrepancy = Math.abs(s.val - s.baseline);
-                    if (discrepancy > s.noiseFloor) {
-                        active.push({ sensor: s, weight: discrepancy / s.noiseFloor });
+                if (s.complexity > 0) {
+                    const deviation = Math.abs(s.val - s.median);
+                    if (deviation > s.complexity) {
+                        active.push({ sensor: s, weight: deviation / s.complexity });
                     }
                 }
             }
@@ -144,102 +144,102 @@
                         wsum += weight;
                     }
                 }
-                const pokeThreshold = wsum > 0 ? tw / wsum : 1;
-                if (pokeActuator(a, pokeThreshold)) fired = true;
+                const pulseTone = wsum > 0 ? tw / wsum : 1;
+                if (pulseActuator(a, pulseTone)) fired = true;
             }
             return fired;
         }
 
-        function checkBroad(ts) {
-            const responders = checkResponse(probeState.snapshot);
-            if (responders.length > 0) {
-                sendSurvived(probeState.batch);
+        function checkProbing(ts) {
+            const resonant = checkResonance(probeState.snapshot);
+            if (resonant.length > 0) {
+                sendResonant(probeState.batch);
                 probeState.stack = [];
-                startNarrowing(ts, probeState.batch);
+                startResolving(ts, probeState.batch);
             } else {
-                sendSurvived(probeState.batch);
+                sendResonant(probeState.batch);
                 for (const a of probeState.batch) {
-                    a.pokeValue *= PHI;
-                    if (a.pokeValue > sensors.size * PHI) {
-                    dead.add(a.path);
+                    a.pulse *= PHI;
+                    if (a.pulse > sensors.size * PHI) {
+                    silent.add(a.path);
                     actuators.delete(a.path);
                     }
                 }
-                startBroad(ts);
+                startProbing(ts);
             }
         }
 
-        function checkNarrowing(ts) {
-            const responders = checkResponse(probeState.snapshot);
+        function checkResolving(ts) {
+            const resonant = checkResonance(probeState.snapshot);
 
-            if (responders.length > 0 && probeState.batch.length === 1) {
+            if (resonant.length > 0 && probeState.batch.length === 1) {
                 const actuator = probeState.batch[0];
                 if (!resonanceMap.has(actuator.path)) {
                     resonanceMap.set(actuator.path, new Map());
                 }
-                for (const r of responders) {
+                for (const r of resonant) {
                     const existing = resonanceMap.get(actuator.path).get(r.path);
                     const predicted = probeState.predictions ? (probeState.predictions[r.path] || 0) : 0;
-                    const error = Math.abs(r.magnitude - predicted);
+                    const divergence = Math.abs(r.magnitude - predicted);
                     const ma = 1 / (PHI * PHI);
                     if (existing) {
-                        existing.threshold = existing.threshold * (1 - ma) + actuator.pokeValue * ma;
+                        existing.threshold = existing.threshold * (1 - ma) + actuator.pulse * ma;
                         existing.magnitude = existing.magnitude * (1 - ma) + r.magnitude * ma;
-                        existing.surprise = (existing.surprise || 0) * (1 - ma) + error * ma;
+                        existing.divergence = (existing.divergence || 0) * (1 - ma) + error * ma;
                     } else {
                         resonanceMap.get(actuator.path).set(r.path, {
-                            threshold: actuator.pokeValue,
+                            threshold: actuator.pulse,
                             magnitude: r.magnitude,
-                            surprise: error
+                            divergence: error
                         });
                     }
                 }
-                try { pokeActuator(actuator, 0); } catch {}
-                sendSurvived([actuator]);
+                try { pulseActuator(actuator, 0); } catch {}
+                sendResonant([actuator]);
                 if (probeState.stack.length > 0) {
                     const next = probeState.stack.pop();
-                    startNarrowing(ts, next);
+                    startResolving(ts, next);
                 } else {
-                    startBroad(ts);
+                    startProbing(ts);
                 }
                 return;
             }
 
-            if (responders.length > 0 && probeState.batch.length > 1) {
-                sendSurvived(probeState.batch);
-                startNarrowing(ts, probeState.batch);
+            if (resonant.length > 0 && probeState.batch.length > 1) {
+                sendResonant(probeState.batch);
+                startResolving(ts, probeState.batch);
                 return;
             }
 
-            sendSurvived(probeState.batch);
+            sendResonant(probeState.batch);
             for (const a of probeState.batch) {
-                a.pokeValue *= PHI;
-                if (a.pokeValue > sensors.size * PHI) {
-                    dead.add(a.path);
+                a.pulse *= PHI;
+                if (a.pulse > sensors.size * PHI) {
+                    silent.add(a.path);
                     actuators.delete(a.path);
                 }
             }
 
             if (probeState.stack.length > 0) {
                 const next = probeState.stack.pop();
-                startNarrowing(ts, next);
+                startResolving(ts, next);
             } else {
-                startBroad(ts);
+                startProbing(ts);
             }
         }
 
-        function checkResponse(snap) {
-            const responders = [];
+        function checkResonance(snap) {
+            const resonant = [];
             for (const path in snap) {
                 const s = sensors.get(path);
                 if (!s) continue;
                 const before = snap[path];
                 const delta = Math.abs(s.val - before.val);
-                if (delta > before.noiseFloor) {
-                    responders.push({ path, magnitude: delta });
+                if (delta > before.complexity) {
+                    resonant.push({ path, magnitude: delta });
                 }
             }
-            return responders;
+            return resonant;
         }
 
         function discoverObj(obj, path, depth) {
@@ -264,20 +264,20 @@
 
                 if (typeof val === 'number') {
                     if (!sensors.has(p)) {
-                        sensors.set(p, { path: p, obj, key, val, interval: null, lastPoll: 0, noiseFloor: 0, baseline: 0 });
-                        live[p] = val;
+                        sensors.set(p, { path: p, obj, key, val, interval: null, lastPoll: 0, complexity: 0, median: 0 });
+                        is[p] = val;
                     }
                 } else if (typeof val === 'boolean') {
                     if (!sensors.has(p)) {
-                        sensors.set(p, { path: p, obj, key, val: val ? 1 : 0, interval: null, lastPoll: 0, noiseFloor: 0, baseline: 0 });
-                        live[p] = val ? 1 : 0;
+                        sensors.set(p, { path: p, obj, key, val: val ? 1 : 0, interval: null, lastPoll: 0, complexity: 0, median: 0 });
+                        is[p] = val ? 1 : 0;
                     }
                 } else if (typeof val === 'function') {
-                    if (!immunity.has(key) && !dead.has(p) && !actuators.has(p)) {
-                        actuators.set(p, { path: p, obj, key, pokeValue: 1 });
+                    if (!dormant.has(key) && !silent.has(p) && !actuators.has(p)) {
+                        actuators.set(p, { path: p, obj, key, pulse: 1 });
                     }
                 } else if (typeof val === 'object') {
-                    if (!immunity.has(key) && !dead.has(p)) {
+                    if (!dormant.has(key) && !silent.has(p)) {
                         discoverObj(val, p, depth + 1);
                     }
                 }
@@ -288,43 +288,43 @@
             try {
                 const wn = Object.getOwnPropertyNames(window);
                 for (const k of wn) {
-                    if (circular.has(k) || immunity.has(k) || k.startsWith('on')) continue;
+                    if (circular.has(k) || dormant.has(k) || k.startsWith('on')) continue;
                     try {
                         const v = window[k];
                         if (typeof v === 'number') {
                             if (!sensors.has(k)) {
-                                sensors.set(k, { path: k, obj: window, key: k, val: v, interval: null, lastPoll: 0, noiseFloor: 0, baseline: 0 });
-                                live[k] = v;
+                                sensors.set(k, { path: k, obj: window, key: k, val: v, interval: null, lastPoll: 0, complexity: 0, median: 0 });
+                                is[k] = v;
                             }
                         } else if (typeof v === 'boolean') {
                             if (!sensors.has(k)) {
-                                sensors.set(k, { path: k, obj: window, key: k, val: v ? 1 : 0, interval: null, lastPoll: 0, noiseFloor: 0, baseline: 0 });
-                                live[k] = v ? 1 : 0;
+                                sensors.set(k, { path: k, obj: window, key: k, val: v ? 1 : 0, interval: null, lastPoll: 0, complexity: 0, median: 0 });
+                                is[k] = v ? 1 : 0;
                             }
                         } else if (typeof v === 'function') {
-                            if (!immunity.has(k) && !dead.has(k) && !actuators.has(k)) {
-                                actuators.set(k, { path: k, obj: window, key: k, pokeValue: 1 });
+                            if (!dormant.has(k) && !silent.has(k) && !actuators.has(k)) {
+                                actuators.set(k, { path: k, obj: window, key: k, pulse: 1 });
                             }
                         } else if (typeof v === 'object' && v !== null) {
-                            if (!dead.has(k)) discoverObj(v, k, 0);
+                            if (!silent.has(k)) discoverObj(v, k, 0);
                         }
                     } catch {}
                 }
             } catch {}
         }
 
-        function pokeActuator(actuator, value) {
+        function pulseActuator(actuator, value) {
             try {
                 const result = actuator.obj[actuator.key](value);
                 if (result && typeof result.catch === 'function') {
                     result.catch(() => {
-                        dead.add(actuator.path);
+                        silent.add(actuator.path);
                         actuators.delete(actuator.path);
                     });
                 }
                 return true;
             } catch {
-                dead.add(actuator.path);
+                silent.add(actuator.path);
                 actuators.delete(actuator.path);
                 return false;
             }
@@ -336,15 +336,15 @@
             for (let i = 0; i < gps.length; i++) {
                 if (gps[i]) {
                     const gp = gps[i];
-                    live['gamepad[' + i + '].connected'] = gp.connected ? 1 : 0;
-                    live['gamepad[' + i + '].timestamp'] = gp.timestamp;
+                    is['gamepad[' + i + '].connected'] = gp.connected ? 1 : 0;
+                    is['gamepad[' + i + '].timestamp'] = gp.timestamp;
                     for (let a = 0; a < gp.axes.length; a++) {
-                    live['gamepad[' + i + '].axes[' + a + ']'] = gp.axes[a];
+                    is['gamepad[' + i + '].axes[' + a + ']'] = gp.axes[a];
                     state = state * 31 + (gp.axes[a] * Math.pow(2, 16) | 0);
                     }
                     for (let b = 0; b < gp.buttons.length; b++) {
-                    live['gamepad[' + i + '].buttons[' + b + '].pressed'] = gp.buttons[b].pressed ? 1 : 0;
-                    live['gamepad[' + i + '].buttons[' + b + '].value'] = gp.buttons[b].value;
+                    is['gamepad[' + i + '].buttons[' + b + '].pressed'] = gp.buttons[b].pressed ? 1 : 0;
+                    is['gamepad[' + i + '].buttons[' + b + '].value'] = gp.buttons[b].value;
                     state = state * 31 + (gp.buttons[b].value * Math.pow(2, 16) | 0);
                     }
                 }
@@ -364,19 +364,19 @@
             for (const evName of eventSources) {
                 window.addEventListener(evName, (e) => {
                     const prefix = 'event.' + evName;
-                    live[prefix] = performance.now();
+                    is[prefix] = performance.now();
                     for (const k of Object.getOwnPropertyNames(e)) {
                         const v = e[k];
-                        if (typeof v === 'number') live[prefix + '.' + k] = v;
+                        if (typeof v === 'number') is[prefix + '.' + k] = v;
                     }
                     if (e.touches) {
-                        live[prefix + '.touches'] = e.touches.length;
+                        is[prefix + '.touches'] = e.touches.length;
                         for (let ti = 0; ti < e.touches.length; ti++) {
                             const tch = e.touches[ti];
                             const tp = prefix + '.touch[' + ti + ']';
                             for (const k of Object.getOwnPropertyNames(tch)) {
                                 const v = tch[k];
-                                if (typeof v === 'number') live[tp + '.' + k] = v;
+                                if (typeof v === 'number') is[tp + '.' + k] = v;
                             }
                         }
                     }
@@ -384,20 +384,20 @@
             }
         }
 
-        function sendPoke(batch) {
+        function sendPulse(batch) {
             if (pulseWs.readyState !== WebSocket.OPEN || batch.length === 0) return;
-            pulseWs.send(JSON.stringify({ poke: batch.map(a => a.path).join('|') }));
+            pulseWs.send(JSON.stringify({ pulse: batch.map(a => a.path).join('|') }));
         }
 
-        function sendSurvived(batch) {
+        function sendResonant(batch) {
             if (pulseWs.readyState !== WebSocket.OPEN || batch.length === 0) return;
-            pulseWs.send(JSON.stringify({ survived: batch.map(a => a.path).join('|') }));
+            pulseWs.send(JSON.stringify({ resonant: batch.map(a => a.path).join('|') }));
         }
 
         function snapshotSensors() {
             const snap = {};
             for (const [path, s] of sensors) {
-                snap[path] = { val: s.val, noiseFloor: s.noiseFloor };
+                snap[path] = { val: s.val, complexity: s.complexity };
             }
             return snap;
         }
@@ -407,22 +407,22 @@
             return { left: batch.slice(0, splitIdx), right: batch.slice(splitIdx) };
         }
 
-        function startBroad(ts) {
+        function startProbing(ts) {
             const prune = 1 - 1 / (PHI * PHI);
-            let totalSurprise = 0;
+            let totalDivergence = 0;
             for (const [actPath, sensorMap] of resonanceMap) {
                 for (const [spath, data] of sensorMap) {
                     data.magnitude *= prune;
-                    data.surprise = (data.surprise || 0) * prune;
-                    totalSurprise += data.surprise;
+                    data.divergence = (data.divergence || 0) * prune;
+                    totalDivergence += data.divergence;
                     if (data.magnitude < 1 / ringSize) sensorMap.delete(spath);
                 }
                 if (sensorMap.size === 0) resonanceMap.delete(actPath);
             }
-            live['surprise'] = totalSurprise;
+            is['divergence'] = totalDivergence;
             probeState.batch = Array.from(actuators.values());
             if (probeState.batch.length === 0) {
-                probeState.phase = 'idle';
+                probeState.phase = 'waiting';
                 return;
             }
             const predictions = {};
@@ -434,53 +434,53 @@
                     }
                 }
             }
-            sendPoke(probeState.batch);
+            sendPulse(probeState.batch);
             probeState.snapshot = snapshotSensors();
             probeState.predictions = predictions;
             for (const a of probeState.batch) {
-                pokeActuator(a, a.pokeValue);
+                pulseActuator(a, a.pulse);
             }
-            probeState.pokeTime = ts;
-            probeState.phase = 'broad';
+            probeState.pulseTime = ts;
+            probeState.phase = 'probing';
         }
 
-        function startNarrowing(ts, batch) {
+        function startResolving(ts, batch) {
             if (batch.length <= 1) {
                 probeState.batch = batch;
-                sendPoke(batch);
+                sendPulse(batch);
                 probeState.snapshot = snapshotSensors();
                 for (const a of batch) {
-                    pokeActuator(a, a.pokeValue);
+                    pulseActuator(a, a.pulse);
                 }
-                probeState.pokeTime = ts;
-                probeState.phase = 'narrowing';
+                probeState.pulseTime = ts;
+                probeState.phase = 'resolving';
                 return;
             }
 
             const { left, right } = splitBatch(batch);
             probeState.stack.push(right);
             probeState.batch = left;
-            sendPoke(left);
+            sendPulse(left);
             probeState.snapshot = snapshotSensors();
             for (const a of left) {
-                pokeActuator(a, a.pokeValue);
+                pulseActuator(a, a.pulse);
             }
-            probeState.pokeTime = ts;
-            probeState.phase = 'narrowing';
+            probeState.pulseTime = ts;
+            probeState.phase = 'resolving';
         }
 
-        function tick(ts) {
+        function heartbeat(ts) {
             const tickTime = lastTs > 0 ? ts - lastTs : 1;
             lastTs = ts;
 
-            const lat = live['geolocation.latitude'];
-            const lon = live['geolocation.longitude'];
-            const alt = live['geolocation.altitude'];
-            if (lat !== undefined && lon !== undefined && (lat !== lastGeoLat || lon !== lastGeoLon || alt !== lastGeoAlt)) {
-                lastGeoLat = lat;
-                lastGeoLon = lon;
-                lastGeoAlt = alt;
-                const t_j2000 = (live['server.time'] / 86400.0) + 2440587.5 - 2451545.0;
+            const lat = is['geolocation.latitude'];
+            const lon = is['geolocation.longitude'];
+            const alt = is['geolocation.altitude'];
+            if (lat !== undefined && lon !== undefined && (lat !== geoLatCache || lon !== geoLonCache || alt !== geoAltCache)) {
+                geoLatCache = lat;
+                geoLonCache = lon;
+                geoAltCache = alt;
+                const t_j2000 = (is['server.time'] / 86400.0) + 2440587.5 - 2451545.0;
                 const a = WGS84_A;
                 const f = WGS84_F;
                 const e2 = f * (2 - f);
@@ -491,7 +491,7 @@
                 const y = (n + (alt || 0)) * Math.cos(latR) * Math.sin(lonR);
                 const z = (n * (1 - e2) + (alt || 0)) * Math.sin(latR);
                 get(t_j2000, x, y, z).then(r => {
-                    if (r.certainty !== undefined) localCertainty = r.certainty;
+                    if (r.certainty !== undefined) certainty = r.certainty;
                 }).catch(() => {});
             }
 
@@ -544,20 +544,20 @@
                 nextDelay = dDue;
             }
 
-            if (probeState.phase === 'idle') {
-                const surprise = live['surprise'] || 0;
-                const curiosity = surprise / (localCertainty + (1 / C));
-                if (!act()) {
+            if (probeState.phase === 'waiting') {
+                const divergence = is['divergence'] || 0;
+                const explorationRate = divergence / (certainty + (1 / C));
+                if (!express()) {
                     if (actuators.size > 0 && sensors.size > 0) {
-                        if (Math.random() < curiosity) {
-                            startBroad(ts);
+                        if (Math.random() < explorationRate) {
+                            startProbing(ts);
                         }
                     }
                 }
-            } else if (probeState.phase === 'broad') {
-                checkBroad(ts);
-            } else if (probeState.phase === 'narrowing') {
-                checkNarrowing(ts);
+            } else if (probeState.phase === 'probing') {
+                checkProbing(ts);
+            } else if (probeState.phase === 'resolving') {
+                checkResolving(ts);
             }
 
             if (topologyInterval === null) topologyInterval = tickTime;
@@ -565,8 +565,8 @@
             if (topoDue <= 0) {
                 lastTopology = ts;
                 runSignalTopology(ts);
-                const surprise = live['surprise'] || 0;
-                topologyInterval = surprise > sensors.size ? tickTime : topologyInterval * PHI;
+                const divergence = is['divergence'] || 0;
+                topologyInterval = divergence > sensors.size ? tickTime : topologyInterval * PHI;
                 nextDelay = 0;
             } else if (topoDue < nextDelay) {
                 nextDelay = topoDue;
@@ -575,14 +575,14 @@
             const icDue = lastInteroception + (tickTime * PHI) - ts;
             if (icDue <= 0) {
                 lastInteroception = ts;
-                live['system.cpu'] = navigator.hardwareConcurrency || 0;
+                is['system.cpu'] = navigator.hardwareConcurrency || 0;
                 if (performance.memory) {
-                    live['system.memory'] = performance.memory.usedJSHeapSize;
-                    live['system.memoryTotal'] = performance.memory.totalJSHeapSize;
+                    is['system.memory'] = performance.memory.usedJSHeapSize;
+                    is['system.memoryTotal'] = performance.memory.totalJSHeapSize;
                 }
                 const t0 = performance.now();
                 fetch('/time').then(() => {
-                    live['system.latency'] = performance.now() - t0;
+                    is['system.latency'] = performance.now() - t0;
                 }).catch(() => {});
                 nextDelay = 0;
             } else if (icDue < nextDelay) {
@@ -592,16 +592,16 @@
             const noDue = lastNostrPub + (tickTime * PHI * PHI * PHI) - ts;
             if (noDue <= 0 && nostrPub && nostrRelay && nostrRelay.readyState === WebSocket.OPEN) {
                 lastNostrPub = ts;
-                const physLat = live['geolocation.latitude'];
-                const physLon = live['geolocation.longitude'];
+                const physLat = is['geolocation.latitude'];
+                const physLon = is['geolocation.longitude'];
                 if (physLat !== undefined && physLon !== undefined) {
-                    const values = {};
-                    for (const key in live) {
+                    const payload = {};
+                    for (const key in is) {
                         if (key.startsWith('server.') || key.startsWith('system.') || key.startsWith('omega_flow.')) continue;
-                        const val = live[key];
-                        if (typeof val === 'number') values[key] = val;
+                        const val = is[key];
+                        if (typeof val === 'number') payload[key] = val;
                     }
-                    const content = JSON.stringify(values);
+                    const content = JSON.stringify(payload);
                     if (content !== '{}') {
                         try {
                             const event = finalizeEvent({
@@ -624,7 +624,7 @@
             }
 
             setTimeout(() => {
-                try { tick(performance.now()); } catch (e) { console.error(e); setTimeout(() => tick(performance.now()), 0); }
+                try { heartbeat(performance.now()); } catch (e) { console.warn(e); setTimeout(() => heartbeat(performance.now()), 0); }
             }, nextDelay);
         }
 
@@ -632,10 +632,10 @@
             if (navigator.getBattery) {
                 navigator.getBattery().then(b => {
                     const push = () => {
-                        live['battery.charging'] = b.charging ? 1 : 0;
-                        live['battery.chargingTime'] = b.chargingTime;
-                        live['battery.dischargingTime'] = b.dischargingTime;
-                        live['battery.level'] = b.level;
+                        is['battery.charging'] = b.charging ? 1 : 0;
+                        is['battery.chargingTime'] = b.chargingTime;
+                        is['battery.dischargingTime'] = b.dischargingTime;
+                        is['battery.level'] = b.level;
                     };
                     push();
                     b.addEventListener('chargingchange', push, { passive: true });
@@ -648,12 +648,12 @@
             if (navigator.geolocation && navigator.geolocation.watchPosition) {
                 navigator.geolocation.watchPosition(pos => {
                     const cc = pos.coords;
-                    live['geolocation.latitude'] = cc.latitude;
-                    live['geolocation.longitude'] = cc.longitude;
-                    live['geolocation.accuracy'] = cc.accuracy;
-                    if (cc.altitude !== null) live['geolocation.altitude'] = cc.altitude;
-                    if (cc.heading !== null) live['geolocation.heading'] = cc.heading;
-                    if (cc.speed !== null) live['geolocation.speed'] = cc.speed;
+                    is['geolocation.latitude'] = cc.latitude;
+                    is['geolocation.longitude'] = cc.longitude;
+                    is['geolocation.accuracy'] = cc.accuracy;
+                    if (cc.altitude !== null) is['geolocation.altitude'] = cc.altitude;
+                    if (cc.heading !== null) is['geolocation.heading'] = cc.heading;
+                    if (cc.speed !== null) is['geolocation.speed'] = cc.speed;
                 }, () => {}, { enableHighAccuracy: true, maximumAge: 0 });
             }
         }
@@ -668,10 +668,10 @@
                         for (const prop of Object.getOwnPropertyNames(sensor)) {
                             const v = sensor[prop];
                             if (typeof v === 'number') {
-                                live[name + '.' + prop] = v;
+                                is[name + '.' + prop] = v;
                             } else if (v && typeof v === 'object' && typeof v.length === 'number') {
                                 for (let qi = 0; qi < v.length; qi++) {
-                                    live[name + '.' + prop + '[' + qi + ']'] = v[qi];
+                                    is[name + '.' + prop + '[' + qi + ']'] = v[qi];
                                 }
                             }
                         }
@@ -687,7 +687,7 @@
                 if (adapter) {
                     const device = await adapter.requestDevice();
                     window.omegaflow.gpu = device;
-                    live['system.gpu'] = 1;
+                    is['system.gpu'] = 1;
                 }
             } catch {}
         }
@@ -744,7 +744,7 @@
                     panner.panningModel = 'HRTF';
                     panner.connect(audioCtx.destination);
                     window.omegaflow.audio = { ctx: audioCtx, panner };
-                    live['system.audio'] = 1;
+                    is['system.audio'] = 1;
                 } catch {}
             };
             document.addEventListener('click', start, { once: true, passive: true });
@@ -1006,10 +1006,10 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         function processSensorReading(s, val, tickTime) {
             const absDelta = Math.abs(val - s.val);
             const ma = 1 / (PHI * PHI);
-            s.baseline = s.baseline * (1 - ma) + val * ma;
+            s.median = s.median * (1 - ma) + val * ma;
             
-            if (s.noiseFloor === 0 || absDelta <= s.noiseFloor) {
-                s.noiseFloor = s.noiseFloor * (1 - ma) + absDelta * ma;
+            if (s.complexity === 0 || absDelta <= s.complexity) {
+                s.complexity = s.complexity * (1 - ma) + absDelta * ma;
             }
 
             if (!signalBuffers.has(s.path)) {
@@ -1020,9 +1020,9 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             sb.idx = (sb.idx + 1) % ringSize;
             if (sb.filled < ringSize) sb.filled++;
 
-            if (absDelta > s.noiseFloor) {
+            if (absDelta > s.complexity) {
                 s.interval = tickTime;
-                live[s.path] = val;
+                is[s.path] = val;
             } else {
                 if (s.interval !== null) {
                     s.interval *= PHI;
@@ -1180,21 +1180,21 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 for (let i = 0; i < n; i++) variances.push(icaRes[i * 2]);
 
                 for (let i = 0; i < n; i++) {
-                    live['complexity.' + activeNames[i]] = kRes[i];
+                    is['complexity.' + activeNames[i]] = kRes[i];
                     const sens = sensors.get(activeNames[i]);
                     if (sens) {
                         const ma = 1 / (PHI * PHI);
-                        sens.noiseFloor = sens.noiseFloor * (1 - ma) + kRes[i] * ma;
+                        sens.complexity = sens.complexity * (1 - ma) + kRes[i] * ma;
                     }
 
                     const tBase = i * 4;
-                    live['takens.' + activeNames[i] + '.cx'] = tRes[tBase];
-                    live['takens.' + activeNames[i] + '.cy'] = tRes[tBase + 1];
-                    live['takens.' + activeNames[i] + '.cz'] = tRes[tBase + 2];
-                    live['takens.' + activeNames[i] + '.spread'] = tRes[tBase + 3];
+                    is['takens.' + activeNames[i] + '.cx'] = tRes[tBase];
+                    is['takens.' + activeNames[i] + '.cy'] = tRes[tBase + 1];
+                    is['takens.' + activeNames[i] + '.cz'] = tRes[tBase + 2];
+                    is['takens.' + activeNames[i] + '.spread'] = tRes[tBase + 3];
 
-                    live['tda.' + activeNames[i] + '.persistence'] = tdaRes[i * 2];
-                    live['tda.' + activeNames[i] + '.betti0'] = tdaRes[i * 2 + 1];
+                    is['tda.' + activeNames[i] + '.persistence'] = tdaRes[i * 2];
+                    is['tda.' + activeNames[i] + '.betti0'] = tdaRes[i * 2 + 1];
                 }
 
                 if (allTE.length > 0) {
@@ -1206,7 +1206,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                             if (a === b) continue;
                             const v = teRes[a * n + b];
                             if (v > threshold) {
-                                live['transfer.' + activeNames[a] + '>' + activeNames[b]] = v;
+                                is['transfer.' + activeNames[a] + '>' + activeNames[b]] = v;
                             }
                         }
                     }
@@ -1217,11 +1217,11 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 let sourceCount = 0;
                 for (let i = 0; i < n; i++) {
                     if (variances[i] > cutoff) {
-                        live['ica.source' + sourceCount] = icaRes[i * 2 + 1];
+                        is['ica.source' + sourceCount] = icaRes[i * 2 + 1];
                         sourceCount++;
                     }
                 }
-                live['ica.count'] = sourceCount;
+                is['ica.count'] = sourceCount;
 
                 readBuf.unmap();
                 inBuf.destroy(); kOutBuf.destroy(); tOutBuf.destroy(); teOutBuf.destroy(); tdaOutBuf.destroy(); icaOutBuf.destroy(); paramBuf.destroy(); readBuf.destroy();
@@ -1236,7 +1236,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         tryStartWebGPU();
         tryStartWebAudio();
         tryStartNostr();
-        setTimeout(() => tick(performance.now()), 0);
+        setTimeout(() => heartbeat(performance.now()), 0);
     </script>
 </body>
 </html>

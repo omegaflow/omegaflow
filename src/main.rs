@@ -122,22 +122,22 @@ fn fetch_with_headers(url: &str, headers: &[(String, String)]) -> Option<String>
     if output.status.success() { Some(String::from_utf8_lossy(&output.stdout).to_string()) } else { None }
 }
 
-fn format_immunity_snapshot(c: &HashMap<String,(u32,u32)>) -> String {
+fn format_dormant_snapshot(c: &HashMap<String,(u32,u32)>) -> String {
     let mut o=String::new(); let mut k: Vec<&String>=c.keys().collect(); k.sort();
-    for key in k { let (d,s)=c[key]; if d==0&&s==0 { o.push_str(&format!("immunity {}\n",key)); } else { o.push_str(&format!("immunity {} {} {}\n",key,d,s)); } }
+    for key in k { let (d,s)=c[key]; if d==0&&s==0 { o.push_str(&format!("dormant {}\n",key)); } else { o.push_str(&format!("dormant {} {} {}\n",key,d,s)); } }
     o
 }
 
-fn handle_observer(stream: TcpStream, immunity: Arc<Mutex<HashMap<String,(u32,u32)>>>, immunity_str: Arc<Mutex<String>>, archive: Arc<Archive>) {
+fn handle_observer(stream: TcpStream, dormant: Arc<Mutex<HashMap<String,(u32,u32)>>>, dormant_state: Arc<Mutex<String>>, archive: Arc<Archive>) {
     let mut s = stream; s.set_nodelay(true).ok();
     let signal = match read_signal(&mut s) { Some(r) => r, None => return };
-    if signal.to_lowercase().contains("upgrade: websocket") { handle_pulse(s, &signal, immunity, immunity_str, archive); }
+    if signal.to_lowercase().contains("upgrade: websocket") { handle_pulse(s, &signal, dormant, dormant_state, archive); }
     else {
         let mut cur = signal;
         loop {
             match parse_path(&cur).as_str() {
                 "/" => emit(&mut s, "200 OK", "text/html", &archive.index_html),
-                "/immunity" => { let b = immunity_str.lock().unwrap().clone(); emit(&mut s, "200 OK", "text/plain", b.as_bytes()); }
+                "/dormant" => { let b = dormant_state.lock().unwrap().clone(); emit(&mut s, "200 OK", "text/plain", b.as_bytes()); }
                 "/time" => { let t = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs_f64(); emit(&mut s, "200 OK", "text/plain", t.to_string().as_bytes()); }
                 "/world.js" => emit(&mut s, "200 OK", "application/javascript", &archive.world_js),
                 _ => { emit_void(&mut s); break; }
@@ -147,12 +147,12 @@ fn handle_observer(stream: TcpStream, immunity: Arc<Mutex<HashMap<String,(u32,u3
     }
 }
 
-fn handle_pulse(mut stream: TcpStream, signal: &str, immunity: Arc<Mutex<HashMap<String,(u32,u32)>>>, immunity_str: Arc<Mutex<String>>, archive: Arc<Archive>) {
+fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<String,(u32,u32)>>>, dormant_state: Arc<Mutex<String>>, archive: Arc<Archive>) {
     let key = match extract_header(signal,"Sec-WebSocket-Key") { Some(k)=>k, None=>return };
     let encoded = base64_encode(&sha1(&format!("{}{}", key, "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").into_bytes()));
     if stream.write_all(format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {}\r\n\r\n", encoded).as_bytes()).is_err() { return; }
     let _=stream.set_nodelay(true);
-    let mut last_poke: Vec<String> = Vec::new();
+    let mut last_stimulus: Vec<String> = Vec::new();
     while let Some(frame) = read_ws_frame_raw(&mut stream) {
         if frame.opcode==0x8 { break; }
         if frame.opcode==0x2 {
@@ -163,11 +163,11 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, immunity: Arc<Mutex<HashMap
             write_ws_binary(&mut stream, &out);
         } else if frame.opcode==0x1 {
             let msg=String::from_utf8_lossy(&frame.payload);
-            if let Some(survived)=extract_json_value(&msg,"survived") {
-                let mut c=immunity.lock().unwrap();
-                for p in survived.split('|') { c.entry(p.to_string()).or_insert((0,0)).1+=1; }
-                rewrite_immunity(&c); *immunity_str.lock().unwrap()=format_immunity_snapshot(&c); last_poke.clear();
-            } else if let Some(poke)=extract_json_value(&msg,"poke") { last_poke=poke.split('|').map(|s|s.to_string()).collect(); }
+            if let Some(confirmed)=extract_json_value(&msg,"confirmed") {
+                let mut c=dormant.lock().unwrap();
+                for p in confirmed.split('|') { c.entry(p.to_string()).or_insert((0,0)).1+=1; }
+                rewrite_dormant(&c); *dormant_state.lock().unwrap()=format_dormant_snapshot(&c); last_stimulus.clear();
+            } else if let Some(stimulus)=extract_json_value(&msg,"stimulus") { last_stimulus=stimulus.split('|').map(|s|s.to_string()).collect(); }
             else if let Some(stig)=extract_json_value(&msg,"stigmergy") {
                 let parts: Vec<&str>=stig.splitn(3,'|').collect();
                 if parts.len()==3 {
@@ -180,7 +180,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, immunity: Arc<Mutex<HashMap
             }
         }
     }
-    if last_poke.len()==1 { let mut c=immunity.lock().unwrap(); c.entry(last_poke[0].clone()).or_insert((0,0)).0+=1; rewrite_immunity(&c); *immunity_str.lock().unwrap()=format_immunity_snapshot(&c); }
+    if last_stimulus.len()==1 { let mut c=dormant.lock().unwrap(); c.entry(last_stimulus[0].clone()).or_insert((0,0)).0+=1; rewrite_dormant(&c); *dormant_state.lock().unwrap()=format_dormant_snapshot(&c); }
 }
 
 fn haversine(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
@@ -422,11 +422,11 @@ fn load_geo_lookups() -> HashMap<String, Vec<(String, f64, f64)>> {
     map
 }
 
-fn load_immunity() -> HashMap<String,(u32,u32)> {
+fn load_dormant() -> HashMap<String,(u32,u32)> {
     let mut c=HashMap::new();
     for k in ["location","history","document","close","alert","confirm","prompt","print","open","stop"] { c.insert(k.to_string(),(0,0)); }
-    if let Ok(content)=std::fs::read_to_string("is/immunity.is") {
-        for line in content.lines() { let p: Vec<&str>=line.split_whitespace().collect(); if p.len()>=2&&p[0]=="immunity" { c.insert(p[1].to_string(),(if p.len()>=3{p[2].parse().unwrap_or(0)}else{0}, if p.len()>=4{p[3].parse().unwrap_or(0)}else{0})); } }
+    if let Ok(content)=std::fs::read_to_string("is/dormant.is") {
+        for line in content.lines() { let p: Vec<&str>=line.split_whitespace().collect(); if p.len()>=2&&p[0]=="dormant" { c.insert(p[1].to_string(),(if p.len()>=3{p[2].parse().unwrap_or(0)}else{0}, if p.len()>=4{p[3].parse().unwrap_or(0)}else{0})); } }
     }
     c
 }
@@ -769,10 +769,10 @@ fn resolve_geo(lat: f64, lon: f64, cache: &Mutex<HashMap<String, (u64, String)>>
     GeoLookup { usgs_site, ndbc_buoy, intermagnet, nmdb, tide_station, geomag_station, aeronet_site, radiosonde_station, radiosonde_airport, surfrad_station, country_code }
 }
 
-fn rewrite_immunity(c: &HashMap<String,(u32,u32)>) {
+fn rewrite_dormant(c: &HashMap<String,(u32,u32)>) {
     let mut o=String::new(); let mut k: Vec<&String>=c.keys().collect(); k.sort();
-    for key in k { let (d,s)=c[key]; if d==0&&s==0 { o.push_str(&format!("immunity {}\n",key)); } else { o.push_str(&format!("immunity {} {} {}\n",key,d,s)); } }
-    let _=std::fs::write("is/immunity.is",o);
+    for key in k { let (d,s)=c[key]; if d==0&&s==0 { o.push_str(&format!("dormant {}\n",key)); } else { o.push_str(&format!("dormant {} {} {}\n",key,d,s)); } }
+    let _=std::fs::write("is/dormant.is",o);
 }
 
 fn sha1(input: &[u8]) -> [u8;20] {
@@ -984,11 +984,11 @@ fn main() {
     });
     let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
-    let immunity = Arc::new(Mutex::new(load_immunity()));
-    let immunity_str = Arc::new(Mutex::new(format_immunity_snapshot(&immunity.lock().unwrap())));
+    let dormant = Arc::new(Mutex::new(load_dormant()));
+    let dormant_state = Arc::new(Mutex::new(format_dormant_snapshot(&dormant.lock().unwrap())));
     for stream in listener.incoming() {
         if let Ok(stream) = stream {
-            let im = Arc::clone(&immunity); let is = Arc::clone(&immunity_str); let ar = Arc::clone(&archive);
+            let im = Arc::clone(&dormant); let is = Arc::clone(&dormant_state); let ar = Arc::clone(&archive);
             thread::spawn(move || handle_observer(stream, im, is, ar));
         }
     }

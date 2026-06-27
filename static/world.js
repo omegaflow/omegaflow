@@ -1,7 +1,7 @@
 const C = 299792458.0;
 const PHI = 1.618033988749895;
 
-export const live = {};
+export const is = {};
 export const pulse = { ws: null, pending: new Map(), seq: 0 };
 
 let lastT = NaN, lastX = NaN, lastY = NaN, lastZ = NaN, lastResult = null;
@@ -9,7 +9,7 @@ let fetchPending = null;
 let fetchTime = 0;
 let lastIsData = null;
 
-function blend(p, result) {
+function weave(p, result) {
     const ma = 1 / (PHI * PHI);
     for (const key in p) {
         const val = p[key];
@@ -32,9 +32,9 @@ export async function get(t, x, y, z) {
     const now = performance.now();
     let needFetch = !lastIsData
     || Math.abs(t - lastT) > (1.0 / 128.0)
-    || Math.abs(x - lastX) > (live['geolocation.accuracy'] || 0) * PHI
-    || Math.abs(y - lastY) > (live['geolocation.accuracy'] || 0) * PHI
-    || Math.abs(z - lastZ) > (live['geolocation.accuracy'] || 0) * PHI;
+    || Math.abs(x - lastX) > (is['geolocation.accuracy'] || 0) * PHI
+    || Math.abs(y - lastY) > (is['geolocation.accuracy'] || 0) * PHI
+    || Math.abs(z - lastZ) > (is['geolocation.accuracy'] || 0) * PHI;
 
     if (needFetch) {
         if (fetchPending) {
@@ -50,17 +50,17 @@ export async function get(t, x, y, z) {
     const result = {};
     if (lastIsData) {
         for (const p of lastIsData) {
-            blend(p, result);
+            weave(p, result);
         }
     }
 
-    let g = measureG(live);
-    let vC = measureVC(live);
+    let g = measureG(values);
+    let vC = measureVC(values);
     let decay = measureDecay(result);
     let quantum = measureQuantum();
     let epig = measureEpigenetics(result);
-    let tNow = live['server.time'] !== undefined
-        ? (live['server.time'] / 86400.0) + 2440587.5 - 2451545.0
+    let tNow = is['server.time'] !== undefined
+        ? (is['server.time'] / 86400.0) + 2440587.5 - 2451545.0
         : t;
     let dtEff = Math.abs(t - tNow);
 
@@ -68,8 +68,8 @@ export async function get(t, x, y, z) {
                     * Math.exp(-vC / (g + (1.0 / C)))
                     * quantum * decay * epig;
 
-    for (const key in live) {
-        result[key] = live[key];
+    for (const key in values) {
+        result[key] = is[key];
     }
 
     lastT = t; lastX = x; lastY = y; lastZ = z;
@@ -176,10 +176,10 @@ function measureDecay(result) {
     return 1.0;
 }
 
-function measureG(live) {
-    const ax = live['AccelerometerSensor.x'];
-    const ay = live['AccelerometerSensor.y'];
-    const az = live['AccelerometerSensor.z'];
+function measureG(is) {
+    const ax = is['AccelerometerSensor.x'];
+    const ay = is['AccelerometerSensor.y'];
+    const az = is['AccelerometerSensor.z'];
     if (ax !== undefined && ay !== undefined && az !== undefined) {
         return Math.sqrt(ax*ax + ay*ay + az*az);
     }
@@ -191,14 +191,14 @@ function measureQuantum() {
     if (!sensors || sensors.size === 0) return 1.0;
     let sum = 0, count = 0;
     for (const s of sensors.values()) {
-        if (s.noiseFloor > 0) { sum += s.noiseFloor; count++; }
+        if (s.complexity > 0) { sum += s.complexity; count++; }
     }
     if (count === 0) return 1.0;
     return Math.exp(-sum / count);
 }
 
-function measureVC(live) {
-    const speed = live['geolocation.speed'];
+function measureVC(is) {
+    const speed = is['geolocation.speed'];
     if (typeof speed === 'number' && speed >= 0) {
         return speed / C;
     }
