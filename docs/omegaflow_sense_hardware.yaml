@@ -4,10 +4,9 @@
 # PURPOSE: The single source of truth for the physical
 #          omegaflow sense module. The 100% Mantis-Shrimp Config.
 #          Sensors (receivers), Actuators (senders), Infrastructure.
-# PRINCIPLE: §11 — Resonance needs presence (actuators = levers)
-
-#            §13 — is(t,x,y,z) resonates with is(t,x,y,z)
-#            §33 — Structure over Name (single source of truth)
+# PRINCIPLE: Resonance needs presence (actuators = levers)
+#            is(t,x,y,z) resonates with is(t,x,y,z)
+#            Structure over Name (single source of truth)
 # ============================================================
 
 meta:
@@ -370,7 +369,7 @@ protocol:
 
 # ============================================================
 # PART 6: SAFETY MATRIX
-# §19: Active care within reach, restraint beyond.
+# Active care within reach, restraint beyond.
 # ============================================================
 
 safety:
@@ -382,5 +381,5 @@ safety:
   electromagnet: "Limit current (INA219). Monitor temperature. <2A."
   solenoid: "Flyback diode (1N4007) MANDATORY, otherwise ESP32 damage!"
   water_electrodes: "Low impedance only. Never on mains. Galvanic isolation."
-  plant_stimulation: "Max 30mV, max 1mA. Plant is a living system (§22)."
-  general: "§19: Active care. §22: Who suffers? Include plant, fungus, animal."
+  plant_stimulation: "Max 30mV, max 1mA. Plant is a living system."
+  general: "Active care. Who suffers? Include plant, fungus, animal."
