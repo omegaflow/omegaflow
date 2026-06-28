@@ -55,12 +55,14 @@
         let lastTs = 0;
         let certainty = 1.0;
 
-        let geoLatCache = NaN, geoLonCache = NaN, geoAltCache = NaN;
+        let inputBuffer = [];
+        let queryBuffer = [];
+        let lastBatchFetch = 0;
+        let cachedEcef = { x: 0, y: 0, z: 0 };
+        let cachedJ2000 = 0;
 
         let topologyInterval = null;
         let lastTopology = 0;
-
-        let lastInteroception = 0;
 
         let nostrRelay = null;
         let nostrPub = null;
@@ -88,12 +90,13 @@
         pulseWs.addEventListener('message', (e) => {
             if (typeof e.data !== 'string') {
                 const buf = new Uint8Array(e.data);
-                if (buf.length < 4) return;
-                const id = new DataView(buf.buffer, buf.byteOffset + buf.length - 4).getUint32(0, true);
+                if (buf.length < 13 || buf[0] !== 73 || buf[1] !== 83 || buf[2] !== 6) return;
+                const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
+                const id = dv.getUint32(3, true);
                 const pending = pulse.pending.get(id);
                 if (pending) {
                     pulse.pending.delete(id);
-                    pending.resolve(buf.buffer.slice(0, buf.length - 4));
+                    pending.resolve(e.data);
                 }
             }
         });
@@ -265,12 +268,12 @@
                 if (typeof val === 'number') {
                     if (!sensors.has(p)) {
                         sensors.set(p, { path: p, obj, key, val, interval: null, lastPoll: 0, complexity: 0, median: 0 });
-                        is[p] = val;
+                        pushInput(p, val);
                     }
                 } else if (typeof val === 'boolean') {
                     if (!sensors.has(p)) {
                         sensors.set(p, { path: p, obj, key, val: val ? 1 : 0, interval: null, lastPoll: 0, complexity: 0, median: 0 });
-                        is[p] = val ? 1 : 0;
+                        pushInput(p, val ? 1 : 0);
                     }
                 } else if (typeof val === 'function') {
                     if (!dormant.has(key) && !silent.has(p) && !actuators.has(p)) {
@@ -294,12 +297,12 @@
                         if (typeof v === 'number') {
                             if (!sensors.has(k)) {
                                 sensors.set(k, { path: k, obj: window, key: k, val: v, interval: null, lastPoll: 0, complexity: 0, median: 0 });
-                                is[k] = v;
+                                pushInput(k, v);
                             }
                         } else if (typeof v === 'boolean') {
                             if (!sensors.has(k)) {
                                 sensors.set(k, { path: k, obj: window, key: k, val: v ? 1 : 0, interval: null, lastPoll: 0, complexity: 0, median: 0 });
-                                is[k] = v ? 1 : 0;
+                                pushInput(k, v ? 1 : 0);
                             }
                         } else if (typeof v === 'function') {
                             if (!dormant.has(k) && !silent.has(k) && !actuators.has(k)) {
@@ -336,15 +339,15 @@
             for (let i = 0; i < gps.length; i++) {
                 if (gps[i]) {
                     const gp = gps[i];
-                    is['gamepad[' + i + '].connected'] = gp.connected ? 1 : 0;
-                    is['gamepad[' + i + '].timestamp'] = gp.timestamp;
+                    pushInput('gamepad[' + i + '].connected', gp.connected ? 1 : 0);
+                    pushInput('gamepad[' + i + '].timestamp', gp.timestamp);
                     for (let a = 0; a < gp.axes.length; a++) {
-                    is['gamepad[' + i + '].axes[' + a + ']'] = gp.axes[a];
+                    pushInput('gamepad[' + i + '].axes[' + a + ']', gp.axes[a]);
                     state = state * 31 + (gp.axes[a] * Math.pow(2, 16) | 0);
                     }
                     for (let b = 0; b < gp.buttons.length; b++) {
-                    is['gamepad[' + i + '].buttons[' + b + '].pressed'] = gp.buttons[b].pressed ? 1 : 0;
-                    is['gamepad[' + i + '].buttons[' + b + '].value'] = gp.buttons[b].value;
+                    pushInput('gamepad[' + i + '].buttons[' + b + '].pressed', gp.buttons[b].pressed ? 1 : 0);
+                    pushInput('gamepad[' + i + '].buttons[' + b + '].value', gp.buttons[b].value);
                     state = state * 31 + (gp.buttons[b].value * Math.pow(2, 16) | 0);
                     }
                 }
@@ -364,19 +367,19 @@
             for (const evName of eventSources) {
                 window.addEventListener(evName, (e) => {
                     const prefix = 'event.' + evName;
-                    is[prefix] = performance.now();
+                    pushInput(prefix, performance.now());
                     for (const k of Object.getOwnPropertyNames(e)) {
                         const v = e[k];
-                        if (typeof v === 'number') is[prefix + '.' + k] = v;
+                        if (typeof v === 'number') pushInput(prefix + '.' + k, v);
                     }
                     if (e.touches) {
-                        is[prefix + '.touches'] = e.touches.length;
+                        pushInput(prefix + '.touches', e.touches.length);
                         for (let ti = 0; ti < e.touches.length; ti++) {
                             const tch = e.touches[ti];
                             const tp = prefix + '.touch[' + ti + ']';
                             for (const k of Object.getOwnPropertyNames(tch)) {
                                 const v = tch[k];
-                                if (typeof v === 'number') is[tp + '.' + k] = v;
+                                if (typeof v === 'number') pushInput(tp + '.' + k, v);
                             }
                         }
                     }
@@ -419,7 +422,7 @@
                 }
                 if (sensorMap.size === 0) resonanceMap.delete(actPath);
             }
-            is['divergence'] = totalDivergence;
+            pushInput('divergence', totalDivergence);
             probeState.batch = Array.from(actuators.values());
             if (probeState.batch.length === 0) {
                 probeState.phase = 'waiting';
@@ -469,6 +472,21 @@
             probeState.phase = 'resolving';
         }
 
+        function geodeticToEcef(lat, lon, alt) {
+            const a = WGS84_A, f = WGS84_F, e2 = f*(2-f);
+            const latR = lat*Math.PI/180, lonR = lon*Math.PI/180;
+            const n = a/Math.sqrt(1-e2*Math.sin(latR)*Math.sin(latR));
+            const x = (n+alt)*Math.cos(latR)*Math.cos(lonR);
+            const y = (n+alt)*Math.cos(latR)*Math.sin(lonR);
+            const z = (n*(1-e2)+alt)*Math.sin(latR);
+            return { x, y, z };
+        }
+
+        function pushInput(name, value) {
+            if (typeof value !== 'number') return;
+            inputBuffer.push({ name, value, t: cachedJ2000, x: cachedEcef.x, y: cachedEcef.y, z: cachedEcef.z });
+        }
+
         function heartbeat(ts) {
             const tickTime = lastTs > 0 ? ts - lastTs : 1;
             lastTs = ts;
@@ -476,21 +494,20 @@
             const lat = is['geolocation.latitude'];
             const lon = is['geolocation.longitude'];
             const alt = is['geolocation.altitude'];
-            if (lat !== undefined && lon !== undefined && (lat !== geoLatCache || lon !== geoLonCache || alt !== geoAltCache)) {
-                geoLatCache = lat;
-                geoLonCache = lon;
-                geoAltCache = alt;
+            if (lat !== undefined && lon !== undefined) {
                 const t_j2000 = (is['server.time'] / 86400.0) + 2440587.5 - 2451545.0;
-                const a = WGS84_A;
-                const f = WGS84_F;
-                const e2 = f * (2 - f);
-                const latR = lat * Math.PI / 180;
-                const lonR = lon * Math.PI / 180;
-                const n = a / Math.sqrt(1 - e2 * Math.sin(latR) * Math.sin(latR));
-                const x = (n + (alt || 0)) * Math.cos(latR) * Math.cos(lonR);
-                const y = (n + (alt || 0)) * Math.cos(latR) * Math.sin(lonR);
-                const z = (n * (1 - e2) + (alt || 0)) * Math.sin(latR);
-                get(t_j2000, x, y, z).then(r => {
+                cachedEcef = geodeticToEcef(lat, lon, alt || 0);
+                cachedJ2000 = t_j2000;
+                queryBuffer.push({ t: t_j2000, x: cachedEcef.x, y: cachedEcef.y, z: cachedEcef.z });
+            }
+
+            const batchDue = lastBatchFetch + (tickTime * PHI) - ts;
+            if ((inputBuffer.length > 0 || queryBuffer.length > 0) && (batchDue <= 0 || queryBuffer.length >= 128)) {
+                lastBatchFetch = ts;
+                const inputs = inputBuffer.splice(0);
+                const queries = queryBuffer.splice(0);
+                get(inputs, queries).then(r => {
+                    for (const key in r) { is[key] = r[key]; }
                     if (r.certainty !== undefined) certainty = r.certainty;
                 }).catch(() => {});
             }
@@ -572,17 +589,16 @@
                 nextDelay = topoDue;
             }
 
-            const icDue = lastInteroception + (tickTime * PHI) - ts;
+            const icDue = lastBatchFetch + (tickTime * PHI) - ts;
             if (icDue <= 0) {
-                lastInteroception = ts;
-                is['system.cpu'] = navigator.hardwareConcurrency || 0;
+                pushInput('system.cpu', navigator.hardwareConcurrency || 0);
                 if (performance.memory) {
-                    is['system.memory'] = performance.memory.usedJSHeapSize;
-                    is['system.memoryTotal'] = performance.memory.totalJSHeapSize;
+                    pushInput('system.memory', performance.memory.usedJSHeapSize);
+                    pushInput('system.memoryTotal', performance.memory.totalJSHeapSize);
                 }
                 const t0 = performance.now();
                 fetch('/time').then(() => {
-                    is['system.latency'] = performance.now() - t0;
+                    pushInput('system.latency', performance.now() - t0);
                 }).catch(() => {});
                 nextDelay = 0;
             } else if (icDue < nextDelay) {
@@ -632,10 +648,10 @@
             if (navigator.getBattery) {
                 navigator.getBattery().then(b => {
                     const push = () => {
-                        is['battery.charging'] = b.charging ? 1 : 0;
-                        is['battery.chargingTime'] = b.chargingTime;
-                        is['battery.dischargingTime'] = b.dischargingTime;
-                        is['battery.level'] = b.level;
+                        pushInput('battery.charging', b.charging ? 1 : 0);
+                        pushInput('battery.chargingTime', b.chargingTime);
+                        pushInput('battery.dischargingTime', b.dischargingTime);
+                        pushInput('battery.level', b.level);
                     };
                     push();
                     b.addEventListener('chargingchange', push, { passive: true });
@@ -648,12 +664,12 @@
             if (navigator.geolocation && navigator.geolocation.watchPosition) {
                 navigator.geolocation.watchPosition(pos => {
                     const cc = pos.coords;
-                    is['geolocation.latitude'] = cc.latitude;
-                    is['geolocation.longitude'] = cc.longitude;
-                    is['geolocation.accuracy'] = cc.accuracy;
-                    if (cc.altitude !== null) is['geolocation.altitude'] = cc.altitude;
-                    if (cc.heading !== null) is['geolocation.heading'] = cc.heading;
-                    if (cc.speed !== null) is['geolocation.speed'] = cc.speed;
+                    pushInput('geolocation.latitude', cc.latitude);
+                    pushInput('geolocation.longitude', cc.longitude);
+                    pushInput('geolocation.accuracy', cc.accuracy);
+                    if (cc.altitude !== null) pushInput('geolocation.altitude', cc.altitude);
+                    if (cc.heading !== null) pushInput('geolocation.heading', cc.heading);
+                    if (cc.speed !== null) pushInput('geolocation.speed', cc.speed);
                 }, () => {}, { enableHighAccuracy: true, maximumAge: 0 });
             }
         }
@@ -668,10 +684,10 @@
                         for (const prop of Object.getOwnPropertyNames(sensor)) {
                             const v = sensor[prop];
                             if (typeof v === 'number') {
-                                is[name + '.' + prop] = v;
+                                pushInput(name + '.' + prop, v);
                             } else if (v && typeof v === 'object' && typeof v.length === 'number') {
                                 for (let qi = 0; qi < v.length; qi++) {
-                                    is[name + '.' + prop + '[' + qi + ']'] = v[qi];
+                                    pushInput(name + '.' + prop + '[' + qi + ']', v[qi]);
                                 }
                             }
                         }
@@ -687,7 +703,7 @@
                 if (adapter) {
                     const device = await adapter.requestDevice();
                     window.omegaflow.gpu = device;
-                    is['system.gpu'] = 1;
+                    pushInput('system.gpu', 1);
                 }
             } catch {}
         }
@@ -722,11 +738,15 @@
                             const lat = parseFloat(latStr);
                             const lon = parseFloat(lonStr);
                             if (isNaN(lat) || isNaN(lon)) return;
-                            if (pulseWs.readyState === WebSocket.OPEN) {
-                                pulseWs.send(JSON.stringify({
-                                    stigmergy: lat.toFixed(4) + '|' + lon.toFixed(4) + '|' + event.content
-                                }));
-                            }
+                            const ecef = geodeticToEcef(lat, lon, 0);
+                            try {
+                                const payload = JSON.parse(event.content);
+                                for (const [key, val] of Object.entries(payload)) {
+                                    if (typeof val === 'number') {
+                                        inputBuffer.push({ name: 'omega_flow.' + key, value: val, t: 0, x: ecef.x, y: ecef.y, z: ecef.z });
+                                    }
+                                }
+                            } catch {}
                         }
                     } catch {}
                 });
@@ -744,7 +764,7 @@
                     panner.panningModel = 'HRTF';
                     panner.connect(audioCtx.destination);
                     window.omegaflow.audio = { ctx: audioCtx, panner };
-                    is['system.audio'] = 1;
+                    pushInput('system.audio', 1);
                 } catch {}
             };
             document.addEventListener('click', start, { once: true, passive: true });
@@ -1022,7 +1042,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
             if (absDelta > s.complexity) {
                 s.interval = tickTime;
-                is[s.path] = val;
+                pushInput(s.path, val);
             } else {
                 if (s.interval !== null) {
                     s.interval *= PHI;
@@ -1180,7 +1200,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 for (let i = 0; i < n; i++) variances.push(icaRes[i * 2]);
 
                 for (let i = 0; i < n; i++) {
-                    is['complexity.' + activeNames[i]] = kRes[i];
+                    pushInput('complexity.' + activeNames[i], kRes[i]);
                     const sens = sensors.get(activeNames[i]);
                     if (sens) {
                         const ma = 1 / (PHI * PHI);
@@ -1188,13 +1208,13 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                     }
 
                     const tBase = i * 4;
-                    is['takens.' + activeNames[i] + '.cx'] = tRes[tBase];
-                    is['takens.' + activeNames[i] + '.cy'] = tRes[tBase + 1];
-                    is['takens.' + activeNames[i] + '.cz'] = tRes[tBase + 2];
-                    is['takens.' + activeNames[i] + '.spread'] = tRes[tBase + 3];
+                    pushInput('takens.' + activeNames[i] + '.cx', tRes[tBase]);
+                    pushInput('takens.' + activeNames[i] + '.cy', tRes[tBase + 1]);
+                    pushInput('takens.' + activeNames[i] + '.cz', tRes[tBase + 2]);
+                    pushInput('takens.' + activeNames[i] + '.spread', tRes[tBase + 3]);
 
-                    is['tda.' + activeNames[i] + '.persistence'] = tdaRes[i * 2];
-                    is['tda.' + activeNames[i] + '.betti0'] = tdaRes[i * 2 + 1];
+                    pushInput('tda.' + activeNames[i] + '.persistence', tdaRes[i * 2]);
+                    pushInput('tda.' + activeNames[i] + '.betti0', tdaRes[i * 2 + 1]);
                 }
 
                 if (allTE.length > 0) {
@@ -1206,7 +1226,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                             if (a === b) continue;
                             const v = teRes[a * n + b];
                             if (v > threshold) {
-                                is['transfer.' + activeNames[a] + '>' + activeNames[b]] = v;
+                                pushInput('transfer.' + activeNames[a] + '>' + activeNames[b], v);
                             }
                         }
                     }
@@ -1217,11 +1237,11 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 let sourceCount = 0;
                 for (let i = 0; i < n; i++) {
                     if (variances[i] > cutoff) {
-                        is['ica.source' + sourceCount] = icaRes[i * 2 + 1];
+                        pushInput('ica.source' + sourceCount, icaRes[i * 2 + 1]);
                         sourceCount++;
                     }
                 }
-                is['ica.count'] = sourceCount;
+                pushInput('ica.count', sourceCount);
 
                 readBuf.unmap();
                 inBuf.destroy(); kOutBuf.destroy(); tOutBuf.destroy(); teOutBuf.destroy(); tdaOutBuf.destroy(); icaOutBuf.destroy(); paramBuf.destroy(); readBuf.destroy();

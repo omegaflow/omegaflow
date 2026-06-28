@@ -1,22 +1,33 @@
 # SPECS
 
-## 1: PROTOCOL (IS v4)
+## 1: PROTOCOL (IS v6)
 
 ### Request (Browser → Rust)
-36 byte WebSocket binary frame:
+One binary WebSocket frame containing inputs and queries.
 ```
-f64 t          (8 bytes)
-f64 x          (8 bytes)
-f64 y          (8 bytes)
-f64 z          (8 bytes)
-u32 request_id (4 bytes)
+u32 request_id
+u32 input_count
+[per input:]
+  f64 t          (8 bytes)
+  f64 x          (8 bytes)
+  f64 y          (8 bytes)
+  f64 z          (8 bytes)
+  f64 value      (8 bytes)
+  u8 name_len, [name_bytes]
+u32 query_count
+[per query:]
+  f64 t, f64 x, f64 y, f64 z
 ```
 
 ### Response (Rust → Browser)
 ```
 "IS"           (2 bytes magic)
-u8 version     (4)
-u32 obj_count
+u8 version     (6)
+u32 request_id
+u32 query_count
+[per query:]
+  u32 obj_count
+  [per obj:] (field names + values)
 ```
 
 ### Object
@@ -31,31 +42,27 @@ u32 record_count
 
 Entry: `src/main.rs`. Rust std. Flat hierarchy.
 
-### Constants
-```
-PHI     = 1.618033988749895
-WGS84_A = 6378137.0
-WGS84_F = 1.0 / 298.257223563
-```
+### Universal Cache
+The server caches coefficients by their universal existence.
+- Key: Rasterized string `"lat_lon"` (e.g., `"48.12_11.56"`), derived from API resolution or sensor density.
+- Value: `(timestamp, HashMap<Name, Value>)`.
+- Contains API data AND local sensor data with absolute equality.
 
-### Bindings
-- `sources.is` → parsed at boot into `Vec<SourceConfig>`
-- WebSocket listener → `handle_pulse()` receives request, calls `weave()`, returns response
-- `curl` subprocess → `fetch_with_headers()`, 8s timeout, 4s connect
+### `handle_pulse` (The Frame Processor)
+1. Reads `input_count`. For each input: ECEF → geodetic → rasterized key. Inserts into universal cache.
+2. Reads `query_count`. For each query: ECEF → geodetic → rasterized key. Registers key in `active_tiles`. Performs O(1) HashMap lookup.
+3. Writes found values directly to binary output.
+- *No weaving (PHI), no distance calculation, and no evaluation take place here.*
 
-### `weave(payload, archive) -> Vec<u8>`
-1. Extract `(t, x, y, z)` from first 32 bytes
-2. Calculate ECEF distance `r = sqrt(x²+y²+z²)`
-3. `on_earth = r > 6e6 && r < 7.5e6`
-4. If `on_earth`: convert ECEF → geodetic (WGS84), resolve nearest geo lookups
-5. Deliver stigmergy cache (`stig_{lat:.1}_{lon:.1}`) as `omega_flow.*` fields if data exists and age < 60s
-6. Iterate `archive.sources` (sorted by TTL ascending, then alphabetically):
-   - Skip `nostr://` URLs
-   - Render URL templates (`{lat}`, `{lon}`, etc.)
-   - Check cache (`Mutex<HashMap>`): if age < `ttl`, use cached body
-   - Else: fetch via curl, store in cache
-   - Run extractors on body, emit `is_obj`
-7. Write `obj_count` into output
+### `warm_cache` (The API Fetcher)
+- Runs asynchronously in the background.
+- Fetches APIs for all regions (`active_tiles`) requested by queries.
+- The `ecef_to_geodetic` conversion and URL rendering (`{lat}`) happen **exclusively** here, at the HTTP boundary to human servers.
+- Three source types:
+  - Fixed station (`lat`/`lon` set in `sources.is`): cache key from rounded coords
+  - Tile-based (`{lat}`/`{lon}` in URL): cache key = tile string
+  - Global (no geo): cache key = URL
+- `GeojsonEvents` extractor: caches each earthquake at its own coordinates
 
 ### Extractors
 | Keyword | Syntax | Output |
@@ -69,41 +76,45 @@ WGS84_F = 1.0 / 298.257223563
 | `path` | `path <dotted.path> <name>` | `jpath()` |
 | `vector` | `vector <nx> <ny> <nz>` | `text_vector()` |
 | `last_obj` | `last_obj "fk" "fv" "ek" "name"` | `jobj_last_match()` |
-| `geojson` | `geojson nearby <max_dist_m> <mag_key> <min_mag> <o1> <o2> <o3>` | Haversine filter |
+| `geojson` | `geojson events <mag_key> <min_mag> <o1> <o2>` | Caches each event at its own coordinates |
 
 ### `sources.is` format
 ```
 source <name>
 ttl <seconds>
 url <url_with_{templates}>
+lat <f64>       (optional — fixed station)
+lon <f64>       (optional — fixed station)
 header <Name> "value"
 field <key> <name>
 ```
 
 Sorted by TTL ascending, then alphabetically.
 
-### Cache
-`Mutex<HashMap<String, (u64 timestamp, String body)>>`. Keyed by URL path + lat/lon.
-
-### Stigmergy
-`Mutex<HashMap<String, (u64 timestamp, String json)>>`. Keyed by `stig_{lat:.1}_{lon:.1}`. Fed by browser WebSocket text messages: `{"pulse":"lat|lon|json"}`.
-
 ## 3: CPU (JS)
 
 Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 
 ### `world.js`
-- `get(t, x, y, z)` → sends 36-byte request, parses IS v4 response
-- `parsePayload(bytes)` → reads objects, populates `is` object
+- `get(inputs, queries)` → builds v6 binary frame, sends non-blocking
+- `parseBatchPayload(bytes)` → reads objects, weaves into `result`
 - `weave(p, result)` → moving average blend with `1/PHI²`
-- `doFetch()` → WebSocket binary frame, Promise-based with `request_id` tracking
-- Certainty factors: `measureG()`, `measureVC()`, `measureDecay()`, `measureQuantum()`, `measureEpigenetics()`
+- Certainty factors: `measureG()`, `measureVC()`, `measureDecay()`, `measureQuantum()`
 
 ### `index.html` — Sensor Discovery
 - `discoverSensors()` / `discoverObj()` → walks `Object.getOwnPropertyNames(window)`, depth 3
 - Circular set guard, `WeakSet` for visited objects
 - Sensors: numbers/booleans. Actuators: functions taking arguments.
 - `on*` properties → event sources → `addEventListener`
+
+### `index.html` — Input Collection
+- Sensors (Accelerometer, GPS, Battery, Gamepads, etc.) no longer write directly to `is`.
+- They call `pushInput(name, value)`, which stamps them with the current `(t, x, y, z)` of the `io` and pushes them into the `inputBuffer`.
+
+### `index.html` — Heartbeat & Batch
+- Collects queries in `queryBuffer`.
+- Sends the entire `inputBuffer` and `queryBuffer` as a batch once per cycle (`tickTime * PHI`).
+- Only the response writes to the global `is` object.
 
 ### `index.html` — Probe State Machine
 - Phases: `waiting` → `probing` → `resolving`
@@ -116,16 +127,16 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 - Silent threshold: `pulse > sensors.size * PHI`
 
 ### `index.html` — Interoception
-- `navigator.hardwareConcurrency` → `system.cpu`
-- `performance.memory` → `system.memory`, `system.memoryTotal`
-- `fetch('/time')` round-trip → `system.latency`
+- `navigator.hardwareConcurrency` → `pushInput('system.cpu', ...)`
+- `performance.memory` → `pushInput('system.memory', ...)`
+- `fetch('/time')` round-trip → `pushInput('system.latency', ...)`
 
 ### `index.html` — Nostr (Stigmergy)
 - Connects `wss://relay.damus.io`
 - Subscribes `kind: 39603`
 - Publishes `kind: 39603`: `content` = flat JSON of `is` values, `geo` tag = `lat,lon`
 - Publish interval: `tickTime * PHI³`
-- On receive: forwards `{"pulse":"lat|lon|json"}` to Rust via pulse WebSocket
+- On receive: packs into `inputBuffer` via `pushInput('omega_flow.*', ...)` with ECEF stamp
 
 ## 4: GPU (WGSL)
 
@@ -177,24 +188,16 @@ binding 2: uniform         — params vec4(n, ringSize, 0, 0)
 
 ## 5: SOURCES
 
-`is/sources.is`. 229 sources. TTL range: 10s (ISS position) to 31536000s (Gaia star catalog).
+`is/sources.is`. TTL range: 10s (ISS position) to 31536000s (Gaia star catalog).
 
 ### Geo Templates
 ```
 {lat} {lon} {lat_min} {lat_max} {lon_min} {lon_max}
 {today} {yesterday} {tomorrow} {hour_ago} {year} {month} {day}
-{nearest_buoy} {nearest_tide_station} {nearest_geomag_station}
-{nearest_airport} {nearest_site} {nearest_observatory}
 ```
 
-### Geo Resolution
-- USGS site lookup via `waterservices.usgs.gov`
-- NDBC buoy lookup via `ndbcmapstations.json`
-- Tide station via `tidesandcurrents.noaa.gov`
-- Airport/radiosonde via `ourairports-data`
-- Intermagnet, NMDB, AERONET, SURFRAD via `is/lookups.is`
-- Country code via `bigdatacloud.net`
-- Cached 24h in `Mutex<HashMap>`
+### Fixed Stations
+Tide stations (301 NOAA), geomagnetic observatories, and other fixed-location sources declare `lat`/`lon` in `sources.is`. No runtime resolution.
 
 ## 6: DEVICES
 
@@ -204,6 +207,18 @@ binding 2: uniform         — params vec4(n, ringSize, 0, 0)
 - Battery: charging/level/time
 - Gamepad: axes/buttons
 - Web Audio: `PannerNode` HRTF
+
+### Smartwatch (Wearable API)
+- Heart rate, HRV, SpO2, steps, stress, sleep stages
+- Web Bluetooth / Garmin Connect API / Apple HealthKit bridge
+- Pushes via `pushInput('wearable.*', value)` with ECEF stamp from phone GPS
+
+### XR (WebXR Device API)
+- Hand tracking: joints, pinch, grasp
+- Eye tracking: gaze origin, gaze direction
+- Spatial sensors: pose, acceleration from headset IMU
+- World sensing: plane detection, mesh, depth
+- Pushes via `pushInput('xr.*', value)` with ECEF stamp from headset position
 
 ### ESP32-S3 (omegaflow sense)
 Specification: `docs/omegaflow_sense_hardware.yaml`
