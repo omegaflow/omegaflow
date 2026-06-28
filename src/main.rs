@@ -867,12 +867,6 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
         *archive.active_geo.lock().unwrap() = Some((la, lo));
     }
 
-    let _geo = if on_earth {
-        resolve_geo(lat.unwrap(), lon.unwrap(), &archive.cache, &archive.geo_lookups)
-    } else {
-        GeoLookup { usgs_site: String::new(), ndbc_buoy: String::new(), intermagnet: String::new(), nmdb: String::new(), tide_station: String::new(), geomag_station: String::new(), aeronet_site: String::new(), radiosonde_station: String::new(), radiosonde_airport: String::new(), surfrad_station: String::new(), country_code: String::new() }
-    };
-
     if lat.is_some() {
         let key = format!("stig_{:.1}_{:.1}", lat.unwrap(), lon.unwrap());
         let stig = archive.stigmergy.lock().unwrap();
