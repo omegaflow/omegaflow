@@ -38,6 +38,7 @@ struct Archive {
     cache: Mutex<HashMap<String, (u64, String)>>,
     geo_lookups: HashMap<String, Vec<(String, f64, f64)>>,
     stigmergy: Mutex<HashMap<String, (u64, String)>>,
+    active_geo: Mutex<Option<(f64, f64)>>,
 }
 
 struct GeoLookup {
@@ -862,7 +863,11 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
     
     let (lat, lon) = if on_earth { let (la,lo,_)=ecef_to_geodetic(x,y,z); (Some(la),Some(lo)) } else { (None,None) };
 
-    let geo = if on_earth {
+    if let (Some(la), Some(lo)) = (lat, lon) {
+        *archive.active_geo.lock().unwrap() = Some((la, lo));
+    }
+
+    let _geo = if on_earth {
         resolve_geo(lat.unwrap(), lon.unwrap(), &archive.cache, &archive.geo_lookups)
     } else {
         GeoLookup { usgs_site: String::new(), ndbc_buoy: String::new(), intermagnet: String::new(), nmdb: String::new(), tide_station: String::new(), geomag_station: String::new(), aeronet_site: String::new(), radiosonde_station: String::new(), radiosonde_airport: String::new(), surfrad_station: String::new(), country_code: String::new() }
@@ -884,27 +889,16 @@ fn weave(payload: &[u8], archive: &Archive) -> Vec<u8> {
 
     for src in &archive.sources {
         if src.url.starts_with("nostr://") { continue; }
-        let url = if lat.is_some() { render_url(&src.url, lat.unwrap(), lon.unwrap(), &geo) } else { render_url(&src.url, 0.0, 0.0, &geo) };
         let now_secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
         let cache_key = if lat.is_some() { format!("{}_{:.4}_{:.4}", src.url.split('?').next().unwrap_or(&src.url), lat.unwrap(), lon.unwrap()) } else { src.url.split('?').next().unwrap_or(&src.url).to_string() };
         
-        let headers_rendered: Vec<(String, String)> = src.headers.iter().map(|(k, v)| {
-            (k.clone(), render_url(v, lat.unwrap_or(0.0), lon.unwrap_or(0.0), &geo))
-        }).collect();
-
         let body = {
             let cache = archive.cache.lock().unwrap();
-            if let Some((ts, data)) = cache.get(&cache_key) {
-                if now_secs.saturating_sub(*ts) < src.ttl { data.clone() } else { String::new() }
-            } else { String::new() }
+            match cache.get(&cache_key) {
+                Some((ts, data)) if now_secs.saturating_sub(*ts) < src.ttl => data.clone(),
+                _ => continue,
+            }
         };
-        
-        let body = if body.is_empty() {
-            let fetched = match fetch_with_headers(&url, &headers_rendered) { Some(b) => b, None => continue };
-            let mut cache = archive.cache.lock().unwrap();
-            cache.insert(cache_key, (now_secs, fetched.clone()));
-            fetched
-        } else { body };
 
         for ext in &src.extracts {
             match ext {
@@ -971,6 +965,40 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
     let _=stream.write_all(data);
 }
 
+fn warm_cache(archive: Arc<Archive>) {
+    loop {
+        let now_secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
+        let active = archive.active_geo.lock().unwrap().clone();
+        let mut warmed = 0;
+        for src in &archive.sources {
+            if src.url.starts_with("nostr://") { continue; }
+            let (la, lo) = active.unwrap_or((0.0, 0.0));
+            let geo = resolve_geo(la, lo, &archive.cache, &archive.geo_lookups);
+            let url = render_url(&src.url, la, lo, &geo);
+            let cache_key = if active.is_some() { format!("{}_{:.4}_{:.4}", src.url.split('?').next().unwrap_or(&src.url), la, lo) } else { src.url.split('?').next().unwrap_or(&src.url).to_string() };
+            let needs_fetch = {
+                let cache = archive.cache.lock().unwrap();
+                match cache.get(&cache_key) {
+                    Some((ts, _)) => now_secs.saturating_sub(*ts) >= src.ttl,
+                    None => true,
+                }
+            };
+            if needs_fetch {
+                let headers_rendered: Vec<(String, String)> = src.headers.iter().map(|(k, v)| {
+                    (k.clone(), render_url(v, la, lo, &geo))
+                }).collect();
+                if let Some(body) = fetch_with_headers(&url, &headers_rendered) {
+                    let mut cache = archive.cache.lock().unwrap();
+                    cache.insert(cache_key, (now_secs, body));
+                    warmed += 1;
+                }
+            }
+        }
+        let sleep_secs = if warmed == 0 { (10.0 * PHI) as u64 } else { 10 };
+        thread::sleep(std::time::Duration::from_secs(sleep_secs));
+    }
+}
+
 fn main() {
     load_env();
     let port: u16 = std::env::var("PORT").ok().and_then(|s|s.parse().ok()).unwrap_or(3571);
@@ -981,7 +1009,12 @@ fn main() {
         cache: Mutex::new(HashMap::new()),
         geo_lookups: load_geo_lookups(),
         stigmergy: Mutex::new(HashMap::new()),
+        active_geo: Mutex::new(None),
     });
+    {
+        let ar = Arc::clone(&archive);
+        thread::spawn(move || warm_cache(ar));
+    }
     let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
     let dormant = Arc::new(Mutex::new(load_dormant()));
