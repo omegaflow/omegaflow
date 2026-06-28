@@ -114,7 +114,7 @@ fn extract_json_value(msg: &str, key: &str) -> Option<String> {
 
 fn fetch_with_headers(url: &str, headers: &[(String, String)]) -> Option<String> {
     let mut cmd = Command::new("curl");
-    cmd.arg("-s").arg("-k").arg("-m").arg("8").arg("--connect-timeout").arg("4");
+    cmd.arg("-s").arg("-k").arg("-m").arg("2").arg("--connect-timeout").arg("1");
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
@@ -963,12 +963,11 @@ fn warm_cache(archive: Arc<Archive>) {
     loop {
         let now_secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
         let active = archive.active_geo.lock().unwrap().clone();
-        let mut warmed = 0;
-        for src in &archive.sources {
-            if src.url.starts_with("nostr://") { continue; }
-            let (la, lo) = active.unwrap_or((0.0, 0.0));
-            let geo = resolve_geo(la, lo, &archive.cache, &archive.geo_lookups);
-            let url = render_url(&src.url, la, lo, &geo);
+        let (la, lo) = active.unwrap_or((0.0, 0.0));
+
+        let needs: Vec<(usize, String, String, Vec<(String, String)>)> = archive.sources.iter().enumerate().filter(|(_, src)| {
+            !src.url.starts_with("nostr://")
+        }).filter_map(|(i, src)| {
             let cache_key = if active.is_some() { format!("{}_{:.4}_{:.4}", src.url.split('?').next().unwrap_or(&src.url), la, lo) } else { src.url.split('?').next().unwrap_or(&src.url).to_string() };
             let needs_fetch = {
                 let cache = archive.cache.lock().unwrap();
@@ -978,17 +977,37 @@ fn warm_cache(archive: Arc<Archive>) {
                 }
             };
             if needs_fetch {
+                let geo = resolve_geo(la, lo, &archive.cache, &archive.geo_lookups);
+                let url = render_url(&src.url, la, lo, &geo);
                 let headers_rendered: Vec<(String, String)> = src.headers.iter().map(|(k, v)| {
                     (k.clone(), render_url(v, la, lo, &geo))
                 }).collect();
-                if let Some(body) = fetch_with_headers(&url, &headers_rendered) {
-                    let mut cache = archive.cache.lock().unwrap();
-                    cache.insert(cache_key, (now_secs, body));
-                    warmed += 1;
-                }
+                Some((i, cache_key, url, headers_rendered))
+            } else {
+                None
             }
+        }).collect();
+
+        let n_threads = std::thread::available_parallelism().map(|n| n.get()).unwrap_or(4);
+        let chunk_size = (needs.len() + n_threads - 1) / n_threads.max(1);
+
+        let results: Vec<(String, String)> = thread::scope(|s| {
+            let handles: Vec<_> = needs.chunks(chunk_size.max(1)).map(|chunk| {
+                s.spawn(|| {
+                    chunk.iter().filter_map(|(_, cache_key, url, headers)| {
+                        fetch_with_headers(url, headers).map(|body| (cache_key.clone(), body))
+                    }).collect::<Vec<_>>()
+                })
+            }).collect();
+            handles.into_iter().flat_map(|h| h.join().unwrap_or_default()).collect()
+        });
+
+        let warmed = results.len();
+        for (cache_key, body) in results {
+            archive.cache.lock().unwrap().insert(cache_key, (now_secs, body));
         }
-        let sleep_secs = if warmed == 0 { (10.0 * PHI) as u64 } else { 10 };
+
+        let sleep_secs = if warmed == 0 { (10.0 * PHI) as u64 } else { 1 };
         thread::sleep(std::time::Duration::from_secs(sleep_secs));
     }
 }
