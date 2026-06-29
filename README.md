@@ -1,17 +1,17 @@
 # ωφ
 
 ```
-            CPU (Rust)
-            Cache
-            φ(x,y,z,t)
+              CPU (Rust)
+              φ(x,y,z,t)
 
-APIs (f64)      CPU (JS) / GPU (WGSL)      Relay (Nostr)
-(sources.φ)             ω
+APIs (sources.φ)       ω           Relay (Nostr)
+                CPU (JS) / GPU
 
-            IO (Web-API)
+              IO (Web-API)
 ```
 
 Protocol: φ(x,y,z,t), 32 bytes
+
 Certainty: exp(-Δt_eff · g) · exp(-v_c / (g + ε)) · c_q · decay
 
 [omegaflow.space](https://omegaflow.space)
