@@ -12,7 +12,6 @@
 <body>
     <script type="module">
         import { get, is, pulse } from '/world.js';
-        import { generateSecretKey, getPublicKey, finalizeEvent } from 'https://esm.sh/nostr-tools@2.7.0/pure.js';
 
         const PHI = 1.618033988749895;
         const C = 299792458.0;
@@ -58,6 +57,7 @@
         let inputBuffer = [];
         let queryBuffer = [];
         let lastBatchFetch = 0;
+        let lastInfoCollect = 0;
         let cachedEcef = { x: 0, y: 0, z: 0 };
         let cachedJ2000 = 0;
 
@@ -67,6 +67,10 @@
         let nostrRelay = null;
         let nostrPub = null;
         let lastNostrPub = 0;
+        let stableTick = PHI;
+        let batchInterval = PHI;
+        let infoInterval = PHI;
+        let probeInterval = PHI;
 
         const probeState = {
             phase: 'waiting',
@@ -153,6 +157,14 @@
             return fired;
         }
 
+        function isCalibrated() {
+            let ready = 0;
+            for (const s of sensors.values()) {
+                if (s.complexity > 0) ready++;
+            }
+            return ready >= sensors.size / PHI;
+        }
+
         function checkProbing(ts) {
             const resonant = checkResonance(probeState.snapshot);
             if (resonant.length > 0) {
@@ -161,11 +173,14 @@
                 startResolving(ts, probeState.batch);
             } else {
                 sendResonant(probeState.batch);
+                const calibrated = isCalibrated();
                 for (const a of probeState.batch) {
-                    a.pulse *= PHI;
-                    if (a.pulse > sensors.size * PHI) {
-                    silent.add(a.path);
-                    actuators.delete(a.path);
+                    if (calibrated) {
+                        a.pulse *= PHI;
+                        if (a.pulse > getMedianComplexity() * PHI) {
+                            silent.add(a.path);
+                            actuators.delete(a.path);
+                        }
                     }
                 }
                 startProbing(ts);
@@ -188,12 +203,12 @@
                     if (existing) {
                         existing.threshold = existing.threshold * (1 - ma) + actuator.pulse * ma;
                         existing.magnitude = existing.magnitude * (1 - ma) + r.magnitude * ma;
-                        existing.divergence = (existing.divergence || 0) * (1 - ma) + error * ma;
+                        existing.divergence = (existing.divergence || 0) * (1 - ma) + divergence * ma;
                     } else {
                         resonanceMap.get(actuator.path).set(r.path, {
                             threshold: actuator.pulse,
                             magnitude: r.magnitude,
-                            divergence: error
+                            divergence: divergence
                         });
                     }
                 }
@@ -215,11 +230,14 @@
             }
 
             sendResonant(probeState.batch);
+            const calibrated = isCalibrated();
             for (const a of probeState.batch) {
-                a.pulse *= PHI;
-                if (a.pulse > sensors.size * PHI) {
-                    silent.add(a.path);
-                    actuators.delete(a.path);
+                if (calibrated) {
+                    a.pulse *= PHI;
+                    if (a.pulse > getMedianComplexity() * PHI) {
+                        silent.add(a.path);
+                        actuators.delete(a.path);
+                    }
                 }
             }
 
@@ -237,6 +255,7 @@
                 const s = sensors.get(path);
                 if (!s) continue;
                 const before = snap[path];
+                if (before.complexity <= 0) continue;
                 const delta = Math.abs(s.val - before.val);
                 if (delta > before.complexity) {
                     resonant.push({ path, magnitude: delta });
@@ -246,7 +265,7 @@
         }
 
         function discoverObj(obj, path, depth) {
-            if (depth > 3) return;
+            if (depth > 0) return;
             if (obj == null || typeof obj !== 'object') return;
             if (visited.has(obj)) return;
             visited.add(obj);
@@ -277,7 +296,7 @@
                     }
                 } else if (typeof val === 'function') {
                     if (!dormant.has(key) && !silent.has(p) && !actuators.has(p)) {
-                        actuators.set(p, { path: p, obj, key, pulse: 1 });
+                        actuators.set(p, { path: p, obj, key, pulse: 1 / (PHI * PHI) });
                     }
                 } else if (typeof val === 'object') {
                     if (!dormant.has(key) && !silent.has(p)) {
@@ -287,43 +306,72 @@
             }
         }
 
+        let _vibrateVal = 0;
+        let _titleVal = 0;
+        let _scrollVal = 0;
+
+        function _actuateVibrate(v) {
+            _vibrateVal = v;
+            
+            return true;
+        }
+        function _sensorVibrate() { return _vibrateVal; }
+
+        function _actuateTitle(v) {
+            _titleVal = v;
+            document.title = String(Math.round(v * 1000));
+            return true;
+        }
+        function _sensorTitle() { return _titleVal; }
+
+        function _actuateScroll(v) {
+            _scrollVal = v;
+            window.scrollTo(0, Math.round(v * 100));
+            return true;
+        }
+        function _sensorScroll() { return _scrollVal; }
+
         function discoverSensors() {
-            try {
-                const wn = Object.getOwnPropertyNames(window);
-                for (const k of wn) {
-                    if (circular.has(k) || dormant.has(k) || k.startsWith('on')) continue;
-                    try {
-                        const v = window[k];
-                        if (typeof v === 'number') {
-                            if (!sensors.has(k)) {
-                                sensors.set(k, { path: k, obj: window, key: k, val: v, interval: null, lastPoll: 0, complexity: 0, median: 0 });
-                                pushInput(k, v);
-                            }
-                        } else if (typeof v === 'boolean') {
-                            if (!sensors.has(k)) {
-                                sensors.set(k, { path: k, obj: window, key: k, val: v ? 1 : 0, interval: null, lastPoll: 0, complexity: 0, median: 0 });
-                                pushInput(k, v ? 1 : 0);
-                            }
-                        } else if (typeof v === 'function') {
-                            if (!dormant.has(k) && !silent.has(k) && !actuators.has(k)) {
-                                actuators.set(k, { path: k, obj: window, key: k, pulse: 1 });
-                            }
-                        } else if (typeof v === 'object' && v !== null) {
-                            if (!silent.has(k)) discoverObj(v, k, 0);
-                        }
-                    } catch {}
+            const seedSensors = [
+                ['vibrate', () => _vibrateVal],
+                ['title', () => _titleVal],
+                ['scroll', () => _scrollVal],
+                ['innerWidth', () => window.innerWidth],
+                ['innerHeight', () => window.innerHeight],
+                ['devicePixelRatio', () => window.devicePixelRatio],
+                ['hardwareConcurrency', () => navigator.hardwareConcurrency || 0],
+                ['scrollX', () => window.scrollX],
+                ['scrollY', () => window.scrollY],
+                ['time', () => performance.now() / 1000],
+                ['random', () => Math.random()],
+            ];
+            for (const [name, getter] of seedSensors) {
+                if (!sensors.has(name)) {
+                    const v = getter();
+                    if (typeof v === 'number') {
+                        sensors.set(name, { path: name, obj: { _g: getter }, key: '_g', val: v, interval: null, lastPoll: 0, complexity: 0, median: 0 });
+                    }
                 }
-            } catch {}
+            }
+
+            const seedActuators = [
+                ['vibrate', _actuateVibrate],
+                ['title', _actuateTitle],
+                ['scroll', _actuateScroll],
+            ];
+            for (const [name, fn] of seedActuators) {
+                if (!actuators.has(name) && !dormant.has(name)) {
+                    actuators.set(name, { path: name, obj: { _f: fn }, key: '_f', pulse: 1 / (PHI * PHI) });
+                }
+            }
         }
 
         function pulseActuator(actuator, value) {
             try {
-                const result = actuator.obj[actuator.key](value);
+                const fn = actuator.obj[actuator.key];
+                const result = typeof fn === 'function' ? fn(value) : fn;
                 if (result && typeof result.catch === 'function') {
-                    result.catch(() => {
-                        silent.add(actuator.path);
-                        actuators.delete(actuator.path);
-                    });
+                    result.catch(() => {});
                 }
                 return true;
             } catch {
@@ -357,7 +405,8 @@
 
         function readSensorVal(s, tickTime) {
             try {
-                const v = s.obj[s.key];
+                let v = s.obj[s.key];
+                if (typeof v === 'function') v = v();
                 if (typeof v === 'number') processSensorReading(s, v, tickTime);
                 else if (typeof v === 'boolean') processSensorReading(s, v ? 1 : 0, tickTime);
             } catch {}
@@ -408,6 +457,17 @@
         function splitBatch(batch) {
             const splitIdx = Math.floor(batch.length / PHI);
             return { left: batch.slice(0, splitIdx), right: batch.slice(splitIdx) };
+        }
+
+        function getMedianComplexity() {
+            const vals = [];
+            for (const s of sensors.values()) {
+                if (s.complexity > 0) vals.push(s.complexity);
+            }
+            if (vals.length === 0) return 1 / (PHI * PHI);
+            vals.sort((a, b) => a - b);
+            const mid = Math.floor(vals.length / 2);
+            return vals.length % 2 ? vals[mid] : (vals[mid - 1] + vals[mid]) / 2;
         }
 
         function startProbing(ts) {
@@ -488,8 +548,13 @@
         }
 
         function heartbeat(ts) {
-            const tickTime = lastTs > 0 ? ts - lastTs : 1;
+            const rawTick = lastTs > 0 ? ts - lastTs : PHI;
             lastTs = ts;
+            if (probeState.phase === 'waiting' && rawTick > 0) {
+                const ma = 1 / (PHI * PHI);
+                stableTick = stableTick > 0 ? stableTick * (1 - ma) + rawTick * ma : rawTick;
+            }
+            const tickTime = stableTick;
 
             const lat = is['geolocation.latitude'];
             const lon = is['geolocation.longitude'];
@@ -501,7 +566,8 @@
                 queryBuffer.push({ t: t_j2000, x: cachedEcef.x, y: cachedEcef.y, z: cachedEcef.z });
             }
 
-            const batchDue = lastBatchFetch + (tickTime * PHI) - ts;
+            if (batchInterval === null) batchInterval = PHI;
+            const batchDue = lastBatchFetch + batchInterval - ts;
             if ((inputBuffer.length > 0 || queryBuffer.length > 0) && (batchDue <= 0 || queryBuffer.length >= 128)) {
                 lastBatchFetch = ts;
                 const inputs = inputBuffer.splice(0);
@@ -510,19 +576,28 @@
                     for (const key in r) { is[key] = r[key]; }
                     if (r.certainty !== undefined) certainty = r.certainty;
                 }).catch(() => {});
+                if (inputBuffer.length === 0) batchInterval *= PHI;
+                else batchInterval = Math.max(batchInterval / PHI, PHI);
             }
 
             let nextDelay = Infinity;
 
+            const probing = probeState.phase === 'probing' || probeState.phase === 'resolving';
             for (const s of sensors.values()) {
-                if (s.interval === null) s.interval = tickTime;
-                const due = s.lastPoll + s.interval - ts;
-                if (due <= 0) {
+                if (probing) {
                     s.lastPoll = ts;
                     readSensorVal(s, tickTime);
-                    nextDelay = 0;
-                } else if (due < nextDelay) {
-                    nextDelay = due;
+                    nextDelay = Math.min(nextDelay, stableTick);
+                } else {
+                    if (s.interval === null) s.interval = tickTime;
+                    const due = s.lastPoll + s.interval - ts;
+                    if (due <= 0) {
+                        s.lastPoll = ts;
+                        readSensorVal(s, tickTime);
+                        nextDelay = Math.min(nextDelay, s.interval);
+                    } else {
+                        nextDelay = Math.min(nextDelay, due);
+                    }
                 }
             }
 
@@ -538,9 +613,9 @@
                     } else {
                         gamepadInterval *= PHI;
                     }
-                    nextDelay = 0;
-                } else if (gpDue < nextDelay) {
-                    nextDelay = gpDue;
+                    nextDelay = Math.min(nextDelay, gamepadInterval);
+                } else {
+                    nextDelay = Math.min(nextDelay, gpDue);
                 }
             }
 
@@ -551,22 +626,22 @@
                 visited = new WeakSet();
                 discoverSensors();
                 if (sensors.size !== lastSensorCount) {
-                    discoveryInterval = tickTime;
                     lastSensorCount = sensors.size;
-                } else {
-                    discoveryInterval *= PHI;
                 }
-                nextDelay = 0;
-            } else if (dDue < nextDelay) {
-                nextDelay = dDue;
+                discoveryInterval *= PHI;
+                nextDelay = Math.min(nextDelay, discoveryInterval);
+            } else {
+                nextDelay = Math.min(nextDelay, dDue);
             }
 
             if (probeState.phase === 'waiting') {
-                const divergence = is['divergence'] || 0;
-                const explorationRate = divergence / (certainty + (1 / C));
                 if (!express()) {
                     if (actuators.size > 0 && sensors.size > 0) {
-                        if (Math.random() < explorationRate) {
+                        let avgComplexity = 0;
+                        for (const s of sensors.values()) avgComplexity += s.complexity;
+                        avgComplexity /= sensors.size;
+                        const curiosity = 1 - avgComplexity;
+                        if (resonanceMap.size === 0 || Math.random() < curiosity) {
                             startProbing(ts);
                         }
                     }
@@ -577,6 +652,11 @@
                 checkResolving(ts);
             }
 
+            if (probeState.phase === 'probing' || probeState.phase === 'resolving') {
+
+                nextDelay = Math.max(probeInterval, stableTick);
+            }
+
             if (topologyInterval === null) topologyInterval = tickTime;
             const topoDue = lastTopology + topologyInterval - ts;
             if (topoDue <= 0) {
@@ -584,13 +664,15 @@
                 runSignalTopology(ts);
                 const divergence = is['divergence'] || 0;
                 topologyInterval = divergence > sensors.size ? tickTime : topologyInterval * PHI;
-                nextDelay = 0;
-            } else if (topoDue < nextDelay) {
-                nextDelay = topoDue;
+                nextDelay = Math.min(nextDelay, topologyInterval);
+            } else {
+                nextDelay = Math.min(nextDelay, topoDue);
             }
 
-            const icDue = lastBatchFetch + (tickTime * PHI) - ts;
+            if (infoInterval === null) infoInterval = PHI;
+            const icDue = lastInfoCollect + infoInterval - ts;
             if (icDue <= 0) {
+                lastInfoCollect = ts;
                 pushInput('system.cpu', navigator.hardwareConcurrency || 0);
                 if (performance.memory) {
                     pushInput('system.memory', performance.memory.usedJSHeapSize);
@@ -600,13 +682,15 @@
                 fetch('/time').then(() => {
                     pushInput('system.latency', performance.now() - t0);
                 }).catch(() => {});
-                nextDelay = 0;
-            } else if (icDue < nextDelay) {
-                nextDelay = icDue;
+                infoInterval *= PHI;
+                nextDelay = Math.min(nextDelay, infoInterval);
+            } else {
+                nextDelay = Math.min(nextDelay, icDue);
             }
 
-            const noDue = lastNostrPub + (tickTime * PHI * PHI * PHI) - ts;
-            if (noDue <= 0 && nostrPub && nostrRelay && nostrRelay.readyState === WebSocket.OPEN) {
+            if (probeInterval === null) probeInterval = PHI;
+            const noDue = lastNostrPub + probeInterval * PHI * PHI - ts;
+            if (noDue <= 0 && nostrPub && nostrRelay && nostrRelay.readyState === WebSocket.OPEN && nostrModule) {
                 lastNostrPub = ts;
                 const physLat = is['geolocation.latitude'];
                 const physLon = is['geolocation.longitude'];
@@ -620,7 +704,7 @@
                     const content = JSON.stringify(payload);
                     if (content !== '{}') {
                         try {
-                            const event = finalizeEvent({
+                            const event = nostrModule.finalizeEvent({
                                 kind: 39603,
                                 created_at: Math.floor(Date.now() / 1000),
                                 tags: [['geo', physLat.toFixed(4) + ',' + physLon.toFixed(4)]],
@@ -630,9 +714,13 @@
                         } catch {}
                     }
                 }
-                nextDelay = 0;
-            } else if (noDue < nextDelay) {
-                nextDelay = noDue;
+                nextDelay = Math.min(nextDelay, probeInterval * PHI * PHI);
+            } else {
+                nextDelay = Math.min(nextDelay, noDue);
+            }
+
+            if (nextDelay === Infinity) {
+                nextDelay = stableTick > 0 ? stableTick : PHI;
             }
 
             if (document.hidden) {
@@ -702,17 +790,25 @@
                 const adapter = await navigator.gpu.requestAdapter();
                 if (adapter) {
                     const device = await adapter.requestDevice();
+                    device.pushErrorScope('validation');
+                    device.addEventListener('uncapturederror', (e) => {
+                        console.error('GPU:', e.error.message);
+                    });
                     window.omegaflow.gpu = device;
                     pushInput('system.gpu', 1);
                 }
-            } catch {}
+            } catch (e) { console.error('WebGPU init:', e); }
         }
 
         let audioCtx = null;
+        let nostrModule = null;
         async function tryStartNostr() {
+            try {
+                nostrModule = await import('https://esm.sh/nostr-tools@2.7.0/pure.js');
+            } catch { return; }
             let privKey = localStorage.getItem('omegaflow_nostr_key');
             if (!privKey) {
-                privKey = generateSecretKey();
+                privKey = nostrModule.generateSecretKey();
                 localStorage.setItem('omegaflow_nostr_key', JSON.stringify(Array.from(privKey)));
             } else {
                 privKey = new Uint8Array(JSON.parse(privKey));
@@ -870,9 +966,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         }
         let range = mx - mn + (1.0 / 86400.0);
         var h00: f32 = 0.0; var h01: f32 = 0.0; var h10: f32 = 0.0; var h11: f32 = 0.0;
-The suggested edit appears to be completely unrelated to the original code and doesn't replace any specific portion. It seems to be entirely separate constants and a Set declaration.
-
-Since the suggested edit doesn't directly replace the original code, I'll provide what would be the most logical interpretation - replacing the original code with the suggested edit:
+        for (var i = 0u; i < rs - lag; i++) {
+            let b1 = select(0u, 1u, data[base + i] > mn + range * 0.5);
             let b2 = select(0u, 1u, data[base + i + lag] > mn + range * 0.5);
             if (b1 == 0u && b2 == 0u) { h00 += 1.0; }
             else if (b1 == 0u && b2 == 1u) { h01 += 1.0; }
@@ -1256,6 +1351,13 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         tryStartWebGPU();
         tryStartWebAudio();
         tryStartNostr();
+
+        window.addEventListener('error', (e) => {
+            try {
+                fetch('/crash', { method: 'POST', body: e.message + ' @ ' + e.filename + ':' + e.lineno });
+            } catch {}
+        });
+
         setTimeout(() => heartbeat(performance.now()), 0);
     </script>
 </body>

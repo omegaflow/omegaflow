@@ -1,21 +1,73 @@
-dormant location
-dormant history
-dormant document
-dormant close
+dormant Function
 dormant alert
+dormant atob 0 4
+dormant blur 0 5034
+dormant btoa 0 5034
+dormant cancelAnimationFrame 0 5034
+dormant cancelIdleCallback 0 5034
+dormant captureEvents 0 5034
+dormant clearInterval 0 5034
+dormant clearTimeout 0 5034
+dormant close
 dormant confirm
-dormant prompt
-dormant print
+dormant createImageBitmap 0 5034
+dormant decodeURI 0 5034
+dormant decodeURIComponent 0 5034
+dormant document
+dormant encodeURI 0 5034
+dormant encodeURIComponent 0 5034
+dormant escape 0 5034
+dormant eval
+dormant fetch
+dormant fetchLater 0 3623
+dormant find 0 5034
+dormant focus 0 5034
+dormant getComputedStyle 0 4
+dormant getScreenDetails 0 5034
+dormant getSelection 0 5034
+dormant history
+dormant isFinite 0 5034
+dormant isNaN 0 5034
+dormant location
+dormant matchMedia 0 5034
+dormant moveBy 0 4
+dormant moveTo 0 4
 dormant open
+dormant parseFloat 0 5034
+dormant parseInt 0 5034
+dormant postMessage 0 5034
+dormant print
+dormant prompt
+dormant queryLocalFonts 0 5034
+dormant queueMicrotask 0 4
+dormant releaseEvents 0 5034
+dormant reportError 0 5034
+dormant requestAnimationFrame 0 4
+dormant requestIdleCallback 0 4
+dormant resizeBy 0 4
+dormant resizeTo 0 4
+dormant scroll 0 696998
+dormant scrollBy 0 5034
+dormant scrollTo 0 5034
+dormant setInterval 0 5034
+dormant setTimeout 0 5034
+dormant showDirectoryPicker 0 5034
+dormant showOpenFilePicker 0 5034
+dormant showSaveFilePicker 0 5034
 dormant stop
-dormant globalThis.CSS.vw 0 90
-dormant globalThis.WebAssembly.compileStreaming 0 103
-dormant scroll 0 2
-dormant globalThis.Math.log 0 14
-dormant showOpenFilePicker 0 51
-dormant globalThis.clearInterval 0 51
-dormant globalThis.Temporal.Now.instant 0 67
-dormant globalThis.CSS.rex 0 2
-dormant parseFloat 1 96
-dormant globalThis.chrome.csi 0 34
-dormant globalThis.captureEvents 0 78
+dormant structuredClone 0 5034
+dormant title 0 691964
+dormant unescape 0 5034
+dormant vibrate 1 691965
+dormant webkitCancelAnimationFrame 0 5034
+dormant webkitMediaStream 0 4
+dormant webkitRTCPeerConnection 0 4
+dormant webkitRequestAnimationFrame 0 4
+dormant webkitRequestFileSystem 0 4
+dormant webkitResolveLocalFileSystemURL 0 4
+dormant webkitSpeechGrammar 0 4
+dormant webkitSpeechGrammarList 0 4
+dormant webkitSpeechRecognition 0 4
+dormant webkitSpeechRecognitionError 0 4
+dormant webkitSpeechRecognitionEvent 0 4
+dormant webkitURL 0 4

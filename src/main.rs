@@ -122,12 +122,22 @@ fn handle_observer(stream: TcpStream, dormant: Arc<Mutex<HashMap<String,(u32,u32
     else {
         let mut cur = signal;
         loop {
-            match parse_path(&cur).as_str() {
-                "/" => emit(&mut s, "200 OK", "text/html", &archive.index_html),
-                "/dormant" => { let b = dormant_state.lock().unwrap().clone(); emit(&mut s, "200 OK", "text/plain", b.as_bytes()); }
-                "/time" => { let t = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs_f64(); emit(&mut s, "200 OK", "text/plain", t.to_string().as_bytes()); }
-                "/world.js" => emit(&mut s, "200 OK", "application/javascript", &archive.world_js),
-                _ => { emit_void(&mut s); break; }
+            let path = parse_path(&cur);
+            if path.starts_with("/crash") {
+                let body_start = cur.find("\r\n\r\n").map(|i| &cur[i+4..]).unwrap_or("");
+                let log = format!("[{}] CRASH: {}\n", SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs(), body_start.trim());
+                println!("{}", log.trim());
+                use std::io::Write;
+                let _ = std::fs::OpenOptions::new().create(true).append(true).open("crash.log").and_then(|mut f| f.write_all(log.as_bytes()));
+                emit(&mut s, "200 OK", "text/plain", b"ok");
+            } else {
+                match path.as_str() {
+                    "/" => emit(&mut s, "200 OK", "text/html", &archive.index_html),
+                    "/dormant" => { let b = dormant_state.lock().unwrap().clone(); emit(&mut s, "200 OK", "text/plain", b.as_bytes()); }
+                    "/time" => { let t = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs_f64(); emit(&mut s, "200 OK", "text/plain", t.to_string().as_bytes()); }
+                    "/world.js" => emit(&mut s, "200 OK", "application/javascript", &archive.world_js),
+                    _ => { emit_void(&mut s); break; }
+                }
             }
             match read_signal(&mut s) { Some(r) => cur = r, None => break }
         }
@@ -214,12 +224,12 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
 
         } else if frame.opcode==0x1 {
             let msg=String::from_utf8_lossy(&frame.payload);
-            if let Some(confirmed)=extract_json_value(&msg,"confirmed") {
+            if let Some(resonant)=extract_json_value(&msg,"resonant") {
                 let mut c=dormant.lock().unwrap();
-                for p in confirmed.split('|') { c.entry(p.to_string()).or_insert((0,0)).1+=1; }
+                for p in resonant.split('|') { if !p.is_empty() { c.entry(p.to_string()).or_insert((0,0)).1+=1; } }
                 rewrite_dormant(&c); *dormant_state.lock().unwrap()=format_dormant_snapshot(&c); last_stimulus.clear();
-            } else if let Some(stimulus)=extract_json_value(&msg,"stimulus") {
-                last_stimulus=stimulus.split('|').map(|s|s.to_string()).collect();
+            } else if let Some(pulse)=extract_json_value(&msg,"pulse") {
+                last_stimulus=pulse.split('|').filter(|s|!s.is_empty()).map(|s|s.to_string()).collect();
             }
         }
     }
