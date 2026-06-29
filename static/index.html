@@ -37,7 +37,7 @@
         } catch {}
 
         const circular = new Set(['window','self','top','parent','frames','opener',
-            'frameElement','__proto__','constructor','prototype', 'omegaflow']);
+            'frameElement','__proto__','constructor','prototype', 'ω']);
         const silent = new Set();
         const eventSources = new Set();
         const resonanceMap = new Map();
@@ -523,7 +523,6 @@
                     if (r.certainty !== undefined) certainty = r.certainty;
                 }).catch(() => {});
                 if (inputBuffer.length === 0) batchInterval *= φ;
-                batchInterval = Math.max(batchInterval, φ);
                 else batchInterval = Math.max(batchInterval / φ, φ);
             }
 
@@ -1134,9 +1133,6 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 { binding: 1, resource: { buffer: tdaOutBuf } },
                 { binding: 2, resource: { buffer: paramBuf } },
             ]});
-                { binding: 0, resource: { buffer: inBuf } },
-                { binding: 2, resource: { buffer: paramBuf } },
-            ]});
 
             const totalReadSize = n * 4 + n * 4 * 4 + n * n * 4 + n * 2 * 4;
             const readBuf = gpu.createBuffer({ size: totalReadSize, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
@@ -1224,11 +1220,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                     }
                 }
 
-                for (let i = 0; i < n; i++) {
-                    }
-                }
-
                 readBuf.unmap();
+                inBuf.destroy(); kOutBuf.destroy(); tOutBuf.destroy(); teOutBuf.destroy(); tdaOutBuf.destroy(); paramBuf.destroy(); readBuf.destroy();
             });
         }
 
