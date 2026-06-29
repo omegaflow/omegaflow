@@ -12,8 +12,8 @@
 <body>
     <script type="module">
         import { get, φ, pulse } from '/world.js';
+        const Φ = 1.618033988749895;
 
-        const φ = 1.618033988749895;
         const C = 299792458.0;
         const WGS84_A = 6378137.0;
         const WGS84_F = 1.0 / 298.257223563;
@@ -67,10 +67,10 @@
         let nostrRelay = null;
         let nostrPub = null;
         let lastNostrPub = 0;
-        let stableTick = φ;
-        let batchInterval = φ;
-        let infoInterval = φ;
-        let probeInterval = φ;
+        let stableTick = Φ;
+        let batchInterval = Φ;
+        let infoInterval = Φ;
+        let probeInterval = Φ;
 
         const probeState = {
             phase: 'waiting',
@@ -134,7 +134,7 @@
             let varSum = 0;
             for (const v of scores.values()) { const d = v - scoreMean; varSum += d * d; }
             const scoreStd = Math.sqrt(varSum / scores.size);
-            const threshold = scoreMean + scoreStd / φ;
+            const threshold = scoreMean + scoreStd / Φ;
 
             let fired = false;
             for (const [actPath, score] of scores) {
@@ -162,7 +162,7 @@
             for (const s of sensors.values()) {
                 if (s.complexity > 0) ready++;
             }
-            return ready >= sensors.size / φ;
+            return ready >= sensors.size / Φ;
         }
 
         function checkProbing(ts) {
@@ -176,8 +176,8 @@
                 const calibrated = isCalibrated();
                 for (const a of probeState.batch) {
                     if (calibrated) {
-                        a.pulse *= φ;
-                        if (a.pulse > getMedianComplexity() * φ) {
+                        a.pulse *= Φ;
+                        if (a.pulse > getMedianComplexity() * Φ) {
                             silent.add(a.path);
                             actuators.delete(a.path);
                         }
@@ -199,7 +199,7 @@
                     const existing = resonanceMap.get(actuator.path).get(r.path);
                     const predicted = probeState.predictions ? (probeState.predictions[r.path] || 0) : 0;
                     const Δ = Math.abs(r.magnitude - predicted);
-                    const ma = 1 / (φ * φ);
+                    const ma = 1 / (Φ * Φ);
                     if (existing) {
                         existing.threshold = existing.threshold * (1 - ma) + actuator.pulse * ma;
                         existing.magnitude = existing.magnitude * (1 - ma) + r.magnitude * ma;
@@ -233,8 +233,8 @@
             const calibrated = isCalibrated();
             for (const a of probeState.batch) {
                 if (calibrated) {
-                    a.pulse *= φ;
-                    if (a.pulse > getMedianComplexity() * φ) {
+                    a.pulse *= Φ;
+                    if (a.pulse > getMedianComplexity() * Φ) {
                         silent.add(a.path);
                         actuators.delete(a.path);
                     }
@@ -296,7 +296,7 @@
                     }
                 } else if (typeof val === 'function') {
                     if (!dormant.has(key) && !silent.has(p) && !actuators.has(p)) {
-                        actuators.set(p, { path: p, obj, key, pulse: 1 / (φ * φ) });
+                        actuators.set(p, { path: p, obj, key, pulse: 1 / (Φ * Φ) });
                     }
                 } else if (typeof val === 'object') {
                     if (!dormant.has(key) && !silent.has(p)) {
@@ -403,7 +403,7 @@
         }
 
         function splitBatch(batch) {
-            const splitIdx = Math.floor(batch.length / φ);
+            const splitIdx = Math.floor(batch.length / Φ);
             return { left: batch.slice(0, splitIdx), right: batch.slice(splitIdx) };
         }
 
@@ -412,14 +412,14 @@
             for (const s of sensors.values()) {
                 if (s.complexity > 0) vals.push(s.complexity);
             }
-            if (vals.length === 0) return 1 / (φ * φ);
+            if (vals.length === 0) return 1 / (Φ * Φ);
             vals.sort((a, b) => a - b);
             const mid = Math.floor(vals.length / 2);
             return vals.length % 2 ? vals[mid] : (vals[mid - 1] + vals[mid]) / 2;
         }
 
         function startProbing(ts) {
-            const prune = 1 - 1 / (φ * φ);
+            const prune = 1 - 1 / (Φ * Φ);
             let totalΔ = 0;
             for (const [actPath, sensorMap] of resonanceMap) {
                 for (const [spath, data] of sensorMap) {
@@ -496,10 +496,10 @@
         }
 
         function ω(ts) {
-            const rawTick = lastTs > 0 ? ts - lastTs : φ;
+            const rawTick = lastTs > 0 ? ts - lastTs : Φ;
             lastTs = ts;
             if (probeState.phase === 'waiting' && rawTick > 0) {
-                const ma = 1 / (φ * φ);
+                const ma = 1 / (Φ * Φ);
                 stableTick = stableTick > 0 ? stableTick * (1 - ma) + rawTick * ma : rawTick;
             }
             const tickTime = stableTick;
@@ -512,7 +512,7 @@
             cachedJ2000 = t_j2000;
             queryBuffer.push({ t: t_j2000, x: cachedEcef.x, y: cachedEcef.y, z: cachedEcef.z });
 
-            if (batchInterval === null) batchInterval = φ;
+            if (batchInterval === null) batchInterval = Φ;
             const batchDue = lastBatchFetch + batchInterval - ts;
             if ((inputBuffer.length > 0 || queryBuffer.length > 0) && (batchDue <= 0 || queryBuffer.length >= 128)) {
                 lastBatchFetch = ts;
@@ -522,8 +522,8 @@
                     for (const key in r) { φ[key] = r[key]; }
                     if (r.certainty !== undefined) certainty = r.certainty;
                 }).catch(() => {});
-                if (inputBuffer.length === 0) batchInterval *= φ;
-                else batchInterval = Math.max(batchInterval / φ, φ);
+                if (inputBuffer.length === 0) batchInterval *= Φ;
+                else batchInterval = Math.max(batchInterval / Φ, Φ);
             }
 
             let nextDelay = Infinity;
@@ -557,8 +557,8 @@
                         gamepadInterval = tickTime;
                         lastGamepadState = state;
                     } else {
-                        gamepadInterval *= φ;
-                gamepadInterval = Math.max(gamepadInterval, φ);
+                        gamepadInterval *= Φ;
+                gamepadInterval = Math.max(gamepadInterval, Φ);
                     }
                     nextDelay = Math.min(nextDelay, gamepadInterval);
                 } else {
@@ -575,8 +575,8 @@
                 if (sensors.size !== lastSensorCount) {
                     lastSensorCount = sensors.size;
                 }
-                discoveryInterval *= φ;
-                discoveryInterval = Math.max(discoveryInterval, φ);
+                discoveryInterval *= Φ;
+                discoveryInterval = Math.max(discoveryInterval, Φ);
                 nextDelay = Math.min(nextDelay, discoveryInterval);
             } else {
                 nextDelay = Math.min(nextDelay, dDue);
@@ -611,13 +611,13 @@
                 lastTopology = ts;
                 runSignalTopology(ts);
                 const divergence = φ['divergence'] || 0;
-                topologyInterval = divergence > sensors.size ? tickTime : topologyInterval * φ;
+                topologyInterval = divergence > sensors.size ? tickTime : topologyInterval * Φ;
                 nextDelay = Math.min(nextDelay, topologyInterval);
             } else {
                 nextDelay = Math.min(nextDelay, topoDue);
             }
 
-            if (infoInterval === null) infoInterval = φ;
+            if (infoInterval === null) infoInterval = Φ;
             const icDue = lastInfoCollect + infoInterval - ts;
             if (icDue <= 0) {
                 lastInfoCollect = ts;
@@ -630,15 +630,15 @@
                 fetch('/time').then(() => {
                     pushInput('system.latency', performance.now() - t0);
                 }).catch(() => {});
-                infoInterval *= φ;
-                infoInterval = Math.max(infoInterval, φ);
+                infoInterval *= Φ;
+                infoInterval = Math.max(infoInterval, Φ);
                 nextDelay = Math.min(nextDelay, infoInterval);
             } else {
                 nextDelay = Math.min(nextDelay, icDue);
             }
 
-            if (probeInterval === null) probeInterval = φ;
-            const noDue = lastNostrPub + probeInterval * φ * φ - ts;
+            if (probeInterval === null) probeInterval = Φ;
+            const noDue = lastNostrPub + probeInterval * Φ * Φ - ts;
             if (noDue <= 0 && nostrPub && nostrRelay && nostrRelay.readyState === WebSocket.OPEN && nostrModule) {
                 lastNostrPub = ts;
                 const physLat = φ['geolocation.latitude'];
@@ -663,17 +663,17 @@
                         } catch {}
                     }
                 }
-                nextDelay = Math.min(nextDelay, probeInterval * φ * φ);
+                nextDelay = Math.min(nextDelay, probeInterval * Φ * Φ);
             } else {
                 nextDelay = Math.min(nextDelay, noDue);
             }
 
             if (nextDelay === Infinity) {
-                nextDelay = stableTick > 0 ? stableTick : φ;
+                nextDelay = stableTick > 0 ? stableTick : Φ;
             }
 
             if (document.hidden) {
-                nextDelay = Math.max(nextDelay, tickTime * φ);
+                nextDelay = Math.max(nextDelay, tickTime * Φ);
             }
 
             setTimeout(() => {
@@ -1029,7 +1029,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
         function processSensorReading(s, val, tickTime) {
             const Δ = Math.abs(val - s.val);
-            const ma = 1 / (φ * φ);
+            const ma = 1 / (Φ * Φ);
             s.median = s.median * (1 - ma) + val * ma;
             
             if (s.complexity === 0 || Δ <= s.complexity) {
@@ -1049,7 +1049,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 pushInput(s.path, val);
             } else {
                 if (s.interval !== null) {
-                    s.interval *= φ;
+                    s.interval *= Φ;
                 }
             }
             
@@ -1191,7 +1191,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                     pushInput('complexity.' + activeNames[i], kRes[i]);
                     const sens = sensors.get(activeNames[i]);
                     if (sens) {
-                        const ma = 1 / (φ * φ);
+                        const ma = 1 / (Φ * Φ);
                         sens.complexity = sens.complexity * (1 - ma) + kRes[i] * ma;
                     }
 
@@ -1208,7 +1208,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 if (allTE.length > 0) {
                     const mu = allTE.reduce((s, v) => s + v, 0) / allTE.length;
                     const sigma = Math.sqrt(allTE.reduce((s, v) => s + (v - mu) ** 2, 0) / allTE.length);
-                    const threshold = mu + sigma / φ;
+                    const threshold = mu + sigma / Φ;
                     for (let a = 0; a < n; a++) {
                         for (let b = 0; b < n; b++) {
                             if (a === b) continue;

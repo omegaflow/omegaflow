@@ -100,9 +100,11 @@ fn emit_void(s: &mut TcpStream) { let _=s.write_all(b"HTTP/1.1 404 Not Found\r\n
 fn extract_header(s: &str, n: &str) -> Option<String> { for l in s.lines() { if let Some(c) = l.find(':') { if l[..c].trim().eq_ignore_ascii_case(n) { return Some(l[c+1..].trim().to_string()); } } } None }
 fn extract_json_value(msg: &str, key: &str) -> Option<String> { let p = format!("\"{}\":\"", key); let s = msg.find(&p)? + p.len(); let e = msg[s..].find('"')? + s; Some(msg[s..e].to_string()) }
 
-fn fetch_with_headers(url: &str, headers: &[(String, String)]) -> Option<String> {
+fn fetch_with_headers(url: &str, headers: &[(String, String)], ttl: u64) -> Option<String> {
+    let connect_t = ((ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64;
+    let max_t = ((ttl as f64) / (Φ * Φ)).max(1.0) as u64;
     let mut cmd = Command::new("curl");
-    cmd.arg("-s").arg("-k").arg("-m").arg("2").arg("--connect-timeout").arg("1");
+    cmd.arg("-s").arg("-k").arg("-m").arg(max_t.to_string()).arg("--connect-timeout").arg(connect_t.to_string());
     for (k, v) in headers { cmd.arg("-H").arg(format!("{}: {}", k, v)); }
     cmd.arg(url);
     let output = cmd.output().ok()?;
@@ -656,14 +658,15 @@ fn warm_cache(archive: Arc<Archive>) {
         let tiles: Vec<String> = archive.active_tiles.lock().unwrap().iter().cloned().collect();
 
         if tiles.is_empty() {
-            thread::sleep(std::time::Duration::from_secs((10.0 * Φ) as u64));
+            let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
+            thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / Φ) as u64));
             continue;
         }
 
         for tile in &tiles {
             let (tile_lat, tile_lon) = parse_tile(tile);
 
-            let needs: Vec<(usize, String, String, Vec<(String, String)>)> = archive.sources.iter().enumerate()
+            let needs: Vec<(usize, String, String, Vec<(String, String)>, u64)> = archive.sources.iter().enumerate()
                 .filter(|(_, src)| !src.url.starts_with("nostr://"))
                 .filter_map(|(i, src)| {
                     let (cache_key, render_lat, render_lon) = if let (Some(sl), Some(slo)) = (src.lat, src.lon) {
@@ -687,18 +690,18 @@ fn warm_cache(archive: Arc<Archive>) {
                         let url = render_url(&src.url, render_lat, render_lon);
                         let headers_rendered: Vec<(String, String)> = src.headers.iter()
                             .map(|(k, v)| (k.clone(), render_url(v, render_lat, render_lon))).collect();
-                        Some((i, cache_key, url, headers_rendered))
+                        Some((i, cache_key, url, headers_rendered, src.ttl))
                     } else { None }
                 }).collect();
 
-            let n_threads = std::thread::available_parallelism().map(|n| n.get()).unwrap_or(4);
+            let n_threads = std::thread::available_parallelism().map(|n| n.get()).unwrap_or(1);
             let chunk_size = (needs.len() + n_threads - 1) / n_threads.max(1);
 
             let results: Vec<(usize, String, Option<String>)> = thread::scope(|s| {
                 let handles: Vec<_> = needs.chunks(chunk_size.max(1)).map(|chunk| {
                     s.spawn(|| {
-                        chunk.iter().filter_map(|&(i, ref cache_key, ref url, ref headers)| {
-                            let body = fetch_with_headers(url, headers);
+                        chunk.iter().filter_map(|&(i, ref cache_key, ref url, ref headers, ref ttl)| {
+                            let body = fetch_with_headers(url, headers, *ttl);
                             Some((i, cache_key.clone(), body))
                         }).collect::<Vec<_>>()
                     })
@@ -769,7 +772,8 @@ fn warm_cache(archive: Arc<Archive>) {
                 }
             }
         }
-        thread::sleep(std::time::Duration::from_secs(1));
+        let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
+        thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / (Φ * Φ)) as u64));
     }
 }
 

@@ -1,6 +1,6 @@
 # SPECS
 
-## 1: PROTOCOL (IS v6)
+## 1: PROTOCOL (φ v6)
 
 ### Request (Browser → Rust)
 One binary WebSocket frame containing inputs and queries.
@@ -21,7 +21,7 @@ u32 query_count
 
 ### Response (Rust → Browser)
 ```
-"IS"           (2 bytes magic)
+"φ"            (2 bytes magic, 0xCF 0x86)
 u8 version     (6)
 u32 request_id
 u32 query_count
@@ -114,7 +114,7 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 ### `index.html` — Heartbeat & Batch
 - Collects queries in `queryBuffer`.
 - Sends the entire `inputBuffer` and `queryBuffer` as a batch once per cycle (`tickTime * φ`).
-- Only the response writes to the global `is` object.
+- Only the response writes to the global `φ` object.
 
 ### `index.html` — Probe State Machine
 - Phases: `waiting` → `probing` → `resolving`
@@ -134,7 +134,7 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 ### `index.html` — Nostr (Stigmergy)
 - Connects `wss://relay.damus.io`
 - Subscribes `kind: 39603`
-- Publishes `kind: 39603`: `content` = flat JSON of `is` values, `geo` tag = `lat,lon`
+- Publishes `kind: 39603`: `content` = flat JSON of `φ` values, `geo` tag = `lat,lon`
 - Publish interval: `tickTime * φ³`
 - On receive: packs into `inputBuffer` via `pushInput('omega_flow.*', ...)` with ECEF stamp
 
@@ -171,13 +171,6 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 - Union-Find parent tracking
 - Output: persistence lifetime, Betti-0
 
-#### ICA: Blind Source Separation (`icaShader`)
-- `workgroup_size(64)`
-- FastICA: `tanh` non-linearity, 3 iterations
-- Weight update + normalization per iteration
-- Output per signal: variance, amplitude
-- Dynamic source count via variance cutoff in JS
-
 ### GPU Bindings
 All pipelines share 3-entry bind group layout:
 ```
@@ -188,7 +181,7 @@ binding 2: uniform         — params vec4(n, ringSize, 0, 0)
 
 ## 5: SOURCES
 
-`is/sources.φ`. TTL range: 10s (ISS position) to 31536000s (Gaia star catalog).
+`φ/sources.φ`. TTL range: 10s (ISS position) to 31536000s (Gaia star catalog).
 
 ### Geo Templates
 ```

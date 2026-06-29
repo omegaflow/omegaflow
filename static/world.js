@@ -1,11 +1,11 @@
 const C = 299792458.0;
-const φ = 1.618033988749895;
+const Φ = 1.618033988749895;
 
 export const φ = {};
 export const pulse = { ws: null, pending: new Map(), seq: 0 };
 
 function weave(p, result) {
-    const ma = 1 / (φ * φ);
+    const ma = 1 / (Φ * Φ);
     for (const key in p) {
         const val = p[key];
         if (typeof val === 'number') {
