@@ -11,9 +11,9 @@
 </head>
 <body>
     <script type="module">
-        import { get, is, pulse } from '/world.js';
+        import { get, φ, pulse } from '/world.js';
 
-        const PHI = 1.618033988749895;
+        const φ = 1.618033988749895;
         const C = 299792458.0;
         const WGS84_A = 6378137.0;
         const WGS84_F = 1.0 / 298.257223563;
@@ -67,10 +67,10 @@
         let nostrRelay = null;
         let nostrPub = null;
         let lastNostrPub = 0;
-        let stableTick = PHI;
-        let batchInterval = PHI;
-        let infoInterval = PHI;
-        let probeInterval = PHI;
+        let stableTick = φ;
+        let batchInterval = φ;
+        let infoInterval = φ;
+        let probeInterval = φ;
 
         const probeState = {
             phase: 'waiting',
@@ -80,9 +80,9 @@
             pulseTime: 0,
         };
 
-        window.omegaflow = { get, is, pulse, sensors, actuators, resonanceMap };
+        window.ω = { get, φ, pulse, sensors, actuators, resonanceMap };
 
-        is['server.time'] = parseFloat(await (await fetch('/time')).text());
+        φ['server.time'] = parseFloat(await (await fetch('/time')).text());
 
         const pulseWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/pulse`);
         pulseWs.binaryType = 'arraybuffer';
@@ -94,7 +94,7 @@
         pulseWs.addEventListener('message', (e) => {
             if (typeof e.data !== 'string') {
                 const buf = new Uint8Array(e.data);
-                if (buf.length < 13 || buf[0] !== 73 || buf[1] !== 83 || buf[2] !== 6) return;
+                if (buf.length < 13 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 6) return;
                 const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
                 const id = dv.getUint32(3, true);
                 const pending = pulse.pending.get(id);
@@ -134,7 +134,7 @@
             let varSum = 0;
             for (const v of scores.values()) { const d = v - scoreMean; varSum += d * d; }
             const scoreStd = Math.sqrt(varSum / scores.size);
-            const threshold = scoreMean + scoreStd / PHI;
+            const threshold = scoreMean + scoreStd / φ;
 
             let fired = false;
             for (const [actPath, score] of scores) {
@@ -162,7 +162,7 @@
             for (const s of sensors.values()) {
                 if (s.complexity > 0) ready++;
             }
-            return ready >= sensors.size / PHI;
+            return ready >= sensors.size / φ;
         }
 
         function checkProbing(ts) {
@@ -176,8 +176,8 @@
                 const calibrated = isCalibrated();
                 for (const a of probeState.batch) {
                     if (calibrated) {
-                        a.pulse *= PHI;
-                        if (a.pulse > getMedianComplexity() * PHI) {
+                        a.pulse *= φ;
+                        if (a.pulse > getMedianComplexity() * φ) {
                             silent.add(a.path);
                             actuators.delete(a.path);
                         }
@@ -198,17 +198,17 @@
                 for (const r of resonant) {
                     const existing = resonanceMap.get(actuator.path).get(r.path);
                     const predicted = probeState.predictions ? (probeState.predictions[r.path] || 0) : 0;
-                    const divergence = Math.abs(r.magnitude - predicted);
-                    const ma = 1 / (PHI * PHI);
+                    const Δ = Math.abs(r.magnitude - predicted);
+                    const ma = 1 / (φ * φ);
                     if (existing) {
                         existing.threshold = existing.threshold * (1 - ma) + actuator.pulse * ma;
                         existing.magnitude = existing.magnitude * (1 - ma) + r.magnitude * ma;
-                        existing.divergence = (existing.divergence || 0) * (1 - ma) + divergence * ma;
+                        existing.Δ = (existing.Δ || 0) * (1 - ma) + Δ * ma;
                     } else {
                         resonanceMap.get(actuator.path).set(r.path, {
                             threshold: actuator.pulse,
                             magnitude: r.magnitude,
-                            divergence: divergence
+                            divergence: Δ
                         });
                     }
                 }
@@ -233,8 +233,8 @@
             const calibrated = isCalibrated();
             for (const a of probeState.batch) {
                 if (calibrated) {
-                    a.pulse *= PHI;
-                    if (a.pulse > getMedianComplexity() * PHI) {
+                    a.pulse *= φ;
+                    if (a.pulse > getMedianComplexity() * φ) {
                         silent.add(a.path);
                         actuators.delete(a.path);
                     }
@@ -256,16 +256,16 @@
                 if (!s) continue;
                 const before = snap[path];
                 if (before.complexity <= 0) continue;
-                const delta = Math.abs(s.val - before.val);
-                if (delta > before.complexity) {
-                    resonant.push({ path, magnitude: delta });
+                const Δ = Math.abs(s.val - before.val);
+                if (Δ > before.complexity) {
+                    resonant.push({ path, magnitude: Δ });
                 }
             }
             return resonant;
         }
 
         function discoverObj(obj, path, depth) {
-            if (depth > 0) return;
+            if (depth > 3) return;
             if (obj == null || typeof obj !== 'object') return;
             if (visited.has(obj)) return;
             visited.add(obj);
@@ -296,7 +296,7 @@
                     }
                 } else if (typeof val === 'function') {
                     if (!dormant.has(key) && !silent.has(p) && !actuators.has(p)) {
-                        actuators.set(p, { path: p, obj, key, pulse: 1 / (PHI * PHI) });
+                        actuators.set(p, { path: p, obj, key, pulse: 1 / (φ * φ) });
                     }
                 } else if (typeof val === 'object') {
                     if (!dormant.has(key) && !silent.has(p)) {
@@ -306,64 +306,12 @@
             }
         }
 
-        let _vibrateVal = 0;
-        let _titleVal = 0;
-        let _scrollVal = 0;
 
-        function _actuateVibrate(v) {
-            _vibrateVal = v;
-            
-            return true;
-        }
-        function _sensorVibrate() { return _vibrateVal; }
 
-        function _actuateTitle(v) {
-            _titleVal = v;
-            document.title = String(Math.round(v * 1000));
-            return true;
-        }
-        function _sensorTitle() { return _titleVal; }
 
-        function _actuateScroll(v) {
-            _scrollVal = v;
-            window.scrollTo(0, Math.round(v * 100));
-            return true;
-        }
-        function _sensorScroll() { return _scrollVal; }
 
         function discoverSensors() {
-            const seedSensors = [
-                ['vibrate', () => _vibrateVal],
-                ['title', () => _titleVal],
-                ['scroll', () => _scrollVal],
-                ['innerWidth', () => window.innerWidth],
-                ['innerHeight', () => window.innerHeight],
-                ['devicePixelRatio', () => window.devicePixelRatio],
-                ['hardwareConcurrency', () => navigator.hardwareConcurrency || 0],
-                ['scrollX', () => window.scrollX],
-                ['scrollY', () => window.scrollY],
-                ['time', () => performance.now() / 1000],
-                ['random', () => Math.random()],
-            ];
-            for (const [name, getter] of seedSensors) {
-                if (!sensors.has(name)) {
-                    const v = getter();
-                    if (typeof v === 'number') {
-                        sensors.set(name, { path: name, obj: { _g: getter }, key: '_g', val: v, interval: null, lastPoll: 0, complexity: 0, median: 0 });
-                    }
-                }
-            }
-
-            const seedActuators = [
-                ['vibrate', _actuateVibrate],
-                ['title', _actuateTitle],
-                ['scroll', _actuateScroll],
-            ];
-            for (const [name, fn] of seedActuators) {
-                if (!actuators.has(name) && !dormant.has(name)) {
-                    actuators.set(name, { path: name, obj: { _f: fn }, key: '_f', pulse: 1 / (PHI * PHI) });
-                }
-            }
+            discoverObj(window, '', 0);
         }
 
         function pulseActuator(actuator, value) {
@@ -455,7 +403,7 @@
         }
 
         function splitBatch(batch) {
-            const splitIdx = Math.floor(batch.length / PHI);
+            const splitIdx = Math.floor(batch.length / φ);
             return { left: batch.slice(0, splitIdx), right: batch.slice(splitIdx) };
         }
 
@@ -464,25 +412,25 @@
             for (const s of sensors.values()) {
                 if (s.complexity > 0) vals.push(s.complexity);
             }
-            if (vals.length === 0) return 1 / (PHI * PHI);
+            if (vals.length === 0) return 1 / (φ * φ);
             vals.sort((a, b) => a - b);
             const mid = Math.floor(vals.length / 2);
             return vals.length % 2 ? vals[mid] : (vals[mid - 1] + vals[mid]) / 2;
         }
 
         function startProbing(ts) {
-            const prune = 1 - 1 / (PHI * PHI);
-            let totalDivergence = 0;
+            const prune = 1 - 1 / (φ * φ);
+            let totalΔ = 0;
             for (const [actPath, sensorMap] of resonanceMap) {
                 for (const [spath, data] of sensorMap) {
                     data.magnitude *= prune;
-                    data.divergence = (data.divergence || 0) * prune;
-                    totalDivergence += data.divergence;
+                    data.Δ = (data.Δ || 0) * prune;
+                    totalΔ += data.Δ;
                     if (data.magnitude < 1 / ringSize) sensorMap.delete(spath);
                 }
                 if (sensorMap.size === 0) resonanceMap.delete(actPath);
             }
-            pushInput('divergence', totalDivergence);
+            pushInput('divergence', totalΔ);
             probeState.batch = Array.from(actuators.values());
             if (probeState.batch.length === 0) {
                 probeState.phase = 'waiting';
@@ -547,37 +495,36 @@
             inputBuffer.push({ name, value, t: cachedJ2000, x: cachedEcef.x, y: cachedEcef.y, z: cachedEcef.z });
         }
 
-        function heartbeat(ts) {
-            const rawTick = lastTs > 0 ? ts - lastTs : PHI;
+        function ω(ts) {
+            const rawTick = lastTs > 0 ? ts - lastTs : φ;
             lastTs = ts;
             if (probeState.phase === 'waiting' && rawTick > 0) {
-                const ma = 1 / (PHI * PHI);
+                const ma = 1 / (φ * φ);
                 stableTick = stableTick > 0 ? stableTick * (1 - ma) + rawTick * ma : rawTick;
             }
             const tickTime = stableTick;
 
-            const lat = is['geolocation.latitude'];
-            const lon = is['geolocation.longitude'];
-            const alt = is['geolocation.altitude'];
-            if (lat !== undefined && lon !== undefined) {
-                const t_j2000 = (is['server.time'] / 86400.0) + 2440587.5 - 2451545.0;
-                cachedEcef = geodeticToEcef(lat, lon, alt || 0);
-                cachedJ2000 = t_j2000;
-                queryBuffer.push({ t: t_j2000, x: cachedEcef.x, y: cachedEcef.y, z: cachedEcef.z });
-            }
+            const lat = φ['geolocation.latitude'] || 0;
+            const lon = φ['geolocation.longitude'] || 0;
+            const alt = φ['geolocation.altitude'] || 0;
+            const t_j2000 = (φ['server.time'] / 86400.0) + 2440587.5 - 2451545.0;
+            cachedEcef = geodeticToEcef(lat, lon, alt);
+            cachedJ2000 = t_j2000;
+            queryBuffer.push({ t: t_j2000, x: cachedEcef.x, y: cachedEcef.y, z: cachedEcef.z });
 
-            if (batchInterval === null) batchInterval = PHI;
+            if (batchInterval === null) batchInterval = φ;
             const batchDue = lastBatchFetch + batchInterval - ts;
             if ((inputBuffer.length > 0 || queryBuffer.length > 0) && (batchDue <= 0 || queryBuffer.length >= 128)) {
                 lastBatchFetch = ts;
                 const inputs = inputBuffer.splice(0);
                 const queries = queryBuffer.splice(0);
                 get(inputs, queries).then(r => {
-                    for (const key in r) { is[key] = r[key]; }
+                    for (const key in r) { φ[key] = r[key]; }
                     if (r.certainty !== undefined) certainty = r.certainty;
                 }).catch(() => {});
-                if (inputBuffer.length === 0) batchInterval *= PHI;
-                else batchInterval = Math.max(batchInterval / PHI, PHI);
+                if (inputBuffer.length === 0) batchInterval *= φ;
+                batchInterval = Math.max(batchInterval, φ);
+                else batchInterval = Math.max(batchInterval / φ, φ);
             }
 
             let nextDelay = Infinity;
@@ -611,7 +558,8 @@
                         gamepadInterval = tickTime;
                         lastGamepadState = state;
                     } else {
-                        gamepadInterval *= PHI;
+                        gamepadInterval *= φ;
+                gamepadInterval = Math.max(gamepadInterval, φ);
                     }
                     nextDelay = Math.min(nextDelay, gamepadInterval);
                 } else {
@@ -628,7 +576,8 @@
                 if (sensors.size !== lastSensorCount) {
                     lastSensorCount = sensors.size;
                 }
-                discoveryInterval *= PHI;
+                discoveryInterval *= φ;
+                discoveryInterval = Math.max(discoveryInterval, φ);
                 nextDelay = Math.min(nextDelay, discoveryInterval);
             } else {
                 nextDelay = Math.min(nextDelay, dDue);
@@ -662,14 +611,14 @@
             if (topoDue <= 0) {
                 lastTopology = ts;
                 runSignalTopology(ts);
-                const divergence = is['divergence'] || 0;
-                topologyInterval = divergence > sensors.size ? tickTime : topologyInterval * PHI;
+                const divergence = φ['divergence'] || 0;
+                topologyInterval = divergence > sensors.size ? tickTime : topologyInterval * φ;
                 nextDelay = Math.min(nextDelay, topologyInterval);
             } else {
                 nextDelay = Math.min(nextDelay, topoDue);
             }
 
-            if (infoInterval === null) infoInterval = PHI;
+            if (infoInterval === null) infoInterval = φ;
             const icDue = lastInfoCollect + infoInterval - ts;
             if (icDue <= 0) {
                 lastInfoCollect = ts;
@@ -682,23 +631,24 @@
                 fetch('/time').then(() => {
                     pushInput('system.latency', performance.now() - t0);
                 }).catch(() => {});
-                infoInterval *= PHI;
+                infoInterval *= φ;
+                infoInterval = Math.max(infoInterval, φ);
                 nextDelay = Math.min(nextDelay, infoInterval);
             } else {
                 nextDelay = Math.min(nextDelay, icDue);
             }
 
-            if (probeInterval === null) probeInterval = PHI;
-            const noDue = lastNostrPub + probeInterval * PHI * PHI - ts;
+            if (probeInterval === null) probeInterval = φ;
+            const noDue = lastNostrPub + probeInterval * φ * φ - ts;
             if (noDue <= 0 && nostrPub && nostrRelay && nostrRelay.readyState === WebSocket.OPEN && nostrModule) {
                 lastNostrPub = ts;
-                const physLat = is['geolocation.latitude'];
-                const physLon = is['geolocation.longitude'];
+                const physLat = φ['geolocation.latitude'];
+                const physLon = φ['geolocation.longitude'];
                 if (physLat !== undefined && physLon !== undefined) {
                     const payload = {};
-                    for (const key in is) {
+                    for (const key in φ) {
                         if (key.startsWith('server.') || key.startsWith('system.') || key.startsWith('omega_flow.')) continue;
-                        const val = is[key];
+                        const val = φ[key];
                         if (typeof val === 'number') payload[key] = val;
                     }
                     const content = JSON.stringify(payload);
@@ -714,21 +664,21 @@
                         } catch {}
                     }
                 }
-                nextDelay = Math.min(nextDelay, probeInterval * PHI * PHI);
+                nextDelay = Math.min(nextDelay, probeInterval * φ * φ);
             } else {
                 nextDelay = Math.min(nextDelay, noDue);
             }
 
             if (nextDelay === Infinity) {
-                nextDelay = stableTick > 0 ? stableTick : PHI;
+                nextDelay = stableTick > 0 ? stableTick : φ;
             }
 
             if (document.hidden) {
-                nextDelay = Math.max(nextDelay, tickTime * PHI);
+                nextDelay = Math.max(nextDelay, tickTime * φ);
             }
 
             setTimeout(() => {
-                try { heartbeat(performance.now()); } catch (e) { console.warn(e); setTimeout(() => heartbeat(performance.now()), 0); }
+                try { ω(performance.now()); } catch (e) { console.warn(e); setTimeout(() => ω(performance.now()), 0); }
             }, nextDelay);
         }
 
@@ -794,7 +744,7 @@
                     device.addEventListener('uncapturederror', (e) => {
                         console.error('GPU:', e.error.message);
                     });
-                    window.omegaflow.gpu = device;
+                    window.ω.gpu = device;
                     pushInput('system.gpu', 1);
                 }
             } catch (e) { console.error('WebGPU init:', e); }
@@ -859,7 +809,7 @@
                     const panner = audioCtx.createPanner();
                     panner.panningModel = 'HRTF';
                     panner.connect(audioCtx.destination);
-                    window.omegaflow.audio = { ctx: audioCtx, panner };
+                    window.ω.audio = { ctx: audioCtx, panner };
                     pushInput('system.audio', 1);
                 } catch {}
             };
@@ -870,45 +820,6 @@
         const ringSize = 128;
         const signalBuffers = new Map();
 
-        const icaShader = `
-@group(0) @binding(0) var<storage, read> data: array<f32>;
-@group(0) @binding(1) var<storage, read_write> out: array<f32>;
-@group(0) @binding(2) var<uniform> params: vec4<f32>;
-@compute @workgroup_size(64)
-fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-    let src = gid.x;
-    let n = u32(params.x);
-    let rs = u32(params.y);
-    if (src >= n) { return; }
-    var sum: f32 = 0.0;
-    for (var i = 0u; i < rs; i++) { sum += data[src * rs + i]; }
-    let mean = sum / f32(rs);
-    var var_sum: f32 = 0.0;
-    for (var i = 0u; i < rs; i++) { let d = data[src * rs + i] - mean; var_sum += d * d; }
-    let variance = var_sum / f32(rs);
-    var w: array<f32, 128>;
-    for (var i = 0u; i < rs; i++) { w[i] = data[src * rs + i]; }
-    for (var iter = 0u; iter < 3u; iter++) {
-        var wx_sum: array<f32, 128>; var g_sum: array<f32, 128>; var gp_sum: f32 = 0.0;
-        for (var i = 0u; i < rs; i++) {
-            var proj: f32 = 0.0;
-            for (var k = 0u; k < n; k++) { proj += w[i] * data[k * rs + i]; }
-            let g = tanh(proj); let gp = 1.0 - g * g;
-            for (var k = 0u; k < n; k++) { g_sum[k] += data[k * rs + i] * g; }
-            gp_sum += gp;
-        }
-        var w_norm: f32 = 0.0;
-        for (var i = 0u; i < rs; i++) { w[i] = (g_sum[src] / f32(rs)) - (gp_sum / f32(rs)) * w[i]; w_norm += w[i] * w[i]; }
-        let norm = sqrt(w_norm) + (1.0 / 86400.0);
-        for (var i = 0u; i < rs; i++) { w[i] = w[i] / norm; }
-    }
-    var amp: f32 = 0.0;
-    for (var i = 0u; i < rs; i++) { amp += abs(w[i]); }
-    let out_base = src * 2u;
-    out[out_base] = variance;
-    out[out_base + 1u] = amp / f32(rs);
-}
-`;
 
         const kolmogorovShader = `
 let PHI = 1.618033988749895;
@@ -1112,19 +1023,18 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 `;
 
-        let icaPipeline = null;
         let kolmogorovPipeline = null;
         let tdaPipeline = null;
         let tePipeline = null;
         let takensPipeline = null;
 
         function processSensorReading(s, val, tickTime) {
-            const absDelta = Math.abs(val - s.val);
-            const ma = 1 / (PHI * PHI);
+            const Δ = Math.abs(val - s.val);
+            const ma = 1 / (φ * φ);
             s.median = s.median * (1 - ma) + val * ma;
             
-            if (s.complexity === 0 || absDelta <= s.complexity) {
-                s.complexity = s.complexity * (1 - ma) + absDelta * ma;
+            if (s.complexity === 0 || Δ <= s.complexity) {
+                s.complexity = s.complexity * (1 - ma) + Δ * ma;
             }
 
             if (!signalBuffers.has(s.path)) {
@@ -1135,12 +1045,12 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             sb.idx = (sb.idx + 1) % ringSize;
             if (sb.filled < ringSize) sb.filled++;
 
-            if (absDelta > s.complexity) {
+            if (Δ > s.complexity) {
                 s.interval = tickTime;
                 pushInput(s.path, val);
             } else {
                 if (s.interval !== null) {
-                    s.interval *= PHI;
+                    s.interval *= φ;
                 }
             }
             
@@ -1148,7 +1058,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         }
 
         function runSignalTopology(ts) {
-            if (!window.omegaflow?.gpu) return;
+            if (!window.ω?.gpu) return;
 
             const activeBuffers = [];
             const activeNames = [];
@@ -1160,7 +1070,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             }
             if (activeBuffers.length < 2) return;
 
-            const gpu = window.omegaflow.gpu;
+            const gpu = window.ω.gpu;
             const n = activeBuffers.length;
             const flat = new Float32Array(n * ringSize);
             for (let i = 0; i < n; i++) {
@@ -1188,7 +1098,6 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 const tePl = gpu.createPipelineLayout({ bindGroupLayouts: [teBl] });
                 tePipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: teShader }), entryPoint: 'main' } });
                 tdaPipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: tdaShader }), entryPoint: 'main' } });
-                icaPipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: icaShader }), entryPoint: 'main' } });
             }
 
             const inBuf = gpu.createBuffer({ size: flat.byteLength, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
@@ -1200,7 +1109,6 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             const tOutBuf = gpu.createBuffer({ size: n * 4 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
             const teOutBuf = gpu.createBuffer({ size: n * n * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
             const tdaOutBuf = gpu.createBuffer({ size: n * 2 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
-            const icaOutBuf = gpu.createBuffer({ size: n * 2 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
 
             const bl = kolmogorovPipeline.getBindGroupLayout(0);
             const teBl = tePipeline.getBindGroupLayout(0);
@@ -1226,13 +1134,11 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 { binding: 1, resource: { buffer: tdaOutBuf } },
                 { binding: 2, resource: { buffer: paramBuf } },
             ]});
-            const icaBg = gpu.createBindGroup({ layout: tdaBl, entries: [
                 { binding: 0, resource: { buffer: inBuf } },
-                { binding: 1, resource: { buffer: icaOutBuf } },
                 { binding: 2, resource: { buffer: paramBuf } },
             ]});
 
-            const totalReadSize = n * 4 + n * 4 * 4 + n * n * 4 + n * 2 * 4 + n * 2 * 4;
+            const totalReadSize = n * 4 + n * 4 * 4 + n * n * 4 + n * 2 * 4;
             const readBuf = gpu.createBuffer({ size: totalReadSize, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
             const enc = gpu.createCommandEncoder();
             
@@ -1260,18 +1166,12 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             tdaPass.dispatchWorkgroups(Math.ceil(n / 64));
             tdaPass.end();
 
-            const icaPass = enc.beginComputePass();
-            icaPass.setPipeline(icaPipeline);
-            icaPass.setBindGroup(0, icaBg);
-            icaPass.dispatchWorkgroups(Math.ceil(n / 64));
-            icaPass.end();
 
             let readOffset = 0;
             enc.copyBufferToBuffer(kOutBuf, 0, readBuf, readOffset, n * 4); readOffset += n * 4;
             enc.copyBufferToBuffer(tOutBuf, 0, readBuf, readOffset, n * 4 * 4); readOffset += n * 4 * 4;
             enc.copyBufferToBuffer(teOutBuf, 0, readBuf, readOffset, n * n * 4); readOffset += n * n * 4;
             enc.copyBufferToBuffer(tdaOutBuf, 0, readBuf, readOffset, n * 2 * 4); readOffset += n * 2 * 4;
-            enc.copyBufferToBuffer(icaOutBuf, 0, readBuf, readOffset, n * 2 * 4);
 
             gpu.queue.submit([enc.finish()]);
 
@@ -1282,7 +1182,6 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 const tRes = res.subarray(off, off + n * 4); off += n * 4;
                 const teRes = res.subarray(off, off + n * n); off += n * n;
                 const tdaRes = res.subarray(off, off + n * 2); off += n * 2;
-                const icaRes = res.subarray(off, off + n * 2);
 
                 const allTE = [];
                 for (let a = 0; a < n; a++) {
@@ -1291,14 +1190,12 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                     }
                 }
 
-                const variances = [];
-                for (let i = 0; i < n; i++) variances.push(icaRes[i * 2]);
 
                 for (let i = 0; i < n; i++) {
                     pushInput('complexity.' + activeNames[i], kRes[i]);
                     const sens = sensors.get(activeNames[i]);
                     if (sens) {
-                        const ma = 1 / (PHI * PHI);
+                        const ma = 1 / (φ * φ);
                         sens.complexity = sens.complexity * (1 - ma) + kRes[i] * ma;
                     }
 
@@ -1315,7 +1212,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 if (allTE.length > 0) {
                     const mu = allTE.reduce((s, v) => s + v, 0) / allTE.length;
                     const sigma = Math.sqrt(allTE.reduce((s, v) => s + (v - mu) ** 2, 0) / allTE.length);
-                    const threshold = mu + sigma / PHI;
+                    const threshold = mu + sigma / φ;
                     for (let a = 0; a < n; a++) {
                         for (let b = 0; b < n; b++) {
                             if (a === b) continue;
@@ -1327,19 +1224,11 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                     }
                 }
 
-                const varMean = variances.reduce((s, v) => s + v, 0) / variances.length;
-                const cutoff = varMean / PHI;
-                let sourceCount = 0;
                 for (let i = 0; i < n; i++) {
-                    if (variances[i] > cutoff) {
-                        pushInput('ica.source' + sourceCount, icaRes[i * 2 + 1]);
-                        sourceCount++;
                     }
                 }
-                pushInput('ica.count', sourceCount);
 
                 readBuf.unmap();
-                inBuf.destroy(); kOutBuf.destroy(); tOutBuf.destroy(); teOutBuf.destroy(); tdaOutBuf.destroy(); icaOutBuf.destroy(); paramBuf.destroy(); readBuf.destroy();
             });
         }
 
@@ -1358,7 +1247,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             } catch {}
         });
 
-        setTimeout(() => heartbeat(performance.now()), 0);
+        setTimeout(() => ω(performance.now()), 0);
     </script>
 </body>
 </html>

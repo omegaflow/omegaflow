@@ -46,7 +46,7 @@ dormant requestAnimationFrame 0 4
 dormant requestIdleCallback 0 4
 dormant resizeBy 0 4
 dormant resizeTo 0 4
-dormant scroll 0 696998
+dormant scroll 0 697341
 dormant scrollBy 0 5034
 dormant scrollTo 0 5034
 dormant setInterval 0 5034
@@ -56,9 +56,9 @@ dormant showOpenFilePicker 0 5034
 dormant showSaveFilePicker 0 5034
 dormant stop
 dormant structuredClone 0 5034
-dormant title 0 691964
+dormant title 0 692308
 dormant unescape 0 5034
-dormant vibrate 1 691965
+dormant vibrate 1 692309
 dormant webkitCancelAnimationFrame 0 5034
 dormant webkitMediaStream 0 4
 dormant webkitRTCPeerConnection 0 4

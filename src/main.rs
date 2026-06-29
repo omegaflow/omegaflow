@@ -6,7 +6,7 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const PHI: f64 = 1.618033988749895;
+const Φ: f64 = 1.618033988749895;
 const WGS84_A: f64 = 6378137.0;
 const WGS84_F: f64 = 1.0 / 298.257223563;
 
@@ -185,7 +185,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
             off+=4;
 
             let mut out=Vec::with_capacity(1024);
-            out.extend_from_slice(b"IS"); out.push(6u8);
+            out.extend_from_slice(&[0xCF, 0x86]); out.push(6u8);
             out.extend_from_slice(&id.to_le_bytes());
             out.extend_from_slice(&(query_count as u32).to_le_bytes());
 
@@ -424,7 +424,7 @@ fn load_env() {
 fn load_dormant() -> HashMap<String,(u32,u32)> {
     let mut c=HashMap::new();
     for k in ["location","history","document","close","alert","confirm","prompt","print","open","stop"] { c.insert(k.to_string(),(0,0)); }
-    if let Ok(content)=std::fs::read_to_string("is/dormant.is") {
+    if let Ok(content)=std::fs::read_to_string("φ/dormant.φ") {
         for line in content.lines() { let p: Vec<&str>=line.split_whitespace().collect(); if p.len()>=2&&p[0]=="dormant" { c.insert(p[1].to_string(),(if p.len()>=3{p[2].parse().unwrap_or(0)}else{0}, if p.len()>=4{p[3].parse().unwrap_or(0)}else{0})); } }
     }
     c
@@ -432,7 +432,7 @@ fn load_dormant() -> HashMap<String,(u32,u32)> {
 
 fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
-    let content = std::fs::read_to_string("is/sources.is").unwrap_or_default();
+    let content = std::fs::read_to_string("φ/sources.φ").unwrap_or_default();
     let mut cur_ttl: u64 = 0;
     let mut cur_url = String::new();
     let mut cur_lat: Option<f64> = None;
@@ -550,10 +550,10 @@ fn render_url(template: &str, lat: f64, lon: f64) -> String {
     template
         .replace("{lat}", &format!("{:.4}", lat))
         .replace("{lon}", &format!("{:.4}", lon))
-        .replace("{lat_min}", &format!("{:.2}", lat - (1.0 / PHI)))
-        .replace("{lat_max}", &format!("{:.2}", lat + (1.0 / PHI)))
-        .replace("{lon_min}", &format!("{:.2}", lon - (1.0 / PHI)))
-        .replace("{lon_max}", &format!("{:.2}", lon + (1.0 / PHI)))
+        .replace("{lat_min}", &format!("{:.2}", lat - (1.0 / Φ)))
+        .replace("{lat_max}", &format!("{:.2}", lat + (1.0 / Φ)))
+        .replace("{lon_min}", &format!("{:.2}", lon - (1.0 / Φ)))
+        .replace("{lon_max}", &format!("{:.2}", lon + (1.0 / Φ)))
         .replace("{today}", &today)
         .replace("{yesterday}", &yesterday)
         .replace("{tomorrow}", &tomorrow)
@@ -578,7 +578,7 @@ fn render_url(template: &str, lat: f64, lon: f64) -> String {
 fn rewrite_dormant(c: &HashMap<String,(u32,u32)>) {
     let mut o=String::new(); let mut k: Vec<&String>=c.keys().collect(); k.sort();
     for key in k { let (d,s)=c[key]; if d==0&&s==0 { o.push_str(&format!("dormant {}\n",key)); } else { o.push_str(&format!("dormant {} {} {}\n",key,d,s)); } }
-    let _=std::fs::write("is/dormant.is",o);
+    let _=std::fs::write("φ/dormant.φ",o);
 }
 
 fn sha1(input: &[u8]) -> [u8;20] {
@@ -656,7 +656,7 @@ fn warm_cache(archive: Arc<Archive>) {
         let tiles: Vec<String> = archive.active_tiles.lock().unwrap().iter().cloned().collect();
 
         if tiles.is_empty() {
-            thread::sleep(std::time::Duration::from_secs((10.0 * PHI) as u64));
+            thread::sleep(std::time::Duration::from_secs((10.0 * Φ) as u64));
             continue;
         }
 
@@ -793,8 +793,8 @@ fn main() {
     let dormant_state = Arc::new(Mutex::new(format_dormant_snapshot(&dormant.lock().unwrap())));
     for stream in listener.incoming() {
         if let Ok(stream) = stream {
-            let im = Arc::clone(&dormant); let is = Arc::clone(&dormant_state); let ar = Arc::clone(&archive);
-            thread::spawn(move || handle_observer(stream, im, is, ar));
+            let im = Arc::clone(&dormant); let ds = Arc::clone(&dormant_state); let ar = Arc::clone(&archive);
+            thread::spawn(move || handle_observer(stream, im, ds, ar));
         }
     }
 }

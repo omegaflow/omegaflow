@@ -52,14 +52,14 @@ The server caches coefficients by their universal existence.
 1. Reads `input_count`. For each input: ECEF → geodetic → rasterized key. Inserts into universal cache.
 2. Reads `query_count`. For each query: ECEF → geodetic → rasterized key. Registers key in `active_tiles`. Performs O(1) HashMap lookup.
 3. Writes found values directly to binary output.
-- *No weaving (PHI), no distance calculation, and no evaluation take place here.*
+- *No weaving (φ), no distance calculation, and no evaluation take place here.*
 
 ### `warm_cache` (The API Fetcher)
 - Runs asynchronously in the background.
 - Fetches APIs for all regions (`active_tiles`) requested by queries.
 - The `ecef_to_geodetic` conversion and URL rendering (`{lat}`) happen **exclusively** here, at the HTTP boundary to human servers.
 - Three source types:
-  - Fixed station (`lat`/`lon` set in `sources.is`): cache key from rounded coords
+  - Fixed station (`lat`/`lon` set in `sources.φ`): cache key from rounded coords
   - Tile-based (`{lat}`/`{lon}` in URL): cache key = tile string
   - Global (no geo): cache key = URL
 - `GeojsonEvents` extractor: caches each earthquake at its own coordinates
@@ -78,7 +78,7 @@ The server caches coefficients by their universal existence.
 | `last_obj` | `last_obj "fk" "fv" "ek" "name"` | `jobj_last_match()` |
 | `geojson` | `geojson events <mag_key> <min_mag> <o1> <o2>` | Caches each event at its own coordinates |
 
-### `sources.is` format
+### `sources.φ` format
 ```
 source <name>
 ttl <seconds>
@@ -98,7 +98,7 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 ### `world.js`
 - `get(inputs, queries)` → builds v6 binary frame, sends non-blocking
 - `parseBatchPayload(bytes)` → reads objects, weaves into `result`
-- `weave(p, result)` → moving average blend with `1/PHI²`
+- `weave(p, result)` → moving average blend with `1/φ²`
 - Certainty factors: `measureG()`, `measureVC()`, `measureDecay()`, `measureQuantum()`
 
 ### `index.html` — Sensor Discovery
@@ -113,18 +113,18 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 
 ### `index.html` — Heartbeat & Batch
 - Collects queries in `queryBuffer`.
-- Sends the entire `inputBuffer` and `queryBuffer` as a batch once per cycle (`tickTime * PHI`).
+- Sends the entire `inputBuffer` and `queryBuffer` as a batch once per cycle (`tickTime * φ`).
 - Only the response writes to the global `is` object.
 
 ### `index.html` — Probe State Machine
 - Phases: `waiting` → `probing` → `resolving`
 - `startProbing(ts)` → pulse all actuators, snapshot sensors
-- `checkProbing(ts)` → if resonators: resolve. Else: decay `pulse *= PHI`
-- `startResolving(ts, batch)` → binary split via `splitBatch()` (`PHI` ratio)
+- `checkProbing(ts)` → if resonators: resolve. Else: decay `pulse *= φ`
+- `startResolving(ts, batch)` → binary split via `splitBatch()` (`φ` ratio)
 - `checkResolving(ts)` → if single actuator resonates: store in `resonanceMap`
 - `resonanceMap`: `Map<actuatorPath, Map<sensorPath, {pulseTone, magnitude, divergence}>>`
-- `express()` → fires actuators above `μ + σ/PHI` threshold
-- Silent threshold: `pulse > sensors.size * PHI`
+- `express()` → fires actuators above `μ + σ/φ` threshold
+- Silent threshold: `pulse > sensors.size * φ`
 
 ### `index.html` — Interoception
 - `navigator.hardwareConcurrency` → `pushInput('system.cpu', ...)`
@@ -135,7 +135,7 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 - Connects `wss://relay.damus.io`
 - Subscribes `kind: 39603`
 - Publishes `kind: 39603`: `content` = flat JSON of `is` values, `geo` tag = `lat,lon`
-- Publish interval: `tickTime * PHI³`
+- Publish interval: `tickTime * φ³`
 - On receive: packs into `inputBuffer` via `pushInput('omega_flow.*', ...)` with ECEF stamp
 
 ## 4: GPU (WGSL)
@@ -149,7 +149,7 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 - `workgroup_size(64)`
 - Input: `data[n * 128]`, `params(n, ringSize)`
 - Output: `complexity[n]` = `1 - repeats/total`
-- Threshold: `sqrt(variance/ringSize) / PHI²`
+- Threshold: `sqrt(variance/ringSize) / φ²`
 
 #### Takens Embedding (`takensShader`)
 - `workgroup_size(64)`
@@ -162,11 +162,11 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 - 3-bin histogram: `to_bin(v, min, max)` → 0, 1, or 2
 - `P(bn+1 | bn, an)` vs `P(bn+1 | bn)` for all N² pairs
 - Output: `te[a*n+b] = max(0, te_val)`
-- Dynamic threshold in JS: `μ + σ/PHI`
+- Dynamic threshold in JS: `μ + σ/φ`
 
 #### TDA: Persistent Homology (`tdaShader`)
 - `workgroup_size(64)`
-- 48-point subsample, `τ = 1 + 1/PHI`
+- 48-point subsample, `τ = 1 + 1/φ`
 - Insertion sort of nearest-neighbor distances
 - Union-Find parent tracking
 - Output: persistence lifetime, Betti-0
@@ -188,7 +188,7 @@ binding 2: uniform         — params vec4(n, ringSize, 0, 0)
 
 ## 5: SOURCES
 
-`is/sources.is`. TTL range: 10s (ISS position) to 31536000s (Gaia star catalog).
+`is/sources.φ`. TTL range: 10s (ISS position) to 31536000s (Gaia star catalog).
 
 ### Geo Templates
 ```
@@ -197,7 +197,7 @@ binding 2: uniform         — params vec4(n, ringSize, 0, 0)
 ```
 
 ### Fixed Stations
-Tide stations (301 NOAA), geomagnetic observatories, and other fixed-location sources declare `lat`/`lon` in `sources.is`. No runtime resolution.
+Tide stations (301 NOAA), geomagnetic observatories, and other fixed-location sources declare `lat`/`lon` in `sources.φ`. No runtime resolution.
 
 ## 6: DEVICES
 
@@ -229,7 +229,7 @@ Core sensors: Telluric currents, Biophotons, 50/60Hz flicker, PM2.5, VOC/Temp/Pr
 
 ```
 C   = 299792458.0
-PHI = 1.618033988749895
+φ = 1.618033988749895
 a   = 6378137.0      (WGS84 semi-major)
 f   = 1/298.257223563 (WGS84 flattening)
 ```

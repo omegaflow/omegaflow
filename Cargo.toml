@@ -4,7 +4,7 @@ version = "6.0.0"
 authors = ["omegaflow"]
 edition = "2024"
 license = "CC-BY-NC-SA-4.0"
-description = "is(t,x,y,z)"
+description = "φ(x,y,z,t)"
 repository = "https://github.com/omegaflow/omegaflow"
 homepage = "https://omegaflow.space"
 

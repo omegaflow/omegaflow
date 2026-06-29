@@ -47,7 +47,7 @@ ws.on('open', () => {
 ws.on('message', (data, isBinary) => {
     console.log('MSG binary=' + isBinary, data.length, 'bytes');
     if (isBinary) {
-        // Check IS\x06 header
+        // Check φ header
         console.log('Header:', data[0], data[1], data[2]);
     } else {
         console.log('Text:', data.toString());

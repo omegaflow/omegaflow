@@ -5,7 +5,7 @@
 #          omegaflow sense module. The 100% Mantis-Shrimp Config.
 #          Sensors (receivers), Actuators (senders), Infrastructure.
 # PRINCIPLE: Resonance needs presence (actuators = levers)
-#            is(t,x,y,z) resonates with is(t,x,y,z)
+#            φ(x,y,z,t) resonates with φ(x,y,z,t)
 #            Structure over Name (single source of truth)
 # ============================================================
 
@@ -133,8 +133,8 @@ sensors:
       cost_eur: 2.00
       url: "https://www.aliexpress.com/wholesale?SearchText=MAX30102+pulse+oximeter"
       note: |
-        RMSSD (vagus nerve tone) becomes the ethical filter for immunity.is.
-        At low tone (stress/danger), immunity.is blocks strong actuators.
+        RMSSD (vagus nerve tone) becomes the ethical filter for immunity.φ.
+        At low tone (stress/danger), immunity.φ blocks strong actuators.
 
 # ============================================================
 # PART 2: 100% AKTUATOREN (The Levers and Stimulators)
@@ -285,13 +285,13 @@ infrastructure:
     url: "https://www.aliexpress.com/wholesale?SearchText=INA219+current+sensor"
 
   display_tft_st7789:
-    purpose: "Local face of the Archivar (shows certainty, is-values)"
+    purpose: "Local face of the Archivar (shows certainty, φ-values)"
     interface: "SPI"
     cost_eur: 3.50
     url: "https://www.aliexpress.com/wholesale?SearchText=1.3+inch+TFT+SPI+ST7789"
 
   enclosure_ip65:
-    purpose: "Physical body (immunity.is). Protects from entropy."
+    purpose: "Physical body (immunity.φ). Protects from entropy."
     cost_eur: 2.50
     url: "https://www.aliexpress.com/wholesale?SearchText=waterproof+plastic+enclosure+100x68x50"
 

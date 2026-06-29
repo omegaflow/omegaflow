@@ -1,11 +1,11 @@
 const C = 299792458.0;
-const PHI = 1.618033988749895;
+const φ = 1.618033988749895;
 
-export const is = {};
+export const φ = {};
 export const pulse = { ws: null, pending: new Map(), seq: 0 };
 
 function weave(p, result) {
-    const ma = 1 / (PHI * PHI);
+    const ma = 1 / (φ * φ);
     for (const key in p) {
         const val = p[key];
         if (typeof val === 'number') {
@@ -82,7 +82,7 @@ function parseBatchPayload(bytes) {
     const td = new TextDecoder();
     let o = 0;
 
-    if (bytes.length < 13 || bytes[0] !== 73 || bytes[1] !== 83 || bytes[2] !== 6) {
+    if (bytes.length < 13 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 6) {
         return [];
     }
     o = 3;
@@ -174,7 +174,7 @@ function measureG(result) {
 }
 
 function measureQuantum() {
-    const sensors = window.omegaflow?.sensors;
+    const sensors = window.ω?.sensors;
     if (!sensors || sensors.size === 0) return 1.0;
     let sum = 0, count = 0;
     for (const s of sensors.values()) {
