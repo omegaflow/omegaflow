@@ -3,25 +3,27 @@
 ## 1: PROTOCOL (φ v6)
 
 ### Request (Browser → Rust)
-One binary WebSocket frame containing inputs and queries.
+One binary WebSocket frame containing inputs, queries, and stigmergy signals.
 ```
 u32 request_id
 u32 input_count
 [per input:]
-  f64 t          (8 bytes)
-  f64 x          (8 bytes)
-  f64 y          (8 bytes)
-  f64 z          (8 bytes)
-  f64 value      (8 bytes)
+  f64 t, x, y, z, value
   u8 name_len, [name_bytes]
 u32 query_count
 [per query:]
-  f64 t, f64 x, f64 y, f64 z
+  f64 t, x, y, z
+u8 signal_count
+[per signal:]
+  u8 type (0=pulse, 1=resonant)
+  u8 path_len, [path_bytes]
 ```
+
+All channels are binary. No JSON on the WebSocket.
 
 ### Response (Rust → Browser)
 ```
-"φ"            (2 bytes magic, 0xCF 0x86)
+φ              (2 bytes magic, 0xCF 0x86)
 u8 version     (6)
 u32 request_id
 u32 query_count
@@ -43,26 +45,30 @@ u32 record_count
 Entry: `src/main.rs`. Rust std. Flat hierarchy.
 
 ### Universal Cache
-The server caches coefficients by their universal existence.
-- Key: Rasterized string `"lat_lon"` (e.g., `"48.12_11.56"`), derived from API resolution or sensor density.
+- Key: Rasterized string `"lat_lon"`, derived from API resolution or sensor density.
 - Value: `(timestamp, HashMap<Name, Value>)`.
 - Contains API data AND local sensor data with absolute equality.
 
 ### `handle_pulse` (The Frame Processor)
 1. Reads `input_count`. For each input: ECEF → geodetic → rasterized key. Inserts into universal cache.
 2. Reads `query_count`. For each query: ECEF → geodetic → rasterized key. Registers key in `active_tiles`. Performs O(1) HashMap lookup.
-3. Writes found values directly to binary output.
+3. Reads `signal_count`. Routes pulse/resonant signals to dormant tracker.
+4. Writes found values directly to binary output.
 - *No weaving (φ), no distance calculation, and no evaluation take place here.*
+- *tile_key results are cached. Repeated coordinates reuse the cached key without recomputing ECEF.*
 
 ### `warm_cache` (The API Fetcher)
 - Runs asynchronously in the background.
-- Fetches APIs for all regions (`active_tiles`) requested by queries.
-- The `ecef_to_geodetic` conversion and URL rendering (`{lat}`) happen **exclusively** here, at the HTTP boundary to human servers.
-- Three source types:
-  - Fixed station (`lat`/`lon` set in `sources.φ`): cache key from rounded coords
-  - Tile-based (`{lat}`/`{lon}` in URL): cache key = tile string
-  - Global (no geo): cache key = URL
-- `GeojsonEvents` extractor: caches each earthquake at its own coordinates
+- Fetches APIs for all regions (`active_tiles`).
+- ECEF conversion and URL rendering happen exclusively here.
+- Connect timeout: `TTL / Φ³`. Max timeout: `TTL / Φ²`.
+- Sleep when idle: `min_TTL / Φ`. Sleep after cycle: `min_TTL / Φ²`.
+- Thread fallback when `available_parallelism()` fails: 1.
+- Single `SystemTime::now()` call per `render_url` invocation.
+
+### Dormant Tracking
+- One function serializes and writes. Not two.
+- Function is named `φ_obj`, not `is_obj`.
 
 ### Extractors
 | Keyword | Syntax | Output |
@@ -89,42 +95,63 @@ header <Name> "value"
 field <key> <name>
 ```
 
-Sorted by TTL ascending, then alphabetically.
-
 ## 3: CPU (JS)
 
 Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 
-### `world.js`
-- `get(inputs, queries)` → builds v6 binary frame, sends non-blocking
-- `parseBatchPayload(bytes)` → reads objects, weaves into `result`
-- `weave(p, result)` → moving average blend with `1/φ²`
-- Certainty factors: `measureG()`, `measureVC()`, `measureDecay()`, `measureQuantum()`
+### `world.js` — The Shared Universe
+Exports the constants Φ, C, WGS84_A, WGS84_F, MA, and the function `j2000()`.
+`index.html` imports these. No redeclaration.
 
-### `index.html` — Sensor Discovery
+- `get(inputs, queries)` → builds v6 binary frame (including signal section), sends non-blocking
+- Binary parsing weaves directly into `result` during parse. No intermediate object array.
+- `weave(p, result)` → moving average blend with `MA = 1/Φ²` (precomputed once)
+- Certainty factors: `measureG()`, `measureVC()`, `measureDecay()`, `measureQuantum()`
+- `j2000(unixSecs)` → single source of truth for J2000 conversion
+- `certainty` is returned and flows back into the organism's behavior
+
+### `index.html` — Constants
+Imports Φ, C, WGS84, MA, j2000 from `world.js`. Does not declare them.
+
+### `index.html` — Sensor & Actuator Discovery
 - `discoverSensors()` / `discoverObj()` → walks `Object.getOwnPropertyNames(window)`, depth 3
 - Circular set guard, `WeakSet` for visited objects
-- Sensors: numbers/booleans. Actuators: functions taking arguments.
+- Sensors: numbers/booleans
+- Actuators: functions taking arguments AND expression channels
+- Expression channels discovered and connected: Canvas, Web Audio (oscillator → panner → destination), Vibration, CSS properties
 - `on*` properties → event sources → `addEventListener`
 
 ### `index.html` — Input Collection
-- Sensors (Accelerometer, GPS, Battery, Gamepads, etc.) no longer write directly to `is`.
-- They call `pushInput(name, value)`, which stamps them with the current `(t, x, y, z)` of the `io` and pushes them into the `inputBuffer`.
+- All sensors call `pushInput(name, value)`, stamped with current `(t, x, y, z)`
+- ECEF conversion runs only when geolocation values change, not every tick
 
 ### `index.html` — Heartbeat & Batch
-- Collects queries in `queryBuffer`.
-- Sends the entire `inputBuffer` and `queryBuffer` as a batch once per cycle (`tickTime * φ`).
-- Only the response writes to the global `φ` object.
+- Sends `inputBuffer` and `queryBuffer` as a batch once per cycle
+- Pulse and resonant signals sent as binary opcodes in the same frame
+- Tick rate scales with certainty: `nextDelay = stableTick / certainty`
+
+### `index.html` — Certainty
+- `certainty` influences tick rate, probe intensity, and expression threshold
+- High certainty → faster ticks, deeper probing, stronger expression
+- Low certainty → slower ticks, restful state
 
 ### `index.html` — Probe State Machine
 - Phases: `waiting` → `probing` → `resolving`
-- `startProbing(ts)` → pulse all actuators, snapshot sensors
-- `checkProbing(ts)` → if resonators: resolve. Else: decay `pulse *= φ`
-- `startResolving(ts, batch)` → binary split via `splitBatch()` (`φ` ratio)
-- `checkResolving(ts)` → if single actuator resonates: store in `resonanceMap`
-- `resonanceMap`: `Map<actuatorPath, Map<sensorPath, {pulseTone, magnitude, divergence}>>`
-- `express()` → fires actuators above `μ + σ/φ` threshold
-- Silent threshold: `pulse > sensors.size * φ`
+- `splitBatch` ratio varies: sometimes Φ, sometimes derived from quantum entropy
+- Curiosity decision uses `quantum_entropy_anu` instead of `Math.random()`
+- Silent threshold: `pulse > sensors.size * Φ`
+
+### `index.html` — Complexity
+- JS computes `s.median` and push-threshold (fast approximation)
+- GPU computes true Kolmogorov complexity and writes `s.complexity`
+- JS does not overwrite GPU complexity
+
+### `index.html` — Expression
+- `express()` fires all actuator types: functions, Canvas pixels, Audio frequencies, Vibration pulses
+- Screen is an active IO channel, not a black void
+
+### `index.html` — Gamepad Hash
+- Hash uses Φ-based mixing, not `*31` and `Math.pow(2,16)`
 
 ### `index.html` — Interoception
 - `navigator.hardwareConcurrency` → `pushInput('system.cpu', ...)`
@@ -135,8 +162,8 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 - Connects `wss://relay.damus.io`
 - Subscribes `kind: 39603`
 - Publishes `kind: 39603`: `content` = flat JSON of `φ` values, `geo` tag = `lat,lon`
-- Publish interval: `tickTime * φ³`
-- On receive: packs into `inputBuffer` via `pushInput('omega_flow.*', ...)` with ECEF stamp
+- Publish interval: `tickTime * Φ³`
+- On receive: compares received values with own `φ` values. Inter-node resonance measured as divergence between local and remote certainty.
 
 ## 4: GPU (WGSL)
 
@@ -147,9 +174,8 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 
 #### Kolmogorov Complexity (`kolmogorovShader`)
 - `workgroup_size(64)`
-- Input: `data[n * 128]`, `params(n, ringSize)`
 - Output: `complexity[n]` = `1 - repeats/total`
-- Threshold: `sqrt(variance/ringSize) / φ²`
+- Threshold: `sqrt(variance/ringSize) / Φ²`
 
 #### Takens Embedding (`takensShader`)
 - `workgroup_size(64)`
@@ -159,17 +185,20 @@ Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
 
 #### Transfer Entropy (`teShader`)
 - `workgroup_size(8, 8)`
-- 3-bin histogram: `to_bin(v, min, max)` → 0, 1, or 2
-- `P(bn+1 | bn, an)` vs `P(bn+1 | bn)` for all N² pairs
+- 3-bin histogram
 - Output: `te[a*n+b] = max(0, te_val)`
-- Dynamic threshold in JS: `μ + σ/φ`
+- Dynamic threshold in JS: `μ + σ/Φ`
 
 #### TDA: Persistent Homology (`tdaShader`)
 - `workgroup_size(64)`
-- 48-point subsample, `τ = 1 + 1/φ`
-- Insertion sort of nearest-neighbor distances
-- Union-Find parent tracking
+- 48-point subsample, `τ = 1 + 1/Φ`
 - Output: persistence lifetime, Betti-0
+
+#### ICA: Blind Source Separation (`icaShader`)
+- `workgroup_size(64)`
+- FastICA: `tanh` non-linearity
+- Separates mixed signals into independent sources
+- Output per signal: independent component magnitude
 
 ### GPU Bindings
 All pipelines share 3-entry bind group layout:
@@ -189,9 +218,6 @@ binding 2: uniform         — params vec4(n, ringSize, 0, 0)
 {today} {yesterday} {tomorrow} {hour_ago} {year} {month} {day}
 ```
 
-### Fixed Stations
-Tide stations (301 NOAA), geomagnetic observatories, and other fixed-location sources declare `lat`/`lon` in `sources.φ`. No runtime resolution.
-
 ## 6: DEVICES
 
 ### Browser-accessible
@@ -199,30 +225,19 @@ Tide stations (301 NOAA), geomagnetic observatories, and other fixed-location so
 - Geolocation: lat/lon/alt/accuracy/heading/speed
 - Battery: charging/level/time
 - Gamepad: axes/buttons
-- Web Audio: `PannerNode` HRTF
-
-### Smartwatch (Wearable API)
-- Heart rate, HRV, SpO2, steps, stress, sleep stages
-- Web Bluetooth / Garmin Connect API / Apple HealthKit bridge
-- Pushes via `pushInput('wearable.*', value)` with ECEF stamp from phone GPS
-
-### XR (WebXR Device API)
-- Hand tracking: joints, pinch, grasp
-- Eye tracking: gaze origin, gaze direction
-- Spatial sensors: pose, acceleration from headset IMU
-- World sensing: plane detection, mesh, depth
-- Pushes via `pushInput('xr.*', value)` with ECEF stamp from headset position
+- Web Audio: Oscillator → PannerNode HRTF → destination (expression)
+- Canvas: pixel output (expression)
+- Vibration API (expression)
 
 ### ESP32-S3 (omegaflow sense)
 Specification: `docs/omegaflow_sense_hardware.yaml`
-
-Core sensors: Telluric currents, Biophotons, 50/60Hz flicker, PM2.5, VOC/Temp/Press/Humid, EMF/Schumann, Bioacoustics.
 
 ## 7: CONSTANTS
 
 ```
 C   = 299792458.0
-φ = 1.618033988749895
-a   = 6378137.0      (WGS84 semi-major)
+Φ   = 1.618033988749895
+MA  = 1/Φ²            (precomputed moving-average weight)
+a   = 6378137.0       (WGS84 semi-major)
 f   = 1/298.257223563 (WGS84 flattening)
 ```

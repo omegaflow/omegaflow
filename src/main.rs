@@ -26,6 +26,7 @@ enum Extract {
 
 struct SourceConfig {
     ttl: u64,
+    res: u8,
     url: String,
     lat: Option<f64>,
     lon: Option<f64>,
@@ -38,7 +39,7 @@ struct Archive {
     index_html: Vec<u8>,
     world_js: Vec<u8>,
     data_cache: Mutex<HashMap<String, (u64, HashMap<String, f64>)>>,
-    active_tiles: Mutex<HashSet<String>>,
+    active_positions: Mutex<HashSet<String>>,
 }
 
 struct WsFrame { opcode: u8, payload: Vec<u8> }
@@ -82,23 +83,20 @@ fn ecef_to_geodetic(x: f64, y: f64, z: f64) -> (f64, f64, f64) {
     (lat.to_degrees(), lon.to_degrees(), alt)
 }
 
-fn tile_key(x: f64, y: f64, z: f64) -> String {
-    let r = (x*x + y*y + z*z).sqrt();
-    if r > 6.0e6 && r < 7.5e6 {
-        let (lat, lon, _) = ecef_to_geodetic(x, y, z);
-        format!("{:.2}_{:.2}", lat, lon)
-    } else { String::new() }
+fn pos_key(lat: f64, lon: f64, res: u8) -> String {
+    let lat_str = format!("{:.*}", res as usize, lat);
+    let lon_str = format!("{:.*}", res as usize, lon);
+    format!("{},{}", lat_str, lon_str)
 }
 
-fn parse_tile(tile: &str) -> (f64, f64) {
-    let parts: Vec<&str> = tile.split('_').collect();
+fn parse_pos(pos: &str) -> (f64, f64) {
+    let parts: Vec<&str> = pos.split(',').collect();
     if parts.len() == 2 { (parts[0].parse().unwrap_or(0.0), parts[1].parse().unwrap_or(0.0)) } else { (0.0, 0.0) }
 }
 
 fn emit(s: &mut TcpStream, st: &str, ct: &str, b: &[u8]) { let _=s.write_all(format!("HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nConnection: keep-alive\r\n\r\n",st,ct,b.len()).as_bytes()); let _=s.write_all(b); }
 fn emit_void(s: &mut TcpStream) { let _=s.write_all(b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"); }
 fn extract_header(s: &str, n: &str) -> Option<String> { for l in s.lines() { if let Some(c) = l.find(':') { if l[..c].trim().eq_ignore_ascii_case(n) { return Some(l[c+1..].trim().to_string()); } } } None }
-fn extract_json_value(msg: &str, key: &str) -> Option<String> { let p = format!("\"{}\":\"", key); let s = msg.find(&p)? + p.len(); let e = msg[s..].find('"')? + s; Some(msg[s..e].to_string()) }
 
 fn fetch_with_headers(url: &str, headers: &[(String, String)], ttl: u64) -> Option<String> {
     let connect_t = ((ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64;
@@ -125,19 +123,64 @@ fn handle_observer(stream: TcpStream, dormant: Arc<Mutex<HashMap<String,(u32,u32
         let mut cur = signal;
         loop {
             let path = parse_path(&cur);
-            if path.starts_with("/crash") {
+            if path == "/scan" {
+                s.set_read_timeout(Some(std::time::Duration::from_millis(500))).ok();
+                let mut body_buf = Vec::new();
+                let header_end = cur.find("\r\n\r\n").map(|i| i + 4).unwrap_or(cur.len());
+                body_buf.extend_from_slice(&cur.as_bytes()[header_end..]);
+                let mut tmp = [0u8; 4096];
+                loop {
+                    match s.read(&mut tmp) {
+                        Ok(0) => break,
+                        Ok(n) => body_buf.extend_from_slice(&tmp[..n]),
+                        Err(_) => break,
+                    }
+                }
+                let body_str = String::from_utf8_lossy(&body_buf);
+                
+                let paths: Vec<&str> = body_str.trim().split('\n').filter(|x| !x.is_empty()).collect();
+                {
+                    let mut c = dormant.lock().unwrap_or_else(|e| e.into_inner());
+                    for p in &paths {
+                        c.entry(p.to_string()).or_insert((1, 0));
+                    }
+                    rewrite_dormant(&c);
+                    *dormant_state.lock().unwrap_or_else(|e| e.into_inner()) = format_dormant_snapshot(&c);
+                }
+                println!("SCAN: {} pathogens quarantined", paths.len());
+                emit(&mut s, "200 OK", "text/plain", b"ok");
+            } else if path.starts_with("/crash") {
                 let body_start = cur.find("\r\n\r\n").map(|i| &cur[i+4..]).unwrap_or("");
-                let log = format!("[{}] CRASH: {}\n", SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs(), body_start.trim());
+                let body = body_start.trim();
+                let log = format!("[{}] CRASH: {}\n", SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs(), body);
                 println!("{}", log.trim());
                 use std::io::Write;
                 let _ = std::fs::OpenOptions::new().create(true).append(true).open("crash.log").and_then(|mut f| f.write_all(log.as_bytes()));
+                if body.starts_with("ACTUATOR_FAIL: ") {
+                    let rest = &body["ACTUATOR_FAIL: ".len()..];
+                    let actuator_path = rest.split_whitespace().next().unwrap_or("");
+                    if !actuator_path.is_empty() {
+                        let mut c = dormant.lock().unwrap_or_else(|e| e.into_inner());
+                        c.entry(actuator_path.to_string()).or_insert((0,0)).0 += 1;
+                        rewrite_dormant(&c);
+                        *dormant_state.lock().unwrap_or_else(|e| e.into_inner()) = format_dormant_snapshot(&c);
+                    }
+                }
                 emit(&mut s, "200 OK", "text/plain", b"ok");
             } else {
                 match path.as_str() {
                     "/" => emit(&mut s, "200 OK", "text/html", &archive.index_html),
-                    "/dormant" => { let b = dormant_state.lock().unwrap().clone(); emit(&mut s, "200 OK", "text/plain", b.as_bytes()); }
+                    "/dormant" => { let b = dormant_state.lock().unwrap_or_else(|e| e.into_inner()).clone(); emit(&mut s, "200 OK", "text/plain", b.as_bytes()); }
                     "/time" => { let t = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs_f64(); emit(&mut s, "200 OK", "text/plain", t.to_string().as_bytes()); }
                     "/world.js" => emit(&mut s, "200 OK", "application/javascript", &archive.world_js),
+                    "/scan.html" => {
+                        let html = std::fs::read("immune/scan.html").unwrap_or_else(|_| b"<h1>scan.html not found</h1>".to_vec());
+                        emit(&mut s, "200 OK", "text/html", &html);
+                    }
+                    "/definitions.js" => {
+                        let js = std::fs::read("immune/definitions.js").unwrap_or_else(|_| b"".to_vec());
+                        emit(&mut s, "200 OK", "application/javascript", &js);
+                    }
                     _ => { emit_void(&mut s); break; }
                 }
             }
@@ -152,6 +195,10 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
     if stream.write_all(format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {}\r\n\r\n", encoded).as_bytes()).is_err() { return; }
     let _=stream.set_nodelay(true);
     let mut last_stimulus: Vec<String> = Vec::new();
+    let mut last_coord: (f64, f64, f64) = (f64::NAN, f64::NAN, f64::NAN);
+    let mut last_key: String = String::new();
+    let mut last_lat: f64 = 0.0;
+    let mut last_lon: f64 = 0.0;
 
     while let Some(frame) = read_ws_frame_raw(&mut stream) {
         if frame.opcode==0x8 { break; }
@@ -163,7 +210,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
 
             {
                 let now=SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
-                let mut cache = archive.data_cache.lock().unwrap();
+                let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
                 for _ in 0..input_count {
                     if off+41 > frame.payload.len() { break; }
                     off+=8;
@@ -175,9 +222,18 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
                     let name=String::from_utf8_lossy(&frame.payload[off..off+name_len]).to_string();
                     off+=name_len;
 
-                    let key=tile_key(x,y,z);
-                    if !key.is_empty() {
-                        cache.entry(key).or_insert_with(||(now,HashMap::new())).1.insert(name,value);
+                    if (x,y,z) != last_coord {
+                        last_coord=(x,y,z);
+                        let r = (x*x + y*y + z*z).sqrt();
+                        if r > 6.0e6 && r < 7.5e6 {
+                            let (lat, lon, _) = ecef_to_geodetic(x, y, z);
+                            last_lat = lat;
+                            last_lon = lon;
+                            last_key = format!("local_{}", pos_key(lat, lon, 7));
+                        } else { last_key.clear(); }
+                    }
+                    if !last_key.is_empty() {
+                        cache.entry(last_key.clone()).or_insert_with(||(now,HashMap::new())).1.insert(name,value);
                     }
                 }
             }
@@ -192,8 +248,8 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
             out.extend_from_slice(&(query_count as u32).to_le_bytes());
 
             {
-                let cache=archive.data_cache.lock().unwrap();
-                let mut active=archive.active_tiles.lock().unwrap();
+                let cache=archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
+                let mut active=archive.active_positions.lock().unwrap_or_else(|e| e.into_inner());
 
                 for _ in 0..query_count {
                     if off+32 > frame.payload.len() { break; }
@@ -202,19 +258,45 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
                     let y=f64::from_le_bytes(frame.payload[off..off+8].try_into().unwrap_or([0u8;8])); off+=8;
                     let z=f64::from_le_bytes(frame.payload[off..off+8].try_into().unwrap_or([0u8;8])); off+=8;
 
-                    let key=tile_key(x,y,z);
-                    if !key.is_empty() { active.insert(key.clone()); }
+                    if (x,y,z) != last_coord {
+                        last_coord=(x,y,z);
+                        let r = (x*x + y*y + z*z).sqrt();
+                        if r > 6.0e6 && r < 7.5e6 {
+                            let (lat, lon, _) = ecef_to_geodetic(x, y, z);
+                            last_lat = lat;
+                            last_lon = lon;
+                        }
+                    }
+
+                    active.insert(format!("{},{}", last_lat, last_lon));
 
                     let obj_pos=out.len();
                     out.extend_from_slice(&0u32.to_le_bytes());
 
-                    if !key.is_empty() {
-                        if let Some((_,values))=cache.get(&key) {
-                            let fields: Vec<(&str,f64)> = values.iter().map(|(k,v)|(k.as_str(),*v)).collect();
-                            if !fields.is_empty() {
-                                is_obj(&mut out,&fields);
-                            }
+                    let mut merged_values = HashMap::new();
+
+                    let local_key = format!("local_{}", pos_key(last_lat, last_lon, 7));
+                    if let Some((_, values)) = cache.get(&local_key) {
+                        for (k, v) in values { merged_values.insert(k.clone(), *v); }
+                    }
+
+                    for (i, src) in archive.sources.iter().enumerate() {
+                        if src.url.starts_with("nostr://") { continue; }
+                        let src_key = if let (Some(sl), Some(slo)) = (src.lat, src.lon) {
+                            format!("{}_{}", i, pos_key(sl, slo, src.res))
+                        } else if src.url.contains("{lat}") || src.url.contains("{lon}") {
+                            format!("{}_{}", i, pos_key(last_lat, last_lon, src.res))
+                        } else {
+                            format!("{}_{}", i, src.url.split('?').next().unwrap_or(&src.url))
+                        };
+                        if let Some((_, values)) = cache.get(&src_key) {
+                            for (k, v) in values { merged_values.insert(k.clone(), *v); }
                         }
+                    }
+
+                    if !merged_values.is_empty() {
+                        let fields: Vec<(&str,f64)> = merged_values.iter().map(|(k,v)|(k.as_str(),*v)).collect();
+                        φ_obj(&mut out,&fields);
                     }
 
                     let obj_count=((out.len()-obj_pos-4)>0) as u32;
@@ -222,25 +304,44 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
                 }
             }
 
+            if off < frame.payload.len() {
+                let signal_count = frame.payload[off] as usize; off += 1;
+                let mut new_resonant = Vec::new();
+                let mut new_pulse = Vec::new();
+                for _ in 0..signal_count {
+                    if off + 2 > frame.payload.len() { break; }
+                    let sig_type = frame.payload[off]; off += 1;
+                    let path_len = frame.payload[off] as usize; off += 1;
+                    if off + path_len > frame.payload.len() { break; }
+                    let path = String::from_utf8_lossy(&frame.payload[off..off+path_len]).to_string();
+                    off += path_len;
+                    match sig_type {
+                        1 => { new_resonant.push(path); }
+                        0 => { new_pulse.push(path); }
+                        _ => {}
+                    }
+                }
+                if !new_resonant.is_empty() {
+                    let mut c = dormant.lock().unwrap_or_else(|e| e.into_inner());
+                    for p in &new_resonant { c.entry(p.clone()).or_insert((0,0)).1 += 1; }
+                    rewrite_dormant(&c); *dormant_state.lock().unwrap_or_else(|e| e.into_inner()) = format_dormant_snapshot(&c);
+                    last_stimulus.clear();
+                }
+                if !new_pulse.is_empty() {
+                    last_stimulus = new_pulse;
+                }
+            }
+
             write_ws_binary(&mut stream,&out);
 
-        } else if frame.opcode==0x1 {
-            let msg=String::from_utf8_lossy(&frame.payload);
-            if let Some(resonant)=extract_json_value(&msg,"resonant") {
-                let mut c=dormant.lock().unwrap();
-                for p in resonant.split('|') { if !p.is_empty() { c.entry(p.to_string()).or_insert((0,0)).1+=1; } }
-                rewrite_dormant(&c); *dormant_state.lock().unwrap()=format_dormant_snapshot(&c); last_stimulus.clear();
-            } else if let Some(pulse)=extract_json_value(&msg,"pulse") {
-                last_stimulus=pulse.split('|').filter(|s|!s.is_empty()).map(|s|s.to_string()).collect();
-            }
         }
     }
-    if last_stimulus.len()==1 { let mut c=dormant.lock().unwrap(); c.entry(last_stimulus[0].clone()).or_insert((0,0)).0+=1; rewrite_dormant(&c); *dormant_state.lock().unwrap()=format_dormant_snapshot(&c); }
+    if last_stimulus.len()==1 { let mut c=dormant.lock().unwrap_or_else(|e| e.into_inner()); c.entry(last_stimulus[0].clone()).or_insert((0,0)).0+=1; rewrite_dormant(&c); *dormant_state.lock().unwrap_or_else(|e| e.into_inner())=format_dormant_snapshot(&c); }
 }
 
 fn is_leap(y: u32) -> bool { (y % 4 == 0 && y % 100 != 0) || y % 400 == 0 }
 
-fn is_obj(out: &mut Vec<u8>, fields: &[(&str, f64)]) {
+fn φ_obj(out: &mut Vec<u8>, fields: &[(&str, f64)]) {
     out.push(fields.len() as u8);
     for (name, _) in fields { out.push(name.len() as u8); out.extend_from_slice(name.as_bytes()); out.push(0u8); }
     for (_, val) in fields { out.extend_from_slice(&val.to_le_bytes()); }
@@ -425,8 +526,7 @@ fn load_env() {
 
 fn load_dormant() -> HashMap<String,(u32,u32)> {
     let mut c=HashMap::new();
-    for k in ["location","history","document","close","alert","confirm","prompt","print","open","stop"] { c.insert(k.to_string(),(0,0)); }
-    if let Ok(content)=std::fs::read_to_string("φ/dormant.φ") {
+    if let Ok(content)=std::fs::read_to_string("immune/dormant") {
         for line in content.lines() { let p: Vec<&str>=line.split_whitespace().collect(); if p.len()>=2&&p[0]=="dormant" { c.insert(p[1].to_string(),(if p.len()>=3{p[2].parse().unwrap_or(0)}else{0}, if p.len()>=4{p[3].parse().unwrap_or(0)}else{0})); } }
     }
     c
@@ -436,6 +536,7 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
     let content = std::fs::read_to_string("φ/sources.φ").unwrap_or_default();
     let mut cur_ttl: u64 = 0;
+    let mut cur_res: u8 = 2;
     let mut cur_url = String::new();
     let mut cur_lat: Option<f64> = None;
     let mut cur_lon: Option<f64> = None;
@@ -450,11 +551,12 @@ fn load_sources() -> Vec<SourceConfig> {
         if parts.is_empty() { continue; }
         match parts[0] {
             "source" => {
-                if active { sources.push(SourceConfig { ttl: cur_ttl, url: cur_url.clone(), lat: cur_lat, lon: cur_lon, extracts: cur_extracts.clone(), headers: cur_headers.clone() }); }
-                cur_ttl = 0; cur_url.clear(); cur_lat = None; cur_lon = None; cur_extracts.clear(); cur_headers.clear(); active = true;
+                if active { sources.push(SourceConfig { ttl: cur_ttl, res: cur_res, url: cur_url.clone(), lat: cur_lat, lon: cur_lon, extracts: cur_extracts.clone(), headers: cur_headers.clone() }); }
+                cur_ttl = 0; cur_res = 2; cur_url.clear(); cur_lat = None; cur_lon = None; cur_extracts.clear(); cur_headers.clear(); active = true;
             }
             "url" => cur_url = line[4..].trim().to_string(),
             "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
+            "res" => cur_res = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(2),
             "lat" => cur_lat = parts.get(1).and_then(|s| s.parse().ok()),
             "lon" => cur_lon = parts.get(1).and_then(|s| s.parse().ok()),
             "header" => {
@@ -485,7 +587,7 @@ fn load_sources() -> Vec<SourceConfig> {
             _ => {}
         }
     }
-    if active { sources.push(SourceConfig { ttl: cur_ttl, url: cur_url, lat: cur_lat, lon: cur_lon, extracts: cur_extracts, headers: cur_headers }); }
+    if active { sources.push(SourceConfig { ttl: cur_ttl, res: cur_res, url: cur_url, lat: cur_lat, lon: cur_lon, extracts: cur_extracts, headers: cur_headers }); }
     sources
 }
 
@@ -539,7 +641,7 @@ fn render_url(template: &str, lat: f64, lon: f64) -> String {
     let tomorrow = format!("{}-{:02}-{:02}", tmy, tmm, tmd);
     let today_yyyymmdd = format!("{}_{:02}_{:02}", ty, tm, td);
     let hour_ago = {
-        let dt = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs().saturating_sub(3600);
+        let dt = secs.saturating_sub(3600);
         let (h_y, h_m, h_d) = days_to_ymd(dt / 86400 + 40587);
         let h_h = (dt % 86400) / 3600;
         let h_min = (dt % 3600) / 60;
@@ -550,12 +652,12 @@ fn render_url(template: &str, lat: f64, lon: f64) -> String {
     let unix_now = secs.to_string();
     let unix_now_plus_3600 = (secs + 3600).to_string();
     template
-        .replace("{lat}", &format!("{:.4}", lat))
-        .replace("{lon}", &format!("{:.4}", lon))
-        .replace("{lat_min}", &format!("{:.2}", lat - (1.0 / Φ)))
-        .replace("{lat_max}", &format!("{:.2}", lat + (1.0 / Φ)))
-        .replace("{lon_min}", &format!("{:.2}", lon - (1.0 / Φ)))
-        .replace("{lon_max}", &format!("{:.2}", lon + (1.0 / Φ)))
+        .replace("{lat}", &format!("{}", lat))
+        .replace("{lon}", &format!("{}", lon))
+        .replace("{lat_min}", &format!("{}", lat - (1.0 / Φ)))
+        .replace("{lat_max}", &format!("{}", lat + (1.0 / Φ)))
+        .replace("{lon_min}", &format!("{}", lon - (1.0 / Φ)))
+        .replace("{lon_max}", &format!("{}", lon + (1.0 / Φ)))
         .replace("{today}", &today)
         .replace("{yesterday}", &yesterday)
         .replace("{tomorrow}", &tomorrow)
@@ -578,9 +680,7 @@ fn render_url(template: &str, lat: f64, lon: f64) -> String {
 }
 
 fn rewrite_dormant(c: &HashMap<String,(u32,u32)>) {
-    let mut o=String::new(); let mut k: Vec<&String>=c.keys().collect(); k.sort();
-    for key in k { let (d,s)=c[key]; if d==0&&s==0 { o.push_str(&format!("dormant {}\n",key)); } else { o.push_str(&format!("dormant {} {} {}\n",key,d,s)); } }
-    let _=std::fs::write("φ/dormant.φ",o);
+    let _=std::fs::write("immune/dormant", format_dormant_snapshot(c));
 }
 
 fn sha1(input: &[u8]) -> [u8;20] {
@@ -655,31 +755,33 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
 fn warm_cache(archive: Arc<Archive>) {
     loop {
         let now_secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
-        let tiles: Vec<String> = archive.active_tiles.lock().unwrap().iter().cloned().collect();
+        let positions: Vec<String> = archive.active_positions.lock().unwrap_or_else(|e| e.into_inner()).iter().cloned().collect();
 
-        if tiles.is_empty() {
+        if positions.is_empty() {
             let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
             thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / Φ) as u64));
             continue;
         }
 
-        for tile in &tiles {
-            let (tile_lat, tile_lon) = parse_tile(tile);
+        for pos in &positions {
+            let (pos_lat, pos_lon) = parse_pos(pos);
 
             let needs: Vec<(usize, String, String, Vec<(String, String)>, u64)> = archive.sources.iter().enumerate()
                 .filter(|(_, src)| !src.url.starts_with("nostr://"))
                 .filter_map(|(i, src)| {
                     let (cache_key, render_lat, render_lon) = if let (Some(sl), Some(slo)) = (src.lat, src.lon) {
-                        let key = format!("{:.2}_{:.2}", sl, slo);
+                        let key = format!("{}_{}", i, pos_key(sl, slo, src.res));
                         (key, sl, slo)
                     } else if src.url.contains("{lat}") || src.url.contains("{lon}") {
-                        (tile.clone(), tile_lat, tile_lon)
+                        let key = format!("{}_{}", i, pos_key(pos_lat, pos_lon, src.res));
+                        (key, pos_lat, pos_lon)
                     } else {
-                        (src.url.split('?').next().unwrap_or(&src.url).to_string(), tile_lat, tile_lon)
+                        let key = format!("{}_{}", i, src.url.split('?').next().unwrap_or(&src.url));
+                        (key, pos_lat, pos_lon)
                     };
 
                     let needs_fetch = {
-                        let cache = archive.data_cache.lock().unwrap();
+                        let cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
                         match cache.get(&cache_key) {
                             Some((ts, _)) => now_secs.saturating_sub(*ts) >= src.ttl,
                             None => true,
@@ -735,7 +837,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             }
                             Extract::GeojsonEvents { mag_key, min_mag, outputs } => {
                                 if outputs.len() >= 2 {
-                                    let mut cache = archive.data_cache.lock().unwrap();
+                                    let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
                                     let mut search = &body[..];
                                     while let Some(cs) = search.find("\"coordinates\":[") {
                                         let csi = cs + "\"coordinates\":[".len();
@@ -751,7 +853,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                                 let vend = rest.find(|c: char| c == ',' || c == '}').unwrap_or(rest.len());
                                                 let mag: f64 = rest[..vend].trim().parse().unwrap_or(0.0);
                                                 if mag >= *min_mag {
-                                                    let ev_key = format!("{:.2}_{:.2}", ela, elo);
+                                                    let ev_key = format!("geojson_{}", pos_key(ela, elo, 4));
                                                     let mut ev_vals = HashMap::new();
                                                     ev_vals.insert(outputs[0].clone(), mag);
                                                     ev_vals.insert(outputs[1].clone(), ed);
@@ -767,7 +869,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     }
 
                     if !extracted.is_empty() {
-                        archive.data_cache.lock().unwrap().insert(cache_key, (now_secs, extracted));
+                        archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).insert(cache_key, (now_secs, extracted));
                     }
                 }
             }
@@ -785,7 +887,7 @@ fn main() {
         index_html: std::fs::read("static/index.html").unwrap_or_default(),
         world_js: std::fs::read("static/world.js").unwrap_or_default(),
         data_cache: Mutex::new(HashMap::new()),
-        active_tiles: Mutex::new(HashSet::new()),
+        active_positions: Mutex::new(HashSet::new()),
     });
     {
         let ar = Arc::clone(&archive);
@@ -794,7 +896,7 @@ fn main() {
     let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
     let dormant = Arc::new(Mutex::new(load_dormant()));
-    let dormant_state = Arc::new(Mutex::new(format_dormant_snapshot(&dormant.lock().unwrap())));
+    let dormant_state = Arc::new(Mutex::new(format_dormant_snapshot(&dormant.lock().unwrap_or_else(|e| e.into_inner()))));
     for stream in listener.incoming() {
         if let Ok(stream) = stream {
             let im = Arc::clone(&dormant); let ds = Arc::clone(&dormant_state); let ar = Arc::clone(&archive);

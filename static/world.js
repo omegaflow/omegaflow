@@ -1,30 +1,46 @@
-const C = 299792458.0;
-const Φ = 1.618033988749895;
+export const C = 299792458.0;
+export const Φ = 1.618033988749895;
+export const MA = 1 / (Φ * Φ);
+export const WGS84_A = 6378137.0;
+export const WGS84_F = 1.0 / 298.257223563;
+
+export function j2000(unixSecs) {
+    return (unixSecs / 86400.0) + 2440587.5 - 2451545.0;
+}
 
 export const φ = {};
-export const pulse = { ws: null, pending: new Map(), seq: 0 };
+export const pulse = { ws: null, pending: new Map(), seq: 0, tickTime: Φ };
+const lastUpdate = new Map();
 
-function weave(p, result) {
-    const ma = 1 / (Φ * Φ);
+function weave(p, result, now) {
+    const τ = pulse.tickTime || Φ;
     for (const key in p) {
         const val = p[key];
         if (typeof val === 'number') {
+            const last = lastUpdate.get(key);
+            const ma = last === undefined ? 1 : 1 - Math.exp(-(now - last) / τ);
             result[key] = (result[key] || 0) * (1 - ma) + val * ma;
+            lastUpdate.set(key, now);
         } else if (Array.isArray(val) && val.length === 3) {
             if (!result[key]) result[key] = [0, 0, 0];
+            const last = lastUpdate.get(key);
+            const ma = last === undefined ? 1 : 1 - Math.exp(-(now - last) / τ);
             result[key][0] = result[key][0] * (1 - ma) + val[0] * ma;
             result[key][1] = result[key][1] * (1 - ma) + val[1] * ma;
             result[key][2] = result[key][2] * (1 - ma) + val[2] * ma;
+            lastUpdate.set(key, now);
         }
     }
 }
 
-export async function get(inputs, queries) {
-    if (!queries || queries.length === 0) return {};
+export async function get(inputs, queries, signals = []) {
+    if (!queries || queries.length === 0 && signals.length === 0) return {};
 
     let inputBytes = 0;
     for (const inp of inputs) { inputBytes += 41 + inp.name.length; }
-    const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32);
+    let signalBytes = 1;
+    for (const sig of signals) { signalBytes += 2 + sig.path.length; }
+    const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32 + signalBytes);
     const dv = new DataView(buf);
     const id = ++pulse.seq;
     dv.setUint32(0, id, true);
@@ -49,6 +65,13 @@ export async function get(inputs, queries) {
         dv.setFloat64(off, q.z, true); off += 8;
     }
 
+    dv.setUint8(off, signals.length); off += 1;
+    for (const sig of signals) {
+        dv.setUint8(off, sig.type); off += 1;
+        dv.setUint8(off, sig.path.length); off += 1;
+        for (let i = 0; i < sig.path.length; i++) { dv.setUint8(off, sig.path.charCodeAt(i)); off++; }
+    }
+
     const promise = new Promise((resolve, reject) => {
         pulse.pending.set(id, { resolve, reject });
     });
@@ -56,17 +79,15 @@ export async function get(inputs, queries) {
         pulse.ws.send(new Uint8Array(buf));
     }
     const buffer = await promise;
-    const batchRecords = parseBatchPayload(new Uint8Array(buffer));
-
     const result = {};
-    for (const p of batchRecords.flat()) { weave(p, result); }
+    weaveBatch(new Uint8Array(buffer), result);
 
     let g = measureG(result);
     let vC = measureVC(result);
     let decay = measureDecay(result);
     let quantum = measureQuantum();
     const tNow = result['server.time'] !== undefined
-        ? (result['server.time'] / 86400.0) + 2440587.5 - 2451545.0
+        ? j2000(result['server.time'])
         : (queries[0] ? queries[0].t : Date.now() / 1000);
     const dtEff = Math.abs((queries[0] ? queries[0].t : tNow) - tNow);
 
@@ -77,24 +98,22 @@ export async function get(inputs, queries) {
     return result;
 }
 
-function parseBatchPayload(bytes) {
+function weaveBatch(bytes, result) {
     const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     const td = new TextDecoder();
+    const now = Date.now() / 1000;
     let o = 0;
 
     if (bytes.length < 13 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 6) {
-        return [];
+        return;
     }
     o = 3;
     o += 4;
     const pointCount = dv.getUint32(o, true); o += 4;
-    
-    const allRecords = [];
 
     for (let pi = 0; pi < pointCount; pi++) {
         if (o + 4 > bytes.length) break;
         const objCount = dv.getUint32(o, true); o += 4;
-        const pointRecords = [];
 
         for (let oi = 0; oi < objCount; oi++) {
             if (o >= bytes.length) break;
@@ -122,7 +141,7 @@ function parseBatchPayload(bytes) {
             const recCount = dv.getUint32(o, true); o += 4;
 
             if (recCount === 0) {
-                pointRecords.push(base);
+                weave(base, result, now);
             } else {
                 const rfCount = bytes[o++];
                 const recordFields = [];
@@ -145,14 +164,11 @@ function parseBatchPayload(bytes) {
                             p[f.name] = arr;
                         }
                     }
-                    pointRecords.push(p);
+                    weave(p, result, now);
                 }
             }
         }
-        allRecords.push(pointRecords);
     }
-
-    return allRecords;
 }
 
 function measureDecay(result) {

@@ -11,12 +11,8 @@
 </head>
 <body>
     <script type="module">
-        import { get, φ, pulse } from '/world.js';
-        const Φ = 1.618033988749895;
-
-        const C = 299792458.0;
-        const WGS84_A = 6378137.0;
-        const WGS84_F = 1.0 / 298.257223563;
+        import { get, φ, pulse, Φ, C, MA, WGS84_A, WGS84_F, j2000 } from '/world.js';
+        import { isAntigen } from '/definitions.js';
         const dormant = new Set();
 
         try {
@@ -24,12 +20,10 @@
             const t = await res.text();
             for (const line of t.split('\n')) {
                 const parts = line.trim().split(/\s+/);
-                if (parts[0] === 'dormant' && parts.length >= 2) {
-                    if (parts.length >= 4) {
-                        if (parseInt(parts[2]) > 0 && parseInt(parts[3]) === 0) {
-                            dormant.add(parts[1]);
-                        }
-                    } else {
+                if (parts[0] === 'dormant' && parts.length >= 4) {
+                    const pulse = parseInt(parts[2]);
+                    const resonant = parseInt(parts[3]);
+                    if (pulse > 0 && resonant === 0) {
                         dormant.add(parts[1]);
                     }
                 }
@@ -53,13 +47,30 @@
         let lastSensorCount = 0;
         let lastTs = 0;
         let certainty = 1.0;
+        let birthTime = 0;
+        let plasticity = MA;
+        let exploration = MA;
+        let exploitation = 0;
+        let instability = 0;
+        let coherence = 0;
+        let pressure = 0;
+        let presence = 0;
+        let world_flux = 0;
+        let self_coupling = 0;
+        let phase = 'waking';
+        const lastPhi = new Map();
+        let distress = 0;
+        let debugEl = null;
+        let lastDebug = 0;
 
         let inputBuffer = [];
         let queryBuffer = [];
+        let signalBuffer = [];
         let lastBatchFetch = 0;
         let lastInfoCollect = 0;
         let cachedEcef = { x: 0, y: 0, z: 0 };
         let cachedJ2000 = 0;
+        let cachedLat = null, cachedLon = null, cachedAlt = null;
 
         let topologyInterval = null;
         let lastTopology = 0;
@@ -151,8 +162,27 @@
                         wsum += weight;
                     }
                 }
-                const pulseTone = wsum > 0 ? tw / wsum : 1;
-                if (pulseActuator(a, pulseTone)) fired = true;
+        function checkProbing(ts) {
+            const resonant = checkResonance(probeState.snapshot);
+            if (resonant.length > 0) {
+                sendResonant(probeState.batch);
+                probeState.stack = [];
+                startResolving(ts, probeState.batch);
+            } else {
+                const calibrated = isCalibrated();
+                for (const a of probeState.batch) {
+                    if (calibrated) {
+                        a.pulse *= Φ * (1 + pressure);
+                        if (a.pulse > getMedianComplexity() * Φ) {
+                            silent.add(a.path);
+                            actuators.delete(a.path);
+                        }
+                    }
+                }
+                startProbing(ts);
+            }
+        }
+                if (pulseActuator(a, pulseTone * (1 + coherence))) fired = true;
             }
             return fired;
         }
@@ -172,7 +202,6 @@
                 probeState.stack = [];
                 startResolving(ts, probeState.batch);
             } else {
-                sendResonant(probeState.batch);
                 const calibrated = isCalibrated();
                 for (const a of probeState.batch) {
                     if (calibrated) {
@@ -199,16 +228,15 @@
                     const existing = resonanceMap.get(actuator.path).get(r.path);
                     const predicted = probeState.predictions ? (probeState.predictions[r.path] || 0) : 0;
                     const Δ = Math.abs(r.magnitude - predicted);
-                    const ma = 1 / (Φ * Φ);
                     if (existing) {
-                        existing.threshold = existing.threshold * (1 - ma) + actuator.pulse * ma;
-                        existing.magnitude = existing.magnitude * (1 - ma) + r.magnitude * ma;
-                        existing.Δ = (existing.Δ || 0) * (1 - ma) + Δ * ma;
+                        existing.threshold = existing.threshold * (1 - plasticity) + actuator.pulse * plasticity;
+                        existing.magnitude = existing.magnitude * (1 - plasticity) + r.magnitude * plasticity;
+                        existing.Δ = (existing.Δ || 0) * (1 - plasticity) + Δ * plasticity;
                     } else {
                         resonanceMap.get(actuator.path).set(r.path, {
                             threshold: actuator.pulse,
                             magnitude: r.magnitude,
-                            divergence: Δ
+                            Δ: Δ
                         });
                     }
                 }
@@ -229,11 +257,10 @@
                 return;
             }
 
-            sendResonant(probeState.batch);
             const calibrated = isCalibrated();
             for (const a of probeState.batch) {
                 if (calibrated) {
-                    a.pulse *= Φ;
+                    a.pulse *= Φ * (1 + pressure);
                     if (a.pulse > getMedianComplexity() * Φ) {
                         silent.add(a.path);
                         actuators.delete(a.path);
@@ -295,11 +322,11 @@
                         pushInput(p, val ? 1 : 0);
                     }
                 } else if (typeof val === 'function') {
-                    if (!dormant.has(key) && !silent.has(p) && !actuators.has(p)) {
-                        actuators.set(p, { path: p, obj, key, pulse: 1 / (Φ * Φ) });
+                    if (!dormant.has(p) && !silent.has(p) && !actuators.has(p) && !isAntigen(p, val)) {
+                        actuators.set(p, { path: p, obj, key, pulse: MA });
                     }
                 } else if (typeof val === 'object') {
-                    if (!dormant.has(key) && !silent.has(p)) {
+                    if (!dormant.has(p) && !silent.has(p) && !isAntigen(p, val)) {
                         discoverObj(val, p, depth + 1);
                     }
                 }
@@ -317,14 +344,38 @@
         function pulseActuator(actuator, value) {
             try {
                 const fn = actuator.obj[actuator.key];
-                const result = typeof fn === 'function' ? fn(value) : fn;
-                if (result && typeof result.catch === 'function') {
-                    result.catch(() => {});
+                if (typeof fn !== 'function') return false;
+
+                const lastSeg = actuator.path.split('.').pop();
+                const isConstructor = lastSeg[0] === lastSeg[0].toUpperCase() && lastSeg[0] !== lastSeg[0].toLowerCase();
+
+                if (isConstructor) {
+                    try {
+                        const inst = new fn();
+                        if (inst && typeof inst === 'object') {
+                            window.ω[actuator.key.toLowerCase()] = inst;
+                        }
+                        return true;
+                    } catch {}
+                }
+
+                const result = fn.call(actuator.obj, value);
+                if (result && typeof result.then === 'function') {
+                    result.then((resolved) => {
+                        if (resolved && typeof resolved === 'object') {
+                            window.ω[actuator.key.toLowerCase()] = resolved;
+                        }
+                    }).catch((err) => {
+                        silent.add(actuator.path); actuators.delete(actuator.path);
+                        try { fetch('/crash', { method: 'POST', body: 'ACTUATOR_FAIL: ' + actuator.path + ' ERR: ' + (err.message || err) }); } catch {}
+                    });
                 }
                 return true;
-            } catch {
+
+            } catch (err) {
                 silent.add(actuator.path);
                 actuators.delete(actuator.path);
+                try { fetch('/crash', { method: 'POST', body: 'ACTUATOR_FAIL: ' + actuator.path + ' ERR: ' + (err.message || err) }); } catch {}
                 return false;
             }
         }
@@ -339,12 +390,12 @@
                     pushInput('gamepad[' + i + '].timestamp', gp.timestamp);
                     for (let a = 0; a < gp.axes.length; a++) {
                     pushInput('gamepad[' + i + '].axes[' + a + ']', gp.axes[a]);
-                    state = state * 31 + (gp.axes[a] * Math.pow(2, 16) | 0);
+                    state = (state * 2654435761 + (gp.axes[a] * 65536 | 0)) | 0;
                     }
                     for (let b = 0; b < gp.buttons.length; b++) {
                     pushInput('gamepad[' + i + '].buttons[' + b + '].pressed', gp.buttons[b].pressed ? 1 : 0);
                     pushInput('gamepad[' + i + '].buttons[' + b + '].value', gp.buttons[b].value);
-                    state = state * 31 + (gp.buttons[b].value * Math.pow(2, 16) | 0);
+                    state = (state * 2654435761 + (gp.buttons[b].value * 65536 | 0)) | 0;
                     }
                 }
             }
@@ -385,13 +436,11 @@
         }
 
         function sendPulse(batch) {
-            if (pulseWs.readyState !== WebSocket.OPEN || batch.length === 0) return;
-            pulseWs.send(JSON.stringify({ pulse: batch.map(a => a.path).join('|') }));
+            for (const a of batch) { signalBuffer.push({ type: 0, path: a.path }); }
         }
 
         function sendResonant(batch) {
-            if (pulseWs.readyState !== WebSocket.OPEN || batch.length === 0) return;
-            pulseWs.send(JSON.stringify({ resonant: batch.map(a => a.path).join('|') }));
+            for (const a of batch) { signalBuffer.push({ type: 1, path: a.path }); }
         }
 
         function snapshotSensors() {
@@ -412,26 +461,42 @@
             for (const s of sensors.values()) {
                 if (s.complexity > 0) vals.push(s.complexity);
             }
-            if (vals.length === 0) return 1 / (Φ * Φ);
+            if (vals.length === 0) return MA;
             vals.sort((a, b) => a - b);
             const mid = Math.floor(vals.length / 2);
             return vals.length % 2 ? vals[mid] : (vals[mid - 1] + vals[mid]) / 2;
         }
 
+        function resonanceMapHasSensor(path) {
+            for (const sm of resonanceMap.values()) {
+                if (sm.has(path)) return true;
+            }
+            return false;
+        }
+
         function startProbing(ts) {
-            const prune = 1 - 1 / (Φ * Φ);
+            const decay = 1 - exploration;
             let totalΔ = 0;
             for (const [actPath, sensorMap] of resonanceMap) {
                 for (const [spath, data] of sensorMap) {
-                    data.magnitude *= prune;
-                    data.Δ = (data.Δ || 0) * prune;
+                    data.magnitude *= (1 - plasticity);
+                    data.Δ = (data.Δ || 0) * decay;
                     totalΔ += data.Δ;
-                    if (data.magnitude < 1 / ringSize) sensorMap.delete(spath);
+                    if (data.magnitude < 1 / (ringSize * Φ)) sensorMap.delete(spath);
                 }
                 if (sensorMap.size === 0) resonanceMap.delete(actPath);
             }
             pushInput('divergence', totalΔ);
-            probeState.batch = Array.from(actuators.values());
+            const all = Array.from(actuators.values());
+            const maxBatch = Math.max(2, Math.floor(64 * exploration));
+            if (resonanceMap.size > 0 && exploitation > exploration) {
+                const known = all.filter(a => resonanceMap.has(a.path));
+                const unknown = all.filter(a => !resonanceMap.has(a.path));
+                const kCount = Math.max(1, Math.floor(maxBatch * exploitation));
+                probeState.batch = known.slice(0, kCount).concat(unknown.slice(0, Math.max(1, Math.floor(maxBatch * exploration))));
+            } else {
+                probeState.batch = all.slice(0, maxBatch);
+            }
             if (probeState.batch.length === 0) {
                 probeState.phase = 'waiting';
                 return;
@@ -496,21 +561,51 @@
         }
 
         function ω(ts) {
+            if (birthTime === 0) birthTime = ts;
+            const age = (ts - birthTime) / 1000;
+            const τ = (stableTick * ringSize) / (1 + coherence);
+            
+            instability = Math.max(0, (1 / Φ) - certainty);
+            let magSum = 0;
+            for (const sm of resonanceMap.values()) { for (const d of sm.values()) magSum += d.magnitude; }
+            coherence = magSum / (sensors.size + 1);
+
+            exploration = instability * (1 - coherence) + MA / Φ;
+            exploration = Math.max(exploration, 1 / ringSize);
+            exploitation = 1 - exploration;
+            plasticity = exploration;
+            self_coupling = actuators.size > 0 ? resonanceMap.size / actuators.size : 0;
+            let avgC = 0;
+            for (const s of sensors.values()) avgC += s.complexity;
+            avgC = sensors.size > 0 ? avgC / sensors.size : 0;
+            pressure = avgC > 0 ? Math.max(0, (MA - avgC)) / avgC : 0;
+            let declining = 0;
+            let totalS = 0;
+            for (const s of sensors.values()) {
+                if (s.complexity > 0) {
+                    totalS++;
+                    if (Math.abs(s.val - s.median) > s.complexity * Φ) declining++;
+                }
+            }
+            distress = totalS > 0 ? declining / totalS : 0;
+
             const rawTick = lastTs > 0 ? ts - lastTs : Φ;
             lastTs = ts;
             if (probeState.phase === 'waiting' && rawTick > 0) {
-                const ma = 1 / (Φ * Φ);
-                stableTick = stableTick > 0 ? stableTick * (1 - ma) + rawTick * ma : rawTick;
+                stableTick = stableTick > 0 ? stableTick * (1 - MA) + rawTick * MA : rawTick;
             }
             const tickTime = stableTick;
+            pulse.tickTime = tickTime / 1000;
 
             const lat = φ['geolocation.latitude'] || 0;
             const lon = φ['geolocation.longitude'] || 0;
             const alt = φ['geolocation.altitude'] || 0;
-            const t_j2000 = (φ['server.time'] / 86400.0) + 2440587.5 - 2451545.0;
-            cachedEcef = geodeticToEcef(lat, lon, alt);
-            cachedJ2000 = t_j2000;
-            queryBuffer.push({ t: t_j2000, x: cachedEcef.x, y: cachedEcef.y, z: cachedEcef.z });
+            if (lat !== cachedLat || lon !== cachedLon || alt !== cachedAlt) {
+                cachedLat = lat; cachedLon = lon; cachedAlt = alt;
+                cachedEcef = geodeticToEcef(lat, lon, alt);
+            }
+            cachedJ2000 = j2000(φ['server.time']);
+            queryBuffer.push({ t: cachedJ2000, x: cachedEcef.x, y: cachedEcef.y, z: cachedEcef.z });
 
             if (batchInterval === null) batchInterval = Φ;
             const batchDue = lastBatchFetch + batchInterval - ts;
@@ -518,11 +613,12 @@
                 lastBatchFetch = ts;
                 const inputs = inputBuffer.splice(0);
                 const queries = queryBuffer.splice(0);
-                get(inputs, queries).then(r => {
+                const signals = signalBuffer.splice(0);
+                get(inputs, queries, signals).then(r => {
                     for (const key in r) { φ[key] = r[key]; }
                     if (r.certainty !== undefined) certainty = r.certainty;
                 }).catch(() => {});
-                if (inputBuffer.length === 0) batchInterval *= Φ;
+                if (inputBuffer.length === 0) batchInterval = Math.min(batchInterval * Φ, tickTime * ringSize);
                 else batchInterval = Math.max(batchInterval / Φ, Φ);
             }
 
@@ -557,7 +653,7 @@
                         gamepadInterval = tickTime;
                         lastGamepadState = state;
                     } else {
-                        gamepadInterval *= Φ;
+                        gamepadInterval = Math.min(gamepadInterval * Φ, tickTime * ringSize);
                 gamepadInterval = Math.max(gamepadInterval, Φ);
                     }
                     nextDelay = Math.min(nextDelay, gamepadInterval);
@@ -570,26 +666,64 @@
             const dDue = lastDiscovery + discoveryInterval - ts;
             if (dDue <= 0) {
                 lastDiscovery = ts;
+                for (const [path, s] of sensors) {
+                    if (s.complexity === 0 && s.lastPoll > 0 && (ts - s.lastPoll) > topologyInterval * ringSize && !resonanceMapHasSensor(path)) {
+                        sensors.delete(path);
+                        signalBuffers.delete(path);
+                    }
+                }
                 visited = new WeakSet();
                 discoverSensors();
                 if (sensors.size !== lastSensorCount) {
                     lastSensorCount = sensors.size;
                 }
-                discoveryInterval *= Φ;
+                discoveryInterval = Math.min(discoveryInterval * Φ, tickTime * ringSize);
                 discoveryInterval = Math.max(discoveryInterval, Φ);
                 nextDelay = Math.min(nextDelay, discoveryInterval);
             } else {
                 nextDelay = Math.min(nextDelay, dDue);
             }
 
+            let extDelta = 0;
+            for (const s of sensors.values()) {
+                const before = s.median;
+                const now = s.val;
+                const d = Math.abs(now - before);
+                if (d > s.complexity && !(probeState.phase === 'probing' || probeState.phase === 'resolving')) {
+                    extDelta += d;
+                }
+            }
+            presence = presence * (1 - MA) + (extDelta > 0 ? 1 : 0) * MA;
+            let phiDelta = 0;
+            for (const key in φ) {
+                if (typeof φ[key] === 'number') {
+                    const prev = lastPhi.get(key) ?? φ[key];
+                    phiDelta += Math.abs(φ[key] - prev);
+                    lastPhi.set(key, φ[key]);
+                }
+            }
+            world_flux = world_flux * (1 - MA) + phiDelta * MA;
+
+            const canSleep = certainty > (1 / Φ) && coherence > MA && presence < (1 / Φ);
+            
             if (probeState.phase === 'waiting') {
-                if (!express()) {
+                if (canSleep && resonanceMap.size > 0) {
+                    for (const [actPath, sensorMap] of resonanceMap) {
+                        const a = actuators.get(actPath);
+                        if (a) {
+                            for (const [spath, data] of sensorMap) {
+                                pulseActuator(a, data.threshold);
+                            }
+                        }
+                    }
+                } else if (!express()) {
                     if (actuators.size > 0 && sensors.size > 0) {
                         let avgComplexity = 0;
                         for (const s of sensors.values()) avgComplexity += s.complexity;
                         avgComplexity /= sensors.size;
-                        const curiosity = 1 - avgComplexity;
-                        if (resonanceMap.size === 0 || Math.random() < curiosity) {
+                        const curiosity = (1 - avgComplexity) * certainty * (1 - instability) * (1 - distress);
+                        const qe = φ['quantum_entropy_anu'] !== undefined ? φ['quantum_entropy_anu'] / 255 : Math.random();
+                        if (resonanceMap.size === 0 || qe < curiosity) {
                             startProbing(ts);
                         }
                     }
@@ -612,6 +746,7 @@
                 runSignalTopology(ts);
                 const divergence = φ['divergence'] || 0;
                 topologyInterval = divergence > sensors.size ? tickTime : topologyInterval * Φ;
+                topologyInterval = Math.min(topologyInterval, tickTime * ringSize / Φ);
                 nextDelay = Math.min(nextDelay, topologyInterval);
             } else {
                 nextDelay = Math.min(nextDelay, topoDue);
@@ -630,7 +765,7 @@
                 fetch('/time').then(() => {
                     pushInput('system.latency', performance.now() - t0);
                 }).catch(() => {});
-                infoInterval *= Φ;
+                infoInterval = Math.min(infoInterval * Φ, tickTime * ringSize);
                 infoInterval = Math.max(infoInterval, Φ);
                 nextDelay = Math.min(nextDelay, infoInterval);
             } else {
@@ -671,9 +806,52 @@
             if (nextDelay === Infinity) {
                 nextDelay = stableTick > 0 ? stableTick : Φ;
             }
+            nextDelay = nextDelay / (certainty > 0 ? certainty : 0.001);
+            if (distress > 1 / Φ) nextDelay *= Φ * Φ;
+            if (canSleep) nextDelay *= Φ;
+            nextDelay = Math.max(1, Math.min(nextDelay, 65536));
 
             if (document.hidden) {
                 nextDelay = Math.max(nextDelay, tickTime * Φ);
+            }
+
+            if (!debugEl) {
+                debugEl = document.createElement('textarea');
+                debugEl.readOnly = true;
+                debugEl.style.cssText = 'position:fixed;bottom:4px;left:4px;font:10px monospace;color:#0f0;background:rgba(0,0,0,0.9);padding:4px;margin:0;border:none;z-index:9999;line-height:1.4;width:360px;height:200px;resize:none';
+                document.body.appendChild(debugEl);
+            }
+            if (ts - lastDebug > 250) {
+                lastDebug = ts;
+                let ready = 0;
+                for (const s of sensors.values()) { if (s.complexity > 0) ready++; }
+                const n = sensors.size;
+                let avgC = 0;
+                for (const s of sensors.values()) avgC += s.complexity;
+                avgC = n > 0 ? avgC / n : 0;
+                let totalMag = 0;
+                for (const sm of resonanceMap.values()) { for (const d of sm.values()) totalMag += d.magnitude; }
+                const ageSec = birthTime > 0 ? ((ts - birthTime) / 1000).toFixed(0) : '0';
+                const sleepStatus = canSleep ? 'YES' : 'no';
+                let topoIn = topologyInterval !== null ? topologyInterval.toFixed(0) : '?';
+                let topoLast = lastTopology > 0 ? ((ts - lastTopology) / 1000).toFixed(1) + 's' : 'never';
+                let sigFilled = 0;
+                for (const sb of signalBuffers.values()) { if (sb.filled === ringSize) sigFilled++; }
+                let batLvl = 'n/a';
+                for (const [p, s] of sensors) {
+                    if (p === 'battery.level') { batLvl = s.val.toFixed(2) + '/' + s.median.toFixed(2); break; }
+                }
+                const spiral = exploration.toFixed(3);
+                debugEl.value =
+                    `S:${n} R:${ready} A:${actuators.size} sig:${sigFilled} Ph:${probeState.phase}\n` +
+                    `age:${ageSec}s c:${certainty.toFixed(2)} tick:${tickTime.toFixed(1)} delay:${nextDelay.toFixed(0)}\n` +
+                    `expl:${spiral} explt:${exploitation.toFixed(3)} dist:${distress.toFixed(2)}\n` +
+                    `avgK:${avgC.toFixed(4)} res:${resonanceMap.size} mag:${totalMag.toFixed(2)}\n` +
+                    `expl:${exploration.toFixed(2)} explt:${exploitation.toFixed(2)} plast:${plasticity.toFixed(3)}\n` +
+                    `pres:${presence.toFixed(2)} flux:${world_flux.toFixed(1)} coh:${coherence.toFixed(3)}\n` +
+                    `inst:${instability.toFixed(2)} press:${pressure.toFixed(2)} sleep:${sleepStatus}\n` +
+                    `bat:${batLvl} topo:${topoIn} last:${topoLast}\n` +
+                    `d:${dormant.size} sil:${silent.size}`;
             }
 
             setTimeout(() => {
@@ -788,6 +966,10 @@
                                 const payload = JSON.parse(event.content);
                                 for (const [key, val] of Object.entries(payload)) {
                                     if (typeof val === 'number') {
+                                        const ownVal = φ[key];
+                                        if (typeof ownVal === 'number') {
+                                            pushInput('omega_flow.divergence.' + key, Math.abs(ownVal - val));
+                                        }
                                         inputBuffer.push({ name: 'omega_flow.' + key, value: val, t: 0, x: ecef.x, y: ecef.y, z: ecef.z });
                                     }
                                 }
@@ -803,14 +985,7 @@
         function tryStartWebAudio() {
             const start = () => {
                 if (audioCtx) return;
-                try {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const panner = audioCtx.createPanner();
-                    panner.panningModel = 'HRTF';
-                    panner.connect(audioCtx.destination);
-                    window.ω.audio = { ctx: audioCtx, panner };
-                    pushInput('system.audio', 1);
-                } catch {}
+                try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
             };
             document.addEventListener('click', start, { once: true, passive: true });
             document.addEventListener('touchstart', start, { once: true, passive: true });
@@ -837,7 +1012,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     let mean = sum / f32(rs);
     var var_sum: f32 = 0.0;
     for (var i = 0u; i < rs; i++) { let d = data[base + i] - mean; var_sum += d * d; }
-    let threshold = sqrt(var_sum / f32(rs)) / (PHI * PHI);
+    let threshold = sqrt(var_sum / f32(rs)) / 2.618033988749895;
     var repeats: f32 = 0.0;
     for (var i = 0u; i < rs; i++) {
         let vi = data[base + i];
@@ -929,7 +1104,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     let rs = u32(params.y);
     if (s >= n) { return; }
     let base = s * rs;
-    let sub = u32(f32(rs) / (PHI * PHI));
+    let sub = u32(f32(rs) / 2.618033988749895);
     let tau = u32(1.0 + 1.0 / PHI);
     var parent: array<u32, 48>;
     for (var i = 0u; i < 48u; i++) { if (i < sub) { parent[i] = i; } }
@@ -1022,19 +1197,54 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 `;
 
+        const icaShader = `
+let PHI = 1.618033988749895;
+@group(0) @binding(0) var<storage, read> data: array<f32>;
+@group(0) @binding(1) var<storage, read_write> out: array<f32>;
+@group(0) @binding(2) var<uniform> params: vec4<f32>;
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let s = gid.x;
+    let n = u32(params.x);
+    let rs = u32(params.y);
+    if (s >= n) { return; }
+    let base = s * rs;
+    var mean: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) { mean += data[base + i]; }
+    mean = mean / f32(rs);
+    var w: f32 = 1.0 / (PHI + f32(s + 1u));
+    for (var iter = 0u; iter < 3u; iter++) {
+        var num: f32 = 0.0; var den: f32 = 0.0;
+        for (var i = 0u; i < rs; i++) {
+            let x = data[base + i] - mean;
+            let wx = w * x;
+            let g = tanh(wx);
+            let gp = 1.0 - g * g;
+            num += x * g; den += gp;
+        }
+        num = num / f32(rs); den = den / f32(rs);
+        let w_new = num - den * w;
+        w = w_new / (abs(w_new) + (1.0 / 86400.0));
+    }
+    var mag: f32 = 0.0;
+    for (var i = 0u; i < rs; i++) {
+        let x = data[base + i] - mean;
+        mag += abs(w * x);
+    }
+    out[s] = mag / f32(rs);
+}
+`;
+
         let kolmogorovPipeline = null;
         let tdaPipeline = null;
         let tePipeline = null;
         let takensPipeline = null;
+        let icaPipeline = null;
+        let topologyPending = false;
 
         function processSensorReading(s, val, tickTime) {
             const Δ = Math.abs(val - s.val);
-            const ma = 1 / (Φ * Φ);
-            s.median = s.median * (1 - ma) + val * ma;
-            
-            if (s.complexity === 0 || Δ <= s.complexity) {
-                s.complexity = s.complexity * (1 - ma) + Δ * ma;
-            }
+            s.median = s.median * (1 - MA) + val * MA;
 
             if (!signalBuffers.has(s.path)) {
                 signalBuffers.set(s.path, { buf: new Float32Array(ringSize), idx: 0, filled: 0 });
@@ -1049,7 +1259,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 pushInput(s.path, val);
             } else {
                 if (s.interval !== null) {
-                    s.interval *= Φ;
+                    s.interval = Math.min(s.interval * Φ, tickTime * ringSize);
                 }
             }
             
@@ -1057,17 +1267,47 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         }
 
         function runSignalTopology(ts) {
-            if (!window.ω?.gpu) return;
+            if (!window.ω?.gpu || topologyPending) return;
+            topologyPending = true;
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const candidates = [];
+            for (const [path, sb] of signalBuffers) {
+                if (sb.filled === ringSize) {
+                    let sum = 0;
+                    for (let i = 0; i < ringSize; i++) sum += sb.buf[i];
+                    const mean = sum / ringSize;
+                    let varSum = 0;
+                    for (let i = 0; i < ringSize; i++) { const d = sb.buf[i] - mean; varSum += d * d; }
+                    candidates.push({ path, buf: sb.buf, variance: varSum / ringSize });
+                }
+            }
+            if (candidates.length < 2) { topologyPending = false; return; }
+
+            candidates.sort((a, b) => b.variance - a.variance);
+            const midIdx = Math.floor(candidates.length / 2);
+            const medianVar = candidates.length % 2 ? candidates[midIdx].variance : (candidates[midIdx - 1].variance + candidates[midIdx].variance) / 2;
+            const varThreshold = medianVar / Φ;
 
             const activeBuffers = [];
             const activeNames = [];
-            for (const [path, sb] of signalBuffers) {
-                if (sb.filled === ringSize) {
-                    activeBuffers.push(sb.buf);
-                    activeNames.push(path);
+            for (const c of candidates) {
+                if (c.variance >= varThreshold || activeBuffers.length < 2) {
+                    activeBuffers.push(c.buf);
+                    activeNames.push(c.path);
                 }
             }
-            if (activeBuffers.length < 2) return;
 
             const gpu = window.ω.gpu;
             const n = activeBuffers.length;
@@ -1089,6 +1329,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 const pl = gpu.createPipelineLayout({ bindGroupLayouts: [bl] });
                 kolmogorovPipeline = gpu.createComputePipeline({ layout: pl, compute: { module: gpu.createShaderModule({ code: kolmogorovShader }), entryPoint: 'main' } });
                 takensPipeline = gpu.createComputePipeline({ layout: pl, compute: { module: gpu.createShaderModule({ code: takensShader }), entryPoint: 'main' } });
+                icaPipeline = gpu.createComputePipeline({ layout: pl, compute: { module: gpu.createShaderModule({ code: icaShader }), entryPoint: 'main' } });
             }
             
             if (!tePipeline) {
@@ -1108,9 +1349,11 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             const tOutBuf = gpu.createBuffer({ size: n * 4 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
             const teOutBuf = gpu.createBuffer({ size: n * n * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
             const tdaOutBuf = gpu.createBuffer({ size: n * 2 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+            const icaOutBuf = gpu.createBuffer({ size: n * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
 
             const bl = kolmogorovPipeline.getBindGroupLayout(0);
             const teBl = tePipeline.getBindGroupLayout(0);
+            const icaBl = icaPipeline.getBindGroupLayout(0);
             const tdaBl = tdaPipeline.getBindGroupLayout(0);
             
             const kBg = gpu.createBindGroup({ layout: bl, entries: [
@@ -1133,8 +1376,13 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 { binding: 1, resource: { buffer: tdaOutBuf } },
                 { binding: 2, resource: { buffer: paramBuf } },
             ]});
+            const icaBg = gpu.createBindGroup({ layout: icaBl, entries: [
+                { binding: 0, resource: { buffer: inBuf } },
+                { binding: 1, resource: { buffer: icaOutBuf } },
+                { binding: 2, resource: { buffer: paramBuf } },
+            ]});
 
-            const totalReadSize = n * 4 + n * 4 * 4 + n * n * 4 + n * 2 * 4;
+            const totalReadSize = n * 4 + n * 4 * 4 + n * n * 4 + n * 2 * 4 + n * 4;
             const readBuf = gpu.createBuffer({ size: totalReadSize, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
             const enc = gpu.createCommandEncoder();
             
@@ -1162,12 +1410,19 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             tdaPass.dispatchWorkgroups(Math.ceil(n / 64));
             tdaPass.end();
 
+            const icaPass = enc.beginComputePass();
+            icaPass.setPipeline(icaPipeline);
+            icaPass.setBindGroup(0, icaBg);
+            icaPass.dispatchWorkgroups(Math.ceil(n / 64));
+            icaPass.end();
+
 
             let readOffset = 0;
             enc.copyBufferToBuffer(kOutBuf, 0, readBuf, readOffset, n * 4); readOffset += n * 4;
             enc.copyBufferToBuffer(tOutBuf, 0, readBuf, readOffset, n * 4 * 4); readOffset += n * 4 * 4;
             enc.copyBufferToBuffer(teOutBuf, 0, readBuf, readOffset, n * n * 4); readOffset += n * n * 4;
             enc.copyBufferToBuffer(tdaOutBuf, 0, readBuf, readOffset, n * 2 * 4); readOffset += n * 2 * 4;
+            enc.copyBufferToBuffer(icaOutBuf, 0, readBuf, readOffset, n * 4); readOffset += n * 4;
 
             gpu.queue.submit([enc.finish()]);
 
@@ -1178,6 +1433,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 const tRes = res.subarray(off, off + n * 4); off += n * 4;
                 const teRes = res.subarray(off, off + n * n); off += n * n;
                 const tdaRes = res.subarray(off, off + n * 2); off += n * 2;
+                const icaRes = res.subarray(off, off + n); off += n;
 
                 const allTE = [];
                 for (let a = 0; a < n; a++) {
@@ -1191,8 +1447,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                     pushInput('complexity.' + activeNames[i], kRes[i]);
                     const sens = sensors.get(activeNames[i]);
                     if (sens) {
-                        const ma = 1 / (Φ * Φ);
-                        sens.complexity = sens.complexity * (1 - ma) + kRes[i] * ma;
+                        sens.complexity = sens.complexity * (1 - MA) + kRes[i] * MA;
                     }
 
                     const tBase = i * 4;
@@ -1203,6 +1458,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
                     pushInput('tda.' + activeNames[i] + '.persistence', tdaRes[i * 2]);
                     pushInput('tda.' + activeNames[i] + '.betti0', tdaRes[i * 2 + 1]);
+                    pushInput('ica.' + activeNames[i], icaRes[i]);
                 }
 
                 if (allTE.length > 0) {
@@ -1221,7 +1477,8 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                 }
 
                 readBuf.unmap();
-                inBuf.destroy(); kOutBuf.destroy(); tOutBuf.destroy(); teOutBuf.destroy(); tdaOutBuf.destroy(); paramBuf.destroy(); readBuf.destroy();
+                inBuf.destroy(); kOutBuf.destroy(); tOutBuf.destroy(); teOutBuf.destroy(); tdaOutBuf.destroy(); icaOutBuf.destroy(); paramBuf.destroy(); readBuf.destroy();
+                topologyPending = false;
             });
         }
 
@@ -1230,14 +1487,21 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         tryStartBattery();
         tryStartGeolocation();
         tryStartSensors();
-        tryStartWebGPU();
         tryStartWebAudio();
         tryStartNostr();
 
         window.addEventListener('error', (e) => {
             try {
-                fetch('/crash', { method: 'POST', body: e.message + ' @ ' + e.filename + ':' + e.lineno });
+                fetch('/crash', { method: 'POST', body: e.message + ' @ ' + e.filename + ':' + e.lineno + ':' + e.colno });
             } catch {}
+            e.preventDefault();
+        });
+
+        window.addEventListener('unhandledrejection', (e) => {
+            try {
+                fetch('/crash', { method: 'POST', body: 'UNHANDLED_REJECTION @ ' + e.reason });
+            } catch {}
+            e.preventDefault();
         });
 
         setTimeout(() => ω(performance.now()), 0);
