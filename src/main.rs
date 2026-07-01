@@ -772,16 +772,16 @@ fn read_ws_frame_raw(stream: &mut TcpStream) -> Option<WsFrame> {
 fn render_url(template: &str, lat: f64, lon: f64, query_t: f64) -> String {
     let secs = j2000_to_unix(query_t);
     let days = secs / 86400;
-    let (ty, tm, td) = days_to_ymd(days + 40587);
+    let (ty, tm, td) = days_to_ymd(days);
     let today = format!("{}-{:02}-{:02}", ty, tm, td);
-    let (yy, ym, yd) = days_to_ymd(days + 40586);
+    let (yy, ym, yd) = days_to_ymd(days - 1);
     let yesterday = format!("{}-{:02}-{:02}", yy, ym, yd);
-    let (tmy, tmm, tmd) = days_to_ymd(days + 40588);
+    let (tmy, tmm, tmd) = days_to_ymd(days + 1);
     let tomorrow = format!("{}-{:02}-{:02}", tmy, tmm, tmd);
     let today_yyyymmdd = format!("{}_{:02}_{:02}", ty, tm, td);
     let hour_ago = {
         let dt = secs.saturating_sub(3600);
-        let (h_y, h_m, h_d) = days_to_ymd(dt / 86400 + 40587);
+        let (h_y, h_m, h_d) = days_to_ymd(dt / 86400);
         let h_h = (dt % 86400) / 3600;
         let h_min = (dt % 3600) / 60;
         format!("{}-{:02}-{:02}T{:02}:{:02}:00", h_y, h_m, h_d, h_h, h_min)
