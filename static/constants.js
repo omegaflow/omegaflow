@@ -12,25 +12,33 @@ export function j2000(unixSecs) {
 }
 
 export const φ = {};
-export const pulse = { ws: null, pending: new Map(), seq: 0, tickTime: Φ };
+export const pulse = { ws: null, pending: new Map(), seq: 0, tickTime: Φ, presence: 0, distress: 0 };
 const lastUpdate = new Map();
 
 function weave(p, result, t) {
     const τ = pulse.tickTime || Φ;
+    const arousal = Math.min(1, (pulse.presence || 0) * Φ + (pulse.distress || 0));
+    const absorption = arousal < 0.5
+        ? 4 * arousal * (1 - arousal)
+        : 4 * arousal * (1 - arousal) * (1 - arousal);
+    const dynτ_abs = τ / (absorption + 1 / (Φ * Φ * Φ));
+
     for (const key in p) {
         const val = p[key];
         if (typeof val === 'number') {
             const last = lastUpdate.get(key);
-            const ma = last === undefined ? 1 : 1 - Math.exp(-(t - last) / τ);
+            const ma = last === undefined ? 1 : 1 - Math.exp(-(t - last) / dynτ_abs);
             result[key] = (result[key] || 0) * (1 - ma) + val * ma;
             lastUpdate.set(key, t);
-        } else if (Array.isArray(val) && val.length === 3) {
-            if (!result[key]) result[key] = [0, 0, 0];
+        } else if (Array.isArray(val) && val.length > 0) {
+            if (!Array.isArray(result[key]) || result[key].length !== val.length) {
+                result[key] = new Array(val.length).fill(0);
+            }
             const last = lastUpdate.get(key);
-            const ma = last === undefined ? 1 : 1 - Math.exp(-(t - last) / τ);
-            result[key][0] = result[key][0] * (1 - ma) + val[0] * ma;
-            result[key][1] = result[key][1] * (1 - ma) + val[1] * ma;
-            result[key][2] = result[key][2] * (1 - ma) + val[2] * ma;
+            const ma = last === undefined ? 1 : 1 - Math.exp(-(t - last) / dynτ_abs);
+            for (let i = 0; i < val.length; i++) {
+                result[key][i] = (result[key][i] || 0) * (1 - ma) + val[i] * ma;
+            }
             lastUpdate.set(key, t);
         }
     }
@@ -212,4 +220,5 @@ function measureVC(result) {
     }
     return 0.0;
 }
+
 
