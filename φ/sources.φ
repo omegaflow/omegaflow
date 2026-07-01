@@ -5734,11 +5734,6 @@ ttl 86400
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 vector sun_x sun_y sun_z
 
-source technosphere_ais_vessel_density
-ttl 86400
-url https://www.aisstream.ai/api/v1/heatmap
-count data technosphere_ais_vessel_density
-
 source technosphere_global_ixp_count
 ttl 86400
 url https://peeringdb.com/api/ix

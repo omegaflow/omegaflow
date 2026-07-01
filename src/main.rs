@@ -44,6 +44,7 @@ struct SourceConfig {
     url: String,
     lat: Option<f64>,
     lon: Option<f64>,
+    format: String,
     extracts: Vec<Extract>,
     headers: Vec<(String, String)>,
 }
@@ -669,6 +670,7 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_url = String::new();
     let mut cur_lat: Option<f64> = None;
     let mut cur_lon: Option<f64> = None;
+    let mut cur_format = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
     let mut cur_headers: Vec<(String, String)> = Vec::new();
     let mut active = false;
@@ -680,12 +682,13 @@ fn load_sources() -> Vec<SourceConfig> {
         if parts.is_empty() { continue; }
         match parts[0] {
             "source" => {
-                if active { sources.push(SourceConfig { ttl: cur_ttl, res: cur_res, url: cur_url.clone(), lat: cur_lat, lon: cur_lon, extracts: cur_extracts.clone(), headers: cur_headers.clone() }); }
-                cur_ttl = 0; cur_res = 2; cur_url.clear(); cur_lat = None; cur_lon = None; cur_extracts.clear(); cur_headers.clear(); active = true;
+                if active { sources.push(SourceConfig { ttl: cur_ttl, res: cur_res, url: cur_url.clone(), lat: cur_lat, lon: cur_lon, format: cur_format.clone(), extracts: cur_extracts.clone(), headers: cur_headers.clone() }); }
+                cur_ttl = 0; cur_res = 2; cur_url.clear(); cur_lat = None; cur_lon = None; cur_format.clear(); cur_extracts.clear(); cur_headers.clear(); active = true;
             }
             "url" => cur_url = line[4..].trim().to_string(),
             "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "res" => cur_res = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(2),
+            "format" => cur_format = parts.get(1).unwrap_or(&"json").to_string(),
             "lat" => cur_lat = parts.get(1).and_then(|s| s.parse().ok()),
             "lon" => cur_lon = parts.get(1).and_then(|s| s.parse().ok()),
             "header" => {
@@ -726,7 +729,7 @@ fn load_sources() -> Vec<SourceConfig> {
             _ => {}
         }
     }
-    if active { sources.push(SourceConfig { ttl: cur_ttl, res: cur_res, url: cur_url, lat: cur_lat, lon: cur_lon, extracts: cur_extracts, headers: cur_headers }); }
+    if active { sources.push(SourceConfig { ttl: cur_ttl, res: cur_res, url: cur_url, lat: cur_lat, lon: cur_lon, format: cur_format, extracts: cur_extracts, headers: cur_headers }); }
     sources
 }
 
@@ -951,7 +954,14 @@ fn warm_cache(archive: Arc<Archive>) {
                             Extract::Field(k, n) => { if let Some(v) = jnum(&body, k) { extracted.insert(n.clone(), v); } }
                             Extract::First(k, n) => { if let Some(v) = jarr_first(&body, k) { extracted.insert(n.clone(), v); } }
                             Extract::Last(k, n) => { if let Some(v) = jarr_last(&body, k) { extracted.insert(n.clone(), v); } }
-                            Extract::Count(k, n) => { if let Some(v) = jarr_count(&body, k) { extracted.insert(n.clone(), v); } }
+                            Extract::Count(k, n) => {
+                let v = if src.format == "csv" || k == "lines" {
+                    Some(body.lines().filter(|l| !l.trim().is_empty() && !l.trim().starts_with('#')).count() as f64)
+                } else {
+                    jarr_count(&body, k)
+                };
+                if let Some(v) = v { extracted.insert(n.clone(), v); }
+            }
                             Extract::Sum(k, n) => { if let Some(v) = jsum(&body, k) { extracted.insert(n.clone(), v); } }
                             Extract::LastRow(k, n) => { if let Some(v) = j2d_last_row(&body, k) { extracted.insert(n.clone(), v); } }
                             Extract::Path(k, n) => { if let Some(v) = jpath(&body, k) { extracted.insert(n.clone(), v); } }
@@ -1024,6 +1034,10 @@ fn warm_cache(archive: Arc<Archive>) {
             }
         }
         let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
+        let max_ttl = archive.sources.iter().map(|s| s.ttl).max().unwrap_or(3600);
+        let now_secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
+        let evict_thresh = now_secs.saturating_sub(max_ttl * 2);
+        archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).retain(|_, (ts, _)| *ts > evict_thresh);
         thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / (Φ * Φ)) as u64));
     }
 }
