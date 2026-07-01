@@ -317,6 +317,12 @@ ttl 60
 url https://api.irail.be/liveboard/?station=Brussels&format=json
 count departures.departure technosphere_train_departures_belgium
 
+source irish_rail_realtime
+ttl 60
+format xml
+url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
+count ArrayOfObjStationData.ObjStationData technosphere_train_departures_dublin
+
 source kp_index
 ttl 60
 url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
@@ -340,6 +346,11 @@ url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
 last_row bz_gsm magnetosphere_imf_bz_nt
 last_row bt magnetosphere_imf_bt_nt
 last_row by_gsm magnetosphere_imf_by_nt
+
+source nasa_dsn_status
+ttl 60
+url https://eyes.nasa.gov/dsn-now/dsn.json
+count dsn technosphere_nasa_deep_space_network_signals
 
 source nist_randomness_beacon
 ttl 60
@@ -404,6 +415,16 @@ ttl 60
 url https://api.thingspeak.com/channels/705404/feeds/last.json
 field field1 biosphere_plant_voltage_mv
 
+source transport_bern_departures
+ttl 60
+url https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10
+count stationboard technosphere_transport_departures_bern
+
+source transport_zurich_departures
+ttl 60
+url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
+count stationboard technosphere_transport_departures_zurich
+
 source usgs_earthquake_detail
 ttl 60
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
@@ -412,6 +433,11 @@ geojson geometry.coordinates[2] seismic_depth_m
 geojson properties.gap seismic_azimuthal_gap_deg
 geojson properties.rms seismic_rms_s
 geojson properties.sig seismic_significance_score
+
+source wiener_linien_realtime
+ttl 60
+url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
+count data.monitors.0.lines technosphere_transport_lines_vienna
 
 source xray
 ttl 60
@@ -473,6 +499,17 @@ url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&o
 field X magnetosphere_x_bou_nt
 field Y magnetosphere_y_bou_nt
 field Z magnetosphere_z_bou_nt
+
+source ndbc_buoy_41001
+ttl 300
+url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
+format csv
+last_row WDIR hydrosphere_buoy_41001_wind_dir
+last_row WSPD hydrosphere_buoy_41001_wind_speed
+last_row WVHT hydrosphere_buoy_41001_wave_height
+last_row DPD hydrosphere_buoy_41001_dominant_period
+last_row PRES hydrosphere_buoy_41001_pressure
+last_row WTMP hydrosphere_buoy_41001_water_temp
 
 source noaa_tides_1611400
 ttl 300
@@ -2882,11 +2919,21 @@ url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759938&pr
 first v hydrosphere_tide_height_m_mona_island
 first t hydrosphere_tide_time_mona_island
 
+source noaa_tides_salinity_8771450
+ttl 300
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={today}&end_date={tomorrow}&station=8771450&product=salinity&time_zone=utc&units=metric&format=json
+last data.0.v hydrosphere_salinity_galveston
+
 source rain_radar
 ttl 300
 url https://api.rainviewer.com/public/weather-maps.json
 field host atmosphere_rain_radar_host
 count past atmosphere_rain_radar_frames
+
+source ripe_bgp_default_route
+ttl 300
+url https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0
+count data.bgp_state technosphere_internet_bgp_routes_default
 
 source satnogs_radio_observations
 ttl 300
@@ -2951,6 +2998,11 @@ ttl 600
 url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto
 last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
 
+source inaturalist_observations_count
+ttl 600
+url https://api.inaturalist.org/v1/observations?per_page=1
+path total_results biosphere_inaturalist_observations_total
+
 source lightning_open_meteo
 ttl 600
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto
@@ -2966,10 +3018,24 @@ field current.carbon_monoxide atmosphere_co_ugm3
 field current.sulphur_dioxide atmosphere_so2_ugm3
 field current.ozone atmosphere_o3_ugm3
 
+source openmeteo_air_quality_trace
+ttl 600
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=ammonia,dust,aerosol_optical_depth,black_carbon,formaldehyde
+field current.ammonia atmosphere_ammonia_ugm3
+field current.dust atmosphere_dust_ugm3
+field current.black_carbon atmosphere_black_carbon_ugm3
+field current.formaldehyde atmosphere_formaldehyde_ugm3
+field current.aerosol_optical_depth atmosphere_aerosol_optical_depth
+
 source openmeteo_air_quality_us
 ttl 600
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
 field current.us_aqi atmosphere_aqi_us
+
+source openmeteo_thunderstorm
+ttl 600
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=thunderstorm_max_intensity
+field daily.thunderstorm_max_intensity.0 atmosphere_thunderstorm_max_intensity
 
 source openmeteo_weather
 ttl 600
@@ -3070,6 +3136,14 @@ ttl 3600
 url http://api.open-notify.org/astros.json
 count people anthroposphere_humans_in_space
 
+source cdc_covid_global
+ttl 3600
+url https://disease.sh/v3/covid-19/all
+field cases anthroposphere_covid_cases_global
+field deaths anthroposphere_covid_deaths_global
+field active anthroposphere_covid_active_global
+field critical anthroposphere_covid_critical_global
+
 source celestrak_debris
 ttl 3600
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=iridium-33-debris&FORMAT=json
@@ -3079,6 +3153,13 @@ source copernicus_sentinel2_count
 ttl 3600
 url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S2A_MSIL1C%27)%20and%20ContentLength%20gt%200&$top=1&$count=true
 path @odata.count technosphere_copernicus_s2_products_total
+
+source coral_bleach_southeast_florida
+ttl 3600
+url https://api.coral.tsr.lol/stations/southeast_florida/current
+field current.dhw biosphere_coral_dhw_florida
+field current.baa_7day_max biosphere_coral_alert_florida
+field current.ssta_90th_hs biosphere_coral_ssta_florida
 
 source crossref_dois
 ttl 3600
@@ -3090,6 +3171,14 @@ ttl 3600
 url https://gml.noaa.gov/aftp/data/radiation/crn/brw_radiation_2024.txt
 format csv
 last_row 15001 cryosphere_permafrost_temp_barrow_c
+
+source dwd_pollen_germany
+ttl 3600
+url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
+field content.0.Pollen.Graeser.today biosphere_pollen_grass_germany_today
+field content.0.Pollen.Birke.today biosphere_pollen_birch_germany_today
+field content.0.Pollen.Beifuss.today biosphere_pollen_mugwort_germany_today
+field content.0.Pollen.Esche.today biosphere_pollen_ash_germany_today
 
 source ebird_recent
 ttl 3600
@@ -3142,6 +3231,11 @@ source fbi_wanted
 ttl 3600
 url https://api.fbi.gov/wanted/v1/list
 field total social_fbi_wanted_count
+
+source gbif_species_observations_count
+ttl 3600
+url https://api.gbif.org/v1/occurrence/count?isGeoreferenced=true
+path . biosphere_gbif_species_observations_total
 
 source govtrack_votes
 ttl 3600
@@ -3215,6 +3309,13 @@ source nasa_donki_sep
 ttl 3600
 url https://api.nasa.gov/DONKI/SEP?startDate={yesterday}&api_key=DEMO_KEY
 count sep solar_sep_count_24h
+
+source nasa_fireballs
+ttl 3600
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
+field data.0.1 cosmic_fireball_energy_kt
+field data.0.3 cosmic_fireball_lat
+field data.0.5 cosmic_fireball_lon
 
 source nasa_neows
 ttl 3600
@@ -5764,6 +5865,15 @@ url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=5
 count lines biosphere_circulating_variants
 field modeled_share biosphere_dominant_variant_proportion
 
+source celestrak_earth_orientation
+ttl 86400
+url https://celestrak.org/SpaceData/EOP-All.csv
+format csv
+last_row UT1-UTC geosphere_ut1_utc_offset
+last_row LOD geosphere_length_of_day_ms
+last_row X geosphere_pole_x_arcsec
+last_row Y geosphere_pole_y_arcsec
+
 source ceres_vectors
 ttl 86400
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
@@ -5800,6 +5910,12 @@ source ebird_hotspots
 ttl 86400
 url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
 field count biosphere_birding_hotspots
+
+source ecdc_monkeypox
+ttl 86400
+url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/csv/data.csv
+format csv
+count lines anthroposphere_monkeypox_cases_count
 
 source enceladus_vectors
 ttl 86400
@@ -5926,10 +6042,20 @@ url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={toda
 field properties.sunrise.time atmosphere_sunrise_time
 field properties.solar_noon.elevation atmosphere_solar_elevation_max_deg
 
+source modis_ndvi_local
+ttl 86400
+url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0
+field subset.0.1 biosphere_ndvi_local
+
 source moon_vectors
 ttl 86400
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 vector moon_x moon_y moon_z
+
+source nasa_exoplanets_count
+ttl 86400
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+count(*)+from+ps+where+default_flag=1&format=json
+field 0.count cosmic_exoplanet_count_confirmed
 
 source nasa_sentry
 ttl 86400
@@ -6127,6 +6253,17 @@ ttl 2592000
 url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1
 path response.numFound climate_esa_cci_datasets
 
+source globalforestwatch_tree_cover_loss
+ttl 2592000
+url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest
+field data.0.areaHa biosphere_tree_cover_loss_ha_latest
+
+source icgem_geoid_height
+ttl 2592000
+url https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf
+format csv
+last_row undulate geosphere_geoid_height_m
+
 source macrostrat_ages
 ttl 2592000
 url https://macrostrat.org/api/v2/units?age_top=0&age_bottom=4600&format=json
@@ -6201,6 +6338,26 @@ ttl 2592000
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='S*Y'
 path data.0.0 cosmic_simbad_young_stellar_objects
 
+source soilgrids_clay
+ttl 2592000
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_clay_pct
+
+source soilgrids_ph
+ttl 2592000
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_ph_x10
+
+source soilgrids_sand
+ttl 2592000
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=sand&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_sand_pct
+
+source soilgrids_soc
+ttl 2592000
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_organic_carbon_x10
+
 source solar_system_earth_data
 ttl 2592000
 url https://api.le-systeme-solaire.net/rest.php/bodies/earth
@@ -6231,6 +6388,11 @@ url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.t
 format csv
 last_row age_bp paleoclimate_vostok_age_bp
 last_row CO2 paleoclimate_vostok_co2_ppm
+
+source who_cholera
+ttl 2592000
+url https://ghoapi.azureedge.net/api/CHOLERA_0000000001
+field value.0.NumericValue anthroposphere_cholera_cases
 
 source who_gho_tuberculosis
 ttl 2592000

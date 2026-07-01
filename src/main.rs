@@ -664,7 +664,7 @@ fn load_dormant() -> HashMap<String,(u32,u32)> {
 
 fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
-    let content = std::fs::read_to_string("φ/sources.φ").unwrap_or_default();
+    let content = std::fs::read_to_string("phi/sources.φ").unwrap_or_default();
     let mut cur_ttl: u64 = 0;
     let mut cur_res: u8 = 2;
     let mut cur_url = String::new();
