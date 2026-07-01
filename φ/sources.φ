@@ -1071,6 +1071,7 @@ source superk_proton_decay
 ttl 31536000
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
 field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
+
 source noaa_tides_1611400
 ttl 300
 lat 21.9544
@@ -5888,3 +5889,160 @@ first v hydrosphere_tide_prediction_m_mona_island
 first t hydrosphere_tide_prediction_time_mona_island
 
 
+
+source cryosphere_snow_depth
+ttl 600
+res 1
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snow_depth&timezone=auto
+field current.snow_depth cryosphere_snow_depth_m
+
+source cryosphere_sea_ice_south
+ttl 86400
+res 0
+url https://coastwatch.pfeg.noaa.gov/erddap/tabledap/nsidcG02135South.csv?extent&time%3E={yesterday}&orderByMax(%22time%22)
+last_row extent cryosphere_sea_ice_south_mkm2
+
+source anthroposphere_power_outages_us
+ttl 300
+res 0
+url https://poweroutage.us/api/states.json
+sum customers_affected anthroposphere_power_outages_us_customers
+
+source anthroposphere_faa_delay_atl
+ttl 300
+res 0
+url https://soa.smext.faa.gov/asws/api/airport/status/ATL?format=json
+path AirportStatusRespons.AirportStatus.AvgDelay anthroposphere_faa_avg_delay_atl_min
+
+source anthroposphere_faa_delay_ewr
+ttl 300
+res 0
+url https://soa.smext.faa.gov/asws/api/airport/status/EWR?format=json
+path AirportStatusRespons.AirportStatus.AvgDelay anthroposphere_faa_avg_delay_ewr_min
+
+source anthroposphere_faa_delay_lax
+ttl 300
+res 0
+url https://soa.smext.faa.gov/asws/api/airport/status/LAX?format=json
+path AirportStatusRespons.AirportStatus.AvgDelay anthroposphere_faa_avg_delay_lax_min
+
+source cosmic_neutron_flux_jung
+ttl 600
+res 0
+url http://www.nmdb.eu/nmdb/qtipart.php?station=JUNG&start={yesterday}&end={today}&format=json&bins=3600
+path data.JUNG.1h.0.1 cosmic_neutron_flux_jung
+
+source technosphere_tor_relays_running
+ttl 3600
+res 0
+url https://onionoo.torproject.org/summary?running=true
+count relays technosphere_tor_relays_running
+
+source spacex_latest_launch
+ttl 3600
+url https://api.spacexdata.com/v5/launches/latest
+field flight_number orbital_spacex_latest_flight_number
+field success orbital_spacex_latest_launch_success
+field date_unix orbital_spacex_latest_launch_time_unix
+
+source solar_system_earth_data
+ttl 2592000
+url https://api.le-systeme-solaire.net/rest.php/bodies/earth
+field meanRadius planetary_earth_mean_radius_km
+field mass.massValue planetary_earth_mass_value
+field mass.massExponent planetary_earth_mass_exponent
+field gravity planetary_earth_gravity_ms2
+field escapeSpeed planetary_earth_escape_speed_ms
+
+source mast_jwst_observations
+ttl 3600
+url https://mast.stsci.edu/api/v0/portal/search?service=Mast.Caom.Filtered.Tap&format=json&params=%7B%22query%22%3A%22SELECT%20COUNT(*)%20as%20n%20FROM%20caomv2_jwst.observation%22%7D
+path data.0.n cosmic_jwst_observations_total
+
+source esasky_missions
+ttl 86400
+url https://sky.esa.int/esasky/api/missions
+count missions cosmic_esasky_mission_count
+
+source copernicus_sentinel2_count
+ttl 3600
+url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S2A_MSIL1C%27)%20and%20ContentLength%20gt%200&$top=1&$count=true
+path @odata.count technosphere_copernicus_s2_products_total
+
+source planetary_computer_collections
+ttl 86400
+url https://planetarycomputer.microsoft.com/api/stac/v1/collections
+count collections geospace_planetary_computer_collections
+
+source sentinel_hub_catalog
+ttl 86400
+url https://services.sentinel-hub.com/api/v1/catalog/collections
+count collections geospace_sentinel_hub_collections
+
+source esa_maap_collections
+ttl 86400
+url https://catalog.maap.eo.esa.int/stac/collections
+count collections geospace_esa_maap_collections
+
+source eoapi_collections
+ttl 86400
+url https://eoapi.dev/stac/collections
+count collections geospace_eoapi_collections
+
+source cryosphere_sea_ice_north
+ttl 86400
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v3.0.csv
+format csv
+last_row extent cryosphere_sea_ice_north_mkm2
+
+source cryosphere_glacier_count
+ttl 2592000
+url https://www.glims.org/mapservice/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=glims_glaciers&maxFeatures=1&outputFormat=application/json
+path totalFeatures cryosphere_global_glaciers_count
+
+source cryosphere_permafrost_barrow
+ttl 3600
+url https://gml.noaa.gov/aftp/data/radiation/crn/brw1_data_15001.txt
+format csv
+last_row 15001 cryosphere_permafrost_temp_barrow_c
+
+source anthroposphere_global_active_aircraft
+ttl 300
+url https://opensky-network.org/api/states/all
+count states anthroposphere_global_active_aircraft
+
+source anthroposphere_grid_frequency_hz_de
+ttl 60
+url https://www.transnetbw.de/de/kunden/strommarkt/transparenz/transparenz-api?format=json&subject=regelnetzfrequenz
+path value anthroposphere_grid_frequency_hz_de
+
+source anthroposphere_global_conflict_events_today
+ttl 3600
+url https://api.acleddata.com/acled/read?event_date={today}&event_date_where=BETWEEN&limit=1
+field count anthroposphere_global_conflict_events_today
+
+source anthroposphere_global_population_density_sqkm
+ttl 2592000
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.POP.DNST?format=json&per_page=1&date=2023
+field 1.0.value anthroposphere_global_population_density_sqkm
+
+source technosphere_submarine_cables
+ttl 2592000
+url https://raw.githubusercontent.com/telegeography/www.submarinecablemap.com/master/web/public/api/v3/cable/cable-geo.json
+count features technosphere_submarine_cables_count
+
+source technosphere_global_ixp_count
+ttl 86400
+url https://peeringdb.com/api/ix
+count data technosphere_global_ixp_count
+
+source biosphere_global_vegetation_health_index
+ttl 86400
+url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
+format csv
+last_row VHI biosphere_global_vegetation_health_index
+
+source hydrosphere_global_evapotranspiration_mm
+ttl 600
+url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto
+last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm

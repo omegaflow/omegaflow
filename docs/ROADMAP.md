@@ -7,6 +7,7 @@ One binary WebSocket frame containing inputs, queries, and stigmergy signals.
 ```
 u32 request_id
 u32 input_count
+f64 t_frame (J2000 epoch, shared across all inputs in this frame)
 [per input:]
   f64 t, x, y, z, value
   u8 name_len, [name_bytes]
@@ -29,14 +30,14 @@ u32 request_id
 u32 query_count
 [per query:]
   u32 obj_count
-  [per obj:] (field names + values)
+  [per obj:] (field names + values + timestamps)
 ```
 
 ### Object
 ```
 u8 field_count
 [field_name: u8 len, utf8 bytes, 0x00 terminator]
-[f64 value per field]
+[f64 value, f64 t per field]
 u32 record_count
 ```
 
@@ -44,31 +45,40 @@ u32 record_count
 
 Entry: `src/main.rs`. Rust std. Flat hierarchy.
 
+### Time Architecture
+- `SystemTime::now()` is permanent in exactly two places: `/time` and `/crash`.
+- `/time` is the boundary: Unix seconds (f64) sent to the client.
+- The client converts to J2000 via `j2000()`.
+- `t` (J2000) flows through the binary protocol.
+- The server converts back via `j2000_to_unix()` for cache TTL and URL rendering.
+- `render_url` derives dates from `query_t`. No `SystemTime::now()` calls.
+
 ### Universal Cache
 - Key: Rasterized string `"lat_lon"`, derived from API resolution or sensor density.
-- Value: `(timestamp, HashMap<Name, Value>)`.
+- Value: `(unix_timestamp, HashMap<Name, (Value, J2000_t)>)`.
 - Contains API data AND local sensor data with absolute equality.
+- Invalid coordinates are discarded, never defaulted to `0.0`.
 
 ### `handle_pulse` (The Frame Processor)
 1. Reads `input_count`. For each input: ECEF → geodetic → rasterized key. Inserts into universal cache.
-2. Reads `query_count`. For each query: ECEF → geodetic → rasterized key. Registers key in `active_tiles`. Performs O(1) HashMap lookup.
+2. Reads `query_count`. For each query: ECEF → geodetic → rasterized key. Registers key in `active_positions`. Performs O(1) HashMap lookup.
 3. Reads `signal_count`. Routes pulse/resonant signals to dormant tracker.
 4. Writes found values directly to binary output.
-- *No weaving (φ), no distance calculation, and no evaluation take place here.*
-- *tile_key results are cached. Repeated coordinates reuse the cached key without recomputing ECEF.*
+- `φ_obj` emits `(value, t)` pairs for every field.
 
 ### `warm_cache` (The API Fetcher)
 - Runs asynchronously in the background.
-- Fetches APIs for all regions (`active_tiles`).
-- ECEF conversion and URL rendering happen exclusively here.
+- Fetches APIs for all regions (`active_positions`).
+- TTL is evaluated against the `query_t` provided by the client, not `SystemTime::now()`.
+- `render_url` receives `query_t` to render time-dependent URLs.
 - Connect timeout: `TTL / Φ³`. Max timeout: `TTL / Φ²`.
 - Sleep when idle: `min_TTL / Φ`. Sleep after cycle: `min_TTL / Φ²`.
 - Thread fallback when `available_parallelism()` fails: 1.
-- Single `SystemTime::now()` call per `render_url` invocation.
 
-### Dormant Tracking
-- One function serializes and writes. Not two.
-- Function is named `φ_obj`, not `is_obj`.
+### Distress Signal (`/crash`)
+- Single source of client pain: `distress()` in `definitions.js`.
+- Server logs as `DISTRESS:` with `SystemTime::now()` for human readability.
+- `ACTUATOR_FAIL` triggers dormant tracking increment.
 
 ### Extractors
 | Keyword | Syntax | Output |
@@ -97,21 +107,34 @@ field <key> <name>
 
 ## 3: CPU (JS)
 
-Entry: `static/index.html`, `static/world.js`. Vanilla ES modules.
+Entry: `static/index.html`, `static/constants.js`, `immune/definitions.js`. Vanilla ES modules.
 
-### `world.js` — The Shared Universe
-Exports the constants Φ, C, WGS84_A, WGS84_F, MA, and the function `j2000()`.
+### `constants.js` — The Shared Universe
+Exports the constants Φ, C, WGS84_A, WGS84_F, MA, `J2000_EPOCH`, `UNIX_JD_EPOCH`, and the function `j2000()`.
 `index.html` imports these. No redeclaration.
 
 - `get(inputs, queries)` → builds v6 binary frame (including signal section), sends non-blocking
 - Binary parsing weaves directly into `result` during parse. No intermediate object array.
-- `weave(p, result)` → moving average blend with `MA = 1/Φ²` (precomputed once)
+- `weave(p, result, t)` → exponential moving average blend using `τ = pulse.tickTime`
 - Certainty factors: `measureG()`, `measureVC()`, `measureDecay()`, `measureQuantum()`
 - `j2000(unixSecs)` → single source of truth for J2000 conversion
 - `certainty` is returned and flows back into the organism's behavior
 
+### `definitions.js` — The Immune Contract
+- `ANTIGEN_PATHS`: Array of forbidden browser paths.
+- `isAntigen(path, fn)`: Predicate for actuator discovery.
+- `distress(category, detail)`: Single point of failure reporting. Replaces all `fetch('/crash')` and `console.error`.
+- `REMOTE_PREFIX`: `'omega_flow.'` prefix for Nostr-received keys.
+
 ### `index.html` — Constants
-Imports Φ, C, WGS84, MA, j2000 from `world.js`. Does not declare them.
+Imports Φ, C, WGS84, MA, j2000 from `constants.js`. Imports `isAntigen`, `distress`, `REMOTE_PREFIX` from `definitions.js`. Does not declare them.
+
+### `index.html` — Time Architecture
+- No `Date.now()`.
+- `φ['server.time']` is populated from `/time`.
+- `cachedJ2000 = j2000(φ['server.time'])` is the `t` for all queries and inputs.
+- Nostr `created_at` uses `Math.floor(φ['server.time'])`.
+- `performance.now()` is the heartbeat tick, not wall-clock time.
 
 ### `index.html` — Sensor & Actuator Discovery
 - `discoverSensors()` / `discoverObj()` → walks `Object.getOwnPropertyNames(window)`, depth 3
@@ -208,6 +231,9 @@ binding 1: storage (write) — output
 binding 2: uniform         — params vec4(n, ringSize, 0, 0)
 ```
 
+### Constants in Shaders
+`PHI = 1.618033988749895` (ASCII). WGSL does not support Unicode identifiers.
+
 ## 5: SOURCES
 
 `φ/sources.φ`. TTL range: 10s (ISS position) to 31536000s (Gaia star catalog).
@@ -215,7 +241,8 @@ binding 2: uniform         — params vec4(n, ringSize, 0, 0)
 ### Geo Templates
 ```
 {lat} {lon} {lat_min} {lat_max} {lon_min} {lon_max}
-{today} {yesterday} {tomorrow} {hour_ago} {year} {month} {day}
+{today} {yesterday} {tomorrow} {hour_ago} {year} {month} {day} {hour} {minute}
+{unix_now} {unix_now_plus_3600}
 ```
 
 ## 6: DEVICES

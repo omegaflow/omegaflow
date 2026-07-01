@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::process::Command;
@@ -9,6 +9,18 @@ use std::time::{SystemTime, UNIX_EPOCH};
 const Φ: f64 = 1.618033988749895;
 const WGS84_A: f64 = 6378137.0;
 const WGS84_F: f64 = 1.0 / 298.257223563;
+const J2000_EPOCH: f64 = 2451545.0;
+const UNIX_JD_EPOCH: f64 = 2440587.5;
+const EARTH_R_MIN: f64 = 6.0e6;
+const EARTH_R_MAX: f64 = 7.5e6;
+
+fn j2000_to_unix(t: f64) -> u64 {
+    ((t + J2000_EPOCH - UNIX_JD_EPOCH) * 86400.0) as u64
+}
+
+fn unix_to_j2000(secs: u64) -> f64 {
+    (secs as f64 / 86400.0) + UNIX_JD_EPOCH - J2000_EPOCH
+}
 
 #[derive(Clone)]
 enum Extract {
@@ -22,6 +34,7 @@ enum Extract {
     GeojsonEvents { mag_key: String, min_mag: f64, outputs: Vec<String> },
     Path(String, String),
     Sum(String, String),
+    Map(String, Vec<(String, String)>),
 }
 
 struct SourceConfig {
@@ -37,9 +50,9 @@ struct SourceConfig {
 struct Archive {
     sources: Vec<SourceConfig>,
     index_html: Vec<u8>,
-    world_js: Vec<u8>,
-    data_cache: Mutex<HashMap<String, (u64, HashMap<String, f64>)>>,
-    active_positions: Mutex<HashSet<String>>,
+    constants_js: Vec<u8>,
+    data_cache: Mutex<HashMap<String, (u64, HashMap<String, (f64, f64)>)>>,
+    active_positions: Mutex<HashMap<String, u64>>,
 }
 
 struct WsFrame { opcode: u8, payload: Vec<u8> }
@@ -86,12 +99,17 @@ fn ecef_to_geodetic(x: f64, y: f64, z: f64) -> (f64, f64, f64) {
 fn pos_key(lat: f64, lon: f64, res: u8) -> String {
     let lat_str = format!("{:.*}", res as usize, lat);
     let lon_str = format!("{:.*}", res as usize, lon);
-    format!("{},{}", lat_str, lon_str)
+    format!("{}_{}", lat_str, lon_str)
 }
 
-fn parse_pos(pos: &str) -> (f64, f64) {
-    let parts: Vec<&str> = pos.split(',').collect();
-    if parts.len() == 2 { (parts[0].parse().unwrap_or(0.0), parts[1].parse().unwrap_or(0.0)) } else { (0.0, 0.0) }
+fn parse_pos(pos: &str) -> Option<(f64, f64)> {
+    let parts: Vec<&str> = pos.split('_').collect();
+    if parts.len() == 2 {
+        if let (Ok(lat), Ok(lon)) = (parts[0].parse::<f64>(), parts[1].parse::<f64>()) {
+            return Some((lat, lon));
+        }
+    }
+    None
 }
 
 fn emit(s: &mut TcpStream, st: &str, ct: &str, b: &[u8]) { let _=s.write_all(format!("HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nConnection: keep-alive\r\n\r\n",st,ct,b.len()).as_bytes()); let _=s.write_all(b); }
@@ -137,13 +155,10 @@ fn handle_observer(stream: TcpStream, dormant: Arc<Mutex<HashMap<String,(u32,u32
                     }
                 }
                 let body_str = String::from_utf8_lossy(&body_buf);
-                
                 let paths: Vec<&str> = body_str.trim().split('\n').filter(|x| !x.is_empty()).collect();
                 {
                     let mut c = dormant.lock().unwrap_or_else(|e| e.into_inner());
-                    for p in &paths {
-                        c.entry(p.to_string()).or_insert((1, 0));
-                    }
+                    for p in &paths { c.entry(p.to_string()).or_insert((1, 0)); }
                     rewrite_dormant(&c);
                     *dormant_state.lock().unwrap_or_else(|e| e.into_inner()) = format_dormant_snapshot(&c);
                 }
@@ -152,13 +167,12 @@ fn handle_observer(stream: TcpStream, dormant: Arc<Mutex<HashMap<String,(u32,u32
             } else if path.starts_with("/crash") {
                 let body_start = cur.find("\r\n\r\n").map(|i| &cur[i+4..]).unwrap_or("");
                 let body = body_start.trim();
-                let log = format!("[{}] CRASH: {}\n", SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs(), body);
+                let log = format!("[{}] DISTRESS: {}\n", SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs(), body);
                 println!("{}", log.trim());
-                use std::io::Write;
                 let _ = std::fs::OpenOptions::new().create(true).append(true).open("crash.log").and_then(|mut f| f.write_all(log.as_bytes()));
-                if body.starts_with("ACTUATOR_FAIL: ") {
-                    let rest = &body["ACTUATOR_FAIL: ".len()..];
-                    let actuator_path = rest.split_whitespace().next().unwrap_or("");
+                if body.starts_with("ACTUATOR_FAIL") {
+                    let detail = body.find(':').map(|i| body[i+1..].trim()).unwrap_or("");
+                    let actuator_path = detail.split_whitespace().next().unwrap_or("");
                     if !actuator_path.is_empty() {
                         let mut c = dormant.lock().unwrap_or_else(|e| e.into_inner());
                         c.entry(actuator_path.to_string()).or_insert((0,0)).0 += 1;
@@ -172,7 +186,7 @@ fn handle_observer(stream: TcpStream, dormant: Arc<Mutex<HashMap<String,(u32,u32
                     "/" => emit(&mut s, "200 OK", "text/html", &archive.index_html),
                     "/dormant" => { let b = dormant_state.lock().unwrap_or_else(|e| e.into_inner()).clone(); emit(&mut s, "200 OK", "text/plain", b.as_bytes()); }
                     "/time" => { let t = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs_f64(); emit(&mut s, "200 OK", "text/plain", t.to_string().as_bytes()); }
-                    "/world.js" => emit(&mut s, "200 OK", "application/javascript", &archive.world_js),
+                    "/constants.js" => emit(&mut s, "200 OK", "application/javascript", &archive.constants_js),
                     "/scan.html" => {
                         let html = std::fs::read("immune/scan.html").unwrap_or_else(|_| b"<h1>scan.html not found</h1>".to_vec());
                         emit(&mut s, "200 OK", "text/html", &html);
@@ -209,7 +223,8 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
             let mut off=8;
 
             {
-                let now=SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
+                let t_frame = f64::from_le_bytes(frame.payload[8..16].try_into().unwrap_or([0u8;8]));
+                let now = j2000_to_unix(t_frame);
                 let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
                 for _ in 0..input_count {
                     if off+41 > frame.payload.len() { break; }
@@ -225,7 +240,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
                     if (x,y,z) != last_coord {
                         last_coord=(x,y,z);
                         let r = (x*x + y*y + z*z).sqrt();
-                        if r > 6.0e6 && r < 7.5e6 {
+                        if r > EARTH_R_MIN && r < EARTH_R_MAX {
                             let (lat, lon, _) = ecef_to_geodetic(x, y, z);
                             last_lat = lat;
                             last_lon = lon;
@@ -233,7 +248,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
                         } else { last_key.clear(); }
                     }
                     if !last_key.is_empty() {
-                        cache.entry(last_key.clone()).or_insert_with(||(now,HashMap::new())).1.insert(name,value);
+                        cache.entry(last_key.clone()).or_insert_with(||(now,HashMap::new())).1.insert(name,(value,t_frame));
                     }
                 }
             }
@@ -253,7 +268,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
 
                 for _ in 0..query_count {
                     if off+32 > frame.payload.len() { break; }
-                    off+=8;
+                    let q_t = f64::from_le_bytes(frame.payload[off..off+8].try_into().unwrap_or([0u8;8])); off+=8;
                     let x=f64::from_le_bytes(frame.payload[off..off+8].try_into().unwrap_or([0u8;8])); off+=8;
                     let y=f64::from_le_bytes(frame.payload[off..off+8].try_into().unwrap_or([0u8;8])); off+=8;
                     let z=f64::from_le_bytes(frame.payload[off..off+8].try_into().unwrap_or([0u8;8])); off+=8;
@@ -261,19 +276,21 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
                     if (x,y,z) != last_coord {
                         last_coord=(x,y,z);
                         let r = (x*x + y*y + z*z).sqrt();
-                        if r > 6.0e6 && r < 7.5e6 {
+                        if r > EARTH_R_MIN && r < EARTH_R_MAX {
                             let (lat, lon, _) = ecef_to_geodetic(x, y, z);
                             last_lat = lat;
                             last_lon = lon;
                         }
                     }
 
-                    active.insert(format!("{},{}", last_lat, last_lon));
+
+                    let q_unix = j2000_to_unix(q_t);
+                    active.insert(format!("{}_{}", last_lat, last_lon), q_unix);
 
                     let obj_pos=out.len();
                     out.extend_from_slice(&0u32.to_le_bytes());
 
-                    let mut merged_values = HashMap::new();
+                    let mut merged_values: HashMap<String, (f64, f64)> = HashMap::new();
 
                     let local_key = format!("local_{}", pos_key(last_lat, last_lon, 7));
                     if let Some((_, values)) = cache.get(&local_key) {
@@ -295,7 +312,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
                     }
 
                     if !merged_values.is_empty() {
-                        let fields: Vec<(&str,f64)> = merged_values.iter().map(|(k,v)|(k.as_str(),*v)).collect();
+                        let fields: Vec<(&str,f64,f64)> = merged_values.iter().map(|(k,v)|(k.as_str(),v.0,v.1)).collect();
                         φ_obj(&mut out,&fields);
                     }
 
@@ -333,7 +350,6 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
             }
 
             write_ws_binary(&mut stream,&out);
-
         }
     }
     if last_stimulus.len()==1 { let mut c=dormant.lock().unwrap_or_else(|e| e.into_inner()); c.entry(last_stimulus[0].clone()).or_insert((0,0)).0+=1; rewrite_dormant(&c); *dormant_state.lock().unwrap_or_else(|e| e.into_inner())=format_dormant_snapshot(&c); }
@@ -341,10 +357,10 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, dormant: Arc<Mutex<HashMap<
 
 fn is_leap(y: u32) -> bool { (y % 4 == 0 && y % 100 != 0) || y % 400 == 0 }
 
-fn φ_obj(out: &mut Vec<u8>, fields: &[(&str, f64)]) {
+fn φ_obj(out: &mut Vec<u8>, fields: &[(&str, f64, f64)]) {
     out.push(fields.len() as u8);
-    for (name, _) in fields { out.push(name.len() as u8); out.extend_from_slice(name.as_bytes()); out.push(0u8); }
-    for (_, val) in fields { out.extend_from_slice(&val.to_le_bytes()); }
+    for (name, _, _) in fields { out.push(name.len() as u8); out.extend_from_slice(name.as_bytes()); out.push(0u8); }
+    for (_, val, t) in fields { out.extend_from_slice(&val.to_le_bytes()); out.extend_from_slice(&t.to_le_bytes()); }
     out.extend_from_slice(&0u32.to_le_bytes());
 }
 
@@ -444,55 +460,167 @@ fn jpath(json: &str, path: &str) -> Option<f64> {
         let part = part.trim();
         if part.is_empty() { continue; }
         if let Ok(idx) = part.parse::<usize>() {
-            let pat = "[";
-            let mut count = 0;
-            let mut search = current;
-            let mut found = false;
-            while let Some(pos) = search.find(pat) {
-                if count == idx {
-                    let after = &search[pos+pat.len()..];
-                    let end = after.find(|c: char| c == ',' || c == ']').unwrap_or(after.len());
-                    let val_str = after[..end].trim();
-                    if let Ok(v) = val_str.parse::<f64>() { return Some(v); }
-                    current = val_str;
-                    found = true; break;
-                }
-                count += 1;
-                search = &search[pos+pat.len()..];
-            }
-            if !found { return None; }
-        } else {
-            let pat = format!("\"{}\":", part);
-            match current.find(&pat) {
-                Some(pos) => {
-                    let rest = &current[pos + pat.len()..];
-                    let trimmed = rest.trim_start();
-                    if trimmed.starts_with('{') {
-                        let mut depth = 0; let mut end = 0;
-                        for (i, c) in trimmed.char_indices() {
-                            if c == '{' { depth += 1; }
-                            else if c == '}' { depth -= 1; if depth == 0 { end = i + 1; break; } }
+            let trimmed = current.trim_start();
+            if !trimmed.starts_with('[') { return None; }
+            let mut depth: i32 = 0;
+            let mut in_string = false;
+            let mut escape = false;
+            let mut elements: Vec<&str> = Vec::new();
+            let mut start = 1usize;
+            for (i, c) in trimmed.char_indices() {
+                if i == 0 { continue; }
+                if escape { escape = false; continue; }
+                if c == '\\' && in_string { escape = true; continue; }
+                if c == '"' { in_string = !in_string; continue; }
+                if in_string { continue; }
+                match c {
+                    '[' | '{' => depth += 1,
+                    ']' | '}' => {
+                        if depth == 0 {
+                            if start < i { elements.push(&trimmed[start..i]); }
+                            break;
                         }
-                        current = &trimmed[..end];
-                    } else if trimmed.starts_with('[') {
-                        let mut depth = 0; let mut end = 0;
-                        for (i, c) in trimmed.char_indices() {
-                            if c == '[' { depth += 1; }
-                            else if c == ']' { depth -= 1; if depth == 0 { end = i + 1; break; } }
-                        }
-                        current = &trimmed[..end];
-                    } else {
-                        let end = trimmed.find(|c: char| c == ',' || c == '}' || c == ']' || c.is_whitespace()).unwrap_or(trimmed.len());
-                        let val_str = trimmed[..end].trim();
-                        if let Ok(v) = val_str.parse::<f64>() { return Some(v); }
-                        current = val_str;
+                        depth -= 1;
                     }
+                    ',' if depth == 0 => {
+                        elements.push(&trimmed[start..i]);
+                        start = i + 1;
+                    }
+                    _ => {}
                 }
-                None => return None
+            }
+            let elem = elements.get(idx)?;
+            current = elem.trim();
+        } else {
+            let pat = format!("\"{}\"", part);
+            let key_pos = current.find(&pat)?;
+            let after = &current[key_pos + pat.len()..];
+            let trimmed = after.trim_start();
+            let colon_pos = trimmed.find(':')?;
+            let value_start = &trimmed[colon_pos + 1..];
+            let value_trimmed = value_start.trim_start();
+            if value_trimmed.starts_with('{') {
+                let mut depth = 0; let mut end = 0;
+                let mut in_string = false;
+                let mut escape = false;
+                for (i, c) in value_trimmed.char_indices() {
+                    if escape { escape = false; continue; }
+                    if c == '\\' && in_string { escape = true; continue; }
+                    if c == '"' { in_string = !in_string; continue; }
+                    if in_string { continue; }
+                    if c == '{' { depth += 1; }
+                    else if c == '}' { depth -= 1; if depth == 0 { end = i + 1; break; } }
+                }
+                current = &value_trimmed[..end];
+            } else if value_trimmed.starts_with('[') {
+                let mut depth = 0; let mut end = 0;
+                let mut in_string = false;
+                let mut escape = false;
+                for (i, c) in value_trimmed.char_indices() {
+                    if escape { escape = false; continue; }
+                    if c == '\\' && in_string { escape = true; continue; }
+                    if c == '"' { in_string = !in_string; continue; }
+                    if in_string { continue; }
+                    if c == '[' { depth += 1; }
+                    else if c == ']' { depth -= 1; if depth == 0 { end = i + 1; break; } }
+                }
+                current = &value_trimmed[..end];
+            } else {
+                let end = value_trimmed.find(|c: char| c == ',' || c == '}' || c == ']' || c.is_whitespace()).unwrap_or(value_trimmed.len());
+                let val_str = value_trimmed[..end].trim_matches('"');
+                if let Ok(v) = val_str.parse::<f64>() { return Some(v); }
+                current = val_str;
             }
         }
     }
     None
+}
+
+fn match_brace(s: &str) -> usize {
+    if !s.starts_with('{') { return 0; }
+    let mut depth = 0;
+    let mut in_string = false;
+    let mut escape = false;
+    for (i, c) in s.char_indices() {
+        if escape { escape = false; continue; }
+        if c == '\\' && in_string { escape = true; continue; }
+        if c == '"' { in_string = !in_string; continue; }
+        if in_string { continue; }
+        if c == '{' { depth += 1; }
+        else if c == '}' { depth -= 1; if depth == 0 { return i + 1; } }
+    }
+    0
+}
+
+fn jpath_raw<'a>(json: &'a str, path: &str) -> Option<&'a str> {
+    let mut current = json;
+    for part in path.split('.') {
+        let part = part.trim();
+        if part.is_empty() { continue; }
+        if let Ok(idx) = part.parse::<usize>() {
+            let trimmed = current.trim_start();
+            if !trimmed.starts_with('[') { return None; }
+            let mut depth: i32 = 0;
+            let mut in_string = false;
+            let mut escape = false;
+            let mut elements: Vec<&str> = Vec::new();
+            let mut start = 1usize;
+            for (i, c) in trimmed.char_indices() {
+                if i == 0 { continue; }
+                if escape { escape = false; continue; }
+                if c == '\\' && in_string { escape = true; continue; }
+                if c == '"' { in_string = !in_string; continue; }
+                if in_string { continue; }
+                match c {
+                    '[' | '{' => depth += 1,
+                    ']' | '}' => {
+                        if depth == 0 {
+                            if start < i { elements.push(&trimmed[start..i]); }
+                            break;
+                        }
+                        depth -= 1;
+                    }
+                    ',' if depth == 0 => {
+                        elements.push(&trimmed[start..i]);
+                        start = i + 1;
+                    }
+                    _ => {}
+                }
+            }
+            let elem = elements.get(idx)?;
+            current = elem.trim();
+        } else {
+            let pat = format!("\"{}\"", part);
+            let key_pos = current.find(&pat)?;
+            let after = &current[key_pos + pat.len()..];
+            let trimmed = after.trim_start();
+            let colon_pos = trimmed.find(':')?;
+            let value_start = &trimmed[colon_pos + 1..];
+            let value_trimmed = value_start.trim_start();
+            if value_trimmed.starts_with('{') {
+                let end = match_brace(value_trimmed);
+                if end == 0 { return None; }
+                current = &value_trimmed[..end];
+            } else if value_trimmed.starts_with('[') {
+                let mut depth = 0; let mut end = 0;
+                let mut in_string = false;
+                let mut escape = false;
+                for (i, c) in value_trimmed.char_indices() {
+                    if escape { escape = false; continue; }
+                    if c == '\\' && in_string { escape = true; continue; }
+                    if c == '"' { in_string = !in_string; continue; }
+                    if in_string { continue; }
+                    if c == '[' { depth += 1; }
+                    else if c == ']' { depth -= 1; if depth == 0 { end = i + 1; break; } }
+                }
+                current = &value_trimmed[..end];
+            } else {
+                let end = value_trimmed.find(|c: char| c == ',' || c == '}' || c == ']' || c.is_whitespace()).unwrap_or(value_trimmed.len());
+                current = &value_trimmed[..end];
+            }
+        }
+    }
+    Some(current)
 }
 
 fn jsum(json: &str, key: &str) -> Option<f64> {
@@ -584,6 +712,16 @@ fn load_sources() -> Vec<SourceConfig> {
                     });
                 }
             }
+            "map" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::Map(parts[1].to_string(), Vec::new()));
+                }
+            }
+            "field_in" => {
+                if let Some(Extract::Map(_, fields)) = cur_extracts.last_mut() {
+                    if parts.len() >= 3 { fields.push((parts[1].to_string(), parts[2].to_string())); }
+                }
+            },
             _ => {}
         }
     }
@@ -630,8 +768,8 @@ fn read_ws_frame_raw(stream: &mut TcpStream) -> Option<WsFrame> {
     Some(WsFrame{opcode,payload})
 }
 
-fn render_url(template: &str, lat: f64, lon: f64) -> String {
-    let secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
+fn render_url(template: &str, lat: f64, lon: f64, query_t: f64) -> String {
+    let secs = j2000_to_unix(query_t);
     let days = secs / 86400;
     let (ty, tm, td) = days_to_ymd(days + 40587);
     let today = format!("{}-{:02}-{:02}", ty, tm, td);
@@ -647,8 +785,8 @@ fn render_url(template: &str, lat: f64, lon: f64) -> String {
         let h_min = (dt % 3600) / 60;
         format!("{}-{:02}-{:02}T{:02}:{:02}:00", h_y, h_m, h_d, h_h, h_min)
     };
-    let now_hour = (secs % 86400) / 3600;
-    let now_minute = (secs % 3600) / 60;
+    let q_hour = (secs % 86400) / 3600;
+    let q_minute = (secs % 3600) / 60;
     let unix_now = secs.to_string();
     let unix_now_plus_3600 = (secs + 3600).to_string();
     template
@@ -672,8 +810,8 @@ fn render_url(template: &str, lat: f64, lon: f64) -> String {
         .replace("{year}", &ty.to_string())
         .replace("{month}", &tm.to_string())
         .replace("{day}", &td.to_string())
-        .replace("{hour}", &format!("{:02}", now_hour))
-        .replace("{minute}", &format!("{:02}", now_minute))
+        .replace("{hour}", &format!("{:02}", q_hour))
+        .replace("{minute}", &format!("{:02}", q_minute))
         .replace("{unix_now}", &unix_now)
         .replace("{unix_now_plus_3600}", &unix_now_plus_3600)
         .replace("{nasa_key}", &std::env::var("NASA_KEY").unwrap_or_else(|_| "DEMO_KEY".to_string()))
@@ -754,18 +892,15 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
 
 fn warm_cache(archive: Arc<Archive>) {
     loop {
-        let now_secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
-        let positions: Vec<String> = archive.active_positions.lock().unwrap_or_else(|e| e.into_inner()).iter().cloned().collect();
-
+        let positions: Vec<(String, u64)> = archive.active_positions.lock().unwrap_or_else(|e| e.into_inner()).iter().map(|(k,v)| (k.clone(), *v)).collect();
         if positions.is_empty() {
             let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
             thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / Φ) as u64));
             continue;
         }
-
-        for pos in &positions {
-            let (pos_lat, pos_lon) = parse_pos(pos);
-
+        for (pos, query_t) in &positions {
+            let (pos_lat, pos_lon) = match parse_pos(pos) { Some(c) => c, None => continue };
+            let j2000_t = unix_to_j2000(*query_t);
             let needs: Vec<(usize, String, String, Vec<(String, String)>, u64)> = archive.sources.iter().enumerate()
                 .filter(|(_, src)| !src.url.starts_with("nostr://"))
                 .filter_map(|(i, src)| {
@@ -779,26 +914,22 @@ fn warm_cache(archive: Arc<Archive>) {
                         let key = format!("{}_{}", i, src.url.split('?').next().unwrap_or(&src.url));
                         (key, pos_lat, pos_lon)
                     };
-
                     let needs_fetch = {
                         let cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
                         match cache.get(&cache_key) {
-                            Some((ts, _)) => now_secs.saturating_sub(*ts) >= src.ttl,
+                            Some((ts, _)) => query_t.saturating_sub(*ts) >= src.ttl,
                             None => true,
                         }
                     };
-
                     if needs_fetch {
-                        let url = render_url(&src.url, render_lat, render_lon);
+                        let url = render_url(&src.url, render_lat, render_lon, j2000_t);
                         let headers_rendered: Vec<(String, String)> = src.headers.iter()
-                            .map(|(k, v)| (k.clone(), render_url(v, render_lat, render_lon))).collect();
+                            .map(|(k, v)| (k.clone(), render_url(v, render_lat, render_lon, j2000_t))).collect();
                         Some((i, cache_key, url, headers_rendered, src.ttl))
                     } else { None }
                 }).collect();
-
             let n_threads = std::thread::available_parallelism().map(|n| n.get()).unwrap_or(1);
             let chunk_size = (needs.len() + n_threads - 1) / n_threads.max(1);
-
             let results: Vec<(usize, String, Option<String>)> = thread::scope(|s| {
                 let handles: Vec<_> = needs.chunks(chunk_size.max(1)).map(|chunk| {
                     s.spawn(|| {
@@ -810,12 +941,10 @@ fn warm_cache(archive: Arc<Archive>) {
                 }).collect();
                 handles.into_iter().flat_map(|h| h.join().unwrap_or_default()).collect()
             });
-
             for (src_idx, cache_key, body_opt) in results {
                 if let Some(body) = body_opt {
                     let src = &archive.sources[src_idx];
                     let mut extracted: HashMap<String, f64> = HashMap::new();
-
                     for ext in &src.extracts {
                         match ext {
                             Extract::Field(k, n) => { if let Some(v) = jnum(&body, k) { extracted.insert(n.clone(), v); } }
@@ -835,6 +964,25 @@ fn warm_cache(archive: Arc<Archive>) {
                             Extract::LastObj(fk, fv, ek, n) => {
                                 if let Some(v) = jobj_last_match(&body, fk, fv, ek) { extracted.insert(n.clone(), v); }
                             }
+                            Extract::Map(arr_path, fields) => {
+                                if let Some(arr_str) = jpath_raw(&body, arr_path) {
+                                    let mut idx = 0;
+                                    let mut search = arr_str.trim_start();
+                                    while search.starts_with('{') {
+                                        let end = match_brace(search);
+                                        if end == 0 { break; }
+                                        let obj = &search[..end];
+                                        for (fk, fn_) in fields {
+                                            if let Some(v) = jnum(obj, fk) {
+                                                extracted.insert(format!("{}_{}", fn_, idx), v);
+                                            }
+                                        }
+                                        idx += 1;
+                                        search = search[end..].trim_start();
+                                        if search.starts_with(',') { search = search[1..].trim_start(); }
+                                    }
+                                }
+                            }
                             Extract::GeojsonEvents { mag_key, min_mag, outputs } => {
                                 if outputs.len() >= 2 {
                                     let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
@@ -844,20 +992,20 @@ fn warm_cache(archive: Arc<Archive>) {
                                         let cei = match search[csi..].find(']') { Some(e) => csi + e, None => break };
                                         let parts: Vec<&str> = search[csi..cei].split(',').collect();
                                         if parts.len() >= 3 {
-                                            let elo = parts[0].trim().parse().unwrap_or(0.0);
-                                            let ela = parts[1].trim().parse().unwrap_or(0.0);
-                                            let ed = parts[2].trim().parse().unwrap_or(0.0);
-                                            let ac = &search[cei..];
-                                            if let Some(ms) = ac.find(&format!("\"{}\":", mag_key)) {
-                                                let rest = &ac[ms + mag_key.len() + 3..];
-                                                let vend = rest.find(|c: char| c == ',' || c == '}').unwrap_or(rest.len());
-                                                let mag: f64 = rest[..vend].trim().parse().unwrap_or(0.0);
-                                                if mag >= *min_mag {
-                                                    let ev_key = format!("geojson_{}", pos_key(ela, elo, 4));
-                                                    let mut ev_vals = HashMap::new();
-                                                    ev_vals.insert(outputs[0].clone(), mag);
-                                                    ev_vals.insert(outputs[1].clone(), ed);
-                                                    cache.insert(ev_key, (now_secs, ev_vals));
+                                            if let (Ok(elo), Ok(ela), Ok(ed)) = (parts[0].trim().parse::<f64>(), parts[1].trim().parse::<f64>(), parts[2].trim().parse::<f64>()) {
+                                                let ac = &search[cei..];
+                                                if let Some(ms) = ac.find(&format!("\"{}\":", mag_key)) {
+                                                    let rest = &ac[ms + mag_key.len() + 3..];
+                                                    let vend = rest.find(|c: char| c == ',' || c == '}').unwrap_or(rest.len());
+                                                    if let Ok(mag) = rest[..vend].trim().parse::<f64>() {
+                                                        if mag >= *min_mag {
+                                                            let ev_key = format!("geojson_{}", pos_key(ela, elo, 4));
+                                                            let mut ev_vals: HashMap<String, (f64, f64)> = HashMap::new();
+                                                            ev_vals.insert(outputs[0].clone(), (mag, j2000_t));
+                                                            ev_vals.insert(outputs[1].clone(), (ed, j2000_t));
+                                                            cache.insert(ev_key, (*query_t, ev_vals));
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -867,9 +1015,9 @@ fn warm_cache(archive: Arc<Archive>) {
                             }
                         }
                     }
-
                     if !extracted.is_empty() {
-                        archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).insert(cache_key, (now_secs, extracted));
+                        let extracted_with_t: HashMap<String, (f64, f64)> = extracted.iter().map(|(k, v)| (k.clone(), (*v, j2000_t))).collect();
+                        archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).insert(cache_key, (*query_t, extracted_with_t));
                     }
                 }
             }
@@ -885,9 +1033,9 @@ fn main() {
     let archive = Arc::new(Archive {
         sources: load_sources(),
         index_html: std::fs::read("static/index.html").unwrap_or_default(),
-        world_js: std::fs::read("static/world.js").unwrap_or_default(),
+        constants_js: std::fs::read("static/constants.js").unwrap_or_default(),
         data_cache: Mutex::new(HashMap::new()),
-        active_positions: Mutex::new(HashSet::new()),
+        active_positions: Mutex::new(HashMap::new()),
     });
     {
         let ar = Arc::clone(&archive);

@@ -11,8 +11,8 @@
 </head>
 <body>
     <script type="module">
-        import { get, φ, pulse, Φ, C, MA, WGS84_A, WGS84_F, j2000 } from '/world.js';
-        import { isAntigen } from '/definitions.js';
+        import { get, φ, pulse, Φ, C, MA, WGS84_A, WGS84_F, j2000 } from '/constants.js';
+        import { isAntigen, distress, REMOTE_PREFIX } from '/definitions.js';
         const dormant = new Set();
 
         try {
@@ -47,7 +47,6 @@
         let lastSensorCount = 0;
         let lastTs = 0;
         let certainty = 1.0;
-        let birthTime = 0;
         let plasticity = MA;
         let exploration = MA;
         let exploitation = 0;
@@ -162,26 +161,6 @@
                         wsum += weight;
                     }
                 }
-        function checkProbing(ts) {
-            const resonant = checkResonance(probeState.snapshot);
-            if (resonant.length > 0) {
-                sendResonant(probeState.batch);
-                probeState.stack = [];
-                startResolving(ts, probeState.batch);
-            } else {
-                const calibrated = isCalibrated();
-                for (const a of probeState.batch) {
-                    if (calibrated) {
-                        a.pulse *= Φ * (1 + pressure);
-                        if (a.pulse > getMedianComplexity() * Φ) {
-                            silent.add(a.path);
-                            actuators.delete(a.path);
-                        }
-                    }
-                }
-                startProbing(ts);
-            }
-        }
                 if (pulseActuator(a, pulseTone * (1 + coherence))) fired = true;
             }
             return fired;
@@ -333,10 +312,6 @@
             }
         }
 
-
-
-
-
         function discoverSensors() {
             discoverObj(window, '', 0);
         }
@@ -367,7 +342,7 @@
                         }
                     }).catch((err) => {
                         silent.add(actuator.path); actuators.delete(actuator.path);
-                        try { fetch('/crash', { method: 'POST', body: 'ACTUATOR_FAIL: ' + actuator.path + ' ERR: ' + (err.message || err) }); } catch {}
+                        distress('ACTUATOR_FAIL', actuator.path + ' ' + (err.message || err));
                     });
                 }
                 return true;
@@ -375,7 +350,7 @@
             } catch (err) {
                 silent.add(actuator.path);
                 actuators.delete(actuator.path);
-                try { fetch('/crash', { method: 'POST', body: 'ACTUATOR_FAIL: ' + actuator.path + ' ERR: ' + (err.message || err) }); } catch {}
+                distress('ACTUATOR_FAIL', actuator.path + ' ' + (err.message || err));
                 return false;
             }
         }
@@ -561,8 +536,6 @@
         }
 
         function ω(ts) {
-            if (birthTime === 0) birthTime = ts;
-            const age = (ts - birthTime) / 1000;
             const τ = (stableTick * ringSize) / (1 + coherence);
             
             instability = Math.max(0, (1 / Φ) - certainty);
@@ -687,8 +660,8 @@
             let extDelta = 0;
             for (const s of sensors.values()) {
                 const before = s.median;
-                const now = s.val;
-                const d = Math.abs(now - before);
+                const current = s.val;
+                const d = Math.abs(current - before);
                 if (d > s.complexity && !(probeState.phase === 'probing' || probeState.phase === 'resolving')) {
                     extDelta += d;
                 }
@@ -762,7 +735,8 @@
                     pushInput('system.memoryTotal', performance.memory.totalJSHeapSize);
                 }
                 const t0 = performance.now();
-                fetch('/time').then(() => {
+                fetch('/time').then(r => r.text()).then(txt => {
+                    φ['server.time'] = parseFloat(txt);
                     pushInput('system.latency', performance.now() - t0);
                 }).catch(() => {});
                 infoInterval = Math.min(infoInterval * Φ, tickTime * ringSize);
@@ -776,12 +750,15 @@
             const noDue = lastNostrPub + probeInterval * Φ * Φ - ts;
             if (noDue <= 0 && nostrPub && nostrRelay && nostrRelay.readyState === WebSocket.OPEN && nostrModule) {
                 lastNostrPub = ts;
+                const srvTime = φ['server.time'];
+                if (typeof srvTime !== 'number' || !isFinite(srvTime)) return;
                 const physLat = φ['geolocation.latitude'];
                 const physLon = φ['geolocation.longitude'];
                 if (physLat !== undefined && physLon !== undefined) {
                     const payload = {};
                     for (const key in φ) {
-                        if (key.startsWith('server.') || key.startsWith('system.') || key.startsWith('omega_flow.')) continue;
+
+                        if (key.startsWith('server.') || key.startsWith('system.') || key.startsWith(REMOTE_PREFIX)) continue;
                         const val = φ[key];
                         if (typeof val === 'number') payload[key] = val;
                     }
@@ -790,7 +767,7 @@
                         try {
                             const event = nostrModule.finalizeEvent({
                                 kind: 39603,
-                                created_at: Math.floor(Date.now() / 1000),
+                                created_at: Math.floor(φ['server.time']),
                                 tags: [['geo', physLat.toFixed(4) + ',' + physLon.toFixed(4)]],
                                 content: content
                             }, nostrPub);
@@ -831,7 +808,7 @@
                 avgC = n > 0 ? avgC / n : 0;
                 let totalMag = 0;
                 for (const sm of resonanceMap.values()) { for (const d of sm.values()) totalMag += d.magnitude; }
-                const ageSec = birthTime > 0 ? ((ts - birthTime) / 1000).toFixed(0) : '0';
+                const runtime = (ts / 1000).toFixed(0);
                 const sleepStatus = canSleep ? 'YES' : 'no';
                 let topoIn = topologyInterval !== null ? topologyInterval.toFixed(0) : '?';
                 let topoLast = lastTopology > 0 ? ((ts - lastTopology) / 1000).toFixed(1) + 's' : 'never';
@@ -844,7 +821,7 @@
                 const spiral = exploration.toFixed(3);
                 debugEl.value =
                     `S:${n} R:${ready} A:${actuators.size} sig:${sigFilled} Ph:${probeState.phase}\n` +
-                    `age:${ageSec}s c:${certainty.toFixed(2)} tick:${tickTime.toFixed(1)} delay:${nextDelay.toFixed(0)}\n` +
+                    `run:${runtime}s c:${certainty.toFixed(2)} tick:${tickTime.toFixed(1)} delay:${nextDelay.toFixed(0)}\n` +
                     `expl:${spiral} explt:${exploitation.toFixed(3)} dist:${distress.toFixed(2)}\n` +
                     `avgK:${avgC.toFixed(4)} res:${resonanceMap.size} mag:${totalMag.toFixed(2)}\n` +
                     `expl:${exploration.toFixed(2)} explt:${exploitation.toFixed(2)} plast:${plasticity.toFixed(3)}\n` +
@@ -855,7 +832,7 @@
             }
 
             setTimeout(() => {
-                try { ω(performance.now()); } catch (e) { console.warn(e); setTimeout(() => ω(performance.now()), 0); }
+                try { ω(performance.now()); } catch (e) { distress('TICK_FAIL', e.message); setTimeout(() => ω(performance.now()), 0); }
             }, nextDelay);
         }
 
@@ -919,12 +896,12 @@
                     const device = await adapter.requestDevice();
                     device.pushErrorScope('validation');
                     device.addEventListener('uncapturederror', (e) => {
-                        console.error('GPU:', e.error.message);
+                        distress('GPU_ERROR', e.error.message);
                     });
                     window.ω.gpu = device;
                     pushInput('system.gpu', 1);
                 }
-            } catch (e) { console.error('WebGPU init:', e); }
+            } catch (e) { distress('GPU_INIT_FAIL', e.message); }
         }
 
         let audioCtx = null;
@@ -969,8 +946,7 @@
                                         const ownVal = φ[key];
                                         if (typeof ownVal === 'number') {
                                             pushInput('omega_flow.divergence.' + key, Math.abs(ownVal - val));
-                                        }
-                                        inputBuffer.push({ name: 'omega_flow.' + key, value: val, t: 0, x: ecef.x, y: ecef.y, z: ecef.z });
+                                        inputBuffer.push({ name: 'omega_flow.' + key, value: val, t: j2000(event.created_at), x: ecef.x, y: ecef.y, z: ecef.z });
                                     }
                                 }
                             } catch {}
@@ -994,9 +970,8 @@
         const ringSize = 128;
         const signalBuffers = new Map();
 
-
         const kolmogorovShader = `
-let PHI = 1.618033988749895;
+let PHI = f32(1.618033988749895);
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> complexity: array<f32>;
 @group(0) @binding(2) var<uniform> params: vec4<f32>;
@@ -1026,7 +1001,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 `;
 
         const takensShader = `
-let PHI = 1.618033988749895;
+let PHI = f32(1.618033988749895);
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> out: array<f32>;
 @group(0) @binding(2) var<uniform> params: vec4<f32>;
@@ -1093,7 +1068,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 `;
 
         const tdaShader = `
-let PHI = 1.618033988749895;
+let PHI = f32(1.618033988749895);
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> out: array<f32>;
 @group(0) @binding(2) var<uniform> params: vec4<f32>;
@@ -1139,7 +1114,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 `;
 
         const teShader = `
-let PHI = 1.618033988749895;
+let PHI = f32(1.618033988749895);
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> te: array<f32>;
 @group(0) @binding(2) var<uniform> params: vec4<f32>;
@@ -1198,7 +1173,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 `;
 
         const icaShader = `
-let PHI = 1.618033988749895;
+let PHI = f32(1.618033988749895);
 @group(0) @binding(0) var<storage, read> data: array<f32>;
 @group(0) @binding(1) var<storage, read_write> out: array<f32>;
 @group(0) @binding(2) var<uniform> params: vec4<f32>;
@@ -1269,18 +1244,6 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         function runSignalTopology(ts) {
             if (!window.ω?.gpu || topologyPending) return;
             topologyPending = true;
-
-
-
-
-
-
-
-
-
-
-
-
 
             const candidates = [];
             for (const [path, sb] of signalBuffers) {
@@ -1416,7 +1379,6 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
             icaPass.dispatchWorkgroups(Math.ceil(n / 64));
             icaPass.end();
 
-
             let readOffset = 0;
             enc.copyBufferToBuffer(kOutBuf, 0, readBuf, readOffset, n * 4); readOffset += n * 4;
             enc.copyBufferToBuffer(tOutBuf, 0, readBuf, readOffset, n * 4 * 4); readOffset += n * 4 * 4;
@@ -1441,7 +1403,6 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
                         if (a !== b && teRes[a * n + b] > 0) allTE.push(teRes[a * n + b]);
                     }
                 }
-
 
                 for (let i = 0; i < n; i++) {
                     pushInput('complexity.' + activeNames[i], kRes[i]);
@@ -1491,16 +1452,12 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
         tryStartNostr();
 
         window.addEventListener('error', (e) => {
-            try {
-                fetch('/crash', { method: 'POST', body: e.message + ' @ ' + e.filename + ':' + e.lineno + ':' + e.colno });
-            } catch {}
+            distress('ERROR', e.message + ' @ ' + e.filename + ':' + e.lineno + ':' + e.colno);
             e.preventDefault();
         });
 
         window.addEventListener('unhandledrejection', (e) => {
-            try {
-                fetch('/crash', { method: 'POST', body: 'UNHANDLED_REJECTION @ ' + e.reason });
-            } catch {}
+            distress('REJECTION', String(e.reason));
             e.preventDefault();
         });
 

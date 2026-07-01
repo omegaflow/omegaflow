@@ -1,4 +1,3 @@
-
 export const ANTIGEN_PATHS = [
     'location', 'location.href', 'location.assign', 'location.replace',
     'history', 'history.pushState', 'history.replaceState',
@@ -25,6 +24,8 @@ export const ANTIGEN_PATHS = [
 
 export const ANTIGEN_NATIVE_PATTERNS = [];
 
+export const REMOTE_PREFIX = 'omega_flow.';
+
 export function isAntigen(path, fn) {
     const segments = path.split('.');
     const lastSeg = segments[segments.length - 1];
@@ -36,3 +37,9 @@ export function isAntigen(path, fn) {
     }
     return false;
 }
+
+export function distress(category, detail) {
+    const msg = category + (detail ? ': ' + detail : '');
+    fetch('/crash', { method: 'POST', body: msg }).catch(() => {});
+}
+
