@@ -16,11 +16,6 @@ ttl 30
 url https://api.carbonintensity.org.uk/intensity
 path data.0.intensity.actual technosphere_grid_carbon_intensity_gco2_kwh
 
-source anthroposphere_grid_frequency_hz_de
-ttl 60
-url https://www.transnetbw.de/de/kunden/strommarkt/transparenz/transparenz-api?format=json&subject=regelnetzfrequenz
-path value anthroposphere_grid_frequency_hz_de
-
 source anu_quantum_entropy
 ttl 60
 url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
@@ -184,12 +179,6 @@ source anthroposphere_global_active_aircraft
 ttl 300
 url https://opensky-network.org/api/states/all
 count states anthroposphere_global_active_aircraft
-
-source anthroposphere_power_outages_us
-ttl 300
-res 0
-url https://poweroutage.us/api/states.json
-sum customers_affected anthroposphere_power_outages_us_customers
 
 source coingecko_crypto
 ttl 300
@@ -2761,8 +2750,8 @@ count features geosphere_disaster_alert_count
 
 source ionosphere_tec_global
 ttl 1800
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_tec_global.json
-count tec ionosphere_global_tec_points
+url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
+count features ionosphere_global_tec_points
 
 source nasa_eonet
 ttl 1800
@@ -2808,7 +2797,7 @@ field message.total-results technosphere_registered_dois
 
 source cryosphere_permafrost_barrow
 ttl 3600
-url https://gml.noaa.gov/aftp/data/radiation/crn/brw1_data_15001.txt
+url https://gml.noaa.gov/aftp/data/radiation/crn/brw_radiation_2024.txt
 format csv
 last_row 15001 cryosphere_permafrost_temp_barrow_c
 
@@ -2858,11 +2847,6 @@ source launch_library
 ttl 3600
 url https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1
 field count orbital_upcoming_launches
-
-source mast_jwst_observations
-ttl 3600
-url https://mast.stsci.edu/api/v0/portal/search?service=Mast.Caom.Filtered.Tap&format=json&params=%7B%22query%22%3A%22SELECT%20COUNT(*)%20as%20n%20FROM%20caomv2_jwst.observation%22%7D
-path data.0.n cosmic_jwst_observations_total
 
 source microbe_census
 ttl 3600
@@ -5445,8 +5429,8 @@ last_row VHI biosphere_global_vegetation_health_index
 
 source biosphere_uv_index_global
 ttl 86400
-url https://power.larc.nasa.gov/api/temporal/monthly/region?parameter=ALLSKY_SFC_UV_INDEX&community=AG
-path features.properties.ALLSKY_SFC_UV_INDEX biosphere_uv_index_global
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&format=JSON
+path properties.parameter.ALLSKY_SFC_UV_INDEX.0 biosphere_uv_index_global
 
 source callisto_vectors
 ttl 86400
@@ -5508,7 +5492,7 @@ vector encke_x encke_y encke_z
 
 source eoapi_collections
 ttl 86400
-url https://eoapi.dev/stac/collections
+url https://stac.eoapi.dev/collections
 count collections geospace_eoapi_collections
 
 source eris_vectors
@@ -5518,13 +5502,8 @@ vector eris_x eris_y eris_z
 
 source esa_maap_collections
 ttl 86400
-url https://catalog.maap.eo.esa.int/stac/collections
+url https://catalog.maap.eo.esa.int/catalogue/collections
 count collections geospace_esa_maap_collections
-
-source esasky_missions
-ttl 86400
-url https://sky.esa.int/esasky/api/missions
-count missions cosmic_esasky_mission_count
 
 source europa_vectors
 ttl 86400
@@ -5907,7 +5886,7 @@ field escapeSpeed planetary_earth_escape_speed_ms
 
 source technosphere_submarine_cables
 ttl 2592000
-url https://raw.githubusercontent.com/telegeography/www.submarinecablemap.com/master/web/public/api/v3/cable/cable-geo.json
+url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
 count features technosphere_submarine_cables_count
 
 source vostok_icecore
