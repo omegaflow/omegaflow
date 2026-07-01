@@ -2665,6 +2665,11 @@ count flares solar_flare_count_7d
 last class_type solar_flare_class_7d
 last begin_time solar_flare_time_7d
 
+source atmosphere_jetstream_250hpa
+ttl 600
+url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa
+last hourly.windspeed_250hPa atmosphere_jetstream_250hpa_ms
+
 source cosmic_neutron_flux_jung
 ttl 600
 res 0
@@ -2753,6 +2758,11 @@ source gdacs_disasters
 ttl 1800
 url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=EQ;TC;FL;VO;WF&fromDate={yesterday}&limit=10
 count features geosphere_disaster_alert_count
+
+source ionosphere_tec_global
+ttl 1800
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_tec_global.json
+count tec ionosphere_global_tec_points
 
 source nasa_eonet
 ttl 1800
@@ -5433,6 +5443,11 @@ url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=US
 format csv
 last_row VHI biosphere_global_vegetation_health_index
 
+source biosphere_uv_index_global
+ttl 86400
+url https://power.larc.nasa.gov/api/temporal/monthly/region?parameter=ALLSKY_SFC_UV_INDEX&community=AG
+path features.properties.ALLSKY_SFC_UV_INDEX biosphere_uv_index_global
+
 source callisto_vectors
 ttl 86400
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27504%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
@@ -5718,6 +5733,11 @@ source sun_vectors
 ttl 86400
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 vector sun_x sun_y sun_z
+
+source technosphere_ais_vessel_density
+ttl 86400
+url https://www.aisstream.ai/api/v1/heatmap
+count data technosphere_ais_vessel_density
 
 source technosphere_global_ixp_count
 ttl 86400

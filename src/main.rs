@@ -1,3 +1,4 @@
+#![allow(mixed_script_confusables)]
 use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
