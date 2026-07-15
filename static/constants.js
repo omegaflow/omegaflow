@@ -1,6 +1,7 @@
 export const C = 299792458.0;
 export const Φ = 1.618033988749895;
 export const MA = 1 / (Φ * Φ);
+
 export const WGS84_A = 6378137.0;
 export const WGS84_F = 1.0 / 298.257223563;
 
@@ -12,48 +13,20 @@ export function j2000(unixSecs) {
 }
 
 export const φ = {};
-export const pulse = { ws: null, pending: new Map(), seq: 0, tickTime: Φ, presence: 0, distress: 0 };
-const lastUpdate = new Map();
+export const transport = { socket: null, pending: new Map(), seq: 0, tickTime: 16, rtt: 0 };
 
-function weave(p, result, t) {
-    const τ = pulse.tickTime || Φ;
-    const arousal = Math.min(1, (pulse.presence || 0) * Φ + (pulse.distress || 0));
-    const absorption = arousal < 0.5
-        ? 4 * arousal * (1 - arousal)
-        : 4 * arousal * (1 - arousal) * (1 - arousal);
-    const dynτ_abs = τ / (absorption + 1 / (Φ * Φ * Φ));
-
-    for (const key in p) {
-        const val = p[key];
-        if (typeof val === 'number') {
-            const last = lastUpdate.get(key);
-            const ma = last === undefined ? 1 : 1 - Math.exp(-(t - last) / dynτ_abs);
-            result[key] = (result[key] || 0) * (1 - ma) + val * ma;
-            lastUpdate.set(key, t);
-        } else if (Array.isArray(val) && val.length > 0) {
-            if (!Array.isArray(result[key]) || result[key].length !== val.length) {
-                result[key] = new Array(val.length).fill(0);
-            }
-            const last = lastUpdate.get(key);
-            const ma = last === undefined ? 1 : 1 - Math.exp(-(t - last) / dynτ_abs);
-            for (let i = 0; i < val.length; i++) {
-                result[key][i] = (result[key][i] || 0) * (1 - ma) + val[i] * ma;
-            }
-            lastUpdate.set(key, t);
-        }
-    }
-}
-
-export async function get(inputs, queries, signals = []) {
-    if (!queries || queries.length === 0 && signals.length === 0) return {};
+export async function syncFrame(inputs, queries, signals = []) {
+    if (!queries || queries.length === 0 && signals.length === 0) return [];
 
     let inputBytes = 0;
-    for (const inp of inputs) { inputBytes += 41 + inp.name.length; }
+    for (const inp of inputs) inputBytes += 41 + inp.name.length;
     let signalBytes = 1;
-    for (const sig of signals) { signalBytes += 2 + sig.path.length; }
+    for (const sig of signals) signalBytes += 2 + sig.path.length;
+
     const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32 + signalBytes);
     const dv = new DataView(buf);
-    const id = ++pulse.seq;
+    const id = ++transport.seq;
+
     dv.setUint32(0, id, true);
     dv.setUint32(4, inputs.length, true);
     let off = 8;
@@ -83,142 +56,50 @@ export async function get(inputs, queries, signals = []) {
         for (let i = 0; i < sig.path.length; i++) { dv.setUint8(off, sig.path.charCodeAt(i)); off++; }
     }
 
+    const startTime = performance.now();
     const promise = new Promise((resolve, reject) => {
-        pulse.pending.set(id, { resolve, reject });
+        const timeoutDuration = Math.max(transport.tickTime * 4, transport.rtt * 4);
+        const timeout = setTimeout(() => {
+            if (transport.pending.has(id)) { transport.pending.delete(id); reject(new Error("Frame timeout")); }
+        }, timeoutDuration);
+        transport.pending.set(id, { resolve, reject, timeout, startTime });
     });
-    if (pulse.ws && pulse.ws.readyState === WebSocket.OPEN) {
-        pulse.ws.send(new Uint8Array(buf));
-    }
+    
+    if (transport.socket && transport.socket.readyState === WebSocket.OPEN) {
+        transport.socket.send(new Uint8Array(buf));
+    } else { return []; }
+    
     const buffer = await promise;
-    const result = {};
-    weaveBatch(new Uint8Array(buffer), result);
-
-    let g = measureG(result);
-    let vC = measureVC(result);
-    let decay = measureDecay(result);
-    let quantum = measureQuantum();
-    const tQuery = queries[0] ? queries[0].t : 0;
-    const tServer = result['server.time'] !== undefined ? j2000(result['server.time']) : tQuery;
-    const dtEff = Math.abs(tQuery - tServer);
-
-    result.certainty = Math.exp(-dtEff * g)
-                    * Math.exp(-vC / (g + (1.0 / C)))
-                    * quantum * decay;
-
-    return result;
-}
-
-function weaveBatch(bytes, result) {
-    const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    const td = new TextDecoder();
-    let o = 0;
-
-    if (bytes.length < 13 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 6) {
-        return;
-    }
-    o = 3;
-    o += 4;
-    const pointCount = dv.getUint32(o, true); o += 4;
-
+    const bytes = new Uint8Array(buffer);
+    const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    
+    if (bytes.length < 13 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 6) return [];
+    
+    let o = 3;
+    o += 4; 
+    const pointCount = dvRes.getUint32(o, true); o += 4;
+    
+    const result = [];
     for (let pi = 0; pi < pointCount; pi++) {
         if (o + 4 > bytes.length) break;
-        const objCount = dv.getUint32(o, true); o += 4;
-
+        const objCount = dvRes.getUint32(o, true); o += 4;
         for (let oi = 0; oi < objCount; oi++) {
             if (o >= bytes.length) break;
             const sfCount = bytes[o++];
-            const staticFields = [];
             for (let s = 0; s < sfCount; s++) {
                 const nl = bytes[o++];
-                const name = td.decode(bytes.slice(o, o + nl)); o += nl;
-                const typ = bytes[o++];
-                staticFields.push({ name, typ });
+                let name = '';
+                for(let i=0; i<nl; i++) name += String.fromCharCode(bytes[o++]);
+                o++; 
+                if (o + 16 > bytes.length) break;
+                const val = dvRes.getFloat64(o, true); o += 8;
+                const t = dvRes.getFloat64(o, true); o += 8;
+                result.push({ name, val, t });
             }
-
-            const base = {};
-            let baseT = 0;
-            for (const f of staticFields) {
-                if (f.typ === 0) { base[f.name] = dv.getFloat64(o, true); o += 8; baseT = dv.getFloat64(o, true); o += 8; }
-                else if (f.typ === 1) { base[f.name] = dv.getUint32(o, true); o += 4; baseT = dv.getFloat64(o, true); o += 8; }
-                else if (f.typ === 2) {
-                    const cnt = dv.getUint32(o, true); o += 4;
-                    const arr = new Float64Array(cnt);
-                    for (let i = 0; i < cnt; i++) { arr[i] = dv.getFloat64(o, true); o += 8; }
-                    base[f.name] = arr;
-                    baseT = dv.getFloat64(o, true); o += 8;
-                }
-            }
-
-            const recCount = dv.getUint32(o, true); o += 4;
-
-            if (recCount === 0) {
-                weave(base, result, baseT);
-            } else {
-                const rfCount = bytes[o++];
-                const recordFields = [];
-                for (let r = 0; r < rfCount; r++) {
-                    const nl = bytes[o++];
-                    const name = td.decode(bytes.slice(o, o + nl)); o += nl;
-                    const typ = bytes[o++];
-                    recordFields.push({ name, typ });
-                }
-
-                for (let ri = 0; ri < recCount; ri++) {
-                    const p = Object.assign({}, base);
-                    let rt = baseT;
-                    for (const f of recordFields) {
-                        if (f.typ === 0) { p[f.name] = dv.getFloat64(o, true); o += 8; rt = dv.getFloat64(o, true); o += 8; }
-                        else if (f.typ === 1) { p[f.name] = dv.getUint32(o, true); o += 4; rt = dv.getFloat64(o, true); o += 8; }
-                        else if (f.typ === 2) {
-                            const cnt = dv.getUint32(o, true); o += 4;
-                            const arr = new Float64Array(cnt);
-                            for (let i = 0; i < cnt; i++) { arr[i] = dv.getFloat64(o, true); o += 8; }
-                            p[f.name] = arr;
-                            rt = dv.getFloat64(o, true); o += 8;
-                        }
-                    }
-                    weave(p, result, rt);
-                }
-            }
+            const recCount = dvRes.getUint32(o, true); o += 4;
+            if (recCount > 0) { o += recCount * 16; }
         }
     }
+    return result;
 }
-
-function measureDecay(result) {
-    const flux = result['radiation_proton_flux_100mev'];
-    if (typeof flux === 'number' && flux >= 0) {
-        return 1.0 / (1.0 + flux);
-    }
-    return 1.0;
-}
-
-function measureG(result) {
-    const ax = result['AccelerometerSensor.x'];
-    const ay = result['AccelerometerSensor.y'];
-    const az = result['AccelerometerSensor.z'];
-    if (ax !== undefined && ay !== undefined && az !== undefined) {
-        return Math.sqrt(ax*ax + ay*ay + az*az);
-    }
-    return 1.0;
-}
-
-function measureQuantum() {
-    const sensors = window.ω?.sensors;
-    if (!sensors || sensors.size === 0) return 1.0;
-    let sum = 0, count = 0;
-    for (const s of sensors.values()) {
-        if (s.complexity > 0) { sum += s.complexity; count++; }
-    }
-    if (count === 0) return 1.0;
-    return Math.exp(-sum / count);
-}
-
-function measureVC(result) {
-    const speed = result['geolocation.speed'];
-    if (typeof speed === 'number' && speed >= 0) {
-        return speed / C;
-    }
-    return 0.0;
-}
-
 

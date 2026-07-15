@@ -2,3 +2,7 @@ target/
 .env
 is/immunity.is
 is/epigenome.is
+home/
+temp/
+*.bak
+

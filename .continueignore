@@ -1,4 +1,63 @@
+# =============================================================================
+# .continueignore — omegaflow
+# Verhindert, dass Continue.dev diese Dateien/Ordner indiziert
+# (Codebase-Retrieval, @codebase, Embeddings). Syntax wie .gitignore.
+# =============================================================================
+
+# --- Build- & Abhängigkeits-Ordner (Rust/Cargo) -----------------------------
 target/
+Cargo.lock
+**/*.rlib
+**/*.rmeta
+
+# --- Build- & Abhängigkeits-Ordner (JS/Web) ---------------------------------
 node_modules/
+dist/
+build/
+.cache/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# --- Große/binäre Assets, die keinen Kontextwert für Coding-Fragen haben ---
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.ico
+*.mp4
+*.mov
+*.wasm
+*.woff
+*.woff2
+*.ttf
+
+# --- Projektspezifisch: proprietäres/undokumentiertes Binärformat ----------
+# .is-Dateien sind kein Standardformat (weder Text noch für Embeddings
+# sinnvoll auswertbar) -> raus aus dem Index.
+*.is
+*.dat
+*.idx
+immunity.is
+epigenome.is
+dormant
+
+# --- Sensible/Betriebsdateien ------------------------------------------------
 .env
+.env.*
+*.pem
+*.key
+secrets/
+
+# --- IDE / Continue.dev eigene Ordner ---------------------------------------
+.continue/sessions/
+.continue/index/
+.vscode/
+.idea/
+
+# --- Logs & temporäre Dateien ------------------------------------------------
 *.log
+tmp/
+*.tmp

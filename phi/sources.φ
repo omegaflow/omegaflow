@@ -425,6 +425,11 @@ ttl 60
 url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
 count stationboard technosphere_transport_departures_zurich
 
+source usgs_earthquakes_24h
+ttl 60
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+geojson events mag 2.0 seismic_magnitude seismic_depth
+
 source usgs_earthquake_detail
 ttl 60
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
@@ -433,6 +438,11 @@ geojson geometry.coordinates[2] seismic_depth_m
 geojson properties.gap seismic_azimuthal_gap_deg
 geojson properties.rms seismic_rms_s
 geojson properties.sig seismic_significance_score
+
+source vaisala_lightning_global
+ttl 60
+url https://lightning.gld/v1/rates/global
+field count atmosphere_global_lightning_rate
 
 source wiener_linien_realtime
 ttl 60
@@ -451,6 +461,12 @@ header User-Agent "omegaflow"
 url https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_stock_price
 field chart.result.0.meta.chartPreviousClose economic_stock_prev_close
+
+source yahoo_finance_vix
+ttl 60
+header User-Agent "omegaflow"
+url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
+path chart.result.0.meta.regularMarketPrice economic_fear_gauge_vix
 
 source anthroposphere_faa_delay_atl
 ttl 300
@@ -499,6 +515,15 @@ url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&o
 field X magnetosphere_x_bou_nt
 field Y magnetosphere_y_bou_nt
 field Z magnetosphere_z_bou_nt
+
+source openmeteo_weather_current
+ttl 300
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,wind_speed_10m,wind_direction_10m
+path current.temperature_2m atmosphere_temp_c
+path current.relative_humidity_2m atmosphere_humidity_pct
+path current.precipitation atmosphere_precipitation_mm
+path current.surface_pressure atmosphere_pressure_hpa
+path current.wind_speed_10m atmosphere_wind_speed_ms
 
 source ndbc_buoy_41001
 ttl 300
@@ -2998,6 +3023,11 @@ ttl 600
 url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto
 last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
 
+source inaturalist_fungi
+ttl 600
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+path total_results biosphere_fungi_observations
+
 source inaturalist_observations_count
 ttl 600
 url https://api.inaturalist.org/v1/observations?per_page=1
@@ -3263,15 +3293,11 @@ url https://api.farmsense.net/v1/moonphases/?d={unix_now}
 path 0.Phase cosmic_moon_phase
 path 0.Illumination cosmic_moon_illumination_pct
 
-
-*(Hinweis: Für die FRED-API musst du dir kostenlos einen API-Key auf der St. Louis Fed Website holen und ihn in der `.env`-Datei deines Servers als `FRED_API_KEY=dein_key` eintragen. Genauso habe ich für UNHCR `2024` als Platzhalter genutzt, den du ggf. in der `render_url`-Funktion im Rust-Code noch implementieren musst, falls noch nicht vorhanden, andernfalls ersetze es testweise durch das aktuelle Jahr).*
-
-# --- BIP-Wachstum (Weltbank NY.GDP.MKTP.KD.ZG) fuer alle 216 von der Weltbank getrackten Volkswirtschaften ---
-
 source nasa_donki_cme
 ttl 3600
 url https://api.nasa.gov/DONKI/CME?startDate={yesterday}&api_key=DEMO_KEY
 count cme solar_cme_count_24h
+deep activityID solar_cme_latest_id
 
 source nasa_donki_flares
 ttl 3600
@@ -3279,6 +3305,7 @@ url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&api_key=DEMO_KEY
 count flares solar_flare_count_24h
 last classType solar_flare_class_latest
 last peakTime solar_flare_peak_time
+deep classType solar_flare_class_latest
 
 source nasa_donki_gstorms
 ttl 3600
@@ -3310,6 +3337,11 @@ ttl 3600
 url https://api.nasa.gov/DONKI/SEP?startDate={yesterday}&api_key=DEMO_KEY
 count sep solar_sep_count_24h
 
+source nasa_donki_xflares
+ttl 3600
+url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&classType=X&api_key=DEMO_KEY
+count flares solar_xflare_count_24h
+
 source nasa_fireballs
 ttl 3600
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
@@ -3334,6 +3366,11 @@ ttl 3600
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
 format csv
 last_row (ppm) atmosphere_co2_weekly_ppm
+
+source noaa_integral_protons
+ttl 3600
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+last_obj energy ">=100 MeV" flux cosmic_proton_flux_100mev
 
 source noaa_methane
 ttl 3600
@@ -5786,6 +5823,11 @@ format csv
 last_row extent hydrosphere_sea_ice_extent_north_mkm2
 last_row area hydrosphere_sea_ice_area_north_mkm2
 
+source obis_cetaceans
+ttl 3600
+url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
+path total biosphere_cetacean_observations_24h
+
 source open_notify_astros
 ttl 3600
 url http://api.open-notify.org/astros.json
@@ -5827,6 +5869,16 @@ res 0
 url https://onionoo.torproject.org/summary?running=true
 count relays technosphere_tor_relays_running
 
+source usgs_deep_earthquakes
+ttl 3600
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&mindepth=600
+count features geosphere_deep_quake_count
+
+source usgs_significant_rms
+ttl 3600
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+path features.0.properties.rms geosphere_earth_hum_rms
+
 source celestrak_starlink
 ttl 7200
 header User-Agent "omegaflow"
@@ -5837,6 +5889,11 @@ source apophis_vectors
 ttl 86400
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 vector apophis_x apophis_y apophis_z
+
+source atlas_3i_vectors
+ttl 86400
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+vector atlas_3i_x atlas_3i_y atlas_3i_z
 
 source bennu_vectors
 ttl 86400
@@ -6052,10 +6109,13 @@ ttl 86400
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 vector moon_x moon_y moon_z
 
-source nasa_exoplanets_count
+source nasa_exoplanets
 ttl 86400
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+count(*)+from+ps+where+default_flag=1&format=json
-field 0.count cosmic_exoplanet_count_confirmed
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+20+pl_name,pl_orbper,pl_rade,pl_eqt+from+pscomppars+where+pl_eqt+is+not+null+order+by+pl_eqt+desc&format=json
+count data cosmic_exoplanet_count
+field pl_eqt cosmic_exoplanet_eqt_k
+field pl_orbper cosmic_exoplanet_period_d
+field pl_rade cosmic_exoplanet_radius_re
 
 source nasa_sentry
 ttl 86400
@@ -6225,6 +6285,12 @@ source geopages
 ttl 604800
 url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
 count query.geosearch technosphere_geopages_nearby
+
+source usdm_conus_drought
+ttl 604800
+header Accept "application/json"
+url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
+last D4 anthroposphere_conus_extreme_drought_pct
 
 source anthroposphere_global_population_density_sqkm
 ttl 2592000
@@ -6629,10 +6695,10 @@ ttl 2592000
 url https://api.worldbank.org/v2/country/COD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
 field 1.0.value economic_gdp_growth_congo_pct
 
-source worldbank_gdp_growth_congo
+source worldbank_gdp_growth_congo_republic
 ttl 2592000
 url https://api.worldbank.org/v2/country/COG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
-field 1.0.value economic_gdp_growth_congo_pct
+field 1.0.value economic_gdp_growth_congo_republic_pct
 
 source worldbank_gdp_growth_costa_rica
 ttl 2592000
@@ -6919,10 +6985,10 @@ ttl 2592000
 url https://api.worldbank.org/v2/country/KOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
 field 1.0.value economic_gdp_growth_korea_pct
 
-source worldbank_gdp_growth_korea
+source worldbank_gdp_growth_north_korea
 ttl 2592000
 url https://api.worldbank.org/v2/country/PRK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
-field 1.0.value economic_gdp_growth_korea_pct
+field 1.0.value economic_gdp_growth_north_korea_pct
 
 source worldbank_gdp_growth_kosovo
 ttl 2592000
