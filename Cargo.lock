@@ -4,4 +4,4 @@ version = 4
 
 [[package]]
 name = "omegaflow"
-version = "6.0.0"
+version = "1.0.0"
