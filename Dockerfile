@@ -12,6 +12,6 @@ WORKDIR /app
 COPY --from=builder /app/target/release/omegaflow /app/server
 COPY static/ static/
 COPY φ/ φ/
-EXPOSE 3571
+EXPOSE 1111
 CMD ["./server"]
 

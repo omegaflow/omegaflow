@@ -670,7 +670,7 @@
                         const content = JSON.stringify(payload);
                         if (content !== '{}') {
                             try {
-                                const event = nostrModule.finalizeEvent({ kind: 39603, created_at: Math.floor(srvTime), tags: [['geo', String(physLat) + ',' + String(physLon)]], content }, nostrPub);
+                                const event = nostrModule.finalizeEvent({ kind: 1111, created_at: Math.floor(srvTime), tags: [['geo', String(physLat) + ',' + String(physLon)]], content }, nostrPub);
                                 nostrRelay.send(JSON.stringify(['EVENT', event]));
                             } catch {}
                         }
@@ -706,7 +706,7 @@
                 else { privKey = new Uint8Array(JSON.parse(privKey)); }
                 nostrRelay = new WebSocket('wss://relay.damus.io');
                 nostrRelay.binaryType = 'arraybuffer';
-                nostrRelay.addEventListener('open', () => { nostrRelay.send(JSON.stringify(['REQ', 'omegaflow', { kinds: [39603] }])); nostrPub = privKey; });
+                nostrRelay.addEventListener('open', () => { nostrRelay.send(JSON.stringify(['REQ', 'omegaflow', { kinds: [1111] }])); nostrPub = privKey; });
                 nostrRelay.addEventListener('message', (e) => {
                     try {
                         const data = JSON.parse(e.data);

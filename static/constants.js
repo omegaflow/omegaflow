@@ -73,7 +73,7 @@ export async function syncFrame(inputs, queries, signals = []) {
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     
-    if (bytes.length < 13 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 6) return [];
+    if (bytes.length < 13 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 1) return [];
     
     let o = 3;
     o += 4; 

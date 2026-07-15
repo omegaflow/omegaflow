@@ -375,7 +375,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
             let query_count = u32::from_le_bytes(buf4) as usize;
 
             let mut out=Vec::with_capacity(1024);
-            out.extend_from_slice(&[0xCF, 0x86]); out.push(6u8);
+            out.extend_from_slice(&[0xCF, 0x86]); out.push(1u8);
             out.extend_from_slice(&id.to_le_bytes());
             out.extend_from_slice(&(query_count as u32).to_le_bytes());
 
@@ -573,7 +573,11 @@ fn render_url(template: &str, lat: f64, lon: f64, query_t: f64) -> String {
     let (yy, ym, yd) = days_to_ymd(days - 1); let yesterday = format!("{}-{:02}-{:02}", yy, ym, yd);
     let (tmy, tmm, tmd) = days_to_ymd(days + 1); let tomorrow = format!("{}-{:02}-{:02}", tmy, tmm, tmd);
     let today_yyyymmdd = format!("{}_{:02}_{:02}", ty, tm, td);
+    let today_nodashes = format!("{}{:02}{:02}", ty, tm, td);
     let hour_ago = { let dt = secs.saturating_sub(3600); let (h_y, h_m, h_d) = days_to_ymd(dt / 86400); let h_h = (dt % 86400) / 3600; let h_min = (dt % 3600) / 60; format!("{}-{:02}-{:02}T{:02}:{:02}:00", h_y, h_m, h_d, h_h, h_min) };
+    let now_iso = { let n_h = (secs % 86400) / 3600; let n_min = (secs % 3600) / 60; format!("{}-{:02}-{:02}T{:02}:{:02}:00", ty, tm, td, n_h, n_min) };
+    let week_ago = { let dt = secs.saturating_sub(604800); let (w_y, w_m, w_d) = days_to_ymd(dt / 86400); format!("{}-{:02}-{:02}", w_y, w_m, w_d) };
+    let week_ago_nodashes = { let dt = secs.saturating_sub(604800); let (w_y, w_m, w_d) = days_to_ymd(dt / 86400); format!("{}{:02}{:02}", w_y, w_m, w_d) };
     let q_hour = (secs % 86400) / 3600; let q_minute = (secs % 3600) / 60;
     let unix_now = secs.to_string(); let unix_now_plus_3600 = (secs + 3600).to_string();
     template
@@ -581,8 +585,9 @@ fn render_url(template: &str, lat: f64, lon: f64, query_t: f64) -> String {
         .replace("{lat_min}", &format!("{}", lat - (1.0 / Φ))).replace("{lat_max}", &format!("{}", lat + (1.0 / Φ)))
         .replace("{lon_min}", &format!("{}", lon - (1.0 / Φ))).replace("{lon_max}", &format!("{}", lon + (1.0 / Φ)))
         .replace("{today}", &today).replace("{yesterday}", &yesterday).replace("{tomorrow}", &tomorrow)
-        .replace("{today_yyyymmdd}", &today_yyyymmdd).replace("{today_ymd}", &today_yyyymmdd)
+        .replace("{today_yyyymmdd}", &today_yyyymmdd).replace("{today_ymd}", &today_yyyymmdd).replace("{today_nodashes}", &today_nodashes)
         .replace("{t_start}", &yesterday).replace("{t_end}", &today)
+        .replace("{now}", &now_iso).replace("{week_ago}", &week_ago).replace("{week_ago_nodashes}", &week_ago_nodashes)
         .replace("{today_plus_365}", &format!("{}-{:02}-{:02}", ty+1, tm, td))
         .replace("{lat_int}", &format!("{}", lat as i32)).replace("{lon_int}", &format!("{}", lon as i32))
         .replace("{hour_ago}", &hour_ago).replace("{year}", &ty.to_string()).replace("{month}", &tm.to_string()).replace("{day}", &td.to_string())
@@ -712,7 +717,7 @@ fn warm_cache(archive: Arc<Archive>) {
 
 fn main() {
     load_env();
-    let port: u16 = std::env::var("PORT").ok().and_then(|s| s.parse().ok()).unwrap_or(3571);
+    let port: u16 = std::env::var("PORT").ok().and_then(|s| s.parse().ok()).unwrap_or(1111);
     let archive = Arc::new(Archive {
         sources: load_sources(), index_html: std::fs::read("static/index.html").unwrap_or_default(),
         constants_js: std::fs::read("static/constants.js").unwrap_or_default(),

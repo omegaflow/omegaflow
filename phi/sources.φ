@@ -342,9 +342,9 @@ first superevents.0.superevent_id cosmic_gravitational_wave_latest_id
 
 source magnetism
 ttl 60
-url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
-last_row bz_gsm magnetosphere_imf_bz_nt
-last_row bt magnetosphere_imf_bt_nt
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+path 0.bz_gsm magnetosphere_imf_bz_nt
+path 0.bt magnetosphere_imf_bt_nt
 last_row by_gsm magnetosphere_imf_by_nt
 
 source nasa_dsn_status
@@ -383,9 +383,9 @@ url nostr://stream
 
 source plasma
 ttl 60
-url https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json
-last_row speed solar_wind_speed_km_s
-last_row density solar_wind_density_cm3
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+path 0.speed solar_wind_speed_km_s
+path 0.density solar_wind_density_cm3
 last_row temperature solar_wind_temp_k
 
 source protons
@@ -397,7 +397,7 @@ last_obj energy ">=1 MeV" flux radiation_proton_flux_1mev
 
 source ripe_bgp_updates
 ttl 60
-url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={now}
+url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today}
 field nr_updates technosphere_bgp_updates_per_hour
 
 source safecast_radiation
@@ -439,10 +439,6 @@ geojson properties.gap seismic_azimuthal_gap_deg
 geojson properties.rms seismic_rms_s
 geojson properties.sig seismic_significance_score
 
-source vaisala_lightning_global
-ttl 60
-url https://lightning.gld/v1/rates/global
-field count atmosphere_global_lightning_rate
 
 source wiener_linien_realtime
 ttl 60
@@ -500,7 +496,7 @@ field ethereum.usd economic_ethereum_price_usd
 
 source energy_charts_renewable
 ttl 300
-url https://api.energy-charts.info/ren_share
+url https://api.energy-charts.info/ren_share_eu
 last data technosphere_renewable_share_pct
 
 source goes_euv
@@ -2946,7 +2942,7 @@ first t hydrosphere_tide_time_mona_island
 
 source noaa_tides_salinity_8771450
 ttl 300
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={today}&end_date={tomorrow}&station=8771450&product=salinity&time_zone=utc&units=metric&format=json
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={today_nodashes}&end_date={tomorrow_nodashes}&station=8771450&product=salinity&time_zone=gmt&units=metric&format=json
 last data.0.v hydrosphere_salinity_galveston
 
 source rain_radar
@@ -3412,7 +3408,7 @@ source noaa_tides_pred_1611400
 ttl 3600
 lat 21.9544
 lon -159.3561
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1611400&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1611400&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_nawiliwili
 first t hydrosphere_tide_prediction_time_nawiliwili
 
@@ -3420,7 +3416,7 @@ source noaa_tides_pred_1612340
 ttl 3600
 lat 21.303333
 lon -157.86453
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612340&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612340&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_honolulu
 first t hydrosphere_tide_prediction_time_honolulu
 
@@ -3428,7 +3424,7 @@ source noaa_tides_pred_1612401
 ttl 3600
 lat 21.3675
 lon -157.9639
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612401&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612401&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_pearl_harbor
 first t hydrosphere_tide_prediction_time_pearl_harbor
 
@@ -3436,7 +3432,7 @@ source noaa_tides_pred_1612480
 ttl 3600
 lat 21.433056
 lon -157.79
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612480&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612480&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_mokuoloe
 first t hydrosphere_tide_prediction_time_mokuoloe
 
@@ -3444,7 +3440,7 @@ source noaa_tides_pred_1615680
 ttl 3600
 lat 20.894945
 lon -156.469
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1615680&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1615680&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_kahului_kahului_harbor
 first t hydrosphere_tide_prediction_time_kahului_kahului_harbor
 
@@ -3452,7 +3448,7 @@ source noaa_tides_pred_1617433
 ttl 3600
 lat 20.0366
 lon -155.8294
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617433&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617433&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_kawaihae
 first t hydrosphere_tide_prediction_time_kawaihae
 
@@ -3460,7 +3456,7 @@ source noaa_tides_pred_1617760
 ttl 3600
 lat 19.730278
 lon -155.05556
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617760&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617760&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_hilo_hilo_bay_kuhio_bay
 first t hydrosphere_tide_prediction_time_hilo_hilo_bay_kuhio_bay
 
@@ -3468,7 +3464,7 @@ source noaa_tides_pred_1619910
 ttl 3600
 lat 28.211666
 lon -177.36
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1619910&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1619910&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_sand_island_midway_islands
 first t hydrosphere_tide_prediction_time_sand_island_midway_islands
 
@@ -3476,7 +3472,7 @@ source noaa_tides_pred_1630000
 ttl 3600
 lat 13.443389
 lon 144.65636
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1630000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1630000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_apra_harbor_guam
 first t hydrosphere_tide_prediction_time_apra_harbor_guam
 
@@ -3484,7 +3480,7 @@ source noaa_tides_pred_1631428
 ttl 3600
 lat 13.428333
 lon 144.79889
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1631428&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1631428&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_pago_bay_guam
 first t hydrosphere_tide_prediction_time_pago_bay_guam
 
@@ -3492,7 +3488,7 @@ source noaa_tides_pred_1770000
 ttl 3600
 lat -14.28
 lon -170.69
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1770000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1770000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_pago_pago_american_samoa
 first t hydrosphere_tide_prediction_time_pago_pago_american_samoa
 
@@ -3500,7 +3496,7 @@ source noaa_tides_pred_1820000
 ttl 3600
 lat 8.731667
 lon 167.73611
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1820000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1820000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_kwajalein_marshall_islands
 first t hydrosphere_tide_prediction_time_kwajalein_marshall_islands
 
@@ -3508,7 +3504,7 @@ source noaa_tides_pred_1890000
 ttl 3600
 lat 19.290556
 lon 166.6175
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1890000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1890000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_wake_island_pacific_ocean
 first t hydrosphere_tide_prediction_time_wake_island_pacific_ocean
 
@@ -3516,7 +3512,7 @@ source noaa_tides_pred_2695535
 ttl 3600
 lat 32.370224
 lon -64.695724
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695535&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695535&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_bermuda_biological_station
 first t hydrosphere_tide_prediction_time_bermuda_biological_station
 
@@ -3524,7 +3520,7 @@ source noaa_tides_pred_2695540
 ttl 3600
 lat 32.3734
 lon -64.7033
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695540&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695540&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_bermuda_st._georges_island
 first t hydrosphere_tide_prediction_time_bermuda_st._georges_island
 
@@ -3532,7 +3528,7 @@ source noaa_tides_pred_8311030
 ttl 3600
 lat 44.702778
 lon -75.494446
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311030&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311030&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_ogdensburg
 first t hydrosphere_tide_prediction_time_ogdensburg
 
@@ -3540,7 +3536,7 @@ source noaa_tides_pred_8311062
 ttl 3600
 lat 44.33111
 lon -75.934525
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311062&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311062&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_alexandria_bay
 first t hydrosphere_tide_prediction_time_alexandria_bay
 
@@ -3548,7 +3544,7 @@ source noaa_tides_pred_8410140
 ttl 3600
 lat 44.90461
 lon -66.98289
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8410140&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8410140&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_eastport
 first t hydrosphere_tide_prediction_time_eastport
 
@@ -3556,7 +3552,7 @@ source noaa_tides_pred_8411060
 ttl 3600
 lat 44.6567
 lon -67.21
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8411060&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8411060&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_cutler_farris_wharf
 first t hydrosphere_tide_prediction_time_cutler_farris_wharf
 
@@ -3564,7 +3560,7 @@ source noaa_tides_pred_8413320
 ttl 3600
 lat 44.392193
 lon -68.20428
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8413320&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8413320&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_bar_harbor
 first t hydrosphere_tide_prediction_time_bar_harbor
 
@@ -3572,7 +3568,7 @@ source noaa_tides_pred_8418150
 ttl 3600
 lat 43.658054
 lon -70.24416
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8418150&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8418150&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_portland
 first t hydrosphere_tide_prediction_time_portland
 
@@ -3580,7 +3576,7 @@ source noaa_tides_pred_8419870
 ttl 3600
 lat 43.079723
 lon -70.74111
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8419870&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8419870&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_seavey_island
 first t hydrosphere_tide_prediction_time_seavey_island
 
@@ -3588,7 +3584,7 @@ source noaa_tides_pred_8443970
 ttl 3600
 lat 42.35389
 lon -71.05028
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8443970&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8443970&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_boston
 first t hydrosphere_tide_prediction_time_boston
 
@@ -3596,7 +3592,7 @@ source noaa_tides_pred_8447386
 ttl 3600
 lat 41.7043
 lon -71.1641
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447386&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447386&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_fall_river
 first t hydrosphere_tide_prediction_time_fall_river
 
@@ -3604,7 +3600,7 @@ source noaa_tides_pred_8447435
 ttl 3600
 lat 41.6885
 lon -69.9511
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447435&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447435&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_chatham
 first t hydrosphere_tide_prediction_time_chatham
 
@@ -3612,7 +3608,7 @@ source noaa_tides_pred_8447636
 ttl 3600
 lat 41.6212
 lon -70.9137
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447636&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447636&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_new_bedford_harbor
 first t hydrosphere_tide_prediction_time_new_bedford_harbor
 
@@ -3620,7 +3616,7 @@ source noaa_tides_pred_8447930
 ttl 3600
 lat 41.523613
 lon -70.67111
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447930&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447930&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_woods_hole
 first t hydrosphere_tide_prediction_time_woods_hole
 
@@ -3628,7 +3624,7 @@ source noaa_tides_pred_8449130
 ttl 3600
 lat 41.285
 lon -70.0967
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8449130&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8449130&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_nantucket_island
 first t hydrosphere_tide_prediction_time_nantucket_island
 
@@ -3636,7 +3632,7 @@ source noaa_tides_pred_8452660
 ttl 3600
 lat 41.504333
 lon -71.32614
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8452660&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8452660&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_newport
 first t hydrosphere_tide_prediction_time_newport
 
@@ -3644,7 +3640,7 @@ source noaa_tides_pred_8452944
 ttl 3600
 lat 41.7167
 lon -71.3433
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8452944&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8452944&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_conimicut_light
 first t hydrosphere_tide_prediction_time_conimicut_light
 
@@ -3652,7 +3648,7 @@ source noaa_tides_pred_8454000
 ttl 3600
 lat 41.807167
 lon -71.400665
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8454000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8454000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_providence
 first t hydrosphere_tide_prediction_time_providence
 
@@ -3660,7 +3656,7 @@ source noaa_tides_pred_8461490
 ttl 3600
 lat 41.371666
 lon -72.09556
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8461490&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8461490&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_new_london
 first t hydrosphere_tide_prediction_time_new_london
 
@@ -3668,7 +3664,7 @@ source noaa_tides_pred_8465705
 ttl 3600
 lat 41.2833
 lon -72.9083
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8465705&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8465705&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_new_haven
 first t hydrosphere_tide_prediction_time_new_haven
 
@@ -3676,7 +3672,7 @@ source noaa_tides_pred_8467150
 ttl 3600
 lat 41.17582
 lon -73.18397
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8467150&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8467150&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_bridgeport
 first t hydrosphere_tide_prediction_time_bridgeport
 
@@ -3684,7 +3680,7 @@ source noaa_tides_pred_8510560
 ttl 3600
 lat 41.048332
 lon -71.95944
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8510560&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8510560&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_montauk
 first t hydrosphere_tide_prediction_time_montauk
 
@@ -3692,7 +3688,7 @@ source noaa_tides_pred_8516945
 ttl 3600
 lat 40.8103
 lon -73.7649
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8516945&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8516945&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_kings_point
 first t hydrosphere_tide_prediction_time_kings_point
 
@@ -3700,7 +3696,7 @@ source noaa_tides_pred_8518750
 ttl 3600
 lat 40.700554
 lon -74.01417
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518750&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518750&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_the_battery
 first t hydrosphere_tide_prediction_time_the_battery
 
@@ -3708,7 +3704,7 @@ source noaa_tides_pred_8518962
 ttl 3600
 lat 42.0139
 lon -73.9392
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518962&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518962&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_turkey_point_hudson_river_nerr
 first t hydrosphere_tide_prediction_time_turkey_point_hudson_river_nerr
 
@@ -3716,7 +3712,7 @@ source noaa_tides_pred_8518979
 ttl 3600
 lat 42.35264
 lon -73.79486
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518979&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518979&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_coxsackie_hudson_river
 first t hydrosphere_tide_prediction_time_coxsackie_hudson_river
 
@@ -3724,7 +3720,7 @@ source noaa_tides_pred_8531680
 ttl 3600
 lat 40.4669
 lon -74.0094
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8531680&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8531680&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_sandy_hook
 first t hydrosphere_tide_prediction_time_sandy_hook
 
@@ -3732,7 +3728,7 @@ source noaa_tides_pred_8534720
 ttl 3600
 lat 39.356667
 lon -74.41805
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8534720&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8534720&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_atlantic_city
 first t hydrosphere_tide_prediction_time_atlantic_city
 
@@ -3740,7 +3736,7 @@ source noaa_tides_pred_8536110
 ttl 3600
 lat 38.9683
 lon -74.96
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8536110&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8536110&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_cape_may
 first t hydrosphere_tide_prediction_time_cape_may
 
@@ -3748,7 +3744,7 @@ source noaa_tides_pred_8537121
 ttl 3600
 lat 39.30539
 lon -75.37668
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8537121&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8537121&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_ship_john_shoal
 first t hydrosphere_tide_prediction_time_ship_john_shoal
 
@@ -3756,7 +3752,7 @@ source noaa_tides_pred_8539094
 ttl 3600
 lat 40.0817
 lon -74.8697
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8539094&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8539094&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_burlington_delaware_river
 first t hydrosphere_tide_prediction_time_burlington_delaware_river
 
@@ -3764,7 +3760,7 @@ source noaa_tides_pred_8540433
 ttl 3600
 lat 39.811806
 lon -75.4095
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8540433&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8540433&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_marcus_hook
 first t hydrosphere_tide_prediction_time_marcus_hook
 
@@ -3772,7 +3768,7 @@ source noaa_tides_pred_8545240
 ttl 3600
 lat 39.933056
 lon -75.14198
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8545240&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8545240&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_philadelphia
 first t hydrosphere_tide_prediction_time_philadelphia
 
@@ -3780,7 +3776,7 @@ source noaa_tides_pred_8546252
 ttl 3600
 lat 39.979683
 lon -75.079315
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8546252&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8546252&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_bridesburg
 first t hydrosphere_tide_prediction_time_bridesburg
 
@@ -3788,7 +3784,7 @@ source noaa_tides_pred_8548989
 ttl 3600
 lat 40.137333
 lon -74.75183
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8548989&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8548989&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_newbold
 first t hydrosphere_tide_prediction_time_newbold
 
@@ -3796,7 +3792,7 @@ source noaa_tides_pred_8551762
 ttl 3600
 lat 39.582195
 lon -75.588974
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551762&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551762&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_delaware_city
 first t hydrosphere_tide_prediction_time_delaware_city
 
@@ -3804,7 +3800,7 @@ source noaa_tides_pred_8551910
 ttl 3600
 lat 39.558334
 lon -75.571945
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551910&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551910&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_reedy_point
 first t hydrosphere_tide_prediction_time_reedy_point
 
@@ -3812,7 +3808,7 @@ source noaa_tides_pred_8555889
 ttl 3600
 lat 38.986668
 lon -75.113335
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8555889&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8555889&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_brandywine_shoal_light
 first t hydrosphere_tide_prediction_time_brandywine_shoal_light
 
@@ -3820,7 +3816,7 @@ source noaa_tides_pred_8557380
 ttl 3600
 lat 38.782833
 lon -75.11928
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8557380&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8557380&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_lewes
 first t hydrosphere_tide_prediction_time_lewes
 
@@ -3828,7 +3824,7 @@ source noaa_tides_pred_8570283
 ttl 3600
 lat 38.32833
 lon -75.09167
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_ocean_city_inlet
 first t hydrosphere_tide_prediction_time_ocean_city_inlet
 
@@ -3836,7 +3832,7 @@ source noaa_tides_pred_8571421
 ttl 3600
 lat 38.22
 lon -76.0383
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8571421&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8571421&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_bishops_head
 first t hydrosphere_tide_prediction_time_bishops_head
 
@@ -3844,7 +3840,7 @@ source noaa_tides_pred_8571892
 ttl 3600
 lat 38.5725
 lon -76.06167
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8571892&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8571892&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_cambridge
 first t hydrosphere_tide_prediction_time_cambridge
 
@@ -3852,7 +3848,7 @@ source noaa_tides_pred_8573364
 ttl 3600
 lat 39.213444
 lon -76.24455
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8573364&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8573364&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_tolchester_beach
 first t hydrosphere_tide_prediction_time_tolchester_beach
 
@@ -3860,7 +3856,7 @@ source noaa_tides_pred_8573927
 ttl 3600
 lat 39.52667
 lon -75.81
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8573927&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8573927&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_chesapeake_city
 first t hydrosphere_tide_prediction_time_chesapeake_city
 
@@ -3868,7 +3864,7 @@ source noaa_tides_pred_8574680
 ttl 3600
 lat 39.266693
 lon -76.57831
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8574680&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8574680&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_baltimore
 first t hydrosphere_tide_prediction_time_baltimore
 
@@ -3876,7 +3872,7 @@ source noaa_tides_pred_8575512
 ttl 3600
 lat 38.983883
 lon -76.480034
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8575512&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8575512&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_annapolis
 first t hydrosphere_tide_prediction_time_annapolis
 
@@ -3884,7 +3880,7 @@ source noaa_tides_pred_8577330
 ttl 3600
 lat 38.3167
 lon -76.4517
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8577330&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8577330&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_solomons_island
 first t hydrosphere_tide_prediction_time_solomons_island
 
@@ -3892,7 +3888,7 @@ source noaa_tides_pred_8594900
 ttl 3600
 lat 38.873333
 lon -77.02167
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8594900&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8594900&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_washington
 first t hydrosphere_tide_prediction_time_washington
 
@@ -3900,7 +3896,7 @@ source noaa_tides_pred_8631044
 ttl 3600
 lat 37.607777
 lon -75.68584
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8631044&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8631044&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_wachapreague
 first t hydrosphere_tide_prediction_time_wachapreague
 
@@ -3908,7 +3904,7 @@ source noaa_tides_pred_8632200
 ttl 3600
 lat 37.1652
 lon -75.9884
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8632200&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8632200&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_kiptopeke
 first t hydrosphere_tide_prediction_time_kiptopeke
 
@@ -3916,7 +3912,7 @@ source noaa_tides_pred_8635027
 ttl 3600
 lat 38.31975
 lon -77.0366
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635027&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635027&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_dahlgren
 first t hydrosphere_tide_prediction_time_dahlgren
 
@@ -3924,7 +3920,7 @@ source noaa_tides_pred_8635750
 ttl 3600
 lat 37.9961
 lon -76.4644
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635750&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635750&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_lewisetta
 first t hydrosphere_tide_prediction_time_lewisetta
 
@@ -3932,7 +3928,7 @@ source noaa_tides_pred_8636580
 ttl 3600
 lat 37.6155
 lon -76.28978
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8636580&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8636580&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_windmill_point
 first t hydrosphere_tide_prediction_time_windmill_point
 
@@ -3940,7 +3936,7 @@ source noaa_tides_pred_8637689
 ttl 3600
 lat 37.2265
 lon -76.478806
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8637689&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8637689&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_yorktown_uscg_training_center
 first t hydrosphere_tide_prediction_time_yorktown_uscg_training_center
 
@@ -3948,7 +3944,7 @@ source noaa_tides_pred_8638610
 ttl 3600
 lat 36.94278
 lon -76.32861
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8638610&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8638610&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_sewells_point
 first t hydrosphere_tide_prediction_time_sewells_point
 
@@ -3956,7 +3952,7 @@ source noaa_tides_pred_8638901
 ttl 3600
 lat 37.0329
 lon -76.0833
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8638901&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8638901&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_cbbt_chesapeake_channel
 first t hydrosphere_tide_prediction_time_cbbt_chesapeake_channel
 
@@ -3964,7 +3960,7 @@ source noaa_tides_pred_8639348
 ttl 3600
 lat 36.778194
 lon -76.301865
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8639348&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8639348&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_money_point
 first t hydrosphere_tide_prediction_time_money_point
 
@@ -3972,7 +3968,7 @@ source noaa_tides_pred_8651370
 ttl 3600
 lat 36.1833
 lon -75.7467
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8651370&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8651370&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_duck
 first t hydrosphere_tide_prediction_time_duck
 
@@ -3980,7 +3976,7 @@ source noaa_tides_pred_8652587
 ttl 3600
 lat 35.795696
 lon -75.548195
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8652587&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8652587&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_oregon_inlet_marina
 first t hydrosphere_tide_prediction_time_oregon_inlet_marina
 
@@ -3988,7 +3984,7 @@ source noaa_tides_pred_8654467
 ttl 3600
 lat 35.20861
 lon -75.70419
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8654467&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8654467&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_uscg_station_hatteras
 first t hydrosphere_tide_prediction_time_uscg_station_hatteras
 
@@ -3996,7 +3992,7 @@ source noaa_tides_pred_8656483
 ttl 3600
 lat 34.71733
 lon -76.67066
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8656483&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8656483&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_beaufort_duke_marine_lab
 first t hydrosphere_tide_prediction_time_beaufort_duke_marine_lab
 
@@ -4004,7 +4000,7 @@ source noaa_tides_pred_8658120
 ttl 3600
 lat 34.2267
 lon -77.9533
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8658120&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8658120&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_wilmington
 first t hydrosphere_tide_prediction_time_wilmington
 
@@ -4012,7 +4008,7 @@ source noaa_tides_pred_8658163
 ttl 3600
 lat 34.213306
 lon -77.7867
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8658163&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8658163&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_wrightsville_beach
 first t hydrosphere_tide_prediction_time_wrightsville_beach
 
@@ -4020,7 +4016,7 @@ source noaa_tides_pred_8661070
 ttl 3600
 lat 33.655
 lon -78.9183
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8661070&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8661070&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_springmaid_pier
 first t hydrosphere_tide_prediction_time_springmaid_pier
 
@@ -4028,7 +4024,7 @@ source noaa_tides_pred_8665530
 ttl 3600
 lat 32.780834
 lon -79.923615
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8665530&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8665530&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_charleston
 first t hydrosphere_tide_prediction_time_charleston
 
@@ -4036,7 +4032,7 @@ source noaa_tides_pred_8670870
 ttl 3600
 lat 32.034695
 lon -80.90303
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8670870&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8670870&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_fort_pulaski
 first t hydrosphere_tide_prediction_time_fort_pulaski
 
@@ -4044,7 +4040,7 @@ source noaa_tides_pred_8679598
 ttl 3600
 lat 30.7781
 lon -81.4914
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8679598&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8679598&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_kings_bay_msf_pier
 first t hydrosphere_tide_prediction_time_kings_bay_msf_pier
 
@@ -4052,7 +4048,7 @@ source noaa_tides_pred_8720030
 ttl 3600
 lat 30.671356
 lon -81.46584
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8720030&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8720030&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_fernandina_beach
 first t hydrosphere_tide_prediction_time_fernandina_beach
 
@@ -4060,7 +4056,7 @@ source noaa_tides_pred_8720218
 ttl 3600
 lat 30.398167
 lon -81.42789
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8720218&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8720218&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_mayport_(bar_pilots_dock)
 first t hydrosphere_tide_prediction_time_mayport_(bar_pilots_dock)
 
@@ -4068,7 +4064,7 @@ source noaa_tides_pred_8720219
 ttl 3600
 lat 30.3867
 lon -81.5583
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8720219&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8720219&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_dames_point
 first t hydrosphere_tide_prediction_time_dames_point
 
@@ -4076,7 +4072,7 @@ source noaa_tides_pred_8720226
 ttl 3600
 lat 30.32
 lon -81.6583
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8720226&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8720226&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_southbank_riverwalk_st_johns_r
 first t hydrosphere_tide_prediction_time_southbank_riverwalk_st_johns_r
 
@@ -4084,7 +4080,7 @@ source noaa_tides_pred_8720357
 ttl 3600
 lat 30.192417
 lon -81.68889
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8720357&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8720357&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_i-295_buckman_bridge
 first t hydrosphere_tide_prediction_time_i-295_buckman_bridge
 
@@ -4092,7 +4088,7 @@ source noaa_tides_pred_8721604
 ttl 3600
 lat 28.4158
 lon -80.5931
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8721604&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8721604&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_trident_pier_port_canaveral
 first t hydrosphere_tide_prediction_time_trident_pier_port_canaveral
 
@@ -4100,7 +4096,7 @@ source noaa_tides_pred_8722670
 ttl 3600
 lat 26.612778
 lon -80.034164
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8722670&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8722670&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_lake_worth_pier_atlantic_ocean
 first t hydrosphere_tide_prediction_time_lake_worth_pier_atlantic_ocean
 
@@ -4108,7 +4104,7 @@ source noaa_tides_pred_8722956
 ttl 3600
 lat 26.081667
 lon -80.11667
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8722956&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8722956&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_south_port_everglades
 first t hydrosphere_tide_prediction_time_south_port_everglades
 
@@ -4116,7 +4112,7 @@ source noaa_tides_pred_8723214
 ttl 3600
 lat 25.7314
 lon -80.1618
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8723214&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8723214&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_virginia_key
 first t hydrosphere_tide_prediction_time_virginia_key
 
@@ -4124,7 +4120,7 @@ source noaa_tides_pred_8723970
 ttl 3600
 lat 24.711
 lon -81.1065
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8723970&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8723970&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_vaca_key_florida_bay
 first t hydrosphere_tide_prediction_time_vaca_key_florida_bay
 
@@ -4132,7 +4128,7 @@ source noaa_tides_pred_8724580
 ttl 3600
 lat 24.5557
 lon -81.8079
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8724580&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8724580&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_key_west
 first t hydrosphere_tide_prediction_time_key_west
 
@@ -4140,7 +4136,7 @@ source noaa_tides_pred_8725114
 ttl 3600
 lat 26.1367
 lon -81.7883
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8725114&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8725114&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_naples_bay_north
 first t hydrosphere_tide_prediction_time_naples_bay_north
 
@@ -4148,7 +4144,7 @@ source noaa_tides_pred_8725520
 ttl 3600
 lat 26.647778
 lon -81.87111
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8725520&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8725520&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_fort_myers
 first t hydrosphere_tide_prediction_time_fort_myers
 
@@ -4156,7 +4152,7 @@ source noaa_tides_pred_8726384
 ttl 3600
 lat 27.6387
 lon -82.5621
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726384&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726384&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_manatee
 first t hydrosphere_tide_prediction_time_port_manatee
 
@@ -4164,7 +4160,7 @@ source noaa_tides_pred_8726520
 ttl 3600
 lat 27.7606
 lon -82.6269
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726520&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726520&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_st._petersburg
 first t hydrosphere_tide_prediction_time_st._petersburg
 
@@ -4172,7 +4168,7 @@ source noaa_tides_pred_8726607
 ttl 3600
 lat 27.8578
 lon -82.5528
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726607&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726607&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_old_port_tampa
 first t hydrosphere_tide_prediction_time_old_port_tampa
 
@@ -4180,7 +4176,7 @@ source noaa_tides_pred_8726674
 ttl 3600
 lat 27.9231
 lon -82.4214
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726674&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726674&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_east_bay
 first t hydrosphere_tide_prediction_time_east_bay
 
@@ -4188,7 +4184,7 @@ source noaa_tides_pred_8726724
 ttl 3600
 lat 27.978333
 lon -82.831665
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726724&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726724&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_clearwater_beach
 first t hydrosphere_tide_prediction_time_clearwater_beach
 
@@ -4196,7 +4192,7 @@ source noaa_tides_pred_8727520
 ttl 3600
 lat 29.135
 lon -83.0317
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8727520&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8727520&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_cedar_key
 first t hydrosphere_tide_prediction_time_cedar_key
 
@@ -4204,7 +4200,7 @@ source noaa_tides_pred_8728690
 ttl 3600
 lat 29.724445
 lon -84.98055
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8728690&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8728690&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_apalachicola
 first t hydrosphere_tide_prediction_time_apalachicola
 
@@ -4212,7 +4208,7 @@ source noaa_tides_pred_8729108
 ttl 3600
 lat 30.149723
 lon -85.664444
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729108&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729108&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_panama_city
 first t hydrosphere_tide_prediction_time_panama_city
 
@@ -4220,7 +4216,7 @@ source noaa_tides_pred_8729210
 ttl 3600
 lat 30.21375
 lon -85.878586
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729210&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729210&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_panama_city_beach
 first t hydrosphere_tide_prediction_time_panama_city_beach
 
@@ -4228,7 +4224,7 @@ source noaa_tides_pred_8729840
 ttl 3600
 lat 30.4044
 lon -87.2112
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729840&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729840&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_pensacola
 first t hydrosphere_tide_prediction_time_pensacola
 
@@ -4236,7 +4232,7 @@ source noaa_tides_pred_8735180
 ttl 3600
 lat 30.25
 lon -88.075
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8735180&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8735180&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_dauphin_island
 first t hydrosphere_tide_prediction_time_dauphin_island
 
@@ -4244,7 +4240,7 @@ source noaa_tides_pred_8735391
 ttl 3600
 lat 30.5652
 lon -88.088
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8735391&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8735391&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_dog_river_bridge
 first t hydrosphere_tide_prediction_time_dog_river_bridge
 
@@ -4252,7 +4248,7 @@ source noaa_tides_pred_8735523
 ttl 3600
 lat 30.4437
 lon -88.1139
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8735523&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8735523&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_east_fowl_river_bridge
 first t hydrosphere_tide_prediction_time_east_fowl_river_bridge
 
@@ -4260,7 +4256,7 @@ source noaa_tides_pred_8736897
 ttl 3600
 lat 30.6495
 lon -88.05811
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8736897&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8736897&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_coast_guard_sector_mobile
 first t hydrosphere_tide_prediction_time_coast_guard_sector_mobile
 
@@ -4268,7 +4264,7 @@ source noaa_tides_pred_8737048
 ttl 3600
 lat 30.70461
 lon -88.03961
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8737048&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8737048&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_mobile_state_docks
 first t hydrosphere_tide_prediction_time_mobile_state_docks
 
@@ -4276,7 +4272,7 @@ source noaa_tides_pred_8737138
 ttl 3600
 lat 30.7819
 lon -88.0736
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8737138&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8737138&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_chickasaw_creek
 first t hydrosphere_tide_prediction_time_chickasaw_creek
 
@@ -4284,7 +4280,7 @@ source noaa_tides_pred_8738043
 ttl 3600
 lat 30.3766
 lon -88.1586
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8738043&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8738043&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_west_fowl_river_bridge
 first t hydrosphere_tide_prediction_time_west_fowl_river_bridge
 
@@ -4292,7 +4288,7 @@ source noaa_tides_pred_8739803
 ttl 3600
 lat 30.4057
 lon -88.2477
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8739803&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8739803&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_bayou_la_batre_bridge
 first t hydrosphere_tide_prediction_time_bayou_la_batre_bridge
 
@@ -4300,7 +4296,7 @@ source noaa_tides_pred_8741533
 ttl 3600
 lat 30.367777
 lon -88.56306
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8741533&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8741533&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_pascagoula_noaa_lab
 first t hydrosphere_tide_prediction_time_pascagoula_noaa_lab
 
@@ -4308,7 +4304,7 @@ source noaa_tides_pred_8747437
 ttl 3600
 lat 30.326342
 lon -89.3258
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8747437&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8747437&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_bay_waveland_yacht_club
 first t hydrosphere_tide_prediction_time_bay_waveland_yacht_club
 
@@ -4316,7 +4312,7 @@ source noaa_tides_pred_8760721
 ttl 3600
 lat 29.179306
 lon -89.258835
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8760721&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8760721&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_pilottown
 first t hydrosphere_tide_prediction_time_pilottown
 
@@ -4324,7 +4320,7 @@ source noaa_tides_pred_8760922
 ttl 3600
 lat 28.9322
 lon -89.4075
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8760922&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8760922&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_pilots_station_east_s.w._pass
 first t hydrosphere_tide_prediction_time_pilots_station_east_s.w._pass
 
@@ -4332,7 +4328,7 @@ source noaa_tides_pred_8761305
 ttl 3600
 lat 29.86811
 lon -89.67325
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761305&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761305&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_shell_beach
 first t hydrosphere_tide_prediction_time_shell_beach
 
@@ -4340,7 +4336,7 @@ source noaa_tides_pred_8761724
 ttl 3600
 lat 29.263334
 lon -89.956665
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761724&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761724&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_grand_isle
 first t hydrosphere_tide_prediction_time_grand_isle
 
@@ -4348,7 +4344,7 @@ source noaa_tides_pred_8761927
 ttl 3600
 lat 30.027222
 lon -90.113335
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761927&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761927&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_new_canal_station
 first t hydrosphere_tide_prediction_time_new_canal_station
 
@@ -4356,7 +4352,7 @@ source noaa_tides_pred_8761955
 ttl 3600
 lat 29.932888
 lon -90.135475
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761955&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761955&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_carrollton
 first t hydrosphere_tide_prediction_time_carrollton
 
@@ -4364,7 +4360,7 @@ source noaa_tides_pred_8762075
 ttl 3600
 lat 29.1142
 lon -90.1993
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8762075&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8762075&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_fourchon_belle_pass
 first t hydrosphere_tide_prediction_time_port_fourchon_belle_pass
 
@@ -4372,7 +4368,7 @@ source noaa_tides_pred_8762482
 ttl 3600
 lat 29.78861
 lon -90.42028
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8762482&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8762482&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_west_bank_1_bayou_gauche
 first t hydrosphere_tide_prediction_time_west_bank_1_bayou_gauche
 
@@ -4380,7 +4376,7 @@ source noaa_tides_pred_8764044
 ttl 3600
 lat 29.6675
 lon -91.23761
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764044&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764044&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_berwick_atchafalaya_river
 first t hydrosphere_tide_prediction_time_berwick_atchafalaya_river
 
@@ -4388,7 +4384,7 @@ source noaa_tides_pred_8764227
 ttl 3600
 lat 29.4496
 lon -91.3381
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764227&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764227&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_lawma_amerada_pass
 first t hydrosphere_tide_prediction_time_lawma_amerada_pass
 
@@ -4396,7 +4392,7 @@ source noaa_tides_pred_8764314
 ttl 3600
 lat 29.3675
 lon -91.3839
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764314&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764314&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_eugene_island_north_of_atchafa
 first t hydrosphere_tide_prediction_time_eugene_island_north_of_atchafa
 
@@ -4404,7 +4400,7 @@ source noaa_tides_pred_8766072
 ttl 3600
 lat 29.551695
 lon -92.30519
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8766072&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8766072&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_freshwater_canal_locks
 first t hydrosphere_tide_prediction_time_freshwater_canal_locks
 
@@ -4412,7 +4408,7 @@ source noaa_tides_pred_8767816
 ttl 3600
 lat 30.223612
 lon -93.221664
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8767816&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8767816&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_lake_charles
 first t hydrosphere_tide_prediction_time_lake_charles
 
@@ -4420,7 +4416,7 @@ source noaa_tides_pred_8767961
 ttl 3600
 lat 30.1903
 lon -93.3007
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8767961&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8767961&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_bulk_terminal
 first t hydrosphere_tide_prediction_time_bulk_terminal
 
@@ -4428,7 +4424,7 @@ source noaa_tides_pred_8768094
 ttl 3600
 lat 29.768167
 lon -93.34289
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8768094&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8768094&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_calcasieu_pass
 first t hydrosphere_tide_prediction_time_calcasieu_pass
 
@@ -4436,7 +4432,7 @@ source noaa_tides_pred_8770475
 ttl 3600
 lat 29.8667
 lon -93.93
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770475&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770475&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_arthur
 first t hydrosphere_tide_prediction_time_port_arthur
 
@@ -4444,7 +4440,7 @@ source noaa_tides_pred_8770520
 ttl 3600
 lat 29.98
 lon -93.8817
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770520&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770520&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_rainbow_bridge
 first t hydrosphere_tide_prediction_time_rainbow_bridge
 
@@ -4452,7 +4448,7 @@ source noaa_tides_pred_8770613
 ttl 3600
 lat 29.681667
 lon -94.985
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770613&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770613&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_morgans_point_barbours_cut
 first t hydrosphere_tide_prediction_time_morgans_point_barbours_cut
 
@@ -4460,7 +4456,7 @@ source noaa_tides_pred_8770777
 ttl 3600
 lat 29.7263
 lon -95.2658
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770777&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770777&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_manchester
 first t hydrosphere_tide_prediction_time_manchester
 
@@ -4468,7 +4464,7 @@ source noaa_tides_pred_8770808
 ttl 3600
 lat 29.5947
 lon -94.3903
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770808&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770808&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_high_island
 first t hydrosphere_tide_prediction_time_high_island
 
@@ -4476,7 +4472,7 @@ source noaa_tides_pred_8770822
 ttl 3600
 lat 29.6893
 lon -93.8418
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770822&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770822&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_texas_point_sabine_pass
 first t hydrosphere_tide_prediction_time_texas_point_sabine_pass
 
@@ -4484,7 +4480,7 @@ source noaa_tides_pred_8770971
 ttl 3600
 lat 29.515
 lon -94.5133
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770971&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770971&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_rollover_pass
 first t hydrosphere_tide_prediction_time_rollover_pass
 
@@ -4492,7 +4488,7 @@ source noaa_tides_pred_8771013
 ttl 3600
 lat 29.481306
 lon -94.91725
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771013&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771013&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_eagle_point_galveston_bay
 first t hydrosphere_tide_prediction_time_eagle_point_galveston_bay
 
@@ -4500,7 +4496,7 @@ source noaa_tides_pred_8771341
 ttl 3600
 lat 29.357462
 lon -94.724724
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771341&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771341&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_galveston_bay_entrance_north_j
 first t hydrosphere_tide_prediction_time_galveston_bay_entrance_north_j
 
@@ -4508,7 +4504,7 @@ source noaa_tides_pred_8771367
 ttl 3600
 lat 29.469
 lon -93.72
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771367&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771367&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_sabine_offshore_light
 first t hydrosphere_tide_prediction_time_sabine_offshore_light
 
@@ -4516,7 +4512,7 @@ source noaa_tides_pred_8771450
 ttl 3600
 lat 29.31
 lon -94.793304
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771450&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771450&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_galveston_pier_21
 first t hydrosphere_tide_prediction_time_galveston_pier_21
 
@@ -4524,7 +4520,7 @@ source noaa_tides_pred_8771486
 ttl 3600
 lat 29.3026
 lon -94.8971
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771486&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771486&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_galveston_railroad_bridge
 first t hydrosphere_tide_prediction_time_galveston_railroad_bridge
 
@@ -4532,7 +4528,7 @@ source noaa_tides_pred_8771972
 ttl 3600
 lat 29.095
 lon -95.1133
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771972&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8771972&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_san_luis_pass
 first t hydrosphere_tide_prediction_time_san_luis_pass
 
@@ -4540,7 +4536,7 @@ source noaa_tides_pred_8772471
 ttl 3600
 lat 28.9357
 lon -95.2942
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8772471&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8772471&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_freeport_harbor
 first t hydrosphere_tide_prediction_time_freeport_harbor
 
@@ -4548,7 +4544,7 @@ source noaa_tides_pred_8772985
 ttl 3600
 lat 28.771639
 lon -95.61684
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8772985&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8772985&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_sargent
 first t hydrosphere_tide_prediction_time_sargent
 
@@ -4556,7 +4552,7 @@ source noaa_tides_pred_8773037
 ttl 3600
 lat 28.4069
 lon -96.7124
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773037&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773037&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_seadrift
 first t hydrosphere_tide_prediction_time_seadrift
 
@@ -4564,7 +4560,7 @@ source noaa_tides_pred_8773146
 ttl 3600
 lat 28.71
 lon -95.9139
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773146&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773146&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_matagorda_city
 first t hydrosphere_tide_prediction_time_matagorda_city
 
@@ -4572,7 +4568,7 @@ source noaa_tides_pred_8773259
 ttl 3600
 lat 28.6406
 lon -96.6098
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773259&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773259&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_lavaca
 first t hydrosphere_tide_prediction_time_port_lavaca
 
@@ -4580,7 +4576,7 @@ source noaa_tides_pred_8773701
 ttl 3600
 lat 28.4517
 lon -96.3883
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773701&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773701&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_o'connor
 first t hydrosphere_tide_prediction_time_port_o'connor
 
@@ -4588,7 +4584,7 @@ source noaa_tides_pred_8773767
 ttl 3600
 lat 28.4269
 lon -96.3301
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773767&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773767&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_matagorda_bay_entrance_channel
 first t hydrosphere_tide_prediction_time_matagorda_bay_entrance_channel
 
@@ -4596,7 +4592,7 @@ source noaa_tides_pred_8774230
 ttl 3600
 lat 28.2283
 lon -96.795
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8774230&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8774230&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_aransas_wildlife_refuge
 first t hydrosphere_tide_prediction_time_aransas_wildlife_refuge
 
@@ -4604,7 +4600,7 @@ source noaa_tides_pred_8774513
 ttl 3600
 lat 28.118305
 lon -97.0217
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8774513&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8774513&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_copano_bay
 first t hydrosphere_tide_prediction_time_copano_bay
 
@@ -4612,7 +4608,7 @@ source noaa_tides_pred_8774770
 ttl 3600
 lat 28.021667
 lon -97.04667
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8774770&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8774770&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_rockport
 first t hydrosphere_tide_prediction_time_rockport
 
@@ -4620,7 +4616,7 @@ source noaa_tides_pred_8775132
 ttl 3600
 lat 27.8804
 lon -97.2735
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775132&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775132&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_la_quinta_channel_north
 first t hydrosphere_tide_prediction_time_la_quinta_channel_north
 
@@ -4628,7 +4624,7 @@ source noaa_tides_pred_8775222
 ttl 3600
 lat 27.8461
 lon -97.5207
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775222&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775222&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_viola_turning_basin
 first t hydrosphere_tide_prediction_time_viola_turning_basin
 
@@ -4636,7 +4632,7 @@ source noaa_tides_pred_8775237
 ttl 3600
 lat 27.8397
 lon -97.0725
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775237&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775237&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_aransas
 first t hydrosphere_tide_prediction_time_port_aransas
 
@@ -4644,7 +4640,7 @@ source noaa_tides_pred_8775241
 ttl 3600
 lat 27.8366
 lon -97.0391
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775241&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775241&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_aransas_aransas_pass
 first t hydrosphere_tide_prediction_time_aransas_aransas_pass
 
@@ -4652,7 +4648,7 @@ source noaa_tides_pred_8775283
 ttl 3600
 lat 27.818611
 lon -97.20895
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775283&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775283&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_enbridge_ingleside
 first t hydrosphere_tide_prediction_time_enbridge_ingleside
 
@@ -4660,7 +4656,7 @@ source noaa_tides_pred_8775296
 ttl 3600
 lat 27.8149
 lon -97.3892
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775296&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775296&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_uss_lexington_corpus_christi_b
 first t hydrosphere_tide_prediction_time_uss_lexington_corpus_christi_b
 
@@ -4668,7 +4664,7 @@ source noaa_tides_pred_8775792
 ttl 3600
 lat 27.6333
 lon -97.2367
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775792&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775792&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_packery_channel
 first t hydrosphere_tide_prediction_time_packery_channel
 
@@ -4676,7 +4672,7 @@ source noaa_tides_pred_8776139
 ttl 3600
 lat 27.484362
 lon -97.31811
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8776139&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8776139&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_s._bird_island
 first t hydrosphere_tide_prediction_time_s._bird_island
 
@@ -4684,7 +4680,7 @@ source noaa_tides_pred_8776604
 ttl 3600
 lat 27.297
 lon -97.40517
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8776604&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8776604&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_baffin_bay
 first t hydrosphere_tide_prediction_time_baffin_bay
 
@@ -4692,7 +4688,7 @@ source noaa_tides_pred_8777812
 ttl 3600
 lat 26.801195
 lon -97.47056
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8777812&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8777812&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_rincon_del_san_jose
 first t hydrosphere_tide_prediction_time_rincon_del_san_jose
 
@@ -4700,7 +4696,7 @@ source noaa_tides_pred_8778490
 ttl 3600
 lat 26.557638
 lon -97.42572
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8778490&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8778490&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_mansfield
 first t hydrosphere_tide_prediction_time_port_mansfield
 
@@ -4708,7 +4704,7 @@ source noaa_tides_pred_8779280
 ttl 3600
 lat 26.2624
 lon -97.2853
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8779280&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8779280&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_realitos_peninsula
 first t hydrosphere_tide_prediction_time_realitos_peninsula
 
@@ -4716,7 +4712,7 @@ source noaa_tides_pred_8779748
 ttl 3600
 lat 26.0731
 lon -97.1675
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8779748&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8779748&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_south_padre_island_cg_station
 first t hydrosphere_tide_prediction_time_south_padre_island_cg_station
 
@@ -4724,7 +4720,7 @@ source noaa_tides_pred_8779749
 ttl 3600
 lat 26.0675
 lon -97.1548
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8779749&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8779749&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_spi_brazos_santiago
 first t hydrosphere_tide_prediction_time_spi_brazos_santiago
 
@@ -4732,7 +4728,7 @@ source noaa_tides_pred_8779770
 ttl 3600
 lat 26.061167
 lon -97.21553
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8779770&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8779770&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_isabel
 first t hydrosphere_tide_prediction_time_port_isabel
 
@@ -4740,7 +4736,7 @@ source noaa_tides_pred_9014070
 ttl 3600
 lat 42.621113
 lon -82.526665
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014070&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014070&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_algonac
 first t hydrosphere_tide_prediction_time_algonac
 
@@ -4748,7 +4744,7 @@ source noaa_tides_pred_9014080
 ttl 3600
 lat 42.81222
 lon -82.48556
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014080&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014080&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_st._clair_state_police
 first t hydrosphere_tide_prediction_time_st._clair_state_police
 
@@ -4756,7 +4752,7 @@ source noaa_tides_pred_9014087
 ttl 3600
 lat 42.94528
 lon -82.44334
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014087&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014087&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_dry_dock
 first t hydrosphere_tide_prediction_time_dry_dock
 
@@ -4764,7 +4760,7 @@ source noaa_tides_pred_9014090
 ttl 3600
 lat 42.9738
 lon -82.4204
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_mouth_of_the_black_river
 first t hydrosphere_tide_prediction_time_mouth_of_the_black_river
 
@@ -4772,7 +4768,7 @@ source noaa_tides_pred_9014098
 ttl 3600
 lat 43.0069
 lon -82.4225
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014098&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014098&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_fort_gratiot
 first t hydrosphere_tide_prediction_time_fort_gratiot
 
@@ -4780,7 +4776,7 @@ source noaa_tides_pred_9034052
 ttl 3600
 lat 42.47322
 lon -82.87925
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9034052&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9034052&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_st_clair_shores
 first t hydrosphere_tide_prediction_time_st_clair_shores
 
@@ -4788,7 +4784,7 @@ source noaa_tides_pred_9044020
 ttl 3600
 lat 42.090862
 lon -83.186
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9044020&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9044020&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_gibraltar
 first t hydrosphere_tide_prediction_time_gibraltar
 
@@ -4796,7 +4792,7 @@ source noaa_tides_pred_9044030
 ttl 3600
 lat 42.202305
 lon -83.1475
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9044030&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9044030&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_wyandotte
 first t hydrosphere_tide_prediction_time_wyandotte
 
@@ -4804,7 +4800,7 @@ source noaa_tides_pred_9044036
 ttl 3600
 lat 42.298912
 lon -83.092636
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9044036&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9044036&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_fort_wayne
 first t hydrosphere_tide_prediction_time_fort_wayne
 
@@ -4812,7 +4808,7 @@ source noaa_tides_pred_9044049
 ttl 3600
 lat 42.357777
 lon -82.92995
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9044049&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9044049&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_windmill_point
 first t hydrosphere_tide_prediction_time_windmill_point
 
@@ -4820,7 +4816,7 @@ source noaa_tides_pred_9052000
 ttl 3600
 lat 44.13028
 lon -76.33222
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052000&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_cape_vincent
 first t hydrosphere_tide_prediction_time_cape_vincent
 
@@ -4828,7 +4824,7 @@ source noaa_tides_pred_9052030
 ttl 3600
 lat 43.46417
 lon -76.51183
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052030&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052030&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_oswego
 first t hydrosphere_tide_prediction_time_oswego
 
@@ -4836,7 +4832,7 @@ source noaa_tides_pred_9052058
 ttl 3600
 lat 43.26903
 lon -77.62575
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052058&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052058&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_rochester
 first t hydrosphere_tide_prediction_time_rochester
 
@@ -4844,7 +4840,7 @@ source noaa_tides_pred_9052076
 ttl 3600
 lat 43.33839
 lon -78.72733
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052076&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052076&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_olcott
 first t hydrosphere_tide_prediction_time_olcott
 
@@ -4852,7 +4848,7 @@ source noaa_tides_pred_9063007
 ttl 3600
 lat 43.09992
 lon -79.05991
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063007&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063007&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_ashland_ave
 first t hydrosphere_tide_prediction_time_ashland_ave
 
@@ -4860,7 +4856,7 @@ source noaa_tides_pred_9063009
 ttl 3600
 lat 43.08106
 lon -79.06136
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063009&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063009&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_american_falls
 first t hydrosphere_tide_prediction_time_american_falls
 
@@ -4868,7 +4864,7 @@ source noaa_tides_pred_9063012
 ttl 3600
 lat 43.07689
 lon -79.01403
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063012&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063012&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_niagara_intake
 first t hydrosphere_tide_prediction_time_niagara_intake
 
@@ -4876,7 +4872,7 @@ source noaa_tides_pred_9063020
 ttl 3600
 lat 42.877445
 lon -78.89047
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063020&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063020&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_buffalo
 first t hydrosphere_tide_prediction_time_buffalo
 
@@ -4884,7 +4880,7 @@ source noaa_tides_pred_9063028
 ttl 3600
 lat 42.691307
 lon -79.04733
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063028&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063028&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_sturgeon_point
 first t hydrosphere_tide_prediction_time_sturgeon_point
 
@@ -4892,7 +4888,7 @@ source noaa_tides_pred_9063038
 ttl 3600
 lat 42.15389
 lon -80.075836
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063038&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063038&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_erie_lake_erie
 first t hydrosphere_tide_prediction_time_erie_lake_erie
 
@@ -4900,7 +4896,7 @@ source noaa_tides_pred_9063053
 ttl 3600
 lat 41.75975
 lon -81.28106
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063053&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063053&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_fairport
 first t hydrosphere_tide_prediction_time_fairport
 
@@ -4908,7 +4904,7 @@ source noaa_tides_pred_9063063
 ttl 3600
 lat 41.54086
 lon -81.635475
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063063&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063063&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_cleveland
 first t hydrosphere_tide_prediction_time_cleveland
 
@@ -4916,7 +4912,7 @@ source noaa_tides_pred_9063079
 ttl 3600
 lat 41.54364
 lon -82.73139
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063079&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063079&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_marblehead
 first t hydrosphere_tide_prediction_time_marblehead
 
@@ -4924,7 +4920,7 @@ source noaa_tides_pred_9063085
 ttl 3600
 lat 41.693554
 lon -83.472275
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063085&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063085&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_toledo
 first t hydrosphere_tide_prediction_time_toledo
 
@@ -4932,7 +4928,7 @@ source noaa_tides_pred_9063090
 ttl 3600
 lat 41.96
 lon -83.25667
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_fermi_power_plant
 first t hydrosphere_tide_prediction_time_fermi_power_plant
 
@@ -4940,7 +4936,7 @@ source noaa_tides_pred_9075002
 ttl 3600
 lat 43.141693
 lon -82.49331
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075002&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075002&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_lakeport
 first t hydrosphere_tide_prediction_time_lakeport
 
@@ -4948,7 +4944,7 @@ source noaa_tides_pred_9075014
 ttl 3600
 lat 43.84639
 lon -82.64306
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075014&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075014&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_harbor_beach
 first t hydrosphere_tide_prediction_time_harbor_beach
 
@@ -4956,7 +4952,7 @@ source noaa_tides_pred_9075035
 ttl 3600
 lat 43.6404
 lon -83.8468
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075035&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075035&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_essexville
 first t hydrosphere_tide_prediction_time_essexville
 
@@ -4964,7 +4960,7 @@ source noaa_tides_pred_9075065
 ttl 3600
 lat 45.063
 lon -83.4286
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075065&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075065&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_alpena
 first t hydrosphere_tide_prediction_time_alpena
 
@@ -4972,7 +4968,7 @@ source noaa_tides_pred_9075080
 ttl 3600
 lat 45.77722
 lon -84.72111
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075080&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075080&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_mackinaw_city
 first t hydrosphere_tide_prediction_time_mackinaw_city
 
@@ -4980,7 +4976,7 @@ source noaa_tides_pred_9075099
 ttl 3600
 lat 45.9925
 lon -83.8982
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075099&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075099&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_de_tour_village
 first t hydrosphere_tide_prediction_time_de_tour_village
 
@@ -4988,7 +4984,7 @@ source noaa_tides_pred_9076024
 ttl 3600
 lat 46.264805
 lon -84.19119
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9076024&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9076024&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_rock_cut
 first t hydrosphere_tide_prediction_time_rock_cut
 
@@ -4996,7 +4992,7 @@ source noaa_tides_pred_9076027
 ttl 3600
 lat 46.28469
 lon -84.20981
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9076027&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9076027&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_west_neebish_island
 first t hydrosphere_tide_prediction_time_west_neebish_island
 
@@ -5004,7 +5000,7 @@ source noaa_tides_pred_9076033
 ttl 3600
 lat 46.485832
 lon -84.30167
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9076033&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9076033&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_little_rapids
 first t hydrosphere_tide_prediction_time_little_rapids
 
@@ -5012,7 +5008,7 @@ source noaa_tides_pred_9076060
 ttl 3600
 lat 46.500805
 lon -84.34036
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9076060&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9076060&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_u.s._slip
 first t hydrosphere_tide_prediction_time_u.s._slip
 
@@ -5020,7 +5016,7 @@ source noaa_tides_pred_9076070
 ttl 3600
 lat 46.50111
 lon -84.37261
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9076070&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9076070&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_s.w._pier_st._marys_river
 first t hydrosphere_tide_prediction_time_s.w._pier_st._marys_river
 
@@ -5028,7 +5024,7 @@ source noaa_tides_pred_9087023
 ttl 3600
 lat 43.94736
 lon -86.4415
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087023&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087023&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_ludington
 first t hydrosphere_tide_prediction_time_ludington
 
@@ -5036,7 +5032,7 @@ source noaa_tides_pred_9087031
 ttl 3600
 lat 42.773335
 lon -86.212776
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087031&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087031&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_holland
 first t hydrosphere_tide_prediction_time_holland
 
@@ -5044,7 +5040,7 @@ source noaa_tides_pred_9087044
 ttl 3600
 lat 41.72972
 lon -87.53833
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087044&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087044&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_calumet_harbor
 first t hydrosphere_tide_prediction_time_calumet_harbor
 
@@ -5052,7 +5048,7 @@ source noaa_tides_pred_9087057
 ttl 3600
 lat 43.001972
 lon -87.88764
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087057&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087057&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_milwaukee
 first t hydrosphere_tide_prediction_time_milwaukee
 
@@ -5060,7 +5056,7 @@ source noaa_tides_pred_9087068
 ttl 3600
 lat 44.46389
 lon -87.50103
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087068&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087068&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_kewaunee_lake_michigan
 first t hydrosphere_tide_prediction_time_kewaunee_lake_michigan
 
@@ -5068,7 +5064,7 @@ source noaa_tides_pred_9087072
 ttl 3600
 lat 44.794693
 lon -87.31392
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087072&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087072&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_sturgeon_bay_canal
 first t hydrosphere_tide_prediction_time_sturgeon_bay_canal
 
@@ -5076,7 +5072,7 @@ source noaa_tides_pred_9087077
 ttl 3600
 lat 44.539024
 lon -88.00106
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087077&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087077&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_green_bay_east
 first t hydrosphere_tide_prediction_time_green_bay_east
 
@@ -5084,7 +5080,7 @@ source noaa_tides_pred_9087088
 ttl 3600
 lat 45.09589
 lon -87.58994
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087088&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087088&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_menominee
 first t hydrosphere_tide_prediction_time_menominee
 
@@ -5092,7 +5088,7 @@ source noaa_tides_pred_9087096
 ttl 3600
 lat 45.96989
 lon -85.8715
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087096&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087096&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_inland
 first t hydrosphere_tide_prediction_time_port_inland
 
@@ -5100,7 +5096,7 @@ source noaa_tides_pred_9099004
 ttl 3600
 lat 46.484444
 lon -84.63084
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099004&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099004&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_point_iroquois
 first t hydrosphere_tide_prediction_time_point_iroquois
 
@@ -5108,7 +5104,7 @@ source noaa_tides_pred_9099018
 ttl 3600
 lat 46.545555
 lon -87.37861
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099018&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099018&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_marquette_c.g.
 first t hydrosphere_tide_prediction_time_marquette_c.g.
 
@@ -5116,7 +5112,7 @@ source noaa_tides_pred_9099044
 ttl 3600
 lat 46.874443
 lon -89.324165
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099044&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099044&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_ontonagon
 first t hydrosphere_tide_prediction_time_ontonagon
 
@@ -5124,7 +5120,7 @@ source noaa_tides_pred_9099064
 ttl 3600
 lat 46.77575
 lon -92.092026
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099064&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099064&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_duluth
 first t hydrosphere_tide_prediction_time_duluth
 
@@ -5132,7 +5128,7 @@ source noaa_tides_pred_9099090
 ttl 3600
 lat 47.748554
 lon -90.34128
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_grand_marais_lake_superior
 first t hydrosphere_tide_prediction_time_grand_marais_lake_superior
 
@@ -5140,7 +5136,7 @@ source noaa_tides_pred_9410170
 ttl 3600
 lat 32.715557
 lon -117.17667
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410170&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410170&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_san_diego
 first t hydrosphere_tide_prediction_time_san_diego
 
@@ -5148,7 +5144,7 @@ source noaa_tides_pred_9410230
 ttl 3600
 lat 32.86689
 lon -117.25714
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410230&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410230&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_la_jolla
 first t hydrosphere_tide_prediction_time_la_jolla
 
@@ -5156,7 +5152,7 @@ source noaa_tides_pred_9410660
 ttl 3600
 lat 33.72
 lon -118.272
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410660&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410660&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_los_angeles
 first t hydrosphere_tide_prediction_time_los_angeles
 
@@ -5164,7 +5160,7 @@ source noaa_tides_pred_9410840
 ttl 3600
 lat 34.0083
 lon -118.5
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410840&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410840&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_santa_monica
 first t hydrosphere_tide_prediction_time_santa_monica
 
@@ -5172,7 +5168,7 @@ source noaa_tides_pred_9411340
 ttl 3600
 lat 34.40459
 lon -119.6925
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9411340&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9411340&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_santa_barbara
 first t hydrosphere_tide_prediction_time_santa_barbara
 
@@ -5180,7 +5176,7 @@ source noaa_tides_pred_9412110
 ttl 3600
 lat 35.168888
 lon -120.754166
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9412110&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9412110&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_san_luis
 first t hydrosphere_tide_prediction_time_port_san_luis
 
@@ -5188,7 +5184,7 @@ source noaa_tides_pred_9413450
 ttl 3600
 lat 36.60889
 lon -121.89139
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9413450&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9413450&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_monterey
 first t hydrosphere_tide_prediction_time_monterey
 
@@ -5196,7 +5192,7 @@ source noaa_tides_pred_9414290
 ttl 3600
 lat 37.806305
 lon -122.46589
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414290&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414290&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_san_francisco
 first t hydrosphere_tide_prediction_time_san_francisco
 
@@ -5204,7 +5200,7 @@ source noaa_tides_pred_9414523
 ttl 3600
 lat 37.506813
 lon -122.21191
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414523&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414523&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_redwood_city
 first t hydrosphere_tide_prediction_time_redwood_city
 
@@ -5212,7 +5208,7 @@ source noaa_tides_pred_9414750
 ttl 3600
 lat 37.771954
 lon -122.30026
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414750&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414750&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_alameda
 first t hydrosphere_tide_prediction_time_alameda
 
@@ -5220,7 +5216,7 @@ source noaa_tides_pred_9414863
 ttl 3600
 lat 37.9283
 lon -122.4
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414863&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414863&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_richmond
 first t hydrosphere_tide_prediction_time_richmond
 
@@ -5228,7 +5224,7 @@ source noaa_tides_pred_9415020
 ttl 3600
 lat 37.994167
 lon -122.97361
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9415020&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9415020&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_point_reyes
 first t hydrosphere_tide_prediction_time_point_reyes
 
@@ -5236,7 +5232,7 @@ source noaa_tides_pred_9415102
 ttl 3600
 lat 38.034637
 lon -122.12519
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9415102&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9415102&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_martinez-amorco_pier
 first t hydrosphere_tide_prediction_time_martinez-amorco_pier
 
@@ -5244,7 +5240,7 @@ source noaa_tides_pred_9415144
 ttl 3600
 lat 38.056
 lon -122.0395
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9415144&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9415144&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_chicago
 first t hydrosphere_tide_prediction_time_port_chicago
 
@@ -5252,7 +5248,7 @@ source noaa_tides_pred_9416131
 ttl 3600
 lat 38.56225
 lon -121.5463
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416131&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416131&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_of_west_sacramento_washin
 first t hydrosphere_tide_prediction_time_port_of_west_sacramento_washin
 
@@ -5260,7 +5256,7 @@ source noaa_tides_pred_9416841
 ttl 3600
 lat 38.914555
 lon -123.71108
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416841&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416841&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_arena_cove
 first t hydrosphere_tide_prediction_time_arena_cove
 
@@ -5268,7 +5264,7 @@ source noaa_tides_pred_9418767
 ttl 3600
 lat 40.766907
 lon -124.21735
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9418767&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9418767&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_north_spit
 first t hydrosphere_tide_prediction_time_north_spit
 
@@ -5276,7 +5272,7 @@ source noaa_tides_pred_9419750
 ttl 3600
 lat 41.74561
 lon -124.18439
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9419750&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9419750&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_crescent_city
 first t hydrosphere_tide_prediction_time_crescent_city
 
@@ -5284,7 +5280,7 @@ source noaa_tides_pred_9431647
 ttl 3600
 lat 42.739
 lon -124.4983
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9431647&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9431647&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_orford
 first t hydrosphere_tide_prediction_time_port_orford
 
@@ -5292,7 +5288,7 @@ source noaa_tides_pred_9432780
 ttl 3600
 lat 43.345
 lon -124.322
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9432780&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9432780&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_charleston
 first t hydrosphere_tide_prediction_time_charleston
 
@@ -5300,7 +5296,7 @@ source noaa_tides_pred_9435380
 ttl 3600
 lat 44.625446
 lon -124.044945
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9435380&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9435380&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_south_beach
 first t hydrosphere_tide_prediction_time_south_beach
 
@@ -5308,7 +5304,7 @@ source noaa_tides_pred_9437540
 ttl 3600
 lat 45.55453
 lon -123.918945
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9437540&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9437540&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_garibaldi
 first t hydrosphere_tide_prediction_time_garibaldi
 
@@ -5316,7 +5312,7 @@ source noaa_tides_pred_9439040
 ttl 3600
 lat 46.207306
 lon -123.7683
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9439040&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9439040&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_astoria
 first t hydrosphere_tide_prediction_time_astoria
 
@@ -5324,7 +5320,7 @@ source noaa_tides_pred_9439099
 ttl 3600
 lat 46.16
 lon -123.405
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9439099&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9439099&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_wauna
 first t hydrosphere_tide_prediction_time_wauna
 
@@ -5332,7 +5328,7 @@ source noaa_tides_pred_9439201
 ttl 3600
 lat 45.865
 lon -122.797
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9439201&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9439201&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_st_helens
 first t hydrosphere_tide_prediction_time_st_helens
 
@@ -5340,7 +5336,7 @@ source noaa_tides_pred_9440083
 ttl 3600
 lat 45.631172
 lon -122.69577
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440083&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440083&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_vancouver
 first t hydrosphere_tide_prediction_time_vancouver
 
@@ -5348,7 +5344,7 @@ source noaa_tides_pred_9440357
 ttl 3600
 lat 45.9867
 lon -122.8367
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440357&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440357&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_temco_kalama_terminal
 first t hydrosphere_tide_prediction_time_temco_kalama_terminal
 
@@ -5356,7 +5352,7 @@ source noaa_tides_pred_9440422
 ttl 3600
 lat 46.1061
 lon -122.9542
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440422&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440422&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_longview
 first t hydrosphere_tide_prediction_time_longview
 
@@ -5364,7 +5360,7 @@ source noaa_tides_pred_9440569
 ttl 3600
 lat 46.270306
 lon -123.4565
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440569&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440569&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_skamokawa
 first t hydrosphere_tide_prediction_time_skamokawa
 
@@ -5372,7 +5368,7 @@ source noaa_tides_pred_9440581
 ttl 3600
 lat 46.28103
 lon -124.04628
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440581&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440581&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_cape_disappointment
 first t hydrosphere_tide_prediction_time_cape_disappointment
 
@@ -5380,7 +5376,7 @@ source noaa_tides_pred_9440910
 ttl 3600
 lat 46.7075
 lon -123.96694
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440910&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440910&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_toke_point
 first t hydrosphere_tide_prediction_time_toke_point
 
@@ -5388,7 +5384,7 @@ source noaa_tides_pred_9441102
 ttl 3600
 lat 46.90431
 lon -124.10508
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9441102&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9441102&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_westport
 first t hydrosphere_tide_prediction_time_westport
 
@@ -5396,7 +5392,7 @@ source noaa_tides_pred_9442396
 ttl 3600
 lat 47.912838
 lon -124.63574
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9442396&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9442396&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_la_push_quillayute_river
 first t hydrosphere_tide_prediction_time_la_push_quillayute_river
 
@@ -5404,7 +5400,7 @@ source noaa_tides_pred_9443090
 ttl 3600
 lat 48.370724
 lon -124.601585
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9443090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9443090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_neah_bay
 first t hydrosphere_tide_prediction_time_neah_bay
 
@@ -5412,7 +5408,7 @@ source noaa_tides_pred_9444090
 ttl 3600
 lat 48.125
 lon -123.44
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_angeles
 first t hydrosphere_tide_prediction_time_port_angeles
 
@@ -5420,7 +5416,7 @@ source noaa_tides_pred_9444900
 ttl 3600
 lat 48.11122
 lon -122.759674
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444900&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444900&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_townsend
 first t hydrosphere_tide_prediction_time_port_townsend
 
@@ -5428,7 +5424,7 @@ source noaa_tides_pred_9445958
 ttl 3600
 lat 47.5617
 lon -122.623
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9445958&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9445958&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_bremerton
 first t hydrosphere_tide_prediction_time_bremerton
 
@@ -5436,7 +5432,7 @@ source noaa_tides_pred_9446484
 ttl 3600
 lat 47.2667
 lon -122.4133
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9446484&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9446484&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_tacoma
 first t hydrosphere_tide_prediction_time_tacoma
 
@@ -5444,7 +5440,7 @@ source noaa_tides_pred_9447130
 ttl 3600
 lat 47.60264
 lon -122.3393
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9447130&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9447130&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_seattle
 first t hydrosphere_tide_prediction_time_seattle
 
@@ -5452,7 +5448,7 @@ source noaa_tides_pred_9449424
 ttl 3600
 lat 48.862717
 lon -122.75858
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9449424&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9449424&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_cherry_point
 first t hydrosphere_tide_prediction_time_cherry_point
 
@@ -5460,7 +5456,7 @@ source noaa_tides_pred_9449880
 ttl 3600
 lat 48.545277
 lon -123.0125
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9449880&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9449880&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_friday_harbor
 first t hydrosphere_tide_prediction_time_friday_harbor
 
@@ -5468,7 +5464,7 @@ source noaa_tides_pred_9450460
 ttl 3600
 lat 55.331944
 lon -131.62611
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9450460&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9450460&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_ketchikan
 first t hydrosphere_tide_prediction_time_ketchikan
 
@@ -5476,7 +5472,7 @@ source noaa_tides_pred_9451054
 ttl 3600
 lat 56.2467
 lon -134.647
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451054&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451054&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_alexander
 first t hydrosphere_tide_prediction_time_port_alexander
 
@@ -5484,7 +5480,7 @@ source noaa_tides_pred_9451600
 ttl 3600
 lat 57.051693
 lon -135.342
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451600&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451600&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_sitka
 first t hydrosphere_tide_prediction_time_sitka
 
@@ -5492,7 +5488,7 @@ source noaa_tides_pred_9452210
 ttl 3600
 lat 58.2988
 lon -134.4106
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452210&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452210&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_juneau
 first t hydrosphere_tide_prediction_time_juneau
 
@@ -5500,7 +5496,7 @@ source noaa_tides_pred_9452400
 ttl 3600
 lat 59.4508
 lon -135.328
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452400&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452400&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_skagway_taiya_inlet
 first t hydrosphere_tide_prediction_time_skagway_taiya_inlet
 
@@ -5508,7 +5504,7 @@ source noaa_tides_pred_9452634
 ttl 3600
 lat 58.19472
 lon -136.34694
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452634&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452634&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_elfin_cove
 first t hydrosphere_tide_prediction_time_elfin_cove
 
@@ -5516,7 +5512,7 @@ source noaa_tides_pred_9453220
 ttl 3600
 lat 59.5485
 lon -139.7334
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9453220&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9453220&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_yakutat_yakutat_bay
 first t hydrosphere_tide_prediction_time_yakutat_yakutat_bay
 
@@ -5524,7 +5520,7 @@ source noaa_tides_pred_9454050
 ttl 3600
 lat 60.5583
 lon -145.753
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9454050&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9454050&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_cordova
 first t hydrosphere_tide_prediction_time_cordova
 
@@ -5532,7 +5528,7 @@ source noaa_tides_pred_9454240
 ttl 3600
 lat 61.125
 lon -146.362
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9454240&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9454240&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_valdez
 first t hydrosphere_tide_prediction_time_valdez
 
@@ -5540,7 +5536,7 @@ source noaa_tides_pred_9455090
 ttl 3600
 lat 60.1193
 lon -149.42812
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455090&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_seward
 first t hydrosphere_tide_prediction_time_seward
 
@@ -5548,7 +5544,7 @@ source noaa_tides_pred_9455500
 ttl 3600
 lat 59.4405
 lon -151.7199
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455500&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455500&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_seldovia
 first t hydrosphere_tide_prediction_time_seldovia
 
@@ -5556,7 +5552,7 @@ source noaa_tides_pred_9455760
 ttl 3600
 lat 60.6833
 lon -151.398
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455760&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455760&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_nikiski
 first t hydrosphere_tide_prediction_time_nikiski
 
@@ -5564,7 +5560,7 @@ source noaa_tides_pred_9455920
 ttl 3600
 lat 61.2375
 lon -149.8904
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455920&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455920&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_anchorage
 first t hydrosphere_tide_prediction_time_anchorage
 
@@ -5572,7 +5568,7 @@ source noaa_tides_pred_9457292
 ttl 3600
 lat 57.7317
 lon -152.512
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457292&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457292&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_kodiak_island
 first t hydrosphere_tide_prediction_time_kodiak_island
 
@@ -5580,7 +5576,7 @@ source noaa_tides_pred_9457804
 ttl 3600
 lat 56.89739
 lon -154.248
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457804&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457804&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_alitak
 first t hydrosphere_tide_prediction_time_alitak
 
@@ -5588,7 +5584,7 @@ source noaa_tides_pred_9459450
 ttl 3600
 lat 55.331722
 lon -160.50433
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459450&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459450&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_sand_point
 first t hydrosphere_tide_prediction_time_sand_point
 
@@ -5596,7 +5592,7 @@ source noaa_tides_pred_9459881
 ttl 3600
 lat 55.05989
 lon -162.32611
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459881&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459881&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_king_cove
 first t hydrosphere_tide_prediction_time_king_cove
 
@@ -5604,7 +5600,7 @@ source noaa_tides_pred_9461380
 ttl 3600
 lat 51.860638
 lon -176.63759
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461380&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461380&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_adak_island
 first t hydrosphere_tide_prediction_time_adak_island
 
@@ -5612,7 +5608,7 @@ source noaa_tides_pred_9461710
 ttl 3600
 lat 52.231945
 lon -174.1725
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461710&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461710&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_atka
 first t hydrosphere_tide_prediction_time_atka
 
@@ -5620,7 +5616,7 @@ source noaa_tides_pred_9462450
 ttl 3600
 lat 52.94061
 lon -168.8713
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462450&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462450&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_nikolski
 first t hydrosphere_tide_prediction_time_nikolski
 
@@ -5628,7 +5624,7 @@ source noaa_tides_pred_9462620
 ttl 3600
 lat 53.879196
 lon -166.5403
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462620&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462620&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_unalaska
 first t hydrosphere_tide_prediction_time_unalaska
 
@@ -5636,7 +5632,7 @@ source noaa_tides_pred_9463502
 ttl 3600
 lat 55.985832
 lon -160.57361
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9463502&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9463502&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_port_moller
 first t hydrosphere_tide_prediction_time_port_moller
 
@@ -5644,7 +5640,7 @@ source noaa_tides_pred_9464212
 ttl 3600
 lat 57.1253
 lon -170.2852
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9464212&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9464212&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_village_cove_st_paul_island
 first t hydrosphere_tide_prediction_time_village_cove_st_paul_island
 
@@ -5652,7 +5648,7 @@ source noaa_tides_pred_9468333
 ttl 3600
 lat 63.875
 lon -160.788
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468333&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468333&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_unalakleet
 first t hydrosphere_tide_prediction_time_unalakleet
 
@@ -5660,7 +5656,7 @@ source noaa_tides_pred_9468756
 ttl 3600
 lat 64.49461
 lon -165.43964
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468756&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468756&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_nome_norton_sound
 first t hydrosphere_tide_prediction_time_nome_norton_sound
 
@@ -5668,7 +5664,7 @@ source noaa_tides_pred_9491094
 ttl 3600
 lat 67.575806
 lon -164.06439
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9491094&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9491094&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_red_dog_dock
 first t hydrosphere_tide_prediction_time_red_dog_dock
 
@@ -5676,7 +5672,7 @@ source noaa_tides_pred_9497645
 ttl 3600
 lat 70.41139
 lon -148.53166
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9497645&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9497645&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_prudhoe_bay
 first t hydrosphere_tide_prediction_time_prudhoe_bay
 
@@ -5684,7 +5680,7 @@ source noaa_tides_pred_9751364
 ttl 3600
 lat 17.747694
 lon -64.69839
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751364&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751364&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_christiansted_harbor_st_croix
 first t hydrosphere_tide_prediction_time_christiansted_harbor_st_croix
 
@@ -5692,7 +5688,7 @@ source noaa_tides_pred_9751381
 ttl 3600
 lat 18.31825
 lon -64.72422
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751381&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751381&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_lameshur_bay_st_john
 first t hydrosphere_tide_prediction_time_lameshur_bay_st_john
 
@@ -5700,7 +5696,7 @@ source noaa_tides_pred_9751401
 ttl 3600
 lat 17.6947
 lon -64.7538
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751401&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751401&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_limetree_bay
 first t hydrosphere_tide_prediction_time_limetree_bay
 
@@ -5708,7 +5704,7 @@ source noaa_tides_pred_9751639
 ttl 3600
 lat 18.330584
 lon -64.925804
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751639&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751639&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_charlotte_amalie
 first t hydrosphere_tide_prediction_time_charlotte_amalie
 
@@ -5716,7 +5712,7 @@ source noaa_tides_pred_9752235
 ttl 3600
 lat 18.300861
 lon -65.302475
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9752235&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9752235&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_culebra
 first t hydrosphere_tide_prediction_time_culebra
 
@@ -5724,7 +5720,7 @@ source noaa_tides_pred_9752621
 ttl 3600
 lat 18.152527
 lon -65.4438
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9752621&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9752621&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_isabel_segunda_vieques_island
 first t hydrosphere_tide_prediction_time_isabel_segunda_vieques_island
 
@@ -5732,7 +5728,7 @@ source noaa_tides_pred_9752695
 ttl 3600
 lat 18.09386
 lon -65.47136
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9752695&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9752695&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_esperanza_vieques_island
 first t hydrosphere_tide_prediction_time_esperanza_vieques_island
 
@@ -5740,7 +5736,7 @@ source noaa_tides_pred_9753216
 ttl 3600
 lat 18.335278
 lon -65.63111
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_fajardo
 first t hydrosphere_tide_prediction_time_fajardo
 
@@ -5748,7 +5744,7 @@ source noaa_tides_pred_9754229
 ttl 3600
 lat 18.055084
 lon -65.833
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9754229&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9754229&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_yabucoa_harbor
 first t hydrosphere_tide_prediction_time_yabucoa_harbor
 
@@ -5756,7 +5752,7 @@ source noaa_tides_pred_9755371
 ttl 3600
 lat 18.458944
 lon -66.11642
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9755371&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9755371&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_san_juan_la_puntilla_san_juan_
 first t hydrosphere_tide_prediction_time_san_juan_la_puntilla_san_juan_
 
@@ -5764,7 +5760,7 @@ source noaa_tides_pred_9755968
 ttl 3600
 lat 17.949083
 lon -66.225945
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9755968&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9755968&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_salinas_bahia_de_jobos
 first t hydrosphere_tide_prediction_time_salinas_bahia_de_jobos
 
@@ -5772,7 +5768,7 @@ source noaa_tides_pred_9757811
 ttl 3600
 lat 18.480528
 lon -66.70236
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_arecibo
 first t hydrosphere_tide_prediction_time_arecibo
 
@@ -5780,7 +5776,7 @@ source noaa_tides_pred_9758066
 ttl 3600
 lat 18.005861
 lon -66.76661
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9758066&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9758066&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_guayanilla_bahia_de_guayanilla
 first t hydrosphere_tide_prediction_time_guayanilla_bahia_de_guayanilla
 
@@ -5788,7 +5784,7 @@ source noaa_tides_pred_9759110
 ttl 3600
 lat 17.970112
 lon -67.04639
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759110&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759110&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_magueyes_island
 first t hydrosphere_tide_prediction_time_magueyes_island
 
@@ -5796,7 +5792,7 @@ source noaa_tides_pred_9759394
 ttl 3600
 lat 18.218834
 lon -67.162445
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759394&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759394&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_mayaguez
 first t hydrosphere_tide_prediction_time_mayaguez
 
@@ -5804,7 +5800,7 @@ source noaa_tides_pred_9759413
 ttl 3600
 lat 18.456638
 lon -67.16458
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759413&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759413&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_aguadilla_crashboat_beach
 first t hydrosphere_tide_prediction_time_aguadilla_crashboat_beach
 
@@ -5812,7 +5808,7 @@ source noaa_tides_pred_9759938
 ttl 3600
 lat 18.089289
 lon -67.93821
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759938&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759938&product=predictions&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today_nodashes}&end_date={tomorrow_nodashes}&interval=hilo
 first v hydrosphere_tide_prediction_m_mona_island
 first t hydrosphere_tide_prediction_time_mona_island
 
@@ -6268,7 +6264,7 @@ field value.0.SPEC_PROCESSED_NB biosphere_influenza_specimens_global
 
 source wikipedia_pageviews_total
 ttl 86400
-url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday}/{yesterday}
+url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
 path items.0.views social_wikipedia_pageviews_daily
 
 source woudc_total_ozone
@@ -6442,11 +6438,6 @@ source unhcr_displacement
 ttl 2592000
 url https://api.unhcr.org/population/v1/population/?limit=1&yearFrom=2024&yearTo=2024&coo_all=true&coa_all=true
 sum individuals social_global_displaced_persons
-
-
-# ==========================================
-# ORBITAL & KOSMISCH (Lücken)
-# ==========================================
 
 source vostok_icecore
 ttl 2592000

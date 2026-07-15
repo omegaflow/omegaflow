@@ -1,4 +1,4 @@
-# omegaflow — System Architecture (v6)
+# omegaflow — System Architecture (v1)
 
 This document describes the agnostic, purely kybernetic architecture of omegaflow.
 It maps exactly to the source files: `src/main.rs`, `static/index.html`, and `static/constants.js`.
