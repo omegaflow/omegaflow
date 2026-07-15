@@ -1,39 +1,29 @@
 ---
-description: omegaflow project conventions — stack, formats, model routing, hardware constraints
+description: omegaflow project conventions — stack, formats, hardware context
 ---
 
 # Project Conventions: omegaflow
 
-This file complements `omegaflow-gremium.md` (Identity/Heuristics) with
-technical facts to guide code proposals.
+This file complements `omegaflow-gremium.md` (Identity/Heuristics).
 
 ## Stack
 
-- **Language/Runtime:** Rust (Edition 2024), Cargo project (`Cargo.toml`,
-  package name `omegaflow`, license CC-BY-NC-SA-4.0).
-- **Frontend:** Vanilla JS (ES modules, `export const` / `export function`),
-  no framework, no bundler — proposals work without npm dependencies.
-- **Protocol:** Binary custom format over WebSocket (`DataView`,
-  Little-Endian, `Float64`/`Uint32`/`Uint8` fields). Magic bytes `0xCF 0x86`
-  + version byte appear in the deserializer — when changing the binary format,
-  ALWAYS keep encoder (Rust) and decoder (JS) in sync.
-- **Constants:** Golden ratio (`Φ = 1.618...`), speed of light,
-  WGS84 ellipsoid parameters, J2000 epoch — the project works with
-  physical/geodetic quantities.
+- Rust (Edition 2024), Cargo project, license CC-BY-NC-SA-4.0.
+- Vanilla JS (ES modules), no framework, no bundler, no npm dependencies.
+- Binary custom protocol over WebSocket (Little-Endian, DataView, Float64/Uint32/Uint8).
+  Magic bytes 0xCF 0x86 + version byte. Encoder (Rust) and decoder (JS) stay in sync.
+- Physical/geodetic constants: Φ, C, WGS84, J2000.
 
-## File Formats & Naming Conventions
+## Nomenclature
 
-- `*.φ` files (e.g. `sources.φ`) are project-specific, non-standardized formats.
-- Greek identifiers (`φ`, `ω`, `Φ`, `τ`, `Δt`) are deliberate variable names
-  in the code — preserve them during refactoring.
+- `*.φ` files are project-specific formats.
+- Greek identifiers (φ, ω, Φ, τ, Δt) are deliberate variable names — preserve them.
+- The system has Oscillators (ring buffers that accumulate) and Membranes (permeability regulation).
+- The Aperture (0.0 to 1.0) governs how permeable a membrane is.
+- PHI scales all adaptive intervals: tick rates, topology ring sizes, cache TTLs, probe timing.
 
 ## Hardware Context
 
-- Keep proposals lightweight. The machine is the bottleneck.
+- The machine is a Dell XPS 13 9350 (2016, i5, 8GB RAM, no dedicated GPU).
+- Local models run on CPU. Keep tooling lightweight.
 - Reference specific files rather than broad repo-wide queries.
-
-## The System
-
-- The system consists of Oscillators and Membranes.
-- The Aperture regulates permeability.
-- It measures, decays, and adapts.
