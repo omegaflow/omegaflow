@@ -1,0 +1,6 @@
+[1784134679] DISTRESS: REJECTION: InvalidAccessError: Failed to execute 'start' on 'PresentationRequest': PresentationRequest::start() requires user gesture.
+[1784134679] DISTRESS: REJECTION: NotAllowedError: Idle detection permission denied
+[1784134679] DISTRESS: REJECTION: ReferenceError: stableTick is not defined
+[1784136302] DISTRESS: REJECTION: InvalidAccessError: Failed to execute 'start' on 'PresentationRequest': PresentationRequest::start() requires user gesture.
+[1784136302] DISTRESS: REJECTION: NotAllowedError: Idle detection permission denied
+[1784136302] DISTRESS: REJECTION: ReferenceError: stableTick is not defined
