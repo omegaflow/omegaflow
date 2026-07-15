@@ -1,20 +1,8 @@
-# Rust build artifacts
 target/
-
-# Environment variables
 .env
-
-# OS/Editor backups
 *.bak
 *.swp
 .DS_Store
-
-is/immunity.is
-is/epigenome.is
-home/
-temp/
-
-# Continue.dev IDE configs
 .continue/
 .continueignore
 
