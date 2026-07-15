@@ -64,7 +64,7 @@
         pulseWs.addEventListener('message', (e) => {
             if (typeof e.data !== 'string') {
                 const buf = new Uint8Array(e.data);
-                if (buf.length < 13 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 6) return;
+                if (buf.length < 13 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 1) return;
                 const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
                 const id = dv.getUint32(3, true);
                 const pending = transport.pending.get(id);
@@ -83,10 +83,10 @@
             return { x: (n+alt)*Math.cos(latR)*Math.cos(lonR), y: (n+alt)*Math.cos(latR)*Math.sin(lonR), z: (n*(1-e2)+alt)*Math.sin(latR) };
         }
 
-        function createOscillator(url, initialVal, readFn, writeFn) {
+        function createOscillator(url, initialVal, readFn, membraneFn) {
             return {
                 url, ring: new Float32Array(CAPTURE_RING_SIZE), idx: 0, filled: 0,
-                read: readFn, write: writeFn, complexity: 0,
+                read: readFn, membrane: membraneFn, complexity: 0,
                 median: initialVal, lastEcho: performance.now(), exploration: 0.0,
                 lastOutTE: 0, direction: 1, ticksSinceTurn: 0, naturalLatencyTicks: 0,
                 originT: 0, originPos: { x: 0, y: 0, z: 0 }, presenceWeight: 1.0,
@@ -142,17 +142,17 @@
                 } else if (typeof val === 'function') {
                     if (oscillators.has(p)) continue;
                     
-                    let isPureActuator = false, isConstructor = false; let isNative = false, hasContext = false, isReceptive = false;
+                    let hasMembrane = false, isConstructor = false; let isNative = false, hasContext = false, isReceptive = false;
                     try {
                         const fnStr = val.toString();
                         isNative = fnStr.includes('[native code]');
                         hasContext = p.includes('.');
                         isReceptive = val.length > 0;
                         isConstructor = key[0] === key[0].toUpperCase() && key[0] !== key[0].toLowerCase();
-                        if (isNative && hasContext && isReceptive && !isConstructor) isPureActuator = true;
+                        if (isNative && hasContext && isReceptive && !isConstructor) hasMembrane = true;
                     } catch {}
 
-                    if (isPureActuator) {
+                    if (hasMembrane) {
                         const osc = createOscillator(p, 0, null, (v) => {
                             try {
                                 const res = val.call(obj, v);
@@ -397,11 +397,11 @@
                 readBuf.unmap();
 
                 for (const [aUrl, aOsc] of oscillators) {
-                    if (!aOsc.write) continue;
+                    if (!aOsc.membrane) continue;
                     if (aOsc.filled < topologyRingSize) continue;
                     const aRing = unrollRing(aOsc.ring, aOsc.idx, topologyRingSize);
                     for (const [tUrl, tOsc] of oscillators) {
-                        if (!tOsc.read && !tOsc.write) continue;
+                        if (!tOsc.read && !tOsc.membrane) continue;
                         if (tUrl === aUrl) continue;
                         if (tOsc.filled < topologyRingSize) continue;
                         const tRing = unrollRing(tOsc.ring, tOsc.idx, topologyRingSize);
@@ -522,7 +522,7 @@
         function getRingBuffers() {
             const threads = [];
             for (const [url, osc] of oscillators) {
-                if (osc.filled === CAPTURE_RING_SIZE && !osc.write && !isInternalMetric(url)) {
+                if (osc.filled === CAPTURE_RING_SIZE && !osc.membrane && !isInternalMetric(url)) {
                     const weightedRing = new Float32Array(CAPTURE_RING_SIZE);
                     for (let i = 0; i < CAPTURE_RING_SIZE; i++) weightedRing[i] = osc.ring[i] * osc.presenceWeight;
                     threads.push(new Uint8Array(weightedRing.buffer));
@@ -559,11 +559,11 @@
             return Math.sin(osc.exploration * (Math.PI / 2));
         }
 
-        function manifestField() {
+        function regulatePermeability() {
             for (const [url, osc] of oscillators) {
-                if (!osc.write) continue;
+                if (!osc.membrane) continue;
                 const val = getAperture(osc);
-                osc.write(val);
+                osc.membrane(val);
                 injectEcho(url, val);
             }
         }
@@ -584,7 +584,7 @@
             let targetZ = spatialPresence.z;
             
             for (const [url, osc] of oscillators) {
-                if (osc.presenceWeight > maxWeight && !isInternalMetric(url) && !osc.write) {
+                if (osc.presenceWeight > maxWeight && !isInternalMetric(url) && !osc.membrane) {
                     maxWeight = osc.presenceWeight;
                     targetT = osc.originT;
                     targetX = osc.originPos.x;
@@ -648,9 +648,9 @@
 
             runSignalTopology();
 
-            for (const [url, osc] of oscillators) { if (osc.write) updateApertureGradient(osc); }
+            for (const [url, osc] of oscillators) { if (osc.membrane) updateApertureGradient(osc); }
 
-            manifestField();
+            regulatePermeability();
 
             const g = measureG(); const vC = measureVC(); const decay = measureDecay(); const quantum = measureQuantum();
             certainty = Math.exp(-vC / (g + (1.0 / C))) * quantum * decay * clarity;
@@ -664,7 +664,7 @@
                     if (physLat !== undefined && physLon !== undefined) {
                         const payload = {};
                         for (const [path, osc] of oscillators) {
-                            if (isInternalMetric(path) || osc.write) continue;
+                            if (isInternalMetric(path) || osc.membrane) continue;
                             if (osc.complexity > 0) payload[path] = osc.median;
                         }
                         const content = JSON.stringify(payload);
@@ -689,7 +689,7 @@
             if (ts - lastDebug > 1000) {
                 lastDebug = ts;
                 let active = 0, phantom = 0;
-                for (const o of oscillators.values()) { if (o.write) { if (o.exploration > Number.EPSILON) active++; else phantom++; } }
+                for (const o of oscillators.values()) { if (o.membrane) { if (o.exploration > Number.EPSILON) active++; else phantom++; } }
                 debugEl.value = `Osz:${oscillators.size} C:${certainty.toFixed(3)}\nActiveOut:${active} Phantom:${phantom} Coh:${measureCoherence().toFixed(3)}`;
             }
 
@@ -710,7 +710,7 @@
                 nostrRelay.addEventListener('message', (e) => {
                     try {
                         const data = JSON.parse(e.data);
-                        if (data[0] === 'EVENT' && data[2] && data[2].kind === 39603) {
+                        if (data[0] === 'EVENT' && data[2] && data[2].kind === 1111) {
                             const event = data[2];
                             const geoTag = event.tags.find(t => t[0] === 'geo');
                             if (!geoTag) return;

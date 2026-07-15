@@ -3,6 +3,3 @@ target/
 *.bak
 *.swp
 .DS_Store
-.continue/
-.continueignore
-
