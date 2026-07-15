@@ -142,12 +142,12 @@
                 } else if (typeof val === 'function') {
                     if (oscillators.has(p)) continue;
                     
-                    let isPureActuator = false, isConstructor = false;
+                    let isPureActuator = false, isConstructor = false; let isNative = false, hasContext = false, isReceptive = false;
                     try {
                         const fnStr = val.toString();
-                        const isNative = fnStr.includes('[native code]');
-                        const hasContext = p.includes('.');
-                        const isReceptive = val.length > 0;
+                        isNative = fnStr.includes('[native code]');
+                        hasContext = p.includes('.');
+                        isReceptive = val.length > 0;
                         isConstructor = key[0] === key[0].toUpperCase() && key[0] !== key[0].toLowerCase();
                         if (isNative && hasContext && isReceptive && !isConstructor) isPureActuator = true;
                     } catch {}
