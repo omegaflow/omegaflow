@@ -107,7 +107,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         function createOscillator(url, initialVal, readFn, writeFn) {
             const index = oscillators.length;
             const ringOffset = index * CAPTURE_RING_SIZE;
-            const osc = { url, index, ringOffset, idx: 0, filled: 0, read: readFn, write: writeFn, complexity: Number.EPSILON, median: initialVal, lastEcho: performance.now(), exploration: Number.EPSILON, lastOutTE: Number.EPSILON, direction: 1, ticksSinceTurn: 0, naturalLatencyTicks: 0, teHistory: new Float32Array(CAPTURE_RING_SIZE).fill(Number.EPSILON), teIdx: 0, teFilled: 0, originT: 0, originPos: { x: 0, y: 0, z: 0 }, presenceWeight: 1.0, lastTransmitted: initialVal };
+            const osc = { url, index, ringOffset, idx: 0, filled: 0, read: readFn, write: writeFn, complexity: Number.EPSILON, median: initialVal, lastEcho: performance.now(), exploration: Number.EPSILON, lastOutTE: Number.EPSILON, direction: 1, ticksSinceTurn: 0, naturalLatencyTicks: 0, originT: 0, originPos: { x: 0, y: 0, z: 0 }, presenceWeight: 1.0, lastTransmitted: initialVal };
             oscillators.push(osc); indexMap.set(url, index); ensureRingCapacity();
             return osc;
         }

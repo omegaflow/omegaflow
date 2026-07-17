@@ -116,9 +116,6 @@ The flat ring data is a contiguous Float32Array: `flatRings[oscIndex × ringSize
     direction: 1,
     ticksSinceTurn: 0,
     naturalLatencyTicks: 0,
-    teHistory: Float32Array(ringSize) filled with Number.EPSILON,
-    teIdx: 0,
-    teFilled: 0,
     originT: 0,
     originPos: { x: 0, y: 0, z: 0 },
     presenceWeight: 1.0,
@@ -579,7 +576,7 @@ Oscillator struct: write field (writeFn). manifestField uses write. getRingBuffe
 
 ### Step 4: EPSILON initialization
 
-flatRings filled with Number.EPSILON. teHistory filled with Number.EPSILON. complexity: Number.EPSILON. exploration: Number.EPSILON. lastOutTE: Number.EPSILON. Membrane median: Number.EPSILON. measureG default: Number.EPSILON.
+flatRings filled with Number.EPSILON. complexity: Number.EPSILON. exploration: Number.EPSILON. lastOutTE: Number.EPSILON. Membrane median: Number.EPSILON. measureG default: Number.EPSILON.
 
 ### Step 5: Measured replacements
 
