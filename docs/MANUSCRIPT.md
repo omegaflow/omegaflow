@@ -134,20 +134,20 @@ When reading sensor data each tick, the system iterates `oscillators[i]` by inde
 
 ### CAPTURE_RING_SIZE
 
-Adaptive. Starts at 3 (mathematical minimum for 3D Takens embedding at τ=1). Grows when stableTick is stable. Shrinks when stableTick degrades.
+Adaptive. Starts at 32. The mathematical minimum for a 3D Takens embedding at τ=1 is 3, but the system's own math sits above that floor: the Gaussian KDE needs `rs >= 4` (§15), and meaningful statistics over a ring slice need more than a handful of points. 32 carries every shader from the first active tick. Grows when stableTick is stable. Shrinks when stableTick degrades.
 
 ### topologyRingSize
 
-Starts at 3. Adapts:
+Starts at 32. Adapts:
 
 ```
 const ratio = Math.sqrt(stableTick / evalDuration);
-topologyRingSize = Math.max(3, Math.min(CAPTURE_RING_SIZE, Math.floor(topologyRingSize * ratio)));
+topologyRingSize = Math.max(32, Math.min(CAPTURE_RING_SIZE, Math.floor(topologyRingSize * ratio)));
 ```
 
 ### Activation threshold
 
-Oscillators enter the topology and getRingBuffers when `filled >= topologyRingSize`. At 60fps with topologyRingSize=3: activation in 50ms. Every sensor, every API value, every camera point becomes active in 50ms.
+Oscillators enter the topology and getRingBuffers when `filled >= topologyRingSize`. At 60fps with topologyRingSize=32: activation in ~530ms. Every sensor, every API value, every camera point becomes active within that window, then carries a ring deep enough for the KDE, ICA, and TDA shaders to run.
 
 ---
 
@@ -402,15 +402,15 @@ Reception: `omega_flow.*` oscillators with remote ICRS coordinates. Divergence: 
 
 ### What is visible in real-time
 
-Tick 2 (~33ms): window oscillators have filled >= topologyRingSize (3). getRingBuffers delivers threads. Aperture at sin(EPSILON × π/2) ≈ EPSILON.
+After ~530ms (32 frames at 60fps): window oscillators have filled >= topologyRingSize (32). getRingBuffers delivers threads. Aperture at sin(EPSILON × π/2) ≈ EPSILON.
 
-Tick 3: step = EPSILON (naturalLatencyTicks still 0). Aperture creeps up by EPSILON. Slowly. When first significant echo arrives, step jumps to 1/naturalLatencyTicks. Aperture rises. sin() shapes the rise.
+First topology run: step = EPSILON (naturalLatencyTicks still 0). Aperture creeps up by EPSILON. Slowly. When first significant echo arrives, step jumps to 1/naturalLatencyTicks. Aperture rises. sin() shapes the rise.
 
-After user gesture: AudioContext starts. Audio membrane plays threads as sound.
+After user gesture: AudioContext starts. Audio membrane plays threads as sound. Microphone AnalyserNode and camera getUserMedia stream register their oscillators.
 
 First API values: seconds (warm_cache runs immediately on server start, parallel curl, first responses in 1-3s).
 
-Camera (after getUserMedia grant): pixel oscillators fill at 60fps. After 3 frames (50ms) topology includes them. All data through same flat array.
+Camera (after getUserMedia grant): pixel oscillators fill at 60fps. After 32 frames (~530ms) topology includes them. All data through same flat array.
 
 ---
 
@@ -482,10 +482,10 @@ Camera (after getUserMedia grant): pixel oscillators fill at 60fps. After 3 fram
 |---|---|
 | MA = 1/Φ² | `1.0 / Math.max(1, naturalLatencyTicks)` |
 | Φ² in Kolmogorov threshold | `1 + coherenceVariance` |
-| 256 (ring minimum) | 3, grows with stableTick |
+| 256 (ring minimum) | 32, grows with stableTick |
 | 2048 (ring maximum) | shrinks with stableTick |
 | × 256 (deviceMemory) | stableTick + performance.memory |
-| 10 (topologyRingSize) | 3 |
+| 10 (topologyRingSize) | 32 |
 | CAPTURE_RING_SIZE / Φ (latency) | EPSILON (step = EPSILON until first significant echo) |
 | 60 (sensor frequency) | `1000 / stableTick` |
 | 100 (debug) | `stableTick × k` |
@@ -580,7 +580,7 @@ flatRings filled with Number.EPSILON. complexity: Number.EPSILON. exploration: N
 
 ### Step 5: Measured replacements
 
-MA → 1/naturalLatencyTicks. Kolmogorov threshold → 1 + coherenceVariance. Ring size → adaptive from stableTick, start 3. topologyRingSize → start 3. Latency fallback → EPSILON. Sensor frequency → 1000/stableTick. KDE sigma_st → presenceWeight-weighted. scale → 1.0 + g. pos_key → decimal places. TTL defaults → removed. WGSL epsilon → Number.EPSILON. getRingBuffers threshold → filled >= topologyRingSize. Aperture turn threshold → surrogate null (mean + 2σ of 10 shuffled KDEs).
+MA → 1/naturalLatencyTicks. Kolmogorov threshold → 1 + coherenceVariance. Ring size → adaptive from stableTick, start 32. topologyRingSize → start 32. Latency fallback → EPSILON. Sensor frequency → 1000/stableTick. KDE sigma_st → presenceWeight-weighted. scale → 1.0 + g. pos_key → decimal places. TTL defaults → removed. WGSL epsilon → Number.EPSILON. getRingBuffers threshold → filled >= topologyRingSize. Aperture turn threshold → surrogate null (mean + 2σ of 10 shuffled KDEs).
 
 ### Step 6: TE on GPU
 
@@ -602,4 +602,4 @@ Sensors read only when presenceWeight > 0. Silicon spends energy only on present
 
 ### Step 10: Verify
 
-node --check. cargo build. /time, /pulse test. Browser: oscillators active at tick 2, TE on GPU, membranes breathing. First API values in seconds. Camera after getUserMedia: active in 50ms.
+node --check. cargo build. /time, /pulse test. Browser: oscillators active after ~530ms (32 frames at 60fps), TE on GPU, membranes breathing. First API values in seconds. Camera after getUserMedia: active in ~530ms.
