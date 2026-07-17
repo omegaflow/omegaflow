@@ -368,7 +368,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 const surrRes = hasSurr ? res.subarray(off, off + srcW * numSurr) : null; if (hasSurr) off += srcW * numSurr;
                 for (let i = 0; i < n; i++) { const osc = candidates[i]; osc.complexity = kRes[i]; injectEcho('ica.' + i, icaRes[i]); const tB = i * 4; injectEcho('takens.' + osc.url + '.cx', tRes[tB]); injectEcho('takens.' + osc.url + '.cy', tRes[tB + 1]); injectEcho('takens.' + osc.url + '.cz', tRes[tB + 2]); injectEcho('takens.' + osc.url + '.spread', tRes[tB + 3]); injectEcho('tda.' + osc.url + '.persistence', tdaRes[i * 2]); injectEcho('tda.' + osc.url + '.betti0', tdaRes[i * 2 + 1]); }
                 if (hasTE) { for (let si = 0; si < srcW; si++) { const a = candidates[srcList[si]]; for (let di = 0; di < dstR; di++) { const te = teRes[si * dstR + di]; if (te > 0) injectEcho('transfer.' + a.url + '>' + candidates[dstList[di]].url, te); } } }
-                if (hasSurr) { for (let si = 0; si < srcW; si++) { let nullMean = 0; for (let s = 0; s < numSurr; s++) nullMean += surrRes[si * numSurr + s]; nullMean /= numSurr; let nullVar = 0; for (let s = 0; s < numSurr; s++) { const d = surrRes[si * numSurr + s] - nullMean; nullVar += d * d; } const threshold = nullMean + 2 * Math.sqrt(nullVar / numSurr); surrogateThresholds.set(candidates[srcList[si]].url, { threshold, tick: lastDiscovery }); } }
+                if (hasSurr) { for (let si = 0; si < srcW; si++) { let nullMean = 0; for (let s = 0; s < numSurr; s++) nullMean += surrRes[si * numSurr + s]; nullMean /= numSurr; let nullVar = 0; for (let s = 0; s < numSurr; s++) { const d = surrRes[si * numSurr + s] - nullMean; nullVar += d * d; } surrogateThresholds.set(candidates[srcList[si]].url, nullMean + 2 * Math.sqrt(nullVar / numSurr)); } }
                 readBuf.unmap();
             } catch (e) { reportState('GPU_TOPOLOGY_FAIL', e.message); } finally {
                 if (inBuf) inBuf.destroy(); if (kOutBuf) kOutBuf.destroy(); if (tOutBuf) tOutBuf.destroy(); if (tdaOutBuf) tdaOutBuf.destroy(); if (icaOutBuf) icaOutBuf.destroy(); if (paramBuf) paramBuf.destroy(); if (readBuf) readBuf.destroy();
@@ -388,8 +388,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         let surrogateSeed = 1;
         function computeOscSurrogate(osc) {
             const cached = surrogateThresholds.get(osc.url);
-            if (cached && cached.tick >= lastDiscovery) return cached.threshold;
-            return GROUND_STATE;
+            return cached !== undefined ? cached : GROUND_STATE;
         }
         function updateApertureGradient(osc) {
             let outTE = 0;
@@ -518,7 +517,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     `C:${certainty} g:${g} vC:${vC} quantum:${quantum} decay:${decay}\n` +
                     `clarity:${clarity} Coh:${measureCoherence()} Out:${active} P:${phantom}\n` +
                     `Photon:${photonAp.toExponential(3)} (${photonLat}T) Audio:${acousticAp.toExponential(3)} (${acousticLat}T) Kin:${kineticAp.toExponential(3)} (${kineticLat}T)\n` +
-                    `Surrogate:${surrogateThresholds.size > 0 ? Math.max(...Array.from(surrogateThresholds.values()).map(v => v.threshold)).toExponential(3) : '0'} (${surrogateThresholds.size}) TE:${teCount} maxTE:${teMax.toExponential(3)} gNLT:${globalNaturalLatencyTicks}\n` +
+                    `Surrogate:${surrogateThresholds.size > 0 ? Math.max(...surrogateThresholds.values()).toExponential(3) : '0'} (${surrogateThresholds.size}) TE:${teCount} maxTE:${teMax.toExponential(3)} gNLT:${globalNaturalLatencyTicks}\n` +
                     `Presence t:${tPresence.toFixed(1)} (${latStr},${lonStr}) srv:${srvCount}\n` +
                     `WS:${transport.socket ? transport.socket.readyState : 'none'} RTT:${transport.rtt.toFixed(0)} pend:${transport.pending.size}\n` +
                     `Top w:\n` + topLines;
