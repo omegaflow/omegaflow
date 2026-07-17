@@ -177,6 +177,8 @@ Oscillators enter the topology and getRingBuffers when `filled >= topologyRingSi
 | WebUSB (e.g. Garmin) | byte/255 per byte |
 | WebSerial (e.g. ESP32) | byte/255 per byte |
 | WebBluetooth | raw f64 per characteristic |
+| WebHID | byte/255 per byte |
+| WebXR (Head-Pose) | position x,y,z and orientation x,y,z,w as f64 |
 
 ### Write targets
 
@@ -188,6 +190,7 @@ Oscillators enter the topology and getRingBuffers when `filled >= topologyRingSi
 | WebSerial | threads as bytes to hardware |
 | WebUSB | threads as bytes to device |
 | WebBluetooth | aperture as GATT value |
+| WebHID | threads as bytes to USB peripheral |
 
 ### Camera as point cloud
 
