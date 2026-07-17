@@ -42,10 +42,13 @@ fn earth_position_icrs(tdb_secs: f64) -> (f64, f64, f64) {
 fn geodetic_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f64) {
     let lat_r = lat * std::f64::consts::PI / 180.0;
     let lon_r = lon * std::f64::consts::PI / 180.0;
-    let r = EARTH_RADIUS + alt;
-    let x_ecef = r * lat_r.cos() * lon_r.cos();
-    let y_ecef = r * lat_r.cos() * lon_r.sin();
-    let z_ecef = r * lat_r.sin();
+    const WGS84_F: f64 = 1.0 / 298.257223563;
+    let e2 = WGS84_F * (2.0 - WGS84_F);
+    let sin_lat = lat_r.sin();
+    let n = EARTH_RADIUS / (1.0 - e2 * sin_lat * sin_lat).sqrt();
+    let x_ecef = (n + alt) * lat_r.cos() * lon_r.cos();
+    let y_ecef = (n + alt) * lat_r.cos() * lon_r.sin();
+    let z_ecef = (n * (1.0 - e2) + alt) * lat_r.sin();
     let jd = tdb_to_jd(tdb_secs);
     let t = (jd - J2000_EPOCH) / 36525.0;
     let gmst = 280.46061837 + 360.98564736629 * (jd - J2000_EPOCH) + 0.000387933 * t * t - t * t * t / 38710000.0;
@@ -360,7 +363,6 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
 
             let mut cursor = Cursor::new(&frame.payload);
             let mut buf4 = [0u8; 4];
-            let mut buf8 = [0u8; 8];
 
             if cursor.read_exact(&mut buf4).is_err() { continue; } let id = u32::from_le_bytes(buf4);
             if cursor.read_exact(&mut buf4).is_err() { continue; } let input_count = u32::from_le_bytes(buf4) as usize;

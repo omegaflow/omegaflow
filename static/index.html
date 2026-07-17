@@ -58,8 +58,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
             return { x: xEcl, y: yEcl * Math.cos(ECLIPTIC_OBLIQUITY), z: yEcl * Math.sin(ECLIPTIC_OBLIQUITY) };
         }
         function geodeticToIcrs(lat, lon, alt, tdbSecs) {
-            const latR = lat * Math.PI / 180.0, lonR = lon * Math.PI / 180.0, r = EARTH_RADIUS + alt;
-            const xEcef = r * Math.cos(latR) * Math.cos(lonR), yEcef = r * Math.cos(latR) * Math.sin(lonR), zEcef = r * Math.sin(latR);
+            const latR = lat * Math.PI / 180.0, lonR = lon * Math.PI / 180.0;
+            const WGS84_F = 1.0 / 298.257223563;
+            const e2 = WGS84_F * (2 - WGS84_F);
+            const sinLat = Math.sin(latR);
+            const N = EARTH_RADIUS / Math.sqrt(1 - e2 * sinLat * sinLat);
+            const xEcef = (N + alt) * Math.cos(latR) * Math.cos(lonR), yEcef = (N + alt) * Math.cos(latR) * Math.sin(lonR), zEcef = (N * (1 - e2) + alt) * Math.sin(latR);
             const jd = tdbSecs / 86400.0 + J2000_EPOCH, t = (jd - J2000_EPOCH) / 36525.0;
             let gmst = (280.46061837 + 360.98564736629 * (jd - J2000_EPOCH) + 0.000387933 * t * t - t * t * t / 38710000.0) % 360.0 * Math.PI / 180.0;
             const xEci = xEcef * Math.cos(gmst) + yEcef * Math.sin(gmst), yEci = -xEcef * Math.sin(gmst) + yEcef * Math.cos(gmst), zEci = zEcef;
@@ -81,10 +85,31 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
             if (d && typeof d.latitude === 'number') { const icrs = geodeticToIcrs(d.latitude, d.longitude, 0, tPresence); spatialPresence = { x: icrs.x, y: icrs.y, z: icrs.z }; prevSpatialPresence = { ...spatialPresence }; }
         }).catch(() => {});
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const icrs = geodeticToIcrs(pos.coords.latitude, pos.coords.longitude, pos.coords.altitude || 0, tPresence);
+            navigator.geolocation.watchPosition((pos) => {
+                const c = pos.coords;
+                const icrs = geodeticToIcrs(c.latitude, c.longitude, c.altitude || 0, tPresence);
                 spatialPresence = { x: icrs.x, y: icrs.y, z: icrs.z }; prevSpatialPresence = { ...spatialPresence };
+                if (!indexMap.has('geolocation.latitude')) {
+                    createOscillator('geolocation.latitude', c.latitude, () => c.latitude, null);
+                    createOscillator('geolocation.longitude', c.longitude, () => c.longitude, null);
+                    createOscillator('geolocation.altitude', c.altitude || 0, () => c.altitude || 0, null);
+                    createOscillator('geolocation.accuracy', c.accuracy, () => c.accuracy, null);
+                }
+                injectEcho('geolocation.latitude', c.latitude);
+                injectEcho('geolocation.longitude', c.longitude);
+                injectEcho('geolocation.altitude', c.altitude || 0);
+                injectEcho('geolocation.accuracy', c.accuracy);
             }, () => {}, { enableHighAccuracy: true, timeout: 10000 });
+        }
+        if (navigator.getBattery) {
+            navigator.getBattery().then(battery => {
+                if (!indexMap.has('battery.level')) {
+                    createOscillator('battery.level', battery.level, () => typeof battery.level === 'number' ? battery.level : null, null);
+                    createOscillator('battery.charging', battery.charging ? 1 : 0, () => battery.charging ? 1 : 0, null);
+                }
+                injectEcho('battery.level', battery.level);
+                injectEcho('battery.charging', battery.charging ? 1 : 0);
+            }).catch(() => {});
         }
         const pulseWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/pulse`);
         pulseWs.binaryType = 'arraybuffer';
@@ -100,9 +125,27 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
                 if (pending) { transport.pending.delete(id); transport.rtt = transport.rtt === 0 ? (performance.now() - pending.startTime) : transport.rtt * (1 - MA) + (performance.now() - pending.startTime) * MA; pending.resolve(e.data); }
             }
         });
+        if (navigator.gpu) {
+            navigator.gpu.requestAdapter().then(adapter => {
+                if (adapter) adapter.requestDevice().then(device => { window.ω.gpu = device; });
+            }).catch(() => {});
+        }
         function ensureRingCapacity() {
             const needed = oscillators.length * CAPTURE_RING_SIZE;
             if (needed > flatRings.length) { const nr = new Float32Array(Math.max(needed, flatRings.length * 2)).fill(Number.EPSILON); nr.set(flatRings); flatRings = nr; }
+        }
+        function rebuildRings(oldSize) {
+            const nr = new Float32Array(Math.max(oscillators.length * CAPTURE_RING_SIZE, flatRings.length * 2)).fill(Number.EPSILON);
+            for (let i = 0; i < oscillators.length; i++) {
+                const osc = oscillators[i];
+                const newOffset = i * CAPTURE_RING_SIZE;
+                const copyLen = Math.min(osc.filled, oldSize, CAPTURE_RING_SIZE);
+                for (let j = 0; j < copyLen; j++) nr[newOffset + j] = flatRings[osc.ringOffset + j];
+                osc.ringOffset = newOffset;
+                osc.idx = Math.min(osc.idx, CAPTURE_RING_SIZE);
+                osc.filled = copyLen;
+            }
+            flatRings = nr;
         }
         function createOscillator(url, initialVal, readFn, writeFn) {
             const index = oscillators.length;
@@ -138,7 +181,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
                     if (isConstructor && isNative && key.endsWith('Sensor')) { try { const freq = stableTick > 0 ? Math.round(1000 / stableTick) : 60; const instance = new val({ frequency: freq, referenceFrame: 'device' }); discoverObj(instance, p, 0); if (typeof instance.start === 'function') instance.start(); } catch {} }
                 } else if (typeof val === 'object') {
                     if (typeof val.pulse === 'function') { if (!indexMap.has(p)) { createOscillator(p, Number.EPSILON, null, (aperture) => { try { val.pulse(aperture, getRingBuffers()); } catch {} }); } }
-                    else if (typeof val.getTracks === 'function' && !indexMap.has(p + '.track')) { try { for (const track of val.getTracks()) { if (typeof track.readyState !== 'number') continue; const tp = p + '.track.' + track.kind; if (indexMap.has(tp)) continue; if (typeof MediaStreamTrackProcessor !== 'function') continue; const reader = new MediaStreamTrackProcessor(track).readable.getReader(); createOscillator(tp, Number.EPSILON, null, null); (async () => { while (true) { const { value: frame, done } = await reader.read(); if (done) break; try { if (track.kind === 'video' && typeof frame.createImageBitmap === 'function') { const bmp = await createImageBitmap(frame); const c2d = document.createElement('canvas').getContext('2d', { willReadFrequently: true }); c2d.canvas.width = bmp.width; c2d.canvas.height = bmp.height; c2d.drawImage(bmp, 0, 0); const id = c2d.getImageData(0, 0, 1, 1); injectEcho(tp, (id.data[0] + id.data[1] + id.data[2]) / 765); bmp.close(); } frame.close(); } catch { try { frame.close(); } catch {} } } })(); } } catch {} discoverObj(val, p, depth + 1); }
+                    else if (typeof val.getTracks === 'function' && !indexMap.has(p + '.track')) { try { for (const track of val.getTracks()) { if (typeof track.readyState !== 'number') continue; const tp = p + '.track.' + track.kind; if (indexMap.has(tp)) continue; if (typeof MediaStreamTrackProcessor !== 'function') continue; const reader = new MediaStreamTrackProcessor(track).readable.getReader(); createOscillator(tp, Number.EPSILON, null, null); (async () => { while (true) { const { value: frame, done } = await reader.read(); if (done) break; try { if (track.kind === 'video' && typeof frame.createImageBitmap === 'function') { const bmp = await createImageBitmap(frame); const c2d = document.createElement('canvas').getContext('2d', { willReadFrequently: true }); c2d.canvas.width = bmp.width; c2d.canvas.height = bmp.height; c2d.drawImage(bmp, 0, 0); const id = c2d.getImageData(0, 0, bmp.width, bmp.height); const w = bmp.width, h = bmp.height; const firstPixel = tp + '.pixel_0_0'; if (!indexMap.has(firstPixel)) { for (let py = 0; py < h; py++) { for (let px = 0; px < w; px++) { const idx = (py * w + px) * 4; injectEcho(tp + '.pixel_' + px + '_' + py, (id.data[idx] + id.data[idx+1] + id.data[idx+2]) / 765); } } } else { for (let py = 0; py < h; py++) { for (let px = 0; px < w; px++) { const idx = (py * w + px) * 4; const lum = (id.data[idx] + id.data[idx+1] + id.data[idx+2]) / 765; const url = tp + '.pixel_' + px + '_' + py; const oi = indexMap.get(url); if (oi !== undefined) { const osc = oscillators[oi]; flatRings[osc.ringOffset + osc.idx] = lum; osc.idx = (osc.idx + 1) % CAPTURE_RING_SIZE; if (osc.filled < CAPTURE_RING_SIZE) osc.filled++; osc.median = osc.median * (1 - ma()) + lum * ma(); } } } } bmp.close(); } frame.close(); } catch { try { frame.close(); } catch {} } } })(); } } catch {} discoverObj(val, p, depth + 1); }
                     else { discoverObj(val, p, depth + 1); }
                 }
             }
@@ -374,7 +417,19 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 if (inBuf) inBuf.destroy(); if (kOutBuf) kOutBuf.destroy(); if (tOutBuf) tOutBuf.destroy(); if (tdaOutBuf) tdaOutBuf.destroy(); if (icaOutBuf) icaOutBuf.destroy(); if (paramBuf) paramBuf.destroy(); if (readBuf) readBuf.destroy();
                 if (srcIdxBuf) srcIdxBuf.destroy(); if (dstIdxBuf) dstIdxBuf.destroy(); if (teOutBuf) teOutBuf.destroy(); if (teParamBuf) teParamBuf.destroy(); if (surrOutBuf) surrOutBuf.destroy(); if (surrParamBuf) surrParamBuf.destroy();
                 const evalDuration = performance.now() - evalStartTime;
-                if (evalDuration > 0 && stableTick > 0) topologyRingSize = Math.max(32, Math.min(CAPTURE_RING_SIZE, Math.floor(topologyRingSize * Math.sqrt(stableTick / evalDuration))));
+                if (evalDuration > 0 && stableTick > 0) {
+                    const ratio = Math.sqrt(stableTick / evalDuration);
+                    if (ratio >= 1.0 && CAPTURE_RING_SIZE < 2048) {
+                        const oldSize = CAPTURE_RING_SIZE;
+                        CAPTURE_RING_SIZE = Math.min(CAPTURE_RING_SIZE * 2, 2048);
+                        if (CAPTURE_RING_SIZE !== oldSize) rebuildRings(oldSize);
+                    } else if (ratio < 0.5 && CAPTURE_RING_SIZE > 32) {
+                        const oldSize = CAPTURE_RING_SIZE;
+                        CAPTURE_RING_SIZE = Math.max(32, Math.floor(CAPTURE_RING_SIZE / 2));
+                        if (CAPTURE_RING_SIZE !== oldSize) rebuildRings(oldSize);
+                    }
+                    topologyRingSize = Math.max(32, Math.min(CAPTURE_RING_SIZE, Math.floor(topologyRingSize * ratio)));
+                }
                 topologyPending = false;
             }
         }
@@ -415,6 +470,20 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 audioGain = audioCtx.createGain(); audioGain.gain.setValueAtTime(0, audioCtx.currentTime); audioGain.connect(audioCtx.destination);
                 audioBuffer = audioCtx.createBuffer(1, CAPTURE_RING_SIZE, audioCtx.sampleRate);
                 audioSrc = audioCtx.createBufferSource(); audioSrc.buffer = audioBuffer; audioSrc.loop = true; audioSrc.connect(audioGain); audioSrc.start();
+                let micAnalyser = null, micFreqData = null;
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    micAnalyser = audioCtx.createAnalyser();
+                    const micSrc = audioCtx.createMediaStreamSource(stream);
+                    micSrc.connect(micAnalyser);
+                    micFreqData = new Uint8Array(micAnalyser.frequencyBinCount);
+                    for (let i = 0; i < micAnalyser.frequencyBinCount; i++) {
+                        const binIdx = i;
+                        const url = 'microphone.freq_' + binIdx;
+                        if (!indexMap.has(url)) {
+                            createOscillator(url, Number.EPSILON, () => { if (micAnalyser && micFreqData) { micAnalyser.getByteFrequencyData(micFreqData); return micFreqData[binIdx] / 255; } return null; }, null);
+                        }
+                    }
+                }).catch(() => {});
                 createOscillator('membrane.acoustic', Number.EPSILON, null, (aperture) => {
                     try { audioGain.gain.setTargetAtTime(Math.abs(aperture), audioCtx.currentTime, transport.tickTime / 1000); const channelData = audioBuffer.getChannelData(0); const threads = getRingBuffers(); if (threads.length === 0) return; for (let i = 0; i < CAPTURE_RING_SIZE; i++) { let sum = 0; for (let t = 0; t < threads.length; t++) sum += threads[t][i]; channelData[i] = (sum / threads.length) * aperture; } } catch {}
                 });
@@ -422,12 +491,95 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         }
         document.addEventListener('click', startAudio, { once: true });
         document.addEventListener('touchstart', startAudio, { once: true });
+        function startXR() {
+            if (!navigator.xr) return;
+            navigator.xr.requestSession('inline').then(session => {
+                return session.requestReferenceSpace('local').then(refSpace => {
+                    function onXRFrame(time, frame) {
+                        const pose = frame.getViewerPose(refSpace);
+                        if (pose) {
+                            const p = pose.transform.position;
+                            const o = pose.transform.orientation;
+                            injectEcho('xr.headpose.x', p.x);
+                            injectEcho('xr.headpose.y', p.y);
+                            injectEcho('xr.headpose.z', p.z);
+                            injectEcho('xr.orientation.x', o.x);
+                            injectEcho('xr.orientation.y', o.y);
+                            injectEcho('xr.orientation.z', o.z);
+                            injectEcho('xr.orientation.w', o.w);
+                        }
+                        session.requestAnimationFrame(onXRFrame);
+                    }
+                    session.requestAnimationFrame(onXRFrame);
+                });
+            }).catch(() => {});
+        }
+        document.addEventListener('click', startXR, { once: true });
+        document.addEventListener('touchstart', startXR, { once: true });
         if (navigator.vibrate) { createOscillator('membrane.kinetic', Number.EPSILON, null, (aperture) => { navigator.vibrate(Math.max(1, Math.floor(aperture * transport.tickTime))); }); }
         let activeSerialPort = null;
-        if (navigator.serial) {
-            navigator.serial.requestPort().then(port => { port.open({ baudRate: 115200 }).then(() => { activeSerialPort = port; }); }).catch(() => {});
-            createOscillator('membrane.serial', Number.EPSILON, null, async (aperture) => { if (!activeSerialPort || !activeSerialPort.writable) return; try { const writer = activeSerialPort.writable.getWriter(); const threads = getRingBuffers(); if (threads.length > 0) { const sendBuf = new Uint8Array(threads[0].length); for (let i = 0; i < sendBuf.length; i++) sendBuf[i] = (threads[0][i] * aperture) & 255; await writer.write(sendBuf); } writer.releaseLock(); } catch {} });
+        if (navigator.serial) { createOscillator('membrane.serial', Number.EPSILON, null, async (aperture) => { if (!activeSerialPort || !activeSerialPort.writable) return; try { const writer = activeSerialPort.writable.getWriter(); const threads = getRingBuffers(); if (threads.length > 0) { const sendBuf = new Uint8Array(threads[0].length); for (let i = 0; i < sendBuf.length; i++) sendBuf[i] = (threads[0][i] * aperture) & 255; await writer.write(sendBuf); } writer.releaseLock(); } catch {} }); }
+        let activeUsbDevice = null;
+        if (navigator.usb) { createOscillator('membrane.usb', Number.EPSILON, null, async (aperture) => { if (!activeUsbDevice || !activeUsbDevice.opened) return; const alt = activeUsbDevice.configuration?.interfaces?.[0]?.alternates?.[0]; if (!alt) return; const outEp = alt.endpoints.find(e => e.direction === 'out'); if (!outEp) return; const threads = getRingBuffers(); if (threads.length === 0) return; const sendBuf = new Uint8Array(threads[0].length); for (let i = 0; i < sendBuf.length; i++) sendBuf[i] = (threads[0][i] * aperture) & 255; try { await activeUsbDevice.transferOut(outEp.endpointNumber, sendBuf); } catch {} }); }
+        let activeBtChar = null;
+        if (navigator.bluetooth) { createOscillator('membrane.bluetooth', Number.EPSILON, null, async (aperture) => { if (!activeBtChar) return; try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor(aperture * 255)); await activeBtChar.writeValue(buf.buffer); } catch {} }); }
+        let activeHidDevice = null;
+        if (navigator.hid) { createOscillator('membrane.hid', Number.EPSILON, null, async (aperture) => { if (!activeHidDevice || !activeHidDevice.opened) return; for (const coll of activeHidDevice.collections) { for (const inp of coll.inputReports) { const threads = getRingBuffers(); if (threads.length === 0) continue; const sendBuf = new Uint8Array(threads[0].length); for (let i = 0; i < sendBuf.length; i++) sendBuf[i] = (threads[0][i] * aperture) & 255; try { await activeHidDevice.sendReport(inp.reportId, sendBuf); } catch {} } } }); }
+        function startHardware() {
+            if (navigator.serial) { navigator.serial.requestPort().then(port => port.open({ baudRate: 115200 }).then(() => { activeSerialPort = port; })).catch(() => {}); }
+            if (navigator.usb) {
+                navigator.usb.requestDevice({ filters: [] }).then(device => {
+                    return device.open().then(() => { if (device.configuration === null) return device.selectConfiguration(1).then(() => device); return device; }).then(() => device.claimInterface(0)).then(() => {
+                        activeUsbDevice = device;
+                        const alt = device.configuration.interfaces[0].alternates[0];
+                        const inEp = alt.endpoints.find(e => e.direction === 'in');
+                        if (inEp) {
+                            async function pollUsb() {
+                                if (!activeUsbDevice || !activeUsbDevice.opened) return;
+                                try {
+                                    const result = await activeUsbDevice.transferIn(inEp.endpointNumber, 64);
+                                    if (result.data) { const bytes = new Uint8Array(result.data.buffer, result.data.byteOffset, result.data.byteLength); for (let i = 0; i < bytes.length; i++) injectEcho('usb.byte_' + i, bytes[i] / 255); }
+                                } catch {}
+                                pollUsb();
+                            }
+                            pollUsb();
+                        }
+                    });
+                }).catch(() => {});
+            }
+            if (navigator.bluetooth) {
+                navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['generic_access'] }).then(device => {
+                    return device.gatt.connect().then(server => server.getPrimaryServices());
+                }).then(services => {
+                    for (const service of services) {
+                        service.getCharacteristics().then(chars => {
+                            for (const ch of chars) {
+                                if (ch.properties.read) {
+                                    const url = 'bluetooth.' + service.uuid + '.' + ch.uuid;
+                                    if (!indexMap.has(url)) {
+                                        const chRef = ch;
+                                        createOscillator(url, Number.EPSILON, async () => { try { const dv = await chRef.readValue(); return dv.getFloat64(0, true); } catch { return null; } }, null);
+                                    }
+                                }
+                                if (ch.properties.write && !activeBtChar) activeBtChar = ch;
+                            }
+                        }).catch(() => {});
+                    }
+                }).catch(() => {});
+            }
+            if (navigator.hid) {
+                navigator.hid.requestDevice({ filters: [] }).then(devices => {
+                    if (!devices || devices.length === 0) return;
+                    const device = devices[0];
+                    return device.open().then(() => {
+                        activeHidDevice = device;
+                        device.addEventListener('inputreport', (e) => { const bytes = new Uint8Array(e.data.buffer); for (let i = 0; i < bytes.length; i++) injectEcho('hid.byte_' + i, bytes[i] / 255); });
+                    });
+                }).catch(() => {});
+            }
         }
+        document.addEventListener('click', startHardware, { once: true });
+        document.addEventListener('touchstart', startHardware, { once: true });
         const canvas = document.createElement('canvas');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;image-rendering:pixelated;z-index:-1;';
@@ -437,7 +589,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         const data8 = imgData.data;
         createOscillator('membrane.photon', Number.EPSILON, null, (aperture) => {
             const threads = getRingBuffers();
-            if (threads.length === 0) { data8.fill(0); ctx.putImageData(imgData, 0, 0); return; }
+            if (threads.length === 0) return;
             let tIdx = 0, tByteIdx = 0; const tc = threads.length, tl = threads[0].length;
             for (let i = 0; i < data8.length; i++) { if ((i & 3) === 3) { data8[i] = 255; } else { data8[i] = (threads[tIdx][tByteIdx] * aperture) & 255; tByteIdx++; if (tByteIdx >= tl) { tByteIdx = 0; tIdx = (tIdx + 1) % tc; } } }
             ctx.putImageData(imgData, 0, 0);
@@ -459,6 +611,27 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             cachedThreads.length = activeCount;
             return cachedThreads;
         }
+        function registerGamepads() {
+            const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+            for (let p = 0; p < pads.length; p++) {
+                const pad = pads[p];
+                if (!pad) continue;
+                for (let a = 0; a < pad.axes.length; a++) {
+                    const url = `gamepad.${p}.axes.${a}`;
+                    if (!indexMap.has(url)) {
+                        const ax = a, pn = p;
+                        createOscillator(url, pad.axes[a], () => { const gp = navigator.getGamepads()[pn]; return gp ? gp.axes[ax] : null; }, null);
+                    }
+                }
+                for (let b = 0; b < pad.buttons.length; b++) {
+                    const url = `gamepad.${p}.buttons.${b}`;
+                    if (!indexMap.has(url)) {
+                        const bn = b, pn = p;
+                        createOscillator(url, pad.buttons[b].value, () => { const gp = navigator.getGamepads()[pn]; return gp ? gp.buttons[bn].value : null; }, null);
+                    }
+                }
+            }
+        }
         async function ω(ts) {
             const rawTick = lastTs > 0 ? ts - lastTs : Φ;
             lastTs = ts;
@@ -475,6 +648,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             spatialPresence.x += dxDrift * driftSpeed; spatialPresence.y += dyDrift * driftSpeed; spatialPresence.z += dzDrift * driftSpeed;
             if (!isFinite(tPresence) || !isFinite(spatialPresence.x) || !isFinite(spatialPresence.y) || !isFinite(spatialPresence.z)) { const ec = earthPositionIcrs(tdbNow(φ['server.time'] || 0)); tPresence = tdbNow(φ['server.time'] || 0); spatialPresence.x = ec.x; spatialPresence.y = ec.y; spatialPresence.z = ec.z; }
             if (prevTPresence === 0 || (prevSpatialPresence.x === 0 && prevSpatialPresence.y === 0 && prevSpatialPresence.z === 0 && (spatialPresence.x !== 0 || spatialPresence.y !== 0 || spatialPresence.z !== 0))) { prevTPresence = tPresence; prevSpatialPresence = { ...spatialPresence }; }
+            registerGamepads();
             for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.read && osc.presenceWeight > 0) { let readVal = osc.read(); if (readVal !== null && typeof readVal === 'number') injectEcho(osc.url, readVal); } }
             calculatePresenceWeights();
             const scrollSpeedS = Math.sqrt((spatialPresence.x - prevSpatialPresence.x)**2 + (spatialPresence.y - prevSpatialPresence.y)**2 + (spatialPresence.z - prevSpatialPresence.z)**2);
