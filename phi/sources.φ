@@ -13,11 +13,15 @@ count states technosphere_aircraft_count
 
 source uk_carbon_intensity
 ttl 30
+lat 54.0
+lon -2.0
 url https://api.carbonintensity.org.uk/intensity
 path data.0.intensity.actual technosphere_grid_carbon_intensity_gco2_kwh
 
 source anu_quantum_entropy
 ttl 60
+lat -35.28
+lon 149.12
 url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
 path data.0 quantum_entropy_anu
 
@@ -33,6 +37,7 @@ last dst magnetosphere_dst_index_nt
 
 source emsc_earthquakes
 ttl 60
+res 1
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=text&starttime={hour_ago}&lat={lat}&lon={lon}&maxradius=5&minmag=2.0
 format csv
 count lines seismic_count_emsc
@@ -93,8 +98,6 @@ url https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_frontier_markets_price
 field chart.result.0.meta.chartPreviousClose economic_frontier_markets_prev_close
 
-# Regionen (inkl. Globaler Süden)
-
 source etf_germany
 ttl 60
 header User-Agent "omegaflow"
@@ -130,8 +133,6 @@ url https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_latin_america_price
 field chart.result.0.meta.chartPreviousClose economic_region_latin_america_prev_close
 
-# Sektoren
-
 source etf_mexico
 ttl 60
 header User-Agent "omegaflow"
@@ -159,8 +160,6 @@ header User-Agent "omegaflow"
 url https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_communication_price
 field chart.result.0.meta.chartPreviousClose economic_sector_communication_prev_close
-
-# Leading Indicators & Commodities (URL-kodiert für ^ und =)
 
 source etf_sector_consumer_discretionary
 ttl 60
@@ -281,11 +280,6 @@ url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1
 field chart.result.0.meta.regularMarketPrice economic_fear_gauge_vix
 field chart.result.0.meta.chartPreviousClose economic_fear_gauge_vix_prev
 
-
-# ==========================================
-# NOOSPHÄRE & DIGITALES WISSEN
-# ==========================================
-
 source etf_world_all_country
 ttl 60
 header User-Agent "omegaflow"
@@ -308,17 +302,23 @@ count . technosphere_github_events_per_minute
 
 source inex_traffic
 ttl 60
+lat 53.3
+lon -6.2
 url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
 field statistics.curin technosphere_traffic_bits_in_per_s
 field statistics.curout technosphere_traffic_bits_out_per_s
 
 source irail_belgium
 ttl 60
+lat 50.8
+lon 4.3
 url https://api.irail.be/liveboard/?station=Brussels&format=json
 count departures.departure technosphere_train_departures_belgium
 
 source irish_rail_realtime
 ttl 60
+lat 53.3
+lon -6.2
 format xml
 url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
 count ArrayOfObjStationData.ObjStationData technosphere_train_departures_dublin
@@ -331,6 +331,8 @@ last a_index magnetosphere_ap_index
 
 source ldr_quantum_entropy
 ttl 60
+lat 51.1
+lon 10.4
 url https://lfdr.de/qrng_api/qrng?length=1&format=HEX
 field qrn quantum_entropy_lfdr
 
@@ -354,6 +356,8 @@ count dsn technosphere_nasa_deep_space_network_signals
 
 source nist_randomness_beacon
 ttl 60
+lat 39.1
+lon -77.2
 url https://beacon.nist.gov/beacon/2.0/pulse/last
 path pulse.outputValue quantum_entropy_nist_beacon
 
@@ -413,15 +417,19 @@ geojson events mag 2.0 seismic_magnitude seismic_depth
 source thingspeak_plant_voltage
 ttl 60
 url https://api.thingspeak.com/channels/705404/feeds/last.json
-field field1 biosphere_plant_voltage_mv
+field field1 vegetation_plant_voltage_mv
 
 source transport_bern_departures
 ttl 60
+lat 46.9
+lon 7.4
 url https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10
 count stationboard technosphere_transport_departures_bern
 
 source transport_zurich_departures
 ttl 60
+lat 47.3
+lon 8.5
 url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
 count stationboard technosphere_transport_departures_zurich
 
@@ -432,6 +440,7 @@ geojson events mag 2.0 seismic_magnitude seismic_depth
 
 source usgs_earthquake_detail
 ttl 60
+res 1
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
 geojson properties.mag seismic_magnitude_mw
 geojson geometry.coordinates[2] seismic_depth_m
@@ -439,9 +448,10 @@ geojson properties.gap seismic_azimuthal_gap_deg
 geojson properties.rms seismic_rms_s
 geojson properties.sig seismic_significance_score
 
-
 source wiener_linien_realtime
 ttl 60
+lat 48.2
+lon 16.3
 url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
 count data.monitors.0.lines technosphere_transport_lines_vienna
 
@@ -466,19 +476,22 @@ path chart.result.0.meta.regularMarketPrice economic_fear_gauge_vix
 
 source anthroposphere_faa_delay_atl
 ttl 300
-res 0
+lat 33.6
+lon -84.4
 url https://soa.smext.faa.gov/asws/api/airport/status/ATL?format=json
 path AirportStatusRespons.AirportStatus.AvgDelay anthroposphere_faa_avg_delay_atl_min
 
 source anthroposphere_faa_delay_ewr
 ttl 300
-res 0
+lat 40.7
+lon -74.1
 url https://soa.smext.faa.gov/asws/api/airport/status/EWR?format=json
 path AirportStatusRespons.AirportStatus.AvgDelay anthroposphere_faa_avg_delay_ewr_min
 
 source anthroposphere_faa_delay_lax
 ttl 300
-res 0
+lat 33.9
+lon -118.4
 url https://soa.smext.faa.gov/asws/api/airport/status/LAX?format=json
 path AirportStatusRespons.AirportStatus.AvgDelay anthroposphere_faa_avg_delay_lax_min
 
@@ -496,6 +509,8 @@ field ethereum.usd economic_ethereum_price_usd
 
 source energy_charts_renewable
 ttl 300
+lat 50.0
+lon 10.0
 url https://api.energy-charts.info/ren_share_eu
 last data technosphere_renewable_share_pct
 
@@ -507,6 +522,8 @@ last_obj wavelength "0.1-0.8nm" flux solar_euv_flux_long_wm2
 
 source intermagnet_bou
 ttl 300
+lat 40.1
+lon -105.2
 url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
 field X magnetosphere_x_bou_nt
 field Y magnetosphere_y_bou_nt
@@ -514,6 +531,7 @@ field Z magnetosphere_z_bou_nt
 
 source openmeteo_weather_current
 ttl 300
+res 6
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,wind_speed_10m,wind_direction_10m
 path current.temperature_2m atmosphere_temp_c
 path current.relative_humidity_2m atmosphere_humidity_pct
@@ -523,6 +541,8 @@ path current.wind_speed_10m atmosphere_wind_speed_ms
 
 source ndbc_buoy_41001
 ttl 300
+lat 34.7
+lon -72.4
 url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
 format csv
 last_row WDIR hydrosphere_buoy_41001_wind_dir
@@ -2942,6 +2962,8 @@ first t hydrosphere_tide_time_mona_island
 
 source noaa_tides_salinity_8771450
 ttl 300
+lat 29.31
+lon -94.793304
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={today_nodashes}&end_date={tomorrow_nodashes}&station=8771450&product=salinity&time_zone=gmt&units=metric&format=json
 last data.0.v hydrosphere_salinity_galveston
 
@@ -2963,6 +2985,7 @@ count items technosphere_satnogs_observations
 
 source sensor_community_air
 ttl 300
+res 2
 url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
 field 0.sensordatavalues.0.value atmosphere_pm10_sensorcommunity_ugm3
 field 0.sensordatavalues.1.value atmosphere_pm25_sensorcommunity_ugm3
@@ -2979,6 +3002,7 @@ path value.timeSeries.0.values.0.value.0.value hydrosphere_river_flow_cfs
 
 source waqi_air_quality
 ttl 300
+res 2
 url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
 field data.aqi atmosphere_aqi
 field data.pm25 atmosphere_pm25_ugm3
@@ -2998,18 +3022,21 @@ last hourly.windspeed_250hPa atmosphere_jetstream_250hpa_ms
 
 source cosmic_neutron_flux_jung
 ttl 600
-res 0
+lat 46.95
+lon 7.86
 url http://www.nmdb.eu/nmdb/qtipart.php?station=JUNG&start={yesterday}&end={today}&format=json&bins=3600
 path data.JUNG.1h.0.1 cosmic_neutron_flux_jung
 
 source cryosphere_snow_depth
 ttl 600
-res 1
+res 6
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snow_depth&timezone=auto
 field current.snow_depth cryosphere_snow_depth_m
 
 source erddap_smartbay_spl
 ttl 600
+lat 53.13
+lon -9.27
 url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
 format csv
 last_row spl_full hydrosphere_sound_pressure_db
@@ -3021,6 +3048,7 @@ last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
 
 source inaturalist_fungi
 ttl 600
+res 2
 url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
 path total_results biosphere_fungi_observations
 
@@ -3031,11 +3059,13 @@ path total_results biosphere_inaturalist_observations_total
 
 source lightning_open_meteo
 ttl 600
+res 6
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto
 field minutely_15.lightning_potential atmosphere_lightning_potential
 
 source openmeteo_air_quality_full
 ttl 600
+res 6
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto
 field current.pm2_5 atmosphere_pm25_ugm3
 field current.pm10 atmosphere_pm10_ugm3
@@ -3046,6 +3076,7 @@ field current.ozone atmosphere_o3_ugm3
 
 source openmeteo_air_quality_trace
 ttl 600
+res 6
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=ammonia,dust,aerosol_optical_depth,black_carbon,formaldehyde
 field current.ammonia atmosphere_ammonia_ugm3
 field current.dust atmosphere_dust_ugm3
@@ -3055,16 +3086,19 @@ field current.aerosol_optical_depth atmosphere_aerosol_optical_depth
 
 source openmeteo_air_quality_us
 ttl 600
+res 6
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
 field current.us_aqi atmosphere_aqi_us
 
 source openmeteo_thunderstorm
 ttl 600
+res 6
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=thunderstorm_max_intensity
 field daily.thunderstorm_max_intensity.0 atmosphere_thunderstorm_max_intensity
 
 source openmeteo_weather
 ttl 600
+res 6
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto
 field current.temperature_2m atmosphere_temp_c
 field current.relative_humidity_2m atmosphere_humidity_pct
@@ -3076,6 +3110,7 @@ field current.precipitation atmosphere_precipitation_mm
 
 source aeronet_aod
 ttl 900
+res 6
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth
 field current.aerosol_optical_depth atmosphere_aerosol_optical_depth_500nm
 
@@ -3094,13 +3129,9 @@ ttl 900
 url https://api.gdeltproject.org/api/v2/doc/doc?query=sourcelang:eng&mode=timelinevol&format=json
 last value social_global_news_volume
 
-
-# ==========================================
-# SOZIALES & ANTHROPOSPHÄRE
-# ==========================================
-
 source pegelonline_water_level
 ttl 900
+res 1
 url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
 field 0.water.currentMeasurement.value hydrosphere_water_level_cm
 
@@ -3142,6 +3173,8 @@ field alert_level geosphere_volcano_max_alert
 
 source aeronet_gsfc_aod
 ttl 3600
+lat 38.99
+lon -76.84
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
 format csv
 last_row AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
@@ -3182,6 +3215,8 @@ path @odata.count technosphere_copernicus_s2_products_total
 
 source coral_bleach_southeast_florida
 ttl 3600
+lat 26.1
+lon -80.1
 url https://api.coral.tsr.lol/stations/southeast_florida/current
 field current.dhw biosphere_coral_dhw_florida
 field current.baa_7day_max biosphere_coral_alert_florida
@@ -3194,12 +3229,16 @@ field message.total-results technosphere_registered_dois
 
 source cryosphere_permafrost_barrow
 ttl 3600
+lat 71.29
+lon -156.57
 url https://gml.noaa.gov/aftp/data/radiation/crn/brw_radiation_2024.txt
 format csv
 last_row 15001 cryosphere_permafrost_temp_barrow_c
 
 source dwd_pollen_germany
 ttl 3600
+lat 51.0
+lon 10.0
 url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
 field content.0.Pollen.Graeser.today biosphere_pollen_grass_germany_today
 field content.0.Pollen.Birke.today biosphere_pollen_birch_germany_today
@@ -3223,6 +3262,8 @@ count features technosphere_vessel_density_emodnet
 
 source entsoe_energy
 ttl 3600
+lat 51.0
+lon 10.0
 url https://api.energy-charts.info/price?country=DE
 last price technosphere_electricity_price_eur_mwh
 
@@ -3255,6 +3296,8 @@ field rates.PHP economic_usd_php_rate
 
 source fbi_wanted
 ttl 3600
+lat 38.9
+lon -77.0
 url https://api.fbi.gov/wanted/v1/list
 field total social_fbi_wanted_count
 
@@ -3265,11 +3308,14 @@ path . biosphere_gbif_species_observations_total
 
 source govtrack_votes
 ttl 3600
+lat 38.9
+lon -77.0
 url https://www.govtrack.us/api/v2/vote?created__gt={yesterday}&limit=0
 field meta.total_count political_legislation_votes
 
 source inaturalist_verified
 ttl 3600
+res 3
 url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
 field total_results biosphere_verified_observations
 
@@ -3359,6 +3405,8 @@ count features geosphere_fires_active_us
 
 source noaa_co2_mauna_loa
 ttl 3600
+lat 19.47
+lon -155.59
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
 format csv
 last_row (ppm) atmosphere_co2_weekly_ppm
@@ -5836,6 +5884,7 @@ field meta.count social_scholarly_works_total
 
 source openmeteo_marine
 ttl 3600
+res 3
 url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period&timezone=auto
 field current.wave_height hydrosphere_wave_height_m
 field current.wave_direction hydrosphere_wave_direction_deg
@@ -5861,7 +5910,6 @@ last_row kp magnetosphere_forecast_kp_max
 
 source technosphere_tor_relays_running
 ttl 3600
-res 0
 url https://onionoo.torproject.org/summary?running=true
 count relays technosphere_tor_relays_running
 
@@ -5955,7 +6003,6 @@ last_row extent cryosphere_sea_ice_north_mkm2
 
 source cryosphere_sea_ice_south
 ttl 86400
-res 0
 url https://coastwatch.pfeg.noaa.gov/erddap/tabledap/nsidcG02135South.csv?extent&time%3E={yesterday}&orderByMax(%22time%22)
 last_row extent cryosphere_sea_ice_south_mkm2
 
@@ -6000,8 +6047,10 @@ ttl 86400
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 vector europa_x europa_y europa_z
 
+
 source fungi_observations
 ttl 86400
+res 2
 url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
 field total_results biosphere_fungi_observations
 field species_count biosphere_fungi_species_count
@@ -6013,6 +6062,7 @@ vector ganymede_x ganymede_y ganymede_z
 
 source gbif
 ttl 86400
+res 3
 url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
 field count biosphere_species_count
 
@@ -6045,6 +6095,7 @@ vector haumea_x haumea_y haumea_z
 
 source inaturalist
 ttl 86400
+res 3
 url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
 field total_results biosphere_observations
 
@@ -6090,6 +6141,7 @@ vector mercury_x mercury_y mercury_z
 
 source met_norway_sun
 ttl 86400
+res 4
 header User-Agent "omegaflow"
 url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00
 field properties.sunrise.time atmosphere_sunrise_time
@@ -6097,6 +6149,7 @@ field properties.solar_noon.elevation atmosphere_solar_elevation_max_deg
 
 source modis_ndvi_local
 ttl 86400
+res 4
 url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0
 field subset.0.1 biosphere_ndvi_local
 
@@ -6144,6 +6197,7 @@ last_row pH_sw hydrosphere_ph_pmel
 
 source obis_species
 ttl 86400
+res 1
 url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
 field total biosphere_ocean_occurrences_50km
 
@@ -6163,11 +6217,13 @@ last_row sea_surface_temperature hydrosphere_sst_ooi_c
 
 source overpass_mobile_antennas
 ttl 86400
+res 1
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:60];node["telecom"="antenna"](around:10000,{lat},{lon});out%20count;
 count nodes technosphere_mobile_antennas_10km
 
 source overpass_wifi_hotspots
 ttl 86400
+res 2
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count;
 count nodes technosphere_public_wlan_5km
 
@@ -6274,11 +6330,13 @@ path features.0.properties.daily_columno3 atmosphere_total_ozone_du
 
 source elevation
 ttl 604800
+res 4
 url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
 first elevation geosphere_elevation_m
 
 source geopages
 ttl 604800
+res 1
 url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
 count query.geosearch technosphere_geopages_nearby
 
@@ -6322,6 +6380,7 @@ field data.0.areaHa biosphere_tree_cover_loss_ha_latest
 
 source icgem_geoid_height
 ttl 2592000
+res 4
 url https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf
 format csv
 last_row undulate geosphere_geoid_height_m
@@ -6402,21 +6461,25 @@ path data.0.0 cosmic_simbad_young_stellar_objects
 
 source soilgrids_clay
 ttl 2592000
+res 6
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
 field properties.layers.0.depths.0.values.mean geosphere_soil_clay_pct
 
 source soilgrids_ph
 ttl 2592000
+res 6
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
 field properties.layers.0.depths.0.values.mean geosphere_soil_ph_x10
 
 source soilgrids_sand
 ttl 2592000
+res 6
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=sand&depth=0-5cm&value=mean
 field properties.layers.0.depths.0.values.mean geosphere_soil_sand_pct
 
 source soilgrids_soc
 ttl 2592000
+res 6
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
 field properties.layers.0.depths.0.values.mean geosphere_soil_organic_carbon_x10
 
@@ -7673,3 +7736,4 @@ source superk_proton_decay
 ttl 31536000
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
 field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
+
