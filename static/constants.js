@@ -1,36 +1,23 @@
 export const C = 299792458.0;
 export const Φ = 1.618033988749895;
 export const MA = 1 / (Φ * Φ);
-
-export const WGS84_A = 6378137.0;
-export const WGS84_F = 1.0 / 298.257223563;
-
 export const J2000_EPOCH = 2451545.0;
-export const UNIX_JD_EPOCH = 2440587.5;
-
-export function j2000(unixSecs) {
-    return (unixSecs / 86400.0) + UNIX_JD_EPOCH - J2000_EPOCH;
-}
-
+export const UNIX_J2000_OFFSET = 946728000.0;
+export function tdbNow(unixSecs) { return unixSecs - UNIX_J2000_OFFSET; }
 export const φ = {};
 export const transport = { socket: null, pending: new Map(), seq: 0, tickTime: 16, rtt: 0 };
-
 export async function syncFrame(inputs, queries, signals = []) {
     if (!queries || queries.length === 0 && signals.length === 0) return [];
-
     let inputBytes = 0;
     for (const inp of inputs) inputBytes += 41 + inp.name.length;
     let signalBytes = 1;
     for (const sig of signals) signalBytes += 2 + sig.path.length;
-
     const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32 + signalBytes);
     const dv = new DataView(buf);
     const id = ++transport.seq;
-
     dv.setUint32(0, id, true);
     dv.setUint32(4, inputs.length, true);
     let off = 8;
-
     for (const inp of inputs) {
         dv.setFloat64(off, inp.t, true); off += 8;
         dv.setFloat64(off, inp.x, true); off += 8;
@@ -40,7 +27,6 @@ export async function syncFrame(inputs, queries, signals = []) {
         dv.setUint8(off, inp.name.length); off += 1;
         for (let i = 0; i < inp.name.length; i++) { dv.setUint8(off, inp.name.charCodeAt(i)); off++; }
     }
-
     dv.setUint32(off, queries.length, true); off += 4;
     for (const q of queries) {
         dv.setFloat64(off, q.t, true); off += 8;
@@ -48,37 +34,30 @@ export async function syncFrame(inputs, queries, signals = []) {
         dv.setFloat64(off, q.y, true); off += 8;
         dv.setFloat64(off, q.z, true); off += 8;
     }
-
     dv.setUint8(off, signals.length); off += 1;
     for (const sig of signals) {
         dv.setUint8(off, sig.type); off += 1;
         dv.setUint8(off, sig.path.length); off += 1;
         for (let i = 0; i < sig.path.length; i++) { dv.setUint8(off, sig.path.charCodeAt(i)); off++; }
     }
-
     const startTime = performance.now();
     const promise = new Promise((resolve, reject) => {
-        const timeoutDuration = Math.max(transport.tickTime * 4, transport.rtt * 4);
+        const timeoutDuration = Math.max(transport.tickTime * Φ * Φ * Φ * Φ, transport.rtt * Φ * Φ * Φ * Φ, 5000);
         const timeout = setTimeout(() => {
             if (transport.pending.has(id)) { transport.pending.delete(id); reject(new Error("Frame timeout")); }
         }, timeoutDuration);
         transport.pending.set(id, { resolve, reject, timeout, startTime });
     });
-    
     if (transport.socket && transport.socket.readyState === WebSocket.OPEN) {
         transport.socket.send(new Uint8Array(buf));
     } else { return []; }
-    
     const buffer = await promise;
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    
     if (bytes.length < 13 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 1) return [];
-    
     let o = 3;
-    o += 4; 
+    o += 4;
     const pointCount = dvRes.getUint32(o, true); o += 4;
-    
     const result = [];
     for (let pi = 0; pi < pointCount; pi++) {
         if (o + 4 > bytes.length) break;
@@ -89,12 +68,15 @@ export async function syncFrame(inputs, queries, signals = []) {
             for (let s = 0; s < sfCount; s++) {
                 const nl = bytes[o++];
                 let name = '';
-                for(let i=0; i<nl; i++) name += String.fromCharCode(bytes[o++]);
-                o++; 
-                if (o + 16 > bytes.length) break;
+                for (let i = 0; i < nl; i++) name += String.fromCharCode(bytes[o++]);
+                o++;
+                if (o + 40 > bytes.length) break;
                 const val = dvRes.getFloat64(o, true); o += 8;
                 const t = dvRes.getFloat64(o, true); o += 8;
-                result.push({ name, val, t });
+                const x = dvRes.getFloat64(o, true); o += 8;
+                const y = dvRes.getFloat64(o, true); o += 8;
+                const z = dvRes.getFloat64(o, true); o += 8;
+                result.push({ name, val, t, x, y, z });
             }
             const recCount = dvRes.getUint32(o, true); o += 4;
             if (recCount > 0) { o += recCount * 16; }
@@ -102,4 +84,3 @@ export async function syncFrame(inputs, queries, signals = []) {
     }
     return result;
 }
-
