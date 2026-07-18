@@ -1,11 +1,19 @@
 export const C = 299792458.0;
 export const Φ = 1.618033988749895;
-export const MA = 1 / (Φ * Φ);
 export const J2000_EPOCH = 2451545.0;
 export const UNIX_J2000_OFFSET = 946728000.0;
 export function tdbNow(unixSecs) { return unixSecs - UNIX_J2000_OFFSET; }
 export const φ = {};
-export const transport = { socket: null, pending: new Map(), seq: 0, tickTime: 16, rtt: 0 };
+export const transport = { socket: null, pending: new Map(), seq: 0, tickTime: 16, rtt: 0, srtt: 0, rttvar: 0 };
+export function updateRtt(sampleRtt) {
+    if (transport.srtt === 0) { transport.srtt = sampleRtt; transport.rttvar = sampleRtt / 2; }
+    else { transport.rttvar = 0.75 * transport.rttvar + 0.25 * Math.abs(sampleRtt - transport.srtt); transport.srtt = 0.875 * transport.srtt + 0.125 * sampleRtt; }
+    transport.rtt = transport.srtt;
+}
+export function getRto() {
+    if (transport.srtt === 0) return 5000;
+    return Math.max(100, Math.min(transport.srtt + 4 * Math.max(transport.rttvar, 1), 5000));
+}
 export async function syncFrame(inputs, queries, signals = []) {
     if (!queries || queries.length === 0 && signals.length === 0) return [];
     let inputBytes = 0;
@@ -41,16 +49,15 @@ export async function syncFrame(inputs, queries, signals = []) {
         for (let i = 0; i < sig.path.length; i++) { dv.setUint8(off, sig.path.charCodeAt(i)); off++; }
     }
     const startTime = performance.now();
+    if (!transport.socket || transport.socket.readyState !== WebSocket.OPEN) return [];
     const promise = new Promise((resolve, reject) => {
-        const timeoutDuration = Math.max(transport.tickTime * Φ * Φ * Φ * Φ, transport.rtt * Φ * Φ * Φ * Φ, 5000);
+        const timeoutDuration = getRto();
         const timeout = setTimeout(() => {
             if (transport.pending.has(id)) { transport.pending.delete(id); reject(new Error("Frame timeout")); }
         }, timeoutDuration);
         transport.pending.set(id, { resolve, reject, timeout, startTime });
     });
-    if (transport.socket && transport.socket.readyState === WebSocket.OPEN) {
         transport.socket.send(new Uint8Array(buf));
-    } else { return []; }
     const buffer = await promise;
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);

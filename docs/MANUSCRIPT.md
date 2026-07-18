@@ -78,7 +78,7 @@ Rounds to decimal places. If the API provides six decimal places, the box rounds
 
 ### Cache
 
-Key: rounded position. Value: (query_t, HashMap<Name, (value, t, x, y, z)>). Five-tuple per value.
+Key: rounded position. Value: (query_t, HashMap<Name, (value, t, x, y, z)>). Five-tuple per value. Each input is cached under its own transmitted (x, y, z) coordinates, not under a stale coordinate from a previous frame's query.
 
 ### warm_cache
 
@@ -94,24 +94,26 @@ Vanilla ES modules. Garbage collection is thermodynamic friction — the system 
 
 ### Data structure
 
-All oscillators live in a flat array. Each oscillator is a struct with an index. A secondary index map (url → array index) exists for discovery lookups. The hot path — reading, writing, topology, manifestation — operates on the flat array by index.
+All oscillators live in a flat array. Each oscillator is a struct with an index. A secondary index map (url → array index) exists for discovery lookups. The hot path operates on the flat array by index.
 
 The flat ring data is a contiguous Float32Array: `flatRings[oscIndex × ringSize + ringPosition]`. The GPU reads this array directly. No per-oscillator lookups in the hot path.
 
 ### Oscillator struct
 
+An oscillator has optional capabilities (`canSense`, `canRadiate`). These are boolean properties, not classes. The ω() loop touches every oscillator identically. In the touch it does not ask "Who are you?" but "What can you do?".
+
 ```
 {
-    index,           // position in the flat array
-    ringOffset,      // index × ringSize into flatRings
-    idx: 0,          // write position in ring
+    index,                 // position in the flat array
+    ringOffset,            // index × ringSize into flatRings
+    idx: 0,                // write position in ring
     filled: 0,
-    read: readFn,    // function or null
-    write: writeFn,  // function or null
+    canSense: readFn,      // function or null. former 'read'
+    canRadiate: writeFn,   // function or null. former 'write'
     complexity: Number.EPSILON,
     median: initialVal,
     lastEcho: performance.now(),
-    exploration: Number.EPSILON,
+    fieldPermeability: GROUND_STATE,  // former 'exploration'/'aperture'
     lastOutTE: Number.EPSILON,
     direction: 1,
     ticksSinceTurn: 0,
@@ -119,12 +121,13 @@ The flat ring data is a contiguous Float32Array: `flatRings[oscIndex × ringSize
     originT: 0,
     originPos: { x: 0, y: 0, z: 0 },
     presenceWeight: 1.0,
-    lastTransmitted: initialVal
+    lastTransmitted: initialVal,
+    takensCx: 0,           // stored directly on the oscillator
+    takensCy: 0,
+    takensCz: 0,
+    takensSpread: 0
 }
 ```
-
-`read`: receives from space.
-`write`: emits into space.
 
 ### Discovery registers, hot path uses indices
 
@@ -134,7 +137,7 @@ When reading sensor data each tick, the system iterates `oscillators[i]` by inde
 
 ### CAPTURE_RING_SIZE
 
-Adaptive. Starts at 32. The mathematical minimum for a 3D Takens embedding at τ=1 is 3, but the system's own math sits above that floor: the Gaussian KDE needs `rs >= 4` (§15), and meaningful statistics over a ring slice need more than a handful of points. 32 carries every shader from the first active tick. Grows when stableTick is stable. Shrinks when stableTick degrades.
+Adaptive. Starts at 32. The mathematical minimum for a 3D Takens embedding at τ=1 is 3, but the system's own math sits above that floor: the Gaussian KDE needs `rs >= 4`, and meaningful statistics over a ring slice need more than a handful of points. 32 carries every shader from the first active tick. Grows when stableTick is stable. Shrinks when stableTick degrades.
 
 ### topologyRingSize
 
@@ -147,7 +150,7 @@ topologyRingSize = Math.max(32, Math.min(CAPTURE_RING_SIZE, Math.floor(topologyR
 
 ### Activation threshold
 
-Oscillators enter the topology and getRingBuffers when `filled >= topologyRingSize`. At 60fps with topologyRingSize=32: activation in ~530ms. Every sensor, every API value, every camera point becomes active within that window, then carries a ring deep enough for the KDE, ICA, and TDA shaders to run.
+Oscillators enter the topology and getRingBuffers when `filled >= topologyRingSize`. At 60fps with topologyRingSize=32: activation in ~530ms. Every sensor, every API value, every camera point becomes active within that window, then carries a ring deep enough for the KDE, Kurtosis, and TDA shaders to run.
 
 ---
 
@@ -155,13 +158,13 @@ Oscillators enter the topology and getRingBuffers when `filled >= topologyRingSi
 
 `discoverObj(window, '', 0)` — recursive.
 
-- Numbers / booleans → oscillator with read closure.
-- Functions with structural signature (native code, has context, receptive) → oscillator with write closure.
+- Numbers / booleans → oscillator with sensing closure.
+- Functions with structural signature (native code, has context, receptive) → oscillator with radiating closure.
 - `*Sensor` constructors (Accelerometer, Gyroscope, Magnetometer, AmbientLightSensor, etc.) → instantiated, discovered, started.
 - `on*` properties → event sources → addEventListener → scanObjectForValues.
-- scanObjectForValues → recursive descent into arrays and objects, injecting every naked number via injectEcho.
+- scanObjectForValues → recursive descent into arrays and objects, registering presence via recordSample.
 
-### Read sources
+### Sensing sources (canSense)
 
 | Source | f64 value |
 |---|---|
@@ -180,17 +183,17 @@ Oscillators enter the topology and getRingBuffers when `filled >= topologyRingSi
 | WebHID | byte/255 per byte |
 | WebXR (Head-Pose) | position x,y,z and orientation x,y,z,w as f64 |
 
-### Write targets
+### Radiating targets (canRadiate)
 
-| Target | What it does with f64 |
+| Target | What it radiates |
 |---|---|
-| Canvas (Photon) | threads as bytes to screen |
-| AudioContext (Acoustic) | threads as waveform to speaker |
-| navigator.vibrate (Kinetic) | aperture × tickTime as vibration duration |
-| WebSerial | threads as bytes to hardware |
-| WebUSB | threads as bytes to device |
-| WebBluetooth | aperture as GATT value |
-| WebHID | threads as bytes to USB peripheral |
+| Canvas (Photon) | projects takens topology as optical interference |
+| AudioContext (Acoustic) | resonates takens geometry as frequency/partial amplitudes |
+| navigator.vibrate (Kinetic) | derives rhythm from field coherence/density |
+| WebSerial | sends topology geometry as raw bytes to hardware |
+| WebUSB | sends topology geometry as raw bytes to device |
+| WebBluetooth | sends permeability as GATT value |
+| WebHID | sends topology geometry as raw bytes to peripheral |
 
 ### Camera as point cloud
 
@@ -198,7 +201,7 @@ The camera delivers a frame. Each pixel luminance (R+G+B)/765 is an f64 value. T
 
 First frame: pixel oscillators registered (array push, index assigned). Subsequent frames: luminance values written directly to flatRings by index. One pass through the frame buffer, one write per pixel to the flat array. No string lookups in the hot path.
 
-All oscillators are equal. A camera pixel and a NOAA temperature reading follow the same path: register once, write by index, read by GPU, weave into membranes, breathe by aperture.
+All oscillators are equal. A camera pixel and a NOAA temperature reading follow the same path: register once, write by index, read by GPU, contribute to topology, breathe by permeability.
 
 ---
 
@@ -209,7 +212,7 @@ let tPresence = 0;
 let spatialPresence = { x: 0, y: 0, z: 0 };
 ```
 
-First tick: tPresence = server time from /time. spatialPresence = Earth center in ICRS. Refined by geolocation, converted to ICRS. The presence drifts by coherence.
+First tick: tPresence = server time from /time, converted to J2000 via `tdbNow()`. spatialPresence = Earth center in ICRS. Refined by geolocation, converted to ICRS. The presence drifts by coherence.
 
 ### Drift
 
@@ -234,7 +237,7 @@ for each oscillator i:
     dx = oscillators[i].originPos.x - spatialPresence.x
     dy = oscillators[i].originPos.y - spatialPresence.y
     dz = oscillators[i].originPos.z - spatialPresence.z
-    dt = abs(oscillators[i].originT - tPresence) * 86400.0 * C
+    dt = abs(oscillators[i].originT - tPresence) * C
     spatialDistSq = dx*dx + dy*dy + dz*dz
     minkowskiSq = (dt * dt) - spatialDistSq
     if minkowskiSq < 0:
@@ -244,9 +247,9 @@ for each oscillator i:
     oscillators[i].presenceWeight = scale / (scale + dist4D²)
 ```
 
-scale = 1.0 + g. The field energy determines the scale.
+scale = 1.0 + g. The field energy determines the scale. `originT` and `tPresence` are already in TDB seconds; no unit conversion factor (86400.0) is needed.
 
-Spacelike: presenceWeight = 0. The sensor stays silent — ring stays empty, the oscillator vanishes from threads and topology. Silicon spends zero energy on it.
+Spacelike: presenceWeight = 0. The oscillator stays silent — ring stays empty, the oscillator vanishes from threads and topology. Silicon spends zero energy on it.
 
 Timelike: power-law. Distant events are faint echoes. When the presence drifts toward them, they become loud.
 
@@ -260,7 +263,7 @@ Timelike: power-law. Distant events are faint echoes. When the presence drifts t
 |---|---|---|
 | Discovery, ring writes, Minkowski, certainty, clarity, manifestation, Nostr, tick | Browser CPU | Iterates flat array, scalar operations |
 | API fetch, JSON parse, ICRS, pos_key, cache | Rust CPU | Parallel (thread::scope, one thread per source) |
-| Kolmogorov, Takens, TDA, ICA | GPU | One oscillator per thread, reads flatRings |
+| Permutation Entropy, Takens, TDA, Kurtosis | GPU | One oscillator per thread, reads flatRings |
 | Transfer entropy | GPU | One pair per thread, reads flatRings |
 
 ### GPU input
@@ -269,12 +272,12 @@ The GPU receives `flatRings` as a single storage buffer. Each oscillator occupie
 
 ### GPU shaders (WGSL)
 
-1. Kolmogorov complexity — repetition patterns in the ring slice. Threshold: sqrt(variance / ringSize) / (1 + coherenceVariance).
-2. Takens embedding — mutual information finds τ. 3D attractor reconstruction. Output: cx, cy, cz, spread.
-3. TDA — subsample from topologyRingSize at pipeline build. Insertion sort. Output: persistence lifetime, Betti-0.
-4. ICA (FastICA) — tanh nonlinearity. Output: independent component magnitude.
-5. Transfer entropy — Gaussian KDE. One pair (read_i, write_j) per thread. 2D dispatch. Each thread reads two ring slices from flatRings and computes the KDE sum over topologyRingSize samples. Output: te[i × n_write + j].
-6. Surrogate — same Gaussian KDE, but the source is a Fisher-Yates shuffle of the write-oscillator's own ring, performed in-shader (uint-hash seeded per run/oscillator/surrogate). One thread per (write_i, surr_s), s ∈ [0, 10). Output: 10 null-TEs per write-oscillator. The CPU reduces them to mean + 2·sqrt(var/10) — the surrogate threshold for the aperture.
+1. **Permutation Entropy** — ordinal pattern complexity (Bandt & Pompe m=3, 6 permutations), scale-invariant. Normalized by log₂(6).
+2. **Takens embedding** — mutual information finds τ. 3D attractor reconstruction. Output: cx, cy, cz, spread. Stored directly on the oscillator.
+3. **TDA** — subsample from topologyRingSize at pipeline build. Insertion sort. Defensive array clamp (`min(48, ...)`). Output: persistence lifetime, Betti-0 heuristic.
+4. **Excess Kurtosis** — direct non-Gaussianity measure `(mean((x-mean)⁴) / variance²) - 3`. Replaces degenerate single-channel ICA.
+5. **Transfer entropy** — Gaussian KDE. One pair (sense_i, radiate_j) per thread. 2D dispatch. Each thread reads two ring slices from flatRings and computes the KDE sum over topologyRingSize samples. Output: `te[i × n_radiate + j]`.
+6. **Surrogate** — same Gaussian KDE, but the source is a Fisher-Yates shuffle of the radiating oscillator's own ring, performed in-shader (uint-hash seeded per run/oscillator/surrogate). One thread per (radiate_i, surr_s), s ∈ [0, 10). Output: 10 null-TEs per radiating oscillator. The CPU reduces them to `mean + 2·sqrt(var/10)` — the surrogate threshold for the permeability.
 
 Per-oscillator shaders (1-4) use a 3-entry bind group layout:
 
@@ -288,7 +291,7 @@ TE and Surrogate shaders index flatRings indirectly through a separate src/dst c
 
 ### GPU candidates
 
-Oscillators with `filled >= topologyRingSize`, `read` present, `write` absent, `presenceWeight > 0`, excluding internal metrics.
+Oscillators with `filled >= topologyRingSize`, `presenceWeight > 0`, excluding internal metrics. Candidates are divided by capability: sensing oscillators are TE sources, radiating oscillators are TE destinations.
 
 When the presence is at the device location, all local sensors are active. When it drifts away, they fall silent. The GPU processes only what matters.
 
@@ -300,85 +303,77 @@ When the presence is at the device location, all local sensors are active. When 
 certainty = Math.exp(-vC / (g + (1.0 / C))) * quantum * decay;
 ```
 
-- g: sqrt(Σ(median² · presenceWeight) / Σ(presenceWeight)). Empty field: Number.EPSILON.
-- vC: Σ(|ring[i1] − ring[p]| · presenceWeight) / Σ(presenceWeight), modulo-wrapped indices. Empty field: 0.0.
-- quantum: exp(−Σ(|takens.*.spread median| · presenceWeight) / Σ(presenceWeight)). Empty field: 1.0.
-- decay: 1 / (1 + Σ(complexity · presenceWeight) / Σ(presenceWeight)). Empty field: 1.0.
+- g: `sqrt(Σ(median² · presenceWeight) / Σ(presenceWeight))`. Empty field: Number.EPSILON.
+- vC: `Σ(|rateOfChange_i| · presenceWeight) / Σ(presenceWeight)`, windowed over 8 samples. Empty field: 0.0.
+- quantum: `exp(−Σ(|takens.*.spread median| · presenceWeight) / Σ(presenceWeight))`. Empty field: 1.0.
+- decay: `1 / (1 + Σ(complexity · presenceWeight) / Σ(presenceWeight))`. Empty field: 1.0.
 
 Moving-average weight: `1.0 / Math.max(1, naturalLatencyTicks)`. Before first measurement: 1.0.
 
 ---
 
-## 10. Aperture
+## 10. Field Permeability (adaptFieldPermeability)
+
+The field does not "output." It breathes. The permeability (0.0 = closed, 1.0 = open) follows an exponential relaxation driven by the echo (Transfer Entropy).
+
+### Turn detection
+
+outTE is the echo (sum of `transfer.<osc.url>>...` from the GPU TE shader).
+deltaTE is the change in echo since last tick.
+`computeOscSurrogate` returns the surrogate threshold: the null hypothesis built from 10 Fisher-Yates-shuffled copies of the oscillator's own ring (GPU §8 shader 6). The CPU reduces to `mean + 2·sqrt(var/10)`.
+
+A turn happens only when deltaTE exceeds this threshold — i.e. when the echo change is larger than what pure chance would produce from the same ring with its time order destroyed. Sensor jitter and micro-fluctuations stay below the null hypothesis. They produce zero turns.
+
+### Exponential Relaxation
 
 ```
 const GROUND_STATE = Number.EPSILON;
 
-function updateApertureGradient(osc) {
-    let outTE = 0;
-    for (let i = 0; i < oscillators.length; i++) {
-        if (oscillators[i].url.startsWith('transfer.' + osc.url + '>')) outTE += Math.abs(oscillators[i].median);
-    }
-    const deltaTE = outTE - (osc.lastOutTE || GROUND_STATE);
-    osc.lastOutTE = outTE;
-    const threshold = computeOscSurrogate(osc);
-    osc.ticksSinceTurn++;
-    if (osc.direction > 0 && deltaTE < -threshold) { osc.naturalLatencyTicks = osc.ticksSinceTurn; osc.direction = -1; osc.ticksSinceTurn = 0; }
-    if (osc.direction < 0 && (deltaTE > threshold || osc.exploration <= GROUND_STATE)) { osc.naturalLatencyTicks = osc.ticksSinceTurn; osc.direction = 1; osc.ticksSinceTurn = 0; }
-    const latency = Math.max(2, osc.naturalLatencyTicks);
-    const step = osc.naturalLatencyTicks > 0 ? 1.0 / latency : GROUND_STATE;
-    osc.exploration += osc.direction * step;
-    osc.exploration = Math.max(GROUND_STATE, Math.min(1.0, osc.exploration));
-}
-
-function getAperture(osc) {
-    return Math.sin(osc.exploration * (Math.PI / 2));
+function adaptFieldPermeability(osc) {
+    // ... turn detection sets osc.direction and osc.naturalLatencyTicks ...
+    const target = osc.direction > 0 ? 1.0 : 0.0;
+    const alpha = 1 - Math.exp(-1 / Math.max(1, osc.naturalLatencyTicks));
+    osc.fieldPermeability += (target - osc.fieldPermeability) * alpha;
+    osc.fieldPermeability = Math.max(GROUND_STATE, Math.min(1.0, osc.fieldPermeability));
 }
 ```
 
-### How it breathes
+No `sin(exploration · π/2)`. No linear steps. The fieldPermeability asymptotically approaches its target at a rate determined by `naturalLatencyTicks` (τ).
 
-outTE is the echo (sum of `transfer.<osc.url>>...` from the GPU TE shader).
-
-deltaTE is the change in echo since last tick.
-
-`computeOscSurrogate` returns the surrogate threshold: the null hypothesis built from 10 Fisher-Yates-shuffled copies of the oscillator's own ring, each run through the same Gaussian KDE on the GPU (§8 shader 6). The CPU reduces the 10 null-TEs to `mean + 2·sqrt(var/10)`. A turn happens only when deltaTE exceeds this threshold — i.e. when the echo change is larger than what pure chance would produce from the same ring with its time order destroyed. Sensor jitter and micro-fluctuations stay below the null hypothesis. They produce zero turns.
-
-The threshold is cached per oscillator and refreshed once per topology run. On a cache miss (first tick after discovery, or before the first topology run completes) `computeOscSurrogate` returns GROUND_STATE — incomplete, but honest; the real threshold arrives with the next topology run.
-
-Before the first echo: naturalLatencyTicks = 0, step = EPSILON. The aperture stays at sin(EPSILON × π/2) ≈ EPSILON. Quantum whisper.
-
-When the first significant echo arrives: naturalLatencyTicks = ticksSinceTurn. step = 1 / naturalLatencyTicks. The aperture begins to rise. sin() flattens near 1.0 — natural brake.
-
-After calibration: turns happen only on echo changes that beat the null hypothesis. naturalLatencyTicks reflects the measured rhythm of the space. The aperture breathes in that rhythm. sin() shapes each breath.
-
-direction = 1. GROUND_STATE = Number.EPSILON. exploration starts at Number.EPSILON. lastOutTE starts at Number.EPSILON. complexity starts at Number.EPSILON. Ring buffers filled with Number.EPSILON.
+direction = 1. GROUND_STATE = Number.EPSILON. fieldPermeability starts at Number.EPSILON. lastOutTE starts at Number.EPSILON. complexity starts at Number.EPSILON. Ring buffers filled with Number.EPSILON.
 
 ---
 
-## 11. Manifestation
+## 11. Manifestation (flow)
+
+The field manifests in every oscillator that has the capability to radiate. It does not collect "output values" and distribute them to "writers."
 
 ```
-function manifestField() {
+function flow() {
+    // The water seeks its level across all physical boundaries.
+    // Gather the pure fluid state (Takens geometry + Gravity of all active oscillators).
+    const fluidState = { topology: [], globalCoherence: measureCoherence() };
     for (let i = 0; i < oscillators.length; i++) {
-        if (!oscillators[i].write) continue;
-        const val = getAperture(i);
-        oscillators[i].write(val);
+        const o = oscillators[i];
+        if (o.filled > 0 && o.presenceWeight > 0) {
+            fluidState.topology.push({ cx: o.takensCx, cy: o.takensCy, cz: o.takensCz, weight: o.presenceWeight });
+        }
+    }
+    // Every oscillator that forms a surface (canRadiate) feels the exact same fluid state.
+    for (let i = 0; i < oscillators.length; i++) {
+        const osc = oscillators[i];
+        if (osc.canRadiate) osc.canRadiate(osc.fieldPermeability, fluidState);
     }
 }
 ```
 
-Filtering: `oscillators[i].write`. The write function defines a membrane.
-
-getRingBuffers: iterates the flat array, collects oscillators with `read` present, `write` absent, `presenceWeight > 0`, `filled >= topologyRingSize`, excluding internal metrics. Ring slices weighted by presenceWeight into threads.
-
-All membranes receive all threads. Each membrane converts f64 to its physical output: Canvas (bytes), Audio (waveform), Vibration (duration), Serial (bytes), USB (bytes), Bluetooth (GATT value).
+The topology (Geometry + Gravity of all oscillators) is the form through which the field expresses itself. Surfaces (optical, acoustic, kinetic) receive the topology of the field. They translate the same 4D geometry into their respective medium.
 
 ---
 
 ## 12. Stigmergy
 
-Nostr. Relay: `wss://relay.damus.io`. Kind: 1111. Tag: `['icrs', x, y, z, t]`. Publish interval: `stableTick × Φ³`. Content: flat JSON of oscillator values (complexity > Number.EPSILON, read present, write absent, excluding internal metrics).
+Nostr. Relay: `wss://relay.damus.io`. Kind: 1111. Tag: `['icrs', x, y, z, t]`. Publish interval: `stableTick × Φ³`. Content: flat JSON of oscillator values (complexity > Number.EPSILON, `canSense` present, `canRadiate` absent, excluding internal metrics).
 
 Reception: `omega_flow.*` oscillators with remote ICRS coordinates. Divergence: `|own_median − remote_value|`.
 
@@ -387,16 +382,16 @@ Reception: `omega_flow.*` oscillators with remote ICRS coordinates. Divergence: 
 ## 13. Tick
 
 1. stableTick from rawTick (EMA, smoothing weight = 1 / naturalLatencyTicks).
-2. Drift toward strongest read-oscillator by presenceWeight.
+2. Drift toward strongest sensing oscillator by presenceWeight.
 3. NaN anchor: reset to Earth center.
-4. Read all oscillators with `read` and `presenceWeight > 0`: write f64 values directly to flatRings by index.
-5. calculatePresenceWeights (iterate flat array).
+4. Touch all oscillators with `canSense` and `presenceWeight > 0`: write f64 values directly to flatRings by index.
+5. calculateMinkowskiWeight (iterate flat array).
 6. Clarity from presence movement.
 7. transmitList: changed oscillators (delta > complexity).
 8. syncField: fire-and-forget.
-9. updateApertureGradient for all oscillators with write.
-10. manifestField.
-11. runSignalTopology (GPU: upload flatRings, run Kolmogorov, Takens, TDA, ICA, TE).
+9. adaptFieldPermeability for all oscillators with `canRadiate`.
+10. flow.
+11. calculateField (GPU: upload flatRings, run Permutation Entropy, Takens, TDA, Kurtosis, TE, Surrogates).
 12. Certainty.
 13. Nostr publish (when due).
 14. Discovery (when due).
@@ -405,11 +400,11 @@ Reception: `omega_flow.*` oscillators with remote ICRS coordinates. Divergence: 
 
 ### What is visible in real-time
 
-After ~530ms (32 frames at 60fps): window oscillators have filled >= topologyRingSize (32). getRingBuffers delivers threads. Aperture at sin(EPSILON × π/2) ≈ EPSILON.
+After ~530ms (32 frames at 60fps): window oscillators have `filled >= topologyRingSize` (32). flow() gathers topology. fieldPermeability at Number.EPSILON.
 
-First topology run: step = EPSILON (naturalLatencyTicks still 0). Aperture creeps up by EPSILON. Slowly. When first significant echo arrives, step jumps to 1/naturalLatencyTicks. Aperture rises. sin() shapes the rise.
+First topology run: `naturalLatencyTicks` still 0, `alpha = 1 - e⁻¹ ≈ 0.63`. fieldPermeability moves 63% of the way to target. When first significant echo arrives, `naturalLatencyTicks` locks to the measured rhythm of the space.
 
-After user gesture: AudioContext starts. Audio membrane plays threads as sound. Microphone AnalyserNode and camera getUserMedia stream register their oscillators.
+After user gesture: AudioContext starts. Acoustic surface radiates topology as sound. Microphone AnalyserNode and camera getUserMedia stream register their oscillators.
 
 First API values: seconds (warm_cache runs immediately on server start, parallel curl, first responses in 1-3s).
 
@@ -454,8 +449,6 @@ Camera (after getUserMedia grant): pixel oscillators fill at 60fps. After 32 fra
 
 | Number | Derivation |
 |---|---|
-| 86400.0 | 24 × 3600 |
-| 86400000.0 | 86400 × 1000 |
 | 1000 | ms per second |
 | 180.0 | degrees in π radians |
 | 365, 366 | days per year |
@@ -483,8 +476,11 @@ Camera (after getUserMedia grant): pixel oscillators fill at 60fps. After 32 fra
 
 | Former | Replacement |
 |---|---|
+| `86400.0 * C` in Minkowski dt | `* C` (originT/tPresence already in TDB seconds) |
 | MA = 1/Φ² | `1.0 / Math.max(1, naturalLatencyTicks)` |
-| Φ² in Kolmogorov threshold | `1 + coherenceVariance` |
+| Φ² in Kolmogorov threshold | Permutation Entropy (scale-invariant) |
+| Single-channel ICA (tanh) | Excess Kurtosis `(m4/var²) - 3` |
+| `sin(exploration · π/2)` | Exponential relaxation `α = 1 - e^(-1/τ)` |
 | 256 (ring minimum) | 32, grows with stableTick |
 | 2048 (ring maximum) | shrinks with stableTick |
 | × 256 (deviceMemory) | stableTick + performance.memory |
@@ -504,6 +500,18 @@ Camera (after getUserMedia grant): pixel oscillators fill at 60fps. After 32 fra
 | 0 (lastOutTE) | Number.EPSILON |
 | 0 (membrane median) | Number.EPSILON |
 | 0.0 (ring buffer fill) | Number.EPSILON |
+| Φ⁴ Network timeout | Jacobson/Karels RTO (SRTT + 4·RTTVAR) |
+
+### Network adaptive timing (Jacobson/Karels RFC 6298)
+
+| Parameter | Value |
+|---|---|
+| α (SRTT weight) | 0.125 (1/8) |
+| β (RTTVAR weight) | 0.25 (1/4) |
+| RTO formula | `SRTT + 4 · max(RTTVAR, 1)` |
+| RTO lower bound | 100 ms |
+| RTO upper bound | 5000 ms |
+| First sample | `SRTT = RTTVAR = sample` |
 
 ---
 
@@ -514,11 +522,10 @@ Camera (after getUserMedia grant): pixel oscillators fill at 60fps. After 32 fra
 | Conditional | Reason |
 |---|---|
 | `minkowskiSq < 0 → presenceWeight = 0` | Spacelike separation. Minkowski metric. |
-| `presenceWeight > 0` in read-loop and getRingBuffers | Awareness window filter. Silicon spends energy only on present oscillators. |
-| `direction > 0 && deltaTE < -threshold` | Aperture turn. TE gradient exceeds the surrogate null hypothesis (mean + 2σ of 10 shuffled KDEs). |
-| `direction < 0 && (deltaTE > threshold \|\| exploration <= GROUND_STATE)` | Aperture turn / floor bounce. |
-| `(i & 3) === 3 → data8[i] = 255` | Canvas alpha channel. Screen emits light. |
-| `!write` / `!read` | Structural read/write filtering. |
+| `presenceWeight > 0` in sensing-loop and flow topology | Awareness window filter. Silicon spends energy only on present oscillators. |
+| `direction > 0 && deltaTE < -threshold` | Permeability turn. TE gradient exceeds the surrogate null hypothesis (mean + 2σ of 10 shuffled KDEs). |
+| `direction < 0 && (deltaTE > threshold \|\| fieldPermeability <= GROUND_STATE)` | Permeability turn / floor bounce. |
+| `canRadiate` / `canSense` | Structural capability query. The loop touches all, queries properties, does not discriminate by identity. |
 | `isInternalMetric` | Prevents self-referential TE computation. |
 | `buf[0] === 0xCF && buf[1] === 0x86 && buf[2] === 1` | Protocol identity (φ). |
 | `filled >= topologyRingSize` | Takens needs 3×τ points minimum. |
@@ -534,21 +541,12 @@ Camera (after getUserMedia grant): pixel oscillators fill at 60fps. After 32 fra
 |---|---|
 | `obj == null → return/continue` | JavaScript: typeof null === 'object'. Recursion crashes. |
 | `try { val = obj[key] } catch { continue }` | Cross-origin properties throw on access. |
-| `typeof readVal !== 'number'` | read() returns undefined when property disappears. |
+| `typeof readVal !== 'number'` | canSense() returns undefined when property disappears. |
 | `if (audioCtx) return` | AudioContext is singleton. |
 | `if (navigator.vibrate)` / `navigator.serial` / `navigator.usb` / `navigator.bluetooth` / `navigator.deviceMemory` | Feature detection. |
 | `unwrap_or_else(\|e\| e.into_inner())` on Mutex | Poisoned mutex recovery. Alternative is crash. |
 | `unwrap_or_default()` on SystemTime | Duration::ZERO = valid timestamp. |
 | `unwrap_or(&0)` in base64 | Padding. Protocol standard. |
-
-### Dead code (remove)
-
-| Conditional | Reason |
-|---|---|
-| `aperture < Number.EPSILON` in photon/audio/kinetic/serial | Dead. sin(EPSILON × π/2) ≈ 3.49e-16. Never triggers. |
-| `threads.length === 0 → fill(0)` in membranes | Fills canvas with 0. Threads empty when no read-oscillators active. |
-| `if (rawTick > 0)` in stableTick | rawTick = ts − lastTs. Always > 0. |
-| `stableTick > 0 ? ... : rawTick` | Formula works at stableTick = 0. |
 
 ### Protocol protection (stay, boundary to old world)
 
@@ -560,49 +558,3 @@ Camera (after getUserMedia grant): pixel oscillators fill at 60fps. After 32 fra
 | `content !== '{}'` | Empty nostr event rejected by relays. |
 | `nostrRelay.readyState === WebSocket.OPEN` | Connection state. |
 | `if (!privKey)` | Generate key when none stored. |
-
----
-
-## 16. Implementation
-
-### Step 1: Purge
-
-Remove: isValidPath, isPlausibleValue, enumNamespaces, typedArrays, depth > 3, f64() debug, discovery profiling, sensor diagnostics, startSensors 8×8, setPresence cascade, NaN guards in measures, presenceWeight hard-filter in measures, dead `aperture < EPSILON` checks, dead `threads.length === 0 → fill(0)`, `if (rawTick > 0)`, `stableTick > 0 ?`.
-
-### Step 2: Flat array
-
-Replace oscillators Map with flat array + index map. Ring data in contiguous flatRings Float32Array. All hot-path operations iterate by index. Discovery registers via index map. GPU reads flatRings directly.
-
-### Step 3: Structural return
-
-Oscillator struct: write field (writeFn). manifestField uses write. getRingBuffers uses !write. TE source = write oscillators, target = read oscillators. updateApertureGradient: all write. Debug: write. Nostr: write.
-
-### Step 4: EPSILON initialization
-
-flatRings filled with Number.EPSILON. complexity: Number.EPSILON. exploration: Number.EPSILON. lastOutTE: Number.EPSILON. Membrane median: Number.EPSILON. measureG default: Number.EPSILON.
-
-### Step 5: Measured replacements
-
-MA → 1/naturalLatencyTicks. Kolmogorov threshold → 1 + coherenceVariance. Ring size → adaptive from stableTick, start 32. topologyRingSize → start 32. Latency fallback → EPSILON. Sensor frequency → 1000/stableTick. KDE sigma_st → presenceWeight-weighted. scale → 1.0 + g. pos_key → decimal places. TTL defaults → removed. WGSL epsilon → Number.EPSILON. getRingBuffers threshold → filled >= topologyRingSize. Aperture turn threshold → surrogate null (mean + 2σ of 10 shuffled KDEs).
-
-### Step 6: TE on GPU
-
-Write WGSL teShader with Gaussian KDE. 2D dispatch: @workgroup_size(8, 8). Each thread: one pair (read_i, write_j). Reads two ring slices from flatRings. KDE sum over topologyRingSize samples. Output: te[i × n_write + j]. Remove calculateContinuousTE from CPU. Write WGSL surrShader with the same KDE, source = Fisher-Yates shuffle of the write-oscillator's own ring (in-shader, uint-hash seeded per run/oscillator/surrogate). One thread per (write_i, surr_s), s ∈ [0, 10). CPU reduces the 10 null-TEs to mean + 2σ → the aperture turn threshold cached in surrogateThresholds.
-
-### Step 7: Migration fixes
-
-constants.js: 40-byte decode. main.rs: t_frame from first input. main.rs: 5-tuple cache. main.rs: φ_obj 5 values + name validation. main.rs: pos_key decimal-place rounding. index.html: measureVC modulo wrap. main.rs: Cache-Control no-store.
-
-### Step 8: Presence
-
-Earth center ICRS default. Drift by coherence. ICRS coordinates throughout. Nostr ICRS tags (['icrs', x, y, z, t]).
-
-### Step 9: Sensors
-
-getUserMedia on user gesture (camera + microphone). MediaStreamTrackProcessor for video frames. AnalyserNode for audio. Pixel luminance (R+G+B)/765 as f64 per pixel, written to flatRings by index. Frequency bins freqData[i]/255 as f64 per bin. Accelerometer, Gyroscope, Magnetometer, AmbientLightSensor via *Sensor constructors. Gamepad via navigator.getGamepads(). Battery via navigator.getBattery(). WebUSB/WebBluetooth via their APIs.
-
-Sensors read only when presenceWeight > 0. Silicon spends energy only on present oscillators.
-
-### Step 10: Verify
-
-node --check. cargo build. /time, /pulse test. Browser: oscillators active after ~530ms (32 frames at 60fps), TE on GPU, membranes breathing. First API values in seconds. Camera after getUserMedia: active in ~530ms.

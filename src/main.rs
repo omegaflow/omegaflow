@@ -354,8 +354,6 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
     let encoded = base64_encode(&sha1(&format!("{}{}", key, "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").into_bytes()));
     if stream.write_all(format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {}\r\n\r\n", encoded).as_bytes()).is_err() { return; }
     let _=stream.set_nodelay(true);
-    let mut last_coord: (f64, f64, f64) = (f64::NAN, f64::NAN, f64::NAN);
-
     while let Some(frame) = read_ws_frame_raw(&mut stream) {
         if frame.opcode==0x8 { break; }
         if frame.opcode==0x2 {
@@ -386,7 +384,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if cursor.read_exact(&mut name_bytes).is_err() { break; }
                     let name = String::from_utf8_lossy(&name_bytes).to_string();
 
-                    let local_key = format!("local_{}", pos_key(last_coord.0, last_coord.1, last_coord.2, 7, t_frame));
+                    let local_key = format!("local_{}", pos_key(x, y, z, 7, _t));
 
                     cache.entry(local_key).or_insert_with(|| (t_frame, HashMap::<String, (f64, f64, f64, f64, f64)>::new())).1.insert(name, (value, t_frame, x, y, z));
                 }
@@ -411,10 +409,6 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let y = f64::from_le_bytes(t_buf);
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let z = f64::from_le_bytes(t_buf);
 
-                    if (x,y,z) != last_coord {
-                        last_coord=(x,y,z);
-                    }
-
                     active.insert(format!("{}_{}_{}", x, y, z), q_t);
 
                     let obj_pos=out.len();
@@ -427,28 +421,18 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     for (i, src) in archive.sources.iter().enumerate() {
                         if src.url.starts_with("nostr://") { continue; }
                         
-                        let is_global = src.lat.is_none() && src.lon.is_none() && !src.url.contains("{lat}") && !src.url.contains("{lon}");
-                        let (src_x, src_y, src_z) = if is_global {
-                            (0.0, 0.0, 0.0)
-                        } else if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
+                        let (src_x, src_y, src_z) = if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
                             geodetic_to_icrs(lat, lon, 0.0, q_t)
                         } else {
                             (x, y, z)
                         };
 
-                        if !is_global && pos_key(src_x, src_y, src_z, src.res, q_t) != pos_key(x, y, z, src.res, q_t) { continue; }
-
-                        let src_key = if is_global {
-                            format!("global_{}", i)
-                        } else {
-                            format!("{}_{}", i, pos_key(src_x, src_y, src_z, src.res, q_t))
-                        };
+                        let src_key = format!("{}_{}", i, pos_key(src_x, src_y, src_z, src.res, q_t));
                         
                         if let Some((_, values)) = cache.get(&src_key) { for (k, v) in values { merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4)); } }
                     }
 
                     if !merged_values.is_empty() {
-
                         let fields: Vec<(&str,f64,f64,f64,f64,f64)> = merged_values.iter().map(|(k,v)|(k.as_str(),v.0,v.1,v.2,v.3,v.4)).collect();
                         φ_obj(&mut out,&fields);
                     }
@@ -545,15 +529,12 @@ fn load_sources() -> Vec<SourceConfig> {
         match parts[0] {
             "source" => {
                 if active { 
-                    let is_dynamic = cur_lat.is_none() && cur_lon.is_none() && (cur_url.contains("{lat}") || cur_url.contains("{lon}"));
-                    let is_global = cur_lat.is_none() && cur_lon.is_none() && !is_dynamic;
+                    let is_dynamic = cur_lat.is_none() && cur_lon.is_none();
 
                     if is_dynamic && cur_res == 0 {
                     } else {
                         let (final_lat, final_lon, final_res) = if is_dynamic {
                             (None, None, cur_res)
-                        } else if is_global {
-                            (Some(0.0), Some(0.0), -8)
                         } else {
                             let mut final_res = cur_res;
                             if final_res == 0 {
@@ -596,14 +577,11 @@ fn load_sources() -> Vec<SourceConfig> {
         }
     }
     if active { 
-        let is_dynamic = cur_lat.is_none() && cur_lon.is_none() && (cur_url.contains("{lat}") || cur_url.contains("{lon}"));
-        let is_global = cur_lat.is_none() && cur_lon.is_none() && !is_dynamic;
+        let is_dynamic = cur_lat.is_none() && cur_lon.is_none();
 
         if !(is_dynamic && cur_res == 0) {
             let (final_lat, final_lon, final_res) = if is_dynamic {
                 (None, None, cur_res)
-            } else if is_global {
-                (Some(0.0), Some(0.0), -8)
             } else {
                 let mut final_res = cur_res;
                 if final_res == 0 {
@@ -729,23 +707,14 @@ fn warm_cache(archive: Arc<Archive>) {
             let needs: Vec<(usize, String, String, Vec<(String, String)>, u64)> = archive.sources.iter().enumerate()
                 .filter(|(_, src)| !src.url.starts_with("nostr://"))
                 .filter_map(|(i, src)| {
-                    let is_global = src.lat.is_none() && src.lon.is_none() && !src.url.contains("{lat}") && !src.url.contains("{lon}");
-                    let (src_x, src_y, src_z, render_x, render_y, render_z) = if is_global {
-                        (0.0, 0.0, 0.0, pos_x, pos_y, pos_z)
-                    } else if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
+                    let (src_x, src_y, src_z, render_x, render_y, render_z) = if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
                         let (x, y, z) = geodetic_to_icrs(lat, lon, 0.0, *query_t);
                         (x, y, z, pos_x, pos_y, pos_z)
                     } else {
                         (pos_x, pos_y, pos_z, pos_x, pos_y, pos_z)
                     };
 
-                    if !is_global && pos_key(src_x, src_y, src_z, src.res, *query_t) != pos_key(pos_x, pos_y, pos_z, src.res, *query_t) { return None; }
-
-                    let cache_key = if is_global {
-                        format!("global_{}", i)
-                    } else {
-                        format!("{}_{}", i, pos_key(src_x, src_y, src_z, src.res, *query_t))
-                    };
+                    let cache_key = format!("{}_{}", i, pos_key(src_x, src_y, src_z, src.res, *query_t));
                     
                     let needs_fetch = { let cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()); match cache.get(&cache_key) { Some((ts, _)) => query_t - *ts >= src.ttl as f64, None => true } };
                     if needs_fetch { let url = render_url(&src.url, render_x, render_y, render_z, *query_t); let headers_rendered: Vec<(String, String)> = src.headers.iter().map(|(k, v)| (k.clone(), render_url(v, render_x, render_y, render_z, *query_t))).collect(); Some((i, cache_key, url, headers_rendered, src.ttl)) } else { None }

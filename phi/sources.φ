@@ -27,11 +27,15 @@ path data.0 quantum_entropy_anu
 
 source drand_quantum_entropy
 ttl 60
+lat 46.5
+lon 6.6
 url https://api.drand.sh/public/latest
 field round quantum_entropy_generation_round
 
 source dst_index
 ttl 60
+lat 35.0
+lon 135.8
 url https://services.swpc.noaa.gov/products/kyoto-dst.json
 last dst magnetosphere_dst_index_nt
 
@@ -45,6 +49,8 @@ count lines seismic_count_emsc
 source etf_africa_broad
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_africa_price
 field chart.result.0.meta.chartPreviousClose economic_region_africa_prev_close
@@ -52,6 +58,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_africa_prev_close
 source etf_brazil
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_brazil_price
 field chart.result.0.meta.chartPreviousClose economic_region_brazil_prev_close
@@ -59,6 +67,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_brazil_prev_close
 source etf_china
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_china_price
 field chart.result.0.meta.chartPreviousClose economic_region_china_prev_close
@@ -66,6 +76,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_china_prev_close
 source etf_dollar_index
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_dollar_index_price
 field chart.result.0.meta.chartPreviousClose economic_dollar_index_prev_close
@@ -73,6 +85,8 @@ field chart.result.0.meta.chartPreviousClose economic_dollar_index_prev_close
 source etf_dry_bulk_shipping
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_leading_global_trade_proxy_price
 field chart.result.0.meta.chartPreviousClose economic_leading_global_trade_proxy_prev_close
@@ -80,6 +94,8 @@ field chart.result.0.meta.chartPreviousClose economic_leading_global_trade_proxy
 source etf_emerging_markets
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_emerging_markets_price
 field chart.result.0.meta.chartPreviousClose economic_emerging_markets_prev_close
@@ -87,6 +103,8 @@ field chart.result.0.meta.chartPreviousClose economic_emerging_markets_prev_clos
 source etf_europe
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_europe_price
 field chart.result.0.meta.chartPreviousClose economic_region_europe_prev_close
@@ -94,6 +112,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_europe_prev_close
 source etf_frontier_markets
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_frontier_markets_price
 field chart.result.0.meta.chartPreviousClose economic_frontier_markets_prev_close
@@ -101,6 +121,8 @@ field chart.result.0.meta.chartPreviousClose economic_frontier_markets_prev_clos
 source etf_germany
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_germany_price
 field chart.result.0.meta.chartPreviousClose economic_region_germany_prev_close
@@ -108,6 +130,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_germany_prev_close
 source etf_gold
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_commodity_gold_price
 field chart.result.0.meta.chartPreviousClose economic_commodity_gold_prev_close
@@ -115,6 +139,8 @@ field chart.result.0.meta.chartPreviousClose economic_commodity_gold_prev_close
 source etf_india
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_india_price
 field chart.result.0.meta.chartPreviousClose economic_region_india_prev_close
@@ -122,6 +148,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_india_prev_close
 source etf_japan
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_japan_price
 field chart.result.0.meta.chartPreviousClose economic_region_japan_prev_close
@@ -129,6 +157,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_japan_prev_close
 source etf_latin_america_broad
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_latin_america_price
 field chart.result.0.meta.chartPreviousClose economic_region_latin_america_prev_close
@@ -136,6 +166,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_latin_america_prev_
 source etf_mexico
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_mexico_price
 field chart.result.0.meta.chartPreviousClose economic_region_mexico_prev_close
@@ -143,6 +175,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_mexico_prev_close
 source etf_middle_east
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_gulf_price
 field chart.result.0.meta.chartPreviousClose economic_region_gulf_prev_close
@@ -150,6 +184,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_gulf_prev_close
 source etf_oil
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_commodity_oil_price
 field chart.result.0.meta.chartPreviousClose economic_commodity_oil_prev_close
@@ -157,6 +193,8 @@ field chart.result.0.meta.chartPreviousClose economic_commodity_oil_prev_close
 source etf_sector_communication
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_communication_price
 field chart.result.0.meta.chartPreviousClose economic_sector_communication_prev_close
@@ -164,6 +202,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_communication_prev_
 source etf_sector_consumer_discretionary
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_consumer_discretionary_price
 field chart.result.0.meta.chartPreviousClose economic_sector_consumer_discretionary_prev_close
@@ -171,6 +211,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_consumer_discretion
 source etf_sector_consumer_staples
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_consumer_staples_price
 field chart.result.0.meta.chartPreviousClose economic_sector_consumer_staples_prev_close
@@ -178,6 +220,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_consumer_staples_pr
 source etf_sector_energy
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_energy_price
 field chart.result.0.meta.chartPreviousClose economic_sector_energy_prev_close
@@ -185,6 +229,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_energy_prev_close
 source etf_sector_financials
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_financials_price
 field chart.result.0.meta.chartPreviousClose economic_sector_financials_prev_close
@@ -192,6 +238,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_financials_prev_clo
 source etf_sector_healthcare
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_healthcare_price
 field chart.result.0.meta.chartPreviousClose economic_sector_healthcare_prev_close
@@ -199,6 +247,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_healthcare_prev_clo
 source etf_sector_industrials
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_industrials_price
 field chart.result.0.meta.chartPreviousClose economic_sector_industrials_prev_close
@@ -206,6 +256,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_industrials_prev_cl
 source etf_sector_materials
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_materials_price
 field chart.result.0.meta.chartPreviousClose economic_sector_materials_prev_close
@@ -213,6 +265,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_materials_prev_clos
 source etf_sector_real_estate
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_real_estate_price
 field chart.result.0.meta.chartPreviousClose economic_sector_real_estate_prev_close
@@ -220,6 +274,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_real_estate_prev_cl
 source etf_sector_technology
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_technology_price
 field chart.result.0.meta.chartPreviousClose economic_sector_technology_prev_close
@@ -227,6 +283,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_technology_prev_clo
 source etf_sector_utilities
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_utilities_price
 field chart.result.0.meta.chartPreviousClose economic_sector_utilities_prev_close
@@ -234,6 +292,8 @@ field chart.result.0.meta.chartPreviousClose economic_sector_utilities_prev_clos
 source etf_semiconductors
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_leading_semiconductors_price
 field chart.result.0.meta.chartPreviousClose economic_leading_semiconductors_prev_close
@@ -241,6 +301,8 @@ field chart.result.0.meta.chartPreviousClose economic_leading_semiconductors_pre
 source etf_south_africa
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_south_africa_price
 field chart.result.0.meta.chartPreviousClose economic_region_south_africa_prev_close
@@ -248,6 +310,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_south_africa_prev_c
 source etf_southeast_asia
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_southeast_asia_price
 field chart.result.0.meta.chartPreviousClose economic_region_southeast_asia_prev_close
@@ -255,6 +319,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_southeast_asia_prev
 source etf_transportation
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_leading_transportation_price
 field chart.result.0.meta.chartPreviousClose economic_leading_transportation_prev_close
@@ -269,6 +335,8 @@ field chart.result.0.meta.chartPreviousClose economic_interest_rate_10y_treasury
 source etf_usa
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_usa_price
 field chart.result.0.meta.chartPreviousClose economic_region_usa_prev_close
@@ -276,6 +344,8 @@ field chart.result.0.meta.chartPreviousClose economic_region_usa_prev_close
 source etf_volatility
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_fear_gauge_vix
 field chart.result.0.meta.chartPreviousClose economic_fear_gauge_vix_prev
@@ -283,6 +353,8 @@ field chart.result.0.meta.chartPreviousClose economic_fear_gauge_vix_prev
 source etf_world_all_country
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_world_acwi_price
 field chart.result.0.meta.chartPreviousClose economic_world_acwi_prev_close
@@ -290,12 +362,16 @@ field chart.result.0.meta.chartPreviousClose economic_world_acwi_prev_close
 source etf_world_developed
 ttl 60
 header User-Agent "omegaflow"
+lat 40.71
+lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/URTH?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_world_developed_price
 field chart.result.0.meta.chartPreviousClose economic_world_developed_prev_close
 
 source github_public_events
 ttl 60
+lat 37.8
+lon -122.4
 header User-Agent "omegaflow"
 url https://api.github.com/events?per_page=100
 count . technosphere_github_events_per_minute
@@ -325,6 +401,8 @@ count ArrayOfObjStationData.ObjStationData technosphere_train_departures_dublin
 
 source kp_index
 ttl 60
+lat 40.0
+lon -105.2
 url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
 last kp_index magnetosphere_kp_index
 last a_index magnetosphere_ap_index
@@ -338,12 +416,16 @@ field qrn quantum_entropy_lfdr
 
 source ligo_gracedb_events
 ttl 60
+lat 34.1
+lon -118.1
 url https://gracedb.ligo.org/api/superevents/?count=10&category=production
 count superevents cosmic_gravitational_wave_event_count
 first superevents.0.superevent_id cosmic_gravitational_wave_latest_id
 
 source magnetism
 ttl 60
+lat 0.0
+lon 0.0
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 path 0.bz_gsm magnetosphere_imf_bz_nt
 path 0.bt magnetosphere_imf_bt_nt
@@ -351,6 +433,8 @@ last_row by_gsm magnetosphere_imf_by_nt
 
 source nasa_dsn_status
 ttl 60
+lat 35.4
+lon -116.9
 url https://eyes.nasa.gov/dsn-now/dsn.json
 count dsn technosphere_nasa_deep_space_network_signals
 
@@ -363,12 +447,16 @@ path pulse.outputValue quantum_entropy_nist_beacon
 
 source noaa_goes_electrons
 ttl 60
+lat 0.0
+lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 last_obj energy ">=2 MeV" flux radiation_electron_flux_2mev
 last_obj energy ">=0.8 MeV" flux radiation_electron_flux_800kev
 
 source noaa_goes_magnetosphere
 ttl 60
+lat 0.0
+lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 last_obj satellite "GOES-16" Hp magnetosphere_hp_nt
 last_obj satellite "GOES-16" He magnetosphere_he_nt
@@ -377,6 +465,8 @@ last_obj satellite "GOES-16" Ht magnetosphere_ht_nt
 
 source noaa_proton_flux
 ttl 60
+lat 0.0
+lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 last_obj energy "40300-73400 keV" flux radiation_proton_flux_40mev
 last_obj energy "83700-98500 keV" flux radiation_proton_flux_80mev
@@ -387,6 +477,8 @@ url nostr://stream
 
 source plasma
 ttl 60
+lat 0.0
+lon 0.0
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
 path 0.speed solar_wind_speed_km_s
 path 0.density solar_wind_density_cm3
@@ -394,6 +486,8 @@ last_row temperature solar_wind_temp_k
 
 source protons
 ttl 60
+lat 0.0
+lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 last_obj energy ">=100 MeV" flux radiation_proton_flux_100mev
 last_obj energy ">=10 MeV" flux radiation_proton_flux_10mev
@@ -401,23 +495,15 @@ last_obj energy ">=1 MeV" flux radiation_proton_flux_1mev
 
 source ripe_bgp_updates
 ttl 60
+lat 52.3
+lon 4.9
 url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today}
 field nr_updates technosphere_bgp_updates_per_hour
-
-source safecast_radiation
-ttl 60
-url https://api.safecast.org/measurements.json?limit=1
-field value radiation_cpm_safecast
 
 source seismic
 ttl 60
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
 geojson events mag 2.0 seismic_magnitude seismic_depth
-
-source thingspeak_plant_voltage
-ttl 60
-url https://api.thingspeak.com/channels/705404/feeds/last.json
-field field1 vegetation_plant_voltage_mv
 
 source transport_bern_departures
 ttl 60
@@ -457,12 +543,16 @@ count data.monitors.0.lines technosphere_transport_lines_vienna
 
 source xray
 ttl 60
+lat 0.0
+lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
 last flux solar_xray_flux_wm2
 last energy solar_xray_wavelength_a
 
 source yahoo_finance_markets
 ttl 60
+lat 40.71
+lon -74.0
 header User-Agent "omegaflow"
 url https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_stock_price
@@ -470,6 +560,8 @@ field chart.result.0.meta.chartPreviousClose economic_stock_prev_close
 
 source yahoo_finance_vix
 ttl 60
+lat 40.71
+lon -74.0
 header User-Agent "omegaflow"
 url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
 path chart.result.0.meta.regularMarketPrice economic_fear_gauge_vix
@@ -495,18 +587,6 @@ lon -118.4
 url https://soa.smext.faa.gov/asws/api/airport/status/LAX?format=json
 path AirportStatusRespons.AirportStatus.AvgDelay anthroposphere_faa_avg_delay_lax_min
 
-source anthroposphere_global_active_aircraft
-ttl 300
-url https://opensky-network.org/api/states/all
-count states anthroposphere_global_active_aircraft
-
-source coingecko_crypto
-ttl 300
-url https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true
-field bitcoin.usd economic_bitcoin_price_usd
-field bitcoin.usd_24h_change economic_bitcoin_change_24h
-field ethereum.usd economic_ethereum_price_usd
-
 source energy_charts_renewable
 ttl 300
 lat 50.0
@@ -516,6 +596,8 @@ last data technosphere_renewable_share_pct
 
 source goes_euv
 ttl 300
+lat 0.0
+lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
 last_obj wavelength "0.05-0.4nm" flux solar_euv_flux_short_wm2
 last_obj wavelength "0.1-0.8nm" flux solar_euv_flux_long_wm2
