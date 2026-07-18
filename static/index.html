@@ -89,7 +89,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         let topologyRingSize = 32;
         let topologyPending = false;
         let permutationEntropyPipeline = null, takensPipeline = null, tdaPipeline = null, kurtosisPipeline = null, tePipeline = null, surrPipeline = null;
-        let globalNaturalLatencyTicks = 0;
+        let globalNaturalLatencyTicks = 8;
         let lastTs = 0, certainty = 1.0, debugEl = null, lastDebug = 0;
         let stableTick = 0;
         let tPresence = 0, spatialPresence = { x: 0, y: 0, z: 0 };
@@ -206,7 +206,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         function registerOscillator(url, initialVal, readFn, writeFn) {
             const index = oscillators.length;
             const ringOffset = index * CAPTURE_RING_SIZE;
-            const osc = { url, index, ringOffset, idx: 0, filled: 0, canSense: readFn, canRadiate: writeFn, complexity: Number.EPSILON, median: initialVal, lastEcho: performance.now(), fieldPermeability: Number.EPSILON, lastOutTE: Number.EPSILON, prevSign: 0, ticksSinceTurn: 0, naturalLatencyTicks: 0, originT: 0, originPos: { x: 0, y: 0, z: 0 }, presenceWeight: 1.0, lastTransmitted: initialVal, takensCx: 0, takensCy: 0, takensCz: 0, takensSpread: 0 };
+            const osc = { url, index, ringOffset, idx: 0, filled: 0, senseFn: readFn, complexity: Number.EPSILON, median: initialVal, lastEcho: performance.now(), originT: 0, originPos: { x: 0, y: 0, z: 0 }, presenceWeight: 1.0, lastTransmitted: initialVal, takensCx: 0, takensCy: 0, takensCz: 0, takensSpread: 0 };
             oscillators.push(osc); indexMap.set(url, index); ensureRingCapacity();
             return osc;
         }
@@ -364,7 +364,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             for (let i = 0; i < n; i++) flat.set(unrollRing(candidates[i].ringOffset, candidates[i].idx, topologyRingSize), i * topologyRingSize);
             const layout = { entries: [ { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } }, { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }, { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } } ] };
             const srcList = [], dstList = [];
-            for (let i = 0; i < candidates.length; i++) { if (candidates[i].canRadiate) dstList.push(i); else srcList.push(i); }
+            for (let i = 0; i < candidates.length; i++) { srcList.push(i); }
             const srcW = srcList.length, dstR = dstList.length, hasTE = srcW > 0 && dstR > 0;
             let inBuf, paramBuf, kOutBuf, tOutBuf, tdaOutBuf, kurtosisOutBuf, readBuf;
             const numSurr = 10;
@@ -484,56 +484,23 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         const GROUND_STATE = Number.EPSILON;
         let surrogateThresholds = new Map();
         let surrogateSeed = 1;
-        function computeOscSurrogate(osc) {
-            const cached = surrogateThresholds.get(osc.url);
-            return cached !== undefined ? cached : GROUND_STATE;
-        }
-        const GLOBAL_LATENCY_ALPHA = 0.1;
-        function adaptFieldPermeability(osc) {
-            let inTE = 0;
-            for (let i = 0; i < oscillators.length; i++) { 
-                if (oscillators[i].url.endsWith('>' + osc.url)) inTE += Math.abs(oscillators[i].median); 
-            }
-            const deltaTE = inTE - (osc.lastOutTE || GROUND_STATE);
-            osc.lastOutTE = inTE;
-            const threshold = computeOscSurrogate(osc);
-            const target = inTE / (inTE + threshold + GROUND_STATE);
-            osc.ticksSinceTurn++;
-            const currentSign = Math.sign(deltaTE);
-            if (currentSign !== 0 && currentSign !== osc.prevSign && osc.prevSign !== 0) {
-                const measuredLatency = osc.ticksSinceTurn;
-                osc.naturalLatencyTicks = osc.naturalLatencyTicks > 0
-                    ? (osc.naturalLatencyTicks * 0.7) + (measuredLatency * 0.3)
-                    : measuredLatency;
-                osc.ticksSinceTurn = 0;
-                osc.prevSign = currentSign;
-                if (osc.naturalLatencyTicks > 0) {
-                    globalNaturalLatencyTicks = globalNaturalLatencyTicks > 0
-                        ? (globalNaturalLatencyTicks * (1.0 - GLOBAL_LATENCY_ALPHA)) + (osc.naturalLatencyTicks * GLOBAL_LATENCY_ALPHA)
-                        : osc.naturalLatencyTicks;
-                }
-            } else if (osc.prevSign === 0) {
-                osc.prevSign = currentSign;
-            }
-            const alpha = 1 - Math.exp(-1 / Math.max(1, osc.naturalLatencyTicks));
-            osc.fieldPermeability += (target - osc.fieldPermeability) * alpha;
-            osc.fieldPermeability = Math.max(GROUND_STATE, Math.min(1.0, osc.fieldPermeability));
-        }
         function flow() {
-            const fluidState = { topology: [], globalCoherence: measureCoherence() };
+            const topology = [];
+            const globalCoherence = measureCoherence();
             for (let i = 0; i < oscillators.length; i++) {
                 const o = oscillators[i];
                 if (o.filled > 0 && o.presenceWeight > 0 && !isInternalMetric(o.url)) {
-                    fluidState.topology.push({ cx: o.takensCx, cy: o.takensCy, cz: o.takensCz, weight: o.presenceWeight });
+                    topology.push({ cx: o.takensCx, cy: o.takensCy, cz: o.takensCz, weight: o.presenceWeight });
                 }
             }
-            for (let i = 0; i < oscillators.length; i++) {
-                const osc = oscillators[i];
-                if (osc.canRadiate) {
-                    if (osc.fieldPermeability > GROUND_STATE) osc.canRadiate(osc.fieldPermeability, fluidState);
-                    recordSample(osc.url, osc.fieldPermeability);
-                }
-            }
+            if (topology.length === 0) return;
+            if (audioCtx) manifestAcoustic(topology);
+            if (navigator.vibrate) manifestKinetic(globalCoherence);
+            if (ctx) manifestPhoton(topology);
+            if (activeSerialPort) manifestSerial(topology);
+            if (activeUsbDevice) manifestUsb(topology);
+            if (activeBtChar) manifestBluetooth(globalCoherence);
+            if (activeHidDevice) manifestHid(topology);
         }
         let audioCtx = null, audioSrc = null, audioGain = null, audioBuffer = null;
         function startAudio() {
@@ -557,20 +524,35 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                         }
                     }
                 }).catch(() => {});
-                registerOscillator('membrane.acoustic', Number.EPSILON, null, (permeability, fluidState) => {
+                function manifestAcoustic(topology) {
                     try { 
-                        const targetGain = Math.max(0, Math.min(0.5, permeability * (fluidState.globalCoherence || 0))); 
-                        audioGain.gain.setTargetAtTime(targetGain, audioCtx.currentTime, transport.tickTime / 1000); 
+                        if (!topology || topology.length === 0) {
+                            audioGain.gain.setTargetAtTime(0, audioCtx.currentTime, transport.tickTime / 1000);
+                            return;
+                        }
+                        const dt = transport.tickTime / 1000;
+                        const maxGain = 0.15;
+                        audioGain.gain.setTargetAtTime(maxGain, audioCtx.currentTime, dt * Φ * Φ);
                         const channelData = audioBuffer.getChannelData(0); 
-                        const threads = getRingBuffers(); 
-                        if (threads.length === 0) return; 
+                        const sr = audioCtx.sampleRate;
+                        const n = topology.length;
                         for (let i = 0; i < CAPTURE_RING_SIZE; i++) { 
+                            const tSec = i / sr;
                             let sum = 0; 
-                            for (let t = 0; t < threads.length; t++) sum += threads[t][i]; 
-                            channelData[i] = (sum / threads.length) * permeability; 
+                            for (let t = 0; t < n; t++) {
+                                const node = topology[t];
+                                const normCx = (node.cx + 1) * 0.5;
+                                const normCy = (node.cy + 1) * 0.5;
+                                const normCz = (node.cz + 1) * 0.5;
+                                const freq = 55 + normCx * 880;
+                                const phase = normCy * Math.PI * 2;
+                                const detune = 1 + normCz * 0.01;
+                                sum += Math.sin(2 * Math.PI * freq * detune * tSec + phase) * node.weight;
+                            }
+                            channelData[i] = sum / n;
                         } 
                     } catch {}
-                });
+                }
             } catch {}
         }
         async function startCamera() {
@@ -644,66 +626,64 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             document.addEventListener('click', startXR, { once: true });
             document.addEventListener('touchstart', startXR, { once: true });
         }
-        if (navigator.vibrate) { registerOscillator('membrane.kinetic', Number.EPSILON, null, (permeability, fluidState) => {
-            if (permeability <= GROUND_STATE || !navigator.vibrate) return;
-            const pulseDuration = Math.max(10, Math.floor(1000 / (1 + (fluidState.globalCoherence || 0) * 10)));
-            navigator.vibrate(pulseDuration);
-        }); }
+        function manifestKinetic(coherence) {
+            if (!navigator.vibrate) return;
+            if (coherence > 0.1 && Math.random() < coherence * 0.1) {
+                navigator.vibrate(Math.max(10, Math.floor(1000 / (1 + coherence * 10))));
+            }
+        }
         let activeSerialPort = null;
-        if (navigator.serial) { registerOscillator('membrane.serial', Number.EPSILON, null, (permeability, fluidState) => {
-            if (!activeSerialPort || !activeSerialPort.writable || permeability <= GROUND_STATE) return;
+        function manifestSerial(topology) {
+            if (!activeSerialPort || !activeSerialPort.writable) return;
             try {
                 const writer = activeSerialPort.writable.getWriter();
-                const topology = fluidState.topology || [];
                 const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
                 for (let i = 0; i < sendBuf.length; i += 4) {
                     const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
-                    sendBuf[i] = Math.floor(((node.cx + 1) * 0.5 * permeability) * 255) & 255;
-                    sendBuf[i + 1] = Math.floor(((node.cy + 1) * 0.5 * permeability) * 255) & 255;
-                    sendBuf[i + 2] = Math.floor(((node.cz + 1) * 0.5 * permeability) * 255) & 255;
-                    sendBuf[i + 3] = Math.floor(node.weight * permeability * 255) & 255;
+                    sendBuf[i] = Math.floor(((node.cx + 1) * 0.5) * 255) & 255;
+                    sendBuf[i + 1] = Math.floor(((node.cy + 1) * 0.5) * 255) & 255;
+                    sendBuf[i + 2] = Math.floor(((node.cz + 1) * 0.5) * 255) & 255;
+                    sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
                 }
                 writer.write(sendBuf);
                 writer.releaseLock();
             } catch {}
-        }); }
+        }
         let activeUsbDevice = null;
-        if (navigator.usb) { registerOscillator('membrane.usb', Number.EPSILON, null, (permeability, fluidState) => {
-            if (!activeUsbDevice || !activeUsbDevice.opened || permeability <= GROUND_STATE) return;
+        function manifestUsb(topology) {
+            if (!activeUsbDevice || !activeUsbDevice.opened) return;
             const alt = activeUsbDevice.configuration?.interfaces?.[0]?.alternates?.[0];
             if (!alt) return;
             const outEp = alt.endpoints.find(e => e.direction === 'out');
             if (!outEp) return;
-            const topology = fluidState.topology || [];
             const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
             for (let i = 0; i < sendBuf.length; i += 4) {
                 const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
-                sendBuf[i] = Math.floor(((node.cx + 1) * 0.5 * permeability) * 255) & 255;
-                sendBuf[i + 1] = Math.floor(((node.cy + 1) * 0.5 * permeability) * 255) & 255;
-                sendBuf[i + 2] = Math.floor(((node.cz + 1) * 0.5 * permeability) * 255) & 255;
-                sendBuf[i + 3] = Math.floor(node.weight * permeability * 255) & 255;
+                sendBuf[i] = Math.floor(((node.cx + 1) * 0.5) * 255) & 255;
+                sendBuf[i + 1] = Math.floor(((node.cy + 1) * 0.5) * 255) & 255;
+                sendBuf[i + 2] = Math.floor(((node.cz + 1) * 0.5) * 255) & 255;
+                sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
             }
             try { activeUsbDevice.transferOut(outEp.endpointNumber, sendBuf); } catch {}
-        }); }
+        }
         let activeBtChar = null;
-        if (navigator.bluetooth) { registerOscillator('membrane.bluetooth', Number.EPSILON, null, (permeability, fluidState) => {
-            if (!activeBtChar || permeability <= GROUND_STATE) return;
-            try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor(permeability * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
-        }); }
+        function manifestBluetooth(coherence) {
+            if (!activeBtChar) return;
+            try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor(coherence * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
+        }
         let activeHidDevice = null;
-        if (navigator.hid) { registerOscillator('membrane.hid', Number.EPSILON, null, (permeability, fluidState) => {
-            if (!activeHidDevice || !activeHidDevice.opened || permeability <= GROUND_STATE) return;
-            const topology = fluidState.topology || [];
+        function manifestHid(topology) {
+            if (!activeHidDevice || !activeHidDevice.opened) return;
             const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
             for (let i = 0; i < sendBuf.length; i += 4) {
                 const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
-                sendBuf[i] = Math.floor(((node.cx + 1) * 0.5 * permeability) * 255) & 255;
-                sendBuf[i + 1] = Math.floor(((node.cy + 1) * 0.5 * permeability) * 255) & 255;
-                sendBuf[i + 2] = Math.floor(((node.cz + 1) * 0.5 * permeability) * 255) & 255;
-                sendBuf[i + 3] = Math.floor(node.weight * permeability * 255) & 255;
+                sendBuf[i] = Math.floor(((node.cx + 1) * 0.5) * 255) & 255;
+                sendBuf[i + 1] = Math.floor(((node.cy + 1) * 0.5) * 255) & 255;
+                sendBuf[i + 2] = Math.floor(((node.cz + 1) * 0.5) * 255) & 255;
+                sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
             }
             for (const coll of activeHidDevice.collections) { for (const inp of coll.inputReports) { try { activeHidDevice.sendReport(inp.reportId, sendBuf); } catch {} } }
-        }); }
+        }
         function startHardware() {
             if (navigator.serial) { navigator.serial.requestPort().then(port => port.open({ baudRate: 115200 }).then(() => { activeSerialPort = port; })).catch(() => {}); }
             if (navigator.usb) {
@@ -768,15 +748,15 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         const ctx = canvas.getContext('2d');
         const imgData = ctx.createImageData(canvas.width, canvas.height);
         const data8 = imgData.data;
-        registerOscillator('membrane.photon', Number.EPSILON, null, (permeability, fluidState) => {
+        function manifestPhoton(topology) {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            if (permeability <= GROUND_STATE || !fluidState.topology || fluidState.topology.length === 0) return;
-            for (const node of fluidState.topology) {
+            if (!topology || topology.length === 0) return;
+            for (const node of topology) {
                 const screenX = (node.cx + 1.0) * 0.5 * canvas.width;
                 const screenY = (node.cy + 1.0) * 0.5 * canvas.height;
                 const lum = Math.max(0, Math.min(1, (node.cz + 1.0) * 0.5));
-                const alpha = Math.max(0, Math.min(1, node.weight * permeability));
+                const alpha = Math.max(0, Math.min(1, node.weight));
                 if (alpha > 0.01) {
                     ctx.fillStyle = `rgba(${Math.floor(lum * 255)}, ${Math.floor(lum * 255)}, 255, ${alpha})`;
                     ctx.beginPath();
@@ -784,13 +764,13 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     ctx.fill();
                 }
             }
-        });
+        }
         let cachedThreads = []; let cachedThreadBuffers = [];
         function getRingBuffers() {
             let activeCount = 0;
             for (let i = 0; i < oscillators.length; i++) {
                 const osc = oscillators[i];
-                if (osc.filled >= topologyRingSize && !osc.canRadiate && !isInternalMetric(osc.url) && osc.presenceWeight > 0) {
+                if (osc.filled >= topologyRingSize && !isInternalMetric(osc.url) && osc.presenceWeight > 0) {
                     if (!cachedThreadBuffers[activeCount]) cachedThreadBuffers[activeCount] = new Float32Array(CAPTURE_RING_SIZE);
                     const buf = cachedThreadBuffers[activeCount];
                     for (let j = 0; j < topologyRingSize; j++) buf[j] = flatRings[osc.ringOffset + (osc.idx + j) % CAPTURE_RING_SIZE] * osc.presenceWeight;
@@ -829,7 +809,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             stableTick = stableTick * (1 - ma()) + rawTick * ma();
             transport.tickTime = stableTick;
             let maxWeight = 0; let targetT = tPresence, targetX = spatialPresence.x, targetY = spatialPresence.y, targetZ = spatialPresence.z;
-            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.presenceWeight > maxWeight && !isInternalMetric(osc.url) && !osc.canRadiate) { maxWeight = osc.presenceWeight; targetT = osc.originT; targetX = osc.originPos.x; targetY = osc.originPos.y; targetZ = osc.originPos.z; } }
+            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.presenceWeight > maxWeight && !isInternalMetric(osc.url)) { maxWeight = osc.presenceWeight; targetT = osc.originT; targetX = osc.originPos.x; targetY = osc.originPos.y; targetZ = osc.originPos.z; } }
             const dxDrift = targetX - spatialPresence.x, dyDrift = targetY - spatialPresence.y, dzDrift = targetZ - spatialPresence.z;
             const dtDrift = Math.abs(targetT - tPresence) * C;
             const dist4DDrift = Math.sqrt(dxDrift*dxDrift + dyDrift*dyDrift + dzDrift*dzDrift + dtDrift*dtDrift);
@@ -840,7 +820,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             if (!isFinite(tPresence) || !isFinite(spatialPresence.x) || !isFinite(spatialPresence.y) || !isFinite(spatialPresence.z)) { const ec = earthPositionIcrs(φ['server.time'] || 0); tPresence = φ['server.time'] || 0; spatialPresence.x = ec.x; spatialPresence.y = ec.y; spatialPresence.z = ec.z; }
             if (prevTPresence === 0 || (prevSpatialPresence.x === 0 && prevSpatialPresence.y === 0 && prevSpatialPresence.z === 0 && (spatialPresence.x !== 0 || spatialPresence.y !== 0 || spatialPresence.z !== 0))) { prevTPresence = tPresence; prevSpatialPresence = { ...spatialPresence }; }
             registerGamepads();
-            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.canSense && osc.presenceWeight > 0) { let readVal = osc.canSense(); if (readVal !== null && typeof readVal === 'number') recordSample(osc.url, readVal); } }
+            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.senseFn && osc.presenceWeight > 0) { let readVal = osc.senseFn(); if (readVal !== null && typeof readVal === 'number') recordSample(osc.url, readVal); } }
             calculateMinkowskiWeight();
             const scrollSpeedS = Math.sqrt((spatialPresence.x - prevSpatialPresence.x)**2 + (spatialPresence.y - prevSpatialPresence.y)**2 + (spatialPresence.z - prevSpatialPresence.z)**2);
             clarity = Math.exp(-scrollSpeedS / (1.0 + measureRms()));
@@ -849,7 +829,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.presenceWeight <= 0) continue; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > osc.complexity) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val, t: tPresence, x: spatialPresence.x, y: spatialPresence.y, z: spatialPresence.z }); } }
             syncField(transmitList, spatialPresence).catch(() => {});
             calculateField();
-            for (let i = 0; i < oscillators.length; i++) { if (oscillators[i].canRadiate) adaptFieldPermeability(oscillators[i]); }
+            
             flow();
             const g = measureRms(); const vC = measureRateOfChange(); const decay = measureDecay(); const quantum = measureQuantum();
             certainty = Math.exp(-vC / (g + (1.0 / C))) * quantum * decay;
@@ -858,7 +838,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 lastNostrPub = ts;
                 if (typeof tPresence === 'number' && isFinite(tPresence)) {
                     const payload = {};
-                    for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (isInternalMetric(osc.url) || osc.canRadiate) continue; if (osc.complexity > 0) payload[osc.url] = osc.median; }
+                    for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (isInternalMetric(osc.url) ) continue; if (osc.complexity > 0) payload[osc.url] = osc.median; }
                     const content = JSON.stringify(payload);
                     if (content !== '{}') { try { const event = nostrModule.finalizeEvent({ kind: 1111, created_at: Math.floor(tPresence + UNIX_J2000_OFFSET), tags: [['icrs', String(spatialPresence.x), String(spatialPresence.y), String(spatialPresence.z), String(tPresence)]], content }, nostrPub); nostrRelay.send(JSON.stringify(['EVENT', event])); } catch {} }
                 }
@@ -872,16 +852,10 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             }
             if (ts - lastDebug > stableTick * 6 || lastDebug === 0) {
                 lastDebug = ts;
-                let active = 0, phantom = 0, photonAp = 0, acousticAp = 0, kineticAp = 0;
-                let photonLat = 0, acousticLat = 0, kineticLat = 0;
-                for (let i = 0; i < oscillators.length; i++) { 
-                    const o = oscillators[i]; 
-                    if (o.canRadiate) { 
-                        if (o.fieldPermeability > GROUND_STATE) active++; else phantom++; 
-                        if (o.url === 'membrane.photon') { photonAp = o.fieldPermeability; photonLat = o.naturalLatencyTicks; } 
-                        if (o.url === 'membrane.acoustic') { acousticAp = o.fieldPermeability; acousticLat = o.naturalLatencyTicks; } 
-                        if (o.url === 'membrane.kinetic') { kineticAp = o.fieldPermeability; kineticLat = o.naturalLatencyTicks; } 
-                    } 
+                let topoCount = 0;
+                for (let i = 0; i < oscillators.length; i++) {
+                    const o = oscillators[i];
+                    if (o.filled > 0 && o.presenceWeight > 0 && !isInternalMetric(o.url)) topoCount++;
                 }
                 let maxFill = 0; 
                 for (let i = 0; i < oscillators.length; i++) maxFill = Math.max(maxFill, oscillators[i].filled);
@@ -894,7 +868,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 let topOsc = []; 
                 for (let i = 0; i < oscillators.length; i++) { 
                     const o = oscillators[i]; 
-                    if (o.filled > 0 && !o.canRadiate && !isInternalMetric(o.url) && o.presenceWeight > 0) {
+                    if (o.filled > 0 && !isInternalMetric(o.url) && o.presenceWeight > 0) {
                         topOsc.push({ u: o.url.substring(0, 32), v: o.median, w: o.presenceWeight, c: o.complexity, f: o.filled });
                     } 
                 }
@@ -914,8 +888,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     `  Time(t): ${tPresence.toFixed(1)} | Lat/Lon: (${latStr}, ${lonStr})\n` +
                     `  API Sources: ${srvCount} | WS: ${transport.socket ? transport.socket.readyState : 'none'} | RTT: ${transport.rtt.toFixed(0)}ms\n` +
                     "> MANIFESTATION (Flow)\n" +
-                    `  Photon: ${photonAp.toExponential(3)} (${photonLat}T) | Acoustic: ${acousticAp.toExponential(3)} (${acousticLat}T)\n` +
-                    `  Kinetic: ${kineticAp.toExponential(3)} (${kineticLat}T) | Active: ${active} | Dormant: ${phantom}\n` +
+                                    `  Topology Nodes: ${topoCount} | Coherence: ${(measureCoherence()).toFixed(4)}\n` +
                     "> RESONANCE\n" +
                     `  TE Links: ${teCount} | maxTE: ${teMax.toExponential(3)} | gNLT: ${globalNaturalLatencyTicks}\n` +
                     `  Surrogate: ${surrogateThresholds.size > 0 ? Math.max(...surrogateThresholds.values()).toExponential(3) : '0'} (${surrogateThresholds.size})\n` +
