@@ -83,15 +83,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         
         const oscillators = [];
         const indexMap = new Map();
-        let visited = new WeakSet();
-        const eventSources = new Set();
+        
         let flatRings = new Float32Array(1024).fill(Number.EPSILON);
         let CAPTURE_RING_SIZE = 32;
         let topologyRingSize = 32;
         let topologyPending = false;
         let permutationEntropyPipeline = null, takensPipeline = null, tdaPipeline = null, kurtosisPipeline = null, tePipeline = null, surrPipeline = null;
         let globalNaturalLatencyTicks = 0;
-        let lastDiscovery = 0, lastTs = 0, certainty = 1.0, debugEl = null, lastDebug = 0;
+        let lastTs = 0, certainty = 1.0, debugEl = null, lastDebug = 0;
         let stableTick = 0;
         let tPresence = 0, spatialPresence = { x: 0, y: 0, z: 0 };
         let prevTPresence = 0, prevSpatialPresence = { x: 0, y: 0, z: 0 };
@@ -211,54 +210,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
             oscillators.push(osc); indexMap.set(url, index); ensureRingCapacity();
             return osc;
         }
-        function scanObjectForValues(obj, path, depth) {
-            if (obj == null || obj instanceof Node || depth > 3) return;
-            if (typeof obj.length === 'number' && typeof obj !== 'string') { for (let i = 0; i < Math.min(obj.length, 50); i++) { try { scanObjectForValues(obj[i], path + '[' + i + ']', depth + 1); } catch(e) {} } return; }
-            let keys; try { keys = Object.getOwnPropertyNames(obj); } catch(e) { return; }
-            for (const k of keys) { 
-                if (k.startsWith('on') && k.length > 2) continue; 
-                try { const v = obj[k]; if (typeof v === 'number') recordSample(path + '.' + k, v); else if (typeof v === 'boolean') recordSample(path + '.' + k, v ? 1 : 0); else if (typeof v === 'object' && depth < 2) scanObjectForValues(v, path + '.' + k, depth + 1); } catch(e) {} 
-            }
-        }
-        function discoverObj(obj, path, depth, allowRawNumbers = false) {
-            if (obj == null || typeof obj !== 'object' || obj instanceof Node || visited.has(obj)) return;
-            visited.add(obj);
-            if (allowRawNumbers) {
-                let keys; try { keys = Object.getOwnPropertyNames(obj); } catch(e) { return; }
-                for (const key of keys) {
-                    if (key.startsWith('on') && key.length > 2) continue;
-                    let val; try { val = obj[key]; } catch(e) { continue; }
-                    if (val == null) continue;
-                    const p = path ? path + '.' + key : key;
-                    if (typeof val === 'number' || typeof val === 'boolean') {
-                        if (!indexMap.has(p)) { const initVal = typeof val === 'boolean' ? (val ? 1 : 0) : val; registerOscillator(p, initVal, () => { let v; try { v = obj[key]; } catch(e) { return null; } return typeof v === 'boolean' ? (v ? 1 : 0) : (typeof v === 'number' ? v : null); }, null); recordSample(p, initVal); }
-                    } else if (typeof val === 'object') {
-                        discoverObj(val, p, depth + 1, true);
-                    }
-                }
-                return;
-            }
-            if (typeof obj.addEventListener === 'function' && path) { try { for (const k of Object.getOwnPropertyNames(obj)) { if (!k.startsWith('on') || k.length <= 2) continue; try { obj.addEventListener(k.slice(2).toLowerCase(), () => scanObjectForValues(obj, path, 0), { passive: true }); } catch(e) {} } } catch(e) {} }
-            let keys; try { keys = Object.getOwnPropertyNames(obj); } catch(e) { return; }
-            for (const key of keys) {
-                if (key.startsWith('on') && key.length > 2) { eventSources.add(key.slice(2).toLowerCase()); continue; }
-                if (['constructor', 'prototype', '__proto__'].includes(key)) continue;
-                let val; try { val = obj[key]; } catch(e) { continue; }
-                if (val == null) continue;
-                const p = path ? path + '.' + key : key;
-                if (typeof val === 'function') {
-                    let isNative = false, isConstructor = false;
-                    try { isNative = val.toString().includes('[native code]'); isConstructor = key[0] === key[0].toUpperCase() && key[0] !== key[0].toLowerCase(); } catch(e) {}
-                    if (isNative && !isConstructor && /^(get|request|watch)/.test(key)) { try { const result = val.call(obj); if (result && typeof result.then === 'function') result.then(res => { if (res != null) discoverObj(res, p, 0, true); }).catch(() => {}); else if (result != null) discoverObj(result, p, 0, true); } catch(e) {} }
-                    if (isConstructor && isNative && key.endsWith('Sensor')) { try { const freq = Math.min(60, stableTick > 0 ? Math.round(1000 / stableTick) : 60); const instance = new val({ frequency: freq, referenceFrame: 'device' }); discoverObj(instance, p, 0, true); if (typeof instance.start === 'function') instance.start(); } catch(e) {} }
-                } else if (typeof val === 'object') {
-                    if (typeof val.pulse === 'function') { if (!indexMap.has(p)) { registerOscillator(p, Number.EPSILON, null, (aperture) => { try { val.pulse(aperture, getRingBuffers()); } catch(e) {} }); } }
-                    else if (typeof val.getTracks === 'function' && !indexMap.has(p + '.track')) { try { for (const track of val.getTracks()) { if (typeof track.readyState !== 'number') continue; const tp = p + '.track.' + track.kind; if (indexMap.has(tp)) continue; if (typeof MediaStreamTrackProcessor !== 'function') continue; const reader = new MediaStreamTrackProcessor(track).readable.getReader(); registerOscillator(tp, Number.EPSILON, null, null); (async () => { while (true) { const { value: frame, done } = await reader.read(); if (done) break; try { if (track.kind === 'video' && typeof frame.createImageBitmap === 'function') { const bmp = await createImageBitmap(frame); const c2d = document.createElement('canvas').getContext('2d', { willReadFrequently: true }); c2d.canvas.width = bmp.width; c2d.canvas.height = bmp.height; c2d.drawImage(bmp, 0, 0); const id = c2d.getImageData(0, 0, bmp.width, bmp.height); const w = bmp.width, h = bmp.height; const firstPixel = tp + '.pixel_0_0'; if (!indexMap.has(firstPixel)) { for (let py = 0; py < h; py += 4) { for (let px = 0; px < w; px += 4) { const idx = (py * w + px) * 4; recordSample(tp + '.pixel_' + (px/4) + '_' + (py/4), (id.data[idx] + id.data[idx+1] + id.data[idx+2]) / 765); } } } else { for (let py = 0; py < h; py += 4) { for (let px = 0; px < w; px += 4) { const idx = (py * w + px) * 4; const lum = (id.data[idx] + id.data[idx+1] + id.data[idx+2]) / 765; const url = tp + '.pixel_' + (px/4) + '_' + (py/4); const oi = indexMap.get(url); if (oi !== undefined) { const osc = oscillators[oi]; flatRings[osc.ringOffset + osc.idx] = lum; osc.idx = (osc.idx + 1) % CAPTURE_RING_SIZE; if (osc.filled < CAPTURE_RING_SIZE) osc.filled++; osc.median = osc.median * (1 - ma()) + lum * ma(); } } } } bmp.close(); } frame.close(); } catch(e) { try { frame.close(); } catch(e2) {} } } })(); } } catch(e) {} discoverObj(val, p, depth + 1, false); }
-                    else if (['navigator', 'window', 'screen', 'document', 'performance', 'connection'].includes(key) || path === '') { discoverObj(val, p, depth + 1, false); }
-                }
-            }
-        }
-        function registerEvents() { for (const evName of eventSources) { window.addEventListener(evName, (e) => { recordSample('event.' + evName, 1.0); if (e && typeof e === 'object') scanObjectForValues(e, 'event.' + evName, 0); }, { passive: true }); } }
         function recordSample(url, value, t = tPresence, x = spatialPresence.x, y = spatialPresence.y, z = spatialPresence.z) {
             if (typeof value !== 'number' || !isFinite(value)) return;
             if (!isFinite(t) || !isFinite(x) || !isFinite(y) || !isFinite(z)) return;
@@ -275,7 +226,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         async function syncField(transmitList, queryPos) {
             if (transmitList.length === 0 && !queryPos) return;
             const queries = queryPos ? [{ t: tPresence, x: queryPos.x, y: queryPos.y, z: queryPos.z }] : [];
-            const echoes = await syncFrame(transmitList, queries, []);
+            const echoes = await syncFrame(transmitList, queries);
             for (const echo of echoes) { recordSample(echo.name, echo.val, echo.t, echo.x, echo.y, echo.z); }
         }
         function calculateMinkowskiWeight() {
@@ -912,7 +863,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     if (content !== '{}') { try { const event = nostrModule.finalizeEvent({ kind: 1111, created_at: Math.floor(tPresence + UNIX_J2000_OFFSET), tags: [['icrs', String(spatialPresence.x), String(spatialPresence.y), String(spatialPresence.z), String(tPresence)]], content }, nostrPub); nostrRelay.send(JSON.stringify(['EVENT', event])); } catch {} }
                 }
             }
-            if (localFlowConsented && ts - lastDiscovery > stableTick * CAPTURE_RING_SIZE) { lastDiscovery = ts; visited = new WeakSet(); discoverObj(window, '', 0, true); }
             
             if (!debugEl) { 
                 debugEl = document.createElement('textarea'); 
@@ -1008,8 +958,24 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             } catch(e) {}
         }
         if (localFlowConsented) {
-            discoverObj(window, '', 0, false);
-            registerEvents();
+            const sensorNames = ['Accelerometer', 'Gyroscope', 'Magnetometer', 'AmbientLightSensor', 'LinearAccelerationSensor', 'GravitySensor', 'AbsoluteOrientationSensor', 'RelativeOrientationSensor'];
+            for (const name of sensorNames) {
+                if (typeof window[name] !== 'undefined') {
+                    try {
+                        const inst = new window[name]({ frequency: Math.min(60, stableTick > 0 ? Math.round(1000 / stableTick) : 60), referenceFrame: 'device' });
+                        const prefix = name.toLowerCase();
+                        inst.addEventListener('reading', () => {
+                            for (const p of Object.getOwnPropertyNames(inst)) {
+                                if (p === 'timestamp' || p === 'activated') continue;
+                                try { const v = inst[p]; if (typeof v === 'number') recordSample(prefix + '.' + p, v); } catch(e) {}
+                            }
+                        });
+                        inst.start();
+                    } catch(e) {}
+                }
+            }
+            const simpleEvents = ['click', 'touchstart', 'keydown', 'mousemove', 'scroll', 'resize', 'deviceorientation'];
+            for (const ev of simpleEvents) { window.addEventListener(ev, () => { recordSample('event.' + ev, 1.0); }, { passive: true }); }
         }
         if (globalFlowConsented) { bootstrapNetwork(); }
         window.addEventListener('keydown', (e) => {

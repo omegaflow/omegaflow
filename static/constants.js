@@ -14,13 +14,11 @@ export function getRto() {
     if (transport.srtt === 0) return 5000;
     return Math.max(100, Math.min(transport.srtt + 4 * Math.max(transport.rttvar, 1), 5000));
 }
-export async function syncFrame(inputs, queries, signals = []) {
-    if (!queries || queries.length === 0 && signals.length === 0) return [];
+export async function syncFrame(inputs, queries) {
+    if (!queries || queries.length === 0) return [];
     let inputBytes = 0;
     for (const inp of inputs) inputBytes += 41 + inp.name.length;
-    let signalBytes = 1;
-    for (const sig of signals) signalBytes += 2 + sig.path.length;
-    const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32 + signalBytes);
+    const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32);
     const dv = new DataView(buf);
     const id = ++transport.seq;
     dv.setUint32(0, id, true);
@@ -41,12 +39,6 @@ export async function syncFrame(inputs, queries, signals = []) {
         dv.setFloat64(off, q.x, true); off += 8;
         dv.setFloat64(off, q.y, true); off += 8;
         dv.setFloat64(off, q.z, true); off += 8;
-    }
-    dv.setUint8(off, signals.length); off += 1;
-    for (const sig of signals) {
-        dv.setUint8(off, sig.type); off += 1;
-        dv.setUint8(off, sig.path.length); off += 1;
-        for (let i = 0; i < sig.path.length; i++) { dv.setUint8(off, sig.path.charCodeAt(i)); off++; }
     }
     const startTime = performance.now();
     if (!transport.socket || transport.socket.readyState !== WebSocket.OPEN) return [];
@@ -85,8 +77,6 @@ export async function syncFrame(inputs, queries, signals = []) {
                 const z = dvRes.getFloat64(o, true); o += 8;
                 result.push({ name, val, t, x, y, z });
             }
-            const recCount = dvRes.getUint32(o, true); o += 4;
-            if (recCount > 0) { o += recCount * 16; }
         }
     }
     return result;
