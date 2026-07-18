@@ -219,39 +219,7 @@ fn jarr_last(json: &JsonVal, key: &str) -> Option<f64> {
     None
 }
 
-fn jsum(json: &JsonVal, key: &str) -> Option<f64> {
-    if let JsonVal::Obj(map) = json {
-        if let Some(JsonVal::Arr(arr)) = map.get(key) {
-            let mut sum = 0.0;
-            for v in arr {
-                if let JsonVal::Num(n) = v { sum += *n; }
-                else if let JsonVal::Str(s) = v { sum += s.parse::<f64>().unwrap_or(0.0); }
-            }
-            return Some(sum);
-        }
-    }
-    None
-}
 
-fn jarr_avg(json: &JsonVal, path: &str) -> Option<f64> {
-    let mut current = json;
-    for part in path.split('.') {
-        if let Ok(idx) = part.parse::<usize>() {
-            if let JsonVal::Arr(arr) = current { current = arr.get(idx)?; } else { return None; }
-        } else {
-            if let JsonVal::Obj(map) = current { current = map.get(part)?; } else { return None; }
-        }
-    }
-    if let JsonVal::Arr(arr) = current {
-        let mut sum = 0.0; let mut count = 0.0;
-        for v in arr {
-            if let JsonVal::Num(n) = v { sum += *n; count += 1.0; }
-            else if let JsonVal::Str(s) = v { if let Ok(n) = s.parse::<f64>() { sum += n; count += 1.0; } }
-        }
-        if count > 0.0 { return Some(sum / count); }
-    }
-    None
-}
 
 #[derive(Clone)]
 enum Extract {
@@ -498,19 +466,6 @@ fn text_last_col(data: &str, col: &str) -> Option<f64> {
         if let Some(v) = cols.get(idx) { if let Ok(f) = v.trim_matches('"').parse::<f64>() { return Some(f); } }
     }
     None
-}
-
-fn text_vector(text: &str) -> Option<(f64, f64, f64)> {
-    let unescaped = text.replace("\\n", "\n"); let mut last = None;
-    for line in unescaped.lines() {
-        let lx = line.find("X ="); let ly = line.find("Y ="); let lz = line.find("Z =");
-        if let (Some(xp), Some(yp), Some(zp)) = (lx, ly, lz) {
-            let xs = &line[xp+3..yp].trim(); let ys = &line[yp+3..zp].trim();
-            let zs = &line[zp+3..].split_whitespace().next().unwrap_or("").trim();
-            if let (Ok(xv), Ok(yv), Ok(zv)) = (xs.parse::<f64>(), ys.parse::<f64>(), zs.parse::<f64>()) { last = Some((xv, yv, zv)); }
-        }
-    }
-    last
 }
 
 fn load_env() { if let Ok(content) = std::fs::read_to_string(".env") { for line in content.lines() { let line = line.trim(); if line.is_empty() || line.starts_with('#') { continue; } if let Some(eq) = line.find('=') { let key = line[..eq].trim(); let val = line[eq+1..].trim(); if std::env::var(key).is_err() { unsafe { std::env::set_var(key, val); } } } } } }
