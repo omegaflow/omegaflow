@@ -364,7 +364,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             for (let i = 0; i < n; i++) flat.set(unrollRing(candidates[i].ringOffset, candidates[i].idx, topologyRingSize), i * topologyRingSize);
             const layout = { entries: [ { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } }, { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }, { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } } ] };
             const srcList = [], dstList = [];
-            for (let i = 0; i < candidates.length; i++) { if (candidates[i].canRadiate) srcList.push(i); else dstList.push(i); }
+            for (let i = 0; i < candidates.length; i++) { if (candidates[i].canRadiate) dstList.push(i); else srcList.push(i); }
             const srcW = srcList.length, dstR = dstList.length, hasTE = srcW > 0 && dstR > 0;
             let inBuf, paramBuf, kOutBuf, tOutBuf, tdaOutBuf, kurtosisOutBuf, readBuf;
             const numSurr = 10;
@@ -529,8 +529,8 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             }
             for (let i = 0; i < oscillators.length; i++) {
                 const osc = oscillators[i];
-                if (osc.canRadiate && osc.fieldPermeability > GROUND_STATE) {
-                    osc.canRadiate(osc.fieldPermeability, fluidState);
+                if (osc.canRadiate) {
+                    if (osc.fieldPermeability > GROUND_STATE) osc.canRadiate(osc.fieldPermeability, fluidState);
                     recordSample(osc.url, osc.fieldPermeability);
                 }
             }
