@@ -5,11 +5,17 @@ field latitude orbital_iss_lat
 field longitude orbital_iss_lon
 field altitude orbital_iss_alt_km
 
-source aviation
+source opensky_states
 ttl 30
 header User-Agent "omegaflow"
-url https://opensky-network.org/api/states/all?lamin={lat_min}&lomin={lon_min}&lamax={lat_max}&lomax={lon_max}
-count states technosphere_aircraft_count
+url https://opensky-network.org/api/states/all
+map states
+lat_key 6
+lon_key 5
+alt_key 7
+field_in 9 technosphere_aircraft_velocity
+field_in 11 technosphere_aircraft_vertical_rate
+field_in 13 technosphere_aircraft_geo_altitude
 
 source uk_carbon_intensity
 ttl 30
@@ -5971,6 +5977,14 @@ url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&c
 field current.wave_height hydrosphere_wave_height_m
 field current.wave_direction hydrosphere_wave_direction_deg
 field current.wave_period hydrosphere_wave_period_s
+
+source overpass_infrastructure
+ttl 3600
+url https://overpass-api.de/api/interpreter?data=[out:json];(node["amenity"~"hospital|fire_station|school"](around:50000,{lat},{lon});node["railway"="station"](around:50000,{lat},{lon}););out;
+map elements
+lat_key lat
+lon_key lon
+field_in id anthroposphere_node_id
 
 source radio_flux
 ttl 3600

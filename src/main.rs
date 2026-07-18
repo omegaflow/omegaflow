@@ -256,9 +256,10 @@ fn jarr_avg(json: &JsonVal, path: &str) -> Option<f64> {
 #[derive(Clone)]
 enum Extract {
     Field(String, String), First(String, String), Last(String, String), Count(String, String),
-    LastRow(String, String), Vector(String, String, String), LastObj(String, String, String, String),
+    LastRow(String, String), LastObj(String, String, String, String),
     GeojsonEvents { mag_key: String, min_mag: f64, outputs: Vec<String> }, Path(String, String),
-    Sum(String, String), Map(String, Vec<(String, String)>), Deep(String, String), DeepArr(String, String), Avg(String, String),
+    Deep(String, String),
+    Map { arr_path: String, lat_key: String, lon_key: String, alt_key: String, fields: Vec<(String, String)> }
 }
 
 struct SourceConfig { ttl: u64, res: i32, url: String, lat: Option<f64>, lon: Option<f64>, format: String, extracts: Vec<Extract>, headers: Vec<(String, String)> }
@@ -562,17 +563,16 @@ fn load_sources() -> Vec<SourceConfig> {
             "first" => { if parts.len()>=3 { cur_extracts.push(Extract::First(parts[1].to_string(), parts[2].to_string())); } }
             "last" => { if parts.len()>=3 { cur_extracts.push(Extract::Last(parts[1].to_string(), parts[2].to_string())); } }
             "count" => { if parts.len()>=3 { cur_extracts.push(Extract::Count(parts[1].to_string(), parts[2].to_string())); } }
-            "sum" => { if parts.len()>=3 { cur_extracts.push(Extract::Sum(parts[1].to_string(), parts[2].to_string())); } }
             "last_row" => { if parts.len()>=3 { cur_extracts.push(Extract::LastRow(parts[1].to_string(), parts[2].to_string())); } }
-            "vector" => { if parts.len()>=4 { cur_extracts.push(Extract::Vector(parts[1].to_string(), parts[2].to_string(), parts[3].to_string())); } }
             "path" => { if parts.len()>=3 { cur_extracts.push(Extract::Path(parts[1].to_string(), parts[2].to_string())); } }
             "deep" => { if parts.len()>=3 { cur_extracts.push(Extract::Deep(parts[1].to_string(), parts[2].to_string())); } }
-            "deep_arr" => { if parts.len()>=3 { cur_extracts.push(Extract::DeepArr(parts[1].to_string(), parts[2].to_string())); } }
-            "avg" => { if parts.len()>=3 { cur_extracts.push(Extract::Avg(parts[1].to_string(), parts[2].to_string())); } }
             "last_obj" => { let quoted = parse_quoted_args(&line[9..]); if quoted.len() >= 4 { cur_extracts.push(Extract::LastObj(quoted[0].clone(), quoted[1].clone(), quoted[2].clone(), quoted[3].clone())); } }
             "geojson" => { if parts.len() >= 5 && parts[1] == "events" { cur_extracts.push(Extract::GeojsonEvents { mag_key: parts.get(2).unwrap_or(&"mag").to_string(), min_mag: parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0), outputs: parts[4..].iter().map(|s| s.to_string()).collect() }); } }
-            "map" => { if parts.len() >= 2 { cur_extracts.push(Extract::Map(parts[1].to_string(), Vec::new())); } }
-            "field_in" => { if let Some(Extract::Map(_, fields)) = cur_extracts.last_mut() { if parts.len() >= 3 { fields.push((parts[1].to_string(), parts[2].to_string())); } } },
+            "map" => { if parts.len() >= 2 { cur_extracts.push(Extract::Map { arr_path: parts[1].to_string(), lat_key: String::new(), lon_key: String::new(), alt_key: String::new(), fields: Vec::new() }); } }
+            "lat_key" => { if let Some(Extract::Map { lat_key, .. }) = cur_extracts.last_mut() { *lat_key = parts.get(1).unwrap_or(&"").to_string(); } }
+            "lon_key" => { if let Some(Extract::Map { lon_key, .. }) = cur_extracts.last_mut() { *lon_key = parts.get(1).unwrap_or(&"").to_string(); } }
+            "alt_key" => { if let Some(Extract::Map { alt_key, .. }) = cur_extracts.last_mut() { *alt_key = parts.get(1).unwrap_or(&"").to_string(); } }
+            "field_in" => { if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() { if parts.len() >= 3 { fields.push((parts[1].to_string(), parts[2].to_string())); } } },
             _ => {}
         }
     }
@@ -746,15 +746,11 @@ fn warm_cache(archive: Arc<Archive>) {
                                 let v = if src.format == "csv" || k == "lines" { Some(body.lines().filter(|l| !l.trim().is_empty() && !l.trim().starts_with('#')).count() as f64) } else { parsed_json.as_ref().and_then(|j| jarr_count(j, k)) };
                                 if let Some(v) = v { extracted.insert(n.clone(), v); }
                             }
-                            Extract::Sum(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jsum(j, k) { extracted.insert(n.clone(), v); } } }
                             Extract::LastRow(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = j2d_last_row(j, k) { extracted.insert(n.clone(), v); } } else { if let Some(v) = text_last_col(&body, k) { extracted.insert(n.clone(), v); } } }
                             Extract::Path(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jpath(j, k) { extracted.insert(n.clone(), v); } } }
                             Extract::Deep(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jdeep_find_num(j, k) { extracted.insert(n.clone(), v); } } }
-                            Extract::DeepArr(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jpath(j, k) { extracted.insert(n.clone(), v); } } }
-                            Extract::Avg(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jarr_avg(j, k) { extracted.insert(n.clone(), v); } } }
-                            Extract::Vector(nx, ny, nz) => { if let Some((vx, vy, vz)) = text_vector(&body) { extracted.insert(nx.clone(), vx); extracted.insert(ny.clone(), vy); extracted.insert(nz.clone(), vz); } }
                             Extract::LastObj(fk, fv, ek, n) => { if let Some(ref j) = parsed_json { if let JsonVal::Obj(map) = j { if let Some(JsonVal::Arr(arr)) = map.get(fk) { for v in arr.iter().rev() { if let JsonVal::Obj(o) = v { if let Some(JsonVal::Str(s)) = o.get(fv) { if s == fv { if let Some(val) = jnum(&JsonVal::Obj(o.clone()), ek) { extracted.insert(n.clone(), val); break; } } } } } } } } }
-                            Extract::Map(arr_path, fields) => {
+                            Extract::Map { arr_path, lat_key, lon_key, alt_key, fields } => {
                                 if let Some(ref j) = parsed_json {
                                     let mut current = j;
                                     let mut path_ok = true;
@@ -767,7 +763,29 @@ fn warm_cache(archive: Arc<Archive>) {
                                             else { path_ok = false; break; }
                                         }
                                     }
-                                    if path_ok { if let JsonVal::Arr(arr) = current { for (idx, v) in arr.iter().enumerate() { if let JsonVal::Obj(o) = v { for (fk, fn_) in fields { if let Some(val) = jnum(&JsonVal::Obj(o.clone()), fk) { extracted.insert(format!("{}_{}", fn_, idx), val); } } } } } }
+                                    if path_ok {
+                                        if let JsonVal::Arr(arr) = current {
+                                            let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
+                                            for v in arr.iter() {
+                                                let lat = jpath(v, &lat_key);
+                                                let lon = jpath(v, &lon_key);
+                                                let alt = if alt_key.is_empty() { Some(0.0) } else { jpath(v, &alt_key) };
+                                                if let (Some(la), Some(lo), Some(al)) = (lat, lon, alt) {
+                                                    let (ev_x, ev_y, ev_z) = geodetic_to_icrs(la, lo, al, *query_t);
+                                                    let ev_key = format!("map_{}_{}", arr_path, pos_key(ev_x, ev_y, ev_z, 4, *query_t));
+                                                    let mut ev_vals: HashMap<String, (f64, f64, f64, f64, f64)> = HashMap::new();
+                                                    for (fk, fn_) in fields {
+                                                        if let Some(val) = jpath(v, fk) {
+                                                            ev_vals.insert(fn_.clone(), (val, *query_t, ev_x, ev_y, ev_z));
+                                                        }
+                                                    }
+                                                    if !ev_vals.is_empty() {
+                                                        cache.insert(ev_key, (*query_t, ev_vals));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             Extract::GeojsonEvents { mag_key, min_mag, outputs } => {
