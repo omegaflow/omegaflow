@@ -5337,3 +5337,33 @@ lat 36.428
 lon 137.310
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
 field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
+
+source opentopo_srtm30m
+ttl 2592000
+res 4
+url https://api.opentopodata.org/v1/srtm30m?locations={lat},{lon}
+path results.0.elevation geosphere_elevation_srtm30_m
+
+source opentopo_eudem25m
+ttl 2592000
+res 4
+url https://api.opentopodata.org/v1/eudem25m?locations={lat},{lon}
+path results.0.elevation geosphere_elevation_eudem25_m
+
+source opentopo_gebco_bathymetry
+ttl 2592000
+res 2
+url https://api.opentopodata.org/v1/gebco2020?locations={lat},{lon}
+path results.0.elevation hydrosphere_bathymetry_gebco_m
+
+source opentopo_mapzen_terrain
+ttl 2592000
+res 4
+url https://api.opentopodata.org/v1/mapzen?locations={lat},{lon}
+path results.0.elevation geosphere_terrain_mapzen_m
+
+source usgs_epqs_elevation
+ttl 2592000
+res 4
+url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters
+path value geosphere_elevation_epqs_m
