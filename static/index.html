@@ -306,11 +306,11 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             const flat = new Float32Array(n * topologyRingSize);
             for (let i = 0; i < n; i++) flat.set(unrollRing(candidates[i].ringOffset, candidates[i].idx, topologyRingSize), i * topologyRingSize);
             const layout = { entries: [ { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } }, { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }, { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } } ] };
-            const maxTePairs = Math.floor((Φ * 100000) / (topologyRingSize + 1));
-            let activeN = n;
-            if (n > maxTePairs) activeN = maxTePairs;
             const srcList = [], dstList = [];
-            for (let i = 0; i < activeN; i++) { srcList.push(i); dstList.push(i); }
+            for (let i = 0; i < candidates.length; i++) {
+                if (channelApertures.has(candidates[i].url)) dstList.push(i);
+                else srcList.push(i);
+            }
             const srcW = srcList.length, dstR = dstList.length, hasTE = srcW > 1 && dstR > 1;
             let inBuf, paramBuf, kOutBuf, tOutBuf, tdaOutBuf, kurtosisOutBuf, readBuf;
             let srcIdxBuf, dstIdxBuf, teOutBuf, teParamBuf, teBg = null;
