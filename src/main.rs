@@ -79,7 +79,7 @@ fn icrs_to_geodetic(x: f64, y: f64, z: f64, tdb_secs: f64) -> (f64, f64) {
     let y_ecef = x_eci * gmst_rad.sin() + y_eci * gmst_rad.cos();
     let z_ecef = z_eci;
     let lon = y_ecef.atan2(x_ecef).to_degrees();
-    let lat = (z_ecef / EARTH_RADIUS).atan().to_degrees();
+    let lat = z_ecef.atan2((x_ecef * x_ecef + y_ecef * y_ecef).sqrt()).to_degrees();
     (lat, lon)
 }
 
@@ -154,15 +154,11 @@ impl<'a> JsonParser<'a> {
     }
 }
 
-fn jnum(json: &JsonVal, key: &str) -> Option<f64> {
-    if let JsonVal::Obj(map) = json {
-        if let Some(JsonVal::Num(n)) = map.get(key) { return Some(*n); }
-        if let Some(JsonVal::Str(s)) = map.get(key) { return s.parse().ok(); }
-    }
-    None
+fn scalar_of(v: &JsonVal) -> Option<f64> {
+    match v { JsonVal::Num(n) => Some(*n), JsonVal::Str(s) => s.parse().ok(), _ => None }
 }
 
-fn jpath(json: &JsonVal, path: &str) -> Option<f64> {
+fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
     let mut current = json;
     for part in path.split('.') {
         if let Ok(idx) = part.parse::<usize>() {
@@ -171,16 +167,25 @@ fn jpath(json: &JsonVal, path: &str) -> Option<f64> {
             if let JsonVal::Obj(map) = current { current = map.get(part)?; } else { return None; }
         }
     }
-    if let JsonVal::Num(n) = current { Some(*n) } else if let JsonVal::Str(s) = current { s.parse().ok() } else { None }
+    Some(current)
+}
+
+fn jnum(json: &JsonVal, key: &str) -> Option<f64> {
+    if key.contains('.') { return jpath_val(json, key).and_then(scalar_of); }
+    match json {
+        JsonVal::Obj(map) => map.get(key).and_then(scalar_of),
+        _ => None,
+    }
+}
+
+fn jpath(json: &JsonVal, path: &str) -> Option<f64> {
+    jpath_val(json, path).and_then(scalar_of)
 }
 
 fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
     match json {
         JsonVal::Obj(map) => {
-            if let Some(v) = map.get(key) {
-                if let JsonVal::Num(n) = v { return Some(*n); }
-                if let JsonVal::Str(s) = v { return s.parse().ok(); }
-            }
+            if let Some(v) = map.get(key) { if let Some(n) = scalar_of(v) { return Some(n); } }
             for v in map.values() { if let Some(n) = jdeep_find_num(v, key) { return Some(n); } }
             None
         }
@@ -192,34 +197,85 @@ fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
     }
 }
 
-fn jarr_count(json: &JsonVal, key: &str) -> Option<f64> {
-    if let JsonVal::Obj(map) = json { if let Some(JsonVal::Arr(arr)) = map.get(key) { return Some(arr.len() as f64); } }
-    None
-}
-
-fn jarr_first(json: &JsonVal, key: &str) -> Option<f64> {
-    if let JsonVal::Obj(map) = json {
-        if let Some(JsonVal::Arr(arr)) = map.get(key) {
-            if arr.is_empty() { return None; }
-            if let Some(JsonVal::Num(n)) = arr.first() { return Some(*n); }
-            if let Some(JsonVal::Str(s)) = arr.first() { return s.parse().ok(); }
-        }
+fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
+    if path == "." || path.is_empty() {
+        if let JsonVal::Arr(arr) = json { return Some(arr.len() as f64); }
+        return None;
     }
-    None
-}
-
-fn jarr_last(json: &JsonVal, key: &str) -> Option<f64> {
-    if let JsonVal::Obj(map) = json {
-        if let Some(JsonVal::Arr(arr)) = map.get(key) {
-            if arr.is_empty() { return None; }
-            if let Some(JsonVal::Num(n)) = arr.last() { return Some(*n); }
-            if let Some(JsonVal::Str(s)) = arr.last() { return s.parse().ok(); }
-        }
+    if path.contains('.') {
+        let target = jpath_val(json, path)?;
+        if let JsonVal::Arr(arr) = target { return Some(arr.len() as f64); }
+        return None;
     }
-    None
+    match json {
+        JsonVal::Obj(map) => {
+            if let Some(JsonVal::Arr(arr)) = map.get(path) { Some(arr.len() as f64) } else { None }
+        }
+        _ => None,
+    }
 }
 
+fn jfirst(json: &JsonVal, key: &str) -> Option<f64> {
+    if key.contains('.') {
+        let target_path = key.rsplit_once('.').map(|(p, _)| p).unwrap_or("");
+        let final_key = key.rsplit_once('.').map(|(_, k)| k).unwrap_or(key);
+        let parent = if target_path.is_empty() { json } else { jpath_val(json, target_path)? };
+        if let JsonVal::Arr(arr) = parent {
+            return arr.first().and_then(|v| {
+                if let JsonVal::Obj(o) = v { o.get(final_key).and_then(scalar_of) } else { scalar_of(v) }
+            });
+        }
+        return None;
+    }
+    match json {
+        JsonVal::Arr(arr) => arr.first().and_then(|v| match v {
+            JsonVal::Obj(o) => o.get(key).and_then(scalar_of),
+            other => scalar_of(other),
+        }),
+        JsonVal::Obj(map) => map.get(key).and_then(|v| if let JsonVal::Arr(a) = v { a.first().and_then(scalar_of) } else { None }),
+        _ => None,
+    }
+}
 
+fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
+    if key.contains('.') {
+        let target_path = key.rsplit_once('.').map(|(p, _)| p).unwrap_or("");
+        let final_key = key.rsplit_once('.').map(|(_, k)| k).unwrap_or(key);
+        let parent = if target_path.is_empty() { json } else { jpath_val(json, target_path)? };
+        if let JsonVal::Arr(arr) = parent {
+            return arr.last().and_then(|v| {
+                if let JsonVal::Obj(o) = v { o.get(final_key).and_then(scalar_of) } else { scalar_of(v) }
+            });
+        }
+        return None;
+    }
+    match json {
+        JsonVal::Arr(arr) => arr.last().and_then(|v| match v {
+            JsonVal::Obj(o) => o.get(key).and_then(scalar_of),
+            other => scalar_of(other),
+        }),
+        JsonVal::Obj(map) => map.get(key).and_then(|v| if let JsonVal::Arr(a) = v { a.last().and_then(scalar_of) } else { None }),
+        _ => None,
+    }
+}
+
+fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
+    let pat_start = pat.find('(')? + 1;
+    let pat_end = pat.rfind(')')?;
+    if pat_start >= pat_end { return None; }
+    let inner_pat = &pat[pat_start..pat_end];
+    let (prefix, suffix) = inner_pat.split_once("...").unwrap_or((inner_pat, ""));
+    
+    let p_start = body.find(prefix)?;
+    let val_start = p_start + prefix.len();
+    let remainder = &body[val_start..];
+    let val_end = if suffix.is_empty() {
+        remainder.find(|c: char| c.is_whitespace() || c == '<' || c == '"').unwrap_or(remainder.len())
+    } else {
+        remainder.find(suffix).unwrap_or(remainder.len())
+    };
+    remainder[..val_end].trim().parse::<f64>().ok()
+}
 
 #[derive(Clone)]
 enum Extract {
@@ -227,11 +283,14 @@ enum Extract {
     LastRow(String, String), LastObj(String, String, String, String),
     GeojsonEvents { mag_key: String, min_mag: f64, outputs: Vec<String> }, Path(String, String),
     Deep(String, String),
-    Map { arr_path: String, lat_key: String, lon_key: String, alt_key: String, fields: Vec<(String, String)> }
+    Map { arr_path: String, lat_key: String, lon_key: String, alt_key: String, fields: Vec<(String, String)> },
+    Sum(String, String),
+    Regex(String, String),
+    XmlCount(String, String),
+    Vector(String)
 }
 
 struct SourceConfig { ttl: u64, res: i32, url: String, lat: Option<f64>, lon: Option<f64>, format: String, extracts: Vec<Extract>, headers: Vec<(String, String)> }
-
 
 struct Archive { sources: Vec<SourceConfig>, index_html: Vec<u8>, constants_js: Vec<u8>, data_cache: Mutex<HashMap<String, (f64, HashMap<String, (f64, f64, f64, f64, f64)>)>>, active_positions: Mutex<HashMap<String, f64>> }
 struct WsFrame { opcode: u8, payload: Vec<u8> }
@@ -265,10 +324,10 @@ fn pos_key(x: f64, y: f64, z: f64, res: i32, t: f64) -> String {
 
 fn parse_pos(pos: &str) -> Option<(f64, f64, f64)> {
     let parts: Vec<&str> = pos.split('_').collect();
-    if parts.len() == 3 { 
-        if let (Ok(x), Ok(y), Ok(z)) = (parts[0].parse::<f64>(), parts[1].parse::<f64>(), parts[2].parse::<f64>()) { 
-            return Some((x, y, z)); 
-        } 
+    if parts.len() == 3 {
+        if let (Ok(x), Ok(y), Ok(z)) = (parts[0].parse::<f64>(), parts[1].parse::<f64>(), parts[2].parse::<f64>()) {
+            return Some((x, y, z));
+        }
     }
     None
 }
@@ -278,8 +337,8 @@ fn emit_void(s: &mut TcpStream) { let _=s.write_all(b"HTTP/1.1 404 Not Found\r\n
 fn extract_header(s: &str, n: &str) -> Option<String> { for l in s.lines() { if let Some(c) = l.find(':') { if l[..c].trim().eq_ignore_ascii_case(n) { return Some(l[c+1..].trim().to_string()); } } } None }
 
 fn fetch_with_headers(url: &str, headers: &[(String, String)], ttl: u64) -> Option<String> {
-    let connect_t = ((ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64;
-    let max_t = ((ttl as f64) / (Φ * Φ)).max(1.0) as u64;
+    let connect_t = (((ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64).min(15);
+    let max_t = (((ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(30);
     let mut cmd = Command::new("curl"); cmd.arg("-s").arg("-k").arg("-m").arg(max_t.to_string()).arg("--connect-timeout").arg(connect_t.to_string());
     for (k, v) in headers { cmd.arg("-H").arg(format!("{}: {}", k, v)); }
     cmd.arg(url);
@@ -304,10 +363,10 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
             } else {
                 match path.as_str() {
                     "/" => emit(&mut s, "200 OK", "text/html", &archive.index_html),
-                    "/time" => { 
+                    "/time" => {
                         let unix = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs_f64();
                         let tdb = unix - UNIX_J2000_OFFSET;
-                        emit(&mut s, "200 OK", "text/plain", tdb.to_string().as_bytes()); 
+                        emit(&mut s, "200 OK", "text/plain", tdb.to_string().as_bytes());
                     }
                     "/constants.js" => emit(&mut s, "200 OK", "application/javascript", &archive.constants_js),
                     _ => { emit_void(&mut s); break; }
@@ -336,11 +395,9 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
 
             {
                 let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
-                let mut t_frame = 0.0;
-                for i in 0..input_count {
+                for _ in 0..input_count {
                     let mut t_buf = [0u8; 8];
-                    if cursor.read_exact(&mut t_buf).is_err() { break; } let _t = f64::from_le_bytes(t_buf);
-                    if i == 0 { t_frame = _t; }
+                    if cursor.read_exact(&mut t_buf).is_err() { break; } let in_t = f64::from_le_bytes(t_buf);
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let x = f64::from_le_bytes(t_buf);
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let y = f64::from_le_bytes(t_buf);
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let z = f64::from_le_bytes(t_buf);
@@ -353,9 +410,9 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if cursor.read_exact(&mut name_bytes).is_err() { break; }
                     let name = String::from_utf8_lossy(&name_bytes).to_string();
 
-                    let local_key = format!("local_{}", pos_key(x, y, z, 7, _t));
+                    let local_key = format!("local_{}", pos_key(x, y, z, 7, in_t));
 
-                    cache.entry(local_key).or_insert_with(|| (t_frame, HashMap::<String, (f64, f64, f64, f64, f64)>::new())).1.insert(name, (value, t_frame, x, y, z));
+                    cache.entry(local_key).or_insert_with(|| (in_t, HashMap::<String, (f64, f64, f64, f64, f64)>::new())).1.insert(name, (value, in_t, x, y, z));
                 }
             }
 
@@ -378,7 +435,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let y = f64::from_le_bytes(t_buf);
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let z = f64::from_le_bytes(t_buf);
 
-                    active.insert(format!("{}_{}_{}", x, y, z), q_t);
+                    active.insert(pos_key(x, y, z, 2, q_t), q_t);
 
                     let obj_pos=out.len();
                     out.extend_from_slice(&0u32.to_le_bytes());
@@ -389,7 +446,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
 
                     for (i, src) in archive.sources.iter().enumerate() {
                         if src.url.starts_with("nostr://") { continue; }
-                        
+
                         let (src_x, src_y, src_z) = if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
                             geodetic_to_icrs(lat, lon, 0.0, q_t)
                         } else {
@@ -397,7 +454,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                         };
 
                         let src_key = format!("{}_{}", i, pos_key(src_x, src_y, src_z, src.res, q_t));
-                        
+
                         if let Some((_, values)) = cache.get(&src_key) { for (k, v) in values { merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4)); } }
                     }
 
@@ -411,6 +468,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 }
             }
 
+            out.extend_from_slice(&0u32.to_le_bytes());
             write_ws_binary(&mut stream,&out);
         }
     }
@@ -430,7 +488,6 @@ fn φ_obj(out: &mut Vec<u8>, fields: &[(&str, f64, f64, f64, f64, f64)]) {
         out.extend_from_slice(&y.to_le_bytes());
         out.extend_from_slice(&z.to_le_bytes());
     }
-    out.extend_from_slice(&0u32.to_le_bytes());
 }
 
 fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
@@ -439,10 +496,7 @@ fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
         if let JsonVal::Arr(headers) = &arr[0] {
             let col_idx = headers.iter().position(|h| { if let JsonVal::Str(s) = h { s.eq_ignore_ascii_case(col) || s.starts_with(col) } else { false } })?;
             if let Some(JsonVal::Arr(last_row)) = arr.last() {
-                if let Some(v) = last_row.get(col_idx) {
-                    if let JsonVal::Num(n) = v { return Some(*n); }
-                    if let JsonVal::Str(s) = v { return s.parse().ok(); }
-                }
+                return last_row.get(col_idx).and_then(scalar_of);
             }
         }
     }
@@ -477,6 +531,29 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_format = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new(); let mut cur_headers: Vec<(String, String)> = Vec::new(); let mut active = false;
 
+    macro_rules! flush {
+        () => {
+            if active {
+                let is_dynamic = cur_lat.is_none() && cur_lon.is_none();
+                if !(is_dynamic && cur_res == 0) {
+                    let (final_lat, final_lon, final_res) = if is_dynamic {
+                        (None, None, cur_res)
+                    } else {
+                        let mut final_res = cur_res;
+                        if final_res == 0 {
+                            let decimals = cur_lat_str.split('.').last().unwrap_or("").len() as i32;
+                            final_res = decimals;
+                        }
+                        (cur_lat, cur_lon, final_res)
+                    };
+                    sources.push(SourceConfig { ttl: cur_ttl, res: final_res, url: cur_url.clone(), lat: final_lat, lon: final_lon, format: cur_format.clone(), extracts: cur_extracts.clone(), headers: cur_headers.clone() });
+                } else {
+                    eprintln!("sources.φ: dropped '{}' (no lat/lon and no res)", cur_url);
+                }
+            }
+        };
+    }
+
     for line in content.lines() {
         let line = line.trim();
         if line.is_empty() || line.starts_with('#') || line.starts_with("```") { continue; }
@@ -484,31 +561,14 @@ fn load_sources() -> Vec<SourceConfig> {
         if parts.is_empty() { continue; }
         match parts[0] {
             "source" => {
-                if active { 
-                    let is_dynamic = cur_lat.is_none() && cur_lon.is_none();
-
-                    if is_dynamic && cur_res == 0 {
-                    } else {
-                        let (final_lat, final_lon, final_res) = if is_dynamic {
-                            (None, None, cur_res)
-                        } else {
-                            let mut final_res = cur_res;
-                            if final_res == 0 {
-                                let decimals = cur_lat_str.split('.').last().unwrap_or("").len() as i32;
-                                final_res = decimals; 
-                            }
-                            (cur_lat, cur_lon, final_res)
-                        };
-                        sources.push(SourceConfig { ttl: cur_ttl, res: final_res, url: cur_url.clone(), lat: final_lat, lon: final_lon, format: cur_format.clone(), extracts: cur_extracts.clone(), headers: cur_headers.clone() }); 
-                    }
-                }
+                flush!();
                 cur_ttl = 0; cur_res = 0; cur_url.clear(); cur_lat = None; cur_lon = None; cur_lat_str.clear(); cur_format.clear(); cur_extracts.clear(); cur_headers.clear(); active = true;
             }
             "url" => cur_url = line[4..].trim().to_string(),
             "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "res" => cur_res = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "format" => cur_format = parts.get(1).unwrap_or(&"json").to_string(),
-            "lat" => { 
+            "lat" => {
                 cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
                 cur_lat = cur_lat_str.parse().ok();
             },
@@ -521,6 +581,10 @@ fn load_sources() -> Vec<SourceConfig> {
             "last_row" => { if parts.len()>=3 { cur_extracts.push(Extract::LastRow(parts[1].to_string(), parts[2].to_string())); } }
             "path" => { if parts.len()>=3 { cur_extracts.push(Extract::Path(parts[1].to_string(), parts[2].to_string())); } }
             "deep" => { if parts.len()>=3 { cur_extracts.push(Extract::Deep(parts[1].to_string(), parts[2].to_string())); } }
+            "sum" => { if parts.len()>=3 { cur_extracts.push(Extract::Sum(parts[1].to_string(), parts[2].to_string())); } }
+            "regex" => { if parts.len()>=3 { cur_extracts.push(Extract::Regex(parts[1].to_string(), parts[2].to_string())); } }
+            "xml_count" => { if parts.len()>=3 { cur_extracts.push(Extract::XmlCount(parts[1].to_string(), parts[2].to_string())); } }
+            "vector" => { if parts.len()>=2 { cur_extracts.push(Extract::Vector(parts[1].to_string())); } }
             "last_obj" => { let quoted = parse_quoted_args(&line[9..]); if quoted.len() >= 4 { cur_extracts.push(Extract::LastObj(quoted[0].clone(), quoted[1].clone(), quoted[2].clone(), quoted[3].clone())); } }
             "geojson" => { if parts.len() >= 5 && parts[1] == "events" { cur_extracts.push(Extract::GeojsonEvents { mag_key: parts.get(2).unwrap_or(&"mag").to_string(), min_mag: parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0), outputs: parts[4..].iter().map(|s| s.to_string()).collect() }); } }
             "map" => { if parts.len() >= 2 { cur_extracts.push(Extract::Map { arr_path: parts[1].to_string(), lat_key: String::new(), lon_key: String::new(), alt_key: String::new(), fields: Vec::new() }); } }
@@ -531,23 +595,7 @@ fn load_sources() -> Vec<SourceConfig> {
             _ => {}
         }
     }
-    if active { 
-        let is_dynamic = cur_lat.is_none() && cur_lon.is_none();
-
-        if !(is_dynamic && cur_res == 0) {
-            let (final_lat, final_lon, final_res) = if is_dynamic {
-                (None, None, cur_res)
-            } else {
-                let mut final_res = cur_res;
-                if final_res == 0 {
-                    let decimals = cur_lat_str.split('.').last().unwrap_or("").len() as i32;
-                    final_res = decimals;
-                }
-                (cur_lat, cur_lon, final_res)
-            };
-            sources.push(SourceConfig { ttl: cur_ttl, res: final_res, url: cur_url, lat: final_lat, lon: final_lon, format: cur_format, extracts: cur_extracts, headers: cur_headers }); 
-        }
-    }
+    flush!();
     sources
 }
 
@@ -592,15 +640,17 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64) -> String {
     let (tmy, tmm, tmd) = days_to_ymd(days + 1); let tomorrow = format!("{}-{:02}-{:02}", tmy, tmm, tmd);
     let today_yyyymmdd = format!("{}_{:02}_{:02}", ty, tm, td);
     let today_nodashes = format!("{}{:02}{:02}", ty, tm, td);
+    let yesterday_nodashes = format!("{}{:02}{:02}", yy, ym, yd);
+    let tomorrow_nodashes = format!("{}{:02}{:02}", tmy, tmm, tmd);
     let hour_ago = { let dt = secs.saturating_sub(3600); let (h_y, h_m, h_d) = days_to_ymd(dt / 86400); let h_h = (dt % 86400) / 3600; let h_min = (dt % 3600) / 60; format!("{}-{:02}-{:02}T{:02}:{:02}:00", h_y, h_m, h_d, h_h, h_min) };
     let now_iso = { let n_h = (secs % 86400) / 3600; let n_min = (secs % 3600) / 60; format!("{}-{:02}-{:02}T{:02}:{:02}:00", ty, tm, td, n_h, n_min) };
     let week_ago = { let dt = secs.saturating_sub(604800); let (w_y, w_m, w_d) = days_to_ymd(dt / 86400); format!("{}-{:02}-{:02}", w_y, w_m, w_d) };
     let week_ago_nodashes = { let dt = secs.saturating_sub(604800); let (w_y, w_m, w_d) = days_to_ymd(dt / 86400); format!("{}{:02}{:02}", w_y, w_m, w_d) };
     let q_hour = (secs % 86400) / 3600; let q_minute = (secs % 3600) / 60;
     let unix_now = secs.to_string(); let unix_now_plus_3600 = (secs + 3600).to_string();
-    
+
     let (lat, lon) = icrs_to_geodetic(x, y, z, tdb_secs);
-    
+
     template
         .replace("{x}", &format!("{}", x)).replace("{y}", &format!("{}", y)).replace("{z}", &format!("{}", z))
         .replace("{lat}", &format!("{}", lat)).replace("{lon}", &format!("{}", lon))
@@ -608,6 +658,7 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64) -> String {
         .replace("{lon_min}", &format!("{}", lon - (1.0 / Φ))).replace("{lon_max}", &format!("{}", lon + (1.0 / Φ)))
         .replace("{today}", &today).replace("{yesterday}", &yesterday).replace("{tomorrow}", &tomorrow)
         .replace("{today_yyyymmdd}", &today_yyyymmdd).replace("{today_ymd}", &today_yyyymmdd).replace("{today_nodashes}", &today_nodashes)
+        .replace("{yesterday_nodashes}", &yesterday_nodashes).replace("{tomorrow_nodashes}", &tomorrow_nodashes)
         .replace("{t_start}", &yesterday).replace("{t_end}", &today)
         .replace("{now}", &now_iso).replace("{week_ago}", &week_ago).replace("{week_ago_nodashes}", &week_ago_nodashes)
         .replace("{today_plus_365}", &format!("{}-{:02}-{:02}", ty+1, tm, td))
@@ -654,11 +705,11 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
 fn warm_cache(archive: Arc<Archive>) {
     loop {
         let positions: Vec<(String, f64)> = archive.active_positions.lock().unwrap_or_else(|e| e.into_inner()).iter().map(|(k,v)| (k.clone(), *v)).collect();
-        if positions.is_empty() { let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60); thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / Φ) as u64)); continue; }
-        
+        if positions.is_empty() { let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60); thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / Φ).max(1.0) as u64)); continue; }
+
         for (pos, query_t) in &positions {
             let (pos_x, pos_y, pos_z) = match parse_pos(pos) { Some(c) => c, None => continue };
-            
+
             let needs: Vec<(usize, String, String, Vec<(String, String)>, u64)> = archive.sources.iter().enumerate()
                 .filter(|(_, src)| !src.url.starts_with("nostr://"))
                 .filter_map(|(i, src)| {
@@ -670,7 +721,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     };
 
                     let cache_key = format!("{}_{}", i, pos_key(src_x, src_y, src_z, src.res, *query_t));
-                    
+
                     let needs_fetch = { let cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()); match cache.get(&cache_key) { Some((ts, _)) => query_t - *ts >= src.ttl as f64, None => true } };
                     if needs_fetch { let url = render_url(&src.url, render_x, render_y, render_z, *query_t); let headers_rendered: Vec<(String, String)> = src.headers.iter().map(|(k, v)| (k.clone(), render_url(v, render_x, render_y, render_z, *query_t))).collect(); Some((i, cache_key, url, headers_rendered, src.ttl)) } else { None }
                 }).collect();
@@ -695,16 +746,57 @@ fn warm_cache(archive: Arc<Archive>) {
                     for ext in &src.extracts {
                         match ext {
                             Extract::Field(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jnum(j, k) { extracted.insert(n.clone(), v); } } }
-                            Extract::First(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jarr_first(j, k) { extracted.insert(n.clone(), v); } } }
-                            Extract::Last(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jarr_last(j, k) { extracted.insert(n.clone(), v); } } }
+                            Extract::First(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jfirst(j, k) { extracted.insert(n.clone(), v); } } }
+                            Extract::Last(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jlast(j, k) { extracted.insert(n.clone(), v); } } }
                             Extract::Count(k, n) => {
-                                let v = if src.format == "csv" || k == "lines" { Some(body.lines().filter(|l| !l.trim().is_empty() && !l.trim().starts_with('#')).count() as f64) } else { parsed_json.as_ref().and_then(|j| jarr_count(j, k)) };
+                                let v = if src.format == "csv" || k == "lines" { Some(body.lines().filter(|l| !l.trim().is_empty() && !l.trim().starts_with('#')).count() as f64) } else { parsed_json.as_ref().and_then(|j| jcount(j, k)) };
                                 if let Some(v) = v { extracted.insert(n.clone(), v); }
                             }
                             Extract::LastRow(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = j2d_last_row(j, k) { extracted.insert(n.clone(), v); } } else { if let Some(v) = text_last_col(&body, k) { extracted.insert(n.clone(), v); } } }
                             Extract::Path(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jpath(j, k) { extracted.insert(n.clone(), v); } } }
                             Extract::Deep(k, n) => { if let Some(ref j) = parsed_json { if let Some(v) = jdeep_find_num(j, k) { extracted.insert(n.clone(), v); } } }
-                            Extract::LastObj(fk, fv, ek, n) => { if let Some(ref j) = parsed_json { if let JsonVal::Obj(map) = j { if let Some(JsonVal::Arr(arr)) = map.get(fk) { for v in arr.iter().rev() { if let JsonVal::Obj(o) = v { if let Some(JsonVal::Str(s)) = o.get(fv) { if s == fv { if let Some(val) = jnum(&JsonVal::Obj(o.clone()), ek) { extracted.insert(n.clone(), val); break; } } } } } } } } }
+                            Extract::Sum(path, n) => {
+                                if let Some(ref j) = parsed_json {
+                                    let target = if path == "." || path.is_empty() { Some(j) } else { jpath_val(j, path) };
+                                    if let Some(JsonVal::Arr(arr)) = target {
+                                        let sum: f64 = arr.iter().filter_map(|v| scalar_of(v)).sum();
+                                        if sum.is_finite() { extracted.insert(n.clone(), sum); }
+                                    }
+                                }
+                            }
+                            Extract::Regex(pat, n) => {
+
+
+
+
+
+
+
+
+                                if let Some(v) = extract_regex_val(&body, pat) { extracted.insert(n.clone(), v); }
+                            }
+                            Extract::XmlCount(tag, n) => {
+                                let count = body.matches(&format!("<{}>", tag)).count() as f64;
+                                extracted.insert(n.clone(), count);
+                            }
+                            Extract::Vector(prefix) => {
+                                if let Some(v) = extract_regex_val(&body, &format!("({}...)", prefix)) { extracted.insert(format!("{}_val", prefix), v); }
+                            }
+                            Extract::LastObj(fk, fv, ek, n) => {
+                                if let Some(ref j) = parsed_json {
+                                    if let JsonVal::Arr(arr) = j {
+                                        for v in arr.iter().rev() {
+                                            if let JsonVal::Obj(o) = v {
+                                                if let Some(JsonVal::Str(s)) = o.get(fk) {
+                                                    if s == fv {
+                                                        if let Some(val) = jnum(v, ek) { extracted.insert(n.clone(), val); break; }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             Extract::Map { arr_path, lat_key, lon_key, alt_key, fields } => {
                                 if let Some(ref j) = parsed_json {
                                     let mut current = j;
@@ -722,9 +814,9 @@ fn warm_cache(archive: Arc<Archive>) {
                                         if let JsonVal::Arr(arr) = current {
                                             let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
                                             for v in arr.iter() {
-                                                let lat = jpath(v, &lat_key);
-                                                let lon = jpath(v, &lon_key);
-                                                let alt = if alt_key.is_empty() { Some(0.0) } else { jpath(v, &alt_key) };
+                                                let lat = jpath(v, lat_key);
+                                                let lon = jpath(v, lon_key);
+                                                let alt = if alt_key.is_empty() { Some(0.0) } else { jpath(v, alt_key) };
                                                 if let (Some(la), Some(lo), Some(al)) = (lat, lon, alt) {
                                                     let (ev_x, ev_y, ev_z) = geodetic_to_icrs(la, lo, al, *query_t);
                                                     let ev_key = format!("map_{}_{}", arr_path, pos_key(ev_x, ev_y, ev_z, 4, *query_t));
@@ -745,8 +837,39 @@ fn warm_cache(archive: Arc<Archive>) {
                             }
                             Extract::GeojsonEvents { mag_key, min_mag, outputs } => {
                                 if outputs.len() >= 2 {
-                                    let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
-                                    if let Some(ref j) = parsed_json { if let JsonVal::Arr(arr) = j { for v in arr.iter() { if let JsonVal::Obj(o) = v { let mut elo = 0.0; let mut ela = 0.0; let mut ed = 0.0; let mut mag = 0.0; let mut valid = false; if let Some(JsonVal::Obj(coords)) = o.get("geometry") { if let Some(JsonVal::Arr(c)) = coords.get("coordinates") { if c.len() >= 3 { if let JsonVal::Num(n) = c[0] { elo = n; } if let JsonVal::Num(n) = c[1] { ela = n; } if let JsonVal::Num(n) = c[2] { ed = n; } valid = true; } } } if valid { if let Some(m) = jnum(&JsonVal::Obj(o.clone()), mag_key) { mag = m; } if mag >= *min_mag { let (ev_x, ev_y, ev_z) = geodetic_to_icrs(ela, elo, 0.0, *query_t); let ev_key = format!("geojson_{}", pos_key(ev_x, ev_y, ev_z, 4, *query_t)); let mut ev_vals: HashMap<String, (f64, f64, f64, f64, f64)> = HashMap::new(); ev_vals.insert(outputs[0].clone(), (mag, *query_t, ev_x, ev_y, ev_z)); ev_vals.insert(outputs[1].clone(), (ed, *query_t, ev_x, ev_y, ev_z)); cache.insert(ev_key, (*query_t, ev_vals)); } } } } } }
+                                    if let Some(ref j) = parsed_json {
+                                        if let JsonVal::Obj(root) = j {
+                                            if let Some(JsonVal::Arr(features)) = root.get("features") {
+                                                let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
+                                                for feat in features {
+                                                    if let JsonVal::Obj(f) = feat {
+                                                        let mut elo = 0.0; let mut ela = 0.0; let mut ed = 0.0; let mut mag = 0.0; let mut valid = false;
+                                                        if let Some(JsonVal::Obj(geom)) = f.get("geometry") {
+                                                            if let Some(JsonVal::Arr(c)) = geom.get("coordinates") {
+                                                                if c.len() >= 3 {
+                                                                    if let JsonVal::Num(n) = c[0] { elo = n; }
+                                                                    if let JsonVal::Num(n) = c[1] { ela = n; }
+                                                                    if let JsonVal::Num(n) = c[2] { ed = n; }
+                                                                    valid = true;
+                                                                }
+                                                            }
+                                                        }
+                                                        if valid {
+                                                            if let Some(props) = f.get("properties") { if let Some(m) = jnum(props, mag_key) { mag = m; } }
+                                                            if mag >= *min_mag {
+                                                                let (ev_x, ev_y, ev_z) = geodetic_to_icrs(ela, elo, 0.0, *query_t);
+                                                                let ev_key = format!("geojson_{}", pos_key(ev_x, ev_y, ev_z, 4, *query_t));
+                                                                let mut ev_vals: HashMap<String, (f64, f64, f64, f64, f64)> = HashMap::new();
+                                                                ev_vals.insert(outputs[0].clone(), (mag, *query_t, ev_x, ev_y, ev_z));
+                                                                ev_vals.insert(outputs[1].clone(), (ed, *query_t, ev_x, ev_y, ev_z));
+                                                                cache.insert(ev_key, (*query_t, ev_vals));
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -758,13 +881,14 @@ fn warm_cache(archive: Arc<Archive>) {
                 }
             }
         }
-        
+
         let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
         let max_ttl = archive.sources.iter().map(|s| s.ttl).max().unwrap_or(3600);
         let now_tdb = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs_f64() - UNIX_J2000_OFFSET;
         let evict_thresh = now_tdb - max_ttl as f64 * 2.0;
         archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).retain(|_, (ts, _)| *ts > evict_thresh);
-        thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / (Φ * Φ)) as u64));
+        archive.active_positions.lock().unwrap_or_else(|e| e.into_inner()).retain(|_, t| now_tdb - *t < 300.0);
+        thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / (Φ * Φ)).max(1.0) as u64));
     }
 }
 
@@ -772,19 +896,19 @@ fn main() {
     load_env();
     let port: u16 = std::env::var("PORT").ok().and_then(|s| s.parse().ok()).unwrap_or(1111);
     let archive = Arc::new(Archive {
-        sources: load_sources(), 
+        sources: load_sources(),
         index_html: std::fs::read("static/index.html").unwrap_or_default(),
         constants_js: std::fs::read("static/constants.js").unwrap_or_default(),
-        data_cache: Mutex::new(HashMap::new()), 
+        data_cache: Mutex::new(HashMap::new()),
         active_positions: Mutex::new(HashMap::new()),
     });
     { let ar = Arc::clone(&archive); thread::spawn(move || warm_cache(ar)); }
     if let Ok(listener) = TcpListener::bind(format!("0.0.0.0:{}", port)) {
-        for stream in listener.incoming() { 
-            if let Ok(stream) = stream { 
-                let ar = Arc::clone(&archive); 
-                thread::spawn(move || handle_ingress(stream, ar)); 
-            } 
+        for stream in listener.incoming() {
+            if let Ok(stream) = stream {
+                let ar = Arc::clone(&archive);
+                thread::spawn(move || handle_ingress(stream, ar));
+            }
         }
     }
 }
