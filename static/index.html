@@ -88,6 +88,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         let CAPTURE_RING_SIZE = 32;
         let topologyRingSize = 32;
         let topologyPending = false;
+        let permutationEntropyPipeline = null, takensPipeline = null, tdaPipeline = null, kurtosisPipeline = null, tePipeline = null;
         let lastTs = 0, certainty = 1.0, debugEl = null, lastDebug = 0;
         let stableTick = 0;
         let tPresence = 0, spatialPresence = { x: 0, y: 0, z: 0 };
@@ -312,7 +313,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             for (let i = 0; i < activeN; i++) { srcList.push(i); dstList.push(i); }
             const srcW = srcList.length, dstR = dstList.length, hasTE = srcW > 1 && dstR > 1;
             let inBuf, paramBuf, kOutBuf, tOutBuf, tdaOutBuf, kurtosisOutBuf, readBuf;
-            let srcIdxBuf, dstIdxBuf, teOutBuf, teParamBuf;
+            let srcIdxBuf, dstIdxBuf, teOutBuf, teParamBuf, teBg = null;
             const evalStartTime = performance.now();
             try {
                 if (!permutationEntropyPipeline) { 
@@ -346,6 +347,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     teParamBuf = gpu.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(teParamBuf, 0, new Uint32Array([srcW, dstR, topologyRingSize, 0]));
                     teBg = gpu.createBindGroup({ layout: tePipeline.getBindGroupLayout(0), entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: srcIdxBuf } }, { binding: 2, resource: { buffer: dstIdxBuf } }, { binding: 3, resource: { buffer: teOutBuf } }, { binding: 4, resource: { buffer: teParamBuf } }] });
                 }
+                const readSize = n * 4 + n * 4 * 4 + n * 2 * 4 + n * 4 + (hasTE ? srcW * dstR * 4 : 0);
                 readBuf = gpu.createBuffer({ size: readSize, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
                 const enc = gpu.createCommandEncoder();
                 const kPass = enc.beginComputePass(); kPass.setPipeline(permutationEntropyPipeline); kPass.setBindGroup(0, kBg); kPass.dispatchWorkgroups(Math.ceil(n / 64)); kPass.end();
