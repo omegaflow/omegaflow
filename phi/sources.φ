@@ -5367,3 +5367,9 @@ ttl 2592000
 res 4
 url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters
 path value geosphere_elevation_epqs_m
+
+source openelevation_srtm
+ttl 2592000
+res 4
+url https://api.open-elevation.com/api/v1/lookup?locations={lat},{lon}
+path results.0.elevation geosphere_elevation_openelev_m
