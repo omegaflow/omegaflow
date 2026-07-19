@@ -305,10 +305,14 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             const flat = new Float32Array(n * topologyRingSize);
             for (let i = 0; i < n; i++) flat.set(unrollRing(candidates[i].ringOffset, candidates[i].idx, topologyRingSize), i * topologyRingSize);
             const layout = { entries: [ { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } }, { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }, { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } } ] };
+            const maxTePairs = Math.floor((Φ * 100000) / (topologyRingSize + 1));
+            let activeN = n;
+            if (n > maxTePairs) activeN = maxTePairs;
             const srcList = [], dstList = [];
-            for (let i = 0; i < candidates.length; i++) { srcList.push(i); dstList.push(i); }
+            for (let i = 0; i < activeN; i++) { srcList.push(i); dstList.push(i); }
             const srcW = srcList.length, dstR = dstList.length, hasTE = srcW > 1 && dstR > 1;
             let inBuf, paramBuf, kOutBuf, tOutBuf, tdaOutBuf, kurtosisOutBuf, readBuf;
+            let srcIdxBuf, dstIdxBuf, teOutBuf, teParamBuf;
             const evalStartTime = performance.now();
             try {
                 if (!permutationEntropyPipeline) { 
@@ -336,6 +340,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 const tdaBg = gpu.createBindGroup({ layout: bl, entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: tdaOutBuf } }, { binding: 2, resource: { buffer: paramBuf } }] });
                 const kurtosisBg = gpu.createBindGroup({ layout: bl, entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: kurtosisOutBuf } }, { binding: 2, resource: { buffer: paramBuf } }] });
                 if (hasTE) {
+                    srcIdxBuf = gpu.createBuffer({ size: srcW * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(srcIdxBuf, 0, new Uint32Array(srcList));
                     dstIdxBuf = gpu.createBuffer({ size: dstR * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(dstIdxBuf, 0, new Uint32Array(dstList));
                     teOutBuf = gpu.createBuffer({ size: srcW * dstR * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
                     teParamBuf = gpu.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(teParamBuf, 0, new Uint32Array([srcW, dstR, topologyRingSize, 0]));
@@ -379,6 +384,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 readBuf.unmap();
             } catch (e) { reportState('GPU_TOPOLOGY_FAIL', e && e.message ? e.message : String(e)); } finally {
                 if (inBuf) inBuf.destroy(); if (kOutBuf) kOutBuf.destroy(); if (tOutBuf) tOutBuf.destroy(); if (tdaOutBuf) tdaOutBuf.destroy(); if (kurtosisOutBuf) kurtosisOutBuf.destroy(); if (paramBuf) paramBuf.destroy(); if (readBuf) readBuf.destroy();
+                if (srcIdxBuf) srcIdxBuf.destroy(); if (dstIdxBuf) dstIdxBuf.destroy(); if (teOutBuf) teOutBuf.destroy(); if (teParamBuf) teParamBuf.destroy();
                 const evalDuration = performance.now() - evalStartTime;
                 if (evalDuration > 0 && stableTick > 0) {
                     const ratio = Math.sqrt(stableTick / evalDuration);
