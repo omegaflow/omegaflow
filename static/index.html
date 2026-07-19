@@ -416,6 +416,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         }
         function adaptChannelApertures() {
             const globalCoh = measureCoherence();
+            const g = measureRms();
             const tau = Math.max(1, Math.round(CAPTURE_RING_SIZE / Φ));
             const alpha = 1 - Math.exp(-1 / tau);
             for (const [url, ap] of channelApertures) {
@@ -424,9 +425,9 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     const o = oscillators[i];
                     if (o.url.startsWith('transfer.') && o.url.endsWith('>' + url)) inTE += Math.abs(o.median);
                 }
-                ap.target = Math.tanh(inTE * globalCoh * Φ);
+                ap.target = Math.min(1.0, Math.tanh(inTE * globalCoh * Φ) + g);
                 ap.current += (ap.target - ap.current) * alpha;
-                recordSample(url, ap.current);
+                recordSample(url, ap.current * g);
             }
         }
         let audioCtx = null, audioSrc = null, audioGain = null, audioBuffer = null;
@@ -771,11 +772,11 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             let maxWeight = 0; let targetT = tPresence, targetX = spatialPresence.x, targetY = spatialPresence.y, targetZ = spatialPresence.z;
             for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.presenceWeight > maxWeight && !isInternalMetric(osc.url)) { maxWeight = osc.presenceWeight; targetT = osc.originT; targetX = osc.originPos.x; targetY = osc.originPos.y; targetZ = osc.originPos.z; } }
             const dxDrift = targetX - spatialPresence.x, dyDrift = targetY - spatialPresence.y, dzDrift = targetZ - spatialPresence.z;
-            const dtDrift = Math.abs(targetT - tPresence) * C;
+            const dtDrift = Math.max(0, targetT - tPresence) * C;
             const dist4DDrift = Math.sqrt(dxDrift*dxDrift + dyDrift*dyDrift + dzDrift*dzDrift + dtDrift*dtDrift);
             const driftSpeed = ma() / (1.0 + (dist4DDrift / C));
             const naturalTAdvance = rawTick / 1000.0;
-            tPresence += naturalTAdvance + (targetT - tPresence) * driftSpeed;
+            tPresence += naturalTAdvance + (Math.max(0, targetT - tPresence)) * driftSpeed;
             spatialPresence.x += dxDrift * driftSpeed; spatialPresence.y += dyDrift * driftSpeed; spatialPresence.z += dzDrift * driftSpeed;
             if (!isFinite(tPresence) || !isFinite(spatialPresence.x) || !isFinite(spatialPresence.y) || !isFinite(spatialPresence.z)) { const ec = earthPositionIcrs(φ['server.time'] || 0); tPresence = φ['server.time'] || 0; spatialPresence.x = ec.x; spatialPresence.y = ec.y; spatialPresence.z = ec.z; }
             if (prevTPresence === 0 || (prevSpatialPresence.x === 0 && prevSpatialPresence.y === 0 && prevSpatialPresence.z === 0 && (spatialPresence.x !== 0 || spatialPresence.y !== 0 || spatialPresence.z !== 0))) { prevTPresence = tPresence; prevSpatialPresence = { ...spatialPresence }; }
