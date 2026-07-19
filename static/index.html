@@ -88,17 +88,18 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         let CAPTURE_RING_SIZE = 32;
         let topologyRingSize = 32;
         let topologyPending = false;
-        let permutationEntropyPipeline = null, takensPipeline = null, tdaPipeline = null, kurtosisPipeline = null, tePipeline = null, surrPipeline = null;
-        let globalNaturalLatencyTicks = 8;
         let lastTs = 0, certainty = 1.0, debugEl = null, lastDebug = 0;
         let stableTick = 0;
         let tPresence = 0, spatialPresence = { x: 0, y: 0, z: 0 };
         let prevTPresence = 0, prevSpatialPresence = { x: 0, y: 0, z: 0 };
         let clarity = 1.0;
         let nostrRelay = null, nostrPub = null, nostrModule = null, lastNostrPub = 0;
-        const internalMetrics = ['transfer.', 'kurtosis.', 'tda.', 'complexity.', 'server.', 'system.', 'event.', REMOTE_PREFIX];
+        const internalMetrics = ['transfer.', 'kurtosis.', 'tda.', 'complexity.', 'server.', 'system.', REMOTE_PREFIX];
         function isInternalMetric(url) { for (const prefix of internalMetrics) { if (url.startsWith(prefix)) return true; } return false; }
-        function ma() { return 1.0 / Math.max(1, globalNaturalLatencyTicks); }
+        function ma() { return 1.0 / Math.max(1, Math.round(CAPTURE_RING_SIZE / Φ)); }
+        const surfaces = [];
+        const channelApertures = new Map();
+        const pollFns = [];
         window.ω = { syncFrame, φ, transport, oscillators, indexMap };
         φ['server.time'] = parseFloat(await (await fetch('/time')).text());
         tPresence = φ['server.time'];
@@ -145,10 +146,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
                 navigator.geolocation.watchPosition((pos) => {
                     const c = pos.coords;
                     if (!indexMap.has('geolocation.latitude')) {
-                        registerOscillator('geolocation.latitude', c.latitude, () => c.latitude, null);
-                        registerOscillator('geolocation.longitude', c.longitude, () => c.longitude, null);
-                        registerOscillator('geolocation.altitude', c.altitude || 0, () => c.altitude || 0, null);
-                        registerOscillator('geolocation.accuracy', c.accuracy, () => c.accuracy, null);
+                        registerOscillator('geolocation.latitude', c.latitude);
+                        registerOscillator('geolocation.longitude', c.longitude);
+                        registerOscillator('geolocation.altitude', c.altitude || 0);
+                        registerOscillator('geolocation.accuracy', c.accuracy);
                     }
                     recordSample('geolocation.latitude', c.latitude);
                     recordSample('geolocation.longitude', c.longitude);
@@ -159,8 +160,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
             if (navigator.getBattery) {
                 navigator.getBattery().then(battery => {
                     if (!indexMap.has('battery.level')) {
-                        registerOscillator('battery.level', battery.level, () => typeof battery.level === 'number' ? battery.level : null, null);
-                        registerOscillator('battery.charging', battery.charging ? 1 : 0, () => battery.charging ? 1 : 0, null);
+                        registerOscillator('battery.level', battery.level);
+                        registerOscillator('battery.charging', battery.charging ? 1 : 0);
                     }
                     recordSample('battery.level', battery.level);
                     recordSample('battery.charging', battery.charging ? 1 : 0);
@@ -203,10 +204,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
             }
             flatRings = nr;
         }
-        function registerOscillator(url, initialVal, readFn, writeFn) {
+        function registerOscillator(url, initialVal) {
             const index = oscillators.length;
             const ringOffset = index * CAPTURE_RING_SIZE;
-            const osc = { url, index, ringOffset, idx: 0, filled: 0, senseFn: readFn, complexity: Number.EPSILON, median: initialVal, lastEcho: performance.now(), originT: 0, originPos: { x: 0, y: 0, z: 0 }, presenceWeight: 1.0, lastTransmitted: initialVal, takensCx: 0, takensCy: 0, takensCz: 0, takensSpread: 0 };
+            const osc = { url, index, ringOffset, idx: 0, filled: 0, complexity: Number.EPSILON, median: initialVal, originT: 0, originPos: { x: 0, y: 0, z: 0 }, presenceWeight: 1.0, lastTransmitted: initialVal, takensCx: 0, takensCy: 0, takensCz: 0, takensSpread: 0 };
             oscillators.push(osc); indexMap.set(url, index); ensureRingCapacity();
             return osc;
         }
@@ -214,14 +215,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
             if (typeof value !== 'number' || !isFinite(value)) return;
             if (!isFinite(t) || !isFinite(x) || !isFinite(y) || !isFinite(z)) return;
             let idx = indexMap.get(url); let osc;
-            if (idx === undefined) { if (url.startsWith('event.')) return; osc = registerOscillator(url, value, null, null); }
+            if (idx === undefined) { osc = registerOscillator(url, value); }
             else { osc = oscillators[idx]; }
             osc.originT = t; osc.originPos.x = x; osc.originPos.y = y; osc.originPos.z = z;
             flatRings[osc.ringOffset + osc.idx] = value;
             osc.idx = (osc.idx + 1) % CAPTURE_RING_SIZE;
             if (osc.filled < CAPTURE_RING_SIZE) osc.filled++;
             osc.median = osc.median * (1 - ma()) + value * ma();
-            osc.lastEcho = performance.now();
         }
         async function syncField(transmitList, queryPos) {
             if (transmitList.length === 0 && !queryPos) return;
@@ -293,64 +293,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
     let result = teVal / f32(rsM1);
     teOut[i * dstR + j] = select(0.0, result, result > 0.0);
 }`;
-        const surrShader = `
-struct SurrParams { srcW: u32, numSurr: u32, rs: u32, seed: u32 };
-@group(0) @binding(0) var<storage, read> data: array<f32>;
-@group(0) @binding(1) var<storage, read> srcIdx: array<u32>;
-@group(0) @binding(2) var<storage, read_write> surrOut: array<f32>;
-@group(0) @binding(3) var<uniform> params: SurrParams;
-fn hashU(x: u32) -> u32 { var v = x; v = v * 747796405u + 2891336453u; v = ((v >> ((v >> 28u) + 4u)) ^ v) * 277803737u; return (v >> 22u) ^ v; }
-fn rand(st: ptr<function, u32>) -> f32 { let r = hashU(*st); *st = r; return f32(r) / 4294967296.0; }
-fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); }
-@compute @workgroup_size(8, 8) fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-    let i = gid.x; let s = gid.y;
-    let srcW = params.srcW; let numSurr = params.numSurr; let rs = params.rs;
-    if (i >= srcW || s >= numSurr) { return; }
-    if (rs < 4u) { surrOut[i * numSurr + s] = 0.0; return; }
-    let base = srcIdx[i] * rs;
-    var perm: array<u32, 48>;
-    for (var k = 0u; k < rs; k = k + 1u) { perm[k] = k; }
-    var st = hashU(params.seed ^ hashU(i * 257u + s));
-    for (var k = rs - 1u; k > 0u; k = k - 1u) {
-        let r = rand(&st);
-        let jMax = k + 1u;
-        let j = u32(r * f32(jMax));
-        let jj = select(j, k, j >= jMax);
-        let tmp = perm[k]; perm[k] = perm[jj]; perm[jj] = tmp;
-    }
-    var sumS: f32 = 0.0; var sumT: f32 = 0.0;
-    for (var k = 0u; k < rs; k = k + 1u) { sumS = sumS + data[base + perm[k]]; sumT = sumT + data[base + k]; }
-    let meanS = sumS / f32(rs); let meanT = sumT / f32(rs);
-    var varS: f32 = 0.0; var varT: f32 = 0.0;
-    for (var k = 0u; k < rs; k = k + 1u) { let dS = data[base + perm[k]] - meanS; let dT = data[base + k] - meanT; varS = varS + dS * dS; varT = varT + dT * dT; }
-    let eps = 1.1920928955078125e-07;
-    let sigmaS = max(sqrt(varS / f32(rs)), eps);
-    let sigmaT = max(sqrt(varT / f32(rs)), eps);
-    let sigmaSt = (sigmaS + sigmaT) * 0.5;
-    let rsM1 = rs - 1u;
-    var teVal: f32 = 0.0;
-    for (var p = 0u; p < rsM1; p = p + 1u) {
-        let sT = data[base + perm[p]]; let tT = data[base + p]; let tT1 = data[base + p + 1u];
-        var kJoint: f32 = 0.0; var kCond: f32 = 0.0; var kT: f32 = 0.0; var kT1: f32 = 0.0;
-        for (var q = 0u; q < rsM1; q = q + 1u) {
-            let sTq = data[base + perm[q]]; let tTq = data[base + q]; let tTq1 = data[base + q + 1u];
-            let dj2 = (sT - sTq) * (sT - sTq) + (tT - tTq) * (tT - tTq) + (tT1 - tTq1) * (tT1 - tTq1);
-            kJoint = kJoint + gauss(dj2, sigmaSt);
-            let dc2 = (sT - sTq) * (sT - sTq) + (tT - tTq) * (tT - tTq);
-            kCond = kCond + gauss(dc2, sigmaSt);
-            let dt2 = (tT - tTq) * (tT - tTq);
-            kT = kT + gauss(dt2, sigmaT);
-            let dt12 = (tT - tTq) * (tT - tTq) + (tT1 - tTq1) * (tT1 - tTq1);
-            kT1 = kT1 + gauss(dt12, sigmaT);
-        }
-        if (kJoint > 0.0 && kCond > 0.0 && kT > 0.0 && kT1 > 0.0) {
-            let pJ = kJoint / f32(rs); let pC = kCond / f32(rs); let pT = kT / f32(rs); let pT1 = kT1 / f32(rs);
-            teVal = teVal + pJ * log2((pJ * pT) / (pC * pT1) + 1.1920928955078125e-07);
-        }
-    }
-    let result = teVal / f32(rsM1);
-    surrOut[i * numSurr + s] = select(0.0, result, result > 0.0);
-}`;
         function unrollRing(ringOffset, idx, size) { const u = new Float32Array(size); for (let i = 0; i < size; i++) u[i] = flatRings[ringOffset + (idx + i) % CAPTURE_RING_SIZE]; return u; }
         async function calculateField() {
             if (!window.ω?.gpu || topologyPending) return;
@@ -364,12 +306,9 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             for (let i = 0; i < n; i++) flat.set(unrollRing(candidates[i].ringOffset, candidates[i].idx, topologyRingSize), i * topologyRingSize);
             const layout = { entries: [ { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } }, { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }, { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } } ] };
             const srcList = [], dstList = [];
-            for (let i = 0; i < candidates.length; i++) { srcList.push(i); }
-            const srcW = srcList.length, dstR = dstList.length, hasTE = srcW > 0 && dstR > 0;
+            for (let i = 0; i < candidates.length; i++) { srcList.push(i); dstList.push(i); }
+            const srcW = srcList.length, dstR = dstList.length, hasTE = srcW > 1 && dstR > 1;
             let inBuf, paramBuf, kOutBuf, tOutBuf, tdaOutBuf, kurtosisOutBuf, readBuf;
-            const numSurr = 10;
-            const hasSurr = srcW > 0;
-            let srcIdxBuf, dstIdxBuf, teOutBuf, teParamBuf, surrOutBuf, surrParamBuf;
             const evalStartTime = performance.now();
             try {
                 if (!permutationEntropyPipeline) { 
@@ -385,12 +324,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     const tePl = gpu.createPipelineLayout({ bindGroupLayouts: [teBl] });
                     tePipeline = gpu.createComputePipeline({ layout: tePl, compute: { module: gpu.createShaderModule({ code: teShader }), entryPoint: 'main' } });
                 }
-                if (hasSurr && !surrPipeline) {
-                    const surrLayout = { entries: [ { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } }, { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } }, { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }, { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } } ] };
-                    const surrBl = gpu.createBindGroupLayout(surrLayout);
-                    const surrPl = gpu.createPipelineLayout({ bindGroupLayouts: [surrBl] });
-                    surrPipeline = gpu.createComputePipeline({ layout: surrPl, compute: { module: gpu.createShaderModule({ code: surrShader }), entryPoint: 'main' } });
-                }
                 inBuf = gpu.createBuffer({ size: flat.byteLength, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(inBuf, 0, flat);
                 paramBuf = gpu.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(paramBuf, 0, new Uint32Array([n, topologyRingSize, 0, 0]));
                 kOutBuf = gpu.createBuffer({ size: n * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC }); 
@@ -402,20 +335,12 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 const tBg = gpu.createBindGroup({ layout: bl, entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: tOutBuf } }, { binding: 2, resource: { buffer: paramBuf } }] });
                 const tdaBg = gpu.createBindGroup({ layout: bl, entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: tdaOutBuf } }, { binding: 2, resource: { buffer: paramBuf } }] });
                 const kurtosisBg = gpu.createBindGroup({ layout: bl, entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: kurtosisOutBuf } }, { binding: 2, resource: { buffer: paramBuf } }] });
-                let teBg = null, surrBg = null;
-                if (hasSurr) { srcIdxBuf = gpu.createBuffer({ size: srcW * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(srcIdxBuf, 0, new Uint32Array(srcList)); }
                 if (hasTE) {
                     dstIdxBuf = gpu.createBuffer({ size: dstR * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(dstIdxBuf, 0, new Uint32Array(dstList));
                     teOutBuf = gpu.createBuffer({ size: srcW * dstR * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
                     teParamBuf = gpu.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(teParamBuf, 0, new Uint32Array([srcW, dstR, topologyRingSize, 0]));
                     teBg = gpu.createBindGroup({ layout: tePipeline.getBindGroupLayout(0), entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: srcIdxBuf } }, { binding: 2, resource: { buffer: dstIdxBuf } }, { binding: 3, resource: { buffer: teOutBuf } }, { binding: 4, resource: { buffer: teParamBuf } }] });
                 }
-                if (hasSurr) {
-                    surrOutBuf = gpu.createBuffer({ size: srcW * numSurr * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
-                    surrParamBuf = gpu.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(surrParamBuf, 0, new Uint32Array([srcW, numSurr, topologyRingSize, surrogateSeed++]));
-                    surrBg = gpu.createBindGroup({ layout: surrPipeline.getBindGroupLayout(0), entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: srcIdxBuf } }, { binding: 2, resource: { buffer: surrOutBuf } }, { binding: 3, resource: { buffer: surrParamBuf } }] });
-                }
-                const readSize = n * 4 + n * 4 * 4 + n * 2 * 4 + n * 4 + (hasTE ? srcW * dstR * 4 : 0) + (hasSurr ? srcW * numSurr * 4 : 0);
                 readBuf = gpu.createBuffer({ size: readSize, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
                 const enc = gpu.createCommandEncoder();
                 const kPass = enc.beginComputePass(); kPass.setPipeline(permutationEntropyPipeline); kPass.setBindGroup(0, kBg); kPass.dispatchWorkgroups(Math.ceil(n / 64)); kPass.end();
@@ -423,14 +348,12 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 const tdaPass = enc.beginComputePass(); tdaPass.setPipeline(tdaPipeline); tdaPass.setBindGroup(0, tdaBg); tdaPass.dispatchWorkgroups(Math.ceil(n / 64)); tdaPass.end();
                 const kurtosisPass = enc.beginComputePass(); kurtosisPass.setPipeline(kurtosisPipeline); kurtosisPass.setBindGroup(0, kurtosisBg); kurtosisPass.dispatchWorkgroups(Math.ceil(n / 64)); kurtosisPass.end();
                 if (hasTE) { const tePass = enc.beginComputePass(); tePass.setPipeline(tePipeline); tePass.setBindGroup(0, teBg); tePass.dispatchWorkgroups(Math.ceil(srcW / 8), Math.ceil(dstR / 8), 1); tePass.end(); }
-                if (hasSurr) { const surrPass = enc.beginComputePass(); surrPass.setPipeline(surrPipeline); surrPass.setBindGroup(0, surrBg); surrPass.dispatchWorkgroups(Math.ceil(srcW / 8), Math.ceil(numSurr / 8), 1); surrPass.end(); }
                 let ro = 0;
                 enc.copyBufferToBuffer(kOutBuf, 0, readBuf, ro, n * 4); ro += n * 4;
                 enc.copyBufferToBuffer(tOutBuf, 0, readBuf, ro, n * 4 * 4); ro += n * 4 * 4;
                 enc.copyBufferToBuffer(tdaOutBuf, 0, readBuf, ro, n * 2 * 4); ro += n * 2 * 4;
                 enc.copyBufferToBuffer(kurtosisOutBuf, 0, readBuf, ro, n * 4); ro += n * 4;
                 if (hasTE) { enc.copyBufferToBuffer(teOutBuf, 0, readBuf, ro, srcW * dstR * 4); ro += srcW * dstR * 4; }
-                if (hasSurr) { enc.copyBufferToBuffer(surrOutBuf, 0, readBuf, ro, srcW * numSurr * 4); ro += srcW * numSurr * 4; }
                 gpu.queue.submit([enc.finish()]);
                 await readBuf.mapAsync(GPUMapMode.READ);
                 const res = new Float32Array(readBuf.getMappedRange());
@@ -440,7 +363,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 const tdaRes = res.subarray(off, off + n * 2); off += n * 2;
                 const kurtosisRes = res.subarray(off, off + n); off += n;
                 const teRes = hasTE ? res.subarray(off, off + srcW * dstR) : null; if (hasTE) off += srcW * dstR;
-                const surrRes = hasSurr ? res.subarray(off, off + srcW * numSurr) : null; if (hasSurr) off += srcW * numSurr;
                 for (let i = 0; i < n; i++) { 
                     const osc = candidates[i]; 
                     osc.complexity = kRes[i]; 
@@ -453,12 +375,10 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     recordSample('tda.' + osc.url + '.persistence', tdaRes[i * 2]); 
                     recordSample('tda.' + osc.url + '.betti0', tdaRes[i * 2 + 1]); 
                 }
-                if (hasTE) { for (let si = 0; si < srcW; si++) { const a = candidates[srcList[si]]; for (let di = 0; di < dstR; di++) { const te = teRes[si * dstR + di]; if (te > 0) recordSample('transfer.' + a.url + '>' + candidates[dstList[di]].url, te); } } }
-                if (hasSurr) { for (let si = 0; si < srcW; si++) { let nullMean = 0; for (let s = 0; s < numSurr; s++) nullMean += surrRes[si * numSurr + s]; nullMean /= numSurr; let nullVar = 0; for (let s = 0; s < numSurr; s++) { const d = surrRes[si * numSurr + s] - nullMean; nullVar += d * d; } surrogateThresholds.set(candidates[srcList[si]].url, nullMean + 2 * Math.sqrt(nullVar / numSurr)); } }
+                if (hasTE) { for (let si = 0; si < srcW; si++) { const a = candidates[srcList[si]]; for (let di = 0; di < dstR; di++) { if (srcList[si] === dstList[di]) continue; const te = teRes[si * dstR + di]; if (te > 0) recordSample('transfer.' + a.url + '>' + candidates[dstList[di]].url, te); } } }
                 readBuf.unmap();
             } catch (e) { reportState('GPU_TOPOLOGY_FAIL', e && e.message ? e.message : String(e)); } finally {
                 if (inBuf) inBuf.destroy(); if (kOutBuf) kOutBuf.destroy(); if (tOutBuf) tOutBuf.destroy(); if (tdaOutBuf) tdaOutBuf.destroy(); if (kurtosisOutBuf) kurtosisOutBuf.destroy(); if (paramBuf) paramBuf.destroy(); if (readBuf) readBuf.destroy();
-                if (srcIdxBuf) srcIdxBuf.destroy(); if (dstIdxBuf) dstIdxBuf.destroy(); if (teOutBuf) teOutBuf.destroy(); if (teParamBuf) teParamBuf.destroy(); if (surrOutBuf) surrOutBuf.destroy(); if (surrParamBuf) surrParamBuf.destroy();
                 const evalDuration = performance.now() - evalStartTime;
                 if (evalDuration > 0 && stableTick > 0) {
                     const ratio = Math.sqrt(stableTick / evalDuration);
@@ -481,26 +401,24 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         function measureDecay() { let t=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.complexity>0&&!isInternalMetric(o.url)){ t+=o.complexity*o.presenceWeight; c+=o.presenceWeight; } } return c>0?1.0/(1.0+(t/c)):1.0; }
         function measureQuantum() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.takensSpread>0&&!isInternalMetric(o.url)&&o.presenceWeight>0){ s+=o.takensSpread*o.presenceWeight; c+=o.presenceWeight; } } return c===0?1.0:Math.exp(-s/c); }
         function measureCoherence() { let teSum=0,teCount=0,cplxSum=0,cplxCount=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.url.startsWith('transfer.')&&o.presenceWeight>0){teSum+=Math.abs(o.median)*o.presenceWeight;teCount+=o.presenceWeight;} if(o.complexity>0&&!isInternalMetric(o.url)&&o.presenceWeight>0){cplxSum+=o.complexity*o.presenceWeight;cplxCount+=o.presenceWeight;} } const te=teCount>0?teSum/teCount:0; const cplx=cplxCount>0?cplxSum/cplxCount:0; return cplx>0?te/(cplx+Number.EPSILON):0; }
-        const GROUND_STATE = Number.EPSILON;
-        let surrogateThresholds = new Map();
-        let surrogateSeed = 1;
-        function flow() {
-            const topology = [];
-            const globalCoherence = measureCoherence();
-            for (let i = 0; i < oscillators.length; i++) {
-                const o = oscillators[i];
-                if (o.filled > 0 && o.presenceWeight > 0 && !isInternalMetric(o.url)) {
-                    topology.push({ cx: o.takensCx, cy: o.takensCy, cz: o.takensCz, weight: o.presenceWeight });
+        function getChannelAperture(url) {
+            let ap = channelApertures.get(url);
+            if (!ap) { ap = { current: Number.EPSILON, target: Number.EPSILON }; channelApertures.set(url, ap); }
+            return ap.current;
+        }
+        function adaptChannelApertures() {
+            const globalCoh = measureCoherence();
+            const tau = Math.max(1, Math.round(CAPTURE_RING_SIZE / Φ));
+            const alpha = 1 - Math.exp(-1 / tau);
+            for (const [url, ap] of channelApertures) {
+                let inTE = 0;
+                for (let i = 0; i < oscillators.length; i++) {
+                    const o = oscillators[i];
+                    if (o.url.startsWith('transfer.') && o.url.endsWith('>' + url)) inTE += Math.abs(o.median);
                 }
+                ap.target = Math.tanh(inTE * globalCoh * Φ);
+                ap.current += (ap.target - ap.current) * alpha;
             }
-            if (topology.length === 0) return;
-            if (audioCtx) manifestAcoustic(topology);
-            if (navigator.vibrate) manifestKinetic(globalCoherence);
-            if (ctx) manifestPhoton(topology);
-            if (activeSerialPort) manifestSerial(topology);
-            if (activeUsbDevice) manifestUsb(topology);
-            if (activeBtChar) manifestBluetooth(globalCoherence);
-            if (activeHidDevice) manifestHid(topology);
         }
         let audioCtx = null, audioSrc = null, audioGain = null, audioBuffer = null;
         function startAudio() {
@@ -520,39 +438,37 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                         const binIdx = i;
                         const url = 'microphone.freq_' + binIdx;
                         if (!indexMap.has(url)) {
-                            registerOscillator(url, Number.EPSILON, () => { if (micAnalyser && micFreqData) { micAnalyser.getByteFrequencyData(micFreqData); return micFreqData[binIdx] / 255; } return null; }, null);
+                            registerOscillator(url, Number.EPSILON);
+                            pollFns.push(() => { if (micAnalyser && micFreqData) { micAnalyser.getByteFrequencyData(micFreqData); recordSample(url, micFreqData[binIdx] / 255); } });
                         }
                     }
                 }).catch(() => {});
-                function manifestAcoustic(topology) {
-                    try { 
-                        if (!topology || topology.length === 0) {
-                            audioGain.gain.setTargetAtTime(0, audioCtx.currentTime, transport.tickTime / 1000);
-                            return;
-                        }
-                        const dt = transport.tickTime / 1000;
-                        const maxGain = 0.15;
-                        audioGain.gain.setTargetAtTime(maxGain, audioCtx.currentTime, dt * Φ * Φ);
-                        const channelData = audioBuffer.getChannelData(0); 
-                        const sr = audioCtx.sampleRate;
-                        const n = topology.length;
-                        for (let i = 0; i < CAPTURE_RING_SIZE; i++) { 
-                            const tSec = i / sr;
-                            let sum = 0; 
-                            for (let t = 0; t < n; t++) {
-                                const node = topology[t];
-                                const normCx = (node.cx + 1) * 0.5;
-                                const normCy = (node.cy + 1) * 0.5;
-                                const normCz = (node.cz + 1) * 0.5;
-                                const freq = 55 + normCx * 880;
-                                const phase = normCy * Math.PI * 2;
-                                const detune = 1 + normCz * 0.01;
-                                sum += Math.sin(2 * Math.PI * freq * detune * tSec + phase) * node.weight;
+                registerOscillator('audioContext.destination.channel.frequency', Number.EPSILON);
+                registerOscillator('audioContext.destination.channel.amplitude', Number.EPSILON);
+                registerOscillator('audioContext.destination.channel.pan', Number.EPSILON);
+                surfaces.push({
+                    manifest: (topology) => {
+                        try {
+                            const ampAp = getChannelAperture('audioContext.destination.channel.amplitude');
+                            if (!topology || topology.length === 0 || ampAp < Number.EPSILON) {
+                                audioGain.gain.setTargetAtTime(0, audioCtx.currentTime, transport.tickTime / 1000);
+                                return;
                             }
-                            channelData[i] = sum / n;
-                        } 
-                    } catch {}
-                }
+                            audioGain.gain.setTargetAtTime(ampAp * 0.2, audioCtx.currentTime, transport.tickTime / 1000 * Φ * Φ);
+                            const channelData = audioBuffer.getChannelData(0);
+                            const sr = audioCtx.sampleRate;
+                            for (let i = 0; i < CAPTURE_RING_SIZE; i++) {
+                                const tSec = i / sr;
+                                let sum = 0;
+                                for (let t = 0; t < topology.length; t++) {
+                                    const node = topology[t];
+                                    sum += Math.sin(2 * Math.PI * (Math.abs(node.cx) * C / 1e6) * tSec + node.cy * Math.PI * 2) * node.weight;
+                                }
+                                channelData[i] = (sum / topology.length) * ampAp;
+                            }
+                        } catch {}
+                    }
+                });
             } catch {}
         }
         async function startCamera() {
@@ -565,7 +481,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     const tp = 'camera.track.' + track.kind;
                     if (indexMap.has(tp)) continue;
                     const reader = new MediaStreamTrackProcessor(track).readable.getReader();
-                    registerOscillator(tp, Number.EPSILON, null, null);
+                    registerOscillator(tp, Number.EPSILON);
                     (async () => {
                         while (true) {
                             const { value: frame, done } = await reader.read();
@@ -626,63 +542,99 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             document.addEventListener('click', startXR, { once: true });
             document.addEventListener('touchstart', startXR, { once: true });
         }
-        function manifestKinetic(coherence) {
-            if (!navigator.vibrate) return;
-            if (coherence > 0.1 && Math.random() < coherence * 0.1) {
-                navigator.vibrate(Math.max(10, Math.floor(1000 / (1 + coherence * 10))));
-            }
+        if (navigator.vibrate) {
+            registerOscillator('navigator.vibrate.channel.duration', Number.EPSILON);
+            registerOscillator('navigator.vibrate.channel.rhythm', Number.EPSILON);
+            surfaces.push({
+                manifest: (topology, coherence) => {
+                    const durAp = getChannelAperture('navigator.vibrate.channel.duration');
+                    const rhyAp = getChannelAperture('navigator.vibrate.channel.rhythm');
+                    if (durAp < Number.EPSILON && rhyAp < Number.EPSILON) return;
+                    const interval = Math.max(100, Math.floor(1000 / (1 + (coherence || 0) * (Φ * Φ))));
+                    const duration = Math.max(10, Math.floor(interval * durAp));
+                    if (Math.random() < rhyAp) navigator.vibrate(duration);
+                }
+            });
         }
         let activeSerialPort = null;
-        function manifestSerial(topology) {
-            if (!activeSerialPort || !activeSerialPort.writable) return;
-            try {
-                const writer = activeSerialPort.writable.getWriter();
-                const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
-                for (let i = 0; i < sendBuf.length; i += 4) {
-                    const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
-                    sendBuf[i] = Math.floor(((node.cx + 1) * 0.5) * 255) & 255;
-                    sendBuf[i + 1] = Math.floor(((node.cy + 1) * 0.5) * 255) & 255;
-                    sendBuf[i + 2] = Math.floor(((node.cz + 1) * 0.5) * 255) & 255;
-                    sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
+        if (navigator.serial) {
+            registerOscillator('navigator.serial.channel.tx', Number.EPSILON);
+            surfaces.push({
+                manifest: (topology) => {
+                    if (!activeSerialPort || !activeSerialPort.writable) return;
+                    const txAp = getChannelAperture('navigator.serial.channel.tx');
+                    if (txAp < Number.EPSILON) return;
+                    try {
+                        const writer = activeSerialPort.writable.getWriter();
+                        const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
+                        for (let i = 0; i < sendBuf.length; i += 4) {
+                            const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
+                            sendBuf[i] = Math.floor(((node.cx * txAp + 1) * 0.5) * 255) & 255;
+                            sendBuf[i + 1] = Math.floor(((node.cy * txAp + 1) * 0.5) * 255) & 255;
+                            sendBuf[i + 2] = Math.floor(((node.cz * txAp + 1) * 0.5) * 255) & 255;
+                            sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
+                        }
+                        writer.write(sendBuf);
+                        writer.releaseLock();
+                    } catch {}
                 }
-                writer.write(sendBuf);
-                writer.releaseLock();
-            } catch {}
+            });
         }
         let activeUsbDevice = null;
-        function manifestUsb(topology) {
-            if (!activeUsbDevice || !activeUsbDevice.opened) return;
-            const alt = activeUsbDevice.configuration?.interfaces?.[0]?.alternates?.[0];
-            if (!alt) return;
-            const outEp = alt.endpoints.find(e => e.direction === 'out');
-            if (!outEp) return;
-            const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
-            for (let i = 0; i < sendBuf.length; i += 4) {
-                const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
-                sendBuf[i] = Math.floor(((node.cx + 1) * 0.5) * 255) & 255;
-                sendBuf[i + 1] = Math.floor(((node.cy + 1) * 0.5) * 255) & 255;
-                sendBuf[i + 2] = Math.floor(((node.cz + 1) * 0.5) * 255) & 255;
-                sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
-            }
-            try { activeUsbDevice.transferOut(outEp.endpointNumber, sendBuf); } catch {}
+        if (navigator.usb) {
+            registerOscillator('navigator.usb.channel.tx', Number.EPSILON);
+            surfaces.push({
+                manifest: (topology) => {
+                    if (!activeUsbDevice || !activeUsbDevice.opened) return;
+                    const txAp = getChannelAperture('navigator.usb.channel.tx');
+                    if (txAp < Number.EPSILON) return;
+                    const alt = activeUsbDevice.configuration?.interfaces?.[0]?.alternates?.[0];
+                    if (!alt) return;
+                    const outEp = alt.endpoints.find(e => e.direction === 'out');
+                    if (!outEp) return;
+                    const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
+                    for (let i = 0; i < sendBuf.length; i += 4) {
+                        const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
+                        sendBuf[i] = Math.floor(((node.cx * txAp + 1) * 0.5) * 255) & 255;
+                        sendBuf[i + 1] = Math.floor(((node.cy * txAp + 1) * 0.5) * 255) & 255;
+                        sendBuf[i + 2] = Math.floor(((node.cz * txAp + 1) * 0.5) * 255) & 255;
+                        sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
+                    }
+                    try { activeUsbDevice.transferOut(outEp.endpointNumber, sendBuf); } catch {}
+                }
+            });
         }
         let activeBtChar = null;
-        function manifestBluetooth(coherence) {
-            if (!activeBtChar) return;
-            try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor(coherence * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
+        if (navigator.bluetooth) {
+            registerOscillator('navigator.bluetooth.channel.tx', Number.EPSILON);
+            surfaces.push({
+                manifest: (topology, coherence) => {
+                    if (!activeBtChar) return;
+                    const txAp = getChannelAperture('navigator.bluetooth.channel.tx');
+                    if (txAp < Number.EPSILON) return;
+                    try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor(coherence * txAp * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
+                }
+            });
         }
         let activeHidDevice = null;
-        function manifestHid(topology) {
-            if (!activeHidDevice || !activeHidDevice.opened) return;
-            const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
-            for (let i = 0; i < sendBuf.length; i += 4) {
-                const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
-                sendBuf[i] = Math.floor(((node.cx + 1) * 0.5) * 255) & 255;
-                sendBuf[i + 1] = Math.floor(((node.cy + 1) * 0.5) * 255) & 255;
-                sendBuf[i + 2] = Math.floor(((node.cz + 1) * 0.5) * 255) & 255;
-                sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
-            }
-            for (const coll of activeHidDevice.collections) { for (const inp of coll.inputReports) { try { activeHidDevice.sendReport(inp.reportId, sendBuf); } catch {} } }
+        if (navigator.hid) {
+            registerOscillator('navigator.hid.channel.tx', Number.EPSILON);
+            surfaces.push({
+                manifest: (topology) => {
+                    if (!activeHidDevice || !activeHidDevice.opened) return;
+                    const txAp = getChannelAperture('navigator.hid.channel.tx');
+                    if (txAp < Number.EPSILON) return;
+                    const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
+                    for (let i = 0; i < sendBuf.length; i += 4) {
+                        const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
+                        sendBuf[i] = Math.floor(((node.cx * txAp + 1) * 0.5) * 255) & 255;
+                        sendBuf[i + 1] = Math.floor(((node.cy * txAp + 1) * 0.5) * 255) & 255;
+                        sendBuf[i + 2] = Math.floor(((node.cz * txAp + 1) * 0.5) * 255) & 255;
+                        sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
+                    }
+                    for (const coll of activeHidDevice.collections) { for (const inp of coll.inputReports) { try { activeHidDevice.sendReport(inp.reportId, sendBuf); } catch {} } }
+                }
+            });
         }
         function startHardware() {
             if (navigator.serial) { navigator.serial.requestPort().then(port => port.open({ baudRate: 115200 }).then(() => { activeSerialPort = port; })).catch(() => {}); }
@@ -717,7 +669,8 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                                     const url = 'bluetooth.' + service.uuid + '.' + ch.uuid;
                                     if (!indexMap.has(url)) {
                                         const chRef = ch;
-                                        registerOscillator(url, Number.EPSILON, async () => { try { const dv = await chRef.readValue(); return dv.getFloat64(0, true); } catch { return null; } }, null);
+                                        registerOscillator(url, Number.EPSILON);
+                                        pollFns.push(async () => { try { const dv = await chRef.readValue(); recordSample(url, dv.getFloat64(0, true)); } catch {} });
                                     }
                                 }
                                 if (ch.properties.write && !activeBtChar) activeBtChar = ch;
@@ -746,42 +699,38 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;image-rendering:pixelated;z-index:-1;';
         document.body.appendChild(canvas);
         const ctx = canvas.getContext('2d');
-        const imgData = ctx.createImageData(canvas.width, canvas.height);
-        const data8 = imgData.data;
-        function manifestPhoton(topology) {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            if (!topology || topology.length === 0) return;
-            for (const node of topology) {
-                const screenX = (node.cx + 1.0) * 0.5 * canvas.width;
-                const screenY = (node.cy + 1.0) * 0.5 * canvas.height;
-                const lum = Math.max(0, Math.min(1, (node.cz + 1.0) * 0.5));
-                const alpha = Math.max(0, Math.min(1, node.weight));
-                if (alpha > 0.01) {
-                    ctx.fillStyle = `rgba(${Math.floor(lum * 255)}, ${Math.floor(lum * 255)}, 255, ${alpha})`;
-                    ctx.beginPath();
-                    ctx.arc(screenX, screenY, 2 + (lum * 3), 0, Math.PI * 2);
-                    ctx.fill();
+        registerOscillator('document.canvas.channel.x', Number.EPSILON);
+        registerOscillator('document.canvas.channel.y', Number.EPSILON);
+        registerOscillator('document.canvas.channel.r', Number.EPSILON);
+        registerOscillator('document.canvas.channel.g', Number.EPSILON);
+        registerOscillator('document.canvas.channel.b', Number.EPSILON);
+        surfaces.push({
+            manifest: (topology) => {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                if (!topology || topology.length === 0) return;
+                const xAp = getChannelAperture('document.canvas.channel.x');
+                const yAp = getChannelAperture('document.canvas.channel.y');
+                const rAp = getChannelAperture('document.canvas.channel.r');
+                const gAp = getChannelAperture('document.canvas.channel.g');
+                const bAp = getChannelAperture('document.canvas.channel.b');
+                for (const node of topology) {
+                    const screenX = (node.cx + 1.0) * 0.5 * canvas.width;
+                    const screenY = (node.cy + 1.0) * 0.5 * canvas.height;
+                    const lum = Math.max(0, Math.min(1, (node.cz + 1.0) * 0.5));
+                    const alpha = Math.max(0, Math.min(1, node.weight * Math.max(xAp, yAp, rAp, gAp, bAp)));
+                    if (alpha > Number.EPSILON) {
+                        const r = Math.floor(lum * rAp * 255);
+                        const g = Math.floor(lum * gAp * 255);
+                        const b = Math.floor(lum * bAp * 255);
+                        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                        ctx.beginPath();
+                        ctx.arc(screenX * (xAp > Number.EPSILON ? 1 : 0), screenY * (yAp > Number.EPSILON ? 1 : 0), 2 + (lum * 3), 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                 }
             }
-        }
-        let cachedThreads = []; let cachedThreadBuffers = [];
-        function getRingBuffers() {
-            let activeCount = 0;
-            for (let i = 0; i < oscillators.length; i++) {
-                const osc = oscillators[i];
-                if (osc.filled >= topologyRingSize && !isInternalMetric(osc.url) && osc.presenceWeight > 0) {
-                    if (!cachedThreadBuffers[activeCount]) cachedThreadBuffers[activeCount] = new Float32Array(CAPTURE_RING_SIZE);
-                    const buf = cachedThreadBuffers[activeCount];
-                    for (let j = 0; j < topologyRingSize; j++) buf[j] = flatRings[osc.ringOffset + (osc.idx + j) % CAPTURE_RING_SIZE] * osc.presenceWeight;
-                    for (let j = topologyRingSize; j < CAPTURE_RING_SIZE; j++) buf[j] = Number.EPSILON;
-                    cachedThreads[activeCount] = new Uint8Array(buf.buffer);
-                    activeCount++;
-                }
-            }
-            cachedThreads.length = activeCount;
-            return cachedThreads;
-        }
+        });
         function registerGamepads() {
             const pads = navigator.getGamepads ? navigator.getGamepads() : [];
             for (let p = 0; p < pads.length; p++) {
@@ -791,14 +740,16 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     const url = `gamepad.${p}.axes.${a}`;
                     if (!indexMap.has(url)) {
                         const ax = a, pn = p;
-                        registerOscillator(url, pad.axes[a], () => { const gp = navigator.getGamepads()[pn]; return gp ? gp.axes[ax] : null; }, null);
+                        registerOscillator(url, pad.axes[a]);
+                        pollFns.push(() => { const gp = navigator.getGamepads()[pn]; if (gp) recordSample(url, gp.axes[ax]); });
                     }
                 }
                 for (let b = 0; b < pad.buttons.length; b++) {
                     const url = `gamepad.${p}.buttons.${b}`;
                     if (!indexMap.has(url)) {
                         const bn = b, pn = p;
-                        registerOscillator(url, pad.buttons[b].value, () => { const gp = navigator.getGamepads()[pn]; return gp ? gp.buttons[bn].value : null; }, null);
+                        registerOscillator(url, pad.buttons[b].value);
+                        pollFns.push(() => { const gp = navigator.getGamepads()[pn]; if (gp) recordSample(url, gp.buttons[bn].value); });
                     }
                 }
             }
@@ -820,7 +771,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             if (!isFinite(tPresence) || !isFinite(spatialPresence.x) || !isFinite(spatialPresence.y) || !isFinite(spatialPresence.z)) { const ec = earthPositionIcrs(φ['server.time'] || 0); tPresence = φ['server.time'] || 0; spatialPresence.x = ec.x; spatialPresence.y = ec.y; spatialPresence.z = ec.z; }
             if (prevTPresence === 0 || (prevSpatialPresence.x === 0 && prevSpatialPresence.y === 0 && prevSpatialPresence.z === 0 && (spatialPresence.x !== 0 || spatialPresence.y !== 0 || spatialPresence.z !== 0))) { prevTPresence = tPresence; prevSpatialPresence = { ...spatialPresence }; }
             registerGamepads();
-            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.senseFn && osc.presenceWeight > 0) { let readVal = osc.senseFn(); if (readVal !== null && typeof readVal === 'number') recordSample(osc.url, readVal); } }
+            for (const fn of pollFns) { try { fn(); } catch {} }
             calculateMinkowskiWeight();
             const scrollSpeedS = Math.sqrt((spatialPresence.x - prevSpatialPresence.x)**2 + (spatialPresence.y - prevSpatialPresence.y)**2 + (spatialPresence.z - prevSpatialPresence.z)**2);
             clarity = Math.exp(-scrollSpeedS / (1.0 + measureRms()));
@@ -828,9 +779,17 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             const transmitList = [];
             for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.presenceWeight <= 0) continue; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > osc.complexity) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val, t: tPresence, x: spatialPresence.x, y: spatialPresence.y, z: spatialPresence.z }); } }
             syncField(transmitList, spatialPresence).catch(() => {});
-            calculateField();
-            
-            flow();
+            await calculateField();
+            adaptChannelApertures();
+            const topology = [];
+            const coherence = measureCoherence();
+            for (let i = 0; i < oscillators.length; i++) {
+                const o = oscillators[i];
+                if (o.filled > 0 && o.presenceWeight > 0 && !isInternalMetric(o.url)) {
+                    topology.push({ url: o.url, cx: o.takensCx, cy: o.takensCy, cz: o.takensCz, weight: o.presenceWeight });
+                }
+            }
+            for (const surface of surfaces) { try { surface.manifest(topology, coherence); } catch {} }
             const g = measureRms(); const vC = measureRateOfChange(); const decay = measureDecay(); const quantum = measureQuantum();
             certainty = Math.exp(-vC / (g + (1.0 / C))) * quantum * decay;
             const noDue = lastNostrPub + stableTick * Φ * Φ * Φ - ts;
@@ -888,10 +847,10 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     `  Time(t): ${tPresence.toFixed(1)} | Lat/Lon: (${latStr}, ${lonStr})\n` +
                     `  API Sources: ${srvCount} | WS: ${transport.socket ? transport.socket.readyState : 'none'} | RTT: ${transport.rtt.toFixed(0)}ms\n` +
                     "> MANIFESTATION (Flow)\n" +
-                                    `  Topology Nodes: ${topoCount} | Coherence: ${(measureCoherence()).toFixed(4)}\n` +
+                                    `  Topology Nodes: ${topoCount} | Coherence: ${coherence.toFixed(4)}\n` +
+                  `  Channels: ${channelApertures.size} | Active: ${[...channelApertures.values()].filter(a => a.current > 0.001).length}\n` +
                     "> RESONANCE\n" +
-                    `  TE Links: ${teCount} | maxTE: ${teMax.toExponential(3)} | gNLT: ${globalNaturalLatencyTicks}\n` +
-                    `  Surrogate: ${surrogateThresholds.size > 0 ? Math.max(...surrogateThresholds.values()).toExponential(3) : '0'} (${surrogateThresholds.size})\n` +
+                    `  TE Links: ${teCount} | maxTE: ${teMax.toExponential(3)}\n` +
                     "> ACTIVE TOPOLOGY (Sensors/APIs)\n" + 
                     (topLines || "  Waiting for interaction (click page/allow permissions)...");
             }
