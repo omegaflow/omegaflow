@@ -2325,199 +2325,199 @@ source overpass_buildings
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
-count ways technosphere_buildings_1km
+deep ways technosphere_buildings_1km
 
 source overpass_streets
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20count;
-count ways technosphere_streets_500m
+deep ways technosphere_streets_500m
 
 source overpass_shops
 ttl 3600
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count;
-count total technosphere_shops_5km
+deep total technosphere_shops_5km
 
 source overpass_restaurants
 ttl 3600
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="restaurant"](around:1000,{lat},{lon});out%20count;
-count total anthroposphere_restaurants_1km
+deep total anthroposphere_restaurants_1km
 
 source overpass_trees
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["natural"="tree"](around:500,{lat},{lon});out%20count;
-count total biosphere_trees_500m
+deep total biosphere_trees_500m
 
 source overpass_waterways
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["waterway"](around:5000,{lat},{lon});out%20count;
-count ways hydrosphere_waterways_5km
+deep ways hydrosphere_waterways_5km
 
 source overpass_bus_stops
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["highway"="bus_stop"](around:1000,{lat},{lon});out%20count;
-count total technosphere_bus_stops_1km
+deep total technosphere_bus_stops_1km
 
 source overpass_charging_stations
 ttl 3600
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="charging_station"](around:5000,{lat},{lon});out%20count;
-count total technosphere_ev_charging_5km
+deep total technosphere_ev_charging_5km
 
 source overpass_pharmacies
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="pharmacy"](around:2000,{lat},{lon});out%20count;
-count total anthroposphere_pharmacies_2km
+deep total anthroposphere_pharmacies_2km
 
 source overpass_hospitals
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20count;
-count total anthroposphere_hospitals_10km
+deep total anthroposphere_hospitals_10km
 
 source overpass_schools
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20count;
-count total anthroposphere_schools_10km
+deep total anthroposphere_schools_10km
 
 source overpass_fuel_stations
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="fuel"](around:5000,{lat},{lon});out%20count;
-count total technosphere_fuel_stations_5km
+deep total technosphere_fuel_stations_5km
 
 source overpass_benches
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="bench"](around:500,{lat},{lon});out%20count;
-count total anthroposphere_benches_500m
+deep total anthroposphere_benches_500m
 
 source overpass_drinking_water
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="drinking_water"](around:1000,{lat},{lon});out%20count;
-count total hydrosphere_drinking_water_1km
+deep total hydrosphere_drinking_water_1km
 
 source overpass_atms
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="atm"](around:1000,{lat},{lon});out%20count;
-count total economic_atms_1km
+deep total economic_atms_1km
 
 source overpass_parks
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["leisure"="park"](around:5000,{lat},{lon});out%20count;
-count ways biosphere_parks_5km
+deep ways biosphere_parks_5km
 
 source overpass_forest
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["landuse"="forest"](around:10000,{lat},{lon});out%20count;
-count ways biosphere_forest_10km
+deep ways biosphere_forest_10km
 
 source overpass_farmland
 ttl 2592000
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["landuse"="farmland"](around:10000,{lat},{lon});out%20count;
-count ways biosphere_farmland_10km
+deep ways biosphere_farmland_10km
 
 source overpass_power_lines
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["power"="line"](around:5000,{lat},{lon});out%20count;
-count ways technosphere_power_lines_5km
+deep ways technosphere_power_lines_5km
 
 source overpass_power_towers
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["power"="tower"](around:5000,{lat},{lon});out%20count;
-count total technosphere_power_towers_5km
+deep total technosphere_power_towers_5km
 
 source overpass_surveillance
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["man_made"="surveillance"](around:2000,{lat},{lon});out%20count;
-count total anthroposphere_surveillance_cameras_2km
+deep total anthroposphere_surveillance_cameras_2km
 
 source overpass_bridges
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["bridge"="yes"](around:5000,{lat},{lon});out%20count;
-count ways technosphere_bridges_5km
+deep ways technosphere_bridges_5km
 
 source overpass_memorials
 ttl 2592000
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20count;
-count total anthroposphere_memorials_5km
+deep total anthroposphere_memorials_5km
 
 source overpass_crossings
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["highway"="crossing"](around:500,{lat},{lon});out%20count;
-count total technosphere_pedestrian_crossings_500m
+deep total technosphere_pedestrian_crossings_500m
 
 source overpass_hotels
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["tourism"="hotel"](around:5000,{lat},{lon});out%20count;
-count total economic_hotels_5km
+deep total economic_hotels_5km
 
 source overpass_supermarkets
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["shop"="supermarket"](around:2000,{lat},{lon});out%20count;
-count total economic_supermarkets_2km
+deep total economic_supermarkets_2km
 
 source overpass_infrastructure
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node["amenity"~"hospital|fire_station|school"](around:50000,{lat},{lon});node["railway"="station"](around:50000,{lat},{lon}););out%20count;
-count total anthroposphere_critical_infrastructure_50km
+deep total anthroposphere_critical_infrastructure_50km
 
 source overpass_history_buildings_5yr
 ttl 2592000
 res 4
 url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
-count ways technosphere_buildings_2021_1km
+deep ways technosphere_buildings_2021_1km
 
 source overpass_history_buildings_2yr
 ttl 2592000
 res 4
 url https://overpass-api.de/api/interpreter?data=[date:"2024-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
-count ways technosphere_buildings_2024_1km
+deep ways technosphere_buildings_2024_1km
 
 source overpass_history_shops_5yr
 ttl 2592000
 res 4
 url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count;
-count total technosphere_shops_2021_5km
+deep total technosphere_shops_2021_5km
 
 source overpass_history_streets_5yr
 ttl 2592000
 res 4
 url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20count;
-count ways technosphere_streets_2021_500m
+deep ways technosphere_streets_2021_500m
 
 source overpass_history_hospitals_5yr
 ttl 2592000
 res 4
 url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20count;
-count total anthroposphere_hospitals_2021_10km
+deep total anthroposphere_hospitals_2021_10km
 
 source overpass_history_schools_5yr
 ttl 2592000
 res 4
 url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20count;
-count total anthroposphere_schools_2021_10km
+deep total anthroposphere_schools_2021_10km
 
 source pluto_vectors
 res 0
@@ -3002,13 +3002,13 @@ source overpass_mobile_antennas
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:60];node["telecom"="antenna"](around:10000,{lat},{lon});out%20count;
-count nodes technosphere_mobile_antennas_10km
+deep nodes technosphere_mobile_antennas_10km
 
 source overpass_wifi_hotspots
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count;
-count nodes technosphere_public_wlan_5km
+deep nodes technosphere_public_wlan_5km
 
 source parker_solar_probe_vectors
 res 0
@@ -5373,3 +5373,238 @@ ttl 2592000
 res 4
 url https://api.open-elevation.com/api/v1/lookup?locations={lat},{lon}
 path results.0.elevation geosphere_elevation_openelev_m
+
+source openmeteo_flood
+ttl 3600
+res 3
+url https://flood-api.open-meteo.com/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge
+first river_discharge hydrosphere_river_discharge_m3s
+
+source openmeteo_climate_projection
+ttl 2592000
+res 3
+url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum
+first temperature_2m_max atmosphere_climate_temp_max_c
+first temperature_2m_min atmosphere_climate_temp_min_c
+first precipitation_sum atmosphere_climate_precip_mm
+
+source openmeteo_marine_ocean
+ttl 600
+res 3
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,ocean_current_velocity,ocean_current_direction,sea_level_height_msl&timezone=auto
+path current.sea_surface_temperature hydrosphere_sst_c
+path current.ocean_current_velocity hydrosphere_current_velocity_kmh
+path current.ocean_current_direction hydrosphere_current_direction_deg
+path current.sea_level_height_msl hydrosphere_sea_level_msl_m
+
+source openmeteo_pressure_levels
+ttl 600
+res 3
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto
+path current.temperature_500hPa atmosphere_temp_500hpa_c
+path current.temperature_850hPa atmosphere_temp_850hpa_c
+path current.geopotential_height_500hPa atmosphere_geopotential_500hpa_m
+path current.geopotential_height_850hPa atmosphere_geopotential_850hpa_m
+
+source openmeteo_soil_current
+ttl 600
+res 3
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto
+path current.soil_temperature_0cm geosphere_soil_temp_0cm_c
+path current.soil_temperature_6cm geosphere_soil_temp_6cm_c
+path current.soil_temperature_18cm geosphere_soil_temp_18cm_c
+path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
+path current.soil_moisture_0_to_1cm geosphere_soil_moisture_0cm_m3m3
+path current.soil_moisture_9_to_27cm geosphere_soil_moisture_18cm_m3m3
+path current.soil_moisture_27_to_81cm geosphere_soil_moisture_54cm_m3m3
+
+source openmeteo_radiation_current
+ttl 600
+res 3
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto
+path current.shortwave_radiation atmosphere_sw_radiation_wm2
+path current.direct_radiation atmosphere_direct_rad_wm2
+path current.diffuse_radiation atmosphere_diffuse_rad_wm2
+path current.direct_normal_irradiance atmosphere_dni_wm2
+path current.vapour_pressure_deficit atmosphere_vpd_kpa
+path current.cape atmosphere_cape_jkg
+path current.evapotranspiration atmosphere_evapotranspiration_mm
+path current.et0_fao_evapotranspiration atmosphere_et0_mm
+path current.visibility atmosphere_visibility_m
+path current.freezing_level_height atmosphere_freezing_level_m
+path current.snow_depth atmosphere_snow_depth_m
+path current.precipitation_probability atmosphere_precip_probability_pct
+path current.weather_code atmosphere_wmo_code
+
+source openmeteo_wind_heights
+ttl 600
+res 3
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_speed_180m,wind_direction_10m,wind_direction_80m,wind_direction_120m,wind_direction_180m,wind_gusts_10m,temperature_80m,temperature_120m,temperature_180m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,uv_index,uv_index_clear_sky,dew_point_2m,pressure_msl,surface_pressure&timezone=auto
+path current.wind_speed_80m atmosphere_wind_80m_kmh
+path current.wind_speed_120m atmosphere_wind_120m_kmh
+path current.wind_speed_180m atmosphere_wind_180m_kmh
+path current.wind_direction_80m atmosphere_winddir_80m_deg
+path current.wind_direction_120m atmosphere_winddir_120m_deg
+path current.wind_direction_180m atmosphere_winddir_180m_deg
+path current.temperature_80m atmosphere_temp_80m_c
+path current.temperature_120m atmosphere_temp_120m_c
+path current.temperature_180m atmosphere_temp_180m_c
+path current.cloud_cover_low atmosphere_cloud_low_pct
+path current.cloud_cover_mid atmosphere_cloud_mid_pct
+path current.cloud_cover_high atmosphere_cloud_high_pct
+path current.uv_index atmosphere_uv_index
+path current.uv_index_clear_sky atmosphere_uv_clearsky
+path current.dew_point_2m atmosphere_dewpoint_c
+path current.pressure_msl atmosphere_pressure_msl_hpa
+
+source openmeteo_daily_forecast
+ttl 3600
+res 3
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,showers_sum,snowfall_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration,sunrise,sunset,daylight_duration,sunshine_duration,uv_index_max,weather_code&timezone=auto
+first temperature_2m_max atmosphere_forecast_temp_max_c
+first temperature_2m_min atmosphere_forecast_temp_min_c
+first precipitation_sum atmosphere_forecast_precip_mm
+first precipitation_probability_max atmosphere_forecast_precip_prob_pct
+first wind_speed_10m_max atmosphere_forecast_wind_max_kmh
+first wind_gusts_10m_max atmosphere_forecast_gust_max_kmh
+first shortwave_radiation_sum atmosphere_forecast_radiation_mjm2
+first uv_index_max atmosphere_forecast_uv_max
+first daylight_duration atmosphere_forecast_daylight_s
+first sunshine_duration atmosphere_forecast_sunshine_s
+
+source openmeteo_marine_waves
+ttl 600
+res 3
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto
+path current.wind_wave_height hydrosphere_wind_wave_m
+path current.wind_wave_direction hydrosphere_wind_wave_dir_deg
+path current.wind_wave_period hydrosphere_wind_wave_period_s
+path current.swell_wave_height hydrosphere_swell_m
+path current.swell_wave_direction hydrosphere_swell_dir_deg
+path current.swell_wave_period hydrosphere_swell_period_s
+
+source overpass_bicycle_parking
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bicycle_parking"];out%20count;
+deep total technosphere_bicycle_parking_count
+
+source overpass_bicycle_rental
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bicycle_rental"];out%20count;
+deep total technosphere_bicycle_rental_count
+
+source overpass_recycling
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="recycling"];out%20count;
+deep total technosphere_recycling_count
+
+source overpass_place_of_worship
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="place_of_worship"];out%20count;
+deep total culture_place_of_worship_count
+
+source overpass_toilets
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="toilets"];out%20count;
+deep total technosphere_toilets_count
+
+source overpass_police
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="police"];out%20count;
+deep total technosphere_police_count
+
+source overpass_fire_station
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fire_station"];out%20count;
+deep total technosphere_fire_station_count
+
+source overpass_kindergarten
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="kindergarten"];out%20count;
+deep total technosphere_kindergarten_count
+
+source overpass_university
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="university"];out%20count;
+deep total culture_university_count
+
+source overpass_cemetery
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="grave_yard"];out%20count;
+deep total culture_cemetery_count
+
+source overpass_theatre_cinema
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"~"^(theatre|cinema|arts_centre)$"];out%20count;
+deep total culture_theatre_cinema_count
+
+source overpass_defibrillator
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["emergency"="defibrillator"];out%20count;
+deep total technosphere_defibrillator_count
+
+source overpass_street_lamps
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:500,{lat},{lon})["highway"="street_lamp"];out%20count;
+deep total technosphere_street_lamp_count
+
+source overpass_traffic_signals
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="traffic_signals"];out%20count;
+deep total technosphere_traffic_signal_count
+
+source overpass_post_boxes
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="post_box"];out%20count;
+deep total technosphere_post_box_count
+
+source overpass_water_spring
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["natural"="spring"];out%20count;
+deep total hydrosphere_spring_count
+
+source overpass_construction
+ttl 86400
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="construction"];out%20count;
+deep total technosphere_construction_count
+
+source overpass_car_sharing
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="car_sharing"];out%20count;
+deep total technosphere_car_sharing_count
