@@ -426,6 +426,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 }
                 ap.target = Math.tanh(inTE * globalCoh * Φ);
                 ap.current += (ap.target - ap.current) * alpha;
+                recordSample(url, ap.current);
             }
         }
         let audioCtx = null, audioSrc = null, audioGain = null, audioBuffer = null;
