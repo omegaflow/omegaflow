@@ -7,48 +7,31 @@
 <title>omegaflow</title>
 <style>
 * { margin: 0; padding: 0; }
-html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-#consent-gate { position: fixed; inset: 0; background: rgba(0,0,0,0.92); color: #eee; font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; z-index: 99999; }
-#consent-gate .box { max-width: 560px; padding: 28px 32px; border: 1px solid #333; background: #0a0a0a; }
-#consent-gate h1 { font-size: 18px; margin-bottom: 12px; }
-#consent-gate p { font-size: 14px; line-height: 1.5; color: #ccc; margin-bottom: 14px; }
-#consent-gate ul { font-size: 13px; color: #aaa; margin: 0 0 14px 18px; line-height: 1.6; }
-#consent-gate .option { border: 1px solid #333; padding: 12px 14px; margin-bottom: 12px; }
-#consent-gate .option label { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; cursor: pointer; }
-#consent-gate .option input { margin-top: 3px; }
-#consent-gate .option .desc { font-size: 12.5px; color: #999; margin-top: 6px; margin-left: 24px; }
-#consent-gate .warning { font-size: 12.5px; color: #e0a030; margin-top: 6px; margin-left: 24px; display: none; }
-#consent-gate .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
-#consent-gate button { background: #1a1a1a; color: #eee; border: 1px solid #444; padding: 8px 18px; font-size: 13px; cursor: pointer; }
-#consent-gate button:hover { background: #262626; }
-#consent-gate button.primary { background: #2a4a2a; border-color: #3a6a3a; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; color: #c4b9a8; font-family: system-ui, sans-serif; }
+#consent-gate { position: fixed; inset: 0; background: rgba(10,9,8,0.96); display: flex; align-items: center; justify-content: center; z-index: 99999; backdrop-filter: blur(20px); animation: fadeIn 0.8s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+#consent-gate .box { max-width: 420px; padding: 44px 40px; }
+#consent-gate .question { font-size: 15px; line-height: 1.75; color: #c4b9a8; font-weight: 400; letter-spacing: 0.01em; }
+#consent-gate .actions { display: flex; gap: 12px; margin-top: 36px; }
+#consent-gate button { flex: 1; padding: 13px 24px; font-size: 14px; border-radius: 3px; cursor: pointer; transition: all 0.3s ease; font-family: system-ui, sans-serif; }
+#consent-gate #consent-no { background: transparent; color: #6b6358; border: 1px solid rgba(107, 99, 88, 0.25); }
+#consent-gate #consent-no:hover { background: rgba(107, 99, 88, 0.08); color: #c4b9a8; }
+#consent-gate #consent-yes { background: rgba(138, 154, 122, 0.12); color: #8a9a7a; border: 1px solid rgba(138, 154, 122, 0.3); }
+#consent-gate #consent-yes:hover { background: rgba(138, 154, 122, 0.2); }
 </style>
 </head>
 <body>
     <div id="consent-gate">
         <div class="box">
-            <h1>Before omegaflow starts</h1>
-            <p>This page can read sensor data from your device and feed it into a local field. Please choose deliberately what you allow. Both options are off by default.</p>
-            <ul>
-                <li>Possible sources: location (GPS/IP), battery status, camera, microphone, motion sensors, gamepad, arbitrary browser/window properties, keyboard/mouse events.</li>
-                <li>Some sources (camera, microphone, location) additionally trigger the usual browser permission prompt.</li>
-            </ul>
-            <div class="option">
-                <label>
-                    <input type="checkbox" id="consent-local">
-                    <span><strong>Allow local capture</strong> — sensor data is processed only on this device and stays local.</span>
-                </label>
-            </div>
-            <div class="option">
-                <label>
-                    <input type="checkbox" id="consent-global">
-                    <span><strong>Allow global flow</strong> — records your choice for a future network feature. In this version, no data is sent to any network yet.</span>
-                </label>
-                <div class="warning" id="global-warning">Once the network feature is active, your sensor data would be visible to, or decryptable by, other participants in the network.</div>
-            </div>
+            <p class="question">
+                Do you consent to this page accessing your device's<br>
+                sensors, processing the data locally, and generating<br>
+                sound, light, vibration, and signals?
+            </p>
             <div class="actions">
-                <button id="consent-decline">Allow nothing, just watch</button>
-                <button id="consent-confirm" class="primary">Confirm</button>
+                <button id="consent-no">No</button>
+                <button id="consent-yes">Yes</button>
             </div>
         </div>
     </div>
@@ -56,20 +39,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         function awaitConsent() {
             return new Promise((resolve) => {
                 const gate = document.getElementById('consent-gate');
-                const localBox = document.getElementById('consent-local');
-                const globalBox = document.getElementById('consent-global');
-                const globalWarning = document.getElementById('global-warning');
-                globalBox.addEventListener('change', () => { globalWarning.style.display = globalBox.checked ? 'block' : 'none'; });
-                function finish(localFlow, globalFlow) {
-                    gate.remove();
-                    resolve({ localFlow, globalFlow });
+                function finish(localFlow) {
+                    gate.style.animation = 'fadeOut 0.4s ease forwards';
+                    setTimeout(() => { gate.remove(); resolve({ localFlow }); }, 400);
                 }
-                document.getElementById('consent-confirm').addEventListener('click', () => finish(localBox.checked, globalBox.checked));
-                document.getElementById('consent-decline').addEventListener('click', () => finish(false, false));
+                document.getElementById('consent-yes').addEventListener('click', () => finish(true));
+                document.getElementById('consent-no').addEventListener('click', () => finish(false));
             });
         }
-        const { localFlow: localFlowConsented, globalFlow: globalFlowConsented } = await awaitConsent();
-        window.ω_consent = { localFlowConsented, globalFlowConsented };
+        const { localFlow: localFlowConsented } = await awaitConsent();
+        window.ω_consent = { localFlowConsented };
 
         import { syncFrame, φ, transport, Φ, C, tdbNow, updateRtt, getRto } from '/constants.js';
         const REMOTE_PREFIX = 'omega_flow.';
@@ -94,7 +73,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         let tPresence = 0, spatialPresence = { x: 0, y: 0, z: 0 };
         let prevTPresence = 0, prevSpatialPresence = { x: 0, y: 0, z: 0 };
         let clarity = 1.0;
-        let nostrRelay = null, nostrPub = null, nostrModule = null, lastNostrPub = 0;
         const internalMetrics = ['transfer.', 'kurtosis.', 'tda.', 'complexity.', 'server.', 'system.', REMOTE_PREFIX];
         function isInternalMetric(url) { for (const prefix of internalMetrics) { if (url.startsWith(prefix)) return true; } return false; }
         function ma() { return 1.0 / Math.max(1, Math.round(CAPTURE_RING_SIZE / Φ)); }
@@ -191,7 +169,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
             navigator.gpu.requestAdapter().then(adapter => {
                 if (adapter) {
                     gpuMaxBufferSize = adapter.limits.maxBufferSize;
-                    adapter.requestDevice().then(device => { window.ω.gpu = device; });
+                    adapter.requestDevice().then(device => { window.ω.gpu = device; device.lost.then(() => { window.ω.gpu = null; }); });
                 }
             }).catch(() => {});
         }
@@ -205,9 +183,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
                 const osc = oscillators[i];
                 const newOffset = i * CAPTURE_RING_SIZE;
                 const copyLen = Math.min(osc.filled, oldSize, CAPTURE_RING_SIZE);
-                for (let j = 0; j < copyLen; j++) nr[newOffset + j] = flatRings[osc.ringOffset + j];
+                const startIdx = (osc.idx - copyLen + oldSize) % oldSize;
+                for (let j = 0; j < copyLen; j++) nr[newOffset + j] = flatRings[osc.ringOffset + (startIdx + j) % oldSize];
                 osc.ringOffset = newOffset;
-                osc.idx = Math.min(osc.idx, CAPTURE_RING_SIZE);
+                osc.idx = copyLen % CAPTURE_RING_SIZE;
                 osc.filled = copyLen;
             }
             flatRings = nr;
@@ -485,6 +464,13 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 surfaces.push({
                     manifest: (topology) => {
                         try {
+                            if (audioBuffer.length !== CAPTURE_RING_SIZE) {
+                                try { audioSrc.stop(); } catch {}
+                                audioBuffer = audioCtx.createBuffer(1, CAPTURE_RING_SIZE, audioCtx.sampleRate);
+                                audioSrc = audioCtx.createBufferSource();
+                                audioSrc.buffer = audioBuffer; audioSrc.loop = true;
+                                audioSrc.connect(audioGain); audioSrc.start();
+                            }
                             const ampAp = getChannelAperture('audioContext.destination.channel.amplitude');
                             if (!topology || topology.length === 0 || ampAp < Number.EPSILON) {
                                 audioGain.gain.setTargetAtTime(0, audioCtx.currentTime, transport.tickTime / 1000);
@@ -839,21 +825,10 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             for (const surface of surfaces) { try { surface.manifest(topology, coherence); } catch {} }
             const g = measureRms(); const vC = measureRateOfChange(); const decay = measureDecay(); const quantum = measureQuantum();
             certainty = Math.exp(-vC / (g + (1.0 / C))) * quantum * decay;
-            const noDue = lastNostrPub + stableTick * Φ * Φ * Φ - ts;
-            if (noDue <= 0 && nostrPub && nostrRelay && nostrRelay.readyState === WebSocket.OPEN && nostrModule) {
-                lastNostrPub = ts;
-                if (typeof tPresence === 'number' && isFinite(tPresence)) {
-                    const payload = {};
-                    for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (isInternalMetric(osc.url) ) continue; if (osc.complexity > 0) payload[osc.url] = osc.median; }
-                    const content = JSON.stringify(payload);
-                    if (content !== '{}') { try { const event = nostrModule.finalizeEvent({ kind: 1111, created_at: Math.floor(tPresence + UNIX_J2000_OFFSET), tags: [['icrs', String(spatialPresence.x), String(spatialPresence.y), String(spatialPresence.z), String(tPresence)]], content }, nostrPub); nostrRelay.send(JSON.stringify(['EVENT', event])); } catch {} }
-                }
-            }
-
             if (!debugEl) {
                 debugEl = document.createElement('textarea');
                 debugEl.readOnly = true;
-                debugEl.style.cssText = 'position:fixed;bottom:8px;left:8px;font:12px monospace;color:#0f0;background:rgba(0,0,0,0.85);padding:10px;margin:0;border:1px solid #333;z-index:9999;line-height:1.5;width:450px;height:420px;resize:none;backdrop-filter:blur(4px);';
+                debugEl.style.cssText = 'position:fixed;bottom:12px;left:12px;font:11px "SF Mono",Menlo,Consolas,monospace;color:#a89878;background:rgba(10,9,8,0.85);padding:14px 16px;margin:0;border:none;border-radius:4px;z-index:9999;line-height:1.65;width:440px;height:400px;resize:none;backdrop-filter:blur(10px);box-shadow:0 4px 24px rgba(0,0,0,0.4);';
                 document.body.appendChild(debugEl);
             }
             if (ts - lastDebug > stableTick * 6 || lastDebug === 0) {
@@ -879,62 +854,42 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     }
                 }
                 topOsc.sort((a, b) => b.w - a.w);
-                const topLines = topOsc.slice(0, 12).map(t => `  ${t.u}: ${t.v.toExponential(2)} (w:${t.w.toFixed(2)} k:${t.c.toFixed(2)})`).join('\n');
+                const topLines = topOsc.slice(0, 12).map(t => `  ${t.u}: ${t.v.toPrecision(4)} (weight ${t.w.toFixed(2)}, complexity ${t.c.toFixed(2)})`).join('\n');
                 let srvCount = 0;
                 for (let i = 0; i < oscillators.length; i++) { if (oscillators[i].url.startsWith(REMOTE_PREFIX)) srvCount++; }
 
                 debugEl.value =
-                    "--- OMEGAFLOW ---\n" +
-                    "> SYSTEM\n" +
-                    `  TPS: ${tps} | Osz: ${oscillators.length} | Fill: ${maxFill}/${CAPTURE_RING_SIZE} | Topo: ${topologyRingSize}\n` +
-                    `  Certainty: ${certainty.toFixed(4)} | Clarity: ${clarity.toFixed(4)} | Coherence: ${measureCoherence().toFixed(4)}\n` +
-                    `  Gravity(g): ${g.toFixed(3)} | RateOfChange(vC): ${vC.toFixed(4)}\n` +
-                    `  Decay: ${decay.toFixed(4)} | Quantum: ${quantum.toFixed(4)}\n` +
-                    "> PRESENCE (4D Block)\n" +
-                    `  Time(t): ${tPresence.toFixed(1)} | Lat/Lon: (${latStr}, ${lonStr})\n` +
-                    `  API Sources: ${srvCount} | WS: ${transport.socket ? transport.socket.readyState : 'none'} | RTT: ${transport.rtt.toFixed(0)}ms\n` +
-                    "> MANIFESTATION (Flow)\n" +
-                    `  Topology Nodes: ${topoCount} | Coherence: ${coherence.toFixed(4)}\n` +
-                    `  Channels: ${channelApertures.size} | Active: ${[...channelApertures.values()].filter(a => a.current > 0.001).length}\n` +
-                    "> RESONANCE\n" +
-                    `  TE Links: ${teCount} | maxTE: ${teMax.toExponential(3)}\n` +
-                    "> ACTIVE TOPOLOGY (Sensors/APIs)\n" +
-                    (topLines || "  Waiting for interaction (click page/allow permissions)...");
+                    "omegaflow field\n\n" +
+                    "Presence\n" +
+                    `  Position: ${latStr}, ${lonStr}\n` +
+                    `  Time: ${tPresence.toFixed(1)}\n\n` +
+                    "System\n" +
+                    `  Oscillators: ${oscillators.length}\n` +
+                    `  Ring buffer: ${maxFill}/${CAPTURE_RING_SIZE} samples\n` +
+                    `  Topology window: ${topologyRingSize}\n` +
+                    `  Ticks per second: ${tps}\n\n` +
+                    "Field\n" +
+                    `  Certainty:      ${certainty.toFixed(4)}\n` +
+                    `  Clarity:        ${clarity.toFixed(4)}\n` +
+                    `  Coherence:      ${measureCoherence().toFixed(4)}\n` +
+                    `  Gravity:        ${g.toFixed(3)}\n` +
+                    `  Rate of change: ${vC.toFixed(4)}\n` +
+                    `  Decay:          ${decay.toFixed(4)}\n` +
+                    `  Quantum:        ${quantum.toFixed(4)}\n\n` +
+                    "Resonance\n" +
+                    `  Transfer entropy links: ${teCount}\n` +
+                    `  Strongest: ${teMax.toExponential(3)}\n\n` +
+                    "Manifestation\n" +
+                    `  Topology nodes: ${topoCount}\n` +
+                    `  Channels open: ${[...channelApertures.values()].filter(a => a.current > 0.001).length} of ${channelApertures.size}\n\n` +
+                    "Connection\n" +
+                    `  API sources: ${srvCount}\n` +
+                    `  WebSocket: ${transport.socket ? 'open' : 'closed'}\n` +
+                    `  Round trip: ${transport.rtt.toFixed(0)}ms\n\n` +
+                    "Active oscillators\n" +
+                    (topLines || "  Waiting for interaction...");
             }
             requestAnimationFrame(ω);
-        }
-        async function bootstrapNetwork() {
-            try {
-                nostrModule = await import('https://esm.sh/nostr-tools@2.7.0/pure.js');
-                let privKey = localStorage.getItem('omegaflow_nostr_key');
-                if (!privKey) { privKey = nostrModule.generateSecretKey(); localStorage.setItem('omegaflow_nostr_key', JSON.stringify(Array.from(privKey))); }
-                else { privKey = new Uint8Array(JSON.parse(privKey)); }
-                nostrRelay = new WebSocket('wss://relay.damus.io'); nostrRelay.binaryType = 'arraybuffer';
-                nostrRelay.addEventListener('open', () => { nostrRelay.send(JSON.stringify(['REQ', 'omegaflow', { kinds: [1111] }])); nostrPub = privKey; });
-                nostrRelay.addEventListener('message', (e) => {
-                    try {
-                        const data = JSON.parse(e.data);
-                        if (data[0] === 'EVENT' && data[2] && data[2].kind === 1111) {
-                            const event = data[2];
-                            const icrsTag = event.tags.find(t => t[0] === 'icrs');
-                            if (!icrsTag) return;
-                            const rx = parseFloat(icrsTag[1]), ry = parseFloat(icrsTag[2]), rz = parseFloat(icrsTag[3]);
-                            const rt = icrsTag[4] !== undefined ? parseFloat(icrsTag[4]) : event.created_at - UNIX_J2000_OFFSET;
-                            if (isNaN(rx) || isNaN(ry) || isNaN(rz) || isNaN(rt)) return;
-                            try {
-                                const payload = JSON.parse(event.content);
-                                for (const [key, val] of Object.entries(payload)) {
-                                    if (typeof val === 'number') {
-                                        recordSample(REMOTE_PREFIX + key, val, rt, rx, ry, rz);
-                                        recordSample(REMOTE_PREFIX + 'divergence.' + key, Math.abs((indexMap.get(key) !== undefined ? oscillators[indexMap.get(key)].median : 0) - val), rt, rx, ry, rz);
-                                    }
-                                }
-                            } catch(e) {}
-                        }
-                    } catch(e) {}
-                });
-                nostrRelay.addEventListener('close', () => { nostrRelay = null; });
-            } catch(e) {}
         }
         if (localFlowConsented) {
             const sensorNames = ['Accelerometer', 'Gyroscope', 'Magnetometer', 'AmbientLightSensor', 'LinearAccelerationSensor', 'GravitySensor', 'AbsoluteOrientationSensor', 'RelativeOrientationSensor'];
@@ -966,7 +921,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             window.addEventListener('resize', () => { recordSample('event.resize.width', window.innerWidth); recordSample('event.resize.height', window.innerHeight); }, { passive: true });
             window.addEventListener('deviceorientation', (e) => { recordSample('event.deviceorientation.alpha', e.alpha || 0); recordSample('event.deviceorientation.beta', e.beta || 0); recordSample('event.deviceorientation.gamma', e.gamma || 0); }, { passive: true });
         }
-        if (globalFlowConsented) { bootstrapNetwork(); }
         window.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'd' && debugEl) {
                 debugEl.style.display = (debugEl.style.display === 'none') ? 'block' : 'none';

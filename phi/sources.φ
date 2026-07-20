@@ -19,14 +19,6 @@ field_in 9 technosphere_aircraft_velocity
 field_in 11 technosphere_aircraft_vertical_rate
 field_in 13 technosphere_aircraft_geo_altitude
 
-source uk_carbon_intensity
-res 0
-ttl 300
-lat 54.0
-lon -2.0
-url https://api.carbonintensity.org.uk/intensity
-path data.0.intensity.actual technosphere_grid_carbon_intensity_gco2_kwh
-
 source anu_quantum_entropy
 res 0
 ttl 60
@@ -34,6 +26,13 @@ lat -35.28
 lon 149.12
 url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
 path data.0 quantum_entropy_anu
+
+source cosmic_neutron_flux_jung
+ttl 60
+lat 46.95
+lon 7.86
+url http://www.nmdb.eu/nmdb/qtipart.php?station=JUNG&start={yesterday}&end={today}&format=json&bins=3600
+path data.JUNG.1h.0.1 cosmic_neutron_flux_jung
 
 source drand_quantum_entropy
 res 0
@@ -426,15 +425,6 @@ url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
 last kp_index magnetosphere_kp_index
 last a_index magnetosphere_ap_index
 
-source ligo_gracedb_events
-res 0
-ttl 600
-lat 34.10000
-lon -118.10000
-url https://gracedb.ligo.org/api/superevents/?count=10&category=production
-count superevents cosmic_gravitational_wave_event_count
-first superevents.0.superevent_id cosmic_gravitational_wave_latest_id
-
 source magnetism
 res 0
 ttl 60
@@ -444,14 +434,6 @@ url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 path 0.bz_gsm magnetosphere_imf_bz_nt
 path 0.bt magnetosphere_imf_bt_nt
 last_row by_gsm magnetosphere_imf_by_nt
-
-source nasa_dsn_status
-res 0
-ttl 3600
-lat 35.4
-lon -116.9
-url https://eyes.nasa.gov/dsn-now/dsn.json
-count dsn technosphere_nasa_deep_space_network_signals
 
 source nist_randomness_beacon
 res 0
@@ -481,6 +463,14 @@ last_obj satellite "GOES-16" He magnetosphere_he_nt
 last_obj satellite "GOES-16" Hn magnetosphere_hn_nt
 last_obj satellite "GOES-16" Ht magnetosphere_ht_nt
 
+source noaa_integral_protons
+res 0
+ttl 60
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+last flux magnetosphere_integral_proton_flux
+
 source noaa_proton_flux
 res 0
 ttl 60
@@ -490,9 +480,29 @@ url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.
 last_obj energy "40300-73400 keV" flux radiation_proton_flux_40mev
 last_obj energy "83700-98500 keV" flux radiation_proton_flux_80mev
 
-source omega_flow
+source noaa_solar_indices
+res 0
 ttl 60
-url nostr://stream
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
+last ssn solar_sunspot_number_observed
+
+source noaa_solar_radio_measured
+res 0
+ttl 60
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+last flux solar_radio_flux_measured
+
+source noaa_sunspots
+res 0
+ttl 60
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/solar_regions.json
+field length solar_active_region_count
 
 source plasma
 res 0
@@ -514,6 +524,22 @@ last_obj energy ">=100 MeV" flux radiation_proton_flux_100mev
 last_obj energy ">=10 MeV" flux radiation_proton_flux_10mev
 last_obj energy ">=1 MeV" flux radiation_proton_flux_1mev
 
+source radio_flux
+res 0
+ttl 60
+lat 39.9916
+lon -105.2612
+url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+last flux solar_radio_flux_observed_sfu
+
+source ripe_bgp_default_route
+res 0
+ttl 60
+lat 52.379
+lon 4.899
+url https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0
+field data.bgp_state technosphere_bgp_default_route_state
+
 source ripe_bgp_updates
 res 0
 ttl 60
@@ -529,6 +555,23 @@ lat 39.749
 lon -105.221
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
 field metadata.count seismic_count_hour
+
+source swpc_geomag_forecast
+res 0
+ttl 60
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
+format csv
+last_row kp magnetosphere_forecast_kp_max
+
+source swpc_solar_events
+res 0
+ttl 60
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/edited_events.json
+last event magnetosphere_swpc_latest_event
 
 source transport_bern_departures
 res 0
@@ -546,6 +589,14 @@ lon 8.5
 url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
 count stationboard technosphere_transport_departures_zurich
 
+source usgs_deep_earthquakes
+res 0
+ttl 60
+lat 39.749
+lon -105.221
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&mindepth=600
+count features geosphere_deep_quake_count
+
 source usgs_earthquake_detail
 ttl 60
 
@@ -556,6 +607,22 @@ geojson geometry.coordinates[2] seismic_depth_m
 geojson properties.gap seismic_azimuthal_gap_deg
 geojson properties.rms seismic_rms_s
 geojson properties.sig seismic_significance_score
+
+source usgs_earthquakes_24h
+res 0
+ttl 60
+lat 39.749
+lon -105.221
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+field metadata.count seismic_count_24h
+
+source usgs_significant_rms
+res 0
+ttl 60
+lat 39.749
+lon -105.221
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+path features.0.properties.rms geosphere_earth_hum_rms
 
 source wiener_linien_realtime
 res 0
@@ -573,6 +640,16 @@ lon 0.0020913067273796
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
 last flux solar_xray_flux_wm2
 last energy solar_xray_wavelength_a
+
+source xray_flares_7day
+res 0
+ttl 60
+lat 2.6272321065334836
+lon 0.0020913067273796
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
+count flares solar_flare_count_7d
+last class_type solar_flare_class_7d
+last begin_time solar_flare_time_7d
 
 source yahoo_finance_markets
 ttl 60
@@ -599,24 +676,14 @@ lon 10.0
 url https://api.energy-charts.info/ren_share
 last_nonnull 1.data technosphere_renewable_share_pct
 
-source goes_euv
+source icecube_neutrino_alerts
+ttl 300
 res 0
-ttl 600
-lat 0.0
-lon -75.0
-url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
-last_obj wavelength "0.05-0.4nm" flux solar_euv_flux_short_wm2
-last_obj wavelength "0.1-0.8nm" flux solar_euv_flux_long_wm2
-
-source intermagnet_bou
-res 0
-ttl 600
-lat 40.100
-lon -105.200
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
-field X magnetosphere_x_bou_nt
-field Y magnetosphere_y_bou_nt
-field Z magnetosphere_z_bou_nt
+lat -90.0
+lon 0.0
+header User-Agent "omegaflow"
+url https://gcn.nasa.gov/circulars?query=icecube
+regex ("totalItems":...,) cosmic_icecube_alert_circular_count
 
 source ndbc_buoy_41001
 res 0
@@ -631,14 +698,6 @@ last_row WVHT hydrosphere_buoy_41001_wave_height
 last_row DPD hydrosphere_buoy_41001_dominant_period
 last_row PRES hydrosphere_buoy_41001_pressure
 last_row WTMP hydrosphere_buoy_41001_water_temp
-
-source noaa_integral_protons
-res 0
-ttl 60
-lat 40.015
-lon -105.271
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
-last flux magnetosphere_integral_proton_flux
 
 source noaa_tides_1611400
 ttl 300
@@ -1565,60 +1624,19 @@ url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759938&pr
 first v hydrosphere_tide_height_m_mona_island
 first t hydrosphere_tide_time_mona_island
 
-source openmeteo_weather_current
-ttl 600
-res 3
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,wind_speed_10m,wind_direction_10m
-path current.temperature_2m atmosphere_temp_c
-path current.relative_humidity_2m atmosphere_humidity_pct
-path current.precipitation atmosphere_precipitation_mm
-path current.surface_pressure atmosphere_pressure_hpa
-path current.wind_speed_10m atmosphere_wind_speed_ms
-
 source rain_radar
 ttl 300
 res 0
 url https://api.rainviewer.com/public/weather-maps.json
 field generated hydrosphere_rain_radar_generated_time
 
-source ripe_bgp_default_route
+source uk_carbon_intensity
 res 0
-ttl 60
-lat 52.379
-lon 4.899
-url https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0
-field data.bgp_state technosphere_bgp_default_route_state
-
-source satnogs_radio_observations
-res 0
-ttl 3600
-lat 37.983000
-lon 23.727000
-url https://network.satnogs.org/api/observations/?format=json&limit=1
-count items technosphere_satnogs_observations
-
-source sensor_community_air
-ttl 600
-res 1
-url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
-field 0.sensordatavalues.0.value technosphere_pm25_ugm3
-field 0.sensordatavalues.1.value technosphere_pm10_ugm3
-
-source swpc_solar_events
-res 0
-ttl 60
-lat 40.015
-lon -105.271
-url https://services.swpc.noaa.gov/json/edited_events.json
-last event magnetosphere_swpc_latest_event
-
-source usgs_earthquakes_24h
-res 0
-ttl 60
-lat 39.749
-lon -105.221
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
-field metadata.count seismic_count_24h
+ttl 300
+lat 54.0
+lon -2.0
+url https://api.carbonintensity.org.uk/intensity
+path data.0.intensity.actual technosphere_grid_carbon_intensity_gco2_kwh
 
 source usgs_streamflow
 ttl 300
@@ -1635,15 +1653,28 @@ field data.aqi atmosphere_aqi
 field data.pm25 atmosphere_pm25_ugm3
 field data.pm10 atmosphere_pm10_ugm3
 
-source xray_flares_7day
+source aeronet_aod
+ttl 600
+res 3
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth
+field current.aerosol_optical_depth atmosphere_aerosol_optical_depth_500nm
+
+source aeronet_gsfc_aod
 res 0
-ttl 60
-lat 2.6272321065334836
-lon 0.0020913067273796
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
-count flares solar_flare_count_7d
-last class_type solar_flare_class_7d
-last begin_time solar_flare_time_7d
+ttl 600
+lat 38.99
+lon -76.84
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
+format csv
+last_row AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
+
+source astronauts_in_space
+res 0
+ttl 600
+lat 38.9930
+lon -76.8483
+url http://api.open-notify.org/astros.json
+count people anthroposphere_humans_in_space
 
 source atmosphere_jetstream_250hpa
 ttl 600
@@ -1653,26 +1684,27 @@ res 9
 url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa
 last hourly.windspeed_250hPa atmosphere_jetstream_250hpa_ms
 
-source cosmic_neutron_flux_jung
-ttl 60
-lat 46.95
-lon 7.86
-url http://www.nmdb.eu/nmdb/qtipart.php?station=JUNG&start={yesterday}&end={today}&format=json&bins=3600
-path data.JUNG.1h.0.1 cosmic_neutron_flux_jung
-
 source cryosphere_snow_depth
 ttl 600
 res 3
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snow_depth&timezone=auto
 field current.snow_depth cryosphere_snow_depth_m
 
-source erddap_smartbay_spl
-ttl 3600
-lat 53.13
-lon -9.27
-url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
-format csv
-last_row spl_full hydrosphere_sound_pressure_db
+source ebird_recent
+ttl 600
+lat 55.685000
+lon 12.571000
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
+field count biosphere_bird_count
+
+source goes_euv
+res 0
+ttl 600
+lat 0.0
+lon -75.0
+url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
+last_obj wavelength "0.05-0.4nm" flux solar_euv_flux_short_wm2
+last_obj wavelength "0.1-0.8nm" flux solar_euv_flux_long_wm2
 
 source hydrosphere_global_evapotranspiration_mm
 ttl 600
@@ -1682,12 +1714,6 @@ res 9
 url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto
 last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
 
-source inaturalist_fungi
-ttl 3600
-res 4
-url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
-path total_results biosphere_fungi_observations
-
 source inaturalist_observations_count
 res 0
 ttl 600
@@ -1696,11 +1722,47 @@ lon -122.466
 url https://api.inaturalist.org/v1/observations?per_page=1
 path total_results biosphere_inaturalist_observations_total
 
+source intermagnet_bou
+res 0
+ttl 600
+lat 40.100
+lon -105.200
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+field X magnetosphere_x_bou_nt
+field Y magnetosphere_y_bou_nt
+field Z magnetosphere_z_bou_nt
+
 source lightning_open_meteo
 ttl 600
 res 0
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto
 field minutely_15.lightning_potential atmosphere_lightning_potential
+
+source ligo_gracedb_events
+res 0
+ttl 600
+lat 34.10000
+lon -118.10000
+url https://gracedb.ligo.org/api/superevents/?count=10&category=production
+count superevents cosmic_gravitational_wave_event_count
+first superevents.0.superevent_id cosmic_gravitational_wave_latest_id
+
+source ligo_multimessenger
+ttl 600
+res 0
+lat 46.455
+lon -119.407
+header User-Agent "omegaflow"
+url https://gcn.nasa.gov/circulars?query=IceCube%20LVK
+regex ("totalItems":...,) cosmic_neutrino_gravwave_coincidence_count
+
+source open_notify_astros
+res 0
+ttl 600
+lat 38.9930
+lon -76.8483
+url http://api.open-notify.org/astros.json
+field number orbital_humans_in_space_count
 
 source openmeteo_air_quality_full
 ttl 600
@@ -1728,6 +1790,73 @@ res 3
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
 field current.us_aqi atmosphere_aqi_us
 
+source openmeteo_marine
+ttl 600
+res 3
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period&timezone=auto
+field current.wave_height hydrosphere_wave_height_m
+field current.wave_direction hydrosphere_wave_direction_deg
+field current.wave_period hydrosphere_wave_period_s
+
+source openmeteo_marine_ocean
+ttl 600
+res 3
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,ocean_current_velocity,ocean_current_direction,sea_level_height_msl&timezone=auto
+path current.sea_surface_temperature hydrosphere_sst_c
+path current.ocean_current_velocity hydrosphere_current_velocity_kmh
+path current.ocean_current_direction hydrosphere_current_direction_deg
+path current.sea_level_height_msl hydrosphere_sea_level_msl_m
+
+source openmeteo_marine_waves
+ttl 600
+res 3
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto
+path current.wind_wave_height hydrosphere_wind_wave_m
+path current.wind_wave_direction hydrosphere_wind_wave_dir_deg
+path current.wind_wave_period hydrosphere_wind_wave_period_s
+path current.swell_wave_height hydrosphere_swell_m
+path current.swell_wave_direction hydrosphere_swell_dir_deg
+path current.swell_wave_period hydrosphere_swell_period_s
+
+source openmeteo_pressure_levels
+ttl 600
+res 3
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto
+path current.temperature_500hPa atmosphere_temp_500hpa_c
+path current.temperature_850hPa atmosphere_temp_850hpa_c
+path current.geopotential_height_500hPa atmosphere_geopotential_500hpa_m
+path current.geopotential_height_850hPa atmosphere_geopotential_850hpa_m
+
+source openmeteo_radiation_current
+ttl 600
+res 3
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto
+path current.shortwave_radiation atmosphere_sw_radiation_wm2
+path current.direct_radiation atmosphere_direct_rad_wm2
+path current.diffuse_radiation atmosphere_diffuse_rad_wm2
+path current.direct_normal_irradiance atmosphere_dni_wm2
+path current.vapour_pressure_deficit atmosphere_vpd_kpa
+path current.cape atmosphere_cape_jkg
+path current.evapotranspiration atmosphere_evapotranspiration_mm
+path current.et0_fao_evapotranspiration atmosphere_et0_mm
+path current.visibility atmosphere_visibility_m
+path current.freezing_level_height atmosphere_freezing_level_m
+path current.snow_depth atmosphere_snow_depth_m
+path current.precipitation_probability atmosphere_precip_probability_pct
+path current.weather_code atmosphere_wmo_code
+
+source openmeteo_soil_current
+ttl 600
+res 3
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto
+path current.soil_temperature_0cm geosphere_soil_temp_0cm_c
+path current.soil_temperature_6cm geosphere_soil_temp_6cm_c
+path current.soil_temperature_18cm geosphere_soil_temp_18cm_c
+path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
+path current.soil_moisture_0_to_1cm geosphere_soil_moisture_0cm_m3m3
+path current.soil_moisture_9_to_27cm geosphere_soil_moisture_18cm_m3m3
+path current.soil_moisture_27_to_81cm geosphere_soil_moisture_54cm_m3m3
+
 source openmeteo_thunderstorm
 ttl 600
 res 3
@@ -1747,33 +1876,51 @@ field current.wind_direction_10m atmosphere_wind_direction_deg
 field current.cloud_cover atmosphere_cloud_cover_pct
 field current.precipitation atmosphere_precipitation_mm
 
-source aeronet_aod
+source openmeteo_weather_current
 ttl 600
 res 3
-url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth
-field current.aerosol_optical_depth atmosphere_aerosol_optical_depth_500nm
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,wind_speed_10m,wind_direction_10m
+path current.temperature_2m atmosphere_temp_c
+path current.relative_humidity_2m atmosphere_humidity_pct
+path current.precipitation atmosphere_precipitation_mm
+path current.surface_pressure atmosphere_pressure_hpa
+path current.wind_speed_10m atmosphere_wind_speed_ms
 
-source aurora_forecast
-res 0
-ttl 3600
-lat 40.015
-lon -105.271
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
-field forecast_time atmosphere_aurora_forecast_time
+source openmeteo_wind_heights
+ttl 600
+res 3
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_speed_180m,wind_direction_10m,wind_direction_80m,wind_direction_120m,wind_direction_180m,wind_gusts_10m,temperature_80m,temperature_120m,temperature_180m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,uv_index,uv_index_clear_sky,dew_point_2m,pressure_msl,surface_pressure&timezone=auto
+path current.wind_speed_80m atmosphere_wind_80m_kmh
+path current.wind_speed_120m atmosphere_wind_120m_kmh
+path current.wind_speed_180m atmosphere_wind_180m_kmh
+path current.wind_direction_80m atmosphere_winddir_80m_deg
+path current.wind_direction_120m atmosphere_winddir_120m_deg
+path current.wind_direction_180m atmosphere_winddir_180m_deg
+path current.temperature_80m atmosphere_temp_80m_c
+path current.temperature_120m atmosphere_temp_120m_c
+path current.temperature_180m atmosphere_temp_180m_c
+path current.cloud_cover_low atmosphere_cloud_low_pct
+path current.cloud_cover_mid atmosphere_cloud_mid_pct
+path current.cloud_cover_high atmosphere_cloud_high_pct
+path current.uv_index atmosphere_uv_index
+path current.uv_index_clear_sky atmosphere_uv_clearsky
+path current.dew_point_2m atmosphere_dewpoint_c
+path current.pressure_msl atmosphere_pressure_msl_hpa
 
-source aurora_nowcast_north
-res 0
-ttl 3600
-lat 40.015
-lon -105.271
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
-field north_intensity atmosphere_aurora_intensity_north
+source sensor_community_air
+ttl 600
+res 1
+url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
+field 0.sensordatavalues.0.value technosphere_pm25_ugm3
+field 0.sensordatavalues.1.value technosphere_pm10_ugm3
 
-source pegelonline_water_level
-ttl 3600
+source celestrak_debris
 res 0
-url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
-field 0.water.currentMeasurement.value hydrosphere_water_level_cm
+ttl 1800
+lat 40.034
+lon -75.630
+url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=IRIDIUM+33
+field totalItems orbital_debris_iridium33
 
 source celestrak_gps
 res 0
@@ -1791,32 +1938,6 @@ lon -75.630
 url https://tle.ivanstanojevic.me/api/tle/?page-size=1
 field totalItems orbital_active_satellites
 
-source ionosphere_tec_global
-res 0
-ttl 3600
-lat 40.015
-lon -105.271
-url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
-count features ionosphere_global_tec_points
-
-source usgs_volcano_alerts
-res 0
-ttl 3600
-lat 38.949
-lon -77.365
-url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
-count features geosphere_volcano_total
-field alert_level geosphere_volcano_max_alert
-
-source aeronet_gsfc_aod
-res 0
-ttl 600
-lat 38.99
-lon -76.84
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
-format csv
-last_row AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
-
 source arxiv_new_papers
 res 0
 ttl 3600
@@ -1825,13 +1946,44 @@ lon -76.501
 url https://export.arxiv.org/api/query?search_query=all:physics&max_results=1
 field feed.opensearch:totalResults technosphere_arxiv_paper_count
 
-source astronauts_in_space
+source atlas_3i_vectors
 res 0
-ttl 600
-lat 38.9930
-lon -76.8483
-url http://api.open-notify.org/astros.json
-count people anthroposphere_humans_in_space
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector atlas_3i_x atlas_3i_y atlas_3i_z
+
+source aurora_forecast
+res 0
+ttl 3600
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+field forecast_time atmosphere_aurora_forecast_time
+
+source aurora_nowcast_north
+res 0
+ttl 3600
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+field north_intensity atmosphere_aurora_intensity_north
+
+source biosphere_uv_index_global
+ttl 3600
+lat 37.087
+lon -76.387
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&format=JSON
+path properties.parameter.ALLSKY_SFC_UV_INDEX.0 biosphere_uv_index_global
+
+source callisto_vectors
+res 0
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27504%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector callisto_x callisto_y callisto_z
 
 source cdc_covid_global
 res 0
@@ -1844,13 +1996,21 @@ field deaths anthroposphere_covid_deaths_global
 field active anthroposphere_covid_active_global
 field critical anthroposphere_covid_critical_global
 
-source celestrak_debris
-res 0
-ttl 1800
+source celestrak_starlink
+ttl 3600
 lat 40.034
 lon -75.630
-url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=IRIDIUM+33
-field totalItems orbital_debris_iridium33
+header User-Agent "omegaflow"
+url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=STARLINK
+field totalItems orbital_starlink_count
+
+source cneos_asteroids_inside_lunar_orbit
+res 0
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
+field count orbital_asteroids_closer_than_moon
 
 source cneos_close_approaches
 res 0
@@ -1876,32 +2036,13 @@ field current.dhw biosphere_coral_dhw_florida
 field current.baa_7day_max biosphere_coral_alert_florida
 field current.ssta_90th_hs biosphere_coral_ssta_florida
 
-source cryosphere_permafrost_barrow
+source ebird_hotspots
 res 0
-ttl 86400
-lat 71.29
-lon -156.57
-url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
-format csv
-last_row 8 cryosphere_permafrost_temp_barrow_c
-
-source dwd_pollen_germany
-res 0
-ttl 86400
-lat 51.0
-lon 10.0
-url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
-field content.0.Pollen.Graeser.today biosphere_pollen_grass_germany_today
-field content.0.Pollen.Birke.today biosphere_pollen_birch_germany_today
-field content.0.Pollen.Beifuss.today biosphere_pollen_mugwort_germany_today
-field content.0.Pollen.Esche.today biosphere_pollen_ash_germany_today
-
-source ebird_recent
-ttl 600
-lat 55.685000
-lon 12.571000
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
-field count biosphere_bird_count
+ttl 3600
+lat 42.4809
+lon -76.4527
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
+field count biosphere_birding_hotspots
 
 source effis_fires
 res 0
@@ -1911,6 +2052,21 @@ lon 8.624
 url https://ies-ows.jrc.ec.europa.eu/effis?service=WFS&request=GetFeature&typeName=ms:modis.hs&outputFormat=application/json&maxFeatures=1
 field features biosphere_effis_fire_feature_count
 
+source enceladus_vectors
+res 0
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector enceladus_x enceladus_y enceladus_z
+
+source encke_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector encke_x encke_y encke_z
+
 source entsoe_energy
 res 0
 ttl 3600
@@ -1918,6 +2074,29 @@ lat 51.0
 lon 10.0
 url https://api.energy-charts.info/price?country=DE
 last price technosphere_electricity_price_eur_mwh
+
+source erddap_smartbay_spl
+ttl 3600
+lat 53.13
+lon -9.27
+url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
+format csv
+last_row spl_full hydrosphere_sound_pressure_db
+
+source eris_vectors
+res 0
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector eris_x eris_y eris_z
+
+source europa_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector europa_x europa_y europa_z
 
 source exchangerate_api
 res 0
@@ -1952,13 +2131,25 @@ field rates.PKR economic_usd_pkr_rate
 field rates.BDT economic_usd_bdt_rate
 field rates.PHP economic_usd_php_rate
 
-source fbi_wanted
-res 0
-ttl 86400
-lat 38.9
-lon -77.0
-url https://api.fbi.gov/wanted/v1/list
-field total social_fbi_wanted_count
+source fungi_observations
+ttl 3600
+res 4
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+field total_results biosphere_fungi_observations
+field species_count biosphere_fungi_species_count
+
+source ganymede_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector ganymede_x ganymede_y ganymede_z
+
+source gbif
+ttl 3600
+res 4
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
+field count biosphere_species_count
 
 source gbif_species_observations_count
 res 0
@@ -1991,11 +2182,59 @@ lon -77.0
 url https://www.govtrack.us/api/v2/vote?created__gt={yesterday}&limit=0
 field meta.total_count political_legislation_votes
 
+source haumea_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector haumea_x haumea_y haumea_z
+
+source inaturalist
+ttl 3600
+res 6
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
+field total_results biosphere_observations
+
+source inaturalist_fungi
+ttl 3600
+res 4
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+path total_results biosphere_fungi_observations
+
 source inaturalist_verified
 ttl 3600
 res 6
 url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
 field total_results biosphere_verified_observations
+
+source interstellar_object_tracking
+ttl 3600
+res 0
+lat 20.709
+lon -156.257
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=3I&discovery=true
+field object.fullname cosmic_interstellar_object_latest_name
+source io_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27501%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector io_x io_y io_z
+
+source ionosphere_tec_global
+res 0
+ttl 3600
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
+count features ionosphere_global_tec_points
+
+source juno_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector juno_x juno_y juno_z
 
 source jupiter_vectors
 res 0
@@ -2006,12 +2245,26 @@ url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27599%27&OBJ_
 format text
 field result orbital_jupiter_vectors_raw
 
+source jwst_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector jwst_x jwst_y jwst_z
+
 source launch_library
 ttl 3600
 lat 33.921
 lon -118.326
 url https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1
 field count orbital_upcoming_launches
+
+source makemake_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector makemake_x makemake_y makemake_z
 
 source mars_vectors
 res 0
@@ -2029,23 +2282,6 @@ lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27@sun%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_mercury_vectors_raw
-
-source microbe_census
-res 0
-ttl 86400
-lat 52.079
-lon 0.187
-url https://www.ebi.ac.uk/metagenomics/api/v1/studies?page_size=1
-field meta.pagination.count biosphere_metagenomic_studies_count
-
-source moon_phase
-res 0
-ttl 86400
-lat 34.201
-lon -118.171
-url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
-path properties.data.curphase cosmic_moon_phase
-path properties.data.fracillum cosmic_moon_illumination_pct
 
 source moon_vectors
 res 0
@@ -2123,6 +2359,14 @@ lon -76.848
 url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&classType=X&api_key=DEMO_KEY
 count flares solar_xflare_count_24h
 
+source nasa_dsn_status
+res 0
+ttl 3600
+lat 35.4
+lon -116.9
+url https://eyes.nasa.gov/dsn-now/dsn.json
+count dsn technosphere_nasa_deep_space_network_signals
+
 source nasa_eonet
 res 0
 ttl 3600
@@ -2156,14 +2400,6 @@ count near_earth_objects.{today} orbital_neo_count_today
 path near_earth_objects.{today}.0.estimated_diameter.kilometers.estimated_diameter_max orbital_neo_diameter_max_km
 path near_earth_objects.{today}.0.close_approach_data.0.miss_distance.kilometers orbital_neo_distance_km
 
-source nasa_sentry
-res 0
-ttl 86400
-lat 34.201
-lon -118.171
-url https://ssd-api.jpl.nasa.gov/sentry.api
-field count nasa_sentry_risk_object_count
-
 source neptune_vectors
 ttl 3600
 lat 34.201
@@ -2171,6 +2407,13 @@ lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27@sun%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_neptune_vectors_raw
+
+source new_horizons_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector nh_x nh_y nh_z
 
 source nifc_fires
 res 0
@@ -2216,152 +2459,26 @@ url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
 format csv
 last_row average atmosphere_sf6_global_ppt
 
-source noaa_solar_indices
-res 0
-ttl 60
-lat 40.015
-lon -105.271
-url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
-last ssn solar_sunspot_number_observed
-
-source noaa_solar_radio_measured
-res 0
-ttl 60
-lat 40.015
-lon -105.271
-url https://services.swpc.noaa.gov/json/solar-radio-flux.json
-last flux solar_radio_flux_measured
-
-source noaa_sunspots
-res 0
-ttl 60
-lat 40.015
-lon -105.271
-url https://services.swpc.noaa.gov/json/solar_regions.json
-field length solar_active_region_count
-
-source nsidc_sea_ice
-res 0
-ttl 86400
-lat 40.008
-lon -105.263
-url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
-format csv
-last_row extent hydrosphere_sea_ice_extent_north_mkm2
-last_row area hydrosphere_sea_ice_area_north_mkm2
-
-source obis_cetaceans
-res 0
-ttl 86400
-lat 51.231
-lon 2.928
-url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
-path total biosphere_cetacean_observations_24h
-
-source ooi_pmel_co2_moorings
-ttl 86400
-lat 47.606
-lon -122.335
-url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
-format csv
-last line hydrosphere_pmel_co2_mooring_raw
-
-source open_notify_astros
-res 0
-ttl 600
-lat 38.9930
-lon -76.8483
-url http://api.open-notify.org/astros.json
-field number orbital_humans_in_space_count
-
-source openmeteo_marine
-ttl 600
-res 3
-url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period&timezone=auto
-field current.wave_height hydrosphere_wave_height_m
-field current.wave_direction hydrosphere_wave_direction_deg
-field current.wave_period hydrosphere_wave_period_s
-
-source openmeteo_historical_weather
-ttl 86400
-res 3
-url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=temperature_2m,relative_humidity_2m,precipitation,windspeed_10m,soil_temperature_0_to_7cm,soil_moisture_0_to_7cm&timezone=auto
-last temperature_2m atmosphere_hist_temp_c
-last precipitation atmosphere_hist_precip_mm
-last windspeed_10m atmosphere_hist_wind_ms
-
-source openmeteo_historical_solar
-ttl 86400
-res 3
-url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto
-last shortwave_radiation atmosphere_hist_solar_radiation_wm2
-last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
-
-source openmeteo_historical_soil
-ttl 86400
-res 3
-url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto
-last soil_temperature_0_to_7cm geosphere_hist_soil_temp_surface_c
-last soil_moisture_0_to_7cm geosphere_hist_soil_moisture_surface_m3m3
-
-source openmeteo_historical_wind
-ttl 86400
-res 3
-url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=wind_speed_10m,wind_speed_100m,wind_direction_10m,wind_direction_100m,wind_gusts_10m&timezone=auto
-last wind_speed_10m atmosphere_hist_wind_speed_10m_ms
-last wind_speed_100m atmosphere_hist_wind_speed_100m_ms
-last wind_gusts_10m atmosphere_hist_wind_gusts_10m_ms
-
-source openmeteo_historical_daily
-ttl 86400
-res 3
-url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,et0_fao_evapotranspiration,shortwave_radiation_sum&timezone=auto
-last temperature_2m_max atmosphere_hist_temp_max_c
-last temperature_2m_min atmosphere_hist_temp_min_c
-last precipitation_sum atmosphere_hist_precip_sum_mm
-last sunshine_duration atmosphere_hist_sunshine_s
-
-source overpass_buildings
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
-deep ways technosphere_buildings_1km
-
-source overpass_streets
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20count;
-deep ways technosphere_streets_500m
-
-source overpass_shops
+source openmeteo_daily_forecast
 ttl 3600
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count;
-deep total technosphere_shops_5km
+res 3
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,showers_sum,snowfall_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration,sunrise,sunset,daylight_duration,sunshine_duration,uv_index_max,weather_code&timezone=auto
+first temperature_2m_max atmosphere_forecast_temp_max_c
+first temperature_2m_min atmosphere_forecast_temp_min_c
+first precipitation_sum atmosphere_forecast_precip_mm
+first precipitation_probability_max atmosphere_forecast_precip_prob_pct
+first wind_speed_10m_max atmosphere_forecast_wind_max_kmh
+first wind_gusts_10m_max atmosphere_forecast_gust_max_kmh
+first shortwave_radiation_sum atmosphere_forecast_radiation_mjm2
+first uv_index_max atmosphere_forecast_uv_max
+first daylight_duration atmosphere_forecast_daylight_s
+first sunshine_duration atmosphere_forecast_sunshine_s
 
-source overpass_restaurants
+source openmeteo_flood
 ttl 3600
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="restaurant"](around:1000,{lat},{lon});out%20count;
-deep total anthroposphere_restaurants_1km
-
-source overpass_trees
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["natural"="tree"](around:500,{lat},{lon});out%20count;
-deep total biosphere_trees_500m
-
-source overpass_waterways
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["waterway"](around:5000,{lat},{lon});out%20count;
-deep ways hydrosphere_waterways_5km
-
-source overpass_bus_stops
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["highway"="bus_stop"](around:1000,{lat},{lon});out%20count;
-deep total technosphere_bus_stops_1km
+res 3
+url https://flood-api.open-meteo.com/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge
+first river_discharge hydrosphere_river_discharge_m3s
 
 source overpass_charging_stations
 ttl 3600
@@ -2369,155 +2486,31 @@ res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="charging_station"](around:5000,{lat},{lon});out%20count;
 deep total technosphere_ev_charging_5km
 
-source overpass_pharmacies
-ttl 86400
+source overpass_restaurants
+ttl 3600
 res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="pharmacy"](around:2000,{lat},{lon});out%20count;
-deep total anthroposphere_pharmacies_2km
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="restaurant"](around:1000,{lat},{lon});out%20count;
+deep total anthroposphere_restaurants_1km
 
-source overpass_hospitals
-ttl 86400
+source overpass_shops
+ttl 3600
 res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20count;
-deep total anthroposphere_hospitals_10km
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count;
+deep total technosphere_shops_5km
 
-source overpass_schools
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20count;
-deep total anthroposphere_schools_10km
+source parker_solar_probe_vectors
+res 0
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector parker_x parker_y parker_z
 
-source overpass_fuel_stations
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="fuel"](around:5000,{lat},{lon});out%20count;
-deep total technosphere_fuel_stations_5km
-
-source overpass_benches
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="bench"](around:500,{lat},{lon});out%20count;
-deep total anthroposphere_benches_500m
-
-source overpass_drinking_water
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="drinking_water"](around:1000,{lat},{lon});out%20count;
-deep total hydrosphere_drinking_water_1km
-
-source overpass_atms
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="atm"](around:1000,{lat},{lon});out%20count;
-deep total economic_atms_1km
-
-source overpass_parks
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["leisure"="park"](around:5000,{lat},{lon});out%20count;
-deep ways biosphere_parks_5km
-
-source overpass_forest
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["landuse"="forest"](around:10000,{lat},{lon});out%20count;
-deep ways biosphere_forest_10km
-
-source overpass_farmland
-ttl 2592000
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["landuse"="farmland"](around:10000,{lat},{lon});out%20count;
-deep ways biosphere_farmland_10km
-
-source overpass_power_lines
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["power"="line"](around:5000,{lat},{lon});out%20count;
-deep ways technosphere_power_lines_5km
-
-source overpass_power_towers
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["power"="tower"](around:5000,{lat},{lon});out%20count;
-deep total technosphere_power_towers_5km
-
-source overpass_surveillance
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["man_made"="surveillance"](around:2000,{lat},{lon});out%20count;
-deep total anthroposphere_surveillance_cameras_2km
-
-source overpass_bridges
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["bridge"="yes"](around:5000,{lat},{lon});out%20count;
-deep ways technosphere_bridges_5km
-
-source overpass_memorials
-ttl 2592000
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20count;
-deep total anthroposphere_memorials_5km
-
-source overpass_crossings
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["highway"="crossing"](around:500,{lat},{lon});out%20count;
-deep total technosphere_pedestrian_crossings_500m
-
-source overpass_hotels
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["tourism"="hotel"](around:5000,{lat},{lon});out%20count;
-deep total economic_hotels_5km
-
-source overpass_supermarkets
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["shop"="supermarket"](around:2000,{lat},{lon});out%20count;
-deep total economic_supermarkets_2km
-
-source overpass_infrastructure
-ttl 86400
-res 4
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node["amenity"~"hospital|fire_station|school"](around:50000,{lat},{lon});node["railway"="station"](around:50000,{lat},{lon}););out%20count;
-deep total anthroposphere_critical_infrastructure_50km
-
-source overpass_history_buildings_5yr
-ttl 2592000
-res 4
-url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
-deep ways technosphere_buildings_2021_1km
-
-source overpass_history_buildings_2yr
-ttl 2592000
-res 4
-url https://overpass-api.de/api/interpreter?data=[date:"2024-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
-deep ways technosphere_buildings_2024_1km
-
-source overpass_history_shops_5yr
-ttl 2592000
-res 4
-url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count;
-deep total technosphere_shops_2021_5km
-
-source overpass_history_streets_5yr
-ttl 2592000
-res 4
-url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20count;
-deep ways technosphere_streets_2021_500m
-
-source overpass_history_hospitals_5yr
-ttl 2592000
-res 4
-url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20count;
-deep total anthroposphere_hospitals_2021_10km
-
-source overpass_history_schools_5yr
-ttl 2592000
-res 4
-url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20count;
-deep total anthroposphere_schools_2021_10km
+source pegelonline_water_level
+ttl 3600
+res 0
+url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
+field 0.water.currentMeasurement.value hydrosphere_water_level_cm
 
 source pluto_vectors
 res 0
@@ -2528,13 +2521,13 @@ url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27999%27&OBJ_
 format text
 field result orbital_pluto_vectors_raw
 
-source radio_flux
+source satnogs_radio_observations
 res 0
-ttl 60
-lat 39.9916
-lon -105.2612
-url https://services.swpc.noaa.gov/json/solar-radio-flux.json
-last flux solar_radio_flux_observed_sfu
+ttl 3600
+lat 37.983000
+lon 23.727000
+url https://network.satnogs.org/api/observations/?format=json&limit=1
+count items technosphere_satnogs_observations
 
 source saturn_vectors
 res 0
@@ -2545,6 +2538,13 @@ url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27699%27&OBJ_
 format text
 field result orbital_saturn_vectors_raw
 
+source solar_orbiter_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector solo_x solo_y solo_z
+
 source sun_vectors
 ttl 3600
 lat 34.201
@@ -2553,15 +2553,6 @@ url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%2710%27&OBJ_D
 format text
 field result orbital_sun_vectors_raw
 
-source swpc_geomag_forecast
-res 0
-ttl 60
-lat 40.015
-lon -105.271
-url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
-format csv
-last_row kp magnetosphere_forecast_kp_max
-
 source technosphere_tor_relays_running
 res 0
 ttl 3600
@@ -2569,6 +2560,21 @@ lat 42.452
 lon -71.137
 url https://onionoo.torproject.org/summary?running=true
 field relays_published technosphere_tor_relay_count
+
+source titan_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27606%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector titan_x titan_y titan_z
+
+source triton_vectors
+res 0
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector triton_x triton_y triton_z
 
 source uranus_vectors
 res 0
@@ -2579,21 +2585,14 @@ url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27799%27&OBJ_
 format text
 field result orbital_uranus_vectors_raw
 
-source usgs_deep_earthquakes
+source usgs_volcano_alerts
 res 0
-ttl 60
-lat 39.749
-lon -105.221
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&mindepth=600
-count features geosphere_deep_quake_count
-
-source usgs_significant_rms
-res 0
-ttl 60
-lat 39.749
-lon -105.221
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
-path features.0.properties.rms geosphere_earth_hum_rms
+ttl 3600
+lat 38.949
+lon -77.365
+url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
+count features geosphere_volcano_total
+field alert_level geosphere_volcano_max_alert
 
 source venus_vectors
 res 0
@@ -2604,21 +2603,35 @@ url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27299%27&OBJ_
 format text
 field result orbital_venus_vectors_raw
 
-source celestrak_starlink
-ttl 3600
-lat 40.034
-lon -75.630
-header User-Agent "omegaflow"
-url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=STARLINK
-field totalItems orbital_starlink_count
-
-source woudc_total_ozone
+source vesta_vectors
 res 0
-ttl 86400
-lat 43.780
-lon -79.470
-url https://api.woudc.org/collections/totalozone/items?limit=1
-path numberMatched biosphere_ozone_measurement_total_count
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector vesta_x vesta_y vesta_z
+
+source voyager1_vectors
+res 0
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector voyager1_x voyager1_y voyager1_z
+
+source voyager2_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+vector voyager2_x voyager2_y voyager2_z
+
+source wikipedia_pageviews_total
+ttl 3600
+lat 37.779
+lon -122.393
+url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
+path items.0.views social_wikipedia_pageviews_daily
 
 source apophis_vectors
 res 0
@@ -2628,13 +2641,13 @@ lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector apophis_x apophis_y apophis_z
 
-source atlas_3i_vectors
+source bci_clinical_trials_recruiting
+ttl 86400
 res 0
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector atlas_3i_x atlas_3i_y atlas_3i_z
+lat 37.422
+lon -122.084
+url https://clinicaltrials.gov/api/v2/studies?query.term=brain-computer+interface&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+field totalCount technosphere_bci_trials_recruiting
 
 source bennu_vectors
 res 0
@@ -2652,21 +2665,6 @@ lon -76.919
 url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
 format csv
 last_row VHI biosphere_global_vegetation_health_index
-
-source biosphere_uv_index_global
-ttl 3600
-lat 37.087
-lon -76.387
-url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&format=JSON
-path properties.parameter.ALLSKY_SFC_UV_INDEX.0 biosphere_uv_index_global
-
-source callisto_vectors
-res 0
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27504%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector callisto_x callisto_y callisto_z
 
 source cdc_covid_variants
 res 0
@@ -2694,37 +2692,13 @@ lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector ceres_x ceres_y ceres_z
 
-source cern_alice_pbpb
+source crispr_clinical_trials_recruiting
+ttl 86400
 res 0
-ttl 604800
-lat 46.233
-lon 6.055
-url https://opendata.cern.ch/api/records/?q=experiment:ALICE&size=1
-field aggregations.collision_type technosphere_cern_alice_pbpb_count
-
-source cern_cms_data
-res 0
-ttl 604800
-lat 46.233
-lon 6.055
-url https://opendata.cern.ch/api/records/?q=experiment:CMS&size=1
-field aggregations.experiment.buckets technosphere_cern_cms_record_count
-
-source cern_open_data
-res 0
-ttl 604800
-lat 46.233
-lon 6.055
-url https://opendata.cern.ch/api/records/?size=1
-field aggregations.experiment.buckets technosphere_cern_total_record_count
-
-source cneos_asteroids_inside_lunar_orbit
-res 0
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
-field count orbital_asteroids_closer_than_moon
+lat 37.872
+lon -122.258
+url https://clinicaltrials.gov/api/v2/studies?query.term=CRISPR&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+field totalCount biosphere_crispr_trials_recruiting
 
 source crossref_dois
 res 0
@@ -2733,6 +2707,22 @@ lat 42.530
 lon -71.048
 url https://api.crossref.org/works?rows=0
 field message.total-results technosphere_crossref_doi_count
+
+source cryosphere_glacier_count
+ttl 86400
+lat 46.818
+lon 8.227
+url https://www.glims.org/mapservice/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=glims_glaciers&maxFeatures=1&outputFormat=application/json
+path totalFeatures cryosphere_global_glaciers_count
+
+source cryosphere_permafrost_barrow
+res 0
+ttl 86400
+lat 71.29
+lon -156.57
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+format csv
+last_row 8 cryosphere_permafrost_temp_barrow_c
 
 source cryosphere_sea_ice_north
 res 0
@@ -2752,13 +2742,24 @@ url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent
 format csv
 last_row extent cryosphere_sea_ice_south_mkm2
 
-source ebird_hotspots
+source crystallography_xrd
 res 0
-ttl 3600
-lat 42.4809
-lon -76.4527
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
-field count biosphere_birding_hotspots
+ttl 86400
+lat 54.683
+lon 25.287
+url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
+field a molecular_lattice_constant_a
+
+source dwd_pollen_germany
+res 0
+ttl 86400
+lat 51.0
+lon 10.0
+url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
+field content.0.Pollen.Graeser.today biosphere_pollen_grass_germany_today
+field content.0.Pollen.Birke.today biosphere_pollen_birch_germany_today
+field content.0.Pollen.Beifuss.today biosphere_pollen_mugwort_germany_today
+field content.0.Pollen.Esche.today biosphere_pollen_ash_germany_today
 
 source ecdc_monkeypox
 res 0
@@ -2776,55 +2777,22 @@ lon 2.928
 url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
 field features technosphere_vessel_density_feature_count
 
-source enceladus_vectors
+source epoch_ai_compute_trends
+ttl 86400
 res 0
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector enceladus_x enceladus_y enceladus_z
+lat 37.774
+lon -122.419
+url https://epoch.ai/data/notable_ai_models.csv
+format csv
+last_row Training_compute_FLOP technosphere_ai_training_flops_frontier
 
-source encke_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector encke_x encke_y encke_z
-
-source eris_vectors
+source fbi_wanted
 res 0
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector eris_x eris_y eris_z
-
-source europa_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector europa_x europa_y europa_z
-
-source fungi_observations
-ttl 3600
-res 4
-url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
-field total_results biosphere_fungi_observations
-field species_count biosphere_fungi_species_count
-
-source ganymede_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector ganymede_x ganymede_y ganymede_z
-
-source gbif
-ttl 3600
-res 4
-url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
-field count biosphere_species_count
+ttl 86400
+lat 38.9
+lon -77.0
+url https://api.fbi.gov/wanted/v1/list
+field total social_fbi_wanted_count
 
 source gbif_migrations
 res 0
@@ -2842,25 +2810,13 @@ lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000001%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector halley_x halley_y halley_z
 
-source haumea_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector haumea_x haumea_y haumea_z
-
-source inaturalist
-ttl 3600
-res 6
-url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
-field total_results biosphere_observations
-
-source io_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27501%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector io_x io_y io_z
+source iter_fusion_status
+ttl 86400
+res 0
+lat 43.709
+lon 5.777
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_fusion_research_citations
 
 source jpl_atmospheric_fireballs
 res 0
@@ -2870,26 +2826,13 @@ lon -118.171
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
 field count cosmic_fireball_count
 
-source juno_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector juno_x juno_y juno_z
-
-source jwst_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector jwst_x jwst_y jwst_z
-
-source makemake_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector makemake_x makemake_y makemake_z
+source jwst_deep_field_discoveries
+ttl 86400
+res 0
+lat 39.328
+lon -76.620
+url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
+field message.total-results cosmic_jwst_high_z_discovery_papers
 
 source met_norway_sun
 ttl 86400
@@ -2899,11 +2842,28 @@ url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={toda
 field properties.sunrise.time atmosphere_sunrise_time
 field properties.solar_noon.elevation atmosphere_solar_elevation_max_deg
 
+source microbe_census
+res 0
+ttl 86400
+lat 52.079
+lon 0.187
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?page_size=1
+field meta.pagination.count biosphere_metagenomic_studies_count
+
 source modis_ndvi_local
 ttl 86400
 res 3
 url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
 field subset.0.1 biosphere_ndvi_local
+
+source moon_phase
+res 0
+ttl 86400
+lat 34.201
+lon -118.171
+url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
+path properties.data.curphase cosmic_moon_phase
+path properties.data.fracillum cosmic_moon_illumination_pct
 
 source nasa_exoplanet_total
 res 0
@@ -2913,6 +2873,17 @@ lon -118.127
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT%20COUNT(*)%20FROM%20ps&format=json
 field 0.count(*) nasa_exoplanet_total_count
 
+source nasa_exoplanets
+res 0
+ttl 86400
+lat 34.2007
+lon -118.1712
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+20+pl_name,pl_orbper,pl_rade,pl_eqt+FROM+pscomppars+WHERE+pl_eqt+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
+count data cosmic_exoplanet_count
+field pl_eqt cosmic_exoplanet_eqt_k
+field pl_orbper cosmic_exoplanet_period_d
+field pl_rade cosmic_exoplanet_radius_re
+
 source nasa_hot_jupiters
 res 0
 ttl 86400
@@ -2920,6 +2891,14 @@ lat 34.136
 lon -118.127
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT%20COUNT(*)%20FROM%20ps%20WHERE%20pl_orbper%3C1&format=json
 field 0.count(*) nasa_hot_jupiter_count
+
+source nasa_sentry
+res 0
+ttl 86400
+lat 34.201
+lon -118.171
+url https://ssd-api.jpl.nasa.gov/sentry.api
+field count nasa_sentry_risk_object_count
 
 source neotoma_paleoecology
 res 0
@@ -2929,12 +2908,13 @@ lon -89.401
 url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
 field total paleoclimate_neotoma_occurrences
 
-source new_horizons_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector nh_x nh_y nh_z
+source noaa_enso_oni
+res 0
+ttl 86400
+lat 38.989
+lon -76.937
+url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+last_row ANOM atmosphere_enso_oni_c
 
 source noaa_pmel_co2_moorings
 res 0
@@ -2945,6 +2925,16 @@ url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?st
 format csv
 last_row pCO2_sw hydrosphere_pco2_pmel_uatm
 last_row pH_sw hydrosphere_ph_pmel
+
+source nsidc_sea_ice
+res 0
+ttl 86400
+lat 40.008
+lon -105.263
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+format csv
+last_row extent hydrosphere_sea_ice_extent_north_mkm2
+last_row area hydrosphere_sea_ice_area_north_mkm2
 
 source nsidc_sea_ice_north
 res 0
@@ -2963,6 +2953,14 @@ lon -0.071
 url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
 format csv
 last line cryosphere_sea_ice_extent_south_raw
+
+source obis_cetaceans
+res 0
+ttl 86400
+lat 51.231
+lon 2.928
+url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
+path total biosphere_cetacean_observations_24h
 
 source obis_species
 ttl 86400
@@ -2990,6 +2988,14 @@ format csv
 last_row surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm
 last_row sea_surface_temperature hydrosphere_sst_ooi_c
 
+source ooi_pmel_co2_moorings
+ttl 86400
+lat 47.606
+lon -122.335
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
+format csv
+last line hydrosphere_pmel_co2_mooring_raw
+
 source openalex_works
 res 0
 ttl 86400
@@ -2998,11 +3004,189 @@ lon -71.110
 url https://api.openalex.org/works?per-page=1
 field meta.count technosphere_openalex_work_count
 
+source openmeteo_historical_daily
+ttl 86400
+res 3
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,et0_fao_evapotranspiration,shortwave_radiation_sum&timezone=auto
+last temperature_2m_max atmosphere_hist_temp_max_c
+last temperature_2m_min atmosphere_hist_temp_min_c
+last precipitation_sum atmosphere_hist_precip_sum_mm
+last sunshine_duration atmosphere_hist_sunshine_s
+
+source openmeteo_historical_soil
+ttl 86400
+res 3
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto
+last soil_temperature_0_to_7cm geosphere_hist_soil_temp_surface_c
+last soil_moisture_0_to_7cm geosphere_hist_soil_moisture_surface_m3m3
+
+source openmeteo_historical_solar
+ttl 86400
+res 3
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto
+last shortwave_radiation atmosphere_hist_solar_radiation_wm2
+last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
+
+source openmeteo_historical_weather
+ttl 86400
+res 3
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=temperature_2m,relative_humidity_2m,precipitation,windspeed_10m,soil_temperature_0_to_7cm,soil_moisture_0_to_7cm&timezone=auto
+last temperature_2m atmosphere_hist_temp_c
+last precipitation atmosphere_hist_precip_mm
+last windspeed_10m atmosphere_hist_wind_ms
+
+source openmeteo_historical_wind
+ttl 86400
+res 3
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=wind_speed_10m,wind_speed_100m,wind_direction_10m,wind_direction_100m,wind_gusts_10m&timezone=auto
+last wind_speed_10m atmosphere_hist_wind_speed_10m_ms
+last wind_speed_100m atmosphere_hist_wind_speed_100m_ms
+last wind_gusts_10m atmosphere_hist_wind_gusts_10m_ms
+
+source overpass_atms
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="atm"](around:1000,{lat},{lon});out%20count;
+deep total economic_atms_1km
+
+source overpass_benches
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="bench"](around:500,{lat},{lon});out%20count;
+deep total anthroposphere_benches_500m
+
+source overpass_bridges
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["bridge"="yes"](around:5000,{lat},{lon});out%20count;
+deep ways technosphere_bridges_5km
+
+source overpass_buildings
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
+deep ways technosphere_buildings_1km
+
+source overpass_bus_stops
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["highway"="bus_stop"](around:1000,{lat},{lon});out%20count;
+deep total technosphere_bus_stops_1km
+
+source overpass_construction
+ttl 86400
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="construction"];out%20count;
+deep total technosphere_construction_count
+
+source overpass_crossings
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["highway"="crossing"](around:500,{lat},{lon});out%20count;
+deep total technosphere_pedestrian_crossings_500m
+
+source overpass_drinking_water
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="drinking_water"](around:1000,{lat},{lon});out%20count;
+deep total hydrosphere_drinking_water_1km
+
+source overpass_forest
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["landuse"="forest"](around:10000,{lat},{lon});out%20count;
+deep ways biosphere_forest_10km
+
+source overpass_fuel_stations
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="fuel"](around:5000,{lat},{lon});out%20count;
+deep total technosphere_fuel_stations_5km
+
+source overpass_hospitals
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20count;
+deep total anthroposphere_hospitals_10km
+
+source overpass_hotels
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["tourism"="hotel"](around:5000,{lat},{lon});out%20count;
+deep total economic_hotels_5km
+
+source overpass_infrastructure
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node["amenity"~"hospital|fire_station|school"](around:50000,{lat},{lon});node["railway"="station"](around:50000,{lat},{lon}););out%20count;
+deep total anthroposphere_critical_infrastructure_50km
+
 source overpass_mobile_antennas
 ttl 86400
 res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:60];node["telecom"="antenna"](around:10000,{lat},{lon});out%20count;
 deep nodes technosphere_mobile_antennas_10km
+
+source overpass_parks
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["leisure"="park"](around:5000,{lat},{lon});out%20count;
+deep ways biosphere_parks_5km
+
+source overpass_pharmacies
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="pharmacy"](around:2000,{lat},{lon});out%20count;
+deep total anthroposphere_pharmacies_2km
+
+source overpass_power_lines
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["power"="line"](around:5000,{lat},{lon});out%20count;
+deep ways technosphere_power_lines_5km
+
+source overpass_power_towers
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["power"="tower"](around:5000,{lat},{lon});out%20count;
+deep total technosphere_power_towers_5km
+
+source overpass_schools
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20count;
+deep total anthroposphere_schools_10km
+
+source overpass_streets
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20count;
+deep ways technosphere_streets_500m
+
+source overpass_supermarkets
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["shop"="supermarket"](around:2000,{lat},{lon});out%20count;
+deep total economic_supermarkets_2km
+
+source overpass_surveillance
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["man_made"="surveillance"](around:2000,{lat},{lon});out%20count;
+deep total anthroposphere_surveillance_cameras_2km
+
+source overpass_trees
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["natural"="tree"](around:500,{lat},{lon});out%20count;
+deep total biosphere_trees_500m
+
+source overpass_waterways
+ttl 86400
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["waterway"](around:5000,{lat},{lon});out%20count;
+deep ways hydrosphere_waterways_5km
 
 source overpass_wifi_hotspots
 ttl 86400
@@ -3010,20 +3194,29 @@ res 4
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count;
 deep nodes technosphere_public_wlan_5km
 
-source parker_solar_probe_vectors
+source pbdb_paleobiology
 res 0
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector parker_x parker_y parker_z
+ttl 86400
+lat 43.073
+lon -89.401
+url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
+field records_returned paleobiology_pbdb_occurrence_count
 
-source solar_orbiter_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector solo_x solo_y solo_z
+source protein_structures
+res 0
+ttl 86400
+lat 40.500
+lon -74.450
+url https://data.rcsb.org/rest/v1/core/entry/1UBQ
+field rcsb_id biosphere_protein_structure_id
+
+source restcountries_population
+res 0
+ttl 86400
+lat 38.899
+lon -77.043
+url https://restcountries.com/v3.1/all?fields=name,population,latlng
+field 0.population anthroposphere_country_population_sample
 
 source technosphere_global_ixp_count
 res 0
@@ -3033,20 +3226,13 @@ lon -77.043
 url https://www.peeringdb.com/api/ix?limit=1
 field data technosphere_ixp_count
 
-source titan_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27606%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector titan_x titan_y titan_z
-
-source triton_vectors
+source technosphere_submarine_cables
 res 0
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector triton_x triton_y triton_z
+ttl 86400
+lat 38.899
+lon -77.043
+url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
+count features technosphere_submarine_cable_count
 
 source unhcr_displacement
 res 0
@@ -3063,29 +3249,6 @@ lat 40.820
 lon -96.702
 url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
 field 0.DSCI hydrosphere_conus_drought_severity_index
-
-source vesta_vectors
-res 0
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector vesta_x vesta_y vesta_z
-
-source voyager1_vectors
-res 0
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector voyager1_x voyager1_y voyager1_z
-
-source voyager2_vectors
-ttl 3600
-lat 34.201
-lon -118.171
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector voyager2_x voyager2_y voyager2_z
 
 source who_cholera
 res 0
@@ -3111,26 +3274,65 @@ lon 6.140
 url https://xmart-api-public.who.int/FLUMART/VIW_FNT
 field value anthroposphere_influenza_record_count
 
-source wikipedia_pageviews_total
-ttl 3600
-lat 37.779
-lon -122.393
-url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
-path items.0.views social_wikipedia_pageviews_daily
-
-source elevation
-ttl 2592000
-res 3
-url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
-first elevation geosphere_elevation_m
-
-source eoapi_collections
+source woudc_total_ozone
 res 0
-ttl 2592000
-lat 38.900
-lon -77.020
-url https://stac.eoapi.dev/collections
-count collections technosphere_eoapi_collection_count
+ttl 86400
+lat 43.780
+lon -79.470
+url https://api.woudc.org/collections/totalozone/items?limit=1
+path numberMatched biosphere_ozone_measurement_total_count
+
+source bell_test_loophole_free
+ttl 604800
+res 0
+lat 52.086
+lon 5.171
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=loophole-free+Bell+test&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_bell_test_loophole_free_citations
+
+source brain_organoid_computing
+ttl 604800
+res 0
+lat -37.813
+lon 144.963
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=organoid+intelligence+biocomputing&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count biosphere_organoid_computing_citations
+
+source cern_alice_pbpb
+res 0
+ttl 604800
+lat 46.233
+lon 6.055
+url https://opendata.cern.ch/api/records/?q=experiment:ALICE&size=1
+field aggregations.collision_type technosphere_cern_alice_pbpb_count
+
+source cern_cms_data
+res 0
+ttl 604800
+lat 46.233
+lon 6.055
+url https://opendata.cern.ch/api/records/?q=experiment:CMS&size=1
+field aggregations.experiment.buckets technosphere_cern_cms_record_count
+
+source cern_open_data
+res 0
+ttl 604800
+lat 46.233
+lon 6.055
+url https://opendata.cern.ch/api/records/?size=1
+field aggregations.experiment.buckets technosphere_cern_total_record_count
+
+source esa_gaia_stars
+res 0
+ttl 604800
+lat 40.4438
+lon -3.9529
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50+source_id,ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+3.0+ORDER+BY+phot_g_mean_mag
+count data cosmic_bright_stars_count
+path data.0.ra cosmic_star_ra
+path data.0.dec cosmic_star_dec
+path data.0.phot_g_mean_mag cosmic_star_magnitude
+path data.0.parallax cosmic_star_parallax_mas
 
 source gaia_nearby_stars
 res 0
@@ -3139,6 +3341,15 @@ lat 40.443
 lon -3.951
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
 field data.0.0 gaia_nearby_star_count
+
+source gaia_stellar_ages
+res 0
+ttl 604800
+lat 40.4438
+lon -3.9529
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5+source_id,age_flame,mass_flame,teff_gspphot+FROM+gaiadr3.astrophysical_parameters+WHERE+age_flame+IS+NOT+NULL+ORDER+BY+age_flame+DESC
+field age_flame cgerade osmic_oldest_star_age_gyr
+field teff_gspphot cosmic_oldest_star_temp_k
 
 source gaia_total_measured_stars
 res 0
@@ -3156,43 +3367,438 @@ lon -3.951
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.vari_classifier_result
 field data.0.0 gaia_variable_star_count
 
-source geopages
-ttl 2592000
+source longevity_biological_age_research
+ttl 604800
+res 0
+lat 51.500
+lon -0.126
+url https://api.crossref.org/works?query=biological+age+clock+epigenetic&rows=0
+field message.total-results anthroposphere_longevity_research_total
+
+source overpass_allotments
+ttl 604800
 res 4
-url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
-count query.geosearch technosphere_geopages_nearby
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["leisure"="garden"];out%20count;
+deep total biosphere_gardens_2km
 
-source macrostrat_ages
-res 0
-ttl 2592000
-lat 43.073
-lon -89.401
-url https://macrostrat.org/api/v2/units?format=json
-field success.data macrostrat_unit_count
+source overpass_archaeological_paleontology
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["geological"="palaeontological_site"];out%20count;
+deep total geosphere_paleontology_sites_10km
 
-source pbdb_paleobiology
-res 0
-ttl 86400
-lat 43.073
-lon -89.401
-url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
-field records_returned paleobiology_pbdb_occurrence_count
+source overpass_archaeological_sites
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="archaeological_site"];out%20count;
+deep total culture_archaeological_sites_10km
 
-source planetary_computer_collections
-res 0
-ttl 2592000
-lat 47.640000000
-lon -122.140000000
-url https://planetarycomputer.microsoft.com/api/stac/v1/collections
-count collections technosphere_planetary_computer_collection_count
+source overpass_arts_centres
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="arts_centre"];out%20count;
+deep total culture_arts_centres_5km
 
-source protein_structures
+source overpass_bakeries
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="bakery"];out%20count;
+deep total anthroposphere_bakeries_1km
+
+source overpass_banks
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="bank"];out%20count;
+deep total economic_banks_2km
+
+source overpass_bars
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bar"];out%20count;
+deep total anthroposphere_bars_1km
+
+source overpass_bicycle_parking
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bicycle_parking"];out%20count;
+deep total technosphere_bicycle_parking_count
+
+source overpass_bicycle_rental
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bicycle_rental"];out%20count;
+deep total technosphere_bicycle_rental_count
+
+source overpass_bookshops
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="books"];out%20count;
+deep total culture_bookshops_2km
+
+source overpass_cafes
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="cafe"];out%20count;
+deep total anthroposphere_cafes_1km
+
+source overpass_car_sharing
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="car_sharing"];out%20count;
+deep total technosphere_car_sharing_count
+source overpass_castles
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="castle"];out%20count;
+deep total culture_castles_10km
+
+source overpass_cemetery
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="grave_yard"];out%20count;
+deep total culture_cemetery_count
+
+source overpass_clinics
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="clinic"];out%20count;
+deep total anthroposphere_clinics_2km
+
+source overpass_courthouses
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="courthouse"];out%20count;
+deep total culture_courthouses_5km
+
+source overpass_defibrillator
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["emergency"="defibrillator"];out%20count;
+deep total technosphere_defibrillator_count
+
+source overpass_dentists
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="dentist"];out%20count;
+deep total anthroposphere_dentists_2km
+
+source overpass_embassies
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="embassy"];out%20count;
+deep total culture_embassies_5km
+
+source overpass_fast_food
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fast_food"];out%20count;
+deep total anthroposphere_fast_food_1km
+
+source overpass_fire_station
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fire_station"];out%20count;
+deep total technosphere_fire_station_count
+
+source overpass_florists
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="florist"];out%20count;
+deep total biosphere_florists_1km
+
+source overpass_fountains
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fountain"];out%20count;
+deep total culture_fountains_1km
+
+source overpass_galleries
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="gallery"];out%20count;
+deep total culture_galleries_5km
+
+source overpass_greengrocers
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="greengrocer"];out%20count;
+deep total anthroposphere_greengrocers_1km
+
+source overpass_gyms
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["leisure"="fitness_centre"];out%20count;
+deep total anthroposphere_gyms_2km
+
+source overpass_hairdressers
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="hairdresser"];out%20count;
+deep total anthroposphere_hairdressers_1km
+
+source overpass_jewelry_shops
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="jewelry"];out%20count;
+deep total economic_jewelry_shops_2km
+
+source overpass_kindergarten
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="kindergarten"];out%20count;
+deep total technosphere_kindergarten_count
+
+source overpass_laundry
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="laundry"];out%20count;
+deep total technosphere_laundry_1km
+
+source overpass_libraries
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="library"];out%20count;
+deep total culture_libraries_2km
+
+source overpass_memorials_culture
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="memorial"];out%20count;
+deep total culture_memorials_2km
+
+source overpass_monuments
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="monument"];out%20count;
+deep total culture_monuments_2km
+
+source overpass_museums
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="museum"];out%20count;
+deep total culture_museums_5km
+
+source overpass_music_venues
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="music_venue"];out%20count;
+deep total culture_music_venues_5km
+
+source overpass_opticians
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="optician"];out%20count;
+deep total anthroposphere_opticians_2km
+
+source overpass_pet_shops
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="pet"];out%20count;
+deep total biosphere_pet_shops_2km
+
+source overpass_place_of_worship
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="place_of_worship"];out%20count;
+deep total culture_place_of_worship_count
+
+source overpass_playgrounds
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["leisure"="playground"];out%20count;
+deep total anthroposphere_playgrounds_1km
+
+source overpass_police
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="police"];out%20count;
+deep total technosphere_police_count
+
+source overpass_post_boxes
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="post_box"];out%20count;
+deep total technosphere_post_box_count
+
+source overpass_pubs
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="pub"];out%20count;
+deep total anthroposphere_pubs_1km
+
+source overpass_recycling
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="recycling"];out%20count;
+deep total technosphere_recycling_count
+
+source overpass_ruins
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="ruins"];out%20count;
+deep total culture_ruins_10km
+
+source overpass_stadiums
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["leisure"="stadium"];out%20count;
+deep total culture_stadiums_10km
+
+source overpass_street_art
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["tourism"="artwork"];out%20count;
+deep total culture_street_art_1km
+
+source overpass_street_lamps
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:500,{lat},{lon})["highway"="street_lamp"];out%20count;
+deep total technosphere_street_lamp_count
+
+source overpass_theatre_cinema
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"~"^(theatre|cinema|arts_centre)$"];out%20count;
+deep total culture_theatre_cinema_count
+
+source overpass_toilets
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="toilets"];out%20count;
+deep total technosphere_toilets_count
+
+source overpass_traffic_signals
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="traffic_signals"];out%20count;
+deep total technosphere_traffic_signal_count
+
+source overpass_travel_agents
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="travel_agency"];out%20count;
+deep total economic_travel_agents_2km
+
+source overpass_university
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="university"];out%20count;
+deep total culture_university_count
+
+source overpass_veterinary
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="veterinary"];out%20count;
+deep total biosphere_veterinary_5km
+
+source overpass_water_spring
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["natural"="spring"];out%20count;
+deep total hydrosphere_spring_count
+
+source pdg_alpha_s
 res 0
-ttl 86400
-lat 40.500
-lon -74.450
-url https://data.rcsb.org/rest/v1/core/entry/1UBQ
-field rcsb_id biosphere_protein_structure_id
+ttl 604800
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S059
+field pdg_values.0.value physics_alpha_s_value
+
+source pdg_higgs_mass
+res 0
+ttl 604800
+lat 37.8756
+lon -122.2508
+url https://pdgapi.lbl.gov/summaries/S003M
+field value subatomic_higgs_mass_gev
+
+source pdg_proton_mass
+res 0
+ttl 604800
+lat 37.8756
+lon -122.2508
+url https://pdgapi.lbl.gov/summaries/S008M
+field value subatomic_proton_mass_mev
+
+source pdg_w_boson_mass
+res 0
+ttl 604800
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S043
+field pdg_values.0.value physics_w_boson_mass_gev
+
+source pdg_z_boson_mass
+res 0
+ttl 604800
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S044
+field pdg_values.0.value physics_z_boson_mass_gev
+
+source quantum_teleportation_distance
+ttl 604800
+res 0
+lat 39.904
+lon 116.407
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=quantum+entanglement+satellite+distance+record&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count quantum_entanglement_distance_record_citations
 
 source sdss_cosmic_web_galaxies
 res 0
@@ -3202,6 +3808,27 @@ lon -105.82
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?format=json&cmd=SELECT+TOP+10+*+FROM+SpecObj+WHERE+class=%27GALAXY%27+AND+z+BETWEEN+0.1+AND+0.2
 field 0.Rows sdss_cosmic_web_galaxy_records
 
+source simbad_brown_dwarfs
+ttl 604800
+lat 48.5833
+lon 7.7667
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27BD*%27
+path data.0.0 cosmic_simbad_brown_dwarfs
+
+source simbad_carbon_stars
+ttl 604800
+lat 48.5833
+lon 7.7667
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27C*%27
+path data.0.0 cosmic_simbad_carbon_stars
+
+source simbad_eclipsing_binaries
+ttl 604800
+lat 48.5833
+lon 7.7667
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27EB*%27
+path data.0.0 cosmic_simbad_eclipsing_binaries
+
 source simbad_galaxies
 ttl 604800
 lat 48.583
@@ -3209,12 +3836,33 @@ lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Galaxy'
 field data.0.0 simbad_galaxy_count
 
+source simbad_galaxy_clusters
+ttl 604800
+lat 48.5833
+lon 7.7667
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ClG%27
+path data.0.0 cosmic_galaxy_cluster_count
+
+source simbad_high_z_galaxies
+ttl 604800
+lat 48.5833
+lon 7.7667
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+%3E+5
+path data.0.0 cosmic_galaxies_z_gt5
+
 source simbad_highest_redshift_quasar
 ttl 604800
 lat 48.583
 lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1+main_id,ra,dec,rvz_redshift+FROM+basic+WHERE+otype='QSO'+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
 field data.0.0 simbad_highest_redshift_quasar_z
+
+source simbad_millisecond_pulsars
+ttl 604800
+lat 48.5833
+lon 7.7667
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ms*%27
+path data.0.0 cosmic_millisecond_pulsar_count
 
 source simbad_novae
 ttl 604800
@@ -3244,6 +3892,13 @@ lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='SN'
 field data.0.0 simbad_supernova_count
 
+source simbad_symbiotic_stars
+ttl 604800
+lat 48.5833
+lon 7.7667
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Sy*%27
+path data.0.0 cosmic_simbad_symbiotic_stars
+
 source simbad_total_objects
 ttl 604800
 lat 48.583
@@ -3258,85 +3913,43 @@ lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WD*'
 field data.0.0 simbad_white_dwarf_count
 
-source technosphere_submarine_cables
-res 0
-ttl 86400
-lat 38.899
-lon -77.043
-url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
-count features technosphere_submarine_cable_count
+source simbad_wolf_rayet
+ttl 604800
+lat 48.5833
+lon 7.7667
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27WR*%27
+path data.0.0 cosmic_simbad_wolf_rayet_stars
 
-source worldbank_co2_emissions
-res 0
-ttl 2592000
-lat 38.899
-lon -77.043
-url https://api.worldbank.org/v2/country/WLD/indicator/EN.GHG.CO2.MT.CE.AR5?format=json
-field 1.0.value worldbank_co2_emissions_value
+source simbad_young_stellar_objects
+ttl 604800
+lat 48.5833
+lon 7.7667
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27S*Y%27
+path data.0.0 cosmic_simbad_young_stellar_objects
 
-source worldbank_birth_rate
+source superk_proton_decay
 res 0
-ttl 2592000
-lat 38.899
-lon -77.043
-url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CBRT.IN?format=json&date=2023&per_page=1&mrv=1
-field 1.0.value anthroposphere_birth_rate_per_1000
+ttl 604800
+lat 36.428
+lon 137.310
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
+field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
 
-source worldbank_death_rate
+source synthetic_genome_writing
+ttl 604800
 res 0
-ttl 2592000
-lat 38.899
-lon -77.043
-url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1
-field 1.0.value anthroposphere_death_rate_per_1000
+lat 42.373
+lon -71.110
+url https://api.crossref.org/works?query=synthetic+genome+writing+minimal+cell&rows=0
+field message.total-results biosphere_synthetic_genome_research_total
 
-source worldbank_life_expectancy
+source time_crystal_research
+ttl 604800
 res 0
-ttl 2592000
-lat 38.899
-lon -77.043
-url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.LE00.IN?format=json&date=2023&per_page=1&mrv=1
-field 1.0.value anthroposphere_life_expectancy_years
-
-source worldbank_median_age
-res 0
-ttl 2592000
-lat 38.899
-lon -77.043
-url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.MEDN?format=json&date=2023&per_page=1&mrv=1
-field 1.0.value anthroposphere_median_age_years
-
-source worldbank_urban_population_pct
-res 0
-ttl 2592000
-lat 38.899
-lon -77.043
-url https://api.worldbank.org/v2/country/WLD/indicator/SP.URB.TOTL.IN.ZS?format=json&date=2023&per_page=1&mrv=1
-field 1.0.value anthroposphere_urban_population_pct
-
-source restcountries_population
-res 0
-ttl 86400
-lat 38.899
-lon -77.043
-url https://restcountries.com/v3.1/all?fields=name,population,latlng
-field 0.population anthroposphere_country_population_sample
-
-source worldbank_gdp_growth_DEU
-res 0
-ttl 2592000
-lat 52.520
-lon 13.405
-url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
-field 1.0.value economic_gdp_growth_pct_DEU
-
-source worldbank_population
-res 0
-ttl 2592000
-lat 38.899
-lon -77.043
-url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.TOTL?format=json
-field 1.0.value anthroposphere_worldbank_population_total
+lat 42.360
+lon -71.093
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=time+crystal&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_time_crystal_research_citations
 
 source anthroposphere_global_population_density_sqkm
 res 0
@@ -3346,20 +3959,21 @@ lon -77.0430
 url https://api.worldbank.org/v2/country/WLD/indicator/EN.POP.DNST?format=json&per_page=1&date=2023
 field 1.0.value anthroposphere_global_population_density_sqkm
 
-source cryosphere_glacier_count
-ttl 86400
-lat 46.818
-lon 8.227
-url https://www.glims.org/mapservice/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=glims_glaciers&maxFeatures=1&outputFormat=application/json
-path totalFeatures cryosphere_global_glaciers_count
-
-source crystallography_xrd
+source biophoton_emission_research
+ttl 2592000
 res 0
-ttl 86400
-lat 54.683
-lon 25.287
-url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
-field a molecular_lattice_constant_a
+lat 50.775
+lon 6.084
+url https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0
+field message.total-results biosphere_biophoton_research_total
+
+source cmb_anomaly_planck
+ttl 2592000
+res 0
+lat 5.230
+lon -52.769
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count cosmic_cmb_anomaly_research_citations
 
 source dome_fuji_co2
 res 0
@@ -3371,12 +3985,32 @@ format csv
 last_row age_bp paleoclimate_domefuji_age_bp
 last_row co2 paleoclimate_domefuji_co2_ppm
 
+source elevation
+ttl 2592000
+res 3
+url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+first elevation geosphere_elevation_m
+
+source eoapi_collections
+res 0
+ttl 2592000
+lat 38.900
+lon -77.020
+url https://stac.eoapi.dev/collections
+count collections technosphere_eoapi_collection_count
+
 source esa_cci_datasets
 ttl 2592000
 lat 51.2802
 lon -0.5231
 url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1
 path response.numFound climate_esa_cci_datasets
+
+source geopages
+ttl 2592000
+res 4
+url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
+count query.geosearch technosphere_geopages_nearby
 
 source globalforestwatch_tree_cover_loss
 res 0
@@ -3402,6 +4036,14 @@ url https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulatio
 format csv
 last_row undulate geosphere_geoid_height_m
 
+source macrostrat_ages
+res 0
+ttl 2592000
+lat 43.073
+lon -89.401
+url https://macrostrat.org/api/v2/units?format=json
+field success.data macrostrat_unit_count
+
 source macrostrat_timescale
 res 0
 ttl 2592000
@@ -3409,14 +4051,6 @@ lat 43.073
 lon -89.401
 url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
 path success.data.0.n_intervals geosphere_ics_timescale_units
-
-source noaa_enso_oni
-res 0
-ttl 86400
-lat 38.989
-lon -76.937
-url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
-last_row ANOM atmosphere_enso_oni_c
 
 source noaa_lawdome_co2
 ttl 2592000
@@ -3435,71 +4069,99 @@ url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-
 format text
 last line paleoclimate_epica_co2_raw
 
-source pdg_alpha_s
+source openelevation_srtm
+ttl 2592000
+res 4
+url https://api.open-elevation.com/api/v1/lookup?locations={lat},{lon}
+path results.0.elevation geosphere_elevation_openelev_m
+
+source openmeteo_climate_projection
+ttl 2592000
+res 3
+url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum
+first temperature_2m_max atmosphere_climate_temp_max_c
+first temperature_2m_min atmosphere_climate_temp_min_c
+first precipitation_sum atmosphere_climate_precip_mm
+
+source opentopo_eudem25m
+ttl 2592000
+res 4
+url https://api.opentopodata.org/v1/eudem25m?locations={lat},{lon}
+path results.0.elevation geosphere_elevation_eudem25_m
+
+source opentopo_gebco_bathymetry
+ttl 2592000
+res 2
+url https://api.opentopodata.org/v1/gebco2020?locations={lat},{lon}
+path results.0.elevation hydrosphere_bathymetry_gebco_m
+
+source opentopo_mapzen_terrain
+ttl 2592000
+res 4
+url https://api.opentopodata.org/v1/mapzen?locations={lat},{lon}
+path results.0.elevation geosphere_terrain_mapzen_m
+
+source opentopo_srtm30m
+ttl 2592000
+res 4
+url https://api.opentopodata.org/v1/srtm30m?locations={lat},{lon}
+path results.0.elevation geosphere_elevation_srtm30_m
+
+source overpass_farmland
+ttl 2592000
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];way["landuse"="farmland"](around:10000,{lat},{lon});out%20count;
+deep ways biosphere_farmland_10km
+
+source overpass_history_buildings_2yr
+ttl 2592000
+res 4
+url https://overpass-api.de/api/interpreter?data=[date:"2024-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
+deep ways technosphere_buildings_2024_1km
+
+source overpass_history_buildings_5yr
+ttl 2592000
+res 4
+url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
+deep ways technosphere_buildings_2021_1km
+
+source overpass_history_hospitals_5yr
+ttl 2592000
+res 4
+url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20count;
+deep total anthroposphere_hospitals_2021_10km
+
+source overpass_history_schools_5yr
+ttl 2592000
+res 4
+url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20count;
+deep total anthroposphere_schools_2021_10km
+
+source overpass_history_shops_5yr
+ttl 2592000
+res 4
+url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count;
+deep total technosphere_shops_2021_5km
+
+source overpass_history_streets_5yr
+ttl 2592000
+res 4
+url https://overpass-api.de/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20count;
+deep ways technosphere_streets_2021_500m
+
+source overpass_memorials
+ttl 2592000
+res 4
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20count;
+deep total anthroposphere_memorials_5km
+
+source planetary_computer_collections
 res 0
-ttl 604800
-lat 37.877
-lon -122.247
-url https://pdgapi.lbl.gov/summaries/S059
-field pdg_values.0.value physics_alpha_s_value
-
-source pdg_w_boson_mass
-res 0
-ttl 604800
-lat 37.877
-lon -122.247
-url https://pdgapi.lbl.gov/summaries/S043
-field pdg_values.0.value physics_w_boson_mass_gev
-
-source pdg_z_boson_mass
-res 0
-ttl 604800
-lat 37.877
-lon -122.247
-url https://pdgapi.lbl.gov/summaries/S044
-field pdg_values.0.value physics_z_boson_mass_gev
-
-source simbad_brown_dwarfs
-ttl 604800
-lat 48.5833
-lon 7.7667
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27BD*%27
-path data.0.0 cosmic_simbad_brown_dwarfs
-
-source simbad_carbon_stars
-ttl 604800
-lat 48.5833
-lon 7.7667
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27C*%27
-path data.0.0 cosmic_simbad_carbon_stars
-
-source simbad_eclipsing_binaries
-ttl 604800
-lat 48.5833
-lon 7.7667
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27EB*%27
-path data.0.0 cosmic_simbad_eclipsing_binaries
-
-source simbad_symbiotic_stars
-ttl 604800
-lat 48.5833
-lon 7.7667
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Sy*%27
-path data.0.0 cosmic_simbad_symbiotic_stars
-
-source simbad_wolf_rayet
-ttl 604800
-lat 48.5833
-lon 7.7667
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27WR*%27
-path data.0.0 cosmic_simbad_wolf_rayet_stars
-
-source simbad_young_stellar_objects
-ttl 604800
-lat 48.5833
-lon 7.7667
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27S*Y%27
-path data.0.0 cosmic_simbad_young_stellar_objects
+ttl 2592000
+lat 47.640000000
+lon -122.140000000
+url https://planetarycomputer.microsoft.com/api/stac/v1/collections
+count collections technosphere_planetary_computer_collection_count
 
 source soilgrids_clay
 ttl 2592000
@@ -3525,6 +4187,20 @@ res 3
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
 field properties.layers.0.depths.0.values.mean geosphere_soil_organic_carbon_x10
 
+source usgs_epqs_elevation
+ttl 2592000
+res 4
+url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&wkid=4326
+path value geosphere_elevation_epqs_m
+
+source vacuum_decay_metastability
+ttl 2592000
+res 0
+lat 46.233
+lon 6.055
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_vacuum_metastability_citations
+
 source vostok_icecore
 ttl 2592000
 lat -78.464
@@ -3532,6 +4208,30 @@ lon 106.833
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
 format text
 last line paleoclimate_vostok_co2_raw
+
+source worldbank_birth_rate
+res 0
+ttl 2592000
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CBRT.IN?format=json&date=2023&per_page=1&mrv=1
+field 1.0.value anthroposphere_birth_rate_per_1000
+
+source worldbank_co2_emissions
+res 0
+ttl 2592000
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.GHG.CO2.MT.CE.AR5?format=json
+field 1.0.value worldbank_co2_emissions_value
+
+source worldbank_death_rate
+res 0
+ttl 2592000
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1
+field 1.0.value anthroposphere_death_rate_per_1000
 
 source worldbank_gdp_growth_afghanistan
 res 0
@@ -3964,6 +4664,14 @@ lat 55.68
 lon 12.57
 url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
 field 1.0.value economic_gdp_growth_denmark_pct
+
+source worldbank_gdp_growth_DEU
+res 0
+ttl 2592000
+lat 52.520
+lon 13.405
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_DEU
 
 source worldbank_gdp_growth_djibouti
 res 0
@@ -5261,370 +5969,37 @@ lon 31.03
 url https://api.worldbank.org/v2/country/ZWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
 field 1.0.value economic_gdp_growth_zimbabwe_pct
 
-source esa_gaia_stars
+source worldbank_life_expectancy
 res 0
-ttl 604800
-lat 40.4438
-lon -3.9529
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50+source_id,ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+3.0+ORDER+BY+phot_g_mean_mag
-count data cosmic_bright_stars_count
-path data.0.ra cosmic_star_ra
-path data.0.dec cosmic_star_dec
-path data.0.phot_g_mean_mag cosmic_star_magnitude
-path data.0.parallax cosmic_star_parallax_mas
-
-source gaia_stellar_ages
-res 0
-ttl 604800
-lat 40.4438
-lon -3.9529
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5+source_id,age_flame,mass_flame,teff_gspphot+FROM+gaiadr3.astrophysical_parameters+WHERE+age_flame+IS+NOT+NULL+ORDER+BY+age_flame+DESC
-field age_flame cosmic_oldest_star_age_gyr
-field teff_gspphot cosmic_oldest_star_temp_k
-
-source nasa_exoplanets
-res 0
-ttl 86400
-lat 34.2007
-lon -118.1712
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+20+pl_name,pl_orbper,pl_rade,pl_eqt+FROM+pscomppars+WHERE+pl_eqt+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
-count data cosmic_exoplanet_count
-field pl_eqt cosmic_exoplanet_eqt_k
-field pl_orbper cosmic_exoplanet_period_d
-field pl_rade cosmic_exoplanet_radius_re
-
-source pdg_higgs_mass
-res 0
-ttl 604800
-lat 37.8756
-lon -122.2508
-url https://pdgapi.lbl.gov/summaries/S003M
-field value subatomic_higgs_mass_gev
-
-source pdg_proton_mass
-res 0
-ttl 604800
-lat 37.8756
-lon -122.2508
-url https://pdgapi.lbl.gov/summaries/S008M
-field value subatomic_proton_mass_mev
-
-source simbad_galaxy_clusters
-ttl 604800
-lat 48.5833
-lon 7.7667
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ClG%27
-path data.0.0 cosmic_galaxy_cluster_count
-
-source simbad_high_z_galaxies
-ttl 604800
-lat 48.5833
-lon 7.7667
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+%3E+5
-path data.0.0 cosmic_galaxies_z_gt5
-
-source simbad_millisecond_pulsars
-ttl 604800
-lat 48.5833
-lon 7.7667
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ms*%27
-path data.0.0 cosmic_millisecond_pulsar_count
-
-source superk_proton_decay
-res 0
-ttl 604800
-lat 36.428
-lon 137.310
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
-field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
-
-source opentopo_srtm30m
 ttl 2592000
-res 4
-url https://api.opentopodata.org/v1/srtm30m?locations={lat},{lon}
-path results.0.elevation geosphere_elevation_srtm30_m
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.LE00.IN?format=json&date=2023&per_page=1&mrv=1
+field 1.0.value anthroposphere_life_expectancy_years
 
-source opentopo_eudem25m
-ttl 2592000
-res 4
-url https://api.opentopodata.org/v1/eudem25m?locations={lat},{lon}
-path results.0.elevation geosphere_elevation_eudem25_m
-
-source opentopo_gebco_bathymetry
-ttl 2592000
-res 2
-url https://api.opentopodata.org/v1/gebco2020?locations={lat},{lon}
-path results.0.elevation hydrosphere_bathymetry_gebco_m
-
-source opentopo_mapzen_terrain
-ttl 2592000
-res 4
-url https://api.opentopodata.org/v1/mapzen?locations={lat},{lon}
-path results.0.elevation geosphere_terrain_mapzen_m
-
-source usgs_epqs_elevation
-ttl 2592000
-res 4
-url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&wkid=4326
-path value geosphere_elevation_epqs_m
-
-source openelevation_srtm
-ttl 2592000
-res 4
-url https://api.open-elevation.com/api/v1/lookup?locations={lat},{lon}
-path results.0.elevation geosphere_elevation_openelev_m
-
-source openmeteo_flood
-ttl 3600
-res 3
-url https://flood-api.open-meteo.com/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge
-first river_discharge hydrosphere_river_discharge_m3s
-
-source openmeteo_climate_projection
-ttl 2592000
-res 3
-url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum
-first temperature_2m_max atmosphere_climate_temp_max_c
-first temperature_2m_min atmosphere_climate_temp_min_c
-first precipitation_sum atmosphere_climate_precip_mm
-
-source openmeteo_marine_ocean
-ttl 600
-res 3
-url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,ocean_current_velocity,ocean_current_direction,sea_level_height_msl&timezone=auto
-path current.sea_surface_temperature hydrosphere_sst_c
-path current.ocean_current_velocity hydrosphere_current_velocity_kmh
-path current.ocean_current_direction hydrosphere_current_direction_deg
-path current.sea_level_height_msl hydrosphere_sea_level_msl_m
-
-source openmeteo_pressure_levels
-ttl 600
-res 3
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto
-path current.temperature_500hPa atmosphere_temp_500hpa_c
-path current.temperature_850hPa atmosphere_temp_850hpa_c
-path current.geopotential_height_500hPa atmosphere_geopotential_500hpa_m
-path current.geopotential_height_850hPa atmosphere_geopotential_850hpa_m
-
-source openmeteo_soil_current
-ttl 600
-res 3
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto
-path current.soil_temperature_0cm geosphere_soil_temp_0cm_c
-path current.soil_temperature_6cm geosphere_soil_temp_6cm_c
-path current.soil_temperature_18cm geosphere_soil_temp_18cm_c
-path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
-path current.soil_moisture_0_to_1cm geosphere_soil_moisture_0cm_m3m3
-path current.soil_moisture_9_to_27cm geosphere_soil_moisture_18cm_m3m3
-path current.soil_moisture_27_to_81cm geosphere_soil_moisture_54cm_m3m3
-
-source openmeteo_radiation_current
-ttl 600
-res 3
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto
-path current.shortwave_radiation atmosphere_sw_radiation_wm2
-path current.direct_radiation atmosphere_direct_rad_wm2
-path current.diffuse_radiation atmosphere_diffuse_rad_wm2
-path current.direct_normal_irradiance atmosphere_dni_wm2
-path current.vapour_pressure_deficit atmosphere_vpd_kpa
-path current.cape atmosphere_cape_jkg
-path current.evapotranspiration atmosphere_evapotranspiration_mm
-path current.et0_fao_evapotranspiration atmosphere_et0_mm
-path current.visibility atmosphere_visibility_m
-path current.freezing_level_height atmosphere_freezing_level_m
-path current.snow_depth atmosphere_snow_depth_m
-path current.precipitation_probability atmosphere_precip_probability_pct
-path current.weather_code atmosphere_wmo_code
-
-source openmeteo_wind_heights
-ttl 600
-res 3
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_speed_180m,wind_direction_10m,wind_direction_80m,wind_direction_120m,wind_direction_180m,wind_gusts_10m,temperature_80m,temperature_120m,temperature_180m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,uv_index,uv_index_clear_sky,dew_point_2m,pressure_msl,surface_pressure&timezone=auto
-path current.wind_speed_80m atmosphere_wind_80m_kmh
-path current.wind_speed_120m atmosphere_wind_120m_kmh
-path current.wind_speed_180m atmosphere_wind_180m_kmh
-path current.wind_direction_80m atmosphere_winddir_80m_deg
-path current.wind_direction_120m atmosphere_winddir_120m_deg
-path current.wind_direction_180m atmosphere_winddir_180m_deg
-path current.temperature_80m atmosphere_temp_80m_c
-path current.temperature_120m atmosphere_temp_120m_c
-path current.temperature_180m atmosphere_temp_180m_c
-path current.cloud_cover_low atmosphere_cloud_low_pct
-path current.cloud_cover_mid atmosphere_cloud_mid_pct
-path current.cloud_cover_high atmosphere_cloud_high_pct
-path current.uv_index atmosphere_uv_index
-path current.uv_index_clear_sky atmosphere_uv_clearsky
-path current.dew_point_2m atmosphere_dewpoint_c
-path current.pressure_msl atmosphere_pressure_msl_hpa
-
-source openmeteo_daily_forecast
-ttl 3600
-res 3
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,showers_sum,snowfall_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration,sunrise,sunset,daylight_duration,sunshine_duration,uv_index_max,weather_code&timezone=auto
-first temperature_2m_max atmosphere_forecast_temp_max_c
-first temperature_2m_min atmosphere_forecast_temp_min_c
-first precipitation_sum atmosphere_forecast_precip_mm
-first precipitation_probability_max atmosphere_forecast_precip_prob_pct
-first wind_speed_10m_max atmosphere_forecast_wind_max_kmh
-first wind_gusts_10m_max atmosphere_forecast_gust_max_kmh
-first shortwave_radiation_sum atmosphere_forecast_radiation_mjm2
-first uv_index_max atmosphere_forecast_uv_max
-first daylight_duration atmosphere_forecast_daylight_s
-first sunshine_duration atmosphere_forecast_sunshine_s
-
-source openmeteo_marine_waves
-ttl 600
-res 3
-url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto
-path current.wind_wave_height hydrosphere_wind_wave_m
-path current.wind_wave_direction hydrosphere_wind_wave_dir_deg
-path current.wind_wave_period hydrosphere_wind_wave_period_s
-path current.swell_wave_height hydrosphere_swell_m
-path current.swell_wave_direction hydrosphere_swell_dir_deg
-path current.swell_wave_period hydrosphere_swell_period_s
-
-source overpass_bicycle_parking
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bicycle_parking"];out%20count;
-deep total technosphere_bicycle_parking_count
-
-source overpass_bicycle_rental
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bicycle_rental"];out%20count;
-deep total technosphere_bicycle_rental_count
-
-source overpass_recycling
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="recycling"];out%20count;
-deep total technosphere_recycling_count
-
-source overpass_place_of_worship
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="place_of_worship"];out%20count;
-deep total culture_place_of_worship_count
-
-source overpass_toilets
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="toilets"];out%20count;
-deep total technosphere_toilets_count
-
-source overpass_police
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="police"];out%20count;
-deep total technosphere_police_count
-
-source overpass_fire_station
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fire_station"];out%20count;
-deep total technosphere_fire_station_count
-
-source overpass_kindergarten
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="kindergarten"];out%20count;
-deep total technosphere_kindergarten_count
-
-source overpass_university
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="university"];out%20count;
-deep total culture_university_count
-
-source overpass_cemetery
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="grave_yard"];out%20count;
-deep total culture_cemetery_count
-
-source overpass_theatre_cinema
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"~"^(theatre|cinema|arts_centre)$"];out%20count;
-deep total culture_theatre_cinema_count
-
-source overpass_defibrillator
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["emergency"="defibrillator"];out%20count;
-deep total technosphere_defibrillator_count
-
-source overpass_street_lamps
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:500,{lat},{lon})["highway"="street_lamp"];out%20count;
-deep total technosphere_street_lamp_count
-
-source overpass_traffic_signals
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="traffic_signals"];out%20count;
-deep total technosphere_traffic_signal_count
-
-source overpass_post_boxes
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="post_box"];out%20count;
-deep total technosphere_post_box_count
-
-source overpass_water_spring
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["natural"="spring"];out%20count;
-deep total hydrosphere_spring_count
-
-source overpass_construction
-ttl 86400
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="construction"];out%20count;
-deep total technosphere_construction_count
-
-source overpass_car_sharing
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="car_sharing"];out%20count;
-deep total technosphere_car_sharing_count
-source icecube_neutrino_alerts
-ttl 300
+source worldbank_median_age
 res 0
-lat -90.0
-lon 0.0
-header User-Agent "omegaflow"
-url https://gcn.nasa.gov/circulars?query=icecube
-regex ("totalItems":...,) cosmic_icecube_alert_circular_count
+ttl 2592000
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.MEDN?format=json&date=2023&per_page=1&mrv=1
+field 1.0.value anthroposphere_median_age_years
 
-source ligo_multimessenger
-ttl 600
+source worldbank_population
 res 0
-lat 46.455
-lon -119.407
-header User-Agent "omegaflow"
-url https://gcn.nasa.gov/circulars?query=IceCube%20LVK
-regex ("totalItems":...,) cosmic_neutrino_gravwave_coincidence_count
+ttl 2592000
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.TOTL?format=json
+field 1.0.value anthroposphere_worldbank_population_total
+
+source worldbank_urban_population_pct
+res 0
+ttl 2592000
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.URB.TOTL.IN.ZS?format=json&date=2023&per_page=1&mrv=1
+field 1.0.value anthroposphere_urban_population_pct
 
 source xenonnt_dark_matter_limit
 ttl 2592000
@@ -5633,366 +6008,3 @@ lat 42.454
 lon 13.576
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+matter&fields=titles,citation_count
 field hits.hits.0.metadata.citation_count physics_dark_matter_limit_citations
-
-source iter_fusion_status
-ttl 86400
-res 0
-lat 43.709
-lon 5.777
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
-field hits.hits.0.metadata.citation_count physics_fusion_research_citations
-
-source epoch_ai_compute_trends
-ttl 86400
-res 0
-lat 37.774
-lon -122.419
-url https://epoch.ai/data/notable_ai_models.csv
-format csv
-last_row Training_compute_FLOP technosphere_ai_training_flops_frontier
-
-source quantum_teleportation_distance
-ttl 604800
-res 0
-lat 39.904
-lon 116.407
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=quantum+entanglement+satellite+distance+record&fields=titles,citation_count
-field hits.hits.0.metadata.citation_count quantum_entanglement_distance_record_citations
-
-source time_crystal_research
-ttl 604800
-res 0
-lat 42.360
-lon -71.093
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=time+crystal&fields=titles,citation_count
-field hits.hits.0.metadata.citation_count physics_time_crystal_research_citations
-
-source bell_test_loophole_free
-ttl 604800
-res 0
-lat 52.086
-lon 5.171
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=loophole-free+Bell+test&fields=titles,citation_count
-field hits.hits.0.metadata.citation_count physics_bell_test_loophole_free_citations
-
-source cmb_anomaly_planck
-ttl 2592000
-res 0
-lat 5.230
-lon -52.769
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count
-field hits.hits.0.metadata.citation_count cosmic_cmb_anomaly_research_citations
-
-source vacuum_decay_metastability
-ttl 2592000
-res 0
-lat 46.233
-lon 6.055
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count
-field hits.hits.0.metadata.citation_count physics_vacuum_metastability_citations
-
-source brain_organoid_computing
-ttl 604800
-res 0
-lat -37.813
-lon 144.963
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=organoid+intelligence+biocomputing&fields=titles,citation_count
-field hits.hits.0.metadata.citation_count biosphere_organoid_computing_citations
-
-source longevity_biological_age_research
-ttl 604800
-res 0
-lat 51.500
-lon -0.126
-url https://api.crossref.org/works?query=biological+age+clock+epigenetic&rows=0
-field message.total-results anthroposphere_longevity_research_total
-
-source synthetic_genome_writing
-ttl 604800
-res 0
-lat 42.373
-lon -71.110
-url https://api.crossref.org/works?query=synthetic+genome+writing+minimal+cell&rows=0
-field message.total-results biosphere_synthetic_genome_research_total
-
-source jwst_deep_field_discoveries
-ttl 86400
-res 0
-lat 39.328
-lon -76.620
-url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
-field message.total-results cosmic_jwst_high_z_discovery_papers
-
-source biophoton_emission_research
-ttl 2592000
-res 0
-lat 50.775
-lon 6.084
-url https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0
-field message.total-results biosphere_biophoton_research_total
-
-source interstellar_object_tracking
-ttl 3600
-res 0
-lat 20.709
-lon -156.257
-url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=3I&discovery=true
-field object.fullname cosmic_interstellar_object_latest_name
-source overpass_museums
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="museum"];out%20count;
-deep total culture_museums_5km
-
-source overpass_galleries
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="gallery"];out%20count;
-deep total culture_galleries_5km
-
-source overpass_libraries
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="library"];out%20count;
-deep total culture_libraries_2km
-
-source overpass_castles
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="castle"];out%20count;
-deep total culture_castles_10km
-
-source overpass_archaeological_sites
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="archaeological_site"];out%20count;
-deep total culture_archaeological_sites_10km
-
-source overpass_monuments
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="monument"];out%20count;
-deep total culture_monuments_2km
-
-source overpass_memorials_culture
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="memorial"];out%20count;
-deep total culture_memorials_2km
-
-source overpass_fountains
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fountain"];out%20count;
-deep total culture_fountains_1km
-
-source overpass_arts_centres
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="arts_centre"];out%20count;
-deep total culture_arts_centres_5km
-
-source overpass_stadiums
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["leisure"="stadium"];out%20count;
-deep total culture_stadiums_10km
-
-source overpass_bookshops
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="books"];out%20count;
-deep total culture_bookshops_2km
-
-source overpass_music_venues
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="music_venue"];out%20count;
-deep total culture_music_venues_5km
-
-source overpass_ruins
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="ruins"];out%20count;
-deep total culture_ruins_10km
-
-source overpass_street_art
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["tourism"="artwork"];out%20count;
-deep total culture_street_art_1km
-
-source overpass_courthouses
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="courthouse"];out%20count;
-deep total culture_courthouses_5km
-
-source overpass_embassies
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="embassy"];out%20count;
-deep total culture_embassies_5km
-
-source overpass_archaeological_paleontology
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["geological"="palaeontological_site"];out%20count;
-deep total geosphere_paleontology_sites_10km
-
-source overpass_cafes
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="cafe"];out%20count;
-deep total anthroposphere_cafes_1km
-
-source overpass_bars
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bar"];out%20count;
-deep total anthroposphere_bars_1km
-
-source overpass_pubs
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="pub"];out%20count;
-deep total anthroposphere_pubs_1km
-
-source overpass_fast_food
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fast_food"];out%20count;
-deep total anthroposphere_fast_food_1km
-
-source overpass_bakeries
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="bakery"];out%20count;
-deep total anthroposphere_bakeries_1km
-
-source overpass_greengrocers
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="greengrocer"];out%20count;
-deep total anthroposphere_greengrocers_1km
-
-source overpass_hairdressers
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="hairdresser"];out%20count;
-deep total anthroposphere_hairdressers_1km
-
-source overpass_jewelry_shops
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="jewelry"];out%20count;
-deep total economic_jewelry_shops_2km
-
-source overpass_florists
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="florist"];out%20count;
-deep total biosphere_florists_1km
-
-source overpass_pet_shops
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="pet"];out%20count;
-deep total biosphere_pet_shops_2km
-
-source overpass_opticians
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="optician"];out%20count;
-deep total anthroposphere_opticians_2km
-
-source overpass_travel_agents
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="travel_agency"];out%20count;
-deep total economic_travel_agents_2km
-
-source overpass_laundry
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="laundry"];out%20count;
-deep total technosphere_laundry_1km
-
-source overpass_gyms
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["leisure"="fitness_centre"];out%20count;
-deep total anthroposphere_gyms_2km
-
-source overpass_playgrounds
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["leisure"="playground"];out%20count;
-deep total anthroposphere_playgrounds_1km
-
-source overpass_allotments
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["leisure"="garden"];out%20count;
-deep total biosphere_gardens_2km
-
-source overpass_dentists
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="dentist"];out%20count;
-deep total anthroposphere_dentists_2km
-
-source overpass_veterinary
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="veterinary"];out%20count;
-deep total biosphere_veterinary_5km
-
-source overpass_banks
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="bank"];out%20count;
-deep total economic_banks_2km
-
-source overpass_clinics
-ttl 604800
-res 4
-header User-Agent "omegaflow"
-url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="clinic"];out%20count;
-deep total anthroposphere_clinics_2km

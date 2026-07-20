@@ -137,8 +137,26 @@ impl<'a> JsonParser<'a> {
             let c = self.chars[self.pos];
             if c == b'\\' && self.pos + 1 < self.chars.len() {
                 self.pos += 1;
-                match self.chars[self.pos] { b'"' => s.push('"'), b'\\' => s.push('\\'), b'/' => s.push('/'), b'n' => s.push('\n'), b't' => s.push('\t'), _ => {} }
-                self.pos += 1;
+                match self.chars[self.pos] {
+                    b'"' => { s.push('"'); self.pos += 1; }
+                    b'\\' => { s.push('\\'); self.pos += 1; }
+                    b'/' => { s.push('/'); self.pos += 1; }
+                    b'n' => { s.push('\n'); self.pos += 1; }
+                    b't' => { s.push('\t'); self.pos += 1; }
+                    b'r' => { s.push('\r'); self.pos += 1; }
+                    b'u' => {
+                        self.pos += 1;
+                        if self.pos + 4 <= self.chars.len() {
+                            if let Ok(hex) = std::str::from_utf8(&self.chars[self.pos..self.pos+4]) {
+                                if let Ok(cp) = u32::from_str_radix(hex, 16) {
+                                    if let Some(ch) = char::from_u32(cp) { s.push(ch); }
+                                }
+                            }
+                            self.pos += 4;
+                        }
+                    },
+                    _ => { self.pos += 1; }
+                }
             } else if c == b'"' { self.pos += 1; return Some(s); } else { s.push(c as char); self.pos += 1; }
         }
         None
@@ -292,7 +310,7 @@ enum Extract {
 
 struct SourceConfig { ttl: u64, res: i32, url: String, lat: Option<f64>, lon: Option<f64>, format: String, extracts: Vec<Extract>, headers: Vec<(String, String)> }
 
-struct Archive { sources: Vec<SourceConfig>, index_html: Vec<u8>, constants_js: Vec<u8>, data_cache: Mutex<HashMap<String, (f64, HashMap<String, (f64, f64, f64, f64, f64)>)>>, active_positions: Mutex<HashMap<String, f64>> }
+struct Archive { sources: Vec<SourceConfig>, index_html: Vec<u8>, constants_js: Vec<u8>, data_cache: Mutex<HashMap<String, (f64, HashMap<String, (f64, f64, f64, f64, f64)>)>>, active_positions: Mutex<HashMap<String, (f64, f64, f64, f64)>> }
 struct WsFrame { opcode: u8, payload: Vec<u8> }
 
 fn base64_encode(input: &[u8]) -> String {
@@ -320,16 +338,6 @@ fn pos_key(x: f64, y: f64, z: f64, res: i32, t: f64) -> String {
     let (lat, lon) = icrs_to_geodetic(x, y, z, t);
     let r = if res < 0 { 0 } else { res as usize };
     format!("{}_{}", format!("{:.*}", r, lat), format!("{:.*}", r, lon))
-}
-
-fn parse_pos(pos: &str) -> Option<(f64, f64, f64)> {
-    let parts: Vec<&str> = pos.split('_').collect();
-    if parts.len() == 3 {
-        if let (Ok(x), Ok(y), Ok(z)) = (parts[0].parse::<f64>(), parts[1].parse::<f64>(), parts[2].parse::<f64>()) {
-            return Some((x, y, z));
-        }
-    }
-    None
 }
 
 fn emit(s: &mut TcpStream, st: &str, ct: &str, b: &[u8]) { let _=s.write_all(format!("HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nCache-Control: no-store\r\nConnection: keep-alive\r\n\r\n",st,ct,b.len()).as_bytes()); let _=s.write_all(b); }
@@ -384,6 +392,12 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
     let _=stream.set_nodelay(true);
     while let Some(frame) = read_ws_frame_raw(&mut stream) {
         if frame.opcode==0x8 { break; }
+        if frame.opcode==0x9 {
+            let mut h=[0u8;2]; h[0]=0x8A; h[1]=frame.payload.len() as u8;
+            if stream.write_all(&h).is_err() { break; }
+            if stream.write_all(&frame.payload).is_err() { break; }
+            continue;
+        }
         if frame.opcode==0x2 {
             if frame.payload.len()<12 { continue; }
 
@@ -435,7 +449,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let y = f64::from_le_bytes(t_buf);
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let z = f64::from_le_bytes(t_buf);
 
-                    active.insert(pos_key(x, y, z, 2, q_t), q_t);
+                    active.insert(pos_key(x, y, z, 2, q_t), (q_t, x, y, z));
 
                     let obj_pos=out.len();
                     out.extend_from_slice(&0u32.to_le_bytes());
@@ -445,8 +459,6 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if let Some((_, values)) = cache.get(&local_key) { for (k, v) in values { merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4)); } }
 
                     for (i, src) in archive.sources.iter().enumerate() {
-                        if src.url.starts_with("nostr://") { continue; }
-
                         let (src_x, src_y, src_z) = if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
                             geodetic_to_icrs(lat, lon, 0.0, q_t)
                         } else {
@@ -476,7 +488,8 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
 
 fn is_leap(y: u32) -> bool { (y % 4 == 0 && y % 100 != 0) || y % 400 == 0 }
 fn φ_obj(out: &mut Vec<u8>, fields: &[(&str, f64, f64, f64, f64, f64)]) {
-    let valid: Vec<&(&str,f64,f64,f64,f64,f64)> = fields.iter().filter(|(n,_,_,_,_,_)| !n.is_empty() && n.len() <= 255).collect();
+    let mut valid: Vec<&(&str,f64,f64,f64,f64,f64)> = fields.iter().filter(|(n,_,_,_,_,_)| !n.is_empty() && n.len() <= 255).collect();
+    if valid.len() > 255 { valid.truncate(255); }
     out.push(valid.len() as u8);
     for (name, val, t, x, y, z) in valid {
         out.push(name.len() as u8);
@@ -510,7 +523,13 @@ fn text_last_col(data: &str, col: &str) -> Option<f64> {
         if trimmed.is_empty() { continue; }
         let stripped = trimmed.strip_prefix('#').unwrap_or(trimmed).trim();
         let cols = split_data_line(stripped);
-        if header_idx.is_none() { if let Some(idx) = cols.iter().position(|c| c.eq_ignore_ascii_case(col) || c.starts_with(col)) { header_idx = Some(idx); } continue; }
+        if header_idx.is_none() {
+            if let Some(idx) = cols.iter().position(|c| c.eq_ignore_ascii_case(col) || c.starts_with(col)) {
+                header_idx = Some(idx);
+                break;
+            }
+            continue;
+        }
     }
     let idx = header_idx?;
     for line in data.lines().rev() {
@@ -541,7 +560,10 @@ fn load_sources() -> Vec<SourceConfig> {
                     } else {
                         let mut final_res = cur_res;
                         if final_res == 0 {
-                            let decimals = cur_lat_str.split('.').last().unwrap_or("").len() as i32;
+                            let decimals = match cur_lat_str.find('.') {
+                                Some(dot) => (cur_lat_str.len() - dot - 1) as i32,
+                                None => 0,
+                            };
                             final_res = decimals;
                         }
                         (cur_lat, cur_lon, final_res)
@@ -704,20 +726,18 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
 
 fn warm_cache(archive: Arc<Archive>) {
     loop {
-        let positions: Vec<(String, f64)> = archive.active_positions.lock().unwrap_or_else(|e| e.into_inner()).iter().map(|(k,v)| (k.clone(), *v)).collect();
+        let positions: Vec<(f64, f64, f64, f64)> = archive.active_positions.lock().unwrap_or_else(|e| e.into_inner()).values().cloned().collect();
         if positions.is_empty() { let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60); thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / Φ).max(1.0) as u64)); continue; }
 
-        for (pos, query_t) in &positions {
-            let (pos_x, pos_y, pos_z) = match parse_pos(pos) { Some(c) => c, None => continue };
+        for (query_t, pos_x, pos_y, pos_z) in &positions {
 
             let needs: Vec<(usize, String, String, Vec<(String, String)>, u64)> = archive.sources.iter().enumerate()
-                .filter(|(_, src)| !src.url.starts_with("nostr://"))
                 .filter_map(|(i, src)| {
                     let (src_x, src_y, src_z, render_x, render_y, render_z) = if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
                         let (x, y, z) = geodetic_to_icrs(lat, lon, 0.0, *query_t);
-                        (x, y, z, pos_x, pos_y, pos_z)
+                        (x, y, z, *pos_x, *pos_y, *pos_z)
                     } else {
-                        (pos_x, pos_y, pos_z, pos_x, pos_y, pos_z)
+                        (*pos_x, *pos_y, *pos_z, *pos_x, *pos_y, *pos_z)
                     };
 
                     let cache_key = format!("{}_{}", i, pos_key(src_x, src_y, src_z, src.res, *query_t));
@@ -765,14 +785,6 @@ fn warm_cache(archive: Arc<Archive>) {
                                 }
                             }
                             Extract::Regex(pat, n) => {
-
-
-
-
-
-
-
-
                                 if let Some(v) = extract_regex_val(&body, pat) { extracted.insert(n.clone(), v); }
                             }
                             Extract::XmlCount(tag, n) => {
@@ -806,7 +818,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                             if let JsonVal::Arr(arr) = current { current = match arr.get(idx) { Some(v) => v, None => { path_ok = false; break; } }; }
                                             else { path_ok = false; break; }
                                         } else {
-                                            if let JsonVal::Obj(map) = current { current = match map.get(part) { Some(v) => v, None => { path_ok = false; break; } }; }
+                                            if let JsonVal::Obj(map) = current { current = match map.get(part) { Some(v) => v, None: { path_ok = false; break; } }; }
                                             else { path_ok = false; break; }
                                         }
                                     }
@@ -875,7 +887,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         }
                     }
                     if !extracted.is_empty() {
-                        let extracted_with_t: HashMap<String, (f64, f64, f64, f64, f64)> = extracted.iter().map(|(k, v)| (k.clone(), (*v, *query_t, pos_x, pos_y, pos_z))).collect();
+                        let extracted_with_t: HashMap<String, (f64, f64, f64, f64, f64)> = extracted.iter().map(|(k, v)| (k.clone(), (*v, *query_t, *pos_x, *pos_y, *pos_z))).collect();
                         archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).insert(cache_key, (*query_t, extracted_with_t));
                     }
                 }
@@ -887,7 +899,7 @@ fn warm_cache(archive: Arc<Archive>) {
         let now_tdb = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs_f64() - UNIX_J2000_OFFSET;
         let evict_thresh = now_tdb - max_ttl as f64 * 2.0;
         archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).retain(|_, (ts, _)| *ts > evict_thresh);
-        archive.active_positions.lock().unwrap_or_else(|e| e.into_inner()).retain(|_, t| now_tdb - *t < 300.0);
+        archive.active_positions.lock().unwrap_or_else(|e| e.into_inner()).retain(|_, (t, _, _, _)| now_tdb - *t < 300.0);
         thread::sleep(std::time::Duration::from_secs((min_ttl as f64 / (Φ * Φ)).max(1.0) as u64));
     }
 }
@@ -912,4 +924,3 @@ fn main() {
         }
     }
 }
-
