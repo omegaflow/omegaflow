@@ -818,7 +818,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                             if let JsonVal::Arr(arr) = current { current = match arr.get(idx) { Some(v) => v, None => { path_ok = false; break; } }; }
                                             else { path_ok = false; break; }
                                         } else {
-                                            if let JsonVal::Obj(map) = current { current = match map.get(part) { Some(v) => v, None: { path_ok = false; break; } }; }
+                                            if let JsonVal::Obj(map) = current { current = match map.get(part) { Some(v) => v, None => { path_ok = false; break; } }; }
                                             else { path_ok = false; break; }
                                         }
                                     }
@@ -915,7 +915,7 @@ fn main() {
         active_positions: Mutex::new(HashMap::new()),
     });
     { let ar = Arc::clone(&archive); thread::spawn(move || warm_cache(ar)); }
-    if let Ok(listener) = TcpListener::bind(format!("0.0.0.0:{}", port)) {
+    if let Ok(listener) = TcpListener::bind(format!("127.0.0.1:{}", port)) {
         for stream in listener.incoming() {
             if let Ok(stream) = stream {
                 let ar = Arc::clone(&archive);
