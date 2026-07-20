@@ -423,15 +423,11 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
             if cursor.read_exact(&mut buf4).is_err() { continue; } let id = u32::from_le_bytes(buf4);
             if cursor.read_exact(&mut buf4).is_err() { continue; } let input_count = u32::from_le_bytes(buf4) as usize;
 
+            let mut pending_inputs: Vec<(String, f64)> = Vec::with_capacity(input_count);
             {
-                let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
                 for _ in 0..input_count {
-                    let mut t_buf = [0u8; 8];
-                    if cursor.read_exact(&mut t_buf).is_err() { break; } let in_t = f64::from_le_bytes(t_buf);
-                    if cursor.read_exact(&mut t_buf).is_err() { break; } let x = f64::from_le_bytes(t_buf);
-                    if cursor.read_exact(&mut t_buf).is_err() { break; } let y = f64::from_le_bytes(t_buf);
-                    if cursor.read_exact(&mut t_buf).is_err() { break; } let z = f64::from_le_bytes(t_buf);
-                    if cursor.read_exact(&mut t_buf).is_err() { break; } let value = f64::from_le_bytes(t_buf);
+                    let mut val_buf = [0u8; 8];
+                    if cursor.read_exact(&mut val_buf).is_err() { break; } let value = f64::from_le_bytes(val_buf);
 
                     let mut name_len_buf = [0u8; 1];
                     if cursor.read_exact(&mut name_len_buf).is_err() { break; }
@@ -440,9 +436,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if cursor.read_exact(&mut name_bytes).is_err() { break; }
                     let name = String::from_utf8_lossy(&name_bytes).to_string();
 
-                    let local_key = format!("local_{}_{}_{}", x as i64, y as i64, z as i64);
-
-                    cache.entry(local_key).or_insert_with(|| (in_t, HashMap::<String, (f64, f64, f64, f64, f64)>::new())).1.insert(name, (value, in_t, x, y, z));
+                    pending_inputs.push((name, value));
                 }
             }
 
@@ -455,7 +449,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
             out.extend_from_slice(&(query_count as u32).to_le_bytes());
 
             {
-                let cache=archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
+                let mut cache=archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
                 let mut active=archive.active_positions.lock().unwrap_or_else(|e| e.into_inner());
 
                 for _ in 0..query_count {
@@ -464,11 +458,34 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let x = f64::from_le_bytes(t_buf);
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let y = f64::from_le_bytes(t_buf);
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let z = f64::from_le_bytes(t_buf);
+                    let mut dev_lat = None;
+                    let mut dev_lon = None;
+                    for (name, val) in &pending_inputs {
+                        if name == "geolocation.latitude" { dev_lat = Some(*val); }
+                        if name == "geolocation.longitude" { dev_lon = Some(*val); }
+                    }
+                    let now_tdb = q_t;
+                    let (dev_x, dev_y, dev_z) = if let (Some(lat), Some(lon)) = (dev_lat, dev_lon) {
+                        let (ex_e, ey_e, ez_e) = geodetic_to_ecef(lat, lon, 0.0);
+                        let gmst_rad = compute_gmst(now_tdb);
+                        let cg = gmst_rad.cos(); let sg = gmst_rad.sin();
+                        let ce = ECLIPTIC_OBLIQUITY.cos(); let se = ECLIPTIC_OBLIQUITY.sin();
+                        let xi = ex_e * cg + ey_e * sg;
+                        let yi = -ex_e * sg + ey_e * cg;
+                        let zi = ez_e;
+                        let (ex, ey, ez) = earth_position_icrs(now_tdb);
+                        (xi + ex, yi * ce + zi * se + ey, -yi * se + zi * ce + ez)
+                    } else {
+                        (0.0, 0.0, 0.0)
+                    };
+                    let local_key = format!("local_{}_{}_{}", dev_x as i64, dev_y as i64, dev_z as i64);
+                    for (name, value) in &pending_inputs {
+                        cache.entry(local_key.clone()).or_insert_with(|| (now_tdb, HashMap::<String, (f64, f64, f64, f64, f64)>::new())).1.insert(name.clone(), (*value, now_tdb, dev_x, dev_y, dev_z));
+                    }
                     active.insert(format!("{}_{}_{}", x as i64, y as i64, z as i64), (q_t, x, y, z));
                     let obj_pos = out.len();
                     out.extend_from_slice(&0u32.to_le_bytes());
                     let mut merged_values: HashMap<String, (f64, f64, f64, f64, f64)> = HashMap::new();
-                    let local_key = format!("local_{}_{}_{}", x as i64, y as i64, z as i64);
                     if let Some((_, values)) = cache.get(&local_key) {
                         for (k, v) in values { merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4)); }
                     }
@@ -782,7 +799,8 @@ fn warm_cache(archive: Arc<Archive>) {
                         if needs_fetch {
                             let (sx, sy, sz) = (src.lat.unwrap(), src.lon.unwrap(), 0.0f64);
                             let url = render_url(&src.url, sx, sy, sz, *query_t);
-                            Some((i, cache_key, url, src.headers.clone(), src.ttl))
+                            let headers_rendered: Vec<(String, String)> = src.headers.iter().map(|(k, v)| (k.clone(), render_url(v, sx, sy, sz, *query_t))).collect();
+                            Some((i, cache_key, url, headers_rendered, src.ttl))
                         } else { None }
                     } else {
                         let url = render_url(&src.url, *pos_x, *pos_y, *pos_z, *query_t);
@@ -794,7 +812,10 @@ fn warm_cache(archive: Arc<Archive>) {
                                 None => true
                             }
                         };
-                        if needs_fetch { Some((i, dyn_key, url, src.headers.clone(), src.ttl)) } else { None }
+                        if needs_fetch {
+                            let headers_rendered: Vec<(String, String)> = src.headers.iter().map(|(k, v)| (k.clone(), render_url(v, *pos_x, *pos_y, *pos_z, *query_t))).collect();
+                            Some((i, dyn_key, url, headers_rendered, src.ttl))
+                        } else { None }
                     }
                 }).collect();
 
@@ -940,10 +961,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     }
                     if !extracted.is_empty() {
                         let extracted_with_t: HashMap<String, (f64, f64, f64, f64, f64)> = extracted.iter().map(|(k, v)| (k.clone(), (*v, *query_t, *pos_x, *pos_y, *pos_z))).collect();
-                        let key = if needs.iter().find(|(_, ck, _, _, _)| ck == &cache_key).map(|(_, _, url, _, _)| url.clone()).is_some() {
-                            cache_key.clone()
-                        } else { cache_key.clone() };
-                        archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).insert(key, (*query_t, extracted_with_t));
+                        archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).insert(cache_key, (*query_t, extracted_with_t));
                     }
                 }
             }
