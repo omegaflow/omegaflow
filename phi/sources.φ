@@ -5608,3 +5608,391 @@ res 4
 header User-Agent "omegaflow"
 url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="car_sharing"];out%20count;
 deep total technosphere_car_sharing_count
+source icecube_neutrino_alerts
+ttl 300
+res 0
+lat -90.0
+lon 0.0
+header User-Agent "omegaflow"
+url https://gcn.nasa.gov/circulars?query=icecube
+regex ("totalItems":...,) cosmic_icecube_alert_circular_count
+
+source ligo_multimessenger
+ttl 600
+res 0
+lat 46.455
+lon -119.407
+header User-Agent "omegaflow"
+url https://gcn.nasa.gov/circulars?query=IceCube%20LVK
+regex ("totalItems":...,) cosmic_neutrino_gravwave_coincidence_count
+
+source xenonnt_dark_matter_limit
+ttl 2592000
+res 0
+lat 42.454
+lon 13.576
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+matter&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_dark_matter_limit_citations
+
+source iter_fusion_status
+ttl 86400
+res 0
+lat 43.709
+lon 5.777
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_fusion_research_citations
+
+source epoch_ai_compute_trends
+ttl 86400
+res 0
+lat 37.774
+lon -122.419
+url https://epoch.ai/data/notable_ai_models.csv
+format csv
+last_row Training_compute_FLOP technosphere_ai_training_flops_frontier
+
+source quantum_teleportation_distance
+ttl 604800
+res 0
+lat 39.904
+lon 116.407
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=quantum+entanglement+satellite+distance+record&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count quantum_entanglement_distance_record_citations
+
+source time_crystal_research
+ttl 604800
+res 0
+lat 42.360
+lon -71.093
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=time+crystal&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_time_crystal_research_citations
+
+source bell_test_loophole_free
+ttl 604800
+res 0
+lat 52.086
+lon 5.171
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=loophole-free+Bell+test&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_bell_test_loophole_free_citations
+
+source cmb_anomaly_planck
+ttl 2592000
+res 0
+lat 5.230
+lon -52.769
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count cosmic_cmb_anomaly_research_citations
+
+source vacuum_decay_metastability
+ttl 2592000
+res 0
+lat 46.233
+lon 6.055
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_vacuum_metastability_citations
+
+source brain_organoid_computing
+ttl 604800
+res 0
+lat -37.813
+lon 144.963
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=organoid+intelligence+biocomputing&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count biosphere_organoid_computing_citations
+
+source longevity_biological_age_research
+ttl 604800
+res 0
+lat 51.500
+lon -0.126
+url https://api.crossref.org/works?query=biological+age+clock+epigenetic&rows=0
+field message.total-results anthroposphere_longevity_research_total
+
+source synthetic_genome_writing
+ttl 604800
+res 0
+lat 42.373
+lon -71.110
+url https://api.crossref.org/works?query=synthetic+genome+writing+minimal+cell&rows=0
+field message.total-results biosphere_synthetic_genome_research_total
+
+source jwst_deep_field_discoveries
+ttl 86400
+res 0
+lat 39.328
+lon -76.620
+url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
+field message.total-results cosmic_jwst_high_z_discovery_papers
+
+source biophoton_emission_research
+ttl 2592000
+res 0
+lat 50.775
+lon 6.084
+url https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0
+field message.total-results biosphere_biophoton_research_total
+
+source interstellar_object_tracking
+ttl 3600
+res 0
+lat 20.709
+lon -156.257
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=3I&discovery=true
+field object.fullname cosmic_interstellar_object_latest_name
+source overpass_museums
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="museum"];out%20count;
+deep total culture_museums_5km
+
+source overpass_galleries
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="gallery"];out%20count;
+deep total culture_galleries_5km
+
+source overpass_libraries
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="library"];out%20count;
+deep total culture_libraries_2km
+
+source overpass_castles
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="castle"];out%20count;
+deep total culture_castles_10km
+
+source overpass_archaeological_sites
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="archaeological_site"];out%20count;
+deep total culture_archaeological_sites_10km
+
+source overpass_monuments
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="monument"];out%20count;
+deep total culture_monuments_2km
+
+source overpass_memorials_culture
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="memorial"];out%20count;
+deep total culture_memorials_2km
+
+source overpass_fountains
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fountain"];out%20count;
+deep total culture_fountains_1km
+
+source overpass_arts_centres
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="arts_centre"];out%20count;
+deep total culture_arts_centres_5km
+
+source overpass_stadiums
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["leisure"="stadium"];out%20count;
+deep total culture_stadiums_10km
+
+source overpass_bookshops
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="books"];out%20count;
+deep total culture_bookshops_2km
+
+source overpass_music_venues
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="music_venue"];out%20count;
+deep total culture_music_venues_5km
+
+source overpass_ruins
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="ruins"];out%20count;
+deep total culture_ruins_10km
+
+source overpass_street_art
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["tourism"="artwork"];out%20count;
+deep total culture_street_art_1km
+
+source overpass_courthouses
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="courthouse"];out%20count;
+deep total culture_courthouses_5km
+
+source overpass_embassies
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="embassy"];out%20count;
+deep total culture_embassies_5km
+
+source overpass_archaeological_paleontology
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["geological"="palaeontological_site"];out%20count;
+deep total geosphere_paleontology_sites_10km
+
+source overpass_cafes
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="cafe"];out%20count;
+deep total anthroposphere_cafes_1km
+
+source overpass_bars
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bar"];out%20count;
+deep total anthroposphere_bars_1km
+
+source overpass_pubs
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="pub"];out%20count;
+deep total anthroposphere_pubs_1km
+
+source overpass_fast_food
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fast_food"];out%20count;
+deep total anthroposphere_fast_food_1km
+
+source overpass_bakeries
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="bakery"];out%20count;
+deep total anthroposphere_bakeries_1km
+
+source overpass_greengrocers
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="greengrocer"];out%20count;
+deep total anthroposphere_greengrocers_1km
+
+source overpass_hairdressers
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="hairdresser"];out%20count;
+deep total anthroposphere_hairdressers_1km
+
+source overpass_jewelry_shops
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="jewelry"];out%20count;
+deep total economic_jewelry_shops_2km
+
+source overpass_florists
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="florist"];out%20count;
+deep total biosphere_florists_1km
+
+source overpass_pet_shops
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="pet"];out%20count;
+deep total biosphere_pet_shops_2km
+
+source overpass_opticians
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="optician"];out%20count;
+deep total anthroposphere_opticians_2km
+
+source overpass_travel_agents
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="travel_agency"];out%20count;
+deep total economic_travel_agents_2km
+
+source overpass_laundry
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="laundry"];out%20count;
+deep total technosphere_laundry_1km
+
+source overpass_gyms
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["leisure"="fitness_centre"];out%20count;
+deep total anthroposphere_gyms_2km
+
+source overpass_playgrounds
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["leisure"="playground"];out%20count;
+deep total anthroposphere_playgrounds_1km
+
+source overpass_allotments
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["leisure"="garden"];out%20count;
+deep total biosphere_gardens_2km
+
+source overpass_dentists
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="dentist"];out%20count;
+deep total anthroposphere_dentists_2km
+
+source overpass_veterinary
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="veterinary"];out%20count;
+deep total biosphere_veterinary_5km
+
+source overpass_banks
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="bank"];out%20count;
+deep total economic_banks_2km
+
+source overpass_clinics
+ttl 604800
+res 4
+header User-Agent "omegaflow"
+url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="clinic"];out%20count;
+deep total anthroposphere_clinics_2km
