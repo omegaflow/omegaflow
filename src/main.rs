@@ -15,6 +15,27 @@ const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
 
+fn compute_gmst(tdb_secs: f64) -> f64 {
+    let jd = tdb_secs / 86400.0 + J2000_EPOCH;
+    let t = (jd - J2000_EPOCH) / 36525.0;
+    let gmst = 280.46061837 + 360.98564736629 * (jd - J2000_EPOCH) + 0.000387933 * t * t - t * t * t / 38710000.0;
+    (gmst % 360.0) * std::f64::consts::PI / 180.0
+}
+
+fn geodetic_to_ecef(lat: f64, lon: f64, alt: f64) -> (f64, f64, f64) {
+    let lat_r = lat * std::f64::consts::PI / 180.0;
+    let lon_r = lon * std::f64::consts::PI / 180.0;
+    const WGS84_F: f64 = 1.0 / 298.257223563;
+    let e2 = WGS84_F * (2.0 - WGS84_F);
+    let sin_lat = lat_r.sin();
+    let n = EARTH_RADIUS / (1.0 - e2 * sin_lat * sin_lat).sqrt();
+    (
+        (n + alt) * lat_r.cos() * lon_r.cos(),
+        (n + alt) * lat_r.cos() * lon_r.sin(),
+        (n * (1.0 - e2) + alt) * sin_lat
+    )
+}
+
 fn tdb_to_jd(tdb_secs: f64) -> f64 {
     tdb_secs / 86400.0 + J2000_EPOCH
 }
@@ -40,19 +61,8 @@ fn earth_position_icrs(tdb_secs: f64) -> (f64, f64, f64) {
 }
 
 fn geodetic_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f64) {
-    let lat_r = lat * std::f64::consts::PI / 180.0;
-    let lon_r = lon * std::f64::consts::PI / 180.0;
-    const WGS84_F: f64 = 1.0 / 298.257223563;
-    let e2 = WGS84_F * (2.0 - WGS84_F);
-    let sin_lat = lat_r.sin();
-    let n = EARTH_RADIUS / (1.0 - e2 * sin_lat * sin_lat).sqrt();
-    let x_ecef = (n + alt) * lat_r.cos() * lon_r.cos();
-    let y_ecef = (n + alt) * lat_r.cos() * lon_r.sin();
-    let z_ecef = (n * (1.0 - e2) + alt) * lat_r.sin();
-    let jd = tdb_to_jd(tdb_secs);
-    let t = (jd - J2000_EPOCH) / 36525.0;
-    let gmst = 280.46061837 + 360.98564736629 * (jd - J2000_EPOCH) + 0.000387933 * t * t - t * t * t / 38710000.0;
-    let gmst_rad = (gmst % 360.0) * std::f64::consts::PI / 180.0;
+    let (x_ecef, y_ecef, z_ecef) = geodetic_to_ecef(lat, lon, alt);
+    let gmst_rad = compute_gmst(tdb_secs);
     let x_eci = x_ecef * gmst_rad.cos() + y_ecef * gmst_rad.sin();
     let y_eci = -x_ecef * gmst_rad.sin() + y_ecef * gmst_rad.cos();
     let z_eci = z_ecef;
@@ -308,7 +318,19 @@ enum Extract {
     Vector(String)
 }
 
-struct SourceConfig { ttl: u64, res: i32, url: String, lat: Option<f64>, lon: Option<f64>, format: String, extracts: Vec<Extract>, headers: Vec<(String, String)> }
+struct SourceConfig {
+    ttl: u64,
+    url: String,
+    lat: Option<f64>,
+    lon: Option<f64>,
+    ecef_x: f64,
+    ecef_y: f64,
+    ecef_z: f64,
+    radius_sq: f64,
+    format: String,
+    extracts: Vec<Extract>,
+    headers: Vec<(String, String)>,
+}
 
 struct Archive { sources: Vec<SourceConfig>, index_html: Vec<u8>, constants_js: Vec<u8>, data_cache: Mutex<HashMap<String, (f64, HashMap<String, (f64, f64, f64, f64, f64)>)>>, active_positions: Mutex<HashMap<String, (f64, f64, f64, f64)>> }
 struct WsFrame { opcode: u8, payload: Vec<u8> }
@@ -332,12 +354,6 @@ fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
     let months: [u32; 12] = if is_leap(y) { [31,29,31,30,31,30,31,31,30,31,30,31] } else { [31,28,31,30,31,30,31,31,30,31,30,31] };
     let mut m = 0u32; while d >= months[m as usize] { d -= months[m as usize]; m += 1; }
     (y, m + 1, d + 1)
-}
-
-fn pos_key(x: f64, y: f64, z: f64, res: i32, t: f64) -> String {
-    let (lat, lon) = icrs_to_geodetic(x, y, z, t);
-    let r = if res < 0 { 0 } else { res as usize };
-    format!("{}_{}", format!("{:.*}", r, lat), format!("{:.*}", r, lon))
 }
 
 fn emit(s: &mut TcpStream, st: &str, ct: &str, b: &[u8]) { let _=s.write_all(format!("HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nCache-Control: no-store\r\nConnection: keep-alive\r\n\r\n",st,ct,b.len()).as_bytes()); let _=s.write_all(b); }
@@ -424,7 +440,7 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if cursor.read_exact(&mut name_bytes).is_err() { break; }
                     let name = String::from_utf8_lossy(&name_bytes).to_string();
 
-                    let local_key = format!("local_{}", pos_key(x, y, z, 7, in_t));
+                    let local_key = format!("local_{}_{}_{}", x as i64, y as i64, z as i64);
 
                     cache.entry(local_key).or_insert_with(|| (in_t, HashMap::<String, (f64, f64, f64, f64, f64)>::new())).1.insert(name, (value, in_t, x, y, z));
                 }
@@ -448,34 +464,48 @@ fn handle_pulse(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let x = f64::from_le_bytes(t_buf);
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let y = f64::from_le_bytes(t_buf);
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let z = f64::from_le_bytes(t_buf);
-
-                    active.insert(pos_key(x, y, z, 2, q_t), (q_t, x, y, z));
-
-                    let obj_pos=out.len();
+                    active.insert(format!("{}_{}_{}", x as i64, y as i64, z as i64), (q_t, x, y, z));
+                    let obj_pos = out.len();
                     out.extend_from_slice(&0u32.to_le_bytes());
                     let mut merged_values: HashMap<String, (f64, f64, f64, f64, f64)> = HashMap::new();
-
-                    let local_key = format!("local_{}", pos_key(x, y, z, 7, q_t));
-                    if let Some((_, values)) = cache.get(&local_key) { for (k, v) in values { merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4)); } }
-
-                    for (i, src) in archive.sources.iter().enumerate() {
-                        let (src_x, src_y, src_z) = if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
-                            geodetic_to_icrs(lat, lon, 0.0, q_t)
-                        } else {
-                            (x, y, z)
-                        };
-
-                        let src_key = format!("{}_{}", i, pos_key(src_x, src_y, src_z, src.res, q_t));
-
-                        if let Some((_, values)) = cache.get(&src_key) { for (k, v) in values { merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4)); } }
+                    let local_key = format!("local_{}_{}_{}", x as i64, y as i64, z as i64);
+                    if let Some((_, values)) = cache.get(&local_key) {
+                        for (k, v) in values { merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4)); }
                     }
-
+                    let (ex, ey, ez) = earth_position_icrs(q_t);
+                    let gmst = compute_gmst(q_t);
+                    let cos_g = gmst.cos(); let sin_g = gmst.sin();
+                    let cos_e = ECLIPTIC_OBLIQUITY.cos(); let sin_e = ECLIPTIC_OBLIQUITY.sin();
+                    for (i, src) in archive.sources.iter().enumerate() {
+                        if src.lat.is_some() {
+                            let xi = src.ecef_x * cos_g + src.ecef_y * sin_g;
+                            let yi = -src.ecef_x * sin_g + src.ecef_y * cos_g;
+                            let zi = src.ecef_z;
+                            let src_x = xi + ex;
+                            let src_y = yi * cos_e + zi * sin_e + ey;
+                            let src_z = -yi * sin_e + zi * cos_e + ez;
+                            let dx = src_x - x;
+                            let dy = src_y - y;
+                            let dz = src_z - z;
+                            if dx * dx + dy * dy + dz * dz > src.radius_sq { continue; }
+                            let src_key = format!("src_{}_{}", i, q_t as i64);
+                            if let Some((_, values)) = cache.get(&src_key) {
+                                for (k, v) in values { merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4)); }
+                            }
+                        } else {
+                            let (render_x, render_y, render_z) = (x, y, z);
+                            let url = render_url(&src.url, render_x, render_y, render_z, q_t);
+                            let dyn_key = format!("dyn_{}", &url);
+                            if let Some((_, values)) = cache.get(&dyn_key) {
+                                for (k, v) in values { merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4)); }
+                            }
+                        }
+                    }
                     if !merged_values.is_empty() {
                         let fields: Vec<(&str,f64,f64,f64,f64,f64)> = merged_values.iter().map(|(k,v)|(k.as_str(),v.0,v.1,v.2,v.3,v.4)).collect();
-                        φ_obj(&mut out,&fields);
+                        φ_obj(&mut out, &fields);
                     }
-
-                    let obj_count=((out.len()-obj_pos-4)>0) as u32;
+                    let obj_count = ((out.len() - obj_pos - 4) > 0) as u32;
                     out[obj_pos..obj_pos+4].copy_from_slice(&obj_count.to_le_bytes());
                 }
             }
@@ -554,24 +584,31 @@ fn load_sources() -> Vec<SourceConfig> {
         () => {
             if active {
                 let is_dynamic = cur_lat.is_none() && cur_lon.is_none();
-                if !(is_dynamic && cur_res == 0) {
-                    let (final_lat, final_lon, final_res) = if is_dynamic {
-                        (None, None, cur_res)
-                    } else {
-                        let mut final_res = cur_res;
-                        if final_res == 0 {
-                            let decimals = match cur_lat_str.find('.') {
-                                Some(dot) => (cur_lat_str.len() - dot - 1) as i32,
-                                None => 0,
-                            };
-                            final_res = decimals;
-                        }
-                        (cur_lat, cur_lon, final_res)
-                    };
-                    sources.push(SourceConfig { ttl: cur_ttl, res: final_res, url: cur_url.clone(), lat: final_lat, lon: final_lon, format: cur_format.clone(), extracts: cur_extracts.clone(), headers: cur_headers.clone() });
+                let (ecef_x, ecef_y, ecef_z, radius_sq) = if is_dynamic {
+                    (0.0, 0.0, 0.0, f64::MAX)
                 } else {
-                    eprintln!("sources.φ: dropped '{}' (no lat/lon and no res)", cur_url);
-                }
+                    let (ex, ey, ez) = geodetic_to_ecef(cur_lat.unwrap_or(0.0), cur_lon.unwrap_or(0.0), 0.0);
+                    let mut final_res = cur_res;
+                    if final_res == 0 {
+                        let decimals = match cur_lat_str.find('.') {
+                            Some(dot) => (cur_lat_str.len() - dot - 1) as i32,
+                            None => 0,
+                        };
+                        final_res = decimals;
+                    }
+                    let radius_m = EARTH_RADIUS * (std::f64::consts::PI / 180.0) / 10f64.powi(final_res);
+                    (ex, ey, ez, radius_m * radius_m)
+                };
+                sources.push(SourceConfig {
+                    ttl: cur_ttl,
+                    url: cur_url.clone(),
+                    lat: cur_lat,
+                    lon: cur_lon,
+                    ecef_x, ecef_y, ecef_z, radius_sq,
+                    format: cur_format.clone(),
+                    extracts: cur_extracts.clone(),
+                    headers: cur_headers.clone(),
+                });
             }
         };
     }
@@ -733,17 +770,32 @@ fn warm_cache(archive: Arc<Archive>) {
 
             let needs: Vec<(usize, String, String, Vec<(String, String)>, u64)> = archive.sources.iter().enumerate()
                 .filter_map(|(i, src)| {
-                    let (src_x, src_y, src_z, render_x, render_y, render_z) = if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
-                        let (x, y, z) = geodetic_to_icrs(lat, lon, 0.0, *query_t);
-                        (x, y, z, *pos_x, *pos_y, *pos_z)
+                    if src.lat.is_some() {
+                        let cache_key = format!("src_{}_{}", i, *query_t as i64);
+                        let needs_fetch = {
+                            let cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
+                            match cache.get(&cache_key) {
+                                Some((ts, _)) => *query_t - *ts >= src.ttl as f64,
+                                None => true
+                            }
+                        };
+                        if needs_fetch {
+                            let (sx, sy, sz) = (src.lat.unwrap(), src.lon.unwrap(), 0.0f64);
+                            let url = render_url(&src.url, sx, sy, sz, *query_t);
+                            Some((i, cache_key, url, src.headers.clone(), src.ttl))
+                        } else { None }
                     } else {
-                        (*pos_x, *pos_y, *pos_z, *pos_x, *pos_y, *pos_z)
-                    };
-
-                    let cache_key = format!("{}_{}", i, pos_key(src_x, src_y, src_z, src.res, *query_t));
-
-                    let needs_fetch = { let cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()); match cache.get(&cache_key) { Some((ts, _)) => query_t - *ts >= src.ttl as f64, None => true } };
-                    if needs_fetch { let url = render_url(&src.url, render_x, render_y, render_z, *query_t); let headers_rendered: Vec<(String, String)> = src.headers.iter().map(|(k, v)| (k.clone(), render_url(v, render_x, render_y, render_z, *query_t))).collect(); Some((i, cache_key, url, headers_rendered, src.ttl)) } else { None }
+                        let url = render_url(&src.url, *pos_x, *pos_y, *pos_z, *query_t);
+                        let dyn_key = format!("dyn_{}", &url);
+                        let needs_fetch = {
+                            let cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
+                            match cache.get(&dyn_key) {
+                                Some((ts, _)) => *query_t - *ts >= src.ttl as f64,
+                                None => true
+                            }
+                        };
+                        if needs_fetch { Some((i, dyn_key, url, src.headers.clone(), src.ttl)) } else { None }
+                    }
                 }).collect();
 
             if needs.is_empty() { continue; }
@@ -831,7 +883,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                                 let alt = if alt_key.is_empty() { Some(0.0) } else { jpath(v, alt_key) };
                                                 if let (Some(la), Some(lo), Some(al)) = (lat, lon, alt) {
                                                     let (ev_x, ev_y, ev_z) = geodetic_to_icrs(la, lo, al, *query_t);
-                                                    let ev_key = format!("map_{}_{}", arr_path, pos_key(ev_x, ev_y, ev_z, 4, *query_t));
+                                                    let ev_key = format!("map_{}_{}_{}_{}", arr_path, ev_x as i64, ev_y as i64, ev_z as i64);
                                                     let mut ev_vals: HashMap<String, (f64, f64, f64, f64, f64)> = HashMap::new();
                                                     for (fk, fn_) in fields {
                                                         if let Some(val) = jpath(v, fk) {
@@ -870,7 +922,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                                             if let Some(props) = f.get("properties") { if let Some(m) = jnum(props, mag_key) { mag = m; } }
                                                             if mag >= *min_mag {
                                                                 let (ev_x, ev_y, ev_z) = geodetic_to_icrs(ela, elo, 0.0, *query_t);
-                                                                let ev_key = format!("geojson_{}", pos_key(ev_x, ev_y, ev_z, 4, *query_t));
+                                                                let ev_key = format!("geojson_{}_{}_{}", ev_x as i64, ev_y as i64, ev_z as i64);
                                                                 let mut ev_vals: HashMap<String, (f64, f64, f64, f64, f64)> = HashMap::new();
                                                                 ev_vals.insert(outputs[0].clone(), (mag, *query_t, ev_x, ev_y, ev_z));
                                                                 ev_vals.insert(outputs[1].clone(), (ed, *query_t, ev_x, ev_y, ev_z));
@@ -888,7 +940,10 @@ fn warm_cache(archive: Arc<Archive>) {
                     }
                     if !extracted.is_empty() {
                         let extracted_with_t: HashMap<String, (f64, f64, f64, f64, f64)> = extracted.iter().map(|(k, v)| (k.clone(), (*v, *query_t, *pos_x, *pos_y, *pos_z))).collect();
-                        archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).insert(cache_key, (*query_t, extracted_with_t));
+                        let key = if needs.iter().find(|(_, ck, _, _, _)| ck == &cache_key).map(|(_, _, url, _, _)| url.clone()).is_some() {
+                            cache_key.clone()
+                        } else { cache_key.clone() };
+                        archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).insert(key, (*query_t, extracted_with_t));
                     }
                 }
             }

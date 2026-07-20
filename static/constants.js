@@ -1,6 +1,5 @@
 export const C = 299792458.0;
 export const Φ = 1.618033988749895;
-export const J2000_EPOCH = 2451545.0;
 export const UNIX_J2000_OFFSET = 946728000.0;
 export function tdbNow(unixSecs) { return unixSecs - UNIX_J2000_OFFSET; }
 export const φ = {};

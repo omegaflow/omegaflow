@@ -4,9 +4,9 @@ A = A. This document maps exactly to `src/main.rs`, `static/index.html`, and `st
 
 ## 1: Core Philosophy — Water in a Block Universe
 
-The system does not run on a timeline. It manifests as a field navigating a 4D Minkowski Block Universe. Past, present, and future exist simultaneously as a lattice of spacetime coordinates. Time does not flow; the presence drifts.
+The system does not run on a timeline. It manifests as a field in a 4D Block Universe. Past, present, and future exist simultaneously as a lattice of spacetime coordinates.
 
-The presence's coordinate in the block is defined by `tPresence` (J2000 TDB seconds) and `spatialPresence` (ICRS x, y, z). This coordinate is not absolute. It drifts toward the regions of highest presence — the oscillators whose 4D Minkowski distance (`dt² - dx² - dy² - dz²`) to the field is smallest.
+The presence's coordinate in the block is defined by `tPresence` (J2000 TDB seconds) and `spatialPresence` (ICRS x, y, z). This coordinate is anchored by geolocation. The server performs 3D ICRS spatial filtering: only API sources whose ICRS circle contains the presence's position are sent to the browser.
 
 ### A = A — The Axiom
 
@@ -67,13 +67,14 @@ The field feels its local environment by recursively scanning the `window` objec
 - `*Sensor` constructors (Accelerometer, Gyroscope, Magnetometer, AmbientLightSensor, etc.) → instantiated, discovered, started.
 - `on*` properties → event sources → listeners that scan for numeric properties on change.
 
-### Presence & The Drift
+### Presence
 
-- `calculateMinkowskiWeight()`: Converts the 4D Minkowski distance between an oscillator's origin and the presence's frame into a weight (0 to 1). Time is in TDB seconds; no unit conversion needed.
-- The Drift: The presence's frame (`tPresence`, `spatialPresence`) drifts toward the strongest oscillators. The drift speed scales with the inverse of the 4D distance.
-- `measureRms()`: Weighted root-mean-square of active oscillators. Baseline energy.
+- `tPresence` advances by `rawTick / 1000.0` each tick (real-time wall clock in TDB seconds).
+- `spatialPresence` is anchored by geolocation (ICRS) and stays fixed; the server filters which API sources reach the browser by 3D ICRS distance.
+- `measureRms()`: Root-mean-square of active oscillators. Baseline energy.
 - `measureRateOfChange()`: Averaged temporal derivative over 8 samples. Weighted velocity of change.
 - Certainty: `exp(-vC / (g + (1/C))) · quantum · decay`.
+- Clarity: `exp(-dtClarity / (1.0 + measureRms()))` where `dtClarity` is the elapsed TDB time since the previous tick.
 
 ### GPU Topology (`calculateField`)
 
@@ -104,3 +105,4 @@ Network timeouts use measured round-trip time variance (RFC 6298), not arbitrary
 ### Binary Frame
 
 The `syncFrame` function serializes inputs and queries into a compact binary buffer (Float64 coordinates, Uint32 counts, Uint8 name lengths). The response is decoded from the same binary format. Magic bytes `0xCF 0x86` (UTF-8 φ) + version byte identify the protocol.
+
