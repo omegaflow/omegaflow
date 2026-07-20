@@ -15,7 +15,9 @@ export function getRto() {
     return Math.max(100, Math.min(transport.srtt + 4 * Math.max(transport.rttvar, 1), 5000));
 }
 export async function syncFrame(inputs, queries) {
-    if (!queries || queries.length === 0) return [];
+    inputs = inputs || [];
+    queries = queries || [];
+    if (inputs.length === 0 && queries.length === 0) return [];
     let inputBytes = 0;
     for (const inp of inputs) inputBytes += 41 + inp.name.length;
     const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32);
