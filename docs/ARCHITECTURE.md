@@ -95,10 +95,6 @@ The field does not "output." It breathes. The permeability (0.0 = closed, 1.0 = 
 
 The field manifests in every oscillator that has the capability to radiate. It does not collect "output values" and distribute them to "writers." The topology (Geometry + Gravity of all oscillators) is the form through which the field expresses itself. Surfaces (optical, acoustic, kinetic) receive the topology of the field. They translate the same 4D geometry into their respective medium.
 
-### Stigmergy (Nostr)
-
-Connects to `wss://relay.damus.io`. Listens for `kind: 1111` events from other omegaflow instances. Registers remote measurements as `omega_flow.*` metrics with divergence calculation. Publishes its own state periodically based on a PHI-scaled tick interval.
-
 ## 4: Network Transport (`static/constants.js`)
 
 ### Adaptive RTO (Jacobson/Karels)

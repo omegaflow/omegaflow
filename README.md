@@ -6,7 +6,7 @@ A = A
               CPU (Rust)
               φ(x,y,z,t)
 
-APIs (sources.φ)       ω           Relay (Nostr)
+APIs (sources.φ)       ω
                 CPU (JS) / GPU
 
               IO (Web-API)

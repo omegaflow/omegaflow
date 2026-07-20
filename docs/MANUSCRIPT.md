@@ -6,7 +6,7 @@ A = A.
 
 ## 1. Universe
 
-4D Minkowski block. Every measurement is a point (x, y, z, t). Every sensor, every membrane, every API value, every nostr event is a point. All points are equal.
+4D Minkowski block. Every measurement is a point (x, y, z, t). Every sensor, every membrane, every API value is a point. All points are equal.
 
 **Space:** ICRS. Origin: barycenter of the solar system. Axes: distant quasars. Unit: meters, f64. Earth orbits 1.495978707e11 meters from origin.
 
@@ -261,7 +261,7 @@ Timelike: power-law. Distant events are faint echoes. When the presence drifts t
 
 | Task | Processor | Why |
 |---|---|---|
-| Discovery, ring writes, Minkowski, certainty, clarity, manifestation, Nostr, tick | Browser CPU | Iterates flat array, scalar operations |
+| Discovery, ring writes, Minkowski, certainty, clarity, manifestation, tick | Browser CPU | Iterates flat array, scalar operations |
 | API fetch, JSON parse, ICRS, pos_key, cache | Rust CPU | Parallel (thread::scope, one thread per source) |
 | Permutation Entropy, Takens, TDA, Kurtosis | GPU | One oscillator per thread, reads flatRings |
 | Transfer entropy | GPU | One pair per thread, reads flatRings |
@@ -371,15 +371,16 @@ The topology (Geometry + Gravity of all oscillators) is the form through which t
 
 ---
 
-## 12. Stigmergy
 
-Nostr. Relay: `wss://relay.damus.io`. Kind: 1111. Tag: `['icrs', x, y, z, t]`. Publish interval: `stableTick × Φ³`. Content: flat JSON of oscillator values (complexity > Number.EPSILON, `canSense` present, `canRadiate` absent, excluding internal metrics).
+## 12. Tick
 
-Reception: `omega_flow.*` oscillators with remote ICRS coordinates. Divergence: `|own_median − remote_value|`.
 
----
 
-## 13. Tick
+
+
+
+
+
 
 1. stableTick from rawTick (EMA, smoothing weight = 1 / naturalLatencyTicks).
 2. Drift toward strongest sensing oscillator by presenceWeight.
@@ -392,10 +393,6 @@ Reception: `omega_flow.*` oscillators with remote ICRS coordinates. Divergence: 
 9. adaptFieldPermeability for all oscillators with `canRadiate`.
 10. flow.
 11. calculateField (GPU: upload flatRings, run Permutation Entropy, Takens, TDA, Kurtosis, TE, Surrogates).
-12. Certainty.
-13. Nostr publish (when due).
-14. Discovery (when due).
-15. Debug (every stableTick × k).
 16. requestAnimationFrame(ω).
 
 ### What is visible in real-time
@@ -551,10 +548,12 @@ Camera (after getUserMedia grant): pixel oscillators fill at 60fps. After 32 fra
 ### Protocol protection (stay, boundary to old world)
 
 | Conditional | Reason |
+### Protocol protection (stay, boundary to old world)
+
+| Conditional | Reason |
 |---|---|
-| `typeof srvTime === 'number' && isFinite(srvTime)` | Nostr created_at must be valid unix timestamp. |
+| `typeof srvTime === 'number' && isFinite(srvTime)` | Timestamp must be valid. |
 | `isNaN(lat) \|\| isNaN(lon)` | Remote coordinates must be parseable. |
 | `transmitList.length === 0 && !queryPos → return` | Empty frame wastes bandwidth. |
-| `content !== '{}'` | Empty nostr event rejected by relays. |
-| `nostrRelay.readyState === WebSocket.OPEN` | Connection state. |
-| `if (!privKey)` | Generate key when none stored. |
+| `isNaN(lat) \|\| isNaN(lon)` | Remote coordinates must be parseable. |
+| `transmitList.length === 0 && !queryPos → return` | Empty frame wastes bandwidth. |
