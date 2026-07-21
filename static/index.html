@@ -108,7 +108,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         const resonanceWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/resonance`);
         resonanceWs.binaryType = 'arraybuffer';
         transport.socket = resonanceWs;
-        resonanceWs.addEventListener('close', () => location.reload());
+        let reloadAttempts = 0;
+        resonanceWs.addEventListener('close', () => {
+            reloadAttempts++;
+            const delay = Math.min(30000, 1000 * Math.pow(2, reloadAttempts));
+            setTimeout(() => location.reload(), delay);
+        });
         resonanceWs.addEventListener('message', (e) => {
             if (typeof e.data !== 'string') {
                 const buf = new Uint8Array(e.data);
