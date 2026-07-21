@@ -25,9 +25,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
     <div id="consent-gate">
         <div class="box">
             <p class="question">
-                Do you consent to this page accessing your device's<br>
-                sensors, processing the data locally, and generating<br>
-                sound, light, vibration, and signals?
+                Do you consent to this page accessing your device's sensors, processing the data locally, and generating sound, light, vibration, and signals?
             </p>
             <div class="actions">
                 <button id="consent-no">No</button>
@@ -91,6 +89,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             return new Promise((resolve) => {
                 const gate = document.getElementById('consent-gate');
                 function finish(localFlow) {
+                    startAudio();
                     gate.style.animation = 'fadeOut 2.618s ease forwards';
                     setTimeout(() => { gate.remove(); resolve({ localFlow }); }, 2618);
                 }
@@ -129,7 +128,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             }
         }
         let gpuMaxBufferSize = 0;
-        if (localFlowConsented && navigator.gpu) {
+        if (navigator.gpu) {
             navigator.gpu.requestAdapter().then(adapter => {
                 if (adapter) {
                     gpuMaxBufferSize = adapter.limits.maxBufferSize;
@@ -406,21 +405,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 audioGain = audioCtx.createGain(); audioGain.gain.setValueAtTime(0, audioCtx.currentTime); audioGain.connect(audioCtx.destination);
                 audioBuffer = audioCtx.createBuffer(1, CAPTURE_RING_SIZE, audioCtx.sampleRate);
                 audioSrc = audioCtx.createBufferSource(); audioSrc.buffer = audioBuffer; audioSrc.loop = true; audioSrc.connect(audioGain); audioSrc.start();
-                let micAnalyser = null, micFreqData = null;
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                    micAnalyser = audioCtx.createAnalyser();
-                    const micSrc = audioCtx.createMediaStreamSource(stream);
-                    micSrc.connect(micAnalyser);
-                    micFreqData = new Uint8Array(micAnalyser.frequencyBinCount);
-                    for (let i = 0; i < micAnalyser.frequencyBinCount; i++) {
-                        const binIdx = i;
-                        const url = 'microphone.freq_' + binIdx;
-                        if (!indexMap.has(url)) {
-                            registerOscillator(url, Number.EPSILON);
-                            pollFns.push(() => { if (micAnalyser && micFreqData) { micAnalyser.getByteFrequencyData(micFreqData); recordSample(url, micFreqData[binIdx] / 255); } });
-                        }
-                    }
-                }).catch(() => {});
                 registerOscillator('audioContext.destination.channel.frequency', Number.EPSILON);
                 registerOscillator('audioContext.destination.channel.amplitude', Number.EPSILON);
                 registerOscillator('audioContext.destination.channel.pan', Number.EPSILON);
@@ -496,11 +480,28 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 }
             } catch {}
         }
+        function startMicrophone() {
+            if (!audioCtx || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+            let micAnalyser = null, micFreqData = null;
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                micAnalyser = audioCtx.createAnalyser();
+                const micSrc = audioCtx.createMediaStreamSource(stream);
+                micSrc.connect(micAnalyser);
+                micFreqData = new Uint8Array(micAnalyser.frequencyBinCount);
+                for (let i = 0; i < micAnalyser.frequencyBinCount; i++) {
+                    const binIdx = i;
+                    const url = 'microphone.freq_' + binIdx;
+                    if (!indexMap.has(url)) {
+                        registerOscillator(url, Number.EPSILON);
+                        pollFns.push(() => { if (micAnalyser && micFreqData) { micAnalyser.getByteFrequencyData(micFreqData); recordSample(url, micFreqData[binIdx] / 255); } });
+                    }
+                }
+            }).catch(() => {});
+        }
         if (localFlowConsented) {
-            document.addEventListener('click', startAudio, { once: true });
-            document.addEventListener('touchstart', startAudio, { once: true });
             document.addEventListener('click', startCamera, { once: true });
             document.addEventListener('touchstart', startCamera, { once: true });
+            startMicrophone();
         }
         function startXR() {
             if (!navigator.xr) return;
@@ -533,21 +534,21 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         let activeUsbDevice = null;
         let activeBtChar = null;
         let activeHidDevice = null;
+        if (navigator.vibrate) {
+            registerOscillator('navigator.vibrate.channel.duration', Number.EPSILON);
+            registerOscillator('navigator.vibrate.channel.rhythm', Number.EPSILON);
+            surfaces.push({
+                manifest: (topology, coherence) => {
+                    const durAp = getChannelAperture('navigator.vibrate.channel.duration');
+                    const rhyAp = getChannelAperture('navigator.vibrate.channel.rhythm');
+                    if (durAp < Number.EPSILON && rhyAp < Number.EPSILON) return;
+                    const interval = Math.max(100, Math.floor(1000 / (1 + (coherence || 0) * (Φ * Φ))));
+                    const duration = Math.max(10, Math.floor(interval * durAp));
+                    if (Math.random() < rhyAp) navigator.vibrate(duration);
+                }
+            });
+        }
         if (localFlowConsented) {
-            if (navigator.vibrate) {
-                registerOscillator('navigator.vibrate.channel.duration', Number.EPSILON);
-                registerOscillator('navigator.vibrate.channel.rhythm', Number.EPSILON);
-                surfaces.push({
-                    manifest: (topology, coherence) => {
-                        const durAp = getChannelAperture('navigator.vibrate.channel.duration');
-                        const rhyAp = getChannelAperture('navigator.vibrate.channel.rhythm');
-                        if (durAp < Number.EPSILON && rhyAp < Number.EPSILON) return;
-                        const interval = Math.max(100, Math.floor(1000 / (1 + (coherence || 0) * (Φ * Φ))));
-                        const duration = Math.max(10, Math.floor(interval * durAp));
-                        if (Math.random() < rhyAp) navigator.vibrate(duration);
-                    }
-                });
-            }
             if (navigator.serial) {
                 registerOscillator('navigator.serial.channel.tx', Number.EPSILON);
                 surfaces.push({
@@ -683,7 +684,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             document.addEventListener('click', startHardware, { once: true });
             document.addEventListener('touchstart', startHardware, { once: true });
         }
-        if (localFlowConsented) {
+        {
         const canvas = document.createElement('canvas');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;image-rendering:pixelated;z-index:-1;';
@@ -759,7 +760,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
 
             tPresence += rawTick / 1000.0;
 
-            if (localFlowConsented) registerGamepads();
+            registerGamepads();
             for (const fn of pollFns) { try { fn(); } catch {} }
 
             const dtClarity = Math.abs(tPresence - prevTPresence);
@@ -860,116 +861,22 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                             }
                         });
                         inst.start();
-                    } catch(e) {}
-                }
+                            } catch(e) {}
+                        }
             }
-            window.addEventListener('mousemove', (e) => { recordSample('event.mousemove.x', e.clientX); recordSample('event.mousemove.y', e.clientY); }, { passive: true });
-            window.addEventListener('mousedown', (e) => { recordSample('event.mousedown.button', e.button); }, { passive: true });
-            window.addEventListener('mouseup', (e) => { recordSample('event.mouseup.button', e.button); }, { passive: true });
-            window.addEventListener('wheel', (e) => { recordSample('event.wheel.deltaY', e.deltaY); }, { passive: true });
-            window.addEventListener('touchstart', (e) => { if (e.touches.length > 0) { recordSample('event.touchstart.x', e.touches[0].clientX); recordSample('event.touchstart.y', e.touches[0].clientY); } }, { passive: true });
-<script type="module">
-    import { syncFrame, φ, transport, Φ, C, updateRtt, getRto } from '/constants.js';
-    function reportState(category, detail) { try { fetch('/crash', { method: 'POST', body: `${category}: ${detail}` }); } catch {} }
-
-    const oscillators = [];
-    const indexMap = new Map();
-
-    let flatRings = new Float32Array(1024).fill(Number.EPSILON);
-    let CAPTURE_RING_SIZE = 32;
-    let topologyRingSize = 32;
-    let topologyPending = false;
-    let permutationEntropyPipeline = null, takensPipeline = null, tdaPipeline = null, kurtosisPipeline = null, tePipeline = null;
-    let lastTs = 0, certainty = 1.0, debugEl = null, lastDebug = 0;
-    let stableTick = 0;
-    let tPresence = 0;
-    let xPresence = 0, yPresence = 0, zPresence = 0;
-    let prevTPresence = 0;
-    let clarity = 1.0;
-    const internalMetrics = ['transfer.', 'kurtosis.', 'tda.', 'complexity.', 'server.', 'system.'];
-    function isInternalMetric(url) { for (const prefix of internalMetrics) { if (url.startsWith(prefix)) return true; } return false; }
-    function ma() { return 1.0 / Math.max(1, Math.round(CAPTURE_RING_SIZE / Φ)); }
-    const surfaces = [];
-    const channelApertures = new Map();
-    const pollFns = [];
-    window.ω = { syncFrame, φ, transport, oscillators, indexMap };
-
-    φ['server.time'] = parseFloat(await (await fetch('/time')).text());
-    tPresence = φ['server.time'];
-
-    const resonanceWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/resonance`);
-    resonanceWs.binaryType = 'arraybuffer';
-    transport.socket = resonanceWs;
-    let reloadAttempts = 0;
-    resonanceWs.addEventListener('close', () => {
-        reloadAttempts++;
-        const delay = Math.min(30000, 1000 * Math.pow(2, reloadAttempts));
-        setTimeout(() => location.reload(), delay);
-    });
-    resonanceWs.addEventListener('message', (e) => {
-        if (typeof e.data !== 'string') {
-            const buf = new Uint8Array(e.data);
-            if (buf.length < 13 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 1) return;
-            const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
-            const id = dv.getUint32(3, true);
-            const pending = transport.pending.get(id);
-            if (pending) { transport.pending.delete(id); updateRtt(performance.now() - pending.startTime); pending.resolve(e.data); }
         }
-    });
-    resonanceWs.addEventListener('open', () => {
-        syncFrame([], [{ t: tPresence, x: 0, y: 0, z: 0 }]).catch(() => {});
-    });
-
-    function awaitConsent() {
-        return new Promise((resolve) => {
-            const gate = document.getElementById('consent-gate');
-            function finish(localFlow) {
-                gate.style.animation = 'fadeOut 0.4s ease forwards';
-                setTimeout(() => { gate.remove(); resolve({ localFlow }); }, 400);
-            }
-            document.getElementById('consent-yes').addEventListener('click', () => finish(true));
-            document.getElementById('consent-no').addEventListener('click', () => finish(false));
-        });
-    }
-    const { localFlow: localFlowConsented } = await awaitConsent();
-    window.ω_consent = { localFlowConsented };
-
-    if (localFlowConsented) {
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition((pos) => {
-                const c = pos.coords;
-                if (!indexMap.has('geolocation.latitude')) {
-                    registerOscillator('geolocation.latitude', c.latitude);
-                    registerOscillator('geolocation.longitude', c.longitude);
-                    registerOscillator('geolocation.altitude', c.altitude || 0);
-                    registerOscillator('geolocation.accuracy', c.accuracy);
-                }
-                recordSample('geolocation.latitude', c.latitude);
-                recordSample('geolocation.longitude', c.longitude);
-                recordSample('geolocation.altitude', c.altitude || 0);
-                recordSample('geolocation.accuracy', c.accuracy);
-            }, () => {}, { enableHighAccuracy: true, timeout: 10000 });
-        }
-        if (navigator.getBattery) {
-            navigator.getBattery().then(battery => {
-                if (!indexMap.has('battery.level')) {
-                    registerOscillator('battery.level', battery.level);
-                    registerOscillator('battery.charging', battery.charging ? 1 : 0);
-                }
-                recordSample('battery.level', battery.level);
-                recordSample('battery.charging', battery.charging ? 1 : 0);
-            }).catch(() => {});
-        }
-    }
-
-            window.addEventListener('touchmove', (e) => { if (e.touches.length > 0) { recordSample('event.touchmove.x', e.touches[0].clientX); recordSample('event.touchmove.y', e.touches[0].clientY); } }, { passive: true });
-            window.addEventListener('touchend', (e) => { recordSample('event.touchend.count', e.changedTouches.length); }, { passive: true });
-            window.addEventListener('keydown', (e) => { recordSample('event.keydown.code', e.keyCode); }, { passive: true });
-            window.addEventListener('keyup', (e) => { recordSample('event.keyup.code', e.keyCode); }, { passive: true });
-            window.addEventListener('click', (e) => { recordSample('event.click.x', e.clientX); recordSample('event.click.y', e.clientY); }, { passive: true });
-            window.addEventListener('resize', () => { recordSample('event.resize.width', window.innerWidth); recordSample('event.resize.height', window.innerHeight); }, { passive: true });
-            window.addEventListener('deviceorientation', (e) => { recordSample('event.deviceorientation.alpha', e.alpha || 0); recordSample('event.deviceorientation.beta', e.beta || 0); recordSample('event.deviceorientation.gamma', e.gamma || 0); }, { passive: true });
-        }
+        window.addEventListener('mousemove', (e) => { recordSample('event.mousemove.x', e.clientX); recordSample('event.mousemove.y', e.clientY); }, { passive: true });
+        window.addEventListener('mousedown', (e) => { recordSample('event.mousedown.button', e.button); }, { passive: true });
+        window.addEventListener('mouseup', (e) => { recordSample('event.mouseup.button', e.button); }, { passive: true });
+        window.addEventListener('wheel', (e) => { recordSample('event.wheel.deltaY', e.deltaY); }, { passive: true });
+        window.addEventListener('touchstart', (e) => { if (e.touches.length > 0) { recordSample('event.touchstart.x', e.touches[0].clientX); recordSample('event.touchstart.y', e.touches[0].clientY); } }, { passive: true });
+        window.addEventListener('touchmove', (e) => { if (e.touches.length > 0) { recordSample('event.touchmove.x', e.touches[0].clientX); recordSample('event.touchmove.y', e.touches[0].clientY); } }, { passive: true });
+        window.addEventListener('touchend', (e) => { recordSample('event.touchend.count', e.changedTouches.length); }, { passive: true });
+        window.addEventListener('keydown', (e) => { recordSample('event.keydown.code', e.keyCode); }, { passive: true });
+        window.addEventListener('keyup', (e) => { recordSample('event.keyup.code', e.keyCode); }, { passive: true });
+        window.addEventListener('click', (e) => { recordSample('event.click.x', e.clientX); recordSample('event.click.y', e.clientY); }, { passive: true });
+        window.addEventListener('resize', () => { recordSample('event.resize.width', window.innerWidth); recordSample('event.resize.height', window.innerHeight); }, { passive: true });
+        window.addEventListener('deviceorientation', (e) => { recordSample('event.deviceorientation.alpha', e.alpha || 0); recordSample('event.deviceorientation.beta', e.beta || 0); recordSample('event.deviceorientation.gamma', e.gamma || 0); }, { passive: true });
         window.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'd' && debugEl) {
                 debugEl.style.display = (debugEl.style.display === 'none') ? 'block' : 'none';
@@ -977,9 +884,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         });
         window.addEventListener('error', (e) => { reportState('ERROR', e.message + ' @ ' + e.filename + ':' + e.lineno); e.preventDefault(); });
         window.addEventListener('unhandledrejection', (e) => { reportState('REJECTION', String(e.reason)); e.preventDefault(); });
-        if (localFlowConsented) {
-            requestAnimationFrame(ω);
-        }
+        requestAnimationFrame(ω);
     </script>
 </body>
 </html>
