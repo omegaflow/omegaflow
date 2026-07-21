@@ -61,8 +61,10 @@ export async function syncFrame(inputs, queries) {
             if (o >= bytes.length) break;
             const sfCount = bytes[o++];
             for (let s = 0; s < sfCount; s++) {
+                if (o >= bytes.length) break;
                 const nl = bytes[o++];
                 let name = '';
+                if (o + nl > bytes.length) break;
                 for (let i = 0; i < nl; i++) name += String.fromCharCode(bytes[o++]);
                 o++;
                 if (o + 40 > bytes.length) break;
