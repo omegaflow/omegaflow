@@ -8,7 +8,7 @@
 <style>
 * { margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; color: #c4b9a8; font-family: system-ui, sans-serif; }
-#consent-gate { position: fixed; inset: 0; background: rgba(10,9,8,0.96); display: flex; align-items: center; justify-content: center; z-index: 99999; backdrop-filter: blur(20px); animation: fadeIn 4.236s ease; }
+#consent-gate { position: fixed; inset: 0; background: rgba(10,9,8,0.96); display: flex; align-items: center; justify-content: center; z-index: 99999; backdrop-filter: blur(20px); animation: fadeIn 6.854s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 #consent-gate .box { max-width: 424px; padding: 42px 42px; }
@@ -95,8 +95,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                         startXR();
                         startHardware();
                     }
-                    gate.style.animation = 'fadeOut 2.618s ease forwards';
-                    setTimeout(() => { gate.remove(); resolve({ localFlow }); }, 2618);
+                    gate.style.animation = 'fadeOut 7.472s ease forwards';
+                    setTimeout(() => { gate.remove(); resolve({ localFlow }); }, 7472);
                 }
                 document.getElementById('consent-yes').addEventListener('click', () => finish(true));
                 document.getElementById('consent-no').addEventListener('click', () => finish(false));
