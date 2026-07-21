@@ -482,20 +482,6 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     let obj_pos = out.len();
                     out.extend_from_slice(&0u32.to_le_bytes());
                     let mut merged_values: HashMap<String, (f64, f64, f64, f64, f64)> = HashMap::new();
-                    if let (Some(_), Some(_)) = (geo_lat, geo_lon) {
-                        let icrs_pos_key = format!("icrs_pos_{}_{}_{}", oscillator_x as i64, oscillator_y as i64, oscillator_z as i64);
-                        let dx = oscillator_x - presence_x;
-                        let dy = oscillator_y - presence_y;
-                        let dz = oscillator_z - presence_z;
-                        if let Some(acc) = geo_acc {
-                            let res_sq = acc * acc;
-                            if dx * dx + dy * dy + dz * dz <= res_sq {
-                                if let Some((_, values)) = cache.get(&icrs_pos_key) {
-                                    for (k, v) in values { merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4)); }
-                                }
-                            }
-                        }
-                    }
                     let (ex, ey, ez) = earth_position_icrs(presence_t);
                     let gmst = compute_gmst(presence_t);
                     let cos_g = gmst.cos(); let sin_g = gmst.sin();
