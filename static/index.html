@@ -462,6 +462,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     if (indexMap.has(tp)) continue;
                     const reader = new MediaStreamTrackProcessor(track).readable.getReader();
                     registerOscillator(tp, Number.EPSILON);
+                    const c2d = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
                     (async () => {
                         while (true) {
                             const { value: frame, done } = await reader.read();
@@ -469,7 +470,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                             try {
                                 if (track.kind === 'video' && typeof frame.createImageBitmap === 'function') {
                                     const bmp = await createImageBitmap(frame);
-                                    const c2d = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
                                     c2d.canvas.width = bmp.width; c2d.canvas.height = bmp.height;
                                     c2d.drawImage(bmp, 0, 0);
                                     const id = c2d.getImageData(0, 0, bmp.width, bmp.height);
