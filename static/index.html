@@ -540,6 +540,8 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 }
             });
         }
+        if (localFlowConsented) {
+            if (navigator.serial) {
                 registerOscillator('navigator.serial.channel.tx', Number.EPSILON);
                 surfaces.push({
                     manifest: (topology) => {
