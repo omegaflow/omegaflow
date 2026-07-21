@@ -528,37 +528,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         }
         if (navigator.vibrate) {
             registerOscillator('navigator.vibrate.channel.duration', Number.EPSILON);
-
-        let lastFieldTime = 0, lastManifestTime = 0, lastSyncTime = 0;
-
-        async function ω(ts) {
-            const rawTick = lastTs > 0 ? ts - lastTs : Φ;
-            lastTs = ts;
-            stableTick = stableTick * (1 - ma()) + rawTick * ma();
-            transport.tickTime = stableTick;
-
-            tPresence += rawTick / 1000.0;
-
-            registerGamepads();
-            for (const fn of pollFns) { try { fn(); } catch {} }
-
-            const dtClarity = Math.abs(tPresence - prevTPresence);
-            clarity = Math.exp(-dtClarity / (1.0 + measureRms()));
-            prevTPresence = tPresence;
-            const transmitList = [];
-            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > osc.complexity) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val }); } }
-            const syncStart = performance.now();
-            syncField(transmitList).catch(() => {});
-            lastSyncTime = performance.now() - syncStart;
-            const fieldStart = performance.now();
-            await calculateField();
-            lastFieldTime = performance.now() - fieldStart;
-            adaptChannelApertures();
-
-            const manifestStart = performance.now();
-            for (const surface of surfaces) { try { surface.manifest(topology, coherence); } catch {} }
-            lastManifestTime = performance.now() - manifestStart;
-            const g = measureRms(); const vC = measureRateOfChange(); const decay = measureDecay(); const quantum = measureQuantum();
             registerOscillator('navigator.vibrate.channel.rhythm', Number.EPSILON);
             surfaces.push({
                 manifest: (topology, coherence) => {
@@ -571,8 +540,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 }
             });
         }
-        if (localFlowConsented) {
-            if (navigator.serial) {
                 registerOscillator('navigator.serial.channel.tx', Number.EPSILON);
                 surfaces.push({
                     manifest: (topology) => {
