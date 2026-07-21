@@ -264,7 +264,9 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 if (channelApertures.has(candidates[i].url)) dstList.push(i);
                 else srcList.push(i);
             }
-            const srcW = srcList.length, dstR = dstList.length, hasTE = srcW > 1 && dstR > 1;
+            const srcW = Math.min(srcList.length, 8);
+            const dstR = Math.min(dstList.length, 8);
+            const hasTE = srcW > 1 && dstR > 1;
             let inBuf, paramBuf, kOutBuf, tOutBuf, tdaOutBuf, kurtosisOutBuf, readBuf;
             let srcIdxBuf, dstIdxBuf, teOutBuf, teParamBuf, teBg = null;
             const evalStartTime = performance.now();
@@ -295,8 +297,8 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 const tdaBg = gpu.createBindGroup({ layout: bl, entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: tdaOutBuf } }, { binding: 2, resource: { buffer: paramBuf } }] });
                 const kurtosisBg = gpu.createBindGroup({ layout: bl, entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: kurtosisOutBuf } }, { binding: 2, resource: { buffer: paramBuf } }] });
                 if (hasTE) {
-                    srcIdxBuf = gpu.createBuffer({ size: srcW * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(srcIdxBuf, 0, new Uint32Array(srcList));
-                    dstIdxBuf = gpu.createBuffer({ size: dstR * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(dstIdxBuf, 0, new Uint32Array(dstList));
+                    srcIdxBuf = gpu.createBuffer({ size: srcW * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(srcIdxBuf, 0, new Uint32Array(srcList.slice(0, srcW)));
+                    dstIdxBuf = gpu.createBuffer({ size: dstR * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(dstIdxBuf, 0, new Uint32Array(dstList.slice(0, dstR)));
                     teOutBuf = gpu.createBuffer({ size: srcW * dstR * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
                     teParamBuf = gpu.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST }); gpu.queue.writeBuffer(teParamBuf, 0, new Uint32Array([srcW, dstR, topologyRingSize, 0]));
                     teBg = gpu.createBindGroup({ layout: tePipeline.getBindGroupLayout(0), entries: [{ binding: 0, resource: { buffer: inBuf } }, { binding: 1, resource: { buffer: srcIdxBuf } }, { binding: 2, resource: { buffer: dstIdxBuf } }, { binding: 3, resource: { buffer: teOutBuf } }, { binding: 4, resource: { buffer: teParamBuf } }] });
@@ -344,8 +346,8 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 if (srcIdxBuf) srcIdxBuf.destroy(); if (dstIdxBuf) dstIdxBuf.destroy(); if (teOutBuf) teOutBuf.destroy(); if (teParamBuf) teParamBuf.destroy();
                 const evalDuration = performance.now() - evalStartTime;
                 if (stableTick > 0) {
-                    const maxRingByGpu = gpuMaxBufferSize > 0 ? Math.floor(gpuMaxBufferSize / (n * 4)) : 2048;
-                    const hardCap = Math.max(32, Math.min(maxRingByGpu, 2048));
+                    const maxRingByGpu = gpuMaxBufferSize > 0 ? Math.floor(gpuMaxBufferSize / (n * 4)) : 256;
+                    const hardCap = Math.max(32, Math.min(maxRingByGpu, 256));
                     const tau = Φ * Φ;
                     const alpha = 1 - Math.exp(-1 / tau);
                     let target;
@@ -372,8 +374,8 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             }
         }
         function hasPos(o) { return o.ix !== 0 || o.iy !== 0 || o.iz !== 0; }
-        function measureRms() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>0&&!isInternalMetric(o.url)&&hasPos(o)){ s+=o.median*o.median; c+=1; } } return c>0?Math.sqrt(s/c):Number.EPSILON; }
-        function measureRateOfChange() { let s=0,c=0; const k=8; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>1&&!isInternalMetric(o.url)&&hasPos(o)){ let acc=0; const lim=Math.min(k,o.filled); for(let j=0;j<lim;j++){ const a=(o.idx-1-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; const b=(o.idx-2-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; acc+=Math.abs(flatRings[o.ringOffset+a]-flatRings[o.ringOffset+b]); } s+=(acc/lim); c+=1; } } return c>0?(s/c):0.0; }
+        function measureRms() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>0&&!isInternalMetric(o.url)&&hasPos(o)){ let mn=Number.POSITIVE_INFINITY,mx=Number.NEGATIVE_INFINITY; for(let j=0;j<o.filled;j++){ const v=flatRings[o.ringOffset+j]; if(v<mn)mn=v; if(v>mx)mx=v; } const r=mx-mn; if(r>0){ s+=Math.pow((o.median-mn)/r,2); c++; } } } return c>0?Math.sqrt(s/c):Number.EPSILON; }
+        function measureRateOfChange() { let s=0,c=0; const k=8; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>1&&!isInternalMetric(o.url)&&hasPos(o)){ let mn=Number.POSITIVE_INFINITY,mx=Number.NEGATIVE_INFINITY; for(let j=0;j<o.filled;j++){ const v=flatRings[o.ringOffset+j]; if(v<mn)mn=v; if(v>mx)mx=v; } const r=mx-mn; if(r<=0)continue; let acc=0; const lim=Math.min(k,o.filled); for(let j=0;j<lim;j++){ const a=(o.idx-1-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; const b=(o.idx-2-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; acc+=Math.abs(flatRings[o.ringOffset+a]-flatRings[o.ringOffset+b])/r; } s+=(acc/lim); c+=1; } } return c>0?(s/c):0.0; }
         function measureDecay() { let t=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.complexity>0&&!isInternalMetric(o.url)&&hasPos(o)){ t+=o.complexity; c+=1; } } return c>0?1.0/(1.0+(t/c)):1.0; }
         function measureQuantum() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.takensSpread>0&&!isInternalMetric(o.url)&&hasPos(o)){ s+=o.takensSpread; c+=1; } } return c===0?1.0:Math.exp(-s/c); }
         function measureCoherence() { let teSum=0,teCount=0,cplxSum=0,cplxCount=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.url.startsWith('transfer.')){teSum+=Math.abs(o.median);teCount+=1;} if(o.complexity>0&&!isInternalMetric(o.url)){cplxSum+=o.complexity;cplxCount+=1;} } const te=teCount>0?teSum/teCount:0; const cplx=cplxCount>0?cplxSum/cplxCount:0; return cplx>Number.EPSILON?Math.min(1.0, te/(cplx+Number.EPSILON)):0; }
