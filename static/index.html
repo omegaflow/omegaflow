@@ -8,17 +8,17 @@
 <style>
 * { margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; color: #c4b9a8; font-family: system-ui, sans-serif; }
-#consent-gate { position: fixed; inset: 0; background: rgba(10,9,8,0.96); display: flex; align-items: center; justify-content: center; z-index: 99999; backdrop-filter: blur(20px); animation: fadeIn 2.4s ease; }
+#consent-gate { position: fixed; inset: 0; background: rgba(10,9,8,0.96); display: flex; align-items: center; justify-content: center; z-index: 99999; backdrop-filter: blur(20px); animation: fadeIn 4.236s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-#consent-gate .box { max-width: 420px; padding: 44px 40px; }
-#consent-gate .question { font-size: 15px; line-height: 1.75; color: #c4b9a8; font-weight: 400; letter-spacing: 0.01em; }
-#consent-gate .actions { display: flex; gap: 12px; margin-top: 36px; }
-#consent-gate button { flex: 1; padding: 13px 24px; font-size: 14px; border-radius: 3px; cursor: pointer; transition: all 0.3s ease; font-family: system-ui, sans-serif; }
+#consent-gate .box { max-width: 424px; padding: 42px 42px; }
+#consent-gate .question { font-size: 16px; line-height: 1.618; color: #c4b9a8; font-weight: 400; letter-spacing: 0.01em; font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace; }
+#consent-gate .actions { display: flex; gap: 16px; margin-top: 42px; }
+#consent-gate button { flex: 1; padding: 16px 25px; font-size: 16px; border-radius: 3px; cursor: pointer; transition: all 0.3s ease; font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace; }
 #consent-gate #consent-no { background: transparent; color: #6b6358; border: 1px solid rgba(107, 99, 88, 0.25); }
 #consent-gate #consent-no:hover { background: rgba(107, 99, 88, 0.08); color: #c4b9a8; }
-#consent-gate #consent-yes { background: rgba(138, 154, 122, 0.12); color: #8a9a7a; border: 1px solid rgba(138, 154, 122, 0.3); }
-#consent-gate #consent-yes:hover { background: rgba(138, 154, 122, 0.2); }
+#consent-gate #consent-yes { background: rgba(168, 152, 120, 0.12); color: #a89878; border: 1px solid rgba(168, 152, 120, 0.3); }
+#consent-gate #consent-yes:hover { background: rgba(168, 152, 120, 0.2); }
 </style>
 </head>
 <body>
@@ -91,8 +91,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             return new Promise((resolve) => {
                 const gate = document.getElementById('consent-gate');
                 function finish(localFlow) {
-                    gate.style.animation = 'fadeOut 1.6s ease forwards';
-                    setTimeout(() => { gate.remove(); resolve({ localFlow }); }, 1600);
+                    gate.style.animation = 'fadeOut 2.618s ease forwards';
+                    setTimeout(() => { gate.remove(); resolve({ localFlow }); }, 2618);
                 }
                 document.getElementById('consent-yes').addEventListener('click', () => finish(true));
                 document.getElementById('consent-no').addEventListener('click', () => finish(false));
