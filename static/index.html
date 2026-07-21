@@ -772,7 +772,8 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             if (!debugEl) {
                 debugEl = document.createElement('textarea');
                 debugEl.readOnly = true;
-                debugEl.style.cssText = 'position:fixed;bottom:12px;left:12px;font:11px "SF Mono",Menlo,Consolas,monospace;color:#a89878;background:rgba(10,9,8,0.85);padding:14px 16px;margin:0;border:none;border-radius:4px;z-index:9999;line-height:1.65;width:440px;height:400px;resize:none;backdrop-filter:blur(10px);box-shadow:0 4px 24px rgba(0,0,0,0.4);';
+                debugEl.setAttribute('wrap', 'off');
+                debugEl.style.cssText = 'position:fixed;bottom:12px;left:12px;font:11px "SF Mono",Menlo,Consolas,monospace;color:#a89878;background:rgba(10,9,8,0.85);padding:14px 16px;margin:0;border:none;border-radius:4px;z-index:9999;line-height:1.65;width:440px;height:400px;resize:none;backdrop-filter:blur(10px);box-shadow:0 4px 24px rgba(0,0,0,0.4);overflow:hidden;white-space:pre;';
                 document.body.appendChild(debugEl);
             }
             if (ts - lastDebug > stableTick * 6 || lastDebug === 0) {
