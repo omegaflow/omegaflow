@@ -257,7 +257,14 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             const gpu = window.ω.gpu;
             const n = candidates.length;
             const flat = new Float32Array(n * topologyRingSize);
-            for (let i = 0; i < n; i++) flat.set(unrollRing(candidates[i].ringOffset, candidates[i].idx, topologyRingSize), i * topologyRingSize);
+            for (let i = 0; i < n; i++) {
+                const ring = unrollRing(candidates[i].ringOffset, candidates[i].idx, topologyRingSize);
+                let mn = Infinity, mx = -Infinity;
+                for (let v = 0; v < ring.length; v++) { if (ring[v] < mn) mn = ring[v]; if (ring[v] > mx) mx = ring[v]; }
+                const range = mx - mn;
+                if (range > 0) { for (let v = 0; v < ring.length; v++) ring[v] = (ring[v] - mn) / range; }
+                flat.set(ring, i * topologyRingSize);
+            }
             const layout = { entries: [ { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } }, { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }, { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } } ] };
             const srcList = [], dstList = [];
             for (let i = 0; i < candidates.length; i++) {
