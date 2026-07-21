@@ -474,7 +474,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                                     c2d.drawImage(bmp, 0, 0);
                                     const id = c2d.getImageData(0, 0, bmp.width, bmp.height);
                                     const w = bmp.width, h = bmp.height;
-                                    const firstPixel = tp + '.pixel_0_0';
+                                    const firstPixel = tp + '.' + w + 'x' + h + '.pixel_0_0';
                                     if (!indexMap.has(firstPixel)) {
                                         for (let py = 0; py < h; py += 4) { for (let px = 0; px < w; px += 4) { const idx = (py * w + px) * 4; recordSample(tp + '.pixel_' + (px/4) + '_' + (py/4), (id.data[idx] + id.data[idx+1] + id.data[idx+2]) / 765); } }
                                     } else {
