@@ -20,10 +20,7 @@ field_in 11 technosphere_aircraft_vertical_rate
 field_in 13 technosphere_aircraft_geo_altitude
 
 source anu_quantum_entropy
-res 0
 ttl 60
-lat -35.28
-lon 149.12
 url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
 path data.0 quantum_entropy_anu
 
@@ -35,18 +32,12 @@ url http://www.nmdb.eu/nmdb/qtipart.php?station=JUNG&start={yesterday}&end={toda
 path data.JUNG.1h.0.1 cosmic_neutron_flux_jung
 
 source drand_quantum_entropy
-res 0
 ttl 60
-lat 46.5
-lon 6.6
 url https://api.drand.sh/public/latest
 field round quantum_entropy_generation_round
 
 source dst_index
-res 0
 ttl 60
-lat 35.0
-lon 135.8
 url https://services.swpc.noaa.gov/products/kyoto-dst.json
 last dst magnetosphere_dst_index_nt
 
@@ -60,8 +51,6 @@ count lines seismic_count_emsc
 source etf_africa_broad
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_africa_price
 field chart.result.0.meta.chartPreviousClose economic_region_africa_prev_close
@@ -69,8 +58,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_africa_prev_close
 source etf_brazil
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_brazil_price
 field chart.result.0.meta.chartPreviousClose economic_region_brazil_prev_close
@@ -78,8 +65,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_brazil_prev_close
 source etf_china
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_china_price
 field chart.result.0.meta.chartPreviousClose economic_region_china_prev_close
@@ -87,8 +72,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_china_prev_close
 source etf_dollar_index
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_dollar_index_price
 field chart.result.0.meta.chartPreviousClose economic_dollar_index_prev_close
@@ -96,8 +79,6 @@ field chart.result.0.meta.chartPreviousClose economic_dollar_index_prev_close
 source etf_dry_bulk_shipping
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_leading_global_trade_proxy_price
 field chart.result.0.meta.chartPreviousClose economic_leading_global_trade_proxy_prev_close
@@ -105,8 +86,6 @@ field chart.result.0.meta.chartPreviousClose economic_leading_global_trade_proxy
 source etf_emerging_markets
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_emerging_markets_price
 field chart.result.0.meta.chartPreviousClose economic_emerging_markets_prev_close
@@ -114,8 +93,6 @@ field chart.result.0.meta.chartPreviousClose economic_emerging_markets_prev_clos
 source etf_europe
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_europe_price
 field chart.result.0.meta.chartPreviousClose economic_region_europe_prev_close
@@ -123,8 +100,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_europe_prev_close
 source etf_frontier_markets
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_frontier_markets_price
 field chart.result.0.meta.chartPreviousClose economic_frontier_markets_prev_close
@@ -132,8 +107,6 @@ field chart.result.0.meta.chartPreviousClose economic_frontier_markets_prev_clos
 source etf_germany
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_germany_price
 field chart.result.0.meta.chartPreviousClose economic_region_germany_prev_close
@@ -141,8 +114,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_germany_prev_close
 source etf_gold
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_commodity_gold_price
 field chart.result.0.meta.chartPreviousClose economic_commodity_gold_prev_close
@@ -150,8 +121,6 @@ field chart.result.0.meta.chartPreviousClose economic_commodity_gold_prev_close
 source etf_india
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_india_price
 field chart.result.0.meta.chartPreviousClose economic_region_india_prev_close
@@ -159,8 +128,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_india_prev_close
 source etf_japan
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_japan_price
 field chart.result.0.meta.chartPreviousClose economic_region_japan_prev_close
@@ -168,8 +135,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_japan_prev_close
 source etf_latin_america_broad
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_latin_america_price
 field chart.result.0.meta.chartPreviousClose economic_region_latin_america_prev_close
@@ -177,8 +142,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_latin_america_prev_
 source etf_mexico
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_mexico_price
 field chart.result.0.meta.chartPreviousClose economic_region_mexico_prev_close
@@ -186,8 +149,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_mexico_prev_close
 source etf_middle_east
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_gulf_price
 field chart.result.0.meta.chartPreviousClose economic_region_gulf_prev_close
@@ -195,8 +156,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_gulf_prev_close
 source etf_oil
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_commodity_oil_price
 field chart.result.0.meta.chartPreviousClose economic_commodity_oil_prev_close
@@ -204,8 +163,6 @@ field chart.result.0.meta.chartPreviousClose economic_commodity_oil_prev_close
 source etf_sector_communication
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_communication_price
 field chart.result.0.meta.chartPreviousClose economic_sector_communication_prev_close
@@ -213,8 +170,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_communication_prev_
 source etf_sector_consumer_discretionary
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_consumer_discretionary_price
 field chart.result.0.meta.chartPreviousClose economic_sector_consumer_discretionary_prev_close
@@ -222,8 +177,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_consumer_discretion
 source etf_sector_consumer_staples
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_consumer_staples_price
 field chart.result.0.meta.chartPreviousClose economic_sector_consumer_staples_prev_close
@@ -231,8 +184,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_consumer_staples_pr
 source etf_sector_energy
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_energy_price
 field chart.result.0.meta.chartPreviousClose economic_sector_energy_prev_close
@@ -240,8 +191,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_energy_prev_close
 source etf_sector_financials
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_financials_price
 field chart.result.0.meta.chartPreviousClose economic_sector_financials_prev_close
@@ -249,8 +198,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_financials_prev_clo
 source etf_sector_healthcare
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_healthcare_price
 field chart.result.0.meta.chartPreviousClose economic_sector_healthcare_prev_close
@@ -258,8 +205,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_healthcare_prev_clo
 source etf_sector_industrials
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_industrials_price
 field chart.result.0.meta.chartPreviousClose economic_sector_industrials_prev_close
@@ -267,8 +212,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_industrials_prev_cl
 source etf_sector_materials
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_materials_price
 field chart.result.0.meta.chartPreviousClose economic_sector_materials_prev_close
@@ -276,8 +219,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_materials_prev_clos
 source etf_sector_real_estate
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_real_estate_price
 field chart.result.0.meta.chartPreviousClose economic_sector_real_estate_prev_close
@@ -285,8 +226,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_real_estate_prev_cl
 source etf_sector_technology
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_technology_price
 field chart.result.0.meta.chartPreviousClose economic_sector_technology_prev_close
@@ -294,8 +233,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_technology_prev_clo
 source etf_sector_utilities
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_sector_utilities_price
 field chart.result.0.meta.chartPreviousClose economic_sector_utilities_prev_close
@@ -303,8 +240,6 @@ field chart.result.0.meta.chartPreviousClose economic_sector_utilities_prev_clos
 source etf_semiconductors
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_leading_semiconductors_price
 field chart.result.0.meta.chartPreviousClose economic_leading_semiconductors_prev_close
@@ -312,8 +247,6 @@ field chart.result.0.meta.chartPreviousClose economic_leading_semiconductors_pre
 source etf_south_africa
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_south_africa_price
 field chart.result.0.meta.chartPreviousClose economic_region_south_africa_prev_close
@@ -321,8 +254,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_south_africa_prev_c
 source etf_southeast_asia
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_southeast_asia_price
 field chart.result.0.meta.chartPreviousClose economic_region_southeast_asia_prev_close
@@ -330,16 +261,12 @@ field chart.result.0.meta.chartPreviousClose economic_region_southeast_asia_prev
 source etf_transportation
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_leading_transportation_price
 field chart.result.0.meta.chartPreviousClose economic_leading_transportation_prev_close
 
 source etf_treasury_yield_10y
 ttl 60
-lat 40.712
-lon -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_interest_rate_10y_treasury
@@ -348,8 +275,6 @@ field chart.result.0.meta.chartPreviousClose economic_interest_rate_10y_treasury
 source etf_usa
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_region_usa_price
 field chart.result.0.meta.chartPreviousClose economic_region_usa_prev_close
@@ -357,8 +282,6 @@ field chart.result.0.meta.chartPreviousClose economic_region_usa_prev_close
 source etf_volatility
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_fear_gauge_vix
 field chart.result.0.meta.chartPreviousClose economic_fear_gauge_vix_prev
@@ -366,8 +289,6 @@ field chart.result.0.meta.chartPreviousClose economic_fear_gauge_vix_prev
 source etf_world_all_country
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_world_acwi_price
 field chart.result.0.meta.chartPreviousClose economic_world_acwi_prev_close
@@ -375,17 +296,12 @@ field chart.result.0.meta.chartPreviousClose economic_world_acwi_prev_close
 source etf_world_developed
 ttl 60
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-lat 40.71
-lon -74.00
 url https://query1.finance.yahoo.com/v8/finance/chart/URTH?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_world_developed_price
 field chart.result.0.meta.chartPreviousClose economic_world_developed_prev_close
 
 source github_public_events
-res 0
 ttl 60
-lat 37.8
-lon -122.4
 header User-Agent "omegaflow"
 url https://api.github.com/events?per_page=100
 count . technosphere_github_events_per_minute
@@ -417,46 +333,31 @@ url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?Stat
 count ArrayOfObjStationData.ObjStationData technosphere_train_departures_dublin
 
 source kp_index
-res 0
 ttl 60
-lat 40.0
-lon -105.2
 url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
 last kp_index magnetosphere_kp_index
 last a_index magnetosphere_ap_index
 
 source magnetism
-res 0
 ttl 60
-lat 0.0
-lon -75.0
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 path 0.bz_gsm magnetosphere_imf_bz_nt
 path 0.bt magnetosphere_imf_bt_nt
 last_row by_gsm magnetosphere_imf_by_nt
 
 source nist_randomness_beacon
-res 0
 ttl 60
-lat 39.1
-lon -77.2
 url https://beacon.nist.gov/beacon/2.0/pulse/last
 path pulse.outputValue quantum_entropy_nist_beacon
 
 source noaa_goes_electrons
-res 0
 ttl 60
-lat 0.0
-lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 last_obj energy ">=2 MeV" flux radiation_electron_flux_2mev
 last_obj energy ">=0.8 MeV" flux radiation_electron_flux_800kev
 
 source noaa_goes_magnetosphere
-res 0
 ttl 60
-lat 0.0
-lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 last_obj satellite "GOES-16" Hp magnetosphere_hp_nt
 last_obj satellite "GOES-16" He magnetosphere_he_nt
@@ -464,87 +365,57 @@ last_obj satellite "GOES-16" Hn magnetosphere_hn_nt
 last_obj satellite "GOES-16" Ht magnetosphere_ht_nt
 
 source noaa_integral_protons
-res 0
 ttl 60
-lat 40.015
-lon -105.271
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 last flux magnetosphere_integral_proton_flux
 
 source noaa_proton_flux
-res 0
 ttl 60
-lat 0.0
-lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 last_obj energy "40300-73400 keV" flux radiation_proton_flux_40mev
 last_obj energy "83700-98500 keV" flux radiation_proton_flux_80mev
 
 source noaa_solar_indices
-res 0
 ttl 60
-lat 40.015
-lon -105.271
 url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
 last ssn solar_sunspot_number_observed
 
 source noaa_solar_radio_measured
-res 0
 ttl 60
-lat 40.015
-lon -105.271
 url https://services.swpc.noaa.gov/json/solar-radio-flux.json
 last flux solar_radio_flux_measured
 
 source noaa_sunspots
-res 0
 ttl 60
-lat 40.015
-lon -105.271
 url https://services.swpc.noaa.gov/json/solar_regions.json
 field length solar_active_region_count
 
 source plasma
-res 0
 ttl 60
-lat 0.0
-lon -75.0
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
 path 0.speed solar_wind_speed_km_s
 path 0.density solar_wind_density_cm3
 last_row temperature solar_wind_temp_k
 
 source protons
-res 0
 ttl 60
-lat 0.0
-lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 last_obj energy ">=100 MeV" flux radiation_proton_flux_100mev
 last_obj energy ">=10 MeV" flux radiation_proton_flux_10mev
 last_obj energy ">=1 MeV" flux radiation_proton_flux_1mev
 
 source radio_flux
-res 0
 ttl 60
-lat 39.9916
-lon -105.2612
 url https://services.swpc.noaa.gov/json/solar-radio-flux.json
 last flux solar_radio_flux_observed_sfu
 
 source ripe_bgp_default_route
-res 0
 ttl 60
-lat 52.379
-lon 4.899
 url https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0
 field data.bgp_state technosphere_bgp_default_route_state
 
 source ripe_bgp_updates
-res 0
 ttl 60
-lat 52.3
-lon 4.9
 url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today}
 field nr_updates technosphere_bgp_updates_per_hour
 
@@ -557,19 +428,13 @@ url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
 field metadata.count seismic_count_hour
 
 source swpc_geomag_forecast
-res 0
 ttl 60
-lat 40.015
-lon -105.271
 url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
 format csv
 last_row kp magnetosphere_forecast_kp_max
 
 source swpc_solar_events
-res 0
 ttl 60
-lat 40.015
-lon -105.271
 url https://services.swpc.noaa.gov/json/edited_events.json
 last event magnetosphere_swpc_latest_event
 
@@ -633,19 +498,13 @@ url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
 count data.monitors.0.lines technosphere_transport_lines_vienna
 
 source xray
-res 0
 ttl 60
-lat 2.6272321065334836
-lon 0.0020913067273796
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
 last flux solar_xray_flux_wm2
 last energy solar_xray_wavelength_a
 
 source xray_flares_7day
-res 0
 ttl 60
-lat 2.6272321065334836
-lon 0.0020913067273796
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
 count flares solar_flare_count_7d
 last class_type solar_flare_class_7d
@@ -653,8 +512,6 @@ last begin_time solar_flare_time_7d
 
 source yahoo_finance_markets
 ttl 60
-lat 40.71
-lon -74.0
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 url https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_stock_price
@@ -662,8 +519,6 @@ field chart.result.0.meta.chartPreviousClose economic_stock_prev_close
 
 source yahoo_finance_vix
 ttl 60
-lat 40.71
-lon -74.0
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
 path chart.result.0.meta.regularMarketPrice economic_fear_gauge_vix
@@ -678,9 +533,6 @@ last_nonnull 1.data technosphere_renewable_share_pct
 
 source icecube_neutrino_alerts
 ttl 300
-res 0
-lat -90.0
-lon 0.0
 header User-Agent "omegaflow"
 url https://gcn.nasa.gov/circulars?query=icecube
 regex ("totalItems":...,) cosmic_icecube_alert_circular_count
@@ -1669,18 +1521,12 @@ format csv
 last_row AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
 
 source astronauts_in_space
-res 0
 ttl 600
-lat 38.9930
-lon -76.8483
 url http://api.open-notify.org/astros.json
 count people anthroposphere_humans_in_space
 
 source atmosphere_jetstream_250hpa
 ttl 600
-lat 0.000000000
-lon 0.000000000
-res 9
 url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa
 last hourly.windspeed_250hPa atmosphere_jetstream_250hpa_ms
 
@@ -1698,27 +1544,18 @@ url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat
 field count biosphere_bird_count
 
 source goes_euv
-res 0
 ttl 600
-lat 0.0
-lon -75.0
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
 last_obj wavelength "0.05-0.4nm" flux solar_euv_flux_short_wm2
 last_obj wavelength "0.1-0.8nm" flux solar_euv_flux_long_wm2
 
 source hydrosphere_global_evapotranspiration_mm
 ttl 600
-lat 0.000000000
-lon 0.000000000
-res 9
 url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto
 last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
 
 source inaturalist_observations_count
-res 0
 ttl 600
-lat 37.767
-lon -122.466
 url https://api.inaturalist.org/v1/observations?per_page=1
 path total_results biosphere_inaturalist_observations_total
 
@@ -1739,28 +1576,19 @@ url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minute
 field minutely_15.lightning_potential atmosphere_lightning_potential
 
 source ligo_gracedb_events
-res 0
 ttl 600
-lat 34.10000
-lon -118.10000
 url https://gracedb.ligo.org/api/superevents/?count=10&category=production
 count superevents cosmic_gravitational_wave_event_count
 first superevents.0.superevent_id cosmic_gravitational_wave_latest_id
 
 source ligo_multimessenger
 ttl 600
-res 0
-lat 46.455
-lon -119.407
 header User-Agent "omegaflow"
 url https://gcn.nasa.gov/circulars?query=IceCube%20LVK
 regex ("totalItems":...,) cosmic_neutrino_gravwave_coincidence_count
 
 source open_notify_astros
-res 0
 ttl 600
-lat 38.9930
-lon -76.8483
 url http://api.open-notify.org/astros.json
 field number orbital_humans_in_space_count
 
@@ -1915,81 +1743,52 @@ field 0.sensordatavalues.0.value technosphere_pm25_ugm3
 field 0.sensordatavalues.1.value technosphere_pm10_ugm3
 
 source celestrak_debris
-res 0
 ttl 1800
-lat 40.034
-lon -75.630
 url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=IRIDIUM+33
 field totalItems orbital_debris_iridium33
 
 source celestrak_gps
-res 0
 ttl 1800
-lat 40.034
-lon -75.630
 url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=NAVSTAR
 field totalItems orbital_gps_count
 
 source celestrak_satellites
-res 0
 ttl 1800
-lat 40.034
-lon -75.630
 url https://tle.ivanstanojevic.me/api/tle/?page-size=1
 field totalItems orbital_active_satellites
 
 source arxiv_new_papers
-res 0
 ttl 3600
-lat 42.443
-lon -76.501
 url https://export.arxiv.org/api/query?search_query=all:physics&max_results=1
 field feed.opensearch:totalResults technosphere_arxiv_paper_count
 
 source atlas_3i_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector atlas_3i_x atlas_3i_y atlas_3i_z
 
 source aurora_forecast
-res 0
 ttl 3600
-lat 40.015
-lon -105.271
 url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
 field forecast_time atmosphere_aurora_forecast_time
 
 source aurora_nowcast_north
-res 0
 ttl 3600
-lat 40.015
-lon -105.271
 url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
 field north_intensity atmosphere_aurora_intensity_north
 
 source biosphere_uv_index_global
 ttl 3600
-lat 37.087
-lon -76.387
 url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&format=JSON
 path properties.parameter.ALLSKY_SFC_UV_INDEX.0 biosphere_uv_index_global
 
 source callisto_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27504%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector callisto_x callisto_y callisto_z
 
 source cdc_covid_global
-res 0
 ttl 3600
-lat 33.797
-lon -84.323
 url https://disease.sh/v3/covid-19/all
 field cases anthroposphere_covid_cases_global
 field deaths anthroposphere_covid_deaths_global
@@ -1998,32 +1797,22 @@ field critical anthroposphere_covid_critical_global
 
 source celestrak_starlink
 ttl 3600
-lat 40.034
-lon -75.630
 header User-Agent "omegaflow"
 url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=STARLINK
 field totalItems orbital_starlink_count
 
 source cneos_asteroids_inside_lunar_orbit
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
 field count orbital_asteroids_closer_than_moon
 
 source cneos_close_approaches
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd-api.jpl.nasa.gov/cad.api
 field count cneos_close_approach_count
 
 source copernicus_sentinel2_count
 ttl 3600
-lat 41.827
-lon 12.674
 url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$top=1&$count=true
 path @odata.count technosphere_copernicus_s2_products_total
 
@@ -2053,17 +1842,12 @@ url https://ies-ows.jrc.ec.europa.eu/effis?service=WFS&request=GetFeature&typeNa
 field features biosphere_effis_fire_feature_count
 
 source enceladus_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector enceladus_x enceladus_y enceladus_z
 
 source encke_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector encke_x encke_y encke_z
 
@@ -2084,35 +1868,24 @@ format csv
 last_row spl_full hydrosphere_sound_pressure_db
 
 source eris_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector eris_x eris_y eris_z
 
 source europa_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector europa_x europa_y europa_z
 
 source exchangerate_api
-res 0
 ttl 3600
-lat 40.71
-lon -74.00
 url https://api.exchangerate-api.com/v4/latest/USD
 field rates.EUR economic_usd_eur_rate
 field rates.GBP economic_usd_gbp_rate
 field rates.JPY economic_usd_jpy_rate
 
 source exchangerate_global
-res 0
 ttl 3600
-lat 52.5200
-lon 13.4050
 url https://open.er-api.com/v6/latest/USD
 field rates.EUR economic_usd_eur_rate
 field rates.CNY economic_usd_cny_rate
@@ -2140,8 +1913,6 @@ field species_count biosphere_fungi_species_count
 
 source ganymede_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector ganymede_x ganymede_y ganymede_z
 
@@ -2152,25 +1923,17 @@ url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongi
 field count biosphere_species_count
 
 source gbif_species_observations_count
-res 0
 ttl 3600
-lat 55.685
-lon 12.571
 url https://api.gbif.org/v1/occurrence/count?isGeoreferenced=true
 path . biosphere_gbif_species_observations_total
 
 source gdacs_disasters
-res 0
 ttl 3600
-lat 45.803
-lon 8.624
 url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH
 field features anthroposphere_gdacs_active_disaster_count
 
 source gdelt_news_volume
 ttl 3600
-lat 38.900
-lon -77.020
 url https://api.gdeltproject.org/api/v2/doc/doc?query=climate&mode=timelinevol&format=json
 last value anthroposphere_news_climate_volume_intensity
 
@@ -2184,8 +1947,6 @@ field meta.total_count political_legislation_votes
 
 source haumea_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector haumea_x haumea_y haumea_z
 
@@ -2209,101 +1970,70 @@ field total_results biosphere_verified_observations
 
 source interstellar_object_tracking
 ttl 3600
-res 0
-lat 20.709
-lon -156.257
 url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=3I&discovery=true
 field object.fullname cosmic_interstellar_object_latest_name
 source io_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27501%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector io_x io_y io_z
 
 source ionosphere_tec_global
-res 0
 ttl 3600
-lat 40.015
-lon -105.271
 url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
 count features ionosphere_global_tec_points
 
 source juno_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector juno_x juno_y juno_z
 
 source jupiter_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27%40sun%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_jupiter_vectors_raw
 
 source jwst_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector jwst_x jwst_y jwst_z
 
 source launch_library
 ttl 3600
-lat 33.921
-lon -118.326
 url https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1
 field count orbital_upcoming_launches
 
 source makemake_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector makemake_x makemake_y makemake_z
 
 source mars_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_mars_vectors_raw
 
 source mercury_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27@sun%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_mercury_vectors_raw
 
 source moon_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_moon_vectors_raw
 
 source nasa_donki_cme
 ttl 3600
-lat 38.992
-lon -76.848
 url https://api.nasa.gov/DONKI/CME?startDate={yesterday}&api_key=DEMO_KEY
 count cme solar_cme_count_24h
 deep activityID solar_cme_latest_id
 
 source nasa_donki_flares
 ttl 3600
-lat 38.992
-lon -76.848
 url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&api_key=DEMO_KEY
 count flares solar_flare_count_24h
 last classType solar_flare_class_latest
@@ -2312,89 +2042,61 @@ deep classType solar_flare_class_latest
 
 source nasa_donki_gstorms
 ttl 3600
-lat 38.992
-lon -76.848
 url https://api.nasa.gov/DONKI/GST?startDate={yesterday}&api_key=DEMO_KEY
 count gst solar_gstorm_count_24h
 
 source nasa_donki_hss
 ttl 3600
-lat 38.992
-lon -76.848
 url https://api.nasa.gov/DONKI/HSS?startDate={yesterday}&api_key=DEMO_KEY
 count hss high_speed_stream_count_24h
 
 source nasa_donki_ips
 ttl 3600
-lat 38.992
-lon -76.848
 url https://api.nasa.gov/DONKI/IPS?startDate={yesterday}&api_key=DEMO_KEY
 count ips solar_shock_count_24h
 
 source nasa_donki_mpc
 ttl 3600
-lat 38.992
-lon -76.848
 url https://api.nasa.gov/DONKI/MPC?startDate={yesterday}&api_key=DEMO_KEY
 count mpc magnetopause_crossing_count_24h
 
 source nasa_donki_rbe
 ttl 3600
-lat 38.992
-lon -76.848
 url https://api.nasa.gov/DONKI/RBE?startDate={yesterday}&api_key=DEMO_KEY
 count rbe radiation_belt_enhancement_count_24h
 
 source nasa_donki_sep
 ttl 3600
-lat 38.992
-lon -76.848
 url https://api.nasa.gov/DONKI/SEP?startDate={yesterday}&api_key=DEMO_KEY
 count sep solar_sep_count_24h
 
 source nasa_donki_xflares
 ttl 3600
-lat 38.992
-lon -76.848
 url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&classType=X&api_key=DEMO_KEY
 count flares solar_xflare_count_24h
 
 source nasa_dsn_status
-res 0
 ttl 3600
-lat 35.4
-lon -116.9
 url https://eyes.nasa.gov/dsn-now/dsn.json
 count dsn technosphere_nasa_deep_space_network_signals
 
 source nasa_eonet
-res 0
 ttl 3600
-lat 38.992
-lon -76.848
 url https://eonet.gsfc.nasa.gov/api/v3/events
 field events biosphere_eonet_event_count
 
 source nasa_eonet_fires
-res 0
 ttl 3600
-lat 38.992
-lon -76.848
 url https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires
 field events biosphere_eonet_wildfire_count
 
 source nasa_fireballs
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd-api.jpl.nasa.gov/fireball.api
 field count technosphere_fireball_event_count
 
 source nasa_neows
 ttl 3600
-lat 34.201
-lon -118.171
 url https://api.nasa.gov/neo/rest/v1/feed?start_date={today}&end_date={today}&api_key=DEMO_KEY
 count near_earth_objects.{today} orbital_neo_count_today
 path near_earth_objects.{today}.0.estimated_diameter.kilometers.estimated_diameter_max orbital_neo_diameter_max_km
@@ -2402,16 +2104,12 @@ path near_earth_objects.{today}.0.close_approach_data.0.miss_distance.kilometers
 
 source neptune_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27@sun%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_neptune_vectors_raw
 
 source new_horizons_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector nh_x nh_y nh_z
 
@@ -2424,37 +2122,25 @@ url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fi
 count features geosphere_fires_active_us
 
 source noaa_co2_mauna_loa
-res 0
 ttl 3600
-lat 19.47
-lon -155.59
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
 format csv
 last_row (ppm) atmosphere_co2_weekly_ppm
 
 source noaa_methane
-res 0
 ttl 3600
-lat 40.037
-lon -105.245
 url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
 format csv
 last_row average atmosphere_methane_global_ppb
 
 source noaa_n2o
-res 0
 ttl 3600
-lat 40.037
-lon -105.245
 url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
 format csv
 last_row average atmosphere_n2o_global_ppb
 
 source noaa_sf6
-res 0
 ttl 3600
-lat 40.037
-lon -105.245
 url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
 format csv
 last_row average atmosphere_sf6_global_ppt
@@ -2499,10 +2185,7 @@ url https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["sh
 deep total technosphere_shops_5km
 
 source parker_solar_probe_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector parker_x parker_y parker_z
 
@@ -2513,147 +2196,98 @@ url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={l
 field 0.water.currentMeasurement.value hydrosphere_water_level_cm
 
 source pluto_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27999%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_pluto_vectors_raw
 
 source satnogs_radio_observations
-res 0
 ttl 3600
-lat 37.983000
-lon 23.727000
 url https://network.satnogs.org/api/observations/?format=json&limit=1
 count items technosphere_satnogs_observations
 
 source saturn_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27699%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_saturn_vectors_raw
 
 source solar_orbiter_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector solo_x solo_y solo_z
 
 source sun_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27@sun%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_sun_vectors_raw
 
 source technosphere_tor_relays_running
-res 0
 ttl 3600
-lat 42.452
-lon -71.137
 url https://onionoo.torproject.org/summary?running=true
 field relays_published technosphere_tor_relay_count
 
 source titan_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27606%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector titan_x titan_y titan_z
 
 source triton_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector triton_x triton_y triton_z
 
 source uranus_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27799%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_uranus_vectors_raw
 
 source usgs_volcano_alerts
-res 0
 ttl 3600
-lat 38.949
-lon -77.365
 url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
 count features geosphere_volcano_total
 field alert_level geosphere_volcano_max_alert
 
 source venus_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27299%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 format text
 field result orbital_venus_vectors_raw
 
 source vesta_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector vesta_x vesta_y vesta_z
 
 source voyager1_vectors
-res 0
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector voyager1_x voyager1_y voyager1_z
 
 source voyager2_vectors
 ttl 3600
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector voyager2_x voyager2_y voyager2_z
 
 source wikipedia_pageviews_total
 ttl 3600
-lat 37.779
-lon -122.393
 url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
 path items.0.views social_wikipedia_pageviews_daily
 
 source apophis_vectors
-res 0
 ttl 86400
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector apophis_x apophis_y apophis_z
 
 source bci_clinical_trials_recruiting
 ttl 86400
-res 0
-lat 37.422
-lon -122.084
 url https://clinicaltrials.gov/api/v2/studies?query.term=brain-computer+interface&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
 field totalCount technosphere_bci_trials_recruiting
 
 source bennu_vectors
-res 0
 ttl 86400
-lat 34.201
-lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 vector bennu_x bennu_y bennu_z
 

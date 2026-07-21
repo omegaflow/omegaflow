@@ -50,9 +50,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         const { localFlow: localFlowConsented } = await awaitConsent();
         window.ω_consent = { localFlowConsented };
 
-        import { syncFrame, φ, transport, Φ, C, tdbNow, updateRtt, getRto } from '/constants.js';
-        const REMOTE_PREFIX = 'omega_flow.';
-        const UNIX_J2000_OFFSET = 946728000.0;
+        import { syncFrame, φ, transport, Φ, C, updateRtt, getRto } from '/constants.js';
         function reportState(category, detail) { try { fetch('/crash', { method: 'POST', body: `${category}: ${detail}` }); } catch {} }
 
         const oscillators = [];
@@ -69,7 +67,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let xPresence = 0, yPresence = 0, zPresence = 0;
         let prevTPresence = 0;
         let clarity = 1.0;
-        const internalMetrics = ['transfer.', 'kurtosis.', 'tda.', 'complexity.', 'server.', 'system.', REMOTE_PREFIX];
+        const internalMetrics = ['transfer.', 'kurtosis.', 'tda.', 'complexity.', 'server.', 'system.'];
         function isInternalMetric(url) { for (const prefix of internalMetrics) { if (url.startsWith(prefix)) return true; } return false; }
         function ma() { return 1.0 / Math.max(1, Math.round(CAPTURE_RING_SIZE / Φ)); }
         const surfaces = [];
@@ -106,11 +104,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 }).catch(() => {});
             }
         }
-        const pulseWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/pulse`);
-        pulseWs.binaryType = 'arraybuffer';
-        transport.socket = pulseWs;
-        pulseWs.addEventListener('close', () => location.reload());
-        pulseWs.addEventListener('message', (e) => {
+        const resonanceWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/resonance`);
+        resonanceWs.binaryType = 'arraybuffer';
+        transport.socket = resonanceWs;
+        resonanceWs.addEventListener('close', () => location.reload());
+        resonanceWs.addEventListener('message', (e) => {
             if (typeof e.data !== 'string') {
                 const buf = new Uint8Array(e.data);
                 if (buf.length < 13 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 1) return;
@@ -168,8 +166,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         }
         async function syncField(transmitList) {
             const queries = [{ t: tPresence, x: xPresence, y: yPresence, z: zPresence }];
-            const echoes = await syncFrame(transmitList, queries);
-            for (const echo of echoes) { recordSample(echo.name, echo.val, echo.t); }
+            const response = await syncFrame(transmitList, queries);
+            for (const osc of response) { recordSample(osc.name, osc.val, osc.t); }
         }
         const permutationEntropyShader = `@group(0) @binding(0) var<storage, read> data: array<f32>; @group(0) @binding(1) var<storage, read_write> complexity: array<f32>; @group(0) @binding(2) var<uniform> params: vec4<u32>; fn perm3(a: f32, b: f32, c: f32) -> u32 { if (a <= b && b <= c) { return 0u; } if (a <= c && c <= b) { return 1u; } if (b <= a && a <= c) { return 2u; } if (b <= c && c <= a) { return 3u; } if (c <= a && a <= b) { return 4u; } return 5u; } @compute @workgroup_size(64) fn main(@builtin(global_invocation_id) gid: vec3<u32>) { let s = gid.x; let n = u32(params.x); let rs = u32(params.y); if (s >= n) { return; } let base = s * rs; var counts: array<f32, 6>; for (var k = 0u; k < 6u; k = k + 1u) { counts[k] = 0.0; } let num_windows = rs - 2u; for (var i = 0u; i < num_windows; i = i + 1u) { let p = perm3(data[base + i], data[base + i + 1u], data[base + i + 2u]); counts[p] = counts[p] + 1.0; } let total = f32(num_windows); var pe: f32 = 0.0; for (var k = 0u; k < 6u; k = k + 1u) { if (counts[k] > 0.0) { let pk = counts[k] / total; pe = pe - pk * log2(pk); } } complexity[s] = pe / log2(6.0); }`;
         const takensShader = `const PHI = f32(1.618033988749895); @group(0) @binding(0) var<storage, read> data: array<f32>; @group(0) @binding(1) var<storage, read_write> out: array<f32>; @group(0) @binding(2) var<uniform> params: vec4<u32>; @compute @workgroup_size(64) fn main(@builtin(global_invocation_id) gid: vec3<u32>) { let s = gid.x; let n = u32(params.x); let rs = u32(params.y); if (s >= n) { return; } let base = s * rs; var sum: f32 = 0.0; for (var i = 0u; i < rs; i++) { sum += data[base + i]; } let mean = sum / f32(rs); var best_tau: u32 = 1u; var mi_prev: f32 = data[base]; var mi_prev2: f32 = data[base]; let max_lag = u32(f32(rs) / PHI); for (var lag = 1u; lag <= max_lag; lag++) { var mn: f32 = data[base]; var mx: f32 = data[base]; for (var i = 0u; i < rs - lag; i++) { mn = min(mn, data[base + i]); mx = max(mx, data[base + i]); } let range = mx - mn + 1e-16; var h00: f32 = 0.0; var h01: f32 = 0.0; var h10: f32 = 0.0; var h11: f32 = 0.0; for (var i = 0u; i < rs - lag; i++) { let b1 = select(0u, 1u, data[base + i] > mn + range * 0.5); let b2 = select(0u, 1u, data[base + i + lag] > mn + range * 0.5); if (b1 == 0u && b2 == 0u) { h00 += 1.0; } else if (b1 == 0u && b2 == 1u) { h01 += 1.0; } else if (b1 == 1u && b2 == 0u) { h10 += 1.0; } else { h11 += 1.0; } } let total = f32(rs - lag); let p0 = (h00 + h01) / total; let p1 = (h10 + h11) / total; let q0 = (h00 + h10) / total; let q1 = (h01 + h11) / total; var mi: f32 = 0.0; let eps = 1e-16; if (h00 > 0.0) { mi += (h00/total) * log2((h00/total) / (p0*q0 + eps) + eps); } if (h01 > 0.0) { mi += (h01/total) * log2((h01/total) / (p0*q1 + eps) + eps); } if (h10 > 0.0) { mi += (h10/total) * log2((h10/total) / (p1*q0 + eps) + eps); } if (h11 > 0.0) { mi += (h11/total) * log2((h11/total) / (p1*q1 + eps) + eps); } if (lag >= 3u && mi_prev2 > mi_prev && mi_prev <= mi) { best_tau = lag - 1u; break; } mi_prev2 = mi_prev; mi_prev = mi; } if (2u * best_tau >= rs) { best_tau = 1u; } let max_pts = rs - 2u * best_tau; let out_base = s * 4u; var cx: f32 = 0.0; var cy: f32 = 0.0; var cz: f32 = 0.0; for (var i = 0u; i < max_pts; i++) { cx += data[base + i]; cy += data[base + i + best_tau]; cz += data[base + i + 2u * best_tau]; } cx = cx / f32(max_pts); cy = cy / f32(max_pts); cz = cz / f32(max_pts); var spread: f32 = 0.0; for (var i = 0u; i < max_pts; i++) { let dx = data[base + i] - cx; let dy = data[base + i + best_tau] - cy; let dz = data[base + i + 2u * best_tau] - cz; spread += sqrt(dx*dx + dy*dy + dz*dz); } spread = spread / f32(max_pts); out[out_base] = cx; out[out_base + 1u] = cy; out[out_base + 2u] = cz; out[out_base + 3u] = spread; }`;
@@ -229,7 +227,17 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             topologyPending = true;
             const candidates = [];
             for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.filled >= topologyRingSize && !isInternalMetric(osc.url)) candidates.push(osc); }
-            if (candidates.length < 2) { topologyPending = false; return; }
+            if (candidates.length < 2) {
+                let maxFilled = 0;
+                for (let i = 0; i < oscillators.length; i++) { if (oscillators[i].filled > maxFilled) maxFilled = oscillators[i].filled; }
+                if (maxFilled > 0 && maxFilled < topologyRingSize) {
+                    topologyRingSize = Math.max(32, Math.floor(maxFilled));
+                    let neededCapture = 32;
+                    while (neededCapture < topologyRingSize) neededCapture <<= 1;
+                    if (neededCapture !== CAPTURE_RING_SIZE) { const oldSize = CAPTURE_RING_SIZE; CAPTURE_RING_SIZE = neededCapture; rebuildRings(oldSize); }
+                }
+                topologyPending = false; return;
+            }
             const gpu = window.ω.gpu;
             const n = candidates.length;
             const flat = new Float32Array(n * topologyRingSize);
@@ -781,8 +789,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 }
                 topOsc.sort((a, b) => b.w - a.w);
                 const topLines = topOsc.slice(0, 12).map(t => `  ${t.u}: ${t.v.toPrecision(4)} (weight ${t.w.toFixed(2)}, complexity ${t.c.toFixed(2)})`).join('\n');
-                let srvCount = 0;
-                for (let i = 0; i < oscillators.length; i++) { if (oscillators[i].url.startsWith(REMOTE_PREFIX)) srvCount++; }
 
                 debugEl.value =
                     "omegaflow field\n\n" +
@@ -811,7 +817,6 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     `  Topology nodes: ${topoCount}\n` +
                     `  Channels open: ${[...channelApertures.values()].filter(a => a.current > 0.001).length} of ${channelApertures.size}\n\n` +
                     "Connection\n" +
-                    `  API sources: ${srvCount}\n` +
                     `  WebSocket: ${transport.socket ? 'open' : 'closed'}\n` +
                     `  Round trip: ${transport.rtt.toFixed(0)}ms\n\n` +
                     "Active oscillators\n" +
