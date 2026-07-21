@@ -234,7 +234,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             if (!window.ω?.gpu || topologyPending) return;
             topologyPending = true;
             const candidates = [];
-            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.filled >= topologyRingSize && !isInternalMetric(osc.url)) candidates.push(osc); }
+            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.filled >= topologyRingSize && !isInternalMetric(osc.url) && (osc.ix !== 0 || osc.iy !== 0 || osc.iz !== 0)) candidates.push(osc); }
             if (candidates.length < 2) {
                 let maxFilled = 0;
                 for (let i = 0; i < oscillators.length; i++) { if (oscillators[i].filled > maxFilled) maxFilled = oscillators[i].filled; }
@@ -701,9 +701,15 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 const gAp = getChannelAperture('document.canvas.channel.g');
                 const bAp = getChannelAperture('document.canvas.channel.b');
                 for (const node of topology) {
-                    const screenX = (Math.tanh(node.cx) + 1.0) * 0.5 * canvas.width;
-                    const screenY = (Math.tanh(node.cy) + 1.0) * 0.5 * canvas.height;
-                    const lum = (Math.tanh(node.cz) + 1.0) * 0.5;
+                    const AU = 1.495978707e11;
+                    const scale = canvas.height / (AU * 8);
+                    const dx = node.ix - xPresence;
+                    const dy = node.iy - yPresence;
+                    const dz = node.iz - zPresence;
+                    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    const screenX = canvas.width * 0.5 + dx * scale;
+                    const screenY = canvas.height * 0.5 - dy * scale;
+                    const lum = dist > 0 ? Math.min(1, AU / (AU + dist)) : 1;
                     const alpha = Math.max(0, Math.min(1, node.weight * Math.max(xAp, yAp, rAp, gAp, bAp)));
                     if (alpha > Number.EPSILON) {
                         const r = Math.floor(lum * rAp * 255);
@@ -711,7 +717,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                         const b = Math.floor(lum * bAp * 255);
                         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
                         ctx.beginPath();
-                        ctx.arc(screenX * (xAp > Number.EPSILON ? 1 : 0), screenY * (yAp > Number.EPSILON ? 1 : 0), 2 + (lum * 3), 0, Math.PI * 2);
+                        ctx.arc(screenX, screenY, Math.max(1, 5 - dist * scale * 0.001), 0, Math.PI * 2);
                         ctx.fill();
                     }
                 }
@@ -765,7 +771,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             for (let i = 0; i < oscillators.length; i++) {
                 const o = oscillators[i];
                 if (o.filled > 0 && !isInternalMetric(o.url)) {
-                    topology.push({ url: o.url, cx: o.takensCx, cy: o.takensCy, cz: o.takensCz, weight: o.complexity });
+                    topology.push({ url: o.url, ix: o.ix, iy: o.iy, iz: o.iz, median: o.median, cx: o.takensCx, cy: o.takensCy, cz: o.takensCz, weight: o.complexity });
                 }
             }
             for (const surface of surfaces) { try { surface.manifest(topology, coherence); } catch {} }
