@@ -461,11 +461,9 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     if cursor.read_exact(&mut t_buf).is_err() { break; } let presence_z = f64::from_le_bytes(t_buf);
                     let mut geo_lat = None;
                     let mut geo_lon = None;
-                    let mut geo_acc = None;
                     for (name, val) in &pending_inputs {
                         if name == "geolocation.latitude" { geo_lat = Some(*val); }
                         if name == "geolocation.longitude" { geo_lon = Some(*val); }
-                        if name == "geolocation.accuracy" { geo_acc = Some(*val); }
                     }
                     let (oscillator_x, oscillator_y, oscillator_z) = if let (Some(lat), Some(lon)) = (geo_lat, geo_lon) {
                         geodetic_to_icrs(lat, lon, 0.0, presence_t)
