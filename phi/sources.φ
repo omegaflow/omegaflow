@@ -39,7 +39,7 @@ field round quantum_entropy_generation_round
 source dst_index
 ttl 60
 url https://services.swpc.noaa.gov/products/kyoto-dst.json
-last dst magnetosphere_dst_index_nt
+last_row dst magnetosphere_dst_index_nt
 
 source emsc_earthquakes
 ttl 60
@@ -330,7 +330,7 @@ lat 53.3
 lon -6.2
 format xml
 url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
-count ArrayOfObjStationData.ObjStationData technosphere_train_departures_dublin
+xml_count ObjStationData technosphere_train_departures_dublin
 
 source kp_index
 ttl 60
@@ -341,14 +341,14 @@ last a_index magnetosphere_ap_index
 source magnetism
 ttl 60
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
-path 0.bz_gsm magnetosphere_imf_bz_nt
-path 0.bt magnetosphere_imf_bt_nt
+last_row bz_gsm magnetosphere_imf_bz_nt
+last_row bt magnetosphere_imf_bt_nt
 last_row by_gsm magnetosphere_imf_by_nt
 
 source nist_randomness_beacon
 ttl 60
 url https://beacon.nist.gov/beacon/2.0/pulse/last
-path pulse.outputValue quantum_entropy_nist_beacon
+path pulse.pulseIndex quantum_entropy_nist_beacon
 
 source noaa_goes_electrons
 ttl 60
@@ -364,11 +364,6 @@ last_obj satellite "GOES-16" He magnetosphere_he_nt
 last_obj satellite "GOES-16" Hn magnetosphere_hn_nt
 last_obj satellite "GOES-16" Ht magnetosphere_ht_nt
 
-source noaa_integral_protons
-ttl 60
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
-last flux magnetosphere_integral_proton_flux
-
 source noaa_proton_flux
 ttl 60
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
@@ -380,21 +375,16 @@ ttl 60
 url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
 last ssn solar_sunspot_number_observed
 
-source noaa_solar_radio_measured
-ttl 60
-url https://services.swpc.noaa.gov/json/solar-radio-flux.json
-last flux solar_radio_flux_measured
-
 source noaa_sunspots
 ttl 60
 url https://services.swpc.noaa.gov/json/solar_regions.json
-field length solar_active_region_count
+count . solar_active_region_count
 
 source plasma
 ttl 60
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
-path 0.speed solar_wind_speed_km_s
-path 0.density solar_wind_density_cm3
+last_row speed solar_wind_speed_km_s
+last_row density solar_wind_density_cm3
 last_row temperature solar_wind_temp_k
 
 source protons
@@ -417,7 +407,7 @@ field data.bgp_state technosphere_bgp_default_route_state
 source ripe_bgp_updates
 ttl 60
 url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today}
-field nr_updates technosphere_bgp_updates_per_hour
+field data.nr_updates technosphere_bgp_updates_per_hour
 
 source seismic
 res 0
@@ -501,7 +491,6 @@ source xray
 ttl 60
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
 last flux solar_xray_flux_wm2
-last energy solar_xray_wavelength_a
 
 source xray_flares_7day
 ttl 60
@@ -517,19 +506,13 @@ url https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d
 field chart.result.0.meta.regularMarketPrice economic_stock_price
 field chart.result.0.meta.chartPreviousClose economic_stock_prev_close
 
-source yahoo_finance_vix
-ttl 60
-header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
-path chart.result.0.meta.regularMarketPrice economic_fear_gauge_vix
-
 source energy_charts_renewable
 res 0
 ttl 300
 lat 50.0
 lon 10.0
 url https://api.energy-charts.info/ren_share
-last_nonnull 1.data technosphere_renewable_share_pct
+last data.1.data technosphere_renewable_share_pct
 
 source icecube_neutrino_alerts
 ttl 300
@@ -556,544 +539,476 @@ ttl 300
 lat 21.9544
 lon -159.3561
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1611400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_nawiliwili
-first t hydrosphere_tide_time_nawiliwili
+first data.v hydrosphere_tide_height_m_nawiliwili
 
 source noaa_tides_1612340
 ttl 300
 lat 21.3033
 lon -157.8645
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_honolulu
-first t hydrosphere_tide_time_honolulu
+first data.v hydrosphere_tide_height_m_honolulu
 
 source noaa_tides_1615680
 ttl 300
 lat 20.8949
 lon -156.4690
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1615680&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_kahului_kahului_harbor
-first t hydrosphere_tide_time_kahului_kahului_harbor
+first data.v hydrosphere_tide_height_m_kahului_kahului_harbor
 
 source noaa_tides_1617433
 ttl 300
 lat 20.0366
 lon -155.8294
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617433&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_kawaihae
-first t hydrosphere_tide_time_kawaihae
+first data.v hydrosphere_tide_height_m_kawaihae
 
 source noaa_tides_1619910
 ttl 300
 lat 28.2117
 lon -177.3600
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1619910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_sand_island_midway_islands
-first t hydrosphere_tide_time_sand_island_midway_islands
+first data.v hydrosphere_tide_height_m_sand_island_midway_islands
 
 source noaa_tides_1630000
 ttl 300
 lat 13.4434
 lon 144.6564
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1630000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_apra_harbor_guam
-first t hydrosphere_tide_time_apra_harbor_guam
+first data.v hydrosphere_tide_height_m_apra_harbor_guam
 
 source noaa_tides_1770000
 ttl 300
 lat -14.28
 lon -170.69
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1770000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_pago_pago_american_samoa
-first t hydrosphere_tide_time_pago_pago_american_samoa
+first data.v hydrosphere_tide_height_m_pago_pago_american_samoa
 
 source noaa_tides_1820000
 ttl 300
 lat 8.7317
 lon 167.7361
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1820000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_kwajalein_marshall_islands
-first t hydrosphere_tide_time_kwajalein_marshall_islands
+first data.v hydrosphere_tide_height_m_kwajalein_marshall_islands
 
 source noaa_tides_1890000
 ttl 300
 lat 19.2906
 lon 166.6175
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1890000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_wake_island_pacific_ocean
-first t hydrosphere_tide_time_wake_island_pacific_ocean
+first data.v hydrosphere_tide_height_m_wake_island_pacific_ocean
 
 source noaa_tides_2695535
 ttl 300
 lat 32.3702
 lon -64.6957
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695535&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_bermuda_biological_station
-first t hydrosphere_tide_time_bermuda_biological_station
+first data.v hydrosphere_tide_height_m_bermuda_biological_station
 
 source noaa_tides_8311030
 ttl 300
 lat 44.7028
 lon -75.4944
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311030&product=water_level&datum=LWD&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_ogdensburg
-first t hydrosphere_tide_time_ogdensburg
+first data.v hydrosphere_tide_height_m_ogdensburg
 
 source noaa_tides_8410140
 ttl 300
 lat 44.9046
 lon -66.9829
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8410140&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_eastport
-first t hydrosphere_tide_time_eastport
+first data.v hydrosphere_tide_height_m_eastport
 
 source noaa_tides_8413320
 ttl 300
 lat 44.3922
 lon -68.2043
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8413320&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_bar_harbor
-first t hydrosphere_tide_time_bar_harbor
+first data.v hydrosphere_tide_height_m_bar_harbor
 
 source noaa_tides_8418150
 ttl 300
 lat 43.6581
 lon -70.2442
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8418150&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_portland
-first t hydrosphere_tide_time_portland
+first data.v hydrosphere_tide_height_m_portland
 
 source noaa_tides_8443970
 ttl 300
 lat 42.3539
 lon -71.0503
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8443970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_boston
-first t hydrosphere_tide_time_boston
+first data.v hydrosphere_tide_height_m_boston
 
 source noaa_tides_8447435
 ttl 300
 lat 41.6885
 lon -69.9511
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447435&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_chatham
-first t hydrosphere_tide_time_chatham
+first data.v hydrosphere_tide_height_m_chatham
 
 source noaa_tides_8461490
 ttl 300
 lat 41.3717
 lon -72.0956
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8461490&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_new_london
-first t hydrosphere_tide_time_new_london
+first data.v hydrosphere_tide_height_m_new_london
 
 source noaa_tides_8516945
 ttl 300
 lat 40.8103
 lon -73.7649
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8516945&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_kings_point
-first t hydrosphere_tide_time_kings_point
+first data.v hydrosphere_tide_height_m_kings_point
 
 source noaa_tides_8518962
 ttl 300
 lat 42.0139
 lon -73.9392
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518962&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_turkey_point_hudson_river_nerr
-first t hydrosphere_tide_time_turkey_point_hudson_river_nerr
+first data.v hydrosphere_tide_height_m_turkey_point_hudson_river_nerr
 
 source noaa_tides_8534720
 ttl 300
 lat 39.3567
 lon -74.4180
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8534720&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_atlantic_city
-first t hydrosphere_tide_time_atlantic_city
+first data.v hydrosphere_tide_height_m_atlantic_city
 
 source noaa_tides_8551762
 ttl 300
 lat 39.5822
 lon -75.5890
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551762&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_delaware_city
-first t hydrosphere_tide_time_delaware_city
+first data.v hydrosphere_tide_height_m_delaware_city
 
 source noaa_tides_8570283
 ttl 300
 lat 38.3283
 lon -75.0917
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_ocean_city_inlet
-first t hydrosphere_tide_time_ocean_city_inlet
+first data.v hydrosphere_tide_height_m_ocean_city_inlet
 
 source noaa_tides_8575512
 ttl 300
 lat 38.9839
 lon -76.4800
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8575512&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_annapolis
-first t hydrosphere_tide_time_annapolis
+first data.v hydrosphere_tide_height_m_annapolis
 
 source noaa_tides_8632200
 ttl 300
 lat 37.1652
 lon -75.9884
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8632200&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_kiptopeke
-first t hydrosphere_tide_time_kiptopeke
+first data.v hydrosphere_tide_height_m_kiptopeke
 
 source noaa_tides_8635750
 ttl 300
 lat 37.9961
 lon -76.4644
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_lewisetta
-first t hydrosphere_tide_time_lewisetta
+first data.v hydrosphere_tide_height_m_lewisetta
 
 source noaa_tides_8651370
 ttl 300
 lat 36.1833
 lon -75.7467
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8651370&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_duck
-first t hydrosphere_tide_time_duck
+first data.v hydrosphere_tide_height_m_duck
 
 source noaa_tides_8654467
 ttl 300
 lat 35.2086
 lon -75.7042
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8654467&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_uscg_station_hatteras
-first t hydrosphere_tide_time_uscg_station_hatteras
+first data.v hydrosphere_tide_height_m_uscg_station_hatteras
 
 source noaa_tides_8656483
 ttl 300
 lat 34.7173
 lon -76.6707
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8656483&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_beaufort_duke_marine_lab
-first t hydrosphere_tide_time_beaufort_duke_marine_lab
+first data.v hydrosphere_tide_height_m_beaufort_duke_marine_lab
 
 source noaa_tides_8658120
 ttl 300
 lat 34.2267
 lon -77.9533
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8658120&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_wilmington
-first t hydrosphere_tide_time_wilmington
+first data.v hydrosphere_tide_height_m_wilmington
 
 source noaa_tides_8661070
 ttl 300
 lat 33.6550
 lon -78.9180
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8661070&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_springmaid_pier
-first t hydrosphere_tide_time_springmaid_pier
+first data.v hydrosphere_tide_height_m_springmaid_pier
 
 source noaa_tides_8665530
 ttl 300
 lat 32.7808
 lon -79.9236
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8665530&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_charleston
-first t hydrosphere_tide_time_charleston
+first data.v hydrosphere_tide_height_m_charleston
 
 source noaa_tides_8670870
 ttl 300
 lat 32.0347
 lon -80.9030
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8670870&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_fort_pulaski
-first t hydrosphere_tide_time_fort_pulaski
+first data.v hydrosphere_tide_height_m_fort_pulaski
 
 source noaa_tides_8679598
 ttl 300
 lat 30.7781
 lon -81.4914
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8679598&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_kings_bay_msf_pier
-first t hydrosphere_tide_time_kings_bay_msf_pier
+first data.v hydrosphere_tide_height_m_kings_bay_msf_pier
 
 source noaa_tides_8721604
 ttl 300
 lat 28.4158
 lon -80.5931
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8721604&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_trident_pier_port_canaveral
-first t hydrosphere_tide_time_trident_pier_port_canaveral
+first data.v hydrosphere_tide_height_m_trident_pier_port_canaveral
 
 source noaa_tides_8722670
 ttl 300
 lat 26.6128
 lon -80.0342
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8722670&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_lake_worth_pier_atlantic_ocean
-first t hydrosphere_tide_time_lake_worth_pier_atlantic_ocean
+first data.v hydrosphere_tide_height_m_lake_worth_pier_atlantic_ocean
 
 source noaa_tides_8723970
 ttl 300
 lat 24.7110
 lon -81.1060
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8723970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_vaca_key_florida_bay
-first t hydrosphere_tide_time_vaca_key_florida_bay
+first data.v hydrosphere_tide_height_m_vaca_key_florida_bay
 
 source noaa_tides_8725114
 ttl 300
 lat 26.1367
 lon -81.7883
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8725114&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_naples_bay_north
-first t hydrosphere_tide_time_naples_bay_north
+first data.v hydrosphere_tide_height_m_naples_bay_north
 
 source noaa_tides_8726384
 ttl 300
 lat 27.6387
 lon -82.5621
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726384&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_port_manatee
-first t hydrosphere_tide_time_port_manatee
+first data.v hydrosphere_tide_height_m_port_manatee
 
 source noaa_tides_8727520
 ttl 300
 lat 29.1350
 lon -83.0320
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8727520&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_cedar_key
-first t hydrosphere_tide_time_cedar_key
+first data.v hydrosphere_tide_height_m_cedar_key
 
 source noaa_tides_8728690
 ttl 300
 lat 29.7244
 lon -84.9805
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8728690&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_apalachicola
-first t hydrosphere_tide_time_apalachicola
+first data.v hydrosphere_tide_height_m_apalachicola
 
 source noaa_tides_8729210
 ttl 300
 lat 30.2138
 lon -85.8786
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_panama_city_beach
-first t hydrosphere_tide_time_panama_city_beach
+first data.v hydrosphere_tide_height_m_panama_city_beach
 
 source noaa_tides_8729840
 ttl 300
 lat 30.4044
 lon -87.2112
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729840&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_pensacola
-first t hydrosphere_tide_time_pensacola
+first data.v hydrosphere_tide_height_m_pensacola
 
 source noaa_tides_8741533
 ttl 300
 lat 30.3678
 lon -88.5631
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8741533&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_pascagoula_noaa_lab
-first t hydrosphere_tide_time_pascagoula_noaa_lab
+first data.v hydrosphere_tide_height_m_pascagoula_noaa_lab
 
 source noaa_tides_8760721
 ttl 300
 lat 29.1793
 lon -89.2588
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8760721&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_pilottown
-first t hydrosphere_tide_time_pilottown
+first data.v hydrosphere_tide_height_m_pilottown
 
 source noaa_tides_8761927
 ttl 300
 lat 30.0272
 lon -90.1133
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761927&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_new_canal_station
-first t hydrosphere_tide_time_new_canal_station
+first data.v hydrosphere_tide_height_m_new_canal_station
 
 source noaa_tides_8764044
 ttl 300
 lat 29.6675
 lon -91.2376
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764044&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_berwick_atchafalaya_river
-first t hydrosphere_tide_time_berwick_atchafalaya_river
+first data.v hydrosphere_tide_height_m_berwick_atchafalaya_river
 
 source noaa_tides_8766072
 ttl 300
 lat 29.5517
 lon -92.3052
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8766072&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_freshwater_canal_locks
-first t hydrosphere_tide_time_freshwater_canal_locks
+first data.v hydrosphere_tide_height_m_freshwater_canal_locks
 
 source noaa_tides_8767816
 ttl 300
 lat 30.2236
 lon -93.2217
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8767816&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_lake_charles
-first t hydrosphere_tide_time_lake_charles
+first data.v hydrosphere_tide_height_m_lake_charles
 
 source noaa_tides_8770613
 ttl 300
 lat 29.6817
 lon -94.9850
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770613&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_morgans_point_barbours_cut
-first t hydrosphere_tide_time_morgans_point_barbours_cut
+first data.v hydrosphere_tide_height_m_morgans_point_barbours_cut
 
 source noaa_tides_8772985
 ttl 300
 lat 28.7716
 lon -95.6168
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8772985&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_sargent
-first t hydrosphere_tide_time_sargent
+first data.v hydrosphere_tide_height_m_sargent
 
 source noaa_tides_8773037
 ttl 300
 lat 28.4069
 lon -96.7124
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773037&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_seadrift
-first t hydrosphere_tide_time_seadrift
+first data.v hydrosphere_tide_height_m_seadrift
 
 source noaa_tides_8775222
 ttl 300
 lat 27.8461
 lon -97.5207
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775222&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_viola_turning_basin
-first t hydrosphere_tide_time_viola_turning_basin
+first data.v hydrosphere_tide_height_m_viola_turning_basin
 
 source noaa_tides_8777812
 ttl 300
 lat 26.8012
 lon -97.4706
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8777812&product=water_level&datum=MSL&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_rincon_del_san_jose
-first t hydrosphere_tide_time_rincon_del_san_jose
+first data.v hydrosphere_tide_height_m_rincon_del_san_jose
 
 source noaa_tides_9014070
 ttl 300
 lat 42.6211
 lon -82.5267
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014070&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_algonac
-first t hydrosphere_tide_time_algonac
+first data.v hydrosphere_tide_height_m_algonac
 
 source noaa_tides_9052030
 ttl 300
 lat 43.4642
 lon -76.5118
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052030&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_oswego
-first t hydrosphere_tide_time_oswego
+first data.v hydrosphere_tide_height_m_oswego
 
 source noaa_tides_9052076
 ttl 300
 lat 43.3384
 lon -78.7273
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052076&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_olcott
-first t hydrosphere_tide_time_olcott
+first data.v hydrosphere_tide_height_m_olcott
 
 source noaa_tides_9063038
 ttl 300
 lat 42.1539
 lon -80.0758
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063038&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_erie_lake_erie
-first t hydrosphere_tide_time_erie_lake_erie
+first data.v hydrosphere_tide_height_m_erie_lake_erie
 
 source noaa_tides_9063053
 ttl 300
 lat 41.7597
 lon -81.2811
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063053&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_fairport
-first t hydrosphere_tide_time_fairport
+first data.v hydrosphere_tide_height_m_fairport
 
 source noaa_tides_9063079
 ttl 300
 lat 41.5436
 lon -82.7314
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063079&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_marblehead
-first t hydrosphere_tide_time_marblehead
+first data.v hydrosphere_tide_height_m_marblehead
 
 source noaa_tides_9075014
 ttl 300
 lat 43.8464
 lon -82.6431
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075014&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_harbor_beach
-first t hydrosphere_tide_time_harbor_beach
+first data.v hydrosphere_tide_height_m_harbor_beach
 
 source noaa_tides_9075065
 ttl 300
 lat 45.0630
 lon -83.4286
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075065&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_alpena
-first t hydrosphere_tide_time_alpena
+first data.v hydrosphere_tide_height_m_alpena
 
 source noaa_tides_9075080
 ttl 300
 lat 45.7772
 lon -84.7211
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075080&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_mackinaw_city
-first t hydrosphere_tide_time_mackinaw_city
+first data.v hydrosphere_tide_height_m_mackinaw_city
 
 source noaa_tides_9087023
 ttl 300
 lat 43.9474
 lon -86.4415
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087023&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_ludington
-first t hydrosphere_tide_time_ludington
+first data.v hydrosphere_tide_height_m_ludington
 
 source noaa_tides_9087031
 ttl 300
 lat 42.7733
 lon -86.2128
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087031&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_holland
-first t hydrosphere_tide_time_holland
+first data.v hydrosphere_tide_height_m_holland
 
 source noaa_tides_9087044
 ttl 300
 lat 41.7297
 lon -87.5383
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_calumet_harbor
-first t hydrosphere_tide_time_calumet_harbor
+first data.v hydrosphere_tide_height_m_calumet_harbor
 
 source noaa_tides_9087057
 ttl 300
 lat 43.0020
 lon -87.8876
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087057&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_milwaukee
-first t hydrosphere_tide_time_milwaukee
+first data.v hydrosphere_tide_height_m_milwaukee
 
 source noaa_tides_9087068
 ttl 300
 lat 44.4639
 lon -87.5010
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087068&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_kewaunee_lake_michigan
-first t hydrosphere_tide_time_kewaunee_lake_michigan
+first data.v hydrosphere_tide_height_m_kewaunee_lake_michigan
 
 source noaa_tides_9099018
 ttl 300
 lat 46.5456
 lon -87.3786
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099018&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_marquette_c.g.
-first t hydrosphere_tide_time_marquette_c.g.
+first data.v hydrosphere_tide_height_m_marquette_c.g.
 
 source noaa_tides_9099044
 res 0
@@ -1101,96 +1016,84 @@ ttl 300
 lat 46.874443
 lon -89.324165
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_ontonagon
-first t hydrosphere_tide_time_ontonagon
+first data.v hydrosphere_tide_height_m_ontonagon
 
 source noaa_tides_9099064
 ttl 300
 lat 46.7758
 lon -92.0920
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099064&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_duluth
-first t hydrosphere_tide_time_duluth
+first data.v hydrosphere_tide_height_m_duluth
 
 source noaa_tides_9099090
 ttl 300
 lat 47.7486
 lon -90.3413
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099090&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_grand_marais_lake_superior
-first t hydrosphere_tide_time_grand_marais_lake_superior
+first data.v hydrosphere_tide_height_m_grand_marais_lake_superior
 
 source noaa_tides_9410170
 ttl 300
 lat 32.7156
 lon -117.1767
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410170&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_san_diego
-first t hydrosphere_tide_time_san_diego
+first data.v hydrosphere_tide_height_m_san_diego
 
 source noaa_tides_9410660
 ttl 300
 lat 33.720
 lon -118.270
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410660&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_los_angeles
-first t hydrosphere_tide_time_los_angeles
+first data.v hydrosphere_tide_height_m_los_angeles
 
 source noaa_tides_9411340
 ttl 300
 lat 34.4046
 lon -119.6925
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9411340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_santa_barbara
-first t hydrosphere_tide_time_santa_barbara
+first data.v hydrosphere_tide_height_m_santa_barbara
 
 source noaa_tides_9412110
 ttl 300
 lat 35.1689
 lon -120.7542
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9412110&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_port_san_luis
-first t hydrosphere_tide_time_port_san_luis
+first data.v hydrosphere_tide_height_m_port_san_luis
 
 source noaa_tides_9413450
 ttl 300
 lat 36.6089
 lon -121.8914
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9413450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_monterey
-first t hydrosphere_tide_time_monterey
+first data.v hydrosphere_tide_height_m_monterey
 
 source noaa_tides_9414290
 ttl 300
 lat 37.8063
 lon -122.4659
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_san_francisco
-first t hydrosphere_tide_time_san_francisco
+first data.v hydrosphere_tide_height_m_san_francisco
 
 source noaa_tides_9416131
 ttl 300
 lat 38.5622
 lon -121.5463
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416131&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_port_of_west_sacramento_washin
-first t hydrosphere_tide_time_port_of_west_sacramento_washin
+first data.v hydrosphere_tide_height_m_port_of_west_sacramento_washin
 
 source noaa_tides_9416841
 ttl 300
 lat 38.9146
 lon -123.7111
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416841&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_arena_cove
-first t hydrosphere_tide_time_arena_cove
+first data.v hydrosphere_tide_height_m_arena_cove
 
 source noaa_tides_9418767
 ttl 300
 lat 40.7669
 lon -124.2173
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9418767&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_north_spit
-first t hydrosphere_tide_time_north_spit
+first data.v hydrosphere_tide_height_m_north_spit
 
 source noaa_tides_9419750
 res 0
@@ -1198,208 +1101,182 @@ ttl 300
 lat 41.7456
 lon -124.1844
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9419750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_crescent_city
-first t hydrosphere_tide_time_crescent_city
+first data.v hydrosphere_tide_height_m_crescent_city
 
 source noaa_tides_9431647
 ttl 300
 lat 42.7390
 lon -124.4980
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9431647&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_port_orford
-first t hydrosphere_tide_time_port_orford
+first data.v hydrosphere_tide_height_m_port_orford
 
 source noaa_tides_9435380
 ttl 300
 lat 44.6254
 lon -124.0449
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9435380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_south_beach
-first t hydrosphere_tide_time_south_beach
+first data.v hydrosphere_tide_height_m_south_beach
 
 source noaa_tides_9437540
 ttl 300
 lat 45.5545
 lon -123.9189
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9437540&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_garibaldi
-first t hydrosphere_tide_time_garibaldi
+first data.v hydrosphere_tide_height_m_garibaldi
 
 source noaa_tides_9440910
 ttl 300
 lat 46.7075
 lon -123.9669
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_toke_point
-first t hydrosphere_tide_time_toke_point
+first data.v hydrosphere_tide_height_m_toke_point
 
 source noaa_tides_9442396
 ttl 300
 lat 47.9128
 lon -124.6357
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9442396&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_la_push_quillayute_river
-first t hydrosphere_tide_time_la_push_quillayute_river
+first data.v hydrosphere_tide_height_m_la_push_quillayute_river
 
 source noaa_tides_9444900
 ttl 300
 lat 48.1112
 lon -122.7597
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444900&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_port_townsend
-first t hydrosphere_tide_time_port_townsend
+first data.v hydrosphere_tide_height_m_port_townsend
 
 source noaa_tides_9450460
 ttl 300
 lat 55.3319
 lon -131.6261
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9450460&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_ketchikan
-first t hydrosphere_tide_time_ketchikan
+first data.v hydrosphere_tide_height_m_ketchikan
 
 source noaa_tides_9451054
 ttl 300
 lat 56.2467
 lon -134.6470
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451054&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_port_alexander
-first t hydrosphere_tide_time_port_alexander
+first data.v hydrosphere_tide_height_m_port_alexander
 
 source noaa_tides_9452210
 ttl 300
 lat 58.2988
 lon -134.4106
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_juneau
-first t hydrosphere_tide_time_juneau
+first data.v hydrosphere_tide_height_m_juneau
 
 source noaa_tides_9452400
 ttl 300
 lat 59.4508
 lon -135.3280
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_skagway_taiya_inlet
-first t hydrosphere_tide_time_skagway_taiya_inlet
+first data.v hydrosphere_tide_height_m_skagway_taiya_inlet
 
 source noaa_tides_9452634
 ttl 300
 lat 58.1947
 lon -136.3469
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452634&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_elfin_cove
-first t hydrosphere_tide_time_elfin_cove
+first data.v hydrosphere_tide_height_m_elfin_cove
 
 source noaa_tides_9453220
 ttl 300
 lat 59.5485
 lon -139.7334
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9453220&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_yakutat_yakutat_bay
-first t hydrosphere_tide_time_yakutat_yakutat_bay
+first data.v hydrosphere_tide_height_m_yakutat_yakutat_bay
 
 source noaa_tides_9454050
 ttl 300
 lat 60.5583
 lon -145.7530
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9454050&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_cordova
-first t hydrosphere_tide_time_cordova
+first data.v hydrosphere_tide_height_m_cordova
 
 source noaa_tides_9455090
 ttl 300
 lat 60.1193
 lon -149.4281
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455090&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_seward
-first t hydrosphere_tide_time_seward
+first data.v hydrosphere_tide_height_m_seward
 
 source noaa_tides_9455500
 ttl 300
 lat 59.4405
 lon -151.7199
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455500&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_seldovia
-first t hydrosphere_tide_time_seldovia
+first data.v hydrosphere_tide_height_m_seldovia
 
 source noaa_tides_9455760
 ttl 300
 lat 60.6833
 lon -151.3980
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455760&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_nikiski
-first t hydrosphere_tide_time_nikiski
+first data.v hydrosphere_tide_height_m_nikiski
 
 source noaa_tides_9455920
 ttl 300
 lat 61.2375
 lon -149.8904
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455920&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_anchorage
-first t hydrosphere_tide_time_anchorage
+first data.v hydrosphere_tide_height_m_anchorage
 
 source noaa_tides_9457292
 ttl 300
 lat 57.7317
 lon -152.5120
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457292&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_kodiak_island
-first t hydrosphere_tide_time_kodiak_island
+first data.v hydrosphere_tide_height_m_kodiak_island
 
 source noaa_tides_9457804
 ttl 300
 lat 56.8974
 lon -154.2480
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457804&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_alitak
-first t hydrosphere_tide_time_alitak
+first data.v hydrosphere_tide_height_m_alitak
 
 source noaa_tides_9459450
 ttl 300
 lat 55.3317
 lon -160.5043
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_sand_point
-first t hydrosphere_tide_time_sand_point
+first data.v hydrosphere_tide_height_m_sand_point
 
 source noaa_tides_9459881
 ttl 300
 lat 55.0599
 lon -162.3261
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459881&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_king_cove
-first t hydrosphere_tide_time_king_cove
+first data.v hydrosphere_tide_height_m_king_cove
 
 source noaa_tides_9461380
 ttl 300
 lat 51.8606
 lon -176.6376
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_adak_island
-first t hydrosphere_tide_time_adak_island
+first data.v hydrosphere_tide_height_m_adak_island
 
 source noaa_tides_9461710
 ttl 300
 lat 52.2319
 lon -174.1725
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461710&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_atka
-first t hydrosphere_tide_time_atka
+first data.v hydrosphere_tide_height_m_atka
 
 source noaa_tides_9462450
 ttl 300
 lat 52.9406
 lon -168.8713
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_nikolski
-first t hydrosphere_tide_time_nikolski
+first data.v hydrosphere_tide_height_m_nikolski
 
 source noaa_tides_9462620
 ttl 300
 lat 53.8792
 lon -166.5403
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462620&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_unalaska
-first t hydrosphere_tide_time_unalaska
+first data.v hydrosphere_tide_height_m_unalaska
 
 source noaa_tides_9464212
 res 0
@@ -1407,48 +1284,42 @@ ttl 300
 lat 57.1253
 lon -170.2852
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9464212&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_village_cove_st_paul_island
-first t hydrosphere_tide_time_village_cove_st_paul_island
+first data.v hydrosphere_tide_height_m_village_cove_st_paul_island
 
 source noaa_tides_9468333
 ttl 300
 lat 63.875
 lon -160.788
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468333&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_unalakleet
-first t hydrosphere_tide_time_unalakleet
+first data.v hydrosphere_tide_height_m_unalakleet
 
 source noaa_tides_9468756
 ttl 300
 lat 64.4946
 lon -165.4396
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468756&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_nome_norton_sound
-first t hydrosphere_tide_time_nome_norton_sound
+first data.v hydrosphere_tide_height_m_nome_norton_sound
 
 source noaa_tides_9491094
 ttl 300
 lat 67.5758
 lon -164.0644
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9491094&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_red_dog_dock
-first t hydrosphere_tide_time_red_dog_dock
+first data.v hydrosphere_tide_height_m_red_dog_dock
 
 source noaa_tides_9497645
 ttl 300
 lat 70.4114
 lon -148.5317
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9497645&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_prudhoe_bay
-first t hydrosphere_tide_time_prudhoe_bay
+first data.v hydrosphere_tide_height_m_prudhoe_bay
 
 source noaa_tides_9751364
 ttl 300
 lat 17.7477
 lon -64.6984
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751364&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_christiansted_harbor_st_croix
-first t hydrosphere_tide_time_christiansted_harbor_st_croix
+first data.v hydrosphere_tide_height_m_christiansted_harbor_st_croix
 
 source noaa_tides_9753216
 res 0
@@ -1456,8 +1327,7 @@ ttl 300
 lat 18.335278
 lon -65.63111
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_fajardo
-first t hydrosphere_tide_time_fajardo
+first data.v hydrosphere_tide_height_m_fajardo
 
 source noaa_tides_9757811
 res 0
@@ -1465,16 +1335,14 @@ ttl 300
 lat 18.480528
 lon -66.70236
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_arecibo
-first t hydrosphere_tide_time_arecibo
+first data.v hydrosphere_tide_height_m_arecibo
 
 source noaa_tides_9759938
 ttl 300
 lat 18.0893
 lon -67.9382
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759938&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-first v hydrosphere_tide_height_m_mona_island
-first t hydrosphere_tide_time_mona_island
+first data.v hydrosphere_tide_height_m_mona_island
 
 source rain_radar
 ttl 300
