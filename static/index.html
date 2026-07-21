@@ -234,7 +234,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             if (!window.ω?.gpu || topologyPending) return;
             topologyPending = true;
             const candidates = [];
-            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.filled >= topologyRingSize && !isInternalMetric(osc.url) && (osc.ix !== 0 || osc.iy !== 0 || osc.iz !== 0)) candidates.push(osc); }
+            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.filled >= topologyRingSize && !isInternalMetric(osc.url)) candidates.push(osc); }
             if (candidates.length < 2) {
                 let maxFilled = 0;
                 for (let i = 0; i < oscillators.length; i++) { if (oscillators[i].filled > maxFilled) maxFilled = oscillators[i].filled; }
