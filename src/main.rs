@@ -633,7 +633,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 flush!();
                 cur_ttl = 0; cur_res = 0; cur_url.clear(); cur_lat = None; cur_lon = None; cur_lat_str.clear(); cur_format.clear(); cur_extracts.clear(); cur_headers.clear(); active = true;
             }
-            "url" => cur_url = line[4..].trim().to_string(),
+            "url" => cur_url = line.get(4..).unwrap_or("").trim().to_string(),
             "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "res" => cur_res = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "format" => cur_format = parts.get(1).unwrap_or(&"json").to_string(),
@@ -642,7 +642,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_lat = cur_lat_str.parse().ok();
             },
             "lon" => cur_lon = parts.get(1).and_then(|s| s.parse().ok()),
-            "header" => { let rest = line[7..].trim(); if let Some(sp) = rest.find(' ') { cur_headers.push((rest[..sp].to_string(), rest[sp+1..].trim_matches('"').to_string())); } },
+            "header" => { let rest = line.get(7..).unwrap_or("").trim(); if let Some(sp) = rest.find(' ') { cur_headers.push((rest[..sp].to_string(), rest[sp+1..].trim_matches('"').to_string())); } },
             "field" => { if parts.len()>=3 { cur_extracts.push(Extract::Field(parts[1].to_string(), parts[2].to_string())); } }
             "first" => { if parts.len()>=3 { cur_extracts.push(Extract::First(parts[1].to_string(), parts[2].to_string())); } }
             "last" => { if parts.len()>=3 { cur_extracts.push(Extract::Last(parts[1].to_string(), parts[2].to_string())); } }
@@ -654,7 +654,7 @@ fn load_sources() -> Vec<SourceConfig> {
             "regex" => { if parts.len()>=3 { cur_extracts.push(Extract::Regex(parts[1].to_string(), parts[2].to_string())); } }
             "xml_count" => { if parts.len()>=3 { cur_extracts.push(Extract::XmlCount(parts[1].to_string(), parts[2].to_string())); } }
             "vector" => { if parts.len()>=2 { cur_extracts.push(Extract::Vector(parts[1].to_string())); } }
-            "last_obj" => { let quoted = parse_quoted_args(&line[9..]); if quoted.len() >= 4 { cur_extracts.push(Extract::LastObj(quoted[0].clone(), quoted[1].clone(), quoted[2].clone(), quoted[3].clone())); } }
+            "last_obj" => { let quoted = parse_quoted_args(line.get(9..).unwrap_or("")); if quoted.len() >= 4 { cur_extracts.push(Extract::LastObj(quoted[0].clone(), quoted[1].clone(), quoted[2].clone(), quoted[3].clone())); } }
             "geojson" => { if parts.len() >= 5 && parts[1] == "events" { cur_extracts.push(Extract::GeojsonEvents { mag_key: parts.get(2).unwrap_or(&"mag").to_string(), min_mag: parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0), outputs: parts[4..].iter().map(|s| s.to_string()).collect() }); } }
             "map" => { if parts.len() >= 2 { cur_extracts.push(Extract::Map { arr_path: parts[1].to_string(), lat_key: String::new(), lon_key: String::new(), alt_key: String::new(), fields: Vec::new() }); } }
             "lat_key" => { if let Some(Extract::Map { lat_key, .. }) = cur_extracts.last_mut() { *lat_key = parts.get(1).unwrap_or(&"").to_string(); } }
