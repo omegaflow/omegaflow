@@ -363,10 +363,11 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 topologyPending = false;
             }
         }
-        function measureRms() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>0&&!isInternalMetric(o.url)){ s+=o.median*o.median; c+=1; } } return c>0?Math.sqrt(s/c):Number.EPSILON; }
-        function measureRateOfChange() { let s=0,c=0; const k=8; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>1&&!isInternalMetric(o.url)){ let acc=0; const lim=Math.min(k,o.filled); for(let j=0;j<lim;j++){ const a=(o.idx-1-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; const b=(o.idx-2-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; acc+=Math.abs(flatRings[o.ringOffset+a]-flatRings[o.ringOffset+b]); } s+=(acc/lim); c+=1; } } return c>0?(s/c):0.0; }
-        function measureDecay() { let t=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.complexity>0&&!isInternalMetric(o.url)){ t+=o.complexity; c+=1; } } return c>0?1.0/(1.0+(t/c)):1.0; }
-        function measureQuantum() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.takensSpread>0&&!isInternalMetric(o.url)){ s+=o.takensSpread; c+=1; } } return c===0?1.0:Math.exp(-s/c); }
+        function hasPos(o) { return o.ix !== 0 || o.iy !== 0 || o.iz !== 0; }
+        function measureRms() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>0&&!isInternalMetric(o.url)&&hasPos(o)){ s+=o.median*o.median; c+=1; } } return c>0?Math.sqrt(s/c):Number.EPSILON; }
+        function measureRateOfChange() { let s=0,c=0; const k=8; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>1&&!isInternalMetric(o.url)&&hasPos(o)){ let acc=0; const lim=Math.min(k,o.filled); for(let j=0;j<lim;j++){ const a=(o.idx-1-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; const b=(o.idx-2-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; acc+=Math.abs(flatRings[o.ringOffset+a]-flatRings[o.ringOffset+b]); } s+=(acc/lim); c+=1; } } return c>0?(s/c):0.0; }
+        function measureDecay() { let t=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.complexity>0&&!isInternalMetric(o.url)&&hasPos(o)){ t+=o.complexity; c+=1; } } return c>0?1.0/(1.0+(t/c)):1.0; }
+        function measureQuantum() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.takensSpread>0&&!isInternalMetric(o.url)&&hasPos(o)){ s+=o.takensSpread; c+=1; } } return c===0?1.0:Math.exp(-s/c); }
         function measureCoherence() { let teSum=0,teCount=0,cplxSum=0,cplxCount=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.url.startsWith('transfer.')){teSum+=Math.abs(o.median);teCount+=1;} if(o.complexity>0&&!isInternalMetric(o.url)){cplxSum+=o.complexity;cplxCount+=1;} } const te=teCount>0?teSum/teCount:0; const cplx=cplxCount>0?cplxSum/cplxCount:0; return cplx>Number.EPSILON?Math.min(1.0, te/(cplx+Number.EPSILON)):0; }
         function getChannelAperture(url) {
             let ap = channelApertures.get(url);
@@ -701,15 +702,9 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 const gAp = getChannelAperture('document.canvas.channel.g');
                 const bAp = getChannelAperture('document.canvas.channel.b');
                 for (const node of topology) {
-                    const AU = 1.495978707e11;
-                    const scale = canvas.height / (AU * 8);
-                    const dx = node.ix - xPresence;
-                    const dy = node.iy - yPresence;
-                    const dz = node.iz - zPresence;
-                    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                    const screenX = canvas.width * 0.5 + dx * scale;
-                    const screenY = canvas.height * 0.5 - dy * scale;
-                    const lum = dist > 0 ? Math.min(1, AU / (AU + dist)) : 1;
+                    const screenX = (Math.tanh(node.cx) + 1.0) * 0.5 * canvas.width;
+                    const screenY = (Math.tanh(node.cy) + 1.0) * 0.5 * canvas.height;
+                    const lum = (Math.tanh(node.cz) + 1.0) * 0.5;
                     const alpha = Math.max(0, Math.min(1, node.weight * Math.max(xAp, yAp, rAp, gAp, bAp)));
                     if (alpha > Number.EPSILON) {
                         const r = Math.floor(lum * rAp * 255);
@@ -717,7 +712,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                         const b = Math.floor(lum * bAp * 255);
                         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
                         ctx.beginPath();
-                        ctx.arc(screenX, screenY, Math.max(1, 5 - dist * scale * 0.001), 0, Math.PI * 2);
+                        ctx.arc(screenX * (xAp > Number.EPSILON ? 1 : 0), screenY * (yAp > Number.EPSILON ? 1 : 0), 2 + (lum * 3), 0, Math.PI * 2);
                         ctx.fill();
                     }
                 }
@@ -771,7 +766,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             for (let i = 0; i < oscillators.length; i++) {
                 const o = oscillators[i];
                 if (o.filled > 0 && !isInternalMetric(o.url)) {
-                    topology.push({ url: o.url, ix: o.ix, iy: o.iy, iz: o.iz, median: o.median, cx: o.takensCx, cy: o.takensCy, cz: o.takensCz, weight: o.complexity });
+                    topology.push({ url: o.url, cx: o.takensCx, cy: o.takensCy, cz: o.takensCz, weight: o.complexity });
                 }
             }
             for (const surface of surfaces) { try { surface.manifest(topology, coherence); } catch {} }
@@ -802,16 +797,11 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 for (let i = 0; i < oscillators.length; i++) {
                     const o = oscillators[i];
                     if (o.filled > 0 && !isInternalMetric(o.url)) {
-                        const dx = o.ix - xPresence, dy = o.iy - yPresence, dz = o.iz - zPresence;
-                        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                        topOsc.push({ u: o.url.substring(0, 32), v: o.median, w: o.complexity, c: o.complexity, f: o.filled, d: dist });
+                        topOsc.push({ u: o.url.substring(0, 32), v: o.median, w: o.complexity, c: o.complexity, f: o.filled });
                     }
                 }
-                topOsc.sort((a, b) => a.d - b.d || b.w - a.w);
-                const topLines = topOsc.slice(0, 12).map(t => {
-                    const distStr = t.d < 1e6 ? `${(t.d/1e3).toFixed(0)}km` : `${(t.d/1.495978707e11).toFixed(2)}AU`;
-                    return `  ${t.u}: ${t.v.toPrecision(4)} (w${t.w.toFixed(2)}, ${distStr})`;
-                }).join('\n');
+                topOsc.sort((a, b) => b.w - a.w);
+                const topLines = topOsc.slice(0, 12).map(t => `  ${t.u}: ${t.v.toPrecision(4)} (weight ${t.w.toFixed(2)}, complexity ${t.c.toFixed(2)})`).join('\n');
 
                 debugEl.value =
                     "omegaflow field\n\n" +

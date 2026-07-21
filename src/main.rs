@@ -893,11 +893,11 @@ fn warm_cache(archive: Arc<Archive>) {
                                     let blk = &a[..e];
                                     let ph = |k: &str| -> Option<f64> {
                                         let p = blk.find(k)?;
-                                        let r = blk[p+k.len()..].trim_start_matches(|c: char| c == '=' || c == ' ' || c == '\t');
+                                        let r = blk[p+k.len()..].trim_start();
                                         let end = r.find(|c: char| c.is_whitespace()).unwrap_or(r.len());
                                         r[..end].parse::<f64>().ok()
                                     };
-                                    if let (Some(x),Some(y),Some(z),Some(rg)) = (ph("X ="),ph("Y ="),ph("Z ="),ph("RG =").or_else(|| ph("RG="))) {
+                                    if let (Some(x),Some(y),Some(z),Some(rg)) = (ph("X ="),ph("Y ="),ph("Z ="),ph("RG =")) {
                                         eph_pos = Some((x*1000.0, y*1000.0, z*1000.0));
                                         extracted.insert(n.clone(), rg*1000.0);
                                     }
