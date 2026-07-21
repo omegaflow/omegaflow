@@ -315,7 +315,8 @@ enum Extract {
     Sum(String, String),
     Regex(String, String),
     XmlCount(String, String),
-    Vector(String)
+    Vector(String),
+    Ephemeris(String)
 }
 
 struct SourceConfig {
@@ -652,6 +653,7 @@ fn load_sources() -> Vec<SourceConfig> {
             "regex" => { if parts.len()>=3 { cur_extracts.push(Extract::Regex(parts[1].to_string(), parts[2].to_string())); } }
             "xml_count" => { if parts.len()>=3 { cur_extracts.push(Extract::XmlCount(parts[1].to_string(), parts[2].to_string())); } }
             "vector" => { if parts.len()>=2 { cur_extracts.push(Extract::Vector(parts[1].to_string())); } }
+            "ephemeris" => { if parts.len()>=2 { cur_extracts.push(Extract::Ephemeris(parts[1].to_string())); } }
             "last_obj" => { let quoted = parse_quoted_args(line.get(9..).unwrap_or("")); if quoted.len() >= 4 { cur_extracts.push(Extract::LastObj(quoted[0].clone(), quoted[1].clone(), quoted[2].clone(), quoted[3].clone())); } }
             "geojson" => { if parts.len() >= 5 && parts[1] == "events" { cur_extracts.push(Extract::GeojsonEvents { mag_key: parts.get(2).unwrap_or(&"mag").to_string(), min_mag: parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0), outputs: parts[4..].iter().map(|s| s.to_string()).collect() }); } }
             "map" => { if parts.len() >= 2 { cur_extracts.push(Extract::Map { arr_path: parts[1].to_string(), lat_key: String::new(), lon_key: String::new(), alt_key: String::new(), fields: Vec::new() }); } }
@@ -847,6 +849,7 @@ fn warm_cache(archive: Arc<Archive>) {
             for (src_idx, cache_key, body_opt) in results {
                 if let Some(body) = body_opt {
                     let src = &archive.sources[src_idx]; let mut extracted: HashMap<String, f64> = HashMap::new();
+                    let mut eph_pos: Option<(f64, f64, f64)> = None;
                     let parsed_json = if src.format == "json" || src.format.is_empty() { parse_json(&body) } else { None };
 
                     for ext in &src.extracts {
@@ -879,6 +882,26 @@ fn warm_cache(archive: Arc<Archive>) {
                             }
                             Extract::Vector(prefix) => {
                                 if let Some(v) = extract_regex_val(&body, &format!("({}...)", prefix)) { extracted.insert(format!("{}_val", prefix), v); }
+                            }
+                            Extract::Ephemeris(n) => {
+                                let ht = if let Some(ref j) = parsed_json {
+                                    if let JsonVal::Obj(m) = j { if let Some(JsonVal::Str(s)) = m.get("result") { s.clone() } else { body.clone() } } else { body.clone() }
+                                } else { body.clone() };
+                                if let Some(soe) = ht.find("$$SOE") {
+                                    let a = &ht[soe+5..];
+                                    let e = a.find("$$EOE").unwrap_or(a.len());
+                                    let blk = &a[..e];
+                                    let ph = |k: &str| -> Option<f64> {
+                                        let p = blk.find(k)?;
+                                        let r = blk[p+k.len()..].trim_start();
+                                        let end = r.find(|c: char| c.is_whitespace()).unwrap_or(r.len());
+                                        r[..end].parse::<f64>().ok()
+                                    };
+                                    if let (Some(x),Some(y),Some(z),Some(rg)) = (ph("X ="),ph("Y ="),ph("Z ="),ph("RG =")) {
+                                        eph_pos = Some((x*1000.0, y*1000.0, z*1000.0));
+                                        extracted.insert(n.clone(), rg*1000.0);
+                                    }
+                                }
                             }
                             Extract::LastObj(fk, fv, ek, n) => {
                                 if let Some(ref j) = parsed_json {
@@ -973,7 +996,8 @@ fn warm_cache(archive: Arc<Archive>) {
                         }
                     }
                     if !extracted.is_empty() {
-                        let extracted_with_t: HashMap<String, (f64, f64, f64, f64, f64)> = extracted.iter().map(|(k, v)| (k.clone(), (*v, *query_t, *pos_x, *pos_y, *pos_z))).collect();
+                        let (fx, fy, fz) = eph_pos.unwrap_or((*pos_x, *pos_y, *pos_z));
+                        let extracted_with_t: HashMap<String, (f64, f64, f64, f64, f64)> = extracted.iter().map(|(k, v)| (k.clone(), (*v, *query_t, fx, fy, fz))).collect();
                         archive.data_cache.lock().unwrap_or_else(|e| e.into_inner()).insert(cache_key, (*query_t, extracted_with_t));
                     }
                 }

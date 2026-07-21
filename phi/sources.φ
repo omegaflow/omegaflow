@@ -1633,7 +1633,7 @@ field feed.opensearch:totalResults technosphere_arxiv_paper_count
 source atlas_3i_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector atlas_3i_x atlas_3i_y atlas_3i_z
+ephemeris orbital_atlas_3i_distance
 
 source aurora_forecast
 ttl 3600
@@ -1653,7 +1653,7 @@ path properties.parameter.ALLSKY_SFC_UV_INDEX.0 biosphere_uv_index_global
 source callisto_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27504%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector callisto_x callisto_y callisto_z
+ephemeris orbital_callisto_distance
 
 source cdc_covid_global
 ttl 3600
@@ -1712,12 +1712,12 @@ field features biosphere_effis_fire_feature_count
 source enceladus_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector enceladus_x enceladus_y enceladus_z
+ephemeris orbital_enceladus_distance
 
 source encke_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector encke_x encke_y encke_z
+ephemeris orbital_encke_distance
 
 source entsoe_energy
 res 0
@@ -1738,12 +1738,12 @@ last_row spl_full hydrosphere_sound_pressure_db
 source eris_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector eris_x eris_y eris_z
+ephemeris orbital_eris_distance
 
 source europa_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector europa_x europa_y europa_z
+ephemeris orbital_europa_distance
 
 source exchangerate_api
 ttl 3600
@@ -1782,7 +1782,7 @@ field species_count biosphere_fungi_species_count
 source ganymede_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector ganymede_x ganymede_y ganymede_z
+ephemeris orbital_ganymede_distance
 
 source gbif
 ttl 3600
@@ -1816,7 +1816,7 @@ field meta.total_count political_legislation_votes
 source haumea_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector haumea_x haumea_y haumea_z
+ephemeris orbital_haumea_distance
 
 source inaturalist
 ttl 3600
@@ -1843,7 +1843,7 @@ field object.fullname cosmic_interstellar_object_latest_name
 source io_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27501%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector io_x io_y io_z
+ephemeris orbital_io_distance
 
 source ionosphere_tec_global
 ttl 3600
@@ -1853,18 +1853,17 @@ count features ionosphere_global_tec_points
 source juno_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector juno_x juno_y juno_z
+ephemeris orbital_juno_distance
 
 source jupiter_vectors
 ttl 3600
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27%40sun%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-format text
-field result orbital_jupiter_vectors_raw
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris orbital_jupiter_distance
 
 source jwst_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector jwst_x jwst_y jwst_z
+ephemeris orbital_jwst_distance
 
 source launch_library
 ttl 3600
@@ -1874,25 +1873,22 @@ field count orbital_upcoming_launches
 source makemake_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector makemake_x makemake_y makemake_z
+ephemeris orbital_makemake_distance
 
 source mars_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-format text
-field result orbital_mars_vectors_raw
+ephemeris orbital_mars_distance
 
 source mercury_vectors
 ttl 3600
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27@sun%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-format text
-field result orbital_mercury_vectors_raw
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris orbital_mercury_distance
 
 source moon_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-format text
-field result orbital_moon_vectors_raw
+ephemeris orbital_moon_distance
 
 source nasa_donki_cme
 ttl 3600
@@ -1972,14 +1968,13 @@ path near_earth_objects.{today}.0.close_approach_data.0.miss_distance.kilometers
 
 source neptune_vectors
 ttl 3600
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27@sun%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-format text
-field result orbital_neptune_vectors_raw
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris orbital_neptune_distance
 
 source new_horizons_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector nh_x nh_y nh_z
+ephemeris orbital_new_horizons_distance
 
 source nifc_fires
 res 0
@@ -2055,7 +2050,7 @@ deep total technosphere_shops_5km
 source parker_solar_probe_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector parker_x parker_y parker_z
+ephemeris orbital_parker_solar_probe_distance
 
 source pegelonline_water_level
 ttl 3600
@@ -2066,8 +2061,7 @@ field 0.water.currentMeasurement.value hydrosphere_water_level_cm
 source pluto_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27999%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-format text
-field result orbital_pluto_vectors_raw
+ephemeris orbital_pluto_distance
 
 source satnogs_radio_observations
 ttl 3600
@@ -2077,19 +2071,17 @@ count items technosphere_satnogs_observations
 source saturn_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27699%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-format text
-field result orbital_saturn_vectors_raw
+ephemeris orbital_saturn_distance
 
 source solar_orbiter_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector solo_x solo_y solo_z
+ephemeris orbital_solar_orbiter_distance
 
 source sun_vectors
 ttl 3600
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27@sun%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-format text
-field result orbital_sun_vectors_raw
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris orbital_sun_distance
 
 source technosphere_tor_relays_running
 ttl 3600
@@ -2099,18 +2091,17 @@ field relays_published technosphere_tor_relay_count
 source titan_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27606%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector titan_x titan_y titan_z
+ephemeris orbital_titan_distance
 
 source triton_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector triton_x triton_y triton_z
+ephemeris orbital_triton_distance
 
 source uranus_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27799%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-format text
-field result orbital_uranus_vectors_raw
+ephemeris orbital_uranus_distance
 
 source usgs_volcano_alerts
 ttl 3600
@@ -2121,23 +2112,22 @@ field alert_level geosphere_volcano_max_alert
 source venus_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27299%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
-format text
-field result orbital_venus_vectors_raw
+ephemeris orbital_venus_distance
 
 source vesta_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector vesta_x vesta_y vesta_z
+ephemeris orbital_vesta_distance
 
 source voyager1_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector voyager1_x voyager1_y voyager1_z
+ephemeris orbital_voyager1_distance
 
 source voyager2_vectors
 ttl 3600
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector voyager2_x voyager2_y voyager2_z
+ephemeris orbital_voyager2_distance
 
 source wikipedia_pageviews_total
 ttl 3600
@@ -2147,7 +2137,7 @@ path items.0.views social_wikipedia_pageviews_daily
 source apophis_vectors
 ttl 86400
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector apophis_x apophis_y apophis_z
+ephemeris orbital_apophis_distance
 
 source bci_clinical_trials_recruiting
 ttl 86400
@@ -2157,7 +2147,7 @@ field totalCount technosphere_bci_trials_recruiting
 source bennu_vectors
 ttl 86400
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector bennu_x bennu_y bennu_z
+ephemeris orbital_bennu_distance
 
 source biosphere_global_vegetation_health_index
 res 0
@@ -2192,7 +2182,7 @@ ttl 86400
 lat 34.201
 lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector ceres_x ceres_y ceres_z
+ephemeris orbital_ceres_distance
 
 source crispr_clinical_trials_recruiting
 ttl 86400
@@ -2310,7 +2300,7 @@ ttl 86400
 lat 34.201
 lon -118.171
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000001%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-vector halley_x halley_y halley_z
+ephemeris orbital_halley_distance
 
 source iter_fusion_status
 ttl 86400
