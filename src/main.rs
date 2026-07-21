@@ -799,6 +799,11 @@ fn warm_cache(archive: Arc<Archive>) {
 
         for (query_t, pos_x, pos_y, pos_z) in &positions {
 
+            let (ex, ey, ez) = earth_position_icrs(*query_t);
+            let gmst = compute_gmst(*query_t);
+            let cos_g = gmst.cos(); let sin_g = gmst.sin();
+            let cos_e = ECLIPTIC_OBLIQUITY.cos(); let sin_e = ECLIPTIC_OBLIQUITY.sin();
+
             let needs: Vec<(usize, String, String, Vec<(String, String)>, u64)> = archive.sources.iter().enumerate()
                 .filter_map(|(i, src)| {
                     if src.lat.is_some() {
@@ -811,6 +816,16 @@ fn warm_cache(archive: Arc<Archive>) {
                             }
                         };
                         if needs_fetch {
+                            let xi = src.ecef_x * cos_g + src.ecef_y * sin_g;
+                            let yi = -src.ecef_x * sin_g + src.ecef_y * cos_g;
+                            let zi = src.ecef_z;
+                            let source_x = xi + ex;
+                            let source_y = yi * cos_e + zi * sin_e + ey;
+                            let source_z = -yi * sin_e + zi * cos_e + ez;
+                            let dx = source_x - *pos_x;
+                            let dy = source_y - *pos_y;
+                            let dz = source_z - *pos_z;
+                            if dx * dx + dy * dy + dz * dz > src.res_sq { return None; }
                             let (sx, sy, sz) = (src.lat.unwrap(), src.lon.unwrap(), 0.0f64);
                             let url = render_url(&src.url, sx, sy, sz, *query_t, src.res);
                             let headers_rendered: Vec<(String, String)> = src.headers.iter().map(|(k, v)| (k.clone(), render_url(v, sx, sy, sz, *query_t, src.res))).collect();
