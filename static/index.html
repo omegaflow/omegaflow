@@ -104,6 +104,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 }).catch(() => {});
             }
         }
+        if (localFlowConsented) {
         const resonanceWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/resonance`);
         resonanceWs.binaryType = 'arraybuffer';
         transport.socket = resonanceWs;
@@ -118,8 +119,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 if (pending) { transport.pending.delete(id); updateRtt(performance.now() - pending.startTime); pending.resolve(e.data); }
             }
         });
+        }
         let gpuMaxBufferSize = 0;
-        if (navigator.gpu) {
+        if (localFlowConsented && navigator.gpu) {
             navigator.gpu.requestAdapter().then(adapter => {
                 if (adapter) {
                     gpuMaxBufferSize = adapter.limits.maxBufferSize;
@@ -669,6 +671,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             document.addEventListener('click', startHardware, { once: true });
             document.addEventListener('touchstart', startHardware, { once: true });
         }
+        if (localFlowConsented) {
         const canvas = document.createElement('canvas');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;image-rendering:pixelated;z-index:-1;';
@@ -706,6 +709,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 }
             }
         });
+        }
         function registerGamepads() {
             const pads = navigator.getGamepads ? navigator.getGamepads() : [];
             for (let p = 0; p < pads.length; p++) {
@@ -861,7 +865,9 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
         });
         window.addEventListener('error', (e) => { reportState('ERROR', e.message + ' @ ' + e.filename + ':' + e.lineno); e.preventDefault(); });
         window.addEventListener('unhandledrejection', (e) => { reportState('REJECTION', String(e.reason)); e.preventDefault(); });
-        requestAnimationFrame(ω);
+        if (localFlowConsented) {
+            requestAnimationFrame(ω);
+        }
     </script>
 </body>
 </html>
