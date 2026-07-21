@@ -364,7 +364,7 @@ fn extract_header(s: &str, n: &str) -> Option<String> { for l in s.lines() { if 
 fn fetch_with_headers(url: &str, headers: &[(String, String)], ttl: u64) -> Option<String> {
     let connect_t = (((ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64).min(15);
     let max_t = (((ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(30);
-    let mut cmd = Command::new("curl"); cmd.arg("-s").arg("-k").arg("-m").arg(max_t.to_string()).arg("--connect-timeout").arg(connect_t.to_string());
+    let mut cmd = Command::new("curl"); cmd.arg("-s").arg("-m").arg(max_t.to_string()).arg("--connect-timeout").arg(connect_t.to_string());
     for (k, v) in headers { cmd.arg("-H").arg(format!("{}: {}", k, v)); }
     cmd.arg(url);
     let output = cmd.output().ok()?;
