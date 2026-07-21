@@ -464,6 +464,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     registerOscillator(tp, Number.EPSILON);
                     const c2d = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
                     (async () => {
+                    try {
                         while (true) {
                             const { value: frame, done } = await reader.read();
                             if (done) break;
@@ -485,6 +486,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                                 frame.close();
                             } catch { try { frame.close(); } catch {} }
                         }
+                    } catch (e) { reportState('CAMERA_READ_FAIL', e && e.message ? e.message : String(e)); }
                     })();
                 }
             } catch {}
