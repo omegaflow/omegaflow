@@ -802,11 +802,16 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                 for (let i = 0; i < oscillators.length; i++) {
                     const o = oscillators[i];
                     if (o.filled > 0 && !isInternalMetric(o.url)) {
-                        topOsc.push({ u: o.url.substring(0, 32), v: o.median, w: o.complexity, c: o.complexity, f: o.filled });
+                        const dx = o.ix - xPresence, dy = o.iy - yPresence, dz = o.iz - zPresence;
+                        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                        topOsc.push({ u: o.url.substring(0, 32), v: o.median, w: o.complexity, c: o.complexity, f: o.filled, d: dist });
                     }
                 }
-                topOsc.sort((a, b) => b.w - a.w);
-                const topLines = topOsc.slice(0, 12).map(t => `  ${t.u}: ${t.v.toPrecision(4)} (weight ${t.w.toFixed(2)}, complexity ${t.c.toFixed(2)})`).join('\n');
+                topOsc.sort((a, b) => a.d - b.d || b.w - a.w);
+                const topLines = topOsc.slice(0, 12).map(t => {
+                    const distStr = t.d < 1e6 ? `${(t.d/1e3).toFixed(0)}km` : `${(t.d/1.495978707e11).toFixed(2)}AU`;
+                    return `  ${t.u}: ${t.v.toPrecision(4)} (w${t.w.toFixed(2)}, ${distStr})`;
+                }).join('\n');
 
                 debugEl.value =
                     "omegaflow field\n\n" +
