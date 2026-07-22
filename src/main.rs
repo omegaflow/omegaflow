@@ -528,14 +528,17 @@ fn res_sq(res: i32) -> f64 {
     res_m * res_m
 }
 
-fn spatial_key(x: f64, y: f64, z: f64, res: i32) -> String {
+fn wgs84_key(lat: f64, lon: f64, res: i32) -> String {
     let r = res.max(0) as usize;
     format!(
-        "{}_{}_{}",
-        format!("{:.*}", r, x),
-        format!("{:.*}", r, y),
-        format!("{:.*}", r, z)
+        "WGS84_{}_{}",
+        format!("{:.*}", r, lat),
+        format!("{:.*}", r, lon)
     )
+}
+
+fn icrs_key(x: f64, y: f64, z: f64, t: f64) -> String {
+    format!("ICRS_{}_{}_{}_{}", x as i64, y as i64, z as i64, t as i64)
 }
 
 struct Archive {
@@ -544,7 +547,7 @@ struct Archive {
     constants_js: Vec<u8>,
     data_cache: Mutex<HashMap<String, (f64, HashMap<String, (f64, f64, f64, f64, f64)>)>>,
     active_positions: Mutex<HashMap<String, (f64, f64, f64, f64)>>,
-    source_positions: Mutex<HashMap<usize, (f64, f64, f64)>>,
+    source_positions: Mutex<HashMap<usize, (f64, f64, f64, String)>>,
 }
 struct WsFrame {
     opcode: u8,
@@ -820,7 +823,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                         None
                     };
                     if let Some((source_x, source_y, source_z)) = browser_pos {
-                        let browser_key = spatial_key(source_x, source_y, source_z, 5);
+                        let browser_key = wgs84_key(src_lat.unwrap(), src_lon.unwrap(), 5);
                         for (name, value) in &source_oscillators {
                             cache
                                 .entry(browser_key.clone())
@@ -848,14 +851,13 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     out.extend_from_slice(&0u32.to_le_bytes());
                     let mut merged_values: HashMap<String, (f64, f64, f64, f64, f64)> =
                         HashMap::new();
-                    let mut merge_at = |x: f64, y: f64, z: f64, res: i32| {
+                    let mut merge_at = |x: f64, y: f64, z: f64, res: i32, key: String| {
                         let dx = x - presence_x;
                         let dy = y - presence_y;
                         let dz = z - presence_z;
                         if dx * dx + dy * dy + dz * dz > res_sq(res) {
                             return;
                         }
-                        let key = spatial_key(x, y, z, res);
                         if let Some((_, values)) = cache.get(&key) {
                             for (k, v) in values {
                                 merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4));
@@ -865,13 +867,14 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     for (i, src) in archive.sources.iter().enumerate() {
                         if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
                             let (x, y, z) = geodetic_to_icrs(lat, lon, 0.0, presence_t);
-                            merge_at(x, y, z, src.res);
-                        } else if let Some(&(x, y, z)) = source_positions.get(&i) {
-                            merge_at(x, y, z, src.res);
+                            merge_at(x, y, z, src.res, wgs84_key(lat, lon, src.res));
+                        } else if let Some((x, y, z, key)) = source_positions.get(&i) {
+                            merge_at(*x, *y, *z, src.res, key.clone());
                         }
                     }
-                    if let Some((x, y, z)) = browser_pos {
-                        merge_at(x, y, z, 5);
+                    if let (Some(lat), Some(lon), Some((x, y, z))) = (src_lat, src_lon, browser_pos)
+                    {
+                        merge_at(x, y, z, 5, wgs84_key(lat, lon, 5));
                     }
                     if !merged_values.is_empty() {
                         let fields: Vec<(&str, f64, f64, f64, f64, f64)> = merged_values
@@ -1525,13 +1528,7 @@ fn warm_cache(archive: Arc<Archive>) {
         }
 
         for (query_t, pos_x, pos_y, pos_z) in &positions {
-            let needs: Vec<(
-                usize,
-                String,
-                Vec<(String, String)>,
-                u64,
-                Option<(f64, f64, f64)>,
-            )> = archive
+            let needs: Vec<(usize, String, Vec<(String, String)>, u64)> = archive
                 .sources
                 .iter()
                 .enumerate()
@@ -1545,7 +1542,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         if dx * dx + dy * dy + dz * dz > res_sq(src.res) {
                             return None;
                         }
-                        let cache_key = spatial_key(source_x, source_y, source_z, src.res);
+                        let cache_key = wgs84_key(lat, lon, src.res);
                         let needs_fetch = {
                             let cache =
                                 archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
@@ -1569,13 +1566,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                 )
                             })
                             .collect();
-                        Some((
-                            i,
-                            url,
-                            headers_rendered,
-                            src.ttl,
-                            Some((source_x, source_y, source_z)),
-                        ))
+                        Some((i, url, headers_rendered, src.ttl))
                     } else {
                         let prev_pos = archive
                             .source_positions
@@ -1583,12 +1574,11 @@ fn warm_cache(archive: Arc<Archive>) {
                             .unwrap_or_else(|e| e.into_inner())
                             .get(&i)
                             .cloned();
-                        if let Some((px, py, pz)) = prev_pos {
-                            let cache_key = spatial_key(px, py, pz, src.res);
+                        if let Some((_, _, _, ref prev_key)) = prev_pos {
                             let fresh = {
                                 let cache =
                                     archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
-                                match cache.get(&cache_key) {
+                                match cache.get(prev_key) {
                                     Some((ts, _)) => *query_t - *ts < src.ttl as f64,
                                     None => false,
                                 }
@@ -1608,7 +1598,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                 )
                             })
                             .collect();
-                        Some((i, url, headers_rendered, src.ttl, prev_pos))
+                        Some((i, url, headers_rendered, src.ttl))
                     }
                 })
                 .collect();
@@ -1617,22 +1607,21 @@ fn warm_cache(archive: Arc<Archive>) {
                 continue;
             }
 
-            let results: Vec<(usize, Option<(f64, f64, f64)>, Option<String>)> =
-                thread::scope(|s| {
-                    let handles: Vec<_> = needs
-                        .iter()
-                        .map(|&(i, ref url, ref headers, ref ttl, fixed_pos)| {
-                            s.spawn(move || {
-                                let _permit = CurlPermit::acquire();
-                                let body = fetch_with_headers(url, headers, *ttl);
-                                (i, fixed_pos, body)
-                            })
+            let results: Vec<(usize, Option<String>)> = thread::scope(|s| {
+                let handles: Vec<_> = needs
+                    .iter()
+                    .map(|&(i, ref url, ref headers, ref ttl)| {
+                        s.spawn(move || {
+                            let _permit = CurlPermit::acquire();
+                            let body = fetch_with_headers(url, headers, *ttl);
+                            (i, body)
                         })
-                        .collect();
-                    handles.into_iter().filter_map(|h| h.join().ok()).collect()
-                });
+                    })
+                    .collect();
+                handles.into_iter().filter_map(|h| h.join().ok()).collect()
+            });
 
-            for (src_idx, fixed_pos, body_opt) in results {
+            for (src_idx, body_opt) in results {
                 if let Some(body) = body_opt {
                     let src = &archive.sources[src_idx];
                     let mut extracted: HashMap<String, f64> = HashMap::new();
@@ -1850,8 +1839,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                                 {
                                                     let (ev_x, ev_y, ev_z) =
                                                         geodetic_to_icrs(la, lo, al, *query_t);
-                                                    let ev_key =
-                                                        spatial_key(ev_x, ev_y, ev_z, src.res);
+                                                    let ev_key = wgs84_key(la, lo, src.res);
                                                     let mut ev_vals: HashMap<
                                                         String,
                                                         (f64, f64, f64, f64, f64),
@@ -1929,9 +1917,8 @@ fn warm_cache(archive: Arc<Archive>) {
                                                                     geodetic_to_icrs(
                                                                         ela, elo, 0.0, *query_t,
                                                                     );
-                                                                let ev_key = spatial_key(
-                                                                    ev_x, ev_y, ev_z, src.res,
-                                                                );
+                                                                let ev_key =
+                                                                    wgs84_key(ela, elo, src.res);
                                                                 let mut ev_vals: HashMap<
                                                                     String,
                                                                     (f64, f64, f64, f64, f64),
@@ -1966,23 +1953,29 @@ fn warm_cache(archive: Arc<Archive>) {
                         }
                     }
                     if !extracted.is_empty() {
-                        let (fx, fy, fz) = if let Some(p) = eph_pos {
-                            p
-                        } else if let Some(p) = fixed_pos {
-                            p
+                        let (cache_key, fx, fy, fz) = if let Some((px, py, pz)) = eph_pos {
+                            (icrs_key(px, py, pz, *query_t), px, py, pz)
+                        } else if let (Some(la), Some(lo)) = (src.lat, src.lon) {
+                            let (px, py, pz) = geodetic_to_icrs(la, lo, 0.0, *query_t);
+                            (wgs84_key(la, lo, src.res), px, py, pz)
                         } else if let (Some(la), Some(lo)) =
                             (extracted.get("lat"), extracted.get("lon"))
                         {
-                            geodetic_to_icrs(*la, *lo, 0.0, *query_t)
+                            let (px, py, pz) = geodetic_to_icrs(*la, *lo, 0.0, *query_t);
+                            (wgs84_key(*la, *lo, src.res), px, py, pz)
                         } else {
-                            (*pos_x, *pos_y, *pos_z)
+                            (
+                                icrs_key(*pos_x, *pos_y, *pos_z, *query_t),
+                                *pos_x,
+                                *pos_y,
+                                *pos_z,
+                            )
                         };
                         archive
                             .source_positions
                             .lock()
                             .unwrap_or_else(|e| e.into_inner())
-                            .insert(src_idx, (fx, fy, fz));
-                        let cache_key = spatial_key(fx, fy, fz, src.res);
+                            .insert(src_idx, (fx, fy, fz, cache_key.clone()));
                         let extracted_with_t: HashMap<String, (f64, f64, f64, f64, f64)> =
                             extracted
                                 .iter()

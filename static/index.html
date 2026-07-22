@@ -131,16 +131,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition((pos) => {
                     const c = pos.coords;
-                    if (!indexMap.has('geolocation.latitude')) {
-                        registerOscillator('geolocation.latitude', c.latitude);
-                        registerOscillator('geolocation.longitude', c.longitude);
-                        registerOscillator('geolocation.altitude', c.altitude || 0);
-                        registerOscillator('geolocation.accuracy', c.accuracy);
+                    if (!indexMap.has('lat')) {
+                        registerOscillator('lat', c.latitude);
+                        registerOscillator('lon', c.longitude);
+                        registerOscillator('alt', c.altitude || 0);
+                        registerOscillator('acc', c.accuracy);
                     }
-                    recordSample('geolocation.latitude', c.latitude);
-                    recordSample('geolocation.longitude', c.longitude);
-                    recordSample('geolocation.altitude', c.altitude || 0);
-                    recordSample('geolocation.accuracy', c.accuracy);
+                    recordSample('lat', c.latitude);
+                    recordSample('lon', c.longitude);
+                    recordSample('alt', c.altitude || 0);
+                    recordSample('acc', c.accuracy);
                 }, () => {}, { enableHighAccuracy: true, timeout: 10000 });
             }
             if (navigator.getBattery) {
@@ -920,4 +920,3 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
     </script>
 </body>
 </html>
-
