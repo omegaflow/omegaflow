@@ -545,6 +545,7 @@ struct Archive {
     sources: Vec<SourceConfig>,
     index_html: Vec<u8>,
     constants_js: Vec<u8>,
+    gpu_worker_js: Vec<u8>,
     data_cache: Mutex<HashMap<String, (f64, HashMap<String, (f64, f64, f64, f64, f64)>)>>,
     active_positions: Mutex<HashMap<String, (f64, f64, f64, f64)>>,
     source_positions: Mutex<HashMap<usize, (f64, f64, f64, String)>>,
@@ -685,6 +686,12 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                         "200 OK",
                         "application/javascript",
                         &archive.constants_js,
+                    ),
+                    "/gpu.worker.js" => emit(
+                        &mut s,
+                        "200 OK",
+                        "application/javascript",
+                        &archive.gpu_worker_js,
                     ),
                     _ => {
                         emit_void(&mut s);
@@ -2025,6 +2032,7 @@ fn main() {
         sources: load_sources(),
         index_html: std::fs::read("static/index.html").unwrap_or_default(),
         constants_js: std::fs::read("static/constants.js").unwrap_or_default(),
+        gpu_worker_js: std::fs::read("static/gpu.worker.js").unwrap_or_default(),
         data_cache: Mutex::new(HashMap::new()),
         active_positions: Mutex::new(HashMap::new()),
         source_positions: Mutex::new(HashMap::new()),
