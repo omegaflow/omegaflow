@@ -34,6 +34,26 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         import { syncFrame, φ, transport, Φ, C, updateRtt, getRto } from '/constants.js';
         function reportState(category, detail) { try { fetch('/crash', { method: 'POST', body: `${category}: ${detail}` }); } catch {} }
 
+        const AU = 1.495978707e11;
+        const EARTH_ECC = 0.0167086;
+        const ECLIPTIC_OBLIQUITY = 0.409092804;
+        const J2000_EPOCH = 2451545.0;
+
+        function earthPositionIcrs(tdbSecs) {
+            const days = tdbSecs / 86400.0;
+            const m = 6.239996 + 0.017201969 * days;
+            let e = m;
+            for (let i = 0; i < 5; i++) {
+                e = e - (e - EARTH_ECC * Math.sin(e) - m) / (1.0 - EARTH_ECC * Math.cos(e));
+            }
+            const xO = AU * (Math.cos(e) - EARTH_ECC);
+            const yO = AU * Math.sqrt(1.0 - EARTH_ECC * EARTH_ECC) * Math.sin(e);
+            const w = -0.113;
+            const xE = xO * Math.cos(w) - yO * Math.sin(w);
+            const yE = xO * Math.sin(w) + yO * Math.cos(w);
+            return [xE, yE * Math.cos(ECLIPTIC_OBLIQUITY), yE * Math.sin(ECLIPTIC_OBLIQUITY)];
+        }
+
         const oscillators = [];
         const indexMap = new Map();
 
@@ -61,6 +81,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
 
         φ['server.time'] = parseFloat(await (await fetch('/time')).text());
         tPresence = φ['server.time'];
+        [xPresence, yPresence, zPresence] = earthPositionIcrs(tPresence);
 
         const resonanceWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/resonance`);
         resonanceWs.binaryType = 'arraybuffer';
@@ -82,7 +103,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             }
         });
         resonanceWs.addEventListener('open', () => {
-            syncFrame([], [{ t: tPresence, x: 0, y: 0, z: 0 }]).catch(() => {});
+            syncFrame([], [{ t: tPresence, x: xPresence, y: yPresence, z: zPresence }]).catch(() => {});
         });
 
         function awaitConsent() {
@@ -712,11 +733,14 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
                     const screenX = canvas.width * 0.5 + dx * scale;
                     const screenY = canvas.height * 0.5 - dy * scale;
                     const lum = dist > 0 ? Math.min(1, AU / (AU + dist)) : 1;
-                    const alpha = Math.max(0, Math.min(1, node.weight * Math.max(xAp, yAp, rAp, gAp, bAp)));
+                    const hasPosition = node.ix !== 0 || node.iy !== 0 || node.iz !== 0;
+                    const spatialFloor = hasPosition ? 0.12 : 0;
+                    const dynAlpha = node.weight * Math.max(xAp, yAp, rAp, gAp, bAp);
+                    const alpha = Math.min(1, Math.max(spatialFloor, dynAlpha));
                     if (alpha > Number.EPSILON) {
-                        const r = Math.floor(lum * rAp * 255);
-                        const g = Math.floor(lum * gAp * 255);
-                        const b = Math.floor(lum * bAp * 255);
+                        const r = Math.floor(lum * Math.max(rAp, hasPosition ? 0.3 : 0) * 255);
+                        const g = Math.floor(lum * Math.max(gAp, hasPosition ? 0.3 : 0) * 255);
+                        const b = Math.floor(lum * Math.max(bAp, hasPosition ? 0.4 : 0) * 255);
                         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
                         ctx.beginPath();
                         ctx.arc(screenX, screenY, Math.max(1, 5 - dist * scale * 0.001), 0, Math.PI * 2);
@@ -756,6 +780,7 @@ fn gauss(d2: f32, sigma: f32) -> f32 { return exp(-0.5 * d2 / (sigma * sigma)); 
             transport.tickTime = stableTick;
 
             tPresence += rawTick / 1000.0;
+            [xPresence, yPresence, zPresence] = earthPositionIcrs(tPresence);
 
             registerGamepads();
             for (const fn of pollFns) { try { fn(); } catch {} }
