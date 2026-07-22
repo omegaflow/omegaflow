@@ -756,7 +756,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     `  Topology window: ${topologyRingSize}\n` +
                     `  Ticks per second: ${tps}\n\n` +
                     "Performance\n" +
-                    `  GPU: ${window.ω?.gpu ? 'active' : 'none'}\n` +
+                    `  GPU: ${gpuWorkerReady ? 'active' : 'none'}\n` +
                     `  Frame:     ${rawTick.toFixed(1)}ms\n` +
                     `  Field:     ${lastFieldTime.toFixed(1)}ms\n` +
                     `  Manifest:  ${lastManifestTime.toFixed(1)}ms\n\n` +
