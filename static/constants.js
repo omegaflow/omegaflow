@@ -1,5 +1,6 @@
 export const C = 299792458.0;
 export const Φ = 1.618033988749895;
+export const EARTH_RADIUS = 6378137.0;
 export const φ = {};
 export const transport = { socket: null, pending: new Map(), seq: 0, tickTime: 16, rtt: 0, srtt: 0, rttvar: 0 };
 export function updateRtt(sampleRtt) {

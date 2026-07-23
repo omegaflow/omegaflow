@@ -4,7 +4,7 @@ use std::io::{Cursor, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::process::Command;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, RwLock};
 use std::thread;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -15,6 +15,8 @@ const EARTH_ECC: f64 = 0.0167086;
 const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
+const MU_EARTH: f64 = 3.986004418e14;
+const TERRA_DOMAIN: f64 = EARTH_RADIUS * 16.0;
 
 fn compute_gmst(tdb_secs: f64) -> f64 {
     let jd = tdb_secs / 86400.0 + J2000_EPOCH;
@@ -96,6 +98,353 @@ fn icrs_to_geodetic(x: f64, y: f64, z: f64, tdb_secs: f64) -> (f64, f64) {
         .atan2((x_ecef * x_ecef + y_ecef * y_ecef).sqrt())
         .to_degrees();
     (lat, lon)
+}
+
+type CellKey = (i64, i64, i64);
+type Origin = (u32, i32, i32);
+
+#[derive(Clone, Copy)]
+enum Motion {
+    Ground { lat: f64, lon: f64, alt: f64 },
+    Linear { p: [f64; 3], v: [f64; 3] },
+    Terra { scale: f64 },
+}
+
+impl Motion {
+    fn at(&self, t: f64, epoch: f64) -> [f64; 3] {
+        match self {
+            Motion::Ground { lat, lon, alt } => {
+                let (x, y, z) = geodetic_to_icrs(*lat, *lon, *alt, t);
+                [x, y, z]
+            }
+            Motion::Linear { p, v } => {
+                let dt = t - epoch;
+                [p[0] + v[0] * dt, p[1] + v[1] * dt, p[2] + v[2] * dt]
+            }
+            Motion::Terra { scale } => {
+                let (x, y, z) = earth_position_icrs(t);
+                [x * scale, y * scale, z * scale]
+            }
+        }
+    }
+    fn terra_bound(&self) -> bool {
+        matches!(self, Motion::Ground { .. } | Motion::Terra { .. })
+    }
+}
+
+#[derive(Clone)]
+struct Sample {
+    origin: Origin,
+    epoch: f64,
+    ttl: f64,
+    r: f64,
+    vmax: f64,
+    amax: f64,
+    p0f: [f64; 3],
+    motion: Motion,
+    fields: Vec<(String, f64)>,
+}
+
+struct Family {
+    cell_size: f64,
+    vmax: f64,
+    amax: f64,
+    rmax: f64,
+    epoch_min: f64,
+    cell_lo: CellKey,
+    cell_hi: CellKey,
+    cells: HashMap<CellKey, Vec<Sample>>,
+}
+
+struct Buffer {
+    terra: Family,
+    inertial: Family,
+}
+
+fn aperture(res: i32) -> f64 {
+    EARTH_RADIUS * (std::f64::consts::PI / 180.0) / 10f64.powi(res)
+}
+
+fn cell_of(p: [f64; 3], s: f64) -> CellKey {
+    (
+        (p[0] / s).floor() as i64,
+        (p[1] / s).floor() as i64,
+        (p[2] / s).floor() as i64,
+    )
+}
+
+fn relative_frame_position(motion: &Motion, t: f64, epoch: f64) -> [f64; 3] {
+    let p = motion.at(t, epoch);
+    if motion.terra_bound() {
+        let (ex, ey, ez) = earth_position_icrs(t);
+        [p[0] - ex, p[1] - ey, p[2] - ez]
+    } else {
+        p
+    }
+}
+
+fn law_bounds(motion: &Motion, epoch: f64, resid_ema: f64) -> (f64, f64, [f64; 3]) {
+    let p0 = relative_frame_position(motion, epoch, epoch);
+    let p1 = relative_frame_position(motion, epoch + 1.0, epoch);
+    let p2 = relative_frame_position(motion, epoch + 2.0, epoch);
+    let v = ((p1[0] - p0[0]).powi(2) + (p1[1] - p0[1]).powi(2) + (p1[2] - p0[2]).powi(2)).sqrt();
+    let a = ((p2[0] - 2.0 * p1[0] + p0[0]).powi(2)
+        + (p2[1] - 2.0 * p1[1] + p0[1]).powi(2)
+        + (p2[2] - 2.0 * p1[2] + p0[2]).powi(2))
+    .sqrt();
+    (Φ * (v + resid_ema), Φ * a, p0)
+}
+
+fn build_family(samples: Vec<Sample>, cadence: f64) -> Family {
+    let mut vmax = 0.0f64;
+    let mut amax = 0.0f64;
+    let mut rmax = 0.0f64;
+    let mut epoch_min = f64::MAX;
+    for s in &samples {
+        vmax = vmax.max(s.vmax);
+        amax = amax.max(s.amax);
+        rmax = rmax.max(s.r);
+        epoch_min = epoch_min.min(s.epoch);
+    }
+    let rho_cad = rmax + vmax * cadence + 0.5 * amax * cadence * cadence;
+    let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
+    let cell_size = 2f64.powi(shift);
+    let mut cells: HashMap<CellKey, Vec<Sample>> = HashMap::new();
+    let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
+    let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
+    for s in samples {
+        let c = cell_of(s.p0f, cell_size);
+        cell_lo.0 = cell_lo.0.min(c.0);
+        cell_lo.1 = cell_lo.1.min(c.1);
+        cell_lo.2 = cell_lo.2.min(c.2);
+        cell_hi.0 = cell_hi.0.max(c.0);
+        cell_hi.1 = cell_hi.1.max(c.1);
+        cell_hi.2 = cell_hi.2.max(c.2);
+        cells.entry(c).or_default().push(s);
+    }
+    Family {
+        cell_size,
+        vmax,
+        amax,
+        rmax,
+        epoch_min: if epoch_min == f64::MAX {
+            0.0
+        } else {
+            epoch_min
+        },
+        cell_lo,
+        cell_hi,
+        cells,
+    }
+}
+
+fn build_buffer(samples: Vec<Sample>, cadence: f64) -> Buffer {
+    let (terra, inertial): (Vec<Sample>, Vec<Sample>) =
+        samples.into_iter().partition(|s| s.motion.terra_bound());
+    Buffer {
+        terra: build_family(terra, cadence),
+        inertial: build_family(inertial, cadence),
+    }
+}
+
+fn enclose_family(
+    fam: &Family,
+    anchor: [f64; 3],
+    q: [f64; 3],
+    t2: f64,
+    merged: &mut HashMap<String, (f64, f64, f64, f64, f64)>,
+) {
+    if fam.cells.is_empty() {
+        return;
+    }
+    let qf = [q[0] - anchor[0], q[1] - anchor[1], q[2] - anchor[2]];
+    let dt = (t2 - fam.epoch_min).abs();
+    let rho = fam.rmax + fam.vmax * dt + 0.5 * fam.amax * dt * dt;
+    let s = fam.cell_size;
+    let qlo = cell_of([qf[0] - rho, qf[1] - rho, qf[2] - rho], s);
+    let qhi = cell_of([qf[0] + rho, qf[1] + rho, qf[2] + rho], s);
+    let lo = (
+        qlo.0.max(fam.cell_lo.0),
+        qlo.1.max(fam.cell_lo.1),
+        qlo.2.max(fam.cell_lo.2),
+    );
+    let hi = (
+        qhi.0.min(fam.cell_hi.0),
+        qhi.1.min(fam.cell_hi.1),
+        qhi.2.min(fam.cell_hi.2),
+    );
+    if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
+        return;
+    }
+    for cx in lo.0..=hi.0 {
+        for cy in lo.1..=hi.1 {
+            for cz in lo.2..=hi.2 {
+                let Some(samples) = fam.cells.get(&(cx, cy, cz)) else {
+                    continue;
+                };
+                for smp in samples {
+                    let age = (t2 - smp.epoch).abs();
+                    let reach = smp.r + smp.vmax * age + 0.5 * smp.amax * age * age;
+                    let dx = smp.p0f[0] - qf[0];
+                    let dy = smp.p0f[1] - qf[1];
+                    let dz = smp.p0f[2] - qf[2];
+                    if dx * dx + dy * dy + dz * dz > reach * reach {
+                        continue;
+                    }
+                    let p = smp.motion.at(t2, smp.epoch);
+                    let ddx = p[0] - q[0];
+                    let ddy = p[1] - q[1];
+                    let ddz = p[2] - q[2];
+                    if ddx * ddx + ddy * ddy + ddz * ddz > smp.r * smp.r {
+                        continue;
+                    }
+                    for (name, val) in &smp.fields {
+                        merged.insert(name.clone(), (*val, smp.epoch, p[0], p[1], p[2]));
+                    }
+                }
+            }
+        }
+    }
+}
+
+fn sense_buffer(
+    buf: &Buffer,
+    q: [f64; 3],
+    t2: f64,
+    merged: &mut HashMap<String, (f64, f64, f64, f64, f64)>,
+) {
+    let (ex, ey, ez) = earth_position_icrs(t2);
+    enclose_family(&buf.terra, [ex, ey, ez], q, t2, merged);
+    enclose_family(&buf.inertial, [0.0, 0.0, 0.0], q, t2, merged);
+}
+
+fn ecliptic_to_field(v: [f64; 3]) -> [f64; 3] {
+    let (c, s) = (ECLIPTIC_OBLIQUITY.cos(), ECLIPTIC_OBLIQUITY.sin());
+    [v[0], v[1] * c - v[2] * s, v[1] * s + v[2] * c]
+}
+
+fn ecef_vec_to_field(v: [f64; 3], t: f64) -> [f64; 3] {
+    let g = compute_gmst(t);
+    let (cg, sg) = (g.cos(), g.sin());
+    let x = v[0] * cg + v[1] * sg;
+    let y = -v[0] * sg + v[1] * cg;
+    let (c, s) = (ECLIPTIC_OBLIQUITY.cos(), ECLIPTIC_OBLIQUITY.sin());
+    [x, y * c + v[2] * s, -y * s + v[2] * c]
+}
+
+fn flow_motion(lat: f64, lon: f64, alt: f64, speed: f64, track: f64, vrate: f64, t: f64) -> Motion {
+    let p = geodetic_to_icrs(lat, lon, alt, t);
+    let pn = geodetic_to_icrs(lat, lon, alt, t + 1.0);
+    let v_frame = [pn.0 - p.0, pn.1 - p.1, pn.2 - p.2];
+    let latr = lat.to_radians();
+    let lonr = lon.to_radians();
+    let trk = track.to_radians();
+    let v_e = speed * trk.sin();
+    let v_n = speed * trk.cos();
+    let v_ecef = [
+        -v_e * lonr.sin() - v_n * latr.sin() * lonr.cos() + vrate * latr.cos() * lonr.cos(),
+        v_e * lonr.cos() - v_n * latr.sin() * lonr.sin() + vrate * latr.cos() * lonr.sin(),
+        v_n * latr.cos() + vrate * latr.sin(),
+    ];
+    let v_rot = ecef_vec_to_field(v_ecef, t);
+    Motion::Linear {
+        p: [p.0, p.1, p.2],
+        v: [
+            v_frame[0] + v_rot[0],
+            v_frame[1] + v_rot[1],
+            v_frame[2] + v_rot[2],
+        ],
+    }
+}
+
+fn horizons_nums(line: &str, keys: [&str; 3]) -> Option<[f64; 3]> {
+    let mut out = [0.0; 3];
+    for (i, k) in keys.iter().enumerate() {
+        let p = line.find(k)?;
+        let r = line[p + k.len()..].trim_start_matches(|c: char| c == '=' || c == ' ' || c == '\t');
+        let end = r.find(|c: char| c.is_whitespace()).unwrap_or(r.len());
+        out[i] = r[..end].parse().ok()?;
+    }
+    Some(out)
+}
+
+fn tdb_now() -> f64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs_f64()
+        - UNIX_J2000_OFFSET
+}
+
+#[derive(Clone, Copy, Default)]
+struct OriginState {
+    fetched: f64,
+    ttl: f64,
+    prev_epoch: f64,
+    prev_abs: [f64; 3],
+    prev_motion: Option<Motion>,
+    resid_ema: f64,
+    has_prev: bool,
+}
+
+struct StationState {
+    sample: Option<Sample>,
+    buffer: Arc<Buffer>,
+    ema_interval: f64,
+    last_seen: f64,
+}
+
+enum PendingPosition {
+    Source,
+    Geodetic {
+        lat: f64,
+        lon: f64,
+        alt: f64,
+    },
+    GeodeticFlow {
+        lat: f64,
+        lon: f64,
+        alt: f64,
+        speed: f64,
+        track: f64,
+        vrate: f64,
+    },
+    StateVector {
+        p: [f64; 3],
+        v: [f64; 3],
+    },
+}
+
+struct PendingSample {
+    epoch: f64,
+    position: PendingPosition,
+    fields: Vec<(String, f64)>,
+}
+
+fn origin_stale(
+    origins: &HashMap<Origin, OriginState>,
+    origin: Origin,
+    ttl: u64,
+    now: f64,
+) -> bool {
+    match origins.get(&origin) {
+        Some(o) => now - o.fetched >= ttl as f64,
+        None => true,
+    }
+}
+
+fn presence_gate(presences: &[(f64, f64, f64, f64)], pos: (f64, f64, f64), r: f64) -> bool {
+    let reach = r * Φ;
+    presences.iter().any(|&(_, x, y, z)| {
+        let dx = x - pos.0;
+        let dy = y - pos.1;
+        let dz = z - pos.2;
+        dx * dx + dy * dy + dz * dz <= reach * reach
+    })
+}
+
+fn region_quantize(deg: f64, res: i32) -> i32 {
+    (deg * 10f64.powi(res.max(0))).round() as i32
 }
 
 #[derive(Clone, Debug)]
@@ -503,6 +852,9 @@ enum Extract {
         lat_key: String,
         lon_key: String,
         alt_key: String,
+        vel_key: String,
+        trk_key: String,
+        vr_key: String,
         fields: Vec<(String, String)>,
     },
     Sum(String, String),
@@ -512,33 +864,22 @@ enum Extract {
     Ephemeris(String),
 }
 
+enum Frame {
+    Ground { lat: f64, lon: f64, alt: f64 },
+    Terra { scale: f64 },
+    Data,
+    Query,
+}
+
 struct SourceConfig {
     ttl: u64,
     url: String,
-    lat: Option<f64>,
-    lon: Option<f64>,
+    frame: Frame,
     res: i32,
     format: String,
     extracts: Vec<Extract>,
     headers: Vec<(String, String)>,
-}
-
-fn res_sq(res: i32) -> f64 {
-    let res_m = EARTH_RADIUS * (std::f64::consts::PI / 180.0) / 10f64.powi(res);
-    res_m * res_m
-}
-
-fn wgs84_key(lat: f64, lon: f64, res: i32) -> String {
-    let r = res.max(0) as usize;
-    format!(
-        "WGS84_{}_{}",
-        format!("{:.*}", r, lat),
-        format!("{:.*}", r, lon)
-    )
-}
-
-fn icrs_key(x: f64, y: f64, z: f64, t: f64) -> String {
-    format!("ICRS_{}_{}_{}_{}", x as i64, y as i64, z as i64, t as i64)
+    pos_fields: Option<(String, String, Option<String>, f64)>,
 }
 
 struct Archive {
@@ -546,9 +887,10 @@ struct Archive {
     index_html: Vec<u8>,
     constants_js: Vec<u8>,
     gpu_worker_js: Vec<u8>,
-    data_cache: Mutex<HashMap<String, (f64, HashMap<String, (f64, f64, f64, f64, f64)>)>>,
-    active_positions: Mutex<HashMap<String, (f64, f64, f64, f64)>>,
-    source_positions: Mutex<HashMap<usize, (f64, f64, f64, String)>>,
+    field: RwLock<Arc<Buffer>>,
+    station: Mutex<StationState>,
+    presence: Mutex<HashMap<String, (f64, f64, f64, f64)>>,
+    origins: Mutex<HashMap<Origin, OriginState>>,
 }
 struct WsFrame {
     opcode: u8,
@@ -681,6 +1023,15 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                         let tdb = unix - UNIX_J2000_OFFSET;
                         emit(&mut s, "200 OK", "text/plain", tdb.to_string().as_bytes());
                     }
+                    "/earth" => {
+                        let (x, y, z) = earth_position_icrs(tdb_now());
+                        emit(
+                            &mut s,
+                            "200 OK",
+                            "text/plain",
+                            format!("{} {} {}", x, y, z).as_bytes(),
+                        );
+                    }
                     "/constants.js" => emit(
                         &mut s,
                         "200 OK",
@@ -779,6 +1130,69 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
             }
             let query_count = u32::from_le_bytes(buf4) as usize;
 
+            let now = tdb_now();
+            let mut station_fields: Vec<(String, f64)> =
+                Vec::with_capacity(source_oscillators.len());
+            let (mut st_lat, mut st_lon, mut st_alt, mut st_acc) = (None, None, None, None);
+            for (name, value) in &source_oscillators {
+                match name.as_str() {
+                    "lat" => st_lat = Some(*value),
+                    "lon" => st_lon = Some(*value),
+                    "alt" => st_alt = Some(*value),
+                    "acc" => st_acc = Some(*value),
+                    _ => {}
+                }
+                station_fields.push((name.clone(), *value));
+            }
+            let station_buf = {
+                let mut station = archive.station.lock().unwrap_or_else(|e| e.into_inner());
+                if let (Some(lat), Some(lon), Some(acc)) = (st_lat, st_lon, st_acc) {
+                    if acc > 0.0 {
+                        let dt = if station.last_seen > 0.0 {
+                            (now - station.last_seen).abs()
+                        } else {
+                            0.0
+                        };
+                        if dt > 0.0 {
+                            if station.ema_interval <= 0.0 {
+                                station.ema_interval = dt;
+                            } else {
+                                let tau = station.ema_interval;
+                                station.ema_interval += (dt - tau) * (1.0 - (-dt / tau).exp());
+                            }
+                        }
+                        station.last_seen = now;
+                        let res = (aperture(0) / acc).log10().floor() as i32;
+                        let motion = Motion::Ground {
+                            lat,
+                            lon,
+                            alt: st_alt.unwrap_or(0.0),
+                        };
+                        let (vmax, amax, p0f) = law_bounds(&motion, now, 0.0);
+                        let sample = Sample {
+                            origin: (u32::MAX, 0, 0),
+                            epoch: now,
+                            ttl: Φ * Φ * station.ema_interval,
+                            r: aperture(res),
+                            vmax,
+                            amax,
+                            p0f,
+                            motion,
+                            fields: station_fields,
+                        };
+                        station.buffer =
+                            Arc::new(build_buffer(vec![sample.clone()], station.ema_interval));
+                        station.sample = Some(sample);
+                    }
+                }
+                Arc::clone(&station.buffer)
+            };
+            let field = archive
+                .field
+                .read()
+                .unwrap_or_else(|e| e.into_inner())
+                .clone();
+
             let mut out = Vec::with_capacity(1024);
             out.extend_from_slice(&[0xCF, 0x86]);
             out.push(1u8);
@@ -786,15 +1200,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
             out.extend_from_slice(&(query_count as u32).to_le_bytes());
 
             {
-                let mut cache = archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
-                let mut active = archive
-                    .active_positions
-                    .lock()
-                    .unwrap_or_else(|e| e.into_inner());
-                let source_positions = archive
-                    .source_positions
-                    .lock()
-                    .unwrap_or_else(|e| e.into_inner());
+                let mut presence = archive.presence.lock().unwrap_or_else(|e| e.into_inner());
 
                 for _ in 0..query_count {
                     let mut t_buf = [0u8; 8];
@@ -814,40 +1220,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                         break;
                     }
                     let presence_z = f64::from_le_bytes(t_buf);
-                    let mut src_lat = None;
-                    let mut src_lon = None;
-                    for (name, val) in &source_oscillators {
-                        if name == "lat" {
-                            src_lat = Some(*val);
-                        }
-                        if name == "lon" {
-                            src_lon = Some(*val);
-                        }
-                    }
-                    let browser_pos = if let (Some(lat), Some(lon)) = (src_lat, src_lon) {
-                        Some(geodetic_to_icrs(lat, lon, 0.0, presence_t))
-                    } else {
-                        None
-                    };
-                    if let Some((source_x, source_y, source_z)) = browser_pos {
-                        let browser_key = wgs84_key(src_lat.unwrap(), src_lon.unwrap(), 5);
-                        for (name, value) in &source_oscillators {
-                            cache
-                                .entry(browser_key.clone())
-                                .or_insert_with(|| {
-                                    (
-                                        presence_t,
-                                        HashMap::<String, (f64, f64, f64, f64, f64)>::new(),
-                                    )
-                                })
-                                .1
-                                .insert(
-                                    name.clone(),
-                                    (*value, presence_t, source_x, source_y, source_z),
-                                );
-                        }
-                    }
-                    active.insert(
+                    presence.insert(
                         format!(
                             "{}_{}_{}",
                             presence_x as i64, presence_y as i64, presence_z as i64
@@ -858,31 +1231,9 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     out.extend_from_slice(&0u32.to_le_bytes());
                     let mut merged_values: HashMap<String, (f64, f64, f64, f64, f64)> =
                         HashMap::new();
-                    let mut merge_at = |x: f64, y: f64, z: f64, res: i32, key: String| {
-                        let dx = x - presence_x;
-                        let dy = y - presence_y;
-                        let dz = z - presence_z;
-                        if dx * dx + dy * dy + dz * dz > res_sq(res) {
-                            return;
-                        }
-                        if let Some((_, values)) = cache.get(&key) {
-                            for (k, v) in values {
-                                merged_values.insert(k.clone(), (v.0, v.1, v.2, v.3, v.4));
-                            }
-                        }
-                    };
-                    for (i, src) in archive.sources.iter().enumerate() {
-                        if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
-                            let (x, y, z) = geodetic_to_icrs(lat, lon, 0.0, presence_t);
-                            merge_at(x, y, z, src.res, wgs84_key(lat, lon, src.res));
-                        } else if let Some((x, y, z, key)) = source_positions.get(&i) {
-                            merge_at(*x, *y, *z, src.res, key.clone());
-                        }
-                    }
-                    if let (Some(lat), Some(lon), Some((x, y, z))) = (src_lat, src_lon, browser_pos)
-                    {
-                        merge_at(x, y, z, 5, wgs84_key(lat, lon, 5));
-                    }
+                    let q = [presence_x, presence_y, presence_z];
+                    sense_buffer(&field, q, presence_t, &mut merged_values);
+                    sense_buffer(&station_buf, q, presence_t, &mut merged_values);
                     if !merged_values.is_empty() {
                         let fields: Vec<(&str, f64, f64, f64, f64, f64)> = merged_values
                             .iter()
@@ -1014,35 +1365,72 @@ fn load_sources() -> Vec<SourceConfig> {
     let content = std::fs::read_to_string("phi/sources.φ").unwrap_or_default();
     let mut cur_ttl: u64 = 0;
     let mut cur_res: i32 = 0;
+    let mut cur_res_set = false;
     let mut cur_url = String::new();
     let mut cur_lat: Option<f64> = None;
     let mut cur_lon: Option<f64> = None;
+    let mut cur_alt: f64 = 0.0;
+    let mut cur_terra: Option<f64> = None;
+    let mut cur_pos: Option<(String, String, Option<String>, f64)> = None;
     let mut cur_lat_str = String::new();
     let mut cur_format = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
     let mut cur_headers: Vec<(String, String)> = Vec::new();
+    let mut cur_name = String::new();
     let mut active = false;
 
     macro_rules! flush {
         () => {
             if active {
                 let mut res = cur_res;
-                if res == 0 && cur_lat.is_some() {
+                if !cur_res_set && cur_lat.is_some() {
                     res = match cur_lat_str.find('.') {
                         Some(dot) => (cur_lat_str.len() - dot - 1) as i32,
                         None => 0,
                     };
                 }
-                sources.push(SourceConfig {
-                    ttl: cur_ttl,
-                    url: cur_url.clone(),
-                    lat: cur_lat,
-                    lon: cur_lon,
-                    res,
-                    format: cur_format.clone(),
-                    extracts: cur_extracts.clone(),
-                    headers: cur_headers.clone(),
-                });
+                let has_data_position = cur_pos.is_some()
+                    || cur_extracts.iter().any(|e| {
+                        matches!(
+                            e,
+                            Extract::Map { .. }
+                                | Extract::GeojsonEvents { .. }
+                                | Extract::Ephemeris(_)
+                        )
+                    });
+                let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
+                    Some(Frame::Ground {
+                        lat,
+                        lon,
+                        alt: cur_alt,
+                    })
+                } else if let Some(scale) = cur_terra {
+                    Some(Frame::Terra { scale })
+                } else if has_data_position {
+                    Some(Frame::Data)
+                } else if cur_url.contains("{lat}")
+                    || cur_url.contains("{lon}")
+                    || cur_url.contains("{x}")
+                    || cur_url.contains("{y}")
+                    || cur_url.contains("{z}")
+                {
+                    Some(Frame::Query)
+                } else {
+                    eprintln!("source refused (no reference frame): {}", cur_name);
+                    None
+                };
+                if let Some(frame) = frame {
+                    sources.push(SourceConfig {
+                        ttl: cur_ttl,
+                        url: cur_url.clone(),
+                        frame,
+                        res,
+                        format: cur_format.clone(),
+                        extracts: cur_extracts.clone(),
+                        headers: cur_headers.clone(),
+                        pos_fields: cur_pos.clone(),
+                    });
+                }
             }
         };
     }
@@ -1061,24 +1449,44 @@ fn load_sources() -> Vec<SourceConfig> {
                 flush!();
                 cur_ttl = 0;
                 cur_res = 0;
+                cur_res_set = false;
                 cur_url.clear();
                 cur_lat = None;
                 cur_lon = None;
+                cur_alt = 0.0;
+                cur_terra = None;
+                cur_pos = None;
                 cur_lat_str.clear();
                 cur_format.clear();
                 cur_extracts.clear();
                 cur_headers.clear();
+                cur_name = parts.get(1).unwrap_or(&"").to_string();
                 active = true;
             }
             "url" => cur_url = line.get(4..).unwrap_or("").trim().to_string(),
             "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
-            "res" => cur_res = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
+            "res" => {
+                cur_res = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0);
+                cur_res_set = true;
+            }
             "format" => cur_format = parts.get(1).unwrap_or(&"json").to_string(),
             "lat" => {
                 cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
                 cur_lat = cur_lat_str.parse().ok();
             }
             "lon" => cur_lon = parts.get(1).and_then(|s| s.parse().ok()),
+            "alt" => cur_alt = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0.0),
+            "terra" => cur_terra = parts.get(1).and_then(|s| s.parse().ok()),
+            "pos" => {
+                if parts.len() >= 3 {
+                    cur_pos = Some((
+                        parts[1].to_string(),
+                        parts[2].to_string(),
+                        parts.get(3).map(|s| s.to_string()),
+                        parts.get(4).and_then(|s| s.parse().ok()).unwrap_or(1.0),
+                    ));
+                }
+            }
             "header" => {
                 let rest = line.get(7..).unwrap_or("").trim();
                 if let Some(sp) = rest.find(' ') {
@@ -1178,6 +1586,9 @@ fn load_sources() -> Vec<SourceConfig> {
                         lat_key: String::new(),
                         lon_key: String::new(),
                         alt_key: String::new(),
+                        vel_key: String::new(),
+                        trk_key: String::new(),
+                        vr_key: String::new(),
                         fields: Vec::new(),
                     });
                 }
@@ -1195,6 +1606,21 @@ fn load_sources() -> Vec<SourceConfig> {
             "alt_key" => {
                 if let Some(Extract::Map { alt_key, .. }) = cur_extracts.last_mut() {
                     *alt_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "vel_key" => {
+                if let Some(Extract::Map { vel_key, .. }) = cur_extracts.last_mut() {
+                    *vel_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "trk_key" => {
+                if let Some(Extract::Map { trk_key, .. }) = cur_extracts.last_mut() {
+                    *trk_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "vr_key" => {
+                if let Some(Extract::Map { vr_key, .. }) = cur_extracts.last_mut() {
+                    *vr_key = parts.get(1).unwrap_or(&"").to_string();
                 }
             }
             "field_in" => {
@@ -1517,508 +1943,717 @@ impl Drop for CurlPermit {
     }
 }
 
+fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSample> {
+    let mut pending: Vec<PendingSample> = Vec::new();
+    let mut extracted: HashMap<String, f64> = HashMap::new();
+    let parsed_json = if src.format == "json" || src.format.is_empty() {
+        parse_json(body)
+    } else {
+        None
+    };
+    for ext in &src.extracts {
+        match ext {
+            Extract::Field(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = jnum(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::First(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = jfirst(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::Last(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = jlast(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::Count(k, n) => {
+                let v = if src.format == "csv" || k == "lines" {
+                    Some(
+                        body.lines()
+                            .filter(|l| !l.trim().is_empty() && !l.trim().starts_with('#'))
+                            .count() as f64,
+                    )
+                } else {
+                    parsed_json.as_ref().and_then(|j| jcount(j, k))
+                };
+                if let Some(v) = v {
+                    extracted.insert(n.clone(), v);
+                }
+            }
+            Extract::LastRow(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = j2d_last_row(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                } else {
+                    if let Some(v) = text_last_col(body, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::Path(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = jpath(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::Deep(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = jdeep_find_num(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::Sum(path, n) => {
+                if let Some(ref j) = parsed_json {
+                    let target = if path == "." || path.is_empty() {
+                        Some(j)
+                    } else {
+                        jpath_val(j, path)
+                    };
+                    if let Some(JsonVal::Arr(arr)) = target {
+                        let sum: f64 = arr.iter().filter_map(|v| scalar_of(v)).sum();
+                        if sum.is_finite() {
+                            extracted.insert(n.clone(), sum);
+                        }
+                    }
+                }
+            }
+            Extract::Regex(pat, n) => {
+                if let Some(v) = extract_regex_val(body, pat) {
+                    extracted.insert(n.clone(), v);
+                }
+            }
+            Extract::XmlCount(tag, n) => {
+                let count = body.matches(&format!("<{}>", tag)).count() as f64;
+                extracted.insert(n.clone(), count);
+            }
+            Extract::Vector(prefix) => {
+                if let Some(v) = extract_regex_val(body, &format!("({}...)", prefix)) {
+                    extracted.insert(format!("{}_val", prefix), v);
+                }
+            }
+            Extract::Ephemeris(n) => {
+                let ht = if let Some(ref j) = parsed_json {
+                    if let JsonVal::Obj(m) = j {
+                        if let Some(JsonVal::Str(s)) = m.get("result") {
+                            s.clone()
+                        } else {
+                            body.to_string()
+                        }
+                    } else {
+                        body.to_string()
+                    }
+                } else {
+                    body.to_string()
+                };
+                if let Some(soe) = ht.find("$$SOE") {
+                    let a = &ht[soe + 5..];
+                    let e = a.find("$$EOE").unwrap_or(a.len());
+                    let blk = &a[..e];
+                    let mut rows: Vec<(f64, [f64; 3], [f64; 3], Option<f64>)> = Vec::new();
+                    let mut cur_jd: Option<f64> = None;
+                    let mut cur_p: Option<[f64; 3]> = None;
+                    let mut cur_v: Option<[f64; 3]> = None;
+                    let mut cur_rg: Option<f64> = None;
+                    for line in blk.lines() {
+                        let t = line.trim();
+                        if t.is_empty() {
+                            continue;
+                        }
+                        let c0 = t.chars().next().unwrap_or(' ');
+                        if c0.is_ascii_digit() {
+                            if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
+                                rows.push((jd, p, v, cur_rg));
+                            }
+                            cur_jd = t
+                                .split('=')
+                                .next()
+                                .and_then(|s| s.trim().parse::<f64>().ok());
+                            cur_p = None;
+                            cur_v = None;
+                            cur_rg = None;
+                        } else if t.starts_with("VX") {
+                            cur_v = horizons_nums(t, ["VX", "VY", "VZ"]);
+                        } else if t.starts_with('X') {
+                            cur_p = horizons_nums(t, ["X", "Y", "Z"]);
+                        } else if t.starts_with("LT") {
+                            if let Some(r) = horizons_nums(t, ["RG", "LT", "RR"]) {
+                                cur_rg = Some(r[0]);
+                            }
+                        }
+                    }
+                    if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
+                        rows.push((jd, p, v, cur_rg));
+                    }
+                    if let Some(&(jd0, p0k, v0k, rg0)) = rows.first() {
+                        let p0 =
+                            ecliptic_to_field([p0k[0] * 1000.0, p0k[1] * 1000.0, p0k[2] * 1000.0]);
+                        let row_epoch = (jd0 - J2000_EPOCH) * 86400.0;
+                        let v = if rows.len() > 1 {
+                            let &(jd1, p1k, _, _) = rows.last().unwrap_or(&rows[0]);
+                            let p1 = ecliptic_to_field([
+                                p1k[0] * 1000.0,
+                                p1k[1] * 1000.0,
+                                p1k[2] * 1000.0,
+                            ]);
+                            let dt = (jd1 - jd0) * 86400.0;
+                            if dt > 0.0 {
+                                [
+                                    (p1[0] - p0[0]) / dt,
+                                    (p1[1] - p0[1]) / dt,
+                                    (p1[2] - p0[2]) / dt,
+                                ]
+                            } else {
+                                ecliptic_to_field([
+                                    v0k[0] * 1000.0,
+                                    v0k[1] * 1000.0,
+                                    v0k[2] * 1000.0,
+                                ])
+                            }
+                        } else {
+                            ecliptic_to_field([v0k[0] * 1000.0, v0k[1] * 1000.0, v0k[2] * 1000.0])
+                        };
+                        let shift = now - row_epoch;
+                        let p_now = [
+                            p0[0] + v[0] * shift,
+                            p0[1] + v[1] * shift,
+                            p0[2] + v[2] * shift,
+                        ];
+                        let mut fields = Vec::new();
+                        if let Some(rg) = rg0 {
+                            fields.push((n.clone(), rg * 1000.0));
+                        }
+                        pending.push(PendingSample {
+                            epoch: now,
+                            position: PendingPosition::StateVector { p: p_now, v },
+                            fields,
+                        });
+                    }
+                }
+            }
+            Extract::LastObj(fk, fv, ek, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let JsonVal::Arr(arr) = j {
+                        for v in arr.iter().rev() {
+                            if let JsonVal::Obj(o) = v {
+                                if let Some(JsonVal::Str(s)) = o.get(fk) {
+                                    if s == fv {
+                                        if let Some(val) = jnum(v, ek) {
+                                            extracted.insert(n.clone(), val);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Extract::Map {
+                arr_path,
+                lat_key,
+                lon_key,
+                alt_key,
+                vel_key,
+                trk_key,
+                vr_key,
+                fields,
+            } => {
+                if let Some(ref j) = parsed_json {
+                    let mut current = j;
+                    let mut path_ok = true;
+                    for part in arr_path.split('.') {
+                        if let Ok(idx) = part.parse::<usize>() {
+                            if let JsonVal::Arr(arr) = current {
+                                current = match arr.get(idx) {
+                                    Some(v) => v,
+                                    None => {
+                                        path_ok = false;
+                                        break;
+                                    }
+                                };
+                            } else {
+                                path_ok = false;
+                                break;
+                            }
+                        } else {
+                            if let JsonVal::Obj(map) = current {
+                                current = match map.get(part) {
+                                    Some(v) => v,
+                                    None => {
+                                        path_ok = false;
+                                        break;
+                                    }
+                                };
+                            } else {
+                                path_ok = false;
+                                break;
+                            }
+                        }
+                    }
+                    if path_ok {
+                        if let JsonVal::Arr(arr) = current {
+                            for v in arr.iter() {
+                                let lat = jpath(v, lat_key);
+                                let lon = jpath(v, lon_key);
+                                let alt = if alt_key.is_empty() {
+                                    Some(0.0)
+                                } else {
+                                    jpath(v, alt_key)
+                                };
+                                if let (Some(la), Some(lo), Some(al)) = (lat, lon, alt) {
+                                    let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                                    for (fk, fn_) in fields {
+                                        if let Some(val) = jpath(v, fk) {
+                                            ev_fields.push((fn_.clone(), val));
+                                        }
+                                    }
+                                    if ev_fields.is_empty() {
+                                        continue;
+                                    }
+                                    let speed = if vel_key.is_empty() {
+                                        None
+                                    } else {
+                                        jpath(v, vel_key)
+                                    };
+                                    let track = if trk_key.is_empty() {
+                                        None
+                                    } else {
+                                        jpath(v, trk_key)
+                                    };
+                                    let vrate = if vr_key.is_empty() {
+                                        None
+                                    } else {
+                                        jpath(v, vr_key)
+                                    };
+                                    let position = if let (Some(sp), Some(tr)) = (speed, track) {
+                                        PendingPosition::GeodeticFlow {
+                                            lat: la,
+                                            lon: lo,
+                                            alt: al,
+                                            speed: sp,
+                                            track: tr,
+                                            vrate: vrate.unwrap_or(0.0),
+                                        }
+                                    } else {
+                                        PendingPosition::Geodetic {
+                                            lat: la,
+                                            lon: lo,
+                                            alt: al,
+                                        }
+                                    };
+                                    pending.push(PendingSample {
+                                        epoch: now,
+                                        position,
+                                        fields: ev_fields,
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Extract::GeojsonEvents {
+                mag_key,
+                min_mag,
+                outputs,
+            } => {
+                if outputs.len() >= 2 {
+                    if let Some(ref j) = parsed_json {
+                        if let JsonVal::Obj(root) = j {
+                            if let Some(JsonVal::Arr(features)) = root.get("features") {
+                                for feat in features {
+                                    if let JsonVal::Obj(f) = feat {
+                                        let mut elo = 0.0;
+                                        let mut ela = 0.0;
+                                        let mut ed = 0.0;
+                                        let mut mag = 0.0;
+                                        let mut valid = false;
+                                        if let Some(JsonVal::Obj(geom)) = f.get("geometry") {
+                                            if let Some(JsonVal::Arr(c)) = geom.get("coordinates") {
+                                                if c.len() >= 3 {
+                                                    if let JsonVal::Num(n) = c[0] {
+                                                        elo = n;
+                                                    }
+                                                    if let JsonVal::Num(n) = c[1] {
+                                                        ela = n;
+                                                    }
+                                                    if let JsonVal::Num(n) = c[2] {
+                                                        ed = n;
+                                                    }
+                                                    valid = true;
+                                                }
+                                            }
+                                        }
+                                        if valid {
+                                            if let Some(props) = f.get("properties") {
+                                                if let Some(m) = jnum(props, mag_key) {
+                                                    mag = m;
+                                                }
+                                            }
+                                            if mag >= *min_mag {
+                                                pending.push(PendingSample {
+                                                    epoch: now,
+                                                    position: PendingPosition::Geodetic {
+                                                        lat: ela,
+                                                        lon: elo,
+                                                        alt: -ed * 1000.0,
+                                                    },
+                                                    fields: vec![
+                                                        (outputs[0].clone(), mag),
+                                                        (outputs[1].clone(), ed * 1000.0),
+                                                    ],
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if !extracted.is_empty() {
+        pending.push(PendingSample {
+            epoch: now,
+            position: PendingPosition::Source,
+            fields: extracted.into_iter().collect(),
+        });
+    }
+    pending
+}
+
+fn materialize(
+    src: &SourceConfig,
+    origin: Origin,
+    region: Option<(f64, f64)>,
+    pend: PendingSample,
+    origins: &mut HashMap<Origin, OriginState>,
+) -> Option<Sample> {
+    if pend.fields.is_empty() {
+        return None;
+    }
+    let mut vmax_floor = 0.0f64;
+    let motion = match &pend.position {
+        PendingPosition::StateVector { p, v } => Motion::Linear { p: *p, v: *v },
+        PendingPosition::Geodetic { lat, lon, alt } => Motion::Ground {
+            lat: *lat,
+            lon: *lon,
+            alt: *alt,
+        },
+        PendingPosition::GeodeticFlow {
+            lat,
+            lon,
+            alt,
+            speed,
+            track,
+            vrate,
+        } => flow_motion(*lat, *lon, *alt, *speed, *track, *vrate, pend.epoch),
+        PendingPosition::Source => match &src.frame {
+            Frame::Ground { lat, lon, alt } => Motion::Ground {
+                lat: *lat,
+                lon: *lon,
+                alt: *alt,
+            },
+            Frame::Terra { scale } => Motion::Terra { scale: *scale },
+            Frame::Query => {
+                let (lat, lon) = region?;
+                Motion::Ground { lat, lon, alt: 0.0 }
+            }
+            Frame::Data => {
+                let (latf, lonf, altf, alt_scale) = src.pos_fields.as_ref()?;
+                let find = |k: &str| pend.fields.iter().find(|(n, _)| n == k).map(|(_, v)| *v);
+                let lat = find(latf)?;
+                let lon = find(lonf)?;
+                let alt = match altf {
+                    Some(k) => find(k)? * alt_scale,
+                    None => 0.0,
+                };
+                let p = geodetic_to_icrs(lat, lon, alt, pend.epoch);
+                let pa = [p.0, p.1, p.2];
+                let prev = origins.get(&origin).filter(|o| o.has_prev).copied();
+                let v = match prev {
+                    Some(o)
+                        if pend.epoch > o.prev_epoch
+                            && pend.epoch - o.prev_epoch <= src.ttl.max(1) as f64 * Φ * Φ =>
+                    {
+                        let dt = pend.epoch - o.prev_epoch;
+                        [
+                            (pa[0] - o.prev_abs[0]) / dt,
+                            (pa[1] - o.prev_abs[1]) / dt,
+                            (pa[2] - o.prev_abs[2]) / dt,
+                        ]
+                    }
+                    _ => {
+                        vmax_floor = Φ * (MU_EARTH / (EARTH_RADIUS + alt)).sqrt();
+                        [0.0, 0.0, 0.0]
+                    }
+                };
+                Motion::Linear { p: pa, v }
+            }
+        },
+    };
+    let abs = motion.at(pend.epoch, pend.epoch);
+    let mut resid_ema = 0.0;
+    if matches!(
+        pend.position,
+        PendingPosition::Source | PendingPosition::StateVector { .. }
+    ) {
+        let entry = origins.entry(origin).or_default();
+        if entry.has_prev {
+            let dt = (pend.epoch - entry.prev_epoch).abs().max(1.0);
+            if let Some(pm) = &entry.prev_motion {
+                let pred = pm.at(pend.epoch, entry.prev_epoch);
+                let resid = ((pred[0] - abs[0]).powi(2)
+                    + (pred[1] - abs[1]).powi(2)
+                    + (pred[2] - abs[2]).powi(2))
+                .sqrt();
+                let alpha = 1.0 - (-dt / src.ttl.max(1) as f64).exp();
+                entry.resid_ema += (resid / dt - entry.resid_ema) * alpha;
+            }
+        }
+        resid_ema = entry.resid_ema;
+        entry.prev_epoch = pend.epoch;
+        entry.prev_abs = abs;
+        entry.prev_motion = Some(motion);
+        entry.has_prev = true;
+    }
+    let (mut vmax, amax, p0f) = law_bounds(&motion, pend.epoch, resid_ema);
+    if vmax_floor > vmax {
+        vmax = vmax_floor;
+    }
+    Some(Sample {
+        origin,
+        epoch: pend.epoch,
+        ttl: src.ttl.max(1) as f64,
+        r: aperture(src.res),
+        vmax,
+        amax,
+        p0f,
+        motion,
+        fields: pend.fields,
+    })
+}
+
+fn render_headers(src: &SourceConfig, x: f64, y: f64, z: f64, now: f64) -> Vec<(String, String)> {
+    src.headers
+        .iter()
+        .map(|(k, v)| (k.clone(), render_url(v, x, y, z, now, src.res)))
+        .collect()
+}
+
 fn warm_cache(archive: Arc<Archive>) {
     loop {
-        let positions: Vec<(f64, f64, f64, f64)> = archive
-            .active_positions
+        let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
+        let cadence = ((min_ttl as f64) / (Φ * Φ)).max(1.0);
+        let now = tdb_now();
+        archive
+            .presence
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .retain(|_, (t, _, _, _)| (now - *t).abs() < min_ttl as f64 * 64.0);
+        let presences: Vec<(f64, f64, f64, f64)> = archive
+            .presence
             .lock()
             .unwrap_or_else(|e| e.into_inner())
             .values()
             .cloned()
             .collect();
-        if positions.is_empty() {
-            let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
-            thread::sleep(std::time::Duration::from_secs(
-                (min_ttl as f64 / Φ).max(1.0) as u64,
-            ));
+        if presences.is_empty() {
+            thread::sleep(std::time::Duration::from_secs(cadence as u64));
             continue;
         }
 
-        for (query_t, pos_x, pos_y, pos_z) in &positions {
-            let needs: Vec<(usize, String, Vec<(String, String)>, u64)> = archive
-                .sources
-                .iter()
-                .enumerate()
-                .filter_map(|(i, src)| {
-                    if let (Some(lat), Some(lon)) = (src.lat, src.lon) {
-                        let (source_x, source_y, source_z) =
-                            geodetic_to_icrs(lat, lon, 0.0, *query_t);
-                        let dx = source_x - *pos_x;
-                        let dy = source_y - *pos_y;
-                        let dz = source_z - *pos_z;
-                        if dx * dx + dy * dy + dz * dz > res_sq(src.res) {
-                            return None;
+        let mut tasks: Vec<(
+            usize,
+            Origin,
+            Option<(f64, f64)>,
+            String,
+            Vec<(String, String)>,
+            u64,
+        )> = Vec::new();
+        {
+            let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+            let (ex, ey, ez) = earth_position_icrs(now);
+            for (i, src) in archive.sources.iter().enumerate() {
+                let r = aperture(src.res);
+                match &src.frame {
+                    Frame::Ground { lat, lon, alt } => {
+                        let origin = (i as u32, 0, 0);
+                        if !origin_stale(&origins, origin, src.ttl, now) {
+                            continue;
                         }
-                        let cache_key = wgs84_key(lat, lon, src.res);
-                        let needs_fetch = {
-                            let cache =
-                                archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
-                            match cache.get(&cache_key) {
-                                Some((ts, _)) => *query_t - *ts >= src.ttl as f64,
-                                None => true,
-                            }
-                        };
-                        if !needs_fetch {
-                            return None;
+                        let pos = geodetic_to_icrs(*lat, *lon, *alt, now);
+                        if !presence_gate(&presences, pos, r) {
+                            continue;
                         }
-                        let url =
-                            render_url(&src.url, source_x, source_y, source_z, *query_t, src.res);
-                        let headers_rendered: Vec<(String, String)> = src
-                            .headers
-                            .iter()
-                            .map(|(k, v)| {
-                                (
-                                    k.clone(),
-                                    render_url(v, source_x, source_y, source_z, *query_t, src.res),
-                                )
-                            })
-                            .collect();
-                        Some((i, url, headers_rendered, src.ttl))
-                    } else {
-                        let prev_pos = archive
-                            .source_positions
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .get(&i)
-                            .cloned();
-                        if let Some((_, _, _, ref prev_key)) = prev_pos {
-                            let fresh = {
-                                let cache =
-                                    archive.data_cache.lock().unwrap_or_else(|e| e.into_inner());
-                                match cache.get(prev_key) {
-                                    Some((ts, _)) => *query_t - *ts < src.ttl as f64,
-                                    None => false,
-                                }
-                            };
-                            if fresh {
-                                return None;
-                            }
-                        }
-                        let url = render_url(&src.url, *pos_x, *pos_y, *pos_z, *query_t, src.res);
-                        let headers_rendered: Vec<(String, String)> = src
-                            .headers
-                            .iter()
-                            .map(|(k, v)| {
-                                (
-                                    k.clone(),
-                                    render_url(v, *pos_x, *pos_y, *pos_z, *query_t, src.res),
-                                )
-                            })
-                            .collect();
-                        Some((i, url, headers_rendered, src.ttl))
+                        tasks.push((
+                            i,
+                            origin,
+                            None,
+                            render_url(&src.url, pos.0, pos.1, pos.2, now, src.res),
+                            render_headers(src, pos.0, pos.1, pos.2, now),
+                            src.ttl,
+                        ));
                     }
-                })
-                .collect();
-
-            if needs.is_empty() {
-                continue;
-            }
-
-            let results: Vec<(usize, Option<String>)> = thread::scope(|s| {
-                let handles: Vec<_> = needs
-                    .iter()
-                    .map(|&(i, ref url, ref headers, ref ttl)| {
-                        s.spawn(move || {
-                            let _permit = CurlPermit::acquire();
-                            let body = fetch_with_headers(url, headers, *ttl);
-                            (i, body)
-                        })
-                    })
-                    .collect();
-                handles.into_iter().filter_map(|h| h.join().ok()).collect()
-            });
-
-            for (src_idx, body_opt) in results {
-                if let Some(body) = body_opt {
-                    let src = &archive.sources[src_idx];
-                    let mut extracted: HashMap<String, f64> = HashMap::new();
-                    let mut eph_pos: Option<(f64, f64, f64)> = None;
-                    let parsed_json = if src.format == "json" || src.format.is_empty() {
-                        parse_json(&body)
-                    } else {
-                        None
-                    };
-
-                    for ext in &src.extracts {
-                        match ext {
-                            Extract::Field(k, n) => {
-                                if let Some(ref j) = parsed_json {
-                                    if let Some(v) = jnum(j, k) {
-                                        extracted.insert(n.clone(), v);
-                                    }
-                                }
-                            }
-                            Extract::First(k, n) => {
-                                if let Some(ref j) = parsed_json {
-                                    if let Some(v) = jfirst(j, k) {
-                                        extracted.insert(n.clone(), v);
-                                    }
-                                }
-                            }
-                            Extract::Last(k, n) => {
-                                if let Some(ref j) = parsed_json {
-                                    if let Some(v) = jlast(j, k) {
-                                        extracted.insert(n.clone(), v);
-                                    }
-                                }
-                            }
-                            Extract::Count(k, n) => {
-                                let v = if src.format == "csv" || k == "lines" {
-                                    Some(
-                                        body.lines()
-                                            .filter(|l| {
-                                                !l.trim().is_empty() && !l.trim().starts_with('#')
-                                            })
-                                            .count() as f64,
-                                    )
-                                } else {
-                                    parsed_json.as_ref().and_then(|j| jcount(j, k))
-                                };
-                                if let Some(v) = v {
-                                    extracted.insert(n.clone(), v);
-                                }
-                            }
-                            Extract::LastRow(k, n) => {
-                                if let Some(ref j) = parsed_json {
-                                    if let Some(v) = j2d_last_row(j, k) {
-                                        extracted.insert(n.clone(), v);
-                                    }
-                                } else {
-                                    if let Some(v) = text_last_col(&body, k) {
-                                        extracted.insert(n.clone(), v);
-                                    }
-                                }
-                            }
-                            Extract::Path(k, n) => {
-                                if let Some(ref j) = parsed_json {
-                                    if let Some(v) = jpath(j, k) {
-                                        extracted.insert(n.clone(), v);
-                                    }
-                                }
-                            }
-                            Extract::Deep(k, n) => {
-                                if let Some(ref j) = parsed_json {
-                                    if let Some(v) = jdeep_find_num(j, k) {
-                                        extracted.insert(n.clone(), v);
-                                    }
-                                }
-                            }
-                            Extract::Sum(path, n) => {
-                                if let Some(ref j) = parsed_json {
-                                    let target = if path == "." || path.is_empty() {
-                                        Some(j)
-                                    } else {
-                                        jpath_val(j, path)
-                                    };
-                                    if let Some(JsonVal::Arr(arr)) = target {
-                                        let sum: f64 =
-                                            arr.iter().filter_map(|v| scalar_of(v)).sum();
-                                        if sum.is_finite() {
-                                            extracted.insert(n.clone(), sum);
-                                        }
-                                    }
-                                }
-                            }
-                            Extract::Regex(pat, n) => {
-                                if let Some(v) = extract_regex_val(&body, pat) {
-                                    extracted.insert(n.clone(), v);
-                                }
-                            }
-                            Extract::XmlCount(tag, n) => {
-                                let count = body.matches(&format!("<{}>", tag)).count() as f64;
-                                extracted.insert(n.clone(), count);
-                            }
-                            Extract::Vector(prefix) => {
-                                if let Some(v) =
-                                    extract_regex_val(&body, &format!("({}...)", prefix))
-                                {
-                                    extracted.insert(format!("{}_val", prefix), v);
-                                }
-                            }
-                            Extract::Ephemeris(n) => {
-                                let ht = if let Some(ref j) = parsed_json {
-                                    if let JsonVal::Obj(m) = j {
-                                        if let Some(JsonVal::Str(s)) = m.get("result") {
-                                            s.clone()
-                                        } else {
-                                            body.clone()
-                                        }
-                                    } else {
-                                        body.clone()
-                                    }
-                                } else {
-                                    body.clone()
-                                };
-                                if let Some(soe) = ht.find("$$SOE") {
-                                    let a = &ht[soe + 5..];
-                                    let e = a.find("$$EOE").unwrap_or(a.len());
-                                    let blk = &a[..e];
-                                    let ph = |k: &str| -> Option<f64> {
-                                        let p = blk.find(k)?;
-                                        let r = blk[p + k.len()..].trim_start_matches(|c: char| {
-                                            c == '=' || c == ' ' || c == '\t'
-                                        });
-                                        let end =
-                                            r.find(|c: char| c.is_whitespace()).unwrap_or(r.len());
-                                        r[..end].parse::<f64>().ok()
-                                    };
-                                    if let (Some(x), Some(y), Some(z), Some(rg)) =
-                                        (ph("X"), ph("Y"), ph("Z"), ph("RG"))
-                                    {
-                                        eph_pos = Some((x * 1000.0, y * 1000.0, z * 1000.0));
-                                        extracted.insert(n.clone(), rg * 1000.0);
-                                    }
-                                }
-                            }
-                            Extract::LastObj(fk, fv, ek, n) => {
-                                if let Some(ref j) = parsed_json {
-                                    if let JsonVal::Arr(arr) = j {
-                                        for v in arr.iter().rev() {
-                                            if let JsonVal::Obj(o) = v {
-                                                if let Some(JsonVal::Str(s)) = o.get(fk) {
-                                                    if s == fv {
-                                                        if let Some(val) = jnum(v, ek) {
-                                                            extracted.insert(n.clone(), val);
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            Extract::Map {
-                                arr_path,
-                                lat_key,
-                                lon_key,
-                                alt_key,
-                                fields,
-                            } => {
-                                if let Some(ref j) = parsed_json {
-                                    let mut current = j;
-                                    let mut path_ok = true;
-                                    for part in arr_path.split('.') {
-                                        if let Ok(idx) = part.parse::<usize>() {
-                                            if let JsonVal::Arr(arr) = current {
-                                                current = match arr.get(idx) {
-                                                    Some(v) => v,
-                                                    None => {
-                                                        path_ok = false;
-                                                        break;
-                                                    }
-                                                };
-                                            } else {
-                                                path_ok = false;
-                                                break;
-                                            }
-                                        } else {
-                                            if let JsonVal::Obj(map) = current {
-                                                current = match map.get(part) {
-                                                    Some(v) => v,
-                                                    None => {
-                                                        path_ok = false;
-                                                        break;
-                                                    }
-                                                };
-                                            } else {
-                                                path_ok = false;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if path_ok {
-                                        if let JsonVal::Arr(arr) = current {
-                                            let mut cache = archive
-                                                .data_cache
-                                                .lock()
-                                                .unwrap_or_else(|e| e.into_inner());
-                                            for v in arr.iter() {
-                                                let lat = jpath(v, lat_key);
-                                                let lon = jpath(v, lon_key);
-                                                let alt = if alt_key.is_empty() {
-                                                    Some(0.0)
-                                                } else {
-                                                    jpath(v, alt_key)
-                                                };
-                                                if let (Some(la), Some(lo), Some(al)) =
-                                                    (lat, lon, alt)
-                                                {
-                                                    let (ev_x, ev_y, ev_z) =
-                                                        geodetic_to_icrs(la, lo, al, *query_t);
-                                                    let ev_key = wgs84_key(la, lo, src.res);
-                                                    let mut ev_vals: HashMap<
-                                                        String,
-                                                        (f64, f64, f64, f64, f64),
-                                                    > = HashMap::new();
-                                                    for (fk, fn_) in fields {
-                                                        if let Some(val) = jpath(v, fk) {
-                                                            ev_vals.insert(
-                                                                fn_.clone(),
-                                                                (val, *query_t, ev_x, ev_y, ev_z),
-                                                            );
-                                                        }
-                                                    }
-                                                    if !ev_vals.is_empty() {
-                                                        cache.insert(ev_key, (*query_t, ev_vals));
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            Extract::GeojsonEvents {
-                                mag_key,
-                                min_mag,
-                                outputs,
-                            } => {
-                                if outputs.len() >= 2 {
-                                    if let Some(ref j) = parsed_json {
-                                        if let JsonVal::Obj(root) = j {
-                                            if let Some(JsonVal::Arr(features)) =
-                                                root.get("features")
-                                            {
-                                                let mut cache = archive
-                                                    .data_cache
-                                                    .lock()
-                                                    .unwrap_or_else(|e| e.into_inner());
-                                                for feat in features {
-                                                    if let JsonVal::Obj(f) = feat {
-                                                        let mut elo = 0.0;
-                                                        let mut ela = 0.0;
-                                                        let mut ed = 0.0;
-                                                        let mut mag = 0.0;
-                                                        let mut valid = false;
-                                                        if let Some(JsonVal::Obj(geom)) =
-                                                            f.get("geometry")
-                                                        {
-                                                            if let Some(JsonVal::Arr(c)) =
-                                                                geom.get("coordinates")
-                                                            {
-                                                                if c.len() >= 3 {
-                                                                    if let JsonVal::Num(n) = c[0] {
-                                                                        elo = n;
-                                                                    }
-                                                                    if let JsonVal::Num(n) = c[1] {
-                                                                        ela = n;
-                                                                    }
-                                                                    if let JsonVal::Num(n) = c[2] {
-                                                                        ed = n;
-                                                                    }
-                                                                    valid = true;
-                                                                }
-                                                            }
-                                                        }
-                                                        if valid {
-                                                            if let Some(props) = f.get("properties")
-                                                            {
-                                                                if let Some(m) =
-                                                                    jnum(props, mag_key)
-                                                                {
-                                                                    mag = m;
-                                                                }
-                                                            }
-                                                            if mag >= *min_mag {
-                                                                let (ev_x, ev_y, ev_z) =
-                                                                    geodetic_to_icrs(
-                                                                        ela, elo, 0.0, *query_t,
-                                                                    );
-                                                                let ev_key =
-                                                                    wgs84_key(ela, elo, src.res);
-                                                                let mut ev_vals: HashMap<
-                                                                    String,
-                                                                    (f64, f64, f64, f64, f64),
-                                                                > = HashMap::new();
-                                                                ev_vals.insert(
-                                                                    outputs[0].clone(),
-                                                                    (
-                                                                        mag, *query_t, ev_x, ev_y,
-                                                                        ev_z,
-                                                                    ),
-                                                                );
-                                                                ev_vals.insert(
-                                                                    outputs[1].clone(),
-                                                                    (
-                                                                        ed, *query_t, ev_x, ev_y,
-                                                                        ev_z,
-                                                                    ),
-                                                                );
-                                                                cache.insert(
-                                                                    ev_key,
-                                                                    (*query_t, ev_vals),
-                                                                );
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                    Frame::Terra { scale } => {
+                        let origin = (i as u32, 0, 0);
+                        if !origin_stale(&origins, origin, src.ttl, now) {
+                            continue;
+                        }
+                        let pos = (ex * scale, ey * scale, ez * scale);
+                        if !presence_gate(&presences, pos, r) {
+                            continue;
+                        }
+                        tasks.push((
+                            i,
+                            origin,
+                            None,
+                            render_url(&src.url, pos.0, pos.1, pos.2, now, src.res),
+                            render_headers(src, pos.0, pos.1, pos.2, now),
+                            src.ttl,
+                        ));
+                    }
+                    Frame::Data => {
+                        let origin = (i as u32, 0, 0);
+                        if !origin_stale(&origins, origin, src.ttl, now) {
+                            continue;
+                        }
+                        let prev = origins
+                            .get(&origin)
+                            .filter(|o| o.has_prev)
+                            .map(|o| o.prev_abs);
+                        if let Some(pa) = prev {
+                            if !presence_gate(&presences, (pa[0], pa[1], pa[2]), r) {
+                                continue;
                             }
                         }
+                        let (rx, ry, rz) =
+                            prev.map(|pa| (pa[0], pa[1], pa[2])).unwrap_or((ex, ey, ez));
+                        tasks.push((
+                            i,
+                            origin,
+                            None,
+                            render_url(&src.url, rx, ry, rz, now, src.res),
+                            render_headers(src, rx, ry, rz, now),
+                            src.ttl,
+                        ));
                     }
-                    if !extracted.is_empty() {
-                        let (cache_key, fx, fy, fz) = if let Some((px, py, pz)) = eph_pos {
-                            (icrs_key(px, py, pz, *query_t), px, py, pz)
-                        } else if let (Some(la), Some(lo)) = (src.lat, src.lon) {
-                            let (px, py, pz) = geodetic_to_icrs(la, lo, 0.0, *query_t);
-                            (wgs84_key(la, lo, src.res), px, py, pz)
-                        } else if let (Some(la), Some(lo)) =
-                            (extracted.get("lat"), extracted.get("lon"))
-                        {
-                            let (px, py, pz) = geodetic_to_icrs(*la, *lo, 0.0, *query_t);
-                            (wgs84_key(*la, *lo, src.res), px, py, pz)
-                        } else {
-                            (
-                                icrs_key(*pos_x, *pos_y, *pos_z, *query_t),
-                                *pos_x,
-                                *pos_y,
-                                *pos_z,
-                            )
-                        };
-                        archive
-                            .source_positions
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .insert(src_idx, (fx, fy, fz, cache_key.clone()));
-                        let extracted_with_t: HashMap<String, (f64, f64, f64, f64, f64)> =
-                            extracted
-                                .iter()
-                                .map(|(k, v)| (k.clone(), (*v, *query_t, fx, fy, fz)))
-                                .collect();
-                        archive
-                            .data_cache
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .insert(cache_key, (*query_t, extracted_with_t));
+                    Frame::Query => {
+                        for &(_, px, py, pz) in &presences {
+                            let ddx = px - ex;
+                            let ddy = py - ey;
+                            let ddz = pz - ez;
+                            if ddx * ddx + ddy * ddy + ddz * ddz > TERRA_DOMAIN * TERRA_DOMAIN {
+                                continue;
+                            }
+                            let (lat, lon) = icrs_to_geodetic(px, py, pz, now);
+                            let origin = (
+                                i as u32,
+                                region_quantize(lat, src.res),
+                                region_quantize(lon, src.res),
+                            );
+                            if !origin_stale(&origins, origin, src.ttl, now) {
+                                continue;
+                            }
+                            tasks.push((
+                                i,
+                                origin,
+                                Some((lat, lon)),
+                                render_url(&src.url, px, py, pz, now, src.res),
+                                render_headers(src, px, py, pz, now),
+                                src.ttl,
+                            ));
+                        }
                     }
                 }
             }
         }
 
-        let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
-        let max_ttl = archive.sources.iter().map(|s| s.ttl).max().unwrap_or(3600);
-        let now_tdb = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap_or_default()
-            .as_secs_f64()
-            - UNIX_J2000_OFFSET;
-        let evict_thresh = now_tdb - max_ttl as f64 * 2.0;
-        archive
-            .data_cache
+        let mut new_samples: Vec<Sample> = Vec::new();
+        let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
+        if !tasks.is_empty() {
+            let results: Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)> =
+                thread::scope(|s| {
+                    let handles: Vec<_> = tasks
+                        .iter()
+                        .map(|(i, origin, region, url, headers, ttl)| {
+                            s.spawn(move || {
+                                let _permit = CurlPermit::acquire();
+                                let body = fetch_with_headers(url, headers, *ttl);
+                                (*i, *origin, *region, body)
+                            })
+                        })
+                        .collect();
+                    handles.into_iter().filter_map(|h| h.join().ok()).collect()
+                });
+            for (src_idx, origin, region, body_opt) in results {
+                let Some(body) = body_opt else {
+                    continue;
+                };
+                refreshed.insert(origin);
+                let src = &archive.sources[src_idx];
+                let pendings = extract_pending(src, &body, now);
+                let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+                for pend in pendings {
+                    if let Some(smp) = materialize(src, origin, region, pend, &mut origins) {
+                        new_samples.push(smp);
+                    }
+                }
+                let entry = origins.entry(origin).or_default();
+                entry.fetched = now;
+                entry.ttl = src.ttl as f64;
+            }
+        }
+
+        let station_sample = archive
+            .station
             .lock()
             .unwrap_or_else(|e| e.into_inner())
-            .retain(|_, (ts, _)| *ts > evict_thresh);
+            .sample
+            .clone()
+            .filter(|s| (now - s.epoch).abs() <= s.ttl);
+        let mut all: Vec<Sample> = Vec::new();
+        {
+            let old = archive
+                .field
+                .read()
+                .unwrap_or_else(|e| e.into_inner())
+                .clone();
+            for fam in [&old.terra, &old.inertial] {
+                for v in fam.cells.values() {
+                    for s in v {
+                        if (now - s.epoch).abs() <= s.ttl && !refreshed.contains(&s.origin) {
+                            all.push(s.clone());
+                        }
+                    }
+                }
+            }
+        }
+        all.extend(new_samples);
+        if let Some(s) = station_sample {
+            all.push(s);
+        }
+        let next = Arc::new(build_buffer(all, cadence));
+        *archive.field.write().unwrap_or_else(|e| e.into_inner()) = next;
         archive
-            .active_positions
+            .origins
             .lock()
             .unwrap_or_else(|e| e.into_inner())
-            .retain(|_, (t, _, _, _)| now_tdb - *t < 300.0);
-        thread::sleep(std::time::Duration::from_secs(
-            (min_ttl as f64 / (Φ * Φ)).max(1.0) as u64,
-        ));
+            .retain(|_, o| (now - o.fetched).abs() < o.ttl.max(1.0) * 64.0);
+        thread::sleep(std::time::Duration::from_secs(cadence as u64));
     }
 }
 
@@ -2033,9 +2668,15 @@ fn main() {
         index_html: std::fs::read("static/index.html").unwrap_or_default(),
         constants_js: std::fs::read("static/constants.js").unwrap_or_default(),
         gpu_worker_js: std::fs::read("static/gpu.worker.js").unwrap_or_default(),
-        data_cache: Mutex::new(HashMap::new()),
-        active_positions: Mutex::new(HashMap::new()),
-        source_positions: Mutex::new(HashMap::new()),
+        field: RwLock::new(Arc::new(build_buffer(Vec::new(), 1.0))),
+        station: Mutex::new(StationState {
+            sample: None,
+            buffer: Arc::new(build_buffer(Vec::new(), 1.0)),
+            ema_interval: 0.0,
+            last_seen: 0.0,
+        }),
+        presence: Mutex::new(HashMap::new()),
+        origins: Mutex::new(HashMap::new()),
     });
     {
         let ar = Arc::clone(&archive);
