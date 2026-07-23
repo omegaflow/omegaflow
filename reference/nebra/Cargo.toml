@@ -1,0 +1,12 @@
+[workspace]
+members = [
+    "crates/nebra-core",
+    "crates/nebra-api",
+]
+resolver = "2"
+
+[workspace.package]
+version = "3.0.0"
+authors = ["Johannes"]
+edition = "2024"
+license = "CC-BY-NC-SA-4.0"

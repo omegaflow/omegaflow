@@ -1,0 +1,19 @@
+%YAML 1.1
+---
+universe: (t: f64, pos: DVec3) ∞ (f64, DVec3)
+gravity: DE440s, 13 bodies, GM/dist²
+electromagnetism: (0.0, ZERO)
+weak_force: (0.0, ZERO)
+masses_at: t ∞ Vec<Mass>
+pipeline: t ∞ Vec<Mass> ∞ GPU ∞ shader ∞ pixel
+shader: for each pixel, omega += GM / dist²
+files:
+  - crates/nebra-core/src/field.rs
+  - crates/nebra-core/src/lib.rs
+  - crates/nebra-api/src/main.rs
+
+dependencies:
+  alive: [hifitime, glam, anise, serde, axum, tokio]
+  in_cargo: [egm96, srtm_reader, geo, geographiclib-rs,
+             world_magnetic_model, grib, netcdf-reader, hdf5-reader,
+             fitsrs, cdshealpix, tobari, ionotrace]

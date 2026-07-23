@@ -36,6 +36,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
 
         const oscillators = [];
         const indexMap = new Map();
+
         let flatRings = new Float32Array(1024).fill(Number.EPSILON);
         let CAPTURE_RING_SIZE = 32;
         let topologyRingSize = 32;
@@ -77,15 +78,40 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             zPresence = e0[2] + pzOffset;
         }
 
-        const GRID_NX = 160, GRID_NY = 90;
-        let gridStep = 100000.0;
-        function gridQueries() {
-            const qs = [];
+        let camAim = 'sun';
+        let camZoom = 0.5;
+        let showSky = true;
+        let skyCam = null;
+        const GRID_NX = 32, GRID_NY = 18;
+        function cameraBasis() {
+            const target = camAim === 'earth' ? terra(tPresence) : [0, 0, 0];
+            const to = [target[0] - xPresence, target[1] - yPresence, target[2] - zPresence];
+            const f = Math.hypot(to[0], to[1], to[2]) || 1;
+            const dir = [to[0] / f, to[1] / f, to[2] / f];
+            let right = [dir[1], -dir[0], 0];
+            const rl = Math.hypot(right[0], right[1], right[2]);
+            right = rl > 0 ? [right[0] / rl, right[1] / rl, 0] : [1, 0, 0];
+            const up = [
+                right[1] * dir[2] - right[2] * dir[1],
+                right[2] * dir[0] - right[0] * dir[2],
+                right[0] * dir[1] - right[1] * dir[0],
+            ];
+            return { target, dir, right, up, f };
+        }
+        function camQueries(cam) {
+            const aspect = fieldCanvas.height / fieldCanvas.width;
+            const w = cam.f * camZoom, h = w * aspect;
+            const qs = [{ t: tPresence, x: xPresence, y: yPresence, z: zPresence }];
             for (let j = 0; j < GRID_NY; j++) {
                 for (let i = 0; i < GRID_NX; i++) {
-                    const x = xPresence + (i - GRID_NX / 2) * gridStep;
-                    const y = yPresence + (j - GRID_NY / 2) * gridStep;
-                    qs.push({ t: tPresence, x: x, y: y, z: zPresence });
+                    const u = (i / (GRID_NX - 1) - 0.5) * 2 * w;
+                    const v = (j / (GRID_NY - 1) - 0.5) * 2 * h;
+                    qs.push({
+                        t: tPresence,
+                        x: xPresence + cam.dir[0] * cam.f + cam.right[0] * u + cam.up[0] * v,
+                        y: yPresence + cam.dir[1] * cam.f + cam.right[1] * u + cam.up[1] * v,
+                        z: zPresence + cam.dir[2] * cam.f + cam.right[2] * u + cam.up[2] * v,
+                    });
                 }
             }
             return qs;
@@ -221,10 +247,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             if (osc.filled < CAPTURE_RING_SIZE) osc.filled++;
             osc.median = osc.median * (1 - ma()) + value * ma();
         }
-        let rawWindowResponse = [];
-        async function syncField(transmitList, queries) {
+        async function syncField(transmitList) {
+            const queries = [{ t: tPresence, x: xPresence, y: yPresence, z: zPresence }];
             const response = await syncFrame(transmitList, queries);
-            rawWindowResponse = response || [];
+            for (const osc of response) { recordSample(osc.name, osc.val, osc.t, osc.x, osc.y, osc.z); }
         }
         function unrollRing(ringOffset, idx, size) { const u = new Float32Array(size); for (let i = 0; i < size; i++) u[i] = flatRings[ringOffset + (idx + i) % CAPTURE_RING_SIZE]; return u; }
         async function calculateField() {
@@ -374,18 +400,25 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 registerOscillator('audioContext.destination.channel.amplitude', Number.EPSILON);
                 registerOscillator('audioContext.destination.channel.pan', Number.EPSILON);
                 surfaces.push({
-                    manifest: () => {
+                    manifest: (topology) => {
                         try {
-                            if (!rawWindowResponse || rawWindowResponse.length === 0) {
-                                audioGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
+                            const ampAp = getChannelAperture('audioContext.destination.channel.amplitude');
+                            if (!topology || topology.length === 0 || ampAp < Number.EPSILON) {
+                                audioGain.gain.setTargetAtTime(0, audioCtx.currentTime, transport.tickTime / 1000);
                                 return;
                             }
-                            let sum = 0;
-                            for (const p of rawWindowResponse) sum += Math.abs(p.val);
-                            const avg = sum / rawWindowResponse.length;
-                            const freq = Math.max(20, Math.min(audioCtx.sampleRate / 2, avg * 1e-6 * 440));
-                            audioFilter.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.05);
-                            audioGain.gain.setTargetAtTime(Math.min(0.5, avg * 1e-9), audioCtx.currentTime, 0.05);
+                            audioGain.gain.setTargetAtTime(ampAp, audioCtx.currentTime, transport.tickTime / 1000 * Φ * Φ);
+                            const channelData = audioBuffer.getChannelData(0);
+                            const sr = audioCtx.sampleRate;
+                            for (let i = 0; i < CAPTURE_RING_SIZE; i++) {
+                                const tSec = i / sr;
+                                let sum = 0;
+                                for (let t = 0; t < topology.length; t++) {
+                                    const node = topology[t];
+                                    sum += Math.sin(2 * Math.PI * (Math.abs(node.cx) * C / 1e6) * tSec + node.cy * Math.PI * 2) * node.weight;
+                                }
+                                channelData[i] = (sum / topology.length) * ampAp;
+                            }
                         } catch {}
                     }
                 });
@@ -476,10 +509,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             registerOscillator('navigator.vibrate.channel.duration', Number.EPSILON);
             registerOscillator('navigator.vibrate.channel.rhythm', Number.EPSILON);
             surfaces.push({
-                manifest: () => {
-                    if (!rawWindowResponse || rawWindowResponse.length === 0) return;
-                    const pulse = Math.floor(rawWindowResponse.length * stableTick) & 1023;
-                    if (pulse === 0) navigator.vibrate(rawWindowResponse.length);
+                manifest: (topology, coherence) => {
+                    const durAp = getChannelAperture('navigator.vibrate.channel.duration');
+                    const rhyAp = getChannelAperture('navigator.vibrate.channel.rhythm');
+                    if (durAp < Number.EPSILON && rhyAp < Number.EPSILON) return;
+                    const interval = Math.max(100, Math.floor(1000 / (1 + (coherence || 0) * (Φ * Φ))));
+                    const duration = Math.max(10, Math.floor(interval * durAp));
+                    if (Math.random() < rhyAp) navigator.vibrate(duration);
                 }
             });
         }
@@ -487,19 +523,19 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             if (navigator.serial) {
                 registerOscillator('navigator.serial.channel.tx', Number.EPSILON);
                 surfaces.push({
-                    manifest: () => {
+                    manifest: (topology) => {
                         if (!activeSerialPort || !activeSerialPort.writable) return;
                         const txAp = getChannelAperture('navigator.serial.channel.tx');
                         if (txAp < Number.EPSILON) return;
                         try {
                             const writer = activeSerialPort.writable.getWriter();
-                            const sendBuf = new Uint8Array(Math.min(rawWindowResponse.length * 4, 64));
+                            const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
                             for (let i = 0; i < sendBuf.length; i += 4) {
-                                const p = rawWindowResponse[i / 4] || { val: 0 };
-                                sendBuf[i] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                                sendBuf[i + 1] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                                sendBuf[i + 2] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                                sendBuf[i + 3] = Math.floor(Math.abs(p.val) * 255) & 255;
+                                const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
+                                sendBuf[i] = Math.floor(((node.cx * txAp + 1) * 0.5) * 255) & 255;
+                                sendBuf[i + 1] = Math.floor(((node.cy * txAp + 1) * 0.5) * 255) & 255;
+                                sendBuf[i + 2] = Math.floor(((node.cz * txAp + 1) * 0.5) * 255) & 255;
+                                sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
                             }
                             writer.write(sendBuf);
                             writer.releaseLock();
@@ -510,7 +546,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             if (navigator.usb) {
                 registerOscillator('navigator.usb.channel.tx', Number.EPSILON);
                 surfaces.push({
-                    manifest: () => {
+                    manifest: (topology) => {
                         if (!activeUsbDevice || !activeUsbDevice.opened) return;
                         const txAp = getChannelAperture('navigator.usb.channel.tx');
                         if (txAp < Number.EPSILON) return;
@@ -518,13 +554,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                         if (!alt) return;
                         const outEp = alt.endpoints.find(e => e.direction === 'out');
                         if (!outEp) return;
-                        const sendBuf = new Uint8Array(Math.min(rawWindowResponse.length * 4, 64));
+                        const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
                         for (let i = 0; i < sendBuf.length; i += 4) {
-                            const p = rawWindowResponse[i / 4] || { val: 0 };
-                            sendBuf[i] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 1] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 2] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 3] = Math.floor(Math.abs(p.val) * 255) & 255;
+                            const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
+                            sendBuf[i] = Math.floor(((node.cx * txAp + 1) * 0.5) * 255) & 255;
+                            sendBuf[i + 1] = Math.floor(((node.cy * txAp + 1) * 0.5) * 255) & 255;
+                            sendBuf[i + 2] = Math.floor(((node.cz * txAp + 1) * 0.5) * 255) & 255;
+                            sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
                         }
                         try { activeUsbDevice.transferOut(outEp.endpointNumber, sendBuf); } catch {}
                     }
@@ -533,28 +569,28 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             if (navigator.bluetooth) {
                 registerOscillator('navigator.bluetooth.channel.tx', Number.EPSILON);
                 surfaces.push({
-                    manifest: () => {
+                    manifest: (topology, coherence) => {
                         if (!activeBtChar) return;
                         const txAp = getChannelAperture('navigator.bluetooth.channel.tx');
                         if (txAp < Number.EPSILON) return;
-                        try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor(txAp * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
+                        try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor(coherence * txAp * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
                     }
                 });
             }
             if (navigator.hid) {
                 registerOscillator('navigator.hid.channel.tx', Number.EPSILON);
                 surfaces.push({
-                    manifest: () => {
+                    manifest: (topology) => {
                         if (!activeHidDevice || !activeHidDevice.opened) return;
                         const txAp = getChannelAperture('navigator.hid.channel.tx');
                         if (txAp < Number.EPSILON) return;
-                        const sendBuf = new Uint8Array(Math.min(rawWindowResponse.length * 4, 64));
+                        const sendBuf = new Uint8Array(Math.min(topology.length * 4, 64));
                         for (let i = 0; i < sendBuf.length; i += 4) {
-                            const p = rawWindowResponse[i / 4] || { val: 0 };
-                            sendBuf[i] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 1] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 2] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 3] = Math.floor(Math.abs(p.val) * 255) & 255;
+                            const node = topology[i / 4] || { cx: 0, cy: 0, cz: 0, weight: 0 };
+                            sendBuf[i] = Math.floor(((node.cx * txAp + 1) * 0.5) * 255) & 255;
+                            sendBuf[i + 1] = Math.floor(((node.cy * txAp + 1) * 0.5) * 255) & 255;
+                            sendBuf[i + 2] = Math.floor(((node.cz * txAp + 1) * 0.5) * 255) & 255;
+                            sendBuf[i + 3] = Math.floor(node.weight * 255) & 255;
                         }
                         for (const coll of activeHidDevice.collections) { for (const inp of coll.inputReports) { try { activeHidDevice.sendReport(inp.reportId, sendBuf); } catch {} } }
                     }
@@ -617,29 +653,58 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         }
         {
         const canvas = document.createElement('canvas');
-        canvas.width = GRID_NX; canvas.height = GRID_NY;
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;image-rendering:pixelated;z-index:-1;';
         document.body.appendChild(canvas);
         const ctx = canvas.getContext('2d');
-        const imgData = ctx.createImageData(GRID_NX, GRID_NY);
+        registerOscillator('document.canvas.channel.x', Number.EPSILON);
+        registerOscillator('document.canvas.channel.y', Number.EPSILON);
+        registerOscillator('document.canvas.channel.r', Number.EPSILON);
+        registerOscillator('document.canvas.channel.g', Number.EPSILON);
+        registerOscillator('document.canvas.channel.b', Number.EPSILON);
         surfaces.push({
-            manifest: () => {
-                if (!rawWindowResponse || rawWindowResponse.length === 0) {
-                    ctx.fillStyle = 'black';
-                    ctx.fillRect(0, 0, GRID_NX, GRID_NY);
-                    return;
+            manifest: (topology) => {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                if (showSky && skyCam) {
+                    for (let i = 0; i < count; i++) {
+                        if (!hasPos[i] || delay0[i] < 0) continue;
+                        const rx = ix[i] - xPresence, ry = iy[i] - yPresence, rz = iz[i] - zPresence;
+                        const depth = rx * skyCam.dir[0] + ry * skyCam.dir[1] + rz * skyCam.dir[2];
+                        if (depth <= 0) continue;
+                        const su = (rx * skyCam.right[0] + ry * skyCam.right[1] + rz * skyCam.right[2]) / (depth * camZoom);
+                        const sv = (rx * skyCam.up[0] + ry * skyCam.up[1] + rz * skyCam.up[2]) / (depth * camZoom);
+                        if (Math.abs(su) > 1 || Math.abs(sv) > 1) continue;
+                        const px = (0.5 + su * 0.5) * canvas.width;
+                        const py = (0.5 + sv * 0.5) * canvas.height;
+                        const a = Math.max(0.2, Math.min(1, presenceWeight(i, latestValue(i))));
+                        ctx.fillStyle = `rgba(150, 220, 255, ${a})`;
+                        ctx.beginPath();
+                        ctx.arc(px, py, 1.5 + complexity[i] * 6, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                 }
-                const data = imgData.data;
-                for (let i = 0; i < rawWindowResponse.length; i++) {
-                    const p = rawWindowResponse[i];
-                    const idx = i * 4;
-                    const lum = Math.min(255, Math.abs(p.val) * 1e-6 * 255);
-                    data[idx] = lum;
-                    data[idx + 1] = lum;
-                    data[idx + 2] = lum;
-                    data[idx + 3] = 255;
+                if (!topology || topology.length === 0) return;
+                const xAp = getChannelAperture('document.canvas.channel.x');
+                const yAp = getChannelAperture('document.canvas.channel.y');
+                const rAp = getChannelAperture('document.canvas.channel.r');
+                const gAp = getChannelAperture('document.canvas.channel.g');
+                const bAp = getChannelAperture('document.canvas.channel.b');
+                for (const node of topology) {
+                    const alpha = Math.max(0, Math.min(1, node.weight * Math.max(xAp, yAp, rAp, gAp, bAp)));
+                    if (alpha > Number.EPSILON) {
+                        const screenX = (node.cx + 1.0) * 0.5 * canvas.width;
+                        const screenY = (node.cy + 1.0) * 0.5 * canvas.height;
+                        const lum = Math.max(0, Math.min(1, (node.cz + 1.0) * 0.5));
+                        const r = Math.floor(lum * rAp * 255);
+                        const g = Math.floor(lum * gAp * 255);
+                        const b = Math.floor(lum * bAp * 255);
+                        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                        ctx.beginPath();
+                        ctx.arc(screenX * (xAp > Number.EPSILON ? 1 : 0), screenY * (yAp > Number.EPSILON ? 1 : 0), 2 + (lum * 3), 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                 }
-                ctx.putImageData(imgData, 0, 0);
             }
         });
         }
@@ -693,13 +758,22 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             prevTPresence = tPresence;
             const transmitList = [];
             for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > osc.complexity) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val }); } }
-            syncField(transmitList, gridQueries()).catch(() => {});
+            skyCam = cameraBasis();
+            syncField(transmitList, camQueries(skyCam)).catch(() => {});
             const fieldStart = performance.now();
             await calculateField();
             lastFieldTime = performance.now() - fieldStart;
             adaptChannelApertures();
+            const topology = [];
+            const coherence = measureCoherence();
+            for (let i = 0; i < oscillators.length; i++) {
+                const o = oscillators[i];
+                if (o.filled > 0 && !isInternalMetric(o.url)) {
+                    topology.push({ url: o.url, ix: o.ix, iy: o.iy, iz: o.iz, median: o.median, cx: o.takensCx, cy: o.takensCy, cz: o.takensCz, weight: o.complexity });
+                }
+            }
             const manifestStart = performance.now();
-            for (const surface of surfaces) { try { surface.manifest(); } catch {} }
+            for (const surface of surfaces) { try { surface.manifest(topology, coherence); } catch {} }
             lastManifestTime = performance.now() - manifestStart;
             const g = measureRms(); const vC = measureRateOfChange(); const decay = measureDecay(); const quantum = measureQuantum();
             certainty = Math.exp(-vC / (g + (1.0 / C))) * quantum * decay;
@@ -743,9 +817,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     `  Z: ${zStr}\n` +
                     `  Time: ${tPresence.toFixed(1)}\n` +
                     `  Frame: ${presenceFree ? 'free-fall' : 'anchored'}\n\n` +
-                    `Tomography\n` +
-                    `  Grid: ${GRID_NX}x${GRID_NY} (${GRID_NX*GRID_NY} points)\n` +
-                    `  Step: ${gridStep.toExponential(1)} m\n\n` +
+                    `Camera\n` +
+                    `  Aim: ${camAim}\n` +
+                    `  Zoom: ${camZoom.toExponential(1)}\n` +
+                    `  Grid: ${GRID_NX}×${GRID_NY} queries\n\n` +
                     "System\n" +
                     `  Oscillators: ${oscillators.length}\n` +
                     `  Ring buffer: ${maxFill}/${CAPTURE_RING_SIZE} samples\n` +
@@ -844,8 +919,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 case 'PageDown': if (presenceFree) freeV[2] -= step; else pzOffset -= step; break;
                 case ',': tPresence -= tstep; break;
                 case '.': tPresence += tstep; break;
-                case '+': gridStep *= 0.5; break;
-                case '-': gridStep *= 2.0; break;
+                case '+': camZoom = Math.min(camZoom * (e.shiftKey ? 256 : 2), 8); break;
+                case '-': camZoom = Math.max(camZoom / (e.shiftKey ? 256 : 2), Math.pow(2, -64)); break;
+                case '1': camAim = 'sun'; break;
+                case '2': camAim = 'earth'; break;
+                case 'v': showSky = !showSky; break;
                 default: return;
             }
             e.preventDefault();
@@ -856,4 +934,3 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
     </script>
 </body>
 </html>
-
