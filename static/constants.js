@@ -1,6 +1,20 @@
 export const C = 299792458.0;
 export const Φ = 1.618033988749895;
 export const EARTH_RADIUS = 6378137.0;
+export function terra(tdbSecs) {
+    const AU = 1.495978707e11, ECC = 0.0167086, OBL = 0.409092804, J2000 = 2451545.0;
+    const jd = tdbSecs / 86400.0 + J2000;
+    const t = (jd - J2000) / 36525.0;
+    const m = 6.239996 + 0.017201969 * t * 36525.0;
+    let e = m;
+    for (let i = 0; i < 5; i++) e = e - (e - ECC * Math.sin(e) - m) / (1 - ECC * Math.cos(e));
+    const xo = AU * (Math.cos(e) - ECC);
+    const yo = AU * Math.sqrt(1 - ECC * ECC) * Math.sin(e);
+    const om = -0.113;
+    const xe = xo * Math.cos(om) - yo * Math.sin(om);
+    const ye = xo * Math.sin(om) + yo * Math.cos(om);
+    return [xe, ye * Math.cos(OBL), ye * Math.sin(OBL)];
+}
 export const φ = {};
 export const transport = { socket: null, pending: new Map(), seq: 0, tickTime: 16, rtt: 0, srtt: 0, rttvar: 0 };
 export function updateRtt(sampleRtt) {

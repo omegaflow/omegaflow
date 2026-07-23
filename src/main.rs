@@ -433,9 +433,9 @@ fn origin_stale(
     }
 }
 
-fn presence_gate(presences: &[(f64, f64, f64, f64)], pos: (f64, f64, f64), r: f64) -> bool {
-    let reach = r * Φ;
-    presences.iter().any(|&(_, x, y, z)| {
+fn presence_gate(presences: &[(f64, f64, f64, f64, f64)], pos: (f64, f64, f64), r: f64) -> bool {
+    presences.iter().any(|&(_, x, y, z, extent)| {
+        let reach = r * Φ + extent;
         let dx = x - pos.0;
         let dy = y - pos.1;
         let dz = z - pos.2;
@@ -889,8 +889,10 @@ struct Archive {
     gpu_worker_js: Vec<u8>,
     field: RwLock<Arc<Buffer>>,
     station: Mutex<StationState>,
-    presence: Mutex<HashMap<String, (f64, f64, f64, f64)>>,
+    presence: Mutex<HashMap<String, (f64, f64, f64, f64, f64)>>,
     origins: Mutex<HashMap<Origin, OriginState>>,
+    results: Mutex<Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)>>,
+    inflight: Mutex<std::collections::HashSet<Origin>>,
 }
 struct WsFrame {
     opcode: u8,
@@ -1032,6 +1034,55 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                             format!("{} {} {}", x, y, z).as_bytes(),
                         );
                     }
+                    "/field" => {
+                        let buf = archive
+                            .field
+                            .read()
+                            .unwrap_or_else(|e| e.into_inner())
+                            .clone();
+                        let mut report = String::new();
+                        for (fname, fam) in [("terra", &buf.terra), ("inertial", &buf.inertial)] {
+                            let mut n = 0usize;
+                            let mut field_names: std::collections::HashSet<&str> =
+                                std::collections::HashSet::new();
+                            for v in fam.cells.values() {
+                                for smp in v {
+                                    n += 1;
+                                    for (k, _) in &smp.fields {
+                                        field_names.insert(k.as_str());
+                                    }
+                                }
+                            }
+                            report.push_str(&format!(
+                                "{} samples={} cells={} rmax={:.3e} vmax={:.3e} epoch_min={:.1}\n",
+                                fname,
+                                n,
+                                fam.cells.len(),
+                                fam.rmax,
+                                fam.vmax,
+                                fam.epoch_min
+                            ));
+                            let mut names: Vec<&str> = field_names.into_iter().collect();
+                            names.sort();
+                            report.push_str(&format!("{} fields: {}\n", fname, names.len()));
+                            for nm in names {
+                                report.push_str(&format!("  {}\n", nm));
+                            }
+                        }
+                        let origins_n = archive
+                            .origins
+                            .lock()
+                            .unwrap_or_else(|e| e.into_inner())
+                            .len();
+                        let presence_n = archive
+                            .presence
+                            .lock()
+                            .unwrap_or_else(|e| e.into_inner())
+                            .len();
+                        report
+                            .push_str(&format!("origins={} presence={}\n", origins_n, presence_n));
+                        emit(&mut s, "200 OK", "text/plain", report.as_bytes());
+                    }
                     "/constants.js" => emit(
                         &mut s,
                         "200 OK",
@@ -1133,13 +1184,16 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
             let now = tdb_now();
             let mut station_fields: Vec<(String, f64)> =
                 Vec::with_capacity(source_oscillators.len());
-            let (mut st_lat, mut st_lon, mut st_alt, mut st_acc) = (None, None, None, None);
+            let (mut st_lat, mut st_lon, mut st_alt, mut st_acc, mut st_spd, mut st_hdg) =
+                (None, None, None, None, None, None);
             for (name, value) in &source_oscillators {
                 match name.as_str() {
                     "lat" => st_lat = Some(*value),
                     "lon" => st_lon = Some(*value),
                     "alt" => st_alt = Some(*value),
                     "acc" => st_acc = Some(*value),
+                    "spd" => st_spd = Some(*value),
+                    "hdg" => st_hdg = Some(*value),
                     _ => {}
                 }
                 station_fields.push((name.clone(), *value));
@@ -1163,10 +1217,12 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                         }
                         station.last_seen = now;
                         let res = (aperture(0) / acc).log10().floor() as i32;
-                        let motion = Motion::Ground {
-                            lat,
-                            lon,
-                            alt: st_alt.unwrap_or(0.0),
+                        let alt = st_alt.unwrap_or(0.0);
+                        let motion = match (st_spd, st_hdg) {
+                            (Some(spd), Some(hdg)) if spd > 0.0 => {
+                                flow_motion(lat, lon, alt, spd, hdg, 0.0, now)
+                            }
+                            _ => Motion::Ground { lat, lon, alt },
                         };
                         let (vmax, amax, p0f) = law_bounds(&motion, now, 0.0);
                         let sample = Sample {
@@ -1199,51 +1255,61 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
             out.extend_from_slice(&id.to_le_bytes());
             out.extend_from_slice(&(query_count as u32).to_le_bytes());
 
-            {
-                let mut presence = archive.presence.lock().unwrap_or_else(|e| e.into_inner());
-
-                for _ in 0..query_count {
-                    let mut t_buf = [0u8; 8];
-                    if cursor.read_exact(&mut t_buf).is_err() {
-                        break;
-                    }
-                    let presence_t = f64::from_le_bytes(t_buf);
-                    if cursor.read_exact(&mut t_buf).is_err() {
-                        break;
-                    }
-                    let presence_x = f64::from_le_bytes(t_buf);
-                    if cursor.read_exact(&mut t_buf).is_err() {
-                        break;
-                    }
-                    let presence_y = f64::from_le_bytes(t_buf);
-                    if cursor.read_exact(&mut t_buf).is_err() {
-                        break;
-                    }
-                    let presence_z = f64::from_le_bytes(t_buf);
-                    presence.insert(
-                        format!(
-                            "{}_{}_{}",
-                            presence_x as i64, presence_y as i64, presence_z as i64
-                        ),
-                        (presence_t, presence_x, presence_y, presence_z),
-                    );
-                    let obj_pos = out.len();
-                    out.extend_from_slice(&0u32.to_le_bytes());
-                    let mut merged_values: HashMap<String, (f64, f64, f64, f64, f64)> =
-                        HashMap::new();
-                    let q = [presence_x, presence_y, presence_z];
-                    sense_buffer(&field, q, presence_t, &mut merged_values);
-                    sense_buffer(&station_buf, q, presence_t, &mut merged_values);
-                    if !merged_values.is_empty() {
-                        let fields: Vec<(&str, f64, f64, f64, f64, f64)> = merged_values
-                            .iter()
-                            .map(|(k, v)| (k.as_str(), v.0, v.1, v.2, v.3, v.4))
-                            .collect();
-                        φ_obj(&mut out, &fields);
-                    }
-                    let obj_count = ((out.len() - obj_pos - 4) > 0) as u32;
-                    out[obj_pos..obj_pos + 4].copy_from_slice(&obj_count.to_le_bytes());
+            let mut queries: Vec<(f64, f64, f64, f64)> = Vec::with_capacity(query_count);
+            for _ in 0..query_count {
+                let mut t_buf = [0u8; 8];
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
                 }
+                let qt = f64::from_le_bytes(t_buf);
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
+                }
+                let qx = f64::from_le_bytes(t_buf);
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
+                }
+                let qy = f64::from_le_bytes(t_buf);
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
+                }
+                let qz = f64::from_le_bytes(t_buf);
+                queries.push((qt, qx, qy, qz));
+            }
+            if !queries.is_empty() {
+                let (t0, x0, y0, z0) = queries[0];
+                let mut extent = 0.0f64;
+                for &(_, qx, qy, qz) in &queries[1..] {
+                    let d = ((qx - x0).powi(2) + (qy - y0).powi(2) + (qz - z0).powi(2)).sqrt();
+                    if d > extent {
+                        extent = d;
+                    }
+                }
+                archive
+                    .presence
+                    .lock()
+                    .unwrap_or_else(|e| e.into_inner())
+                    .insert(
+                        format!("{}_{}_{}", x0 as i64, y0 as i64, z0 as i64),
+                        (t0, x0, y0, z0, extent),
+                    );
+            }
+            for &(presence_t, presence_x, presence_y, presence_z) in &queries {
+                let obj_pos = out.len();
+                out.extend_from_slice(&0u32.to_le_bytes());
+                let mut merged_values: HashMap<String, (f64, f64, f64, f64, f64)> = HashMap::new();
+                let q = [presence_x, presence_y, presence_z];
+                sense_buffer(&field, q, presence_t, &mut merged_values);
+                sense_buffer(&station_buf, q, presence_t, &mut merged_values);
+                if !merged_values.is_empty() {
+                    let fields: Vec<(&str, f64, f64, f64, f64, f64)> = merged_values
+                        .iter()
+                        .map(|(k, v)| (k.as_str(), v.0, v.1, v.2, v.3, v.4))
+                        .collect();
+                    φ_obj(&mut out, &fields);
+                }
+                let obj_count = ((out.len() - obj_pos - 4) > 0) as u32;
+                out[obj_pos..obj_pos + 4].copy_from_slice(&obj_count.to_le_bytes());
             }
 
             out.extend_from_slice(&0u32.to_le_bytes());
@@ -1932,7 +1998,7 @@ impl CurlPermit {
             {
                 return CurlPermit;
             }
-            thread::yield_now();
+            thread::sleep(std::time::Duration::from_millis(1));
         }
     }
 }
@@ -2463,8 +2529,8 @@ fn warm_cache(archive: Arc<Archive>) {
             .presence
             .lock()
             .unwrap_or_else(|e| e.into_inner())
-            .retain(|_, (t, _, _, _)| (now - *t).abs() < min_ttl as f64 * 64.0);
-        let presences: Vec<(f64, f64, f64, f64)> = archive
+            .retain(|_, (t, _, _, _, _)| (now - *t).abs() < min_ttl as f64 * 64.0);
+        let presences: Vec<(f64, f64, f64, f64, f64)> = archive
             .presence
             .lock()
             .unwrap_or_else(|e| e.into_inner())
@@ -2552,11 +2618,12 @@ fn warm_cache(archive: Arc<Archive>) {
                         ));
                     }
                     Frame::Query => {
-                        for &(_, px, py, pz) in &presences {
+                        for &(_, px, py, pz, extent) in &presences {
                             let ddx = px - ex;
                             let ddy = py - ey;
                             let ddz = pz - ez;
-                            if ddx * ddx + ddy * ddy + ddz * ddz > TERRA_DOMAIN * TERRA_DOMAIN {
+                            let domain = TERRA_DOMAIN + extent;
+                            if ddx * ddx + ddy * ddy + ddz * ddz > domain * domain {
                                 continue;
                             }
                             let (lat, lon) = icrs_to_geodetic(px, py, pz, now);
@@ -2582,40 +2649,50 @@ fn warm_cache(archive: Arc<Archive>) {
             }
         }
 
+        {
+            let mut inflight = archive.inflight.lock().unwrap_or_else(|e| e.into_inner());
+            for (i, origin, region, url, headers, ttl) in tasks {
+                if !inflight.insert(origin) {
+                    continue;
+                }
+                let archive_t = Arc::clone(&archive);
+                thread::spawn(move || {
+                    let _permit = CurlPermit::acquire();
+                    let body = fetch_with_headers(&url, &headers, ttl);
+                    archive_t
+                        .results
+                        .lock()
+                        .unwrap_or_else(|e| e.into_inner())
+                        .push((i, origin, region, body));
+                    archive_t
+                        .inflight
+                        .lock()
+                        .unwrap_or_else(|e| e.into_inner())
+                        .remove(&origin);
+                });
+            }
+        }
+
         let mut new_samples: Vec<Sample> = Vec::new();
         let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
-        if !tasks.is_empty() {
-            let results: Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)> =
-                thread::scope(|s| {
-                    let handles: Vec<_> = tasks
-                        .iter()
-                        .map(|(i, origin, region, url, headers, ttl)| {
-                            s.spawn(move || {
-                                let _permit = CurlPermit::acquire();
-                                let body = fetch_with_headers(url, headers, *ttl);
-                                (*i, *origin, *region, body)
-                            })
-                        })
-                        .collect();
-                    handles.into_iter().filter_map(|h| h.join().ok()).collect()
-                });
-            for (src_idx, origin, region, body_opt) in results {
-                let Some(body) = body_opt else {
-                    continue;
-                };
-                refreshed.insert(origin);
-                let src = &archive.sources[src_idx];
-                let pendings = extract_pending(src, &body, now);
-                let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
-                for pend in pendings {
-                    if let Some(smp) = materialize(src, origin, region, pend, &mut origins) {
-                        new_samples.push(smp);
-                    }
+        let results: Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)> =
+            std::mem::take(&mut *archive.results.lock().unwrap_or_else(|e| e.into_inner()));
+        for (src_idx, origin, region, body_opt) in results {
+            let Some(body) = body_opt else {
+                continue;
+            };
+            refreshed.insert(origin);
+            let src = &archive.sources[src_idx];
+            let pendings = extract_pending(src, &body, now);
+            let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+            for pend in pendings {
+                if let Some(smp) = materialize(src, origin, region, pend, &mut origins) {
+                    new_samples.push(smp);
                 }
-                let entry = origins.entry(origin).or_default();
-                entry.fetched = now;
-                entry.ttl = src.ttl as f64;
             }
+            let entry = origins.entry(origin).or_default();
+            entry.fetched = now;
+            entry.ttl = src.ttl as f64;
         }
 
         let station_sample = archive
@@ -2677,6 +2754,8 @@ fn main() {
         }),
         presence: Mutex::new(HashMap::new()),
         origins: Mutex::new(HashMap::new()),
+        results: Mutex::new(Vec::new()),
+        inflight: Mutex::new(std::collections::HashSet::new()),
     });
     {
         let ar = Arc::clone(&archive);

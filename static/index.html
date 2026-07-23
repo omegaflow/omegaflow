@@ -31,7 +31,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         </div>
     </div>
     <script type="module">
-        import { syncFrame, φ, transport, Φ, C, EARTH_RADIUS, updateRtt, getRto } from '/constants.js';
+        import { syncFrame, φ, transport, Φ, C, EARTH_RADIUS, terra, updateRtt, getRto } from '/constants.js';
         function reportState(category, detail) { try { fetch('/crash', { method: 'POST', body: `${category}: ${detail}` }); } catch {} }
 
         const oscillators = [];
@@ -60,11 +60,61 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
 
         φ['server.time'] = parseFloat(await (await fetch('/time')).text());
         tPresence = φ['server.time'];
-        const earthInit = (await (await fetch('/earth')).text()).trim().split(/\s+/).map(Number);
-        if (earthInit.length === 3 && earthInit.every(isFinite)) {
-            xPresence = earthInit[0] + EARTH_RADIUS * Φ;
-            yPresence = earthInit[1];
-            zPresence = earthInit[2];
+        let pxOffset = EARTH_RADIUS * Φ, pyOffset = 0, pzOffset = 0;
+        let presenceFree = false;
+        let freeP = [0, 0, 0], freeV = [0, 0, 0], freeT0 = 0;
+        const hashInit = location.hash.slice(1).split(',').map(Number);
+        if (hashInit.length === 4 && hashInit.every(isFinite)) {
+            tPresence = hashInit[3];
+            const eH = terra(tPresence);
+            pxOffset = hashInit[0] - eH[0];
+            pyOffset = hashInit[1] - eH[1];
+            pzOffset = hashInit[2] - eH[2];
+        }
+        {
+            const e0 = terra(tPresence);
+            xPresence = e0[0] + pxOffset;
+            yPresence = e0[1] + pyOffset;
+            zPresence = e0[2] + pzOffset;
+        }
+
+        let camAim = 'sun';
+        let camZoom = 0.5;
+        let showSky = true;
+        let skyCam = null;
+        const GRID_NX = 32, GRID_NY = 18;
+        function cameraBasis() {
+            const target = camAim === 'earth' ? terra(tPresence) : [0, 0, 0];
+            const to = [target[0] - xPresence, target[1] - yPresence, target[2] - zPresence];
+            const f = Math.hypot(to[0], to[1], to[2]) || 1;
+            const dir = [to[0] / f, to[1] / f, to[2] / f];
+            let right = [dir[1], -dir[0], 0];
+            const rl = Math.hypot(right[0], right[1], right[2]);
+            right = rl > 0 ? [right[0] / rl, right[1] / rl, 0] : [1, 0, 0];
+            const up = [
+                right[1] * dir[2] - right[2] * dir[1],
+                right[2] * dir[0] - right[0] * dir[2],
+                right[0] * dir[1] - right[1] * dir[0],
+            ];
+            return { target, dir, right, up, f };
+        }
+        function camQueries(cam) {
+            const aspect = fieldCanvas.height / fieldCanvas.width;
+            const w = cam.f * camZoom, h = w * aspect;
+            const qs = [{ t: tPresence, x: xPresence, y: yPresence, z: zPresence }];
+            for (let j = 0; j < GRID_NY; j++) {
+                for (let i = 0; i < GRID_NX; i++) {
+                    const u = (i / (GRID_NX - 1) - 0.5) * 2 * w;
+                    const v = (j / (GRID_NY - 1) - 0.5) * 2 * h;
+                    qs.push({
+                        t: tPresence,
+                        x: xPresence + cam.dir[0] * cam.f + cam.right[0] * u + cam.up[0] * v,
+                        y: yPresence + cam.dir[1] * cam.f + cam.right[1] * u + cam.up[1] * v,
+                        z: zPresence + cam.dir[2] * cam.f + cam.right[2] * u + cam.up[2] * v,
+                    });
+                }
+            }
+            return qs;
         }
 
         const resonanceWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/resonance`);
@@ -120,11 +170,19 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                         registerOscillator('lon', c.longitude);
                         registerOscillator('alt', c.altitude || 0);
                         registerOscillator('acc', c.accuracy);
+                        if (c.speed !== null && c.heading !== null) {
+                            registerOscillator('spd', c.speed);
+                            registerOscillator('hdg', c.heading);
+                        }
                     }
                     recordSample('lat', c.latitude);
                     recordSample('lon', c.longitude);
                     recordSample('alt', c.altitude || 0);
                     recordSample('acc', c.accuracy);
+                    if (c.speed !== null && c.heading !== null) {
+                        recordSample('spd', c.speed);
+                        recordSample('hdg', c.heading);
+                    }
                 }, () => {}, { enableHighAccuracy: true, timeout: 10000 });
             }
             if (navigator.getBattery) {
@@ -608,6 +666,24 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             manifest: (topology) => {
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
+                if (showSky && skyCam) {
+                    for (let i = 0; i < count; i++) {
+                        if (!hasPos[i] || delay0[i] < 0) continue;
+                        const rx = ix[i] - xPresence, ry = iy[i] - yPresence, rz = iz[i] - zPresence;
+                        const depth = rx * skyCam.dir[0] + ry * skyCam.dir[1] + rz * skyCam.dir[2];
+                        if (depth <= 0) continue;
+                        const su = (rx * skyCam.right[0] + ry * skyCam.right[1] + rz * skyCam.right[2]) / (depth * camZoom);
+                        const sv = (rx * skyCam.up[0] + ry * skyCam.up[1] + rz * skyCam.up[2]) / (depth * camZoom);
+                        if (Math.abs(su) > 1 || Math.abs(sv) > 1) continue;
+                        const px = (0.5 + su * 0.5) * canvas.width;
+                        const py = (0.5 + sv * 0.5) * canvas.height;
+                        const a = Math.max(0.2, Math.min(1, presenceWeight(i, latestValue(i))));
+                        ctx.fillStyle = `rgba(150, 220, 255, ${a})`;
+                        ctx.beginPath();
+                        ctx.arc(px, py, 1.5 + complexity[i] * 6, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
                 if (!topology || topology.length === 0) return;
                 const xAp = getChannelAperture('document.canvas.channel.x');
                 const yAp = getChannelAperture('document.canvas.channel.y');
@@ -662,6 +738,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             transport.tickTime = stableTick;
 
             tPresence += rawTick / 1000.0;
+            if (presenceFree) {
+                const dtF = tPresence - freeT0;
+                xPresence = freeP[0] + freeV[0] * dtF;
+                yPresence = freeP[1] + freeV[1] * dtF;
+                zPresence = freeP[2] + freeV[2] * dtF;
+            } else {
+                const eNow = terra(tPresence);
+                xPresence = eNow[0] + pxOffset;
+                yPresence = eNow[1] + pyOffset;
+                zPresence = eNow[2] + pzOffset;
+            }
 
             registerGamepads();
             for (const fn of pollFns) { try { fn(); } catch {} }
@@ -671,7 +758,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             prevTPresence = tPresence;
             const transmitList = [];
             for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > osc.complexity) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val }); } }
-            syncField(transmitList).catch(() => {});
+            skyCam = cameraBasis();
+            syncField(transmitList, camQueries(skyCam)).catch(() => {});
             const fieldStart = performance.now();
             await calculateField();
             lastFieldTime = performance.now() - fieldStart;
@@ -727,7 +815,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     `  X: ${xStr}\n` +
                     `  Y: ${yStr}\n` +
                     `  Z: ${zStr}\n` +
-                    `  Time: ${tPresence.toFixed(1)}\n\n` +
+                    `  Time: ${tPresence.toFixed(1)}\n` +
+                    `  Frame: ${presenceFree ? 'free-fall' : 'anchored'}\n\n` +
+                    `Camera\n` +
+                    `  Aim: ${camAim}\n` +
+                    `  Zoom: ${camZoom.toExponential(1)}\n` +
+                    `  Grid: ${GRID_NX}×${GRID_NY} queries\n\n` +
                     "System\n" +
                     `  Oscillators: ${oscillators.length}\n` +
                     `  Ring buffer: ${maxFill}/${CAPTURE_RING_SIZE} samples\n` +
@@ -799,15 +892,38 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             const mult = e.shiftKey ? 64 : 1;
             const step = C * (transport.tickTime / 1000) / 256 * mult;
             const tstep = transport.tickTime / 1000 * mult;
+            if (e.key === 'f' && !presenceFree) {
+                const eA = terra(tPresence), eB = terra(tPresence + 1.0);
+                freeV = [eB[0] - eA[0], eB[1] - eA[1], eB[2] - eA[2]];
+                freeP = [xPresence, yPresence, zPresence];
+                freeT0 = tPresence;
+                presenceFree = true;
+                e.preventDefault();
+                return;
+            }
+            if (e.key === 'a' && presenceFree) {
+                const eN = terra(tPresence);
+                pxOffset = xPresence - eN[0];
+                pyOffset = yPresence - eN[1];
+                pzOffset = zPresence - eN[2];
+                presenceFree = false;
+                e.preventDefault();
+                return;
+            }
             switch (e.key) {
-                case 'ArrowUp': yPresence += step; break;
-                case 'ArrowDown': yPresence -= step; break;
-                case 'ArrowRight': xPresence += step; break;
-                case 'ArrowLeft': xPresence -= step; break;
-                case 'PageUp': zPresence += step; break;
-                case 'PageDown': zPresence -= step; break;
+                case 'ArrowUp': if (presenceFree) freeV[1] += step; else pyOffset += step; break;
+                case 'ArrowDown': if (presenceFree) freeV[1] -= step; else pyOffset -= step; break;
+                case 'ArrowRight': if (presenceFree) freeV[0] += step; else pxOffset += step; break;
+                case 'ArrowLeft': if (presenceFree) freeV[0] -= step; else pxOffset -= step; break;
+                case 'PageUp': if (presenceFree) freeV[2] += step; else pzOffset += step; break;
+                case 'PageDown': if (presenceFree) freeV[2] -= step; else pzOffset -= step; break;
                 case ',': tPresence -= tstep; break;
                 case '.': tPresence += tstep; break;
+                case '+': camZoom = Math.min(camZoom * (e.shiftKey ? 256 : 2), 8); break;
+                case '-': camZoom = Math.max(camZoom / (e.shiftKey ? 256 : 2), Math.pow(2, -64)); break;
+                case '1': camAim = 'sun'; break;
+                case '2': camAim = 'earth'; break;
+                case 'v': showSky = !showSky; break;
                 default: return;
             }
             e.preventDefault();
