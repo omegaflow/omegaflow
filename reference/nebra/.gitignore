@@ -1,5 +1,0 @@
-/target
-/data
-Cargo.lock
-*.rs.bk
-.env

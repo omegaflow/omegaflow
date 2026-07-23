@@ -12,8 +12,8 @@
 meta:
   project: "omegaflow sense — 100% Mantis-Shrimp Observatory"
   paradigm: |
-    Every sense is an energy channel. For every channel there is
-    a sender (actuator) and a receiver (sensor). This module
+    Every sense is an energy channel. For every channel there is a radiating
+    surface (canRadiate) and a sensing surface (canSense). This module
     unifies the complete phylogenetic story of life on Earth in silicon.
     It is a stationary observatory (a local universe) connected via WebSerial.
     To manage 35 modules on a single ESP32-S3, I2C multiplexers are used.
@@ -21,15 +21,15 @@ meta:
   firmware_language: "Rust no_std (esp-idf-hal)"
   interface: "WebSerial (CDC-ACM)"
   total_cost_eur: 139.00
-  protocol: "actuate <channel> <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>"
+  protocol: "flow <channel> <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>"
 
 # ============================================================
-# PART 1: 100% SENSORS (The Eyes, Ears and Noses)
+# PART 1: SENSING SURFACES (canSense) (The Eyes, Ears and Noses)
 # Measuring the complete electromagnetic spectrum, sound,
 # pressure, chemistry and bioelectricity.
 # ============================================================
 
-sensors:
+sensing_surfaces:
   spectral_vision:
     as7341:
       sense: "10-channel spectrum (Mantis shrimp)"
@@ -137,12 +137,12 @@ sensors:
         At low tone (stress/danger), immunity.φ blocks strong actuators.
 
 # ============================================================
-# PART 2: 100% AKTUATOREN (The Levers and Stimulators)
+# PART 2: RADIATING SURFACES (canRadiate) (The Levers and Stimulators)
 # Emitting photons, sound, heat, magnetic fields and chemicals
 # back into reality to test causality (Transfer-Entropy).
 # ============================================================
 
-actuators:
+radiating_surfaces:
   light_spectrum:
     ws2812b_led_ring:
       stimulates: "Visible light (Bee, Plant, Flicker, Observer Synesthesia)"
@@ -348,14 +348,14 @@ esp32_pin_map:
 # ============================================================
 
 protocol:
-  format: "actuate <channel> <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>"
+  format: "flow <channel> <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>"
   examples:
-    - "actuate light ws2812 hsv 210,255,64 - 500 1719187234.1 48.12 11.56 520"
-    - "actuate heat pad pwm 0.35 - 2000 1719187236.1 48.12 11.56 520"
-    - "actuate haptic erm pwm 0.80 - 120 1719187236.3 48.12 11.56 520"
+    - "flow light ws2812 hsv 210,255,64 - 500 1719187234.1 48.12 11.56 520"
+    - "flow heat pad pwm 0.35 - 2000 1719187236.1 48.12 11.56 520"
+    - "flow haptic erm pwm 0.80 - 120 1719187236.3 48.12 11.56 520"
 
   browser_integration: |
-    async function actuateOmegaflowSense(channel, mode, value, unit, duration_ms) {
+    async function flowToSenseModule(channel, mode, value, unit, duration_ms) {
       const t = live['server.time'] || Date.now() / 1000;
       const x = live['geolocation.latitude'] || 0;
       const y = live['geolocation.longitude'] || 0;
