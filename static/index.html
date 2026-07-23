@@ -34,26 +34,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         import { syncFrame, φ, transport, Φ, C, updateRtt, getRto } from '/constants.js';
         function reportState(category, detail) { try { fetch('/crash', { method: 'POST', body: `${category}: ${detail}` }); } catch {} }
 
-        const AU = 1.495978707e11;
-        const EARTH_ECC = 0.0167086;
-        const ECLIPTIC_OBLIQUITY = 0.409092804;
-        const J2000_EPOCH = 2451545.0;
-
-        function earthPositionIcrs(tdbSecs) {
-            const days = tdbSecs / 86400.0;
-            const m = 6.239996 + 0.017201969 * days;
-            let e = m;
-            for (let i = 0; i < 5; i++) {
-                e = e - (e - EARTH_ECC * Math.sin(e) - m) / (1.0 - EARTH_ECC * Math.cos(e));
-            }
-            const xO = AU * (Math.cos(e) - EARTH_ECC);
-            const yO = AU * Math.sqrt(1.0 - EARTH_ECC * EARTH_ECC) * Math.sin(e);
-            const w = -0.113;
-            const xE = xO * Math.cos(w) - yO * Math.sin(w);
-            const yE = xO * Math.sin(w) + yO * Math.cos(w);
-            return [xE, yE * Math.cos(ECLIPTIC_OBLIQUITY), yE * Math.sin(ECLIPTIC_OBLIQUITY)];
-        }
-
         const oscillators = [];
         const indexMap = new Map();
 
@@ -65,10 +45,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let lastFieldTime = 0, lastManifestTime = 0;
         let stableTick = 0;
         let tPresence = 0;
-        let xPresence = 0, yPresence = 0, zPresence = 0;
+        let xPresence = 1.5e11, yPresence = 1.5e11, zPresence = 1.0e10;
         let prevTPresence = 0;
         let clarity = 1.0;
-        let audioCtx = null, audioSrc = null, audioGain = null, audioBuffer = null;
+        let audioCtx = null, audioSrc = null, audioGain = null, audioFilter = null, audioCompressor = null;
         let activeSerialPort = null, activeUsbDevice = null, activeBtChar = null, activeHidDevice = null;
         const internalMetrics = ['transfer.', 'kurtosis.', 'tda.', 'complexity.', 'server.', 'system.'];
         function isInternalMetric(url) { for (const prefix of internalMetrics) { if (url.startsWith(prefix)) return true; } return false; }
@@ -80,7 +60,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
 
         φ['server.time'] = parseFloat(await (await fetch('/time')).text());
         tPresence = φ['server.time'];
-        [xPresence, yPresence, zPresence] = earthPositionIcrs(tPresence);
 
         const resonanceWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/resonance`);
         resonanceWs.binaryType = 'arraybuffer';
@@ -316,22 +295,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             return ap.current;
         }
         function adaptChannelApertures() {
+            const globalCoh = measureCoherence();
             const tau = Math.max(1, Math.round(CAPTURE_RING_SIZE / Φ));
             const alpha = 1 - Math.exp(-1 / tau);
-            const inTEs = new Map();
-            let maxInTE = Number.EPSILON;
             for (const [url, ap] of channelApertures) {
                 let inTE = 0;
                 for (let i = 0; i < oscillators.length; i++) {
                     const o = oscillators[i];
                     if (o.url.startsWith('transfer.') && o.url.endsWith('>' + url)) inTE += Math.abs(o.median);
                 }
-                inTEs.set(url, inTE);
-                if (inTE > maxInTE) maxInTE = inTE;
-            }
-            for (const [url, ap] of channelApertures) {
-                const inTE = inTEs.get(url) || 0;
-                ap.target = Math.min(1.0, inTE / maxInTE);
+                ap.target = Math.tanh(inTE * globalCoh * Φ);
                 ap.current += (ap.target - ap.current) * alpha;
                 recordSample(url, ap.current);
             }
@@ -340,28 +313,37 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             if (audioCtx) return;
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                audioGain = audioCtx.createGain(); audioGain.gain.setValueAtTime(0, audioCtx.currentTime); audioGain.connect(audioCtx.destination);
-                audioBuffer = audioCtx.createBuffer(1, CAPTURE_RING_SIZE, audioCtx.sampleRate);
-                audioSrc = audioCtx.createBufferSource(); audioSrc.buffer = audioBuffer; audioSrc.loop = true; audioSrc.connect(audioGain); audioSrc.start();
+                audioFilter = audioCtx.createBiquadFilter();
+                audioFilter.type = 'bandpass';
+                audioFilter.frequency.setValueAtTime(220, audioCtx.currentTime);
+                audioFilter.Q.setValueAtTime(1, audioCtx.currentTime);
+                audioCompressor = audioCtx.createDynamicsCompressor();
+                audioGain = audioCtx.createGain();
+                audioGain.gain.setValueAtTime(0, audioCtx.currentTime);
+                audioFilter.connect(audioCompressor);
+                audioCompressor.connect(audioGain);
+                audioGain.connect(audioCtx.destination);
+                const noiseLen = audioCtx.sampleRate * 2;
+                const noiseBuffer = audioCtx.createBuffer(1, noiseLen, audioCtx.sampleRate);
+                const noiseData = noiseBuffer.getChannelData(0);
+                for (let i = 0; i < noiseLen; i++) noiseData[i] = Math.random() * 2 - 1;
+                audioSrc = audioCtx.createBufferSource();
+                audioSrc.buffer = noiseBuffer;
+                audioSrc.loop = true;
+                audioSrc.connect(audioFilter);
+                audioSrc.start();
                 registerOscillator('audioContext.destination.channel.frequency', Number.EPSILON);
                 registerOscillator('audioContext.destination.channel.amplitude', Number.EPSILON);
                 registerOscillator('audioContext.destination.channel.pan', Number.EPSILON);
                 surfaces.push({
                     manifest: (topology) => {
                         try {
-                            if (audioBuffer.length !== CAPTURE_RING_SIZE) {
-                                try { audioSrc.stop(); } catch {}
-                                audioBuffer = audioCtx.createBuffer(1, CAPTURE_RING_SIZE, audioCtx.sampleRate);
-                                audioSrc = audioCtx.createBufferSource();
-                                audioSrc.buffer = audioBuffer; audioSrc.loop = true;
-                                audioSrc.connect(audioGain); audioSrc.start();
-                            }
                             const ampAp = getChannelAperture('audioContext.destination.channel.amplitude');
                             if (!topology || topology.length === 0 || ampAp < Number.EPSILON) {
                                 audioGain.gain.setTargetAtTime(0, audioCtx.currentTime, transport.tickTime / 1000);
                                 return;
                             }
-                            audioGain.gain.setTargetAtTime(ampAp * 0.2, audioCtx.currentTime, transport.tickTime / 1000 * Φ * Φ);
+                            audioGain.gain.setTargetAtTime(ampAp, audioCtx.currentTime, transport.tickTime / 1000 * Φ * Φ);
                             const channelData = audioBuffer.getChannelData(0);
                             const sr = audioCtx.sampleRate;
                             for (let i = 0; i < CAPTURE_RING_SIZE; i++) {
@@ -369,7 +351,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                                 let sum = 0;
                                 for (let t = 0; t < topology.length; t++) {
                                     const node = topology[t];
-                                    sum += Math.sin(2 * Math.PI * (Math.abs(Math.tanh(node.cx)) * C / 1e6) * tSec + Math.tanh(node.cy) * Math.PI * 2) * node.weight;
+                                    sum += Math.sin(2 * Math.PI * (Math.abs(node.cx) * C / 1e6) * tSec + node.cy * Math.PI * 2) * node.weight;
                                 }
                                 channelData[i] = (sum / topology.length) * ampAp;
                             }
@@ -627,26 +609,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 const gAp = getChannelAperture('document.canvas.channel.g');
                 const bAp = getChannelAperture('document.canvas.channel.b');
                 for (const node of topology) {
-                    const AU = 1.495978707e11;
-                    const scale = canvas.height / (AU * 8);
-                    const dx = node.ix - xPresence;
-                    const dy = node.iy - yPresence;
-                    const dz = node.iz - zPresence;
-                    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                    const screenX = canvas.width * 0.5 + dx * scale;
-                    const screenY = canvas.height * 0.5 - dy * scale;
-                    const lum = dist > 0 ? Math.min(1, AU / (AU + dist)) : 1;
-                    const hasPosition = node.ix !== 0 || node.iy !== 0 || node.iz !== 0;
-                    const spatialFloor = hasPosition ? 0.12 : 0;
-                    const dynAlpha = node.weight * Math.max(xAp, yAp, rAp, gAp, bAp);
-                    const alpha = Math.min(1, Math.max(spatialFloor, dynAlpha));
+                    const alpha = Math.max(0, Math.min(1, node.weight * Math.max(xAp, yAp, rAp, gAp, bAp)));
                     if (alpha > Number.EPSILON) {
-                        const r = Math.floor(lum * Math.max(rAp, hasPosition ? 0.3 : 0) * 255);
-                        const g = Math.floor(lum * Math.max(gAp, hasPosition ? 0.3 : 0) * 255);
-                        const b = Math.floor(lum * Math.max(bAp, hasPosition ? 0.4 : 0) * 255);
+                        const screenX = (node.cx + 1.0) * 0.5 * canvas.width;
+                        const screenY = (node.cy + 1.0) * 0.5 * canvas.height;
+                        const lum = Math.max(0, Math.min(1, (node.cz + 1.0) * 0.5));
+                        const r = Math.floor(lum * rAp * 255);
+                        const g = Math.floor(lum * gAp * 255);
+                        const b = Math.floor(lum * bAp * 255);
                         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
                         ctx.beginPath();
-                        ctx.arc(screenX, screenY, Math.max(1, 5 - dist * scale * 0.001), 0, Math.PI * 2);
+                        ctx.arc(screenX * (xAp > Number.EPSILON ? 1 : 0), screenY * (yAp > Number.EPSILON ? 1 : 0), 2 + (lum * 3), 0, Math.PI * 2);
                         ctx.fill();
                     }
                 }
@@ -683,7 +656,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             transport.tickTime = stableTick;
 
             tPresence += rawTick / 1000.0;
-            [xPresence, yPresence, zPresence] = earthPositionIcrs(tPresence);
 
             registerGamepads();
             for (const fn of pollFns) { try { fn(); } catch {} }
