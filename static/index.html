@@ -56,6 +56,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         φ['server.time'] = parseFloat(await (await fetch('/time')).text());
         tPresence = φ['server.time'];
         let pPresence = [0, 0, 0], vPresence = [0, 0, 0], t0P = tPresence;
+        let gravityCoupling = 0;
         let qOrientation = [1, 0, 0, 0];
         function qMul(a, b) {
             return [
@@ -338,19 +339,20 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             } catch { gpu = null; }
         }
         let dvRef = null, dvVals = null;
-        function fieldOmega() {
+        function fieldOmegaAt(px, py, pz) {
             if (dvRef !== rawWindowResponse) { dvRef = rawWindowResponse; dvVals = rawWindowResponse.map(o => decay(o)); }
             const px2 = gridStep * gridStep;
             let omega = 0;
             for (let i = 0; i < rawWindowResponse.length; i++) {
                 const o = rawWindowResponse[i];
-                const dx = o.x - xPresence, dy = o.y - yPresence, dz = o.z - zPresence;
+                const dx = o.x - px, dy = o.y - py, dz = o.z - pz;
                 const d2 = dx * dx + dy * dy + dz * dz;
                 if (d2 > o.aperture * o.aperture) continue;
                 omega += dvVals[i] / (d2 + px2);
             }
             return omega;
         }
+        function fieldOmega() { return fieldOmegaAt(xPresence, yPresence, zPresence); }
         let maRef = null, maVal = 1;
         function windowMedianAperture() {
             if (maRef !== rawWindowResponse) {
@@ -784,6 +786,21 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                 if (gp.buttons[4] && gp.buttons[4].pressed) tThrustTarget = -64;
                 if (gp.buttons[5] && gp.buttons[5].pressed) tThrustTarget = 64;
             }
+            if (gravityCoupling > 0 && rawWindowResponse.length > 0) {
+                const d = gridStep / 2;
+                const o0 = fieldOmega();
+                if (Math.abs(o0) > 0 && isFinite(o0)) {
+                    const gx = (fieldOmegaAt(xPresence + d, yPresence, zPresence) - o0) / d;
+                    const gy = (fieldOmegaAt(xPresence, yPresence + d, zPresence) - o0) / d;
+                    const gz = (fieldOmegaAt(xPresence, yPresence, zPresence + d) - o0) / d;
+                    const acc = gravityCoupling * gridStep * rawTick / 1000 / Math.abs(o0);
+                    pPresence = [xPresence, yPresence, zPresence];
+                    t0P = tPresence;
+                    vPresence[0] += gx * acc;
+                    vPresence[1] += gy * acc;
+                    vPresence[2] += gz * acc;
+                }
+            }
             const dtP = tPresence - t0P;
             xPresence = pPresence[0] + vPresence[0] * dtP;
             yPresence = pPresence[1] + vPresence[1] * dtP;
@@ -844,6 +861,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                     `  Time: ${tPresence.toFixed(1)}\n` +
                     `  Pan: ${panNow.toExponential(1)} m/s\n` +
                     `  Velocity: ${Math.hypot(vPresence[0], vPresence[1], vPresence[2]).toExponential(1)} m/s\n` +
+                    `  Gravity shoes: ${gravityCoupling === 0 ? 'off' : '×' + gravityCoupling}\n` +
                     `  Forward: (${ff.map(v => v.toFixed(2)).join(', ')})\n\n` +
                     `Surface\n` +
                     `  Pixels: ${RX}x${RY} (eval /${1 << evalShift})\n` +
@@ -975,6 +993,15 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                 t0P = tPresence;
                 vPresence = [0, 0, 0];
                 keysDown.clear();
+                e.preventDefault();
+            }
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'g') {
+                gravityCoupling = gravityCoupling === 0 ? 1 : gravityCoupling * 2;
+                e.preventDefault();
+            } else if (e.key === 'G') {
+                gravityCoupling = gravityCoupling <= 1 ? 0 : gravityCoupling / 2;
                 e.preventDefault();
             }
         });
