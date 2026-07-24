@@ -2395,6 +2395,10 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
             fields: extracted.into_iter().collect(),
         });
     }
+    for p in &mut pending {
+        p.fields.retain(|(_, v)| v.is_finite());
+    }
+    pending.retain(|p| !p.fields.is_empty());
     pending
 }
 

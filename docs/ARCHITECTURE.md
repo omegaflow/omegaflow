@@ -6,7 +6,7 @@ A = A. This document maps exactly to `src/main.rs`, `static/index.html`, and `st
 
 The system does not run on a timeline. It manifests as a field in a 4D Block Universe. Past, present, and future exist simultaneously as a lattice of spacetime coordinates.
 
-The presence's coordinate in the block is defined by `tPresence` (J2000 TDB seconds) and `spatialPresence` (ICRS x, y, z). This coordinate is anchored by geolocation. The server performs 3D ICRS spatial filtering: only API sources whose ICRS circle contains the presence's position are sent to the browser.
+The presence's coordinate in the block is defined by `tPresence` (J2000 TDB seconds) and `spatialPresence` (ICRS x, y, z): a free worldline `p + v·(t − t0)`, at rest at the SSB origin by default. The client never computes planetary ephemerides; Earth is data like every planet, delivered by the Archivar. The server performs 3D ICRS spatial filtering: only API sources whose ICRS circle contains the presence's position are sent to the browser.
 
 ### A = A — The Axiom
 
@@ -68,7 +68,7 @@ The field feels its local environment by recursively scanning the `window` objec
 ### Presence
 
 - `tPresence` advances by `rawTick / 1000.0` each tick (real-time wall clock in TDB seconds).
-- `spatialPresence` is anchored by geolocation (ICRS) and stays fixed; the server filters which API sources reach the browser by 3D ICRS distance.
+- `spatialPresence` is a free ICRS worldline (`p + v·(t − t0)`, default at rest at the SSB origin); the server filters which API sources reach the browser by 3D ICRS distance.
 ### GPU Field Evaluation (The Mathematikerin)
 
 
