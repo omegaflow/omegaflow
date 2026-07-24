@@ -14,7 +14,7 @@ APIs (sources.φ)       ω
 
 Protocol: φ(x,y,z,t), 32 bytes
 
-Certainty: exp(-Δt_eff · g) · exp(-v_c / (g + ε)) · c_q · decay
+Certainty: exp(-v_c / (g + ε))
 
 [omegaflow.space](https://omegaflow.space)
 

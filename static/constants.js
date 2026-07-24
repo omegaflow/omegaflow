@@ -64,33 +64,19 @@ export async function syncFrame(inputs, queries) {
     const buffer = await promise;
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    if (bytes.length < 13 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 1) return [];
+    if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 1) return [];
     let o = 3;
     o += 4;
-    const pointCount = dvRes.getUint32(o, true); o += 4;
+    const oscCount = dvRes.getUint32(o, true); o += 4;
     const result = [];
-    for (let pi = 0; pi < pointCount; pi++) {
-        if (o + 4 > bytes.length) break;
-        const objCount = dvRes.getUint32(o, true); o += 4;
-        for (let oi = 0; oi < objCount; oi++) {
-            if (o >= bytes.length) break;
-            const sfCount = bytes[o++];
-            for (let s = 0; s < sfCount; s++) {
-                if (o >= bytes.length) break;
-                const nl = bytes[o++];
-                let name = '';
-                if (o + nl > bytes.length) break;
-                for (let i = 0; i < nl; i++) name += String.fromCharCode(bytes[o++]);
-                o++;
-                if (o + 40 > bytes.length) break;
-                const val = dvRes.getFloat64(o, true); o += 8;
-                const t = dvRes.getFloat64(o, true); o += 8;
-                const x = dvRes.getFloat64(o, true); o += 8;
-                const y = dvRes.getFloat64(o, true); o += 8;
-                const z = dvRes.getFloat64(o, true); o += 8;
-                result.push({ name, val, t, x, y, z });
-            }
-        }
+    for (let i = 0; i < oscCount; i++) {
+        if (o + 40 > bytes.length) break;
+        const x = dvRes.getFloat64(o, true); o += 8;
+        const y = dvRes.getFloat64(o, true); o += 8;
+        const z = dvRes.getFloat64(o, true); o += 8;
+        const val = dvRes.getFloat64(o, true); o += 8;
+        const aperture = dvRes.getFloat64(o, true); o += 8;
+        result.push({ x, y, z, val, aperture });
     }
     return result;
 }

@@ -30,7 +30,7 @@ System time (`SystemTime::now()`) is an illusion isolated strictly to the `/time
 
 ### Universal Spatial Cache (`warm_cache`)
 
-APIs defined in `phi/sources.φ` are fetched asynchronously. The server uses a hand-written recursive descent JSON parser. Extracted data is stored in a thread-safe `RwLock<Arc<Buffer>>` spatial hash. Data is anchored to specific ICRS coordinates in the block. 
+APIs defined in `phi/sources.φ` are fetched asynchronously. The server uses a hand-written recursive descent JSON parser. Extracted data is stored in a thread-safe `RwLock<Arc<Buffer>>` spatial hash. Data is anchored to specific ICRS coordinates in the block. Fetches run through a bounded pool of 2³ workers fed by a min-ttl priority heap, gated by the presence window; every attempt (success or failure) is timestamped so a source is re-fetched at its own ttl/Φ pace — fresh data overlaps, failures never flood.
 
 The cache uses the Enclosure Lemma: it radiates where oscillators were, and the sense flow queries where they could have been. Time is moved out of the cache key into the motion law and the search envelope.
 
@@ -42,16 +42,16 @@ Communication is strictly binary, Little-Endian. No strings on the wire.
 - `u32` request ID, `u32` oscillator count
 - Per oscillator: `f64` value, `u8` name_len, `[name bytes]` (the browser radiates its local sensors as raw oscillators into the field)
 - `u32` query count
-- Per query: `f64` t, x, y, z (the presence window)
+- Per query: `f64` t, x, y, z (the presence window: first query is the presence center, further queries are the corners of the 2D surface at presence t, z; the server derives the window extent from them and runs a single enclosure dilated by that extent)
 
 **Rust → Browser:**
 - `[0xCF, 0x86]` Magic bytes (UTF-8 φ), `u8` version (1)
-- `u32` request ID, `u32` query count
-- Per query: A flat array of active oscillators (x, y, z, val, aperture) found within the presence window.
+- `u32` request ID, `u32` oscillator count
+- Per oscillator: `f64` x, y, z, val, aperture — one flat array for the whole presence window (every active sample × field, no name merging; the point cloud stays intact).
+## 3: GPU (Browser) — The Mathematikerin (`static/gpu.worker.js`, `static/index.html`)
 
-## 3: GPU (Browser) — The Mathematikerin (`static/index.html`)
 
-The browser is a pure sensor window. It queries an N×N grid of points in the 4D block universe and manifests ONLY the coefficients the server returns for those exact points.
+The browser is a pure sensor window. The presence window is a 2D surface in the 4D block (constant t, z of the presence), and the native screen pixels are its point cloud: every pixel is one ICRS point `presence + (u − 0.5) · resolution · scale`, evaluated by a WebGPU fragment shader in `gpu.worker.js` on an OffscreenCanvas at native resolution. No grid is sent to the server; the server only sees the surface definition. If the GPU is absent, the window stays black — there is no CPU field evaluation.
 
 ### The Oscillator
 
@@ -69,13 +69,13 @@ The field feels its local environment by recursively scanning the `window` objec
 
 - `tPresence` advances by `rawTick / 1000.0` each tick (real-time wall clock in TDB seconds).
 - `spatialPresence` is anchored by geolocation (ICRS) and stays fixed; the server filters which API sources reach the browser by 3D ICRS distance.
-
 ### GPU Field Evaluation (The Mathematikerin)
 
-The GPU evaluates the physical laws locally for the requested presence window only. It receives the flat array of raw oscillators from the Archivar. A WebGPU fragment shader iterates over this array for every pixel of the window, calculating the field influence (e.g., `val / dist²`) and applying the aperture filter. 
+
+The GPU evaluates the physical laws locally for the requested presence window only. It receives the flat array of raw oscillators from the Archivar. A WebGPU fragment shader iterates over this array for every pixel of the window, calculating the field influence `val / (dist² + aperture²)` with the aperture as softening length, and maps the log-magnitude to the canvas. The pixel scale (m/px) relaxes exponentially toward the median aperture of the oscillators in the window (Nyquist: two pixels per aperture); an empty window zooms out by Φ. GPU submissions apply backpressure (`onSubmittedWorkDone`) — a slow GPU never accumulates queued frames.
+
 
 No global grids are brute-forced. No abstract temporal topology is calculated. The GPU manifests the pure, physical field in real-time.
-
 ### Field Permeability (`adaptFieldPermeability`)
 
 The field does not "output." It breathes. The permeability (0.0 = closed, 1.0 = open) follows an exponential relaxation (1st-order ODE) with `naturalLatencyTicks` as τ. No `sin()`, no linear step. 

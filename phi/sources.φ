@@ -48,7 +48,7 @@ field round quantum_entropy_generation_round
 source dst_index
 ttl 60
 terra 1
-res -2
+res -3
 url https://services.swpc.noaa.gov/products/kyoto-dst.json
 last_row dst magnetosphere_dst_index_nt
 
@@ -456,7 +456,7 @@ xml_count ObjStationData technosphere_train_departures_dublin
 source kp_index
 ttl 60
 terra 1
-res -2
+res -3
 url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
 last kp_index magnetosphere_kp_index
 last a_index magnetosphere_ap_index
@@ -1821,13 +1821,6 @@ res -2
 url https://tle.ivanstanojevic.me/api/tle/?page-size=1
 field totalItems orbital_active_satellites
 
-source arxiv_new_papers
-ttl 3600
-terra 1
-res -2
-url https://export.arxiv.org/api/query?search_query=all:physics&max_results=1
-field feed.opensearch:totalResults technosphere_arxiv_paper_count
-
 source atlas_3i_vectors
 ttl 3600
 res -5
@@ -2028,7 +2021,7 @@ ttl 3600
 terra 1
 res -2
 url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH
-field features anthroposphere_gdacs_active_disaster_count
+count features anthroposphere_gdacs_active_disaster_count
 
 source gdelt_news_volume
 ttl 3600
@@ -2138,9 +2131,9 @@ url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_
 ephemeris orbital_moon_distance
 
 source nasa_donki_cme
-ttl 3600
 terra 0
-res -5
+res -6
+ttl 3600
 url https://api.nasa.gov/DONKI/CME?startDate={yesterday}&api_key=DEMO_KEY
 count cme solar_cme_count_24h
 deep activityID solar_cme_latest_id
@@ -2158,21 +2151,21 @@ deep classType solar_flare_class_latest
 source nasa_donki_gstorms
 ttl 3600
 terra 1
-res -2
+res -3
 url https://api.nasa.gov/DONKI/GST?startDate={yesterday}&api_key=DEMO_KEY
 count gst solar_gstorm_count_24h
 
 source nasa_donki_hss
-ttl 3600
 terra 0
-res -5
+res -6
+ttl 3600
 url https://api.nasa.gov/DONKI/HSS?startDate={yesterday}&api_key=DEMO_KEY
 count hss high_speed_stream_count_24h
 
 source nasa_donki_ips
+terra 0
+res -6
 ttl 3600
-terra 1
-res -2
 url https://api.nasa.gov/DONKI/IPS?startDate={yesterday}&api_key=DEMO_KEY
 count ips solar_shock_count_24h
 
@@ -2191,9 +2184,9 @@ url https://api.nasa.gov/DONKI/RBE?startDate={yesterday}&api_key=DEMO_KEY
 count rbe radiation_belt_enhancement_count_24h
 
 source nasa_donki_sep
-ttl 3600
 terra 0
-res -5
+res -6
+ttl 3600
 url https://api.nasa.gov/DONKI/SEP?startDate={yesterday}&api_key=DEMO_KEY
 count sep solar_sep_count_24h
 
@@ -2216,14 +2209,14 @@ ttl 3600
 terra 1
 res -2
 url https://eonet.gsfc.nasa.gov/api/v3/events
-field events biosphere_eonet_event_count
+count events biosphere_eonet_event_count
 
 source nasa_eonet_fires
 ttl 3600
 terra 1
 res -2
 url https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires
-field events biosphere_eonet_wildfire_count
+count events biosphere_eonet_wildfire_count
 
 source nasa_fireballs
 ttl 3600
@@ -2572,7 +2565,7 @@ ttl 86400
 lat 59.365
 lon 18.016
 url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/json/data.json
-field 0 anthroposphere_monkeypox_first_record
+count . anthroposphere_monkeypox_record_count
 
 source emodnet_vessel_density
 res 0
@@ -2580,7 +2573,7 @@ ttl 86400
 lat 51.231
 lon 2.928
 url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
-field features technosphere_vessel_density_feature_count
+count features technosphere_vessel_density_feature_count
 
 source epoch_ai_compute_trends
 ttl 86400
@@ -2671,18 +2664,16 @@ path properties.data.curphase cosmic_moon_phase
 path properties.data.fracillum cosmic_moon_illumination_pct
 
 source nasa_exoplanet_total
-res 0
+terra 0
+res -7
 ttl 86400
-lat 34.136
-lon -118.127
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT%20COUNT(*)%20FROM%20ps&format=json
 field 0.count(*) nasa_exoplanet_total_count
 
 source nasa_exoplanets
-res 0
+terra 0
+res -7
 ttl 86400
-lat 34.2007
-lon -118.1712
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+20+pl_name,pl_orbper,pl_rade,pl_eqt+FROM+pscomppars+WHERE+pl_eqt+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
 count data cosmic_exoplanet_count
 field pl_eqt cosmic_exoplanet_eqt_k
@@ -2690,10 +2681,9 @@ field pl_orbper cosmic_exoplanet_period_d
 field pl_rade cosmic_exoplanet_radius_re
 
 source nasa_hot_jupiters
-res 0
+terra 0
+res -7
 ttl 86400
-lat 34.136
-lon -118.127
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT%20COUNT(*)%20FROM%20ps%20WHERE%20pl_orbper%3C1&format=json
 field 0.count(*) nasa_hot_jupiter_count
 
@@ -3029,7 +3019,7 @@ ttl 86400
 lat 38.899
 lon -77.043
 url https://www.peeringdb.com/api/ix?limit=1
-field data technosphere_ixp_count
+count data technosphere_ixp_count
 
 source technosphere_submarine_cables
 res 0
@@ -3045,7 +3035,7 @@ ttl 86400
 lat 46.234
 lon 6.140
 url https://api.unhcr.org/population/v1/population/?limit=1
-field items anthroposphere_displacement_record
+count items anthroposphere_displacement_record_count
 
 source usdm_conus_drought
 res 0
@@ -3061,7 +3051,7 @@ ttl 86400
 lat 46.234
 lon 6.140
 url https://ghoapi.azureedge.net/api/CHOLERA_0000000001
-field value anthroposphere_cholera_record_count
+count value anthroposphere_cholera_record_count
 
 source who_gho_tuberculosis
 res 0
@@ -3069,7 +3059,7 @@ ttl 86400
 lat 46.234
 lon 6.140
 url https://ghoapi.azureedge.net/api/MDG_0000000020
-field value anthroposphere_tuberculosis_record_count
+count value anthroposphere_tuberculosis_record_count
 
 source who_influenza
 res 0
@@ -3077,7 +3067,7 @@ ttl 86400
 lat 46.234
 lon 6.140
 url https://xmart-api-public.who.int/FLUMART/VIW_FNT
-field value anthroposphere_influenza_record_count
+count value anthroposphere_influenza_record_count
 
 source woudc_total_ozone
 res 0
@@ -3109,7 +3099,7 @@ ttl 604800
 lat 46.233
 lon 6.055
 url https://opendata.cern.ch/api/records/?q=experiment:ALICE&size=1
-field aggregations.collision_type technosphere_cern_alice_pbpb_count
+count aggregations.experiment.buckets technosphere_cern_alice_pbpb_count
 
 source cern_cms_data
 res 0
@@ -3117,7 +3107,7 @@ ttl 604800
 lat 46.233
 lon 6.055
 url https://opendata.cern.ch/api/records/?q=experiment:CMS&size=1
-field aggregations.experiment.buckets technosphere_cern_cms_record_count
+count aggregations.experiment.buckets technosphere_cern_cms_record_count
 
 source cern_open_data
 res 0
@@ -3125,13 +3115,12 @@ ttl 604800
 lat 46.233
 lon 6.055
 url https://opendata.cern.ch/api/records/?size=1
-field aggregations.experiment.buckets technosphere_cern_total_record_count
+count aggregations.experiment.buckets technosphere_cern_total_record_count
 
 source esa_gaia_stars
-res 0
+terra 0
+res -7
 ttl 604800
-lat 40.4438
-lon -3.9529
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50+source_id,ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+3.0+ORDER+BY+phot_g_mean_mag
 count data cosmic_bright_stars_count
 path data.0.ra cosmic_star_ra
@@ -3140,35 +3129,31 @@ path data.0.phot_g_mean_mag cosmic_star_magnitude
 path data.0.parallax cosmic_star_parallax_mas
 
 source gaia_nearby_stars
-res 0
+terra 0
+res -7
 ttl 604800
-lat 40.443
-lon -3.951
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
 field data.0.0 gaia_nearby_star_count
 
 source gaia_stellar_ages
-res 0
+terra 0
+res -7
 ttl 604800
-lat 40.4438
-lon -3.9529
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5+source_id,age_flame,mass_flame,teff_gspphot+FROM+gaiadr3.astrophysical_parameters+WHERE+age_flame+IS+NOT+NULL+ORDER+BY+age_flame+DESC
-field age_flame cgerade osmic_oldest_star_age_gyr
+field age_flame cosmic_oldest_star_age_gyr
 field teff_gspphot cosmic_oldest_star_temp_k
 
 source gaia_total_measured_stars
-res 0
+terra 0
+res -7
 ttl 604800
-lat 40.443
-lon -3.951
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax>0
 field data.0.0 gaia_total_measured_star_count
 
 source gaia_variable_stars
-res 0
+terra 0
+res -7
 ttl 604800
-lat 40.443
-lon -3.951
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.vari_classifier_result
 field data.0.0 gaia_variable_star_count
 
@@ -3606,129 +3591,128 @@ url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=quantum+entan
 field hits.hits.0.metadata.citation_count quantum_entanglement_distance_record_citations
 
 source sdss_cosmic_web_galaxies
-res 0
+terra 0
+res -7
 ttl 604800
-lat 32.78
-lon -105.82
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?format=json&cmd=SELECT+TOP+10+*+FROM+SpecObj+WHERE+class=%27GALAXY%27+AND+z+BETWEEN+0.1+AND+0.2
 field 0.Rows sdss_cosmic_web_galaxy_records
 
 source simbad_brown_dwarfs
+terra 0
+res -7
 ttl 604800
-lat 48.5833
-lon 7.7667
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27BD*%27
 path data.0.0 cosmic_simbad_brown_dwarfs
 
 source simbad_carbon_stars
+terra 0
+res -7
 ttl 604800
-lat 48.5833
-lon 7.7667
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27C*%27
 path data.0.0 cosmic_simbad_carbon_stars
 
 source simbad_eclipsing_binaries
+terra 0
+res -7
 ttl 604800
-lat 48.5833
-lon 7.7667
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27EB*%27
 path data.0.0 cosmic_simbad_eclipsing_binaries
 
 source simbad_galaxies
+terra 0
+res -7
 ttl 604800
-lat 48.583
-lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Galaxy'
 field data.0.0 simbad_galaxy_count
 
 source simbad_galaxy_clusters
+terra 0
+res -7
 ttl 604800
-lat 48.5833
-lon 7.7667
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ClG%27
 path data.0.0 cosmic_galaxy_cluster_count
 
 source simbad_high_z_galaxies
+terra 0
+res -7
 ttl 604800
-lat 48.5833
-lon 7.7667
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+%3E+5
 path data.0.0 cosmic_galaxies_z_gt5
 
 source simbad_highest_redshift_quasar
+terra 0
+res -7
 ttl 604800
-lat 48.583
-lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1+main_id,ra,dec,rvz_redshift+FROM+basic+WHERE+otype='QSO'+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
 field data.0.0 simbad_highest_redshift_quasar_z
 
 source simbad_millisecond_pulsars
+terra 0
+res -7
 ttl 604800
-lat 48.5833
-lon 7.7667
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ms*%27
 path data.0.0 cosmic_millisecond_pulsar_count
 
 source simbad_novae
+terra 0
+res -7
 ttl 604800
-lat 48.583
-lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Nova'
 field data.0.0 simbad_nova_count
 
 source simbad_pulsars
+terra 0
+res -7
 ttl 604800
-lat 48.583
-lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Pulsar'
 field data.0.0 simbad_pulsar_count
 
 source simbad_quasars
+terra 0
+res -7
 ttl 604800
-lat 48.583
-lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='QSO'
 field data.0.0 simbad_quasar_count
 
 source simbad_supernovae
+terra 0
+res -7
 ttl 604800
-lat 48.583
-lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='SN'
 field data.0.0 simbad_supernova_count
 
 source simbad_symbiotic_stars
+terra 0
+res -7
 ttl 604800
-lat 48.5833
-lon 7.7667
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Sy*%27
 path data.0.0 cosmic_simbad_symbiotic_stars
 
 source simbad_total_objects
+terra 0
+res -7
 ttl 604800
-lat 48.583
-lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic
 field data.0.0 simbad_total_object_count
 
 source simbad_white_dwarfs
+terra 0
+res -7
 ttl 604800
-lat 48.583
-lon 7.751
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WD*'
 field data.0.0 simbad_white_dwarf_count
 
 source simbad_wolf_rayet
+terra 0
+res -7
 ttl 604800
-lat 48.5833
-lon 7.7667
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27WR*%27
 path data.0.0 cosmic_simbad_wolf_rayet_stars
 
 source simbad_young_stellar_objects
+terra 0
+res -7
 ttl 604800
-lat 48.5833
-lon 7.7667
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27S*Y%27
 path data.0.0 cosmic_simbad_young_stellar_objects
 
@@ -3847,7 +3831,7 @@ ttl 2592000
 lat 43.073
 lon -89.401
 url https://macrostrat.org/api/v2/units?format=json
-field success.data macrostrat_unit_count
+count success.data macrostrat_unit_count
 
 source macrostrat_timescale
 res 0

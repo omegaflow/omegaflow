@@ -38,10 +38,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         const indexMap = new Map();
         let flatRings = new Float32Array(1024).fill(Number.EPSILON);
         let CAPTURE_RING_SIZE = 32;
-        let topologyRingSize = 32;
-        let topologyPending = false;
         let lastTs = 0, certainty = 1.0, debugEl = null, lastDebug = 0;
-        let lastFieldTime = 0, lastManifestTime = 0;
+        let lastManifestTime = 0;
         let stableTick = 0;
         let tPresence = 0;
         let xPresence = 1.5e11, yPresence = 1.5e11, zPresence = 1.0e10;
@@ -49,11 +47,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let clarity = 1.0;
         let audioCtx = null, audioSrc = null, audioGain = null, audioFilter = null, audioCompressor = null;
         let activeSerialPort = null, activeUsbDevice = null, activeBtChar = null, activeHidDevice = null;
-        const internalMetrics = ['transfer.', 'kurtosis.', 'tda.', 'complexity.', 'server.', 'system.'];
-        function isInternalMetric(url) { for (const prefix of internalMetrics) { if (url.startsWith(prefix)) return true; } return false; }
         function ma() { return 1.0 / Math.max(1, Math.round(CAPTURE_RING_SIZE / Φ)); }
         const surfaces = [];
-        const channelApertures = new Map();
         const pollFns = [];
         window.ω = { syncFrame, φ, transport, oscillators, indexMap };
 
@@ -77,18 +72,31 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             zPresence = e0[2] + pzOffset;
         }
 
-        const GRID_NX = 160, GRID_NY = 90;
         let gridStep = 100000.0;
-        function gridQueries() {
-            const qs = [];
-            for (let j = 0; j < GRID_NY; j++) {
-                for (let i = 0; i < GRID_NX; i++) {
-                    const x = xPresence + (i - GRID_NX / 2) * gridStep;
-                    const y = yPresence + (j - GRID_NY / 2) * gridStep;
-                    qs.push({ t: tPresence, x: x, y: y, z: zPresence });
-                }
+        let RX = window.innerWidth, RY = window.innerHeight;
+        function windowQueries() {
+            const hx = RX * gridStep * 0.5, hy = RY * gridStep * 0.5;
+            return [
+                { t: tPresence, x: xPresence, y: yPresence, z: zPresence },
+                { t: tPresence, x: xPresence - hx, y: yPresence - hy, z: zPresence },
+                { t: tPresence, x: xPresence + hx, y: yPresence - hy, z: zPresence },
+                { t: tPresence, x: xPresence + hx, y: yPresence + hy, z: zPresence },
+                { t: tPresence, x: xPresence - hx, y: yPresence + hy, z: zPresence }
+            ];
+        }
+        function adaptWindow(rawTick) {
+            let target;
+            if (rawWindowResponse.length === 0) {
+                target = gridStep * Φ;
+            } else {
+                const aps = [];
+                for (const osc of rawWindowResponse) { if (osc.aperture > 0) aps.push(osc.aperture); }
+                if (aps.length === 0) return;
+                aps.sort((a, b) => a - b);
+                target = aps[aps.length >> 1] * 0.5;
             }
-            return qs;
+            const tau = Math.max(rawTick, 1) * Φ * Φ;
+            gridStep += (target - gridStep) * (1 - Math.exp(-rawTick / tau));
         }
 
         const resonanceWs = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/resonance`);
@@ -103,7 +111,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         resonanceWs.addEventListener('message', (e) => {
             if (typeof e.data !== 'string') {
                 const buf = new Uint8Array(e.data);
-                if (buf.length < 13 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 1) return;
+                if (buf.length < 11 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 1) return;
                 const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
                 const id = dv.getUint32(3, true);
                 const pending = transport.pending.get(id);
@@ -170,41 +178,49 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 }).catch(() => {});
             }
         }
-        let gpuMaxBufferSize = 0;
         let gpuWorker = null;
         let gpuWorkerReady = false;
-        let gpuResolve = null;
         if (navigator.gpu && typeof Worker !== 'undefined') {
             gpuWorker = new Worker('gpu.worker.js');
             gpuWorker.onmessage = (e) => {
                 const d = e.data;
-                if (d.type === 'ready') { gpuMaxBufferSize = d.maxBufferSize; gpuWorkerReady = true; }
+                if (d.type === 'ready') { gpuWorkerReady = true; }
                 else if (d.type === 'lost') { gpuWorkerReady = false; }
-                else if (d.type === 'result' && gpuResolve) { const r = gpuResolve; gpuResolve = null; r(d); }
             };
+        }
+        const fieldCanvas = document.createElement('canvas');
+        fieldCanvas.width = RX; fieldCanvas.height = RY;
+        fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;';
+        document.body.appendChild(fieldCanvas);
+        if (gpuWorker) {
+            try {
+                const offscreen = fieldCanvas.transferControlToOffscreen();
+                gpuWorker.postMessage({ type: 'init', canvas: offscreen }, [offscreen]);
+            } catch {}
+        }
+        function manifestWindow() {
+            if (!gpuWorker || !gpuWorkerReady) return;
+            const n = rawWindowResponse.length;
+            const xyzval = new Float32Array(n * 4);
+            const ap = new Float32Array(n);
+            for (let i = 0; i < n; i++) {
+                const osc = rawWindowResponse[i];
+                xyzval[i * 4] = osc.x;
+                xyzval[i * 4 + 1] = osc.y;
+                xyzval[i * 4 + 2] = osc.z;
+                xyzval[i * 4 + 3] = osc.val;
+                ap[i] = osc.aperture;
+            }
+            gpuWorker.postMessage({ type: 'frame', xyzval: xyzval.buffer, ap: ap.buffer, count: n, cx: xPresence, cy: yPresence, cz: zPresence, step: gridStep, w: RX, h: RY }, [xyzval.buffer, ap.buffer]);
         }
         function ensureRingCapacity() {
             const needed = oscillators.length * CAPTURE_RING_SIZE;
             if (needed > flatRings.length) { const nr = new Float32Array(Math.max(needed, flatRings.length + CAPTURE_RING_SIZE)).fill(Number.EPSILON); nr.set(flatRings); flatRings = nr; }
         }
-        function rebuildRings(oldSize) {
-            const nr = new Float32Array(Math.max(oscillators.length * CAPTURE_RING_SIZE, flatRings.length)).fill(Number.EPSILON);
-            for (let i = 0; i < oscillators.length; i++) {
-                const osc = oscillators[i];
-                const newOffset = i * CAPTURE_RING_SIZE;
-                const copyLen = Math.min(osc.filled, oldSize, CAPTURE_RING_SIZE);
-                const startIdx = (osc.idx - copyLen + oldSize) % oldSize;
-                for (let j = 0; j < copyLen; j++) nr[newOffset + j] = flatRings[osc.ringOffset + (startIdx + j) % oldSize];
-                osc.ringOffset = newOffset;
-                osc.idx = copyLen % CAPTURE_RING_SIZE;
-                osc.filled = copyLen;
-            }
-            flatRings = nr;
-        }
         function registerOscillator(url, initialVal) {
             const index = oscillators.length;
             const ringOffset = index * CAPTURE_RING_SIZE;
-            const osc = { url, index, ringOffset, idx: 0, filled: 0, complexity: Number.EPSILON, median: initialVal, originT: 0, lastTransmitted: initialVal, takensCx: 0, takensCy: 0, takensCz: 0, takensSpread: 0, ix: 0, iy: 0, iz: 0 };
+            const osc = { url, index, ringOffset, idx: 0, filled: 0, median: initialVal, originT: 0, lastTransmitted: initialVal, ix: 0, iy: 0, iz: 0 };
             oscillators.push(osc); indexMap.set(url, index); ensureRingCapacity();
             return osc;
         }
@@ -226,127 +242,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             const response = await syncFrame(transmitList, queries);
             rawWindowResponse = response || [];
         }
-        function unrollRing(ringOffset, idx, size) { const u = new Float32Array(size); for (let i = 0; i < size; i++) u[i] = flatRings[ringOffset + (idx + i) % CAPTURE_RING_SIZE]; return u; }
-        async function calculateField() {
-            if (!gpuWorkerReady || topologyPending) return;
-            topologyPending = true;
-            const candidates = [];
-            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; if (osc.filled >= topologyRingSize && !isInternalMetric(osc.url)) candidates.push(osc); }
-            if (candidates.length < 2) {
-                let maxFilled = 0;
-                for (let i = 0; i < oscillators.length; i++) { if (oscillators[i].filled > maxFilled) maxFilled = oscillators[i].filled; }
-                if (maxFilled > 0 && maxFilled < topologyRingSize) {
-                    topologyRingSize = Math.max(32, Math.floor(maxFilled));
-                    let neededCapture = 32;
-                    while (neededCapture < topologyRingSize) neededCapture <<= 1;
-                    if (neededCapture !== CAPTURE_RING_SIZE) { const oldSize = CAPTURE_RING_SIZE; CAPTURE_RING_SIZE = neededCapture; rebuildRings(oldSize); }
-                }
-                topologyPending = false; return;
-            }
-            const n = candidates.length;
-            const flat = new Float32Array(n * topologyRingSize);
-            for (let i = 0; i < n; i++) {
-                const ring = unrollRing(candidates[i].ringOffset, candidates[i].idx, topologyRingSize);
-                let mn = Infinity, mx = -Infinity;
-                for (let v = 0; v < ring.length; v++) { if (ring[v] < mn) mn = ring[v]; if (ring[v] > mx) mx = ring[v]; }
-                const range = mx - mn;
-                if (range > 0) { for (let v = 0; v < ring.length; v++) ring[v] = (ring[v] - mn) / range; }
-                flat.set(ring, i * topologyRingSize);
-            }
-            const srcList = [], dstList = [];
-            for (let i = 0; i < candidates.length; i++) {
-                if (channelApertures.has(candidates[i].url)) dstList.push(i);
-                else srcList.push(i);
-            }
-            const srcW = Math.min(srcList.length, 8);
-            const dstR = Math.min(dstList.length, 8);
-            const hasTE = srcW > 1 && dstR > 1;
-            const evalStartTime = performance.now();
-            let gpuSucceeded = false;
-            try {
-                const srcArr = new Uint32Array(srcList.slice(0, srcW));
-                const dstArr = new Uint32Array(dstList.slice(0, dstR));
-                const result = await new Promise((resolve) => {
-                    gpuResolve = resolve;
-                    gpuWorker.postMessage({ type: 'compute', flat: flat.buffer, n, ringSize: topologyRingSize, srcList: srcArr.buffer, dstList: dstArr.buffer, srcW, dstR, hasTE }, [flat.buffer, srcArr.buffer, dstArr.buffer]);
-                });
-                if (result.ok) {
-                    const kRes = new Float32Array(result.kRes);
-                    const tRes = new Float32Array(result.tRes);
-                    const tdaRes = new Float32Array(result.tdaRes);
-                    const kurtosisRes = new Float32Array(result.kurtosisRes);
-                    const teRes = hasTE ? new Float32Array(result.teRes) : null;
-                    for (let i = 0; i < n; i++) {
-                        const osc = candidates[i];
-                        osc.complexity = kRes[i];
-                        recordSample('kurtosis.' + i, kurtosisRes[i]);
-                        const tB = i * 4;
-                        osc.takensCx = tRes[tB];
-                        osc.takensCy = tRes[tB + 1];
-                        osc.takensCz = tRes[tB + 2];
-                        osc.takensSpread = tRes[tB + 3];
-                        recordSample('tda.' + osc.url + '.persistence', tdaRes[i * 2]);
-                        recordSample('tda.' + osc.url + '.betti0', tdaRes[i * 2 + 1]);
-                    }
-                    if (hasTE) { for (let si = 0; si < srcW; si++) { const a = candidates[srcList[si]]; for (let di = 0; di < dstR; di++) { if (srcList[si] === dstList[di]) continue; const te = teRes[si * dstR + di]; if (te > 0) recordSample('transfer.' + a.url + '>' + candidates[dstList[di]].url, te); } } }
-                    gpuSucceeded = true;
-                } else { reportState('GPU_TOPOLOGY_FAIL', result.error); }
-            } catch (e) { reportState('GPU_TOPOLOGY_FAIL', e && e.message ? e.message : String(e)); } finally {
-                const evalDuration = performance.now() - evalStartTime;
-                if (stableTick > 0) {
-                    const maxRingByGpu = gpuMaxBufferSize > 0 ? Math.floor(gpuMaxBufferSize / (n * 4)) : 256;
-                    const hardCap = Math.max(32, Math.min(maxRingByGpu, 256));
-                    const tau = Φ * Φ;
-                    const alpha = 1 - Math.exp(-1 / tau);
-                    let target;
-                    if (!gpuSucceeded) {
-                        target = 32;
-                    } else if (evalDuration > 0) {
-                        const ratio = Math.sqrt(stableTick / evalDuration);
-                        target = topologyRingSize * ratio;
-                    } else {
-                        target = topologyRingSize;
-                    }
-                    target = Math.max(32, Math.min(hardCap, target));
-                    topologyRingSize += (target - topologyRingSize) * alpha;
-                    topologyRingSize = Math.round(Math.max(32, Math.min(hardCap, topologyRingSize)));
-                    let neededCapture = 32;
-                    while (neededCapture < topologyRingSize && neededCapture < hardCap) neededCapture <<= 1;
-                    if (neededCapture !== CAPTURE_RING_SIZE) {
-                        const oldSize = CAPTURE_RING_SIZE;
-                        CAPTURE_RING_SIZE = neededCapture;
-                        rebuildRings(oldSize);
-                    }
-                }
-                topologyPending = false;
-            }
-        }
         function hasPos(o) { return o.ix !== 0 || o.iy !== 0 || o.iz !== 0; }
-        function measureRms() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>0&&!isInternalMetric(o.url)&&hasPos(o)){ let mn=Number.POSITIVE_INFINITY,mx=Number.NEGATIVE_INFINITY; for(let j=0;j<o.filled;j++){ const v=flatRings[o.ringOffset+j]; if(v<mn)mn=v; if(v>mx)mx=v; } const r=mx-mn; if(r>0){ s+=Math.pow((o.median-mn)/r,2); c++; } } } return c>0?Math.sqrt(s/c):Number.EPSILON; }
-        function measureRateOfChange() { let s=0,c=0; const k=8; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>1&&!isInternalMetric(o.url)&&hasPos(o)){ let mn=Number.POSITIVE_INFINITY,mx=Number.NEGATIVE_INFINITY; for(let j=0;j<o.filled;j++){ const v=flatRings[o.ringOffset+j]; if(v<mn)mn=v; if(v>mx)mx=v; } const r=mx-mn; if(r<=0)continue; let acc=0; const lim=Math.min(k,o.filled); for(let j=0;j<lim;j++){ const a=(o.idx-1-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; const b=(o.idx-2-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; acc+=Math.abs(flatRings[o.ringOffset+a]-flatRings[o.ringOffset+b])/r; } s+=(acc/lim); c+=1; } } return c>0?(s/c):0.0; }
-        function measureDecay() { let t=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.complexity>0&&!isInternalMetric(o.url)&&hasPos(o)){ t+=o.complexity; c+=1; } } return c>0?1.0/(1.0+(t/c)):1.0; }
-        function measureQuantum() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.takensSpread>0&&!isInternalMetric(o.url)&&hasPos(o)){ s+=o.takensSpread; c+=1; } } return c===0?1.0:Math.exp(-s/c); }
-        function measureCoherence() { let teSum=0,teCount=0,cplxSum=0,cplxCount=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.url.startsWith('transfer.')){teSum+=Math.abs(o.median);teCount+=1;} if(o.complexity>0&&!isInternalMetric(o.url)){cplxSum+=o.complexity;cplxCount+=1;} } const te=teCount>0?teSum/teCount:0; const cplx=cplxCount>0?cplxSum/cplxCount:0; return cplx>Number.EPSILON?Math.min(1.0, te/(cplx+Number.EPSILON)):0; }
-        function getChannelAperture(url) {
-            let ap = channelApertures.get(url);
-            if (!ap) { ap = { current: Number.EPSILON, target: Number.EPSILON }; channelApertures.set(url, ap); }
-            return ap.current;
-        }
-        function adaptChannelApertures() {
-            const globalCoh = measureCoherence();
-            const tau = Math.max(1, Math.round(CAPTURE_RING_SIZE / Φ));
-            const alpha = 1 - Math.exp(-1 / tau);
-            for (const [url, ap] of channelApertures) {
-                let inTE = 0;
-                for (let i = 0; i < oscillators.length; i++) {
-                    const o = oscillators[i];
-                    if (o.url.startsWith('transfer.') && o.url.endsWith('>' + url)) inTE += Math.abs(o.median);
-                }
-                ap.target = Math.tanh(inTE * globalCoh * Φ);
-                ap.current += (ap.target - ap.current) * alpha;
-                recordSample(url, ap.current);
-            }
-        }
+        function measureRms() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>0&&hasPos(o)){ let mn=Number.POSITIVE_INFINITY,mx=Number.NEGATIVE_INFINITY; for(let j=0;j<o.filled;j++){ const v=flatRings[o.ringOffset+j]; if(v<mn)mn=v; if(v>mx)mx=v; } const r=mx-mn; if(r>0){ s+=Math.pow((o.median-mn)/r,2); c++; } } } return c>0?Math.sqrt(s/c):Number.EPSILON; }
+        function measureRateOfChange() { let s=0,c=0; const k=8; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>1&&hasPos(o)){ let mn=Number.POSITIVE_INFINITY,mx=Number.NEGATIVE_INFINITY; for(let j=0;j<o.filled;j++){ const v=flatRings[o.ringOffset+j]; if(v<mn)mn=v; if(v>mx)mx=v; } const r=mx-mn; if(r<=0)continue; let acc=0; const lim=Math.min(k,o.filled); for(let j=0;j<lim;j++){ const a=(o.idx-1-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; const b=(o.idx-2-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; acc+=Math.abs(flatRings[o.ringOffset+a]-flatRings[o.ringOffset+b])/r; } s+=(acc/lim); c+=1; } } return c>0?(s/c):0.0; }
         function startAudio() {
             if (audioCtx) return;
             try {
@@ -489,17 +387,20 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 surfaces.push({
                     manifest: () => {
                         if (!activeSerialPort || !activeSerialPort.writable) return;
-                        const txAp = getChannelAperture('navigator.serial.channel.tx');
-                        if (txAp < Number.EPSILON) return;
+                        const n = Math.min(rawWindowResponse.length, 16);
+                        if (n === 0) return;
+                        let peak = 0;
+                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(rawWindowResponse[i].val));
+                        if (peak <= 0) return;
                         try {
                             const writer = activeSerialPort.writable.getWriter();
-                            const sendBuf = new Uint8Array(Math.min(rawWindowResponse.length * 4, 64));
-                            for (let i = 0; i < sendBuf.length; i += 4) {
-                                const p = rawWindowResponse[i / 4] || { val: 0 };
-                                sendBuf[i] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                                sendBuf[i + 1] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                                sendBuf[i + 2] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                                sendBuf[i + 3] = Math.floor(Math.abs(p.val) * 255) & 255;
+                            const sendBuf = new Uint8Array(n * 4);
+                            for (let i = 0; i < n; i++) {
+                                const lum = Math.floor((Math.abs(rawWindowResponse[i].val) / peak) * 255) & 255;
+                                sendBuf[i * 4] = lum;
+                                sendBuf[i * 4 + 1] = lum;
+                                sendBuf[i * 4 + 2] = lum;
+                                sendBuf[i * 4 + 3] = lum;
                             }
                             writer.write(sendBuf);
                             writer.releaseLock();
@@ -512,19 +413,22 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 surfaces.push({
                     manifest: () => {
                         if (!activeUsbDevice || !activeUsbDevice.opened) return;
-                        const txAp = getChannelAperture('navigator.usb.channel.tx');
-                        if (txAp < Number.EPSILON) return;
                         const alt = activeUsbDevice.configuration?.interfaces?.[0]?.alternates?.[0];
                         if (!alt) return;
                         const outEp = alt.endpoints.find(e => e.direction === 'out');
                         if (!outEp) return;
-                        const sendBuf = new Uint8Array(Math.min(rawWindowResponse.length * 4, 64));
-                        for (let i = 0; i < sendBuf.length; i += 4) {
-                            const p = rawWindowResponse[i / 4] || { val: 0 };
-                            sendBuf[i] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 1] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 2] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 3] = Math.floor(Math.abs(p.val) * 255) & 255;
+                        const n = Math.min(rawWindowResponse.length, 16);
+                        if (n === 0) return;
+                        let peak = 0;
+                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(rawWindowResponse[i].val));
+                        if (peak <= 0) return;
+                        const sendBuf = new Uint8Array(n * 4);
+                        for (let i = 0; i < n; i++) {
+                            const lum = Math.floor((Math.abs(rawWindowResponse[i].val) / peak) * 255) & 255;
+                            sendBuf[i * 4] = lum;
+                            sendBuf[i * 4 + 1] = lum;
+                            sendBuf[i * 4 + 2] = lum;
+                            sendBuf[i * 4 + 3] = lum;
                         }
                         try { activeUsbDevice.transferOut(outEp.endpointNumber, sendBuf); } catch {}
                     }
@@ -534,10 +438,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 registerOscillator('navigator.bluetooth.channel.tx', Number.EPSILON);
                 surfaces.push({
                     manifest: () => {
-                        if (!activeBtChar) return;
-                        const txAp = getChannelAperture('navigator.bluetooth.channel.tx');
-                        if (txAp < Number.EPSILON) return;
-                        try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor(txAp * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
+                        if (!activeBtChar || rawWindowResponse.length === 0) return;
+                        let peak = 0;
+                        for (const p of rawWindowResponse) peak = Math.max(peak, Math.abs(p.val));
+                        if (peak <= 0) return;
+                        try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor((Math.abs(rawWindowResponse[0].val) / peak) * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
                     }
                 });
             }
@@ -546,15 +451,18 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 surfaces.push({
                     manifest: () => {
                         if (!activeHidDevice || !activeHidDevice.opened) return;
-                        const txAp = getChannelAperture('navigator.hid.channel.tx');
-                        if (txAp < Number.EPSILON) return;
-                        const sendBuf = new Uint8Array(Math.min(rawWindowResponse.length * 4, 64));
-                        for (let i = 0; i < sendBuf.length; i += 4) {
-                            const p = rawWindowResponse[i / 4] || { val: 0 };
-                            sendBuf[i] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 1] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 2] = Math.floor(((p.val * txAp + 1) * 0.5) * 255) & 255;
-                            sendBuf[i + 3] = Math.floor(Math.abs(p.val) * 255) & 255;
+                        const n = Math.min(rawWindowResponse.length, 16);
+                        if (n === 0) return;
+                        let peak = 0;
+                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(rawWindowResponse[i].val));
+                        if (peak <= 0) return;
+                        const sendBuf = new Uint8Array(n * 4);
+                        for (let i = 0; i < n; i++) {
+                            const lum = Math.floor((Math.abs(rawWindowResponse[i].val) / peak) * 255) & 255;
+                            sendBuf[i * 4] = lum;
+                            sendBuf[i * 4 + 1] = lum;
+                            sendBuf[i * 4 + 2] = lum;
+                            sendBuf[i * 4 + 3] = lum;
                         }
                         for (const coll of activeHidDevice.collections) { for (const inp of coll.inputReports) { try { activeHidDevice.sendReport(inp.reportId, sendBuf); } catch {} } }
                     }
@@ -615,34 +523,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 }).catch(() => {});
             }
         }
-        {
-        const canvas = document.createElement('canvas');
-        canvas.width = GRID_NX; canvas.height = GRID_NY;
-        canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;image-rendering:pixelated;z-index:-1;';
-        document.body.appendChild(canvas);
-        const ctx = canvas.getContext('2d');
-        const imgData = ctx.createImageData(GRID_NX, GRID_NY);
-        surfaces.push({
-            manifest: () => {
-                if (!rawWindowResponse || rawWindowResponse.length === 0) {
-                    ctx.fillStyle = 'black';
-                    ctx.fillRect(0, 0, GRID_NX, GRID_NY);
-                    return;
-                }
-                const data = imgData.data;
-                for (let i = 0; i < rawWindowResponse.length; i++) {
-                    const p = rawWindowResponse[i];
-                    const idx = i * 4;
-                    const lum = Math.min(255, Math.abs(p.val) * 1e-6 * 255);
-                    data[idx] = lum;
-                    data[idx + 1] = lum;
-                    data[idx + 2] = lum;
-                    data[idx + 3] = 255;
-                }
-                ctx.putImageData(imgData, 0, 0);
-            }
-        });
-        }
         function registerGamepads() {
             const pads = navigator.getGamepads ? navigator.getGamepads() : [];
             for (let p = 0; p < pads.length; p++) {
@@ -692,17 +572,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             clarity = Math.exp(-dtClarity / (1.0 + measureRms()));
             prevTPresence = tPresence;
             const transmitList = [];
-            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > osc.complexity) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val }); } }
-            syncField(transmitList, gridQueries()).catch(() => {});
-            const fieldStart = performance.now();
-            await calculateField();
-            lastFieldTime = performance.now() - fieldStart;
-            adaptChannelApertures();
+            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > Number.EPSILON) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val }); } }
+            syncField(transmitList, windowQueries()).catch(() => {});
+            adaptWindow(rawTick);
+            manifestWindow();
             const manifestStart = performance.now();
             for (const surface of surfaces) { try { surface.manifest(); } catch {} }
             lastManifestTime = performance.now() - manifestStart;
-            const g = measureRms(); const vC = measureRateOfChange(); const decay = measureDecay(); const quantum = measureQuantum();
-            certainty = Math.exp(-vC / (g + (1.0 / C))) * quantum * decay;
+            const g = measureRms(); const vC = measureRateOfChange();
+            certainty = Math.exp(-vC / (g + (1.0 / C)));
             if (!debugEl) {
                 debugEl = document.createElement('textarea');
                 debugEl.readOnly = true;
@@ -712,28 +590,21 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             }
             if (ts - lastDebug > stableTick * 6 || lastDebug === 0) {
                 lastDebug = ts;
-                let topoCount = 0;
-                for (let i = 0; i < oscillators.length; i++) {
-                    const o = oscillators[i];
-                    if (o.filled > 0 && !isInternalMetric(o.url)) topoCount++;
-                }
                 let maxFill = 0;
                 for (let i = 0; i < oscillators.length; i++) maxFill = Math.max(maxFill, oscillators[i].filled);
                 const xStr = isFinite(xPresence) ? xPresence.toExponential(3) : 'NaN';
                 const yStr = isFinite(yPresence) ? yPresence.toExponential(3) : 'NaN';
                 const zStr = isFinite(zPresence) ? zPresence.toExponential(3) : 'NaN';
                 let tps = stableTick > 0 ? (1000 / stableTick).toFixed(1) : '0';
-                let teCount = 0, teMax = 0;
-                for (let i = 0; i < oscillators.length; i++) { if (oscillators[i].url.startsWith('transfer.')) { teCount++; teMax = Math.max(teMax, Math.abs(oscillators[i].median)); } }
                 let topOsc = [];
                 for (let i = 0; i < oscillators.length; i++) {
                     const o = oscillators[i];
-                    if (o.filled > 0 && !isInternalMetric(o.url)) {
-                        topOsc.push({ u: o.url.substring(0, 32), v: o.median, w: o.complexity, c: o.complexity, f: o.filled });
+                    if (o.filled > 0) {
+                        topOsc.push({ u: o.url.substring(0, 32), v: o.median });
                     }
                 }
-                topOsc.sort((a, b) => b.w - a.w);
-                const topLines = topOsc.slice(0, 12).map(t => `  ${t.u}: ${t.v.toPrecision(4)} (weight ${t.w.toFixed(2)}, complexity ${t.c.toFixed(2)})`).join('\n');
+                topOsc.sort((a, b) => Math.abs(b.v) - Math.abs(a.v));
+                const topLines = topOsc.slice(0, 12).map(t => `  ${t.u}: ${t.v.toPrecision(4)}`).join('\n');
 
                 debugEl.value =
                     "omegaflow field\n\n" +
@@ -743,33 +614,23 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     `  Z: ${zStr}\n` +
                     `  Time: ${tPresence.toFixed(1)}\n` +
                     `  Frame: ${presenceFree ? 'free-fall' : 'anchored'}\n\n` +
-                    `Tomography\n` +
-                    `  Grid: ${GRID_NX}x${GRID_NY} (${GRID_NX*GRID_NY} points)\n` +
-                    `  Step: ${gridStep.toExponential(1)} m\n\n` +
+                    `Surface\n` +
+                    `  Pixels: ${RX}x${RY}\n` +
+                    `  Scale: ${gridStep.toExponential(1)} m/px\n` +
+                    `  Oscillators in window: ${rawWindowResponse.length}\n\n` +
                     "System\n" +
                     `  Oscillators: ${oscillators.length}\n` +
                     `  Ring buffer: ${maxFill}/${CAPTURE_RING_SIZE} samples\n` +
-                    `  Topology window: ${topologyRingSize}\n` +
                     `  Ticks per second: ${tps}\n\n` +
                     "Performance\n" +
                     `  GPU: ${gpuWorkerReady ? 'active' : 'none'}\n` +
                     `  Frame:     ${rawTick.toFixed(1)}ms\n` +
-                    `  Field:     ${lastFieldTime.toFixed(1)}ms\n` +
                     `  Manifest:  ${lastManifestTime.toFixed(1)}ms\n\n` +
                     "Field\n" +
                     `  Certainty:      ${certainty.toFixed(4)}\n` +
                     `  Clarity:        ${clarity.toFixed(4)}\n` +
-                    `  Coherence:      ${measureCoherence().toFixed(4)}\n` +
                     `  Gravity:        ${g.toFixed(3)}\n` +
-                    `  Rate of change: ${vC.toFixed(4)}\n` +
-                    `  Decay:          ${decay.toFixed(4)}\n` +
-                    `  Quantum:        ${quantum.toFixed(4)}\n\n` +
-                    "Resonance\n" +
-                    `  Transfer entropy links: ${teCount}\n` +
-                    `  Strongest: ${teMax.toExponential(3)}\n\n` +
-                    "Manifestation\n" +
-                    `  Topology nodes: ${topoCount}\n` +
-                    `  Channels open: ${[...channelApertures.values()].filter(a => a.current > 0.001).length} of ${channelApertures.size}\n\n` +
+                    `  Rate of change: ${vC.toFixed(4)}\n\n` +
                     "Connection\n" +
                     `  WebSocket: ${transport.socket ? 'open' : 'closed'}\n` +
                     `  Round trip: ${transport.rtt.toFixed(0)}ms\n\n` +
@@ -806,7 +667,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         window.addEventListener('keydown', (e) => { recordSample('event.keydown.code', e.keyCode); }, { passive: true });
         window.addEventListener('keyup', (e) => { recordSample('event.keyup.code', e.keyCode); }, { passive: true });
         window.addEventListener('click', (e) => { recordSample('event.click.x', e.clientX); recordSample('event.click.y', e.clientY); }, { passive: true });
-        window.addEventListener('resize', () => { recordSample('event.resize.width', window.innerWidth); recordSample('event.resize.height', window.innerHeight); }, { passive: true });
+        window.addEventListener('resize', () => { RX = window.innerWidth; RY = window.innerHeight; recordSample('event.resize.width', RX); recordSample('event.resize.height', RY); }, { passive: true });
         window.addEventListener('deviceorientation', (e) => { recordSample('event.deviceorientation.alpha', e.alpha || 0); recordSample('event.deviceorientation.beta', e.beta || 0); recordSample('event.deviceorientation.gamma', e.gamma || 0); }, { passive: true });
         window.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'd' && debugEl) {

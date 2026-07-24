@@ -1,10 +1,10 @@
 #![allow(mixed_script_confusables)]
-use std::collections::HashMap;
+use std::collections::{BinaryHeap, HashMap};
 use std::io::{Cursor, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::process::Command;
-use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::atomic::AtomicU64;
+use std::sync::{Arc, Condvar, Mutex, RwLock};
 use std::thread;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -252,14 +252,15 @@ fn enclose_family(
     anchor: [f64; 3],
     q: [f64; 3],
     t2: f64,
-    merged: &mut HashMap<String, (f64, f64, f64, f64, f64)>,
+    pad: f64,
+    records: &mut Vec<(f64, f64, f64, f64, f64)>,
 ) {
     if fam.cells.is_empty() {
         return;
     }
     let qf = [q[0] - anchor[0], q[1] - anchor[1], q[2] - anchor[2]];
     let dt = (t2 - fam.epoch_min).abs();
-    let rho = fam.rmax + fam.vmax * dt + 0.5 * fam.amax * dt * dt;
+    let rho = fam.rmax + fam.vmax * dt + 0.5 * fam.amax * dt * dt + pad;
     let s = fam.cell_size;
     let qlo = cell_of([qf[0] - rho, qf[1] - rho, qf[2] - rho], s);
     let qhi = cell_of([qf[0] + rho, qf[1] + rho, qf[2] + rho], s);
@@ -284,7 +285,7 @@ fn enclose_family(
                 };
                 for smp in samples {
                     let age = (t2 - smp.epoch).abs();
-                    let reach = smp.r + smp.vmax * age + 0.5 * smp.amax * age * age;
+                    let reach = smp.r + smp.vmax * age + 0.5 * smp.amax * age * age + pad;
                     let dx = smp.p0f[0] - qf[0];
                     let dy = smp.p0f[1] - qf[1];
                     let dz = smp.p0f[2] - qf[2];
@@ -295,11 +296,12 @@ fn enclose_family(
                     let ddx = p[0] - q[0];
                     let ddy = p[1] - q[1];
                     let ddz = p[2] - q[2];
-                    if ddx * ddx + ddy * ddy + ddz * ddz > smp.r * smp.r {
+                    let exact = smp.r + pad;
+                    if ddx * ddx + ddy * ddy + ddz * ddz > exact * exact {
                         continue;
                     }
-                    for (name, val) in &smp.fields {
-                        merged.insert(name.clone(), (*val, smp.epoch, p[0], p[1], p[2]));
+                    for (_, val) in &smp.fields {
+                        records.push((*val, p[0], p[1], p[2], smp.r));
                     }
                 }
             }
@@ -311,11 +313,12 @@ fn sense_buffer(
     buf: &Buffer,
     q: [f64; 3],
     t2: f64,
-    merged: &mut HashMap<String, (f64, f64, f64, f64, f64)>,
+    pad: f64,
+    records: &mut Vec<(f64, f64, f64, f64, f64)>,
 ) {
     let (ex, ey, ez) = earth_position_icrs(t2);
-    enclose_family(&buf.terra, [ex, ey, ez], q, t2, merged);
-    enclose_family(&buf.inertial, [0.0, 0.0, 0.0], q, t2, merged);
+    enclose_family(&buf.terra, [ex, ey, ez], q, t2, pad, records);
+    enclose_family(&buf.inertial, [0.0, 0.0, 0.0], q, t2, pad, records);
 }
 
 fn ecliptic_to_field(v: [f64; 3]) -> [f64; 3] {
@@ -385,6 +388,7 @@ struct OriginState {
     prev_motion: Option<Motion>,
     resid_ema: f64,
     has_prev: bool,
+    zero_yield: u32,
 }
 
 struct StationState {
@@ -428,7 +432,7 @@ fn origin_stale(
     now: f64,
 ) -> bool {
     match origins.get(&origin) {
-        Some(o) => now - o.fetched >= ttl as f64,
+        Some(o) => now - o.fetched >= ttl as f64 / Φ,
         None => true,
     }
 }
@@ -682,6 +686,9 @@ fn jnum(json: &JsonVal, key: &str) -> Option<f64> {
 }
 
 fn jpath(json: &JsonVal, path: &str) -> Option<f64> {
+    if path == "." || path.is_empty() {
+        return scalar_of(json);
+    }
     jpath_val(json, path).and_then(scalar_of)
 }
 
@@ -857,10 +864,8 @@ enum Extract {
         vr_key: String,
         fields: Vec<(String, String)>,
     },
-    Sum(String, String),
     Regex(String, String),
     XmlCount(String, String),
-    Vector(String),
     Ephemeris(String),
 }
 
@@ -882,6 +887,40 @@ struct SourceConfig {
     pos_fields: Option<(String, String, Option<String>, f64)>,
 }
 
+type FetchTask = (
+    usize,
+    Origin,
+    Option<(f64, f64)>,
+    String,
+    Vec<(String, String)>,
+    u64,
+);
+
+struct QueuedFetch {
+    ttl: u64,
+    seq: u64,
+    task: FetchTask,
+}
+
+impl PartialEq for QueuedFetch {
+    fn eq(&self, o: &Self) -> bool {
+        (self.ttl, self.seq) == (o.ttl, o.seq)
+    }
+}
+impl Eq for QueuedFetch {}
+impl PartialOrd for QueuedFetch {
+    fn partial_cmp(&self, o: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(o))
+    }
+}
+impl Ord for QueuedFetch {
+    fn cmp(&self, o: &Self) -> std::cmp::Ordering {
+        (o.ttl, o.seq).cmp(&(self.ttl, self.seq))
+    }
+}
+
+static FETCH_SEQ: AtomicU64 = AtomicU64::new(0);
+
 struct Archive {
     sources: Vec<SourceConfig>,
     index_html: Vec<u8>,
@@ -893,6 +932,7 @@ struct Archive {
     origins: Mutex<HashMap<Origin, OriginState>>,
     results: Mutex<Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)>>,
     inflight: Mutex<std::collections::HashSet<Origin>>,
+    fetch_queue: (Mutex<BinaryHeap<QueuedFetch>>, Condvar),
 }
 struct WsFrame {
     opcode: u8,
@@ -1249,12 +1289,6 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 .unwrap_or_else(|e| e.into_inner())
                 .clone();
 
-            let mut out = Vec::with_capacity(1024);
-            out.extend_from_slice(&[0xCF, 0x86]);
-            out.push(1u8);
-            out.extend_from_slice(&id.to_le_bytes());
-            out.extend_from_slice(&(query_count as u32).to_le_bytes());
-
             let mut queries: Vec<(f64, f64, f64, f64)> = Vec::with_capacity(query_count);
             for _ in 0..query_count {
                 let mut t_buf = [0u8; 8];
@@ -1276,6 +1310,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 let qz = f64::from_le_bytes(t_buf);
                 queries.push((qt, qx, qy, qz));
             }
+            let mut records: Vec<(f64, f64, f64, f64, f64)> = Vec::new();
             if !queries.is_empty() {
                 let (t0, x0, y0, z0) = queries[0];
                 let mut extent = 0.0f64;
@@ -1293,26 +1328,23 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                         format!("{}_{}_{}", x0 as i64, y0 as i64, z0 as i64),
                         (t0, x0, y0, z0, extent),
                     );
-            }
-            for &(presence_t, presence_x, presence_y, presence_z) in &queries {
-                let obj_pos = out.len();
-                out.extend_from_slice(&0u32.to_le_bytes());
-                let mut merged_values: HashMap<String, (f64, f64, f64, f64, f64)> = HashMap::new();
-                let q = [presence_x, presence_y, presence_z];
-                sense_buffer(&field, q, presence_t, &mut merged_values);
-                sense_buffer(&station_buf, q, presence_t, &mut merged_values);
-                if !merged_values.is_empty() {
-                    let fields: Vec<(&str, f64, f64, f64, f64, f64)> = merged_values
-                        .iter()
-                        .map(|(k, v)| (k.as_str(), v.0, v.1, v.2, v.3, v.4))
-                        .collect();
-                    φ_obj(&mut out, &fields);
-                }
-                let obj_count = ((out.len() - obj_pos - 4) > 0) as u32;
-                out[obj_pos..obj_pos + 4].copy_from_slice(&obj_count.to_le_bytes());
+                let q = [x0, y0, z0];
+                sense_buffer(&field, q, t0, extent, &mut records);
+                sense_buffer(&station_buf, q, t0, extent, &mut records);
             }
 
-            out.extend_from_slice(&0u32.to_le_bytes());
+            let mut out = Vec::with_capacity(11 + records.len() * 40);
+            out.extend_from_slice(&[0xCF, 0x86]);
+            out.push(1u8);
+            out.extend_from_slice(&id.to_le_bytes());
+            out.extend_from_slice(&(records.len() as u32).to_le_bytes());
+            for &(val, x, y, z, r) in &records {
+                out.extend_from_slice(&x.to_le_bytes());
+                out.extend_from_slice(&y.to_le_bytes());
+                out.extend_from_slice(&z.to_le_bytes());
+                out.extend_from_slice(&val.to_le_bytes());
+                out.extend_from_slice(&r.to_le_bytes());
+            }
             write_ws_binary(&mut stream, &out);
         }
     }
@@ -1320,26 +1352,6 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
 
 fn is_leap(y: u32) -> bool {
     (y % 4 == 0 && y % 100 != 0) || y % 400 == 0
-}
-fn φ_obj(out: &mut Vec<u8>, fields: &[(&str, f64, f64, f64, f64, f64)]) {
-    let mut valid: Vec<&(&str, f64, f64, f64, f64, f64)> = fields
-        .iter()
-        .filter(|(n, _, _, _, _, _)| !n.is_empty() && n.len() <= 255)
-        .collect();
-    if valid.len() > 255 {
-        valid.truncate(255);
-    }
-    out.push(valid.len() as u8);
-    for (name, val, t, x, y, z) in valid {
-        out.push(name.len() as u8);
-        out.extend_from_slice(name.as_bytes());
-        out.push(0u8);
-        out.extend_from_slice(&val.to_le_bytes());
-        out.extend_from_slice(&t.to_le_bytes());
-        out.extend_from_slice(&x.to_le_bytes());
-        out.extend_from_slice(&y.to_le_bytes());
-        out.extend_from_slice(&z.to_le_bytes());
-    }
 }
 
 fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
@@ -1597,11 +1609,6 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::Deep(parts[1].to_string(), parts[2].to_string()));
                 }
             }
-            "sum" => {
-                if parts.len() >= 3 {
-                    cur_extracts.push(Extract::Sum(parts[1].to_string(), parts[2].to_string()));
-                }
-            }
             "regex" => {
                 if parts.len() >= 3 {
                     cur_extracts.push(Extract::Regex(parts[1].to_string(), parts[2].to_string()));
@@ -1613,11 +1620,6 @@ fn load_sources() -> Vec<SourceConfig> {
                         parts[1].to_string(),
                         parts[2].to_string(),
                     ));
-                }
-            }
-            "vector" => {
-                if parts.len() >= 2 {
-                    cur_extracts.push(Extract::Vector(parts[1].to_string()));
                 }
             }
             "ephemeris" => {
@@ -1983,29 +1985,29 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
     let _ = stream.write_all(data);
 }
 
-static CURL_PERMITS: AtomicUsize = AtomicUsize::new(8);
-
-struct CurlPermit;
-
-impl CurlPermit {
-    fn acquire() -> Self {
-        loop {
-            let cur = CURL_PERMITS.load(Ordering::Acquire);
-            if cur > 0
-                && CURL_PERMITS
-                    .compare_exchange_weak(cur, cur - 1, Ordering::AcqRel, Ordering::Acquire)
-                    .is_ok()
-            {
-                return CurlPermit;
+fn fetch_worker(archive: Arc<Archive>) {
+    loop {
+        let (i, origin, region, url, headers, ttl) = {
+            let (lock, cvar) = &archive.fetch_queue;
+            let mut queue = lock.lock().unwrap_or_else(|e| e.into_inner());
+            loop {
+                if let Some(qf) = queue.pop() {
+                    break qf.task;
+                }
+                queue = cvar.wait(queue).unwrap_or_else(|e| e.into_inner());
             }
-            thread::sleep(std::time::Duration::from_millis(1));
-        }
-    }
-}
-
-impl Drop for CurlPermit {
-    fn drop(&mut self) {
-        CURL_PERMITS.fetch_add(1, Ordering::AcqRel);
+        };
+        let body = fetch_with_headers(&url, &headers, ttl);
+        archive
+            .results
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .push((i, origin, region, body));
+        archive
+            .inflight
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .remove(&origin);
     }
 }
 
@@ -2036,6 +2038,22 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
             Extract::Last(k, n) => {
                 if let Some(ref j) = parsed_json {
                     if let Some(v) = jlast(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                } else if k == "line" {
+                    if let Some(v) = body
+                        .lines()
+                        .rev()
+                        .filter(|l| {
+                            let t = l.trim();
+                            !t.is_empty() && !t.starts_with('#')
+                        })
+                        .find_map(|l| {
+                            split_data_line(l)
+                                .last()
+                                .and_then(|c| c.trim_matches('"').parse::<f64>().ok())
+                        })
+                    {
                         extracted.insert(n.clone(), v);
                     }
                 }
@@ -2079,21 +2097,6 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     }
                 }
             }
-            Extract::Sum(path, n) => {
-                if let Some(ref j) = parsed_json {
-                    let target = if path == "." || path.is_empty() {
-                        Some(j)
-                    } else {
-                        jpath_val(j, path)
-                    };
-                    if let Some(JsonVal::Arr(arr)) = target {
-                        let sum: f64 = arr.iter().filter_map(|v| scalar_of(v)).sum();
-                        if sum.is_finite() {
-                            extracted.insert(n.clone(), sum);
-                        }
-                    }
-                }
-            }
             Extract::Regex(pat, n) => {
                 if let Some(v) = extract_regex_val(body, pat) {
                     extracted.insert(n.clone(), v);
@@ -2102,11 +2105,6 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
             Extract::XmlCount(tag, n) => {
                 let count = body.matches(&format!("<{}>", tag)).count() as f64;
                 extracted.insert(n.clone(), count);
-            }
-            Extract::Vector(prefix) => {
-                if let Some(v) = extract_regex_val(body, &format!("({}...)", prefix)) {
-                    extracted.insert(format!("{}_val", prefix), v);
-                }
             }
             Extract::Ephemeris(n) => {
                 let ht = if let Some(ref j) = parsed_json {
@@ -2593,6 +2591,40 @@ fn warm_cache(archive: Arc<Archive>) {
                         ));
                     }
                     Frame::Data => {
+                        let has_template = src.url.contains("{lat}")
+                            || src.url.contains("{lon}")
+                            || src.url.contains("{x}")
+                            || src.url.contains("{y}")
+                            || src.url.contains("{z}");
+                        if has_template {
+                            for &(_, px, py, pz, extent) in &presences {
+                                let ddx = px - ex;
+                                let ddy = py - ey;
+                                let ddz = pz - ez;
+                                let domain = TERRA_DOMAIN + extent;
+                                if ddx * ddx + ddy * ddy + ddz * ddz > domain * domain {
+                                    continue;
+                                }
+                                let (lat, lon) = icrs_to_geodetic(px, py, pz, now);
+                                let origin = (
+                                    i as u32,
+                                    region_quantize(lat, src.res),
+                                    region_quantize(lon, src.res),
+                                );
+                                if !origin_stale(&origins, origin, src.ttl, now) {
+                                    continue;
+                                }
+                                tasks.push((
+                                    i,
+                                    origin,
+                                    None,
+                                    render_url(&src.url, px, py, pz, now, src.res),
+                                    render_headers(src, px, py, pz, now),
+                                    src.ttl,
+                                ));
+                            }
+                            continue;
+                        }
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(&origins, origin, src.ttl, now) {
                             continue;
@@ -2651,25 +2683,22 @@ fn warm_cache(archive: Arc<Archive>) {
 
         {
             let mut inflight = archive.inflight.lock().unwrap_or_else(|e| e.into_inner());
-            for (i, origin, region, url, headers, ttl) in tasks {
-                if !inflight.insert(origin) {
+            let (lock, cvar) = &archive.fetch_queue;
+            let mut queue = lock.lock().unwrap_or_else(|e| e.into_inner());
+            let mut queued = 0usize;
+            for task in tasks {
+                if !inflight.insert(task.1) {
                     continue;
                 }
-                let archive_t = Arc::clone(&archive);
-                thread::spawn(move || {
-                    let _permit = CurlPermit::acquire();
-                    let body = fetch_with_headers(&url, &headers, ttl);
-                    archive_t
-                        .results
-                        .lock()
-                        .unwrap_or_else(|e| e.into_inner())
-                        .push((i, origin, region, body));
-                    archive_t
-                        .inflight
-                        .lock()
-                        .unwrap_or_else(|e| e.into_inner())
-                        .remove(&origin);
+                queue.push(QueuedFetch {
+                    ttl: task.5,
+                    seq: FETCH_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
+                    task,
                 });
+                queued += 1;
+            }
+            if queued > 0 {
+                cvar.notify_all();
             }
         }
 
@@ -2678,21 +2707,36 @@ fn warm_cache(archive: Arc<Archive>) {
         let results: Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)> =
             std::mem::take(&mut *archive.results.lock().unwrap_or_else(|e| e.into_inner()));
         for (src_idx, origin, region, body_opt) in results {
+            let src = &archive.sources[src_idx];
+            let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+            {
+                let entry = origins.entry(origin).or_default();
+                entry.fetched = now;
+                entry.ttl = src.ttl as f64;
+            }
             let Some(body) = body_opt else {
                 continue;
             };
-            refreshed.insert(origin);
-            let src = &archive.sources[src_idx];
             let pendings = extract_pending(src, &body, now);
-            let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+            if pendings.is_empty() {
+                let entry = origins.entry(origin).or_default();
+                entry.zero_yield += 1;
+                if entry.zero_yield & (entry.zero_yield - 1) == 0 {
+                    eprintln!(
+                        "zero_yield x{} {}",
+                        entry.zero_yield,
+                        src.url.split('/').nth(2).unwrap_or("?")
+                    );
+                }
+            } else {
+                origins.entry(origin).or_default().zero_yield = 0;
+                refreshed.insert(origin);
+            }
             for pend in pendings {
                 if let Some(smp) = materialize(src, origin, region, pend, &mut origins) {
                     new_samples.push(smp);
                 }
             }
-            let entry = origins.entry(origin).or_default();
-            entry.fetched = now;
-            entry.ttl = src.ttl as f64;
         }
 
         let station_sample = archive
@@ -2756,7 +2800,12 @@ fn main() {
         origins: Mutex::new(HashMap::new()),
         results: Mutex::new(Vec::new()),
         inflight: Mutex::new(std::collections::HashSet::new()),
+        fetch_queue: (Mutex::new(BinaryHeap::new()), Condvar::new()),
     });
+    for _ in 0..8 {
+        let ar = Arc::clone(&archive);
+        thread::spawn(move || fetch_worker(ar));
+    }
     {
         let ar = Arc::clone(&archive);
         thread::spawn(move || warm_cache(ar));
