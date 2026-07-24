@@ -233,8 +233,10 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         let m = field[j];
         let mt = props[j];
         let d = m.xyz - phi;
+        let d2 = dot(d, d);
+        if (d2 > mt.x * mt.x) { continue; }
         let val_eff = m.w * exp2(-mt.y / max(mt.z, 1.0) * 1.4426950408889634);
-        omega = omega + val_eff / (dot(d, d) + mt.x * mt.x);
+        omega = omega + val_eff / (d2 + scale * scale);
     }
     let aw = abs(omega);
     if (aw < lvl * exp2(-8.0)) { discard; }
@@ -336,11 +338,14 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         let dvRef = null, dvVals = null;
         function fieldOmega() {
             if (dvRef !== rawWindowResponse) { dvRef = rawWindowResponse; dvVals = rawWindowResponse.map(o => decay(o)); }
+            const px2 = gridStep * gridStep;
             let omega = 0;
             for (let i = 0; i < rawWindowResponse.length; i++) {
                 const o = rawWindowResponse[i];
                 const dx = o.x - xPresence, dy = o.y - yPresence, dz = o.z - zPresence;
-                omega += dvVals[i] / (dx * dx + dy * dy + dz * dz + o.aperture * o.aperture);
+                const d2 = dx * dx + dy * dy + dz * dz;
+                if (d2 > o.aperture * o.aperture) continue;
+                omega += dvVals[i] / (d2 + px2);
             }
             return omega;
         }
@@ -972,4 +977,3 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
     </script>
 </body>
 </html>
-
