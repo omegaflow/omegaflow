@@ -124,7 +124,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         function adaptEvalShift() {
             if (stableTick > (1000 / 60) * Φ) {
                 if ((RX >> (evalShift + 1)) >= 1) evalShift++;
-            } else if (stableTick < (1000 / 60) / Φ && evalShift > 0) {
+            } else if (stableTick <= 1000 / 60 && evalShift > 0) {
                 evalShift--;
             }
         }
@@ -239,8 +239,8 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         omega = omega + val_eff / (d2 + scale * scale);
     }
     let aw = abs(omega);
-    if (aw < lvl * exp2(-8.0)) { discard; }
-    let t2 = clamp((log2(aw / lvl) + 4.0) / 8.0, 0.0, 1.0);
+    if (aw < lvl * exp2(-16.0)) { discard; }
+    let t2 = clamp((log2(aw / lvl) + 16.0) / 32.0, 0.0, 1.0);
     let c1 = mix(vec3f(0.0, 0.0, 0.0), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
     let c2 = mix(c1, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
     let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
