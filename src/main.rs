@@ -1070,19 +1070,24 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                     }
                     "/station" => {
                         let now = tdb_now();
-                        let p = archive
+                        let (p, v) = archive
                             .station
                             .lock()
                             .unwrap_or_else(|e| e.into_inner())
                             .sample
                             .as_ref()
-                            .map(|smp| smp.motion.at(now, smp.epoch))
-                            .unwrap_or([0.0, 0.0, 0.0]);
+                            .map(|smp| {
+                                let p0 = smp.motion.at(now, smp.epoch);
+                                let p1 = smp.motion.at(now + 1.0, smp.epoch);
+                                (p0, [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]])
+                            })
+                            .unwrap_or(([0.0, 0.0, 0.0], [0.0, 0.0, 0.0]));
                         emit(
                             &mut s,
                             "200 OK",
                             "text/plain",
-                            format!("{} {} {}", p[0], p[1], p[2]).as_bytes(),
+                            format!("{} {} {} {} {} {}", p[0], p[1], p[2], v[0], v[1], v[2])
+                                .as_bytes(),
                         );
                     }
                     "/field" => {

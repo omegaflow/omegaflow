@@ -55,7 +55,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
 
         φ['server.time'] = parseFloat(await (await fetch('/time')).text());
         tPresence = φ['server.time'];
-        let pPresence = [0, 0, 0];
+        let pPresence = [0, 0, 0], vPresence = [0, 0, 0], t0P = tPresence;
         let qOrientation = [1, 0, 0, 0];
         function qMul(a, b) {
             return [
@@ -100,6 +100,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             if (h.length === 4 && h.every(isFinite)) {
                 tPresence = h[3];
                 pPresence = [h[0], h[1], h[2]];
+                vPresence = [0, 0, 0];
+                t0P = tPresence;
                 keysDown.clear();
             }
         });
@@ -782,9 +784,10 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                 if (gp.buttons[4] && gp.buttons[4].pressed) tThrustTarget = -64;
                 if (gp.buttons[5] && gp.buttons[5].pressed) tThrustTarget = 64;
             }
-            xPresence = pPresence[0];
-            yPresence = pPresence[1];
-            zPresence = pPresence[2];
+            const dtP = tPresence - t0P;
+            xPresence = pPresence[0] + vPresence[0] * dtP;
+            yPresence = pPresence[1] + vPresence[1] * dtP;
+            zPresence = pPresence[2] + vPresence[2] * dtP;
 
             registerGamepads();
             for (const fn of pollFns) { try { fn(); } catch {} }
@@ -840,6 +843,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                     `  Z: ${zStr}\n` +
                     `  Time: ${tPresence.toFixed(1)}\n` +
                     `  Pan: ${panNow.toExponential(1)} m/s\n` +
+                    `  Velocity: ${Math.hypot(vPresence[0], vPresence[1], vPresence[2]).toExponential(1)} m/s\n` +
                     `  Forward: (${ff.map(v => v.toFixed(2)).join(', ')})\n\n` +
                     `Surface\n` +
                     `  Pixels: ${RX}x${RY} (eval /${1 << evalShift})\n` +
@@ -967,6 +971,9 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         window.addEventListener('keyup', (e) => { keysDown.delete(e.key); });
         window.addEventListener('keydown', (e) => {
             if (e.key === 's') {
+                pPresence = [xPresence, yPresence, zPresence];
+                t0P = tPresence;
+                vPresence = [0, 0, 0];
                 keysDown.clear();
                 e.preventDefault();
             }
@@ -975,8 +982,10 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             if (e.key !== 'b') return;
             try {
                 const parts = (await (await fetch('/station')).text()).split(' ').map(Number);
-                if (parts.length === 3 && parts.every(isFinite) && (parts[0] !== 0 || parts[1] !== 0 || parts[2] !== 0)) {
+                if (parts.length === 6 && parts.every(isFinite) && (parts[0] !== 0 || parts[1] !== 0 || parts[2] !== 0)) {
                     pPresence = [parts[0], parts[1], parts[2]];
+                    vPresence = [parts[3], parts[4], parts[5]];
+                    t0P = tPresence;
                     keysDown.clear();
                 }
             } catch {}
