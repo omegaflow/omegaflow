@@ -89,19 +89,21 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         const pointers = new Map();
         let pinchPrev = null;
         const hashInit = location.hash.slice(1).split(',').map(Number);
-        if (hashInit.length === 4 && hashInit.every(isFinite)) {
+        if ((hashInit.length === 4 || hashInit.length === 7) && hashInit.every(isFinite)) {
             tPresence = hashInit[3];
             pPresence = [hashInit[0], hashInit[1], hashInit[2]];
+            if (hashInit.length === 7) vPresence = [hashInit[4], hashInit[5], hashInit[6]];
+            t0P = tPresence;
         }
         xPresence = pPresence[0];
         yPresence = pPresence[1];
         zPresence = pPresence[2];
         window.addEventListener('hashchange', () => {
             const h = location.hash.slice(1).split(',').map(Number);
-            if (h.length === 4 && h.every(isFinite)) {
+            if ((h.length === 4 || h.length === 7) && h.every(isFinite)) {
                 tPresence = h[3];
                 pPresence = [h[0], h[1], h[2]];
-                vPresence = [0, 0, 0];
+                vPresence = h.length === 7 ? [h[4], h[5], h[6]] : [0, 0, 0];
                 t0P = tPresence;
                 keysDown.clear();
             }
