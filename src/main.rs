@@ -1068,13 +1068,21 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                         let tdb = unix - UNIX_J2000_OFFSET;
                         emit(&mut s, "200 OK", "text/plain", tdb.to_string().as_bytes());
                     }
-                    "/earth" => {
-                        let (x, y, z) = earth_position_icrs(tdb_now());
+                    "/station" => {
+                        let now = tdb_now();
+                        let p = archive
+                            .station
+                            .lock()
+                            .unwrap_or_else(|e| e.into_inner())
+                            .sample
+                            .as_ref()
+                            .map(|smp| smp.motion.at(now, smp.epoch))
+                            .unwrap_or([0.0, 0.0, 0.0]);
                         emit(
                             &mut s,
                             "200 OK",
                             "text/plain",
-                            format!("{} {} {}", x, y, z).as_bytes(),
+                            format!("{} {} {}", p[0], p[1], p[2]).as_bytes(),
                         );
                     }
                     "/field" => {

@@ -971,6 +971,16 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                 e.preventDefault();
             }
         });
+        window.addEventListener('keydown', async (e) => {
+            if (e.key !== 'b') return;
+            try {
+                const parts = (await (await fetch('/station')).text()).split(' ').map(Number);
+                if (parts.length === 3 && parts.every(isFinite) && (parts[0] !== 0 || parts[1] !== 0 || parts[2] !== 0)) {
+                    pPresence = [parts[0], parts[1], parts[2]];
+                    keysDown.clear();
+                }
+            } catch {}
+        });
         window.addEventListener('error', (e) => { reportState('ERROR', e.message + ' @ ' + e.filename + ':' + e.lineno); e.preventDefault(); });
         window.addEventListener('unhandledrejection', (e) => { reportState('REJECTION', String(e.reason)); e.preventDefault(); });
         requestAnimationFrame(ω);
