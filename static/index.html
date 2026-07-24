@@ -42,8 +42,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let lastManifestTime = 0;
         let stableTick = 0;
         let tPresence = 0;
+        let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = 0;
+        let prevOmega = 0, prevOmegaTs = 0;
         let xPresence = 1.5e11, yPresence = 1.5e11, zPresence = 1.0e10;
-        let prevTPresence = 0;
         let clarity = 1.0;
         let audioCtx = null, audioSrc = null, audioGain = null, audioFilter = null, audioCompressor = null;
         let activeSerialPort = null, activeUsbDevice = null, activeBtChar = null, activeHidDevice = null;
@@ -54,7 +55,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
 
         φ['server.time'] = parseFloat(await (await fetch('/time')).text());
         tPresence = φ['server.time'];
-        let pxOffset = EARTH_RADIUS * Φ, pyOffset = 0, pzOffset = 0;
+        let pxOffset = EARTH_RADIUS, pyOffset = 0, pzOffset = 0;
         let presenceFree = false;
         let freeP = [0, 0, 0], freeV = [0, 0, 0], freeT0 = 0;
         const hashInit = location.hash.slice(1).split(',').map(Number);
@@ -84,17 +85,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 { t: tPresence, x: xPresence - hx, y: yPresence + hy, z: zPresence }
             ];
         }
-        function adaptWindow(rawTick) {
-            let target;
-            if (rawWindowResponse.length === 0) {
-                target = gridStep * Φ;
-            } else {
-                const aps = [];
-                for (const osc of rawWindowResponse) { if (osc.aperture > 0) aps.push(osc.aperture); }
-                if (aps.length === 0) return;
-                aps.sort((a, b) => a - b);
-                target = aps[aps.length >> 1] * 0.5;
+        let evalShift = 0;
+        function adaptEvalShift() {
+            if (stableTick > (1000 / 60) * Φ) {
+                if ((RX >> (evalShift + 1)) >= 1) evalShift++;
+            } else if (stableTick < (1000 / 60) / Φ && evalShift > 0) {
+                evalShift--;
             }
+        }
+        function adaptWindow(rawTick) {
+            if (rawWindowResponse.length === 0) return;
+            const target = windowMedianAperture() * 0.5;
             const tau = Math.max(rawTick, 1) * Φ * Φ;
             gridStep += (target - gridStep) * (1 - Math.exp(-rawTick / tau));
         }
@@ -178,40 +179,135 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 }).catch(() => {});
             }
         }
-        let gpuWorker = null;
-        let gpuWorkerReady = false;
-        if (navigator.gpu && typeof Worker !== 'undefined') {
-            gpuWorker = new Worker('gpu.worker.js');
-            gpuWorker.onmessage = (e) => {
-                const d = e.data;
-                if (d.type === 'ready') { gpuWorkerReady = true; }
-                else if (d.type === 'lost') { gpuWorkerReady = false; }
-            };
-        }
-        const fieldCanvas = document.createElement('canvas');
+        const fieldShader = `
+struct VP { surface: vec4f };
+@group(0) @binding(0) var<storage, read> field: array<vec4f>;
+@group(0) @binding(1) var<storage, read> aperture: array<f32>;
+@group(0) @binding(2) var<uniform> vp: VP;
+struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
+@vertex fn vs(@builtin(vertex_index) i: u32) -> V {
+    var p = array<vec2f, 3>(vec2f(-1.0, -1.0), vec2f(3.0, -1.0), vec2f(-1.0, 3.0));
+    var o: V;
+    o.p = vec4f(p[i], 0.0, 1.0);
+    o.u = vec2f(p[i].x * 0.5 + 0.5, 0.5 - p[i].y * 0.5);
+    return o;
+}
+@fragment fn fs(i: V) -> @location(0) vec4f {
+    let count = u32(vp.surface.z);
+    let scale = vp.surface.w;
+    let w = vp.surface.x;
+    let h = vp.surface.y;
+    let phi = vec3f((i.u.x - 0.5) * w * scale, (0.5 - i.u.y) * h * scale, 0.0);
+    var omega = 0.0f;
+    for (var j = 0u; j < count; j = j + 1u) {
+        let m = field[j];
+        let d = m.xyz - phi;
+        let a = aperture[j];
+        omega = omega + m.w / (dot(d, d) + a * a);
+    }
+    let aw = abs(omega);
+    if (aw < exp2(-64.0)) { discard; }
+    let t2 = clamp((log2(aw) + 64.0) / 64.0, 0.0, 1.0);
+    let c1 = mix(vec3f(0.0, 0.0, 0.0), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
+    let c2 = mix(c1, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
+    let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
+    let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
+    return vec4f(c4, 1.0);
+}`;
+        let fieldCanvas = document.createElement('canvas');
         fieldCanvas.width = RX; fieldCanvas.height = RY;
-        fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;';
+        fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;';
         document.body.appendChild(fieldCanvas);
-        if (gpuWorker) {
+        let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, vpBuf = null, fieldBuf = null, apertureBuf = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
+        async function initFieldGPU() {
+            if (!navigator.gpu || gpu) return;
             try {
-                const offscreen = fieldCanvas.transferControlToOffscreen();
-                gpuWorker.postMessage({ type: 'init', canvas: offscreen }, [offscreen]);
-            } catch {}
+                const adapter = await navigator.gpu.requestAdapter();
+                if (!adapter) return;
+                const device = await adapter.requestDevice();
+                device.lost.then(() => { gpu = null; });
+                fieldCtx = fieldCanvas.getContext('webgpu');
+                fieldCap = 0;
+                fieldBind = null;
+                const format = navigator.gpu.getPreferredCanvasFormat();
+                fieldCtx.configure({ device, format, alphaMode: 'opaque' });
+                const module = device.createShaderModule({ code: fieldShader });
+                fieldLayout = device.createBindGroupLayout({ entries: [
+                    { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } },
+                    { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } },
+                    { binding: 2, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } }
+                ] });
+                fieldPipe = device.createRenderPipeline({
+                    layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
+                    vertex: { module, entryPoint: 'vs' },
+                    fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+                    primitive: { topology: 'triangle-list' }
+                });
+                vpBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+                gpu = device;
+            } catch { gpu = null; }
+        }
+        initFieldGPU();
+        function decay(o) { return o.val * Math.exp(-Math.abs(tPresence - o.t) / o.ttl); }
+        function ensureFieldCapacity(n) {
+            if (fieldCap > 0 && n <= fieldCap) return;
+            let c = 256;
+            while (c < n) c <<= 1;
+            fieldCap = c;
+            if (fieldBuf) fieldBuf.destroy();
+            if (apertureBuf) apertureBuf.destroy();
+            fieldBuf = gpu.createBuffer({ size: fieldCap * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+            apertureBuf = gpu.createBuffer({ size: fieldCap * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+            fieldBind = gpu.createBindGroup({ layout: fieldLayout, entries: [
+                { binding: 0, resource: { buffer: fieldBuf } },
+                { binding: 1, resource: { buffer: apertureBuf } },
+                { binding: 2, resource: { buffer: vpBuf } }
+            ] });
         }
         function manifestWindow() {
-            if (!gpuWorker || !gpuWorkerReady) return;
+            if (!gpu) { initFieldGPU(); return; }
             const n = rawWindowResponse.length;
-            const xyzval = new Float32Array(n * 4);
-            const ap = new Float32Array(n);
+            ensureFieldCapacity(n);
+            const xyzval = new Float32Array(Math.max(n, 1) * 4);
+            const ap = new Float32Array(Math.max(n, 1));
             for (let i = 0; i < n; i++) {
-                const osc = rawWindowResponse[i];
-                xyzval[i * 4] = osc.x;
-                xyzval[i * 4 + 1] = osc.y;
-                xyzval[i * 4 + 2] = osc.z;
-                xyzval[i * 4 + 3] = osc.val;
-                ap[i] = osc.aperture;
+                const o = rawWindowResponse[i];
+                xyzval[i * 4] = o.x - xPresence;
+                xyzval[i * 4 + 1] = o.y - yPresence;
+                xyzval[i * 4 + 2] = o.z - zPresence;
+                xyzval[i * 4 + 3] = decay(o);
+                ap[i] = o.aperture;
             }
-            gpuWorker.postMessage({ type: 'frame', xyzval: xyzval.buffer, ap: ap.buffer, count: n, cx: xPresence, cy: yPresence, cz: zPresence, step: gridStep, w: RX, h: RY }, [xyzval.buffer, ap.buffer]);
+            const evalW = Math.max(1, RX >> evalShift), evalH = Math.max(1, RY >> evalShift);
+            if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
+            try {
+                gpu.queue.writeBuffer(fieldBuf, 0, xyzval);
+                gpu.queue.writeBuffer(apertureBuf, 0, ap);
+                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep * Math.pow(2, evalShift)]));
+                const encoder = gpu.createCommandEncoder();
+                const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
+                pass.setPipeline(fieldPipe);
+                pass.setBindGroup(0, fieldBind);
+                pass.draw(3);
+                pass.end();
+                gpu.queue.submit([encoder.finish()]);
+                fieldFrames++;
+            } catch { gpu = null; }
+        }
+        function fieldOmega() {
+            let omega = 0;
+            for (const o of rawWindowResponse) {
+                const dx = o.x - xPresence, dy = o.y - yPresence, dz = o.z - zPresence;
+                omega += decay(o) / (dx * dx + dy * dy + dz * dz + o.aperture * o.aperture);
+            }
+            return omega;
+        }
+        function windowMedianAperture() {
+            const aps = [];
+            for (const o of rawWindowResponse) { if (o.aperture > 0) aps.push(o.aperture); }
+            if (aps.length === 0) return 1;
+            aps.sort((a, b) => a - b);
+            return aps[aps.length >> 1];
         }
         function ensureRingCapacity() {
             const needed = oscillators.length * CAPTURE_RING_SIZE;
@@ -220,31 +316,30 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         function registerOscillator(url, initialVal) {
             const index = oscillators.length;
             const ringOffset = index * CAPTURE_RING_SIZE;
-            const osc = { url, index, ringOffset, idx: 0, filled: 0, median: initialVal, originT: 0, lastTransmitted: initialVal, ix: 0, iy: 0, iz: 0 };
+            const osc = { url, index, ringOffset, idx: 0, filled: 0, median: initialVal, originT: 0, lastTransmitted: initialVal };
             oscillators.push(osc); indexMap.set(url, index); ensureRingCapacity();
             return osc;
         }
-        function recordSample(url, value, t = tPresence, x = null, y = null, z = null) {
+        function recordSample(url, value, t = tPresence) {
             if (typeof value !== 'number' || !isFinite(value)) return;
             if (!isFinite(t)) return;
             let idx = indexMap.get(url); let osc;
             if (idx === undefined) { osc = registerOscillator(url, value); }
             else { osc = oscillators[idx]; }
             osc.originT = t;
-            if (x !== null) { osc.ix = x; osc.iy = y; osc.iz = z; }
             flatRings[osc.ringOffset + osc.idx] = value;
             osc.idx = (osc.idx + 1) % CAPTURE_RING_SIZE;
             if (osc.filled < CAPTURE_RING_SIZE) osc.filled++;
             osc.median = osc.median * (1 - ma()) + value * ma();
         }
         let rawWindowResponse = [];
+        let emptySyncs = 0;
         async function syncField(transmitList, queries) {
             const response = await syncFrame(transmitList, queries);
             rawWindowResponse = response || [];
+            if (rawWindowResponse.length === 0) { emptySyncs++; gridStep *= Φ; console.warn('empty window response, socket state:', transport.socket ? transport.socket.readyState : 'none'); }
         }
-        function hasPos(o) { return o.ix !== 0 || o.iy !== 0 || o.iz !== 0; }
-        function measureRms() { let s=0,c=0; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>0&&hasPos(o)){ let mn=Number.POSITIVE_INFINITY,mx=Number.NEGATIVE_INFINITY; for(let j=0;j<o.filled;j++){ const v=flatRings[o.ringOffset+j]; if(v<mn)mn=v; if(v>mx)mx=v; } const r=mx-mn; if(r>0){ s+=Math.pow((o.median-mn)/r,2); c++; } } } return c>0?Math.sqrt(s/c):Number.EPSILON; }
-        function measureRateOfChange() { let s=0,c=0; const k=8; for(let i=0;i<oscillators.length;i++){ const o=oscillators[i]; if(o.filled>1&&hasPos(o)){ let mn=Number.POSITIVE_INFINITY,mx=Number.NEGATIVE_INFINITY; for(let j=0;j<o.filled;j++){ const v=flatRings[o.ringOffset+j]; if(v<mn)mn=v; if(v>mx)mx=v; } const r=mx-mn; if(r<=0)continue; let acc=0; const lim=Math.min(k,o.filled); for(let j=0;j<lim;j++){ const a=(o.idx-1-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; const b=(o.idx-2-j+CAPTURE_RING_SIZE)%CAPTURE_RING_SIZE; acc+=Math.abs(flatRings[o.ringOffset+a]-flatRings[o.ringOffset+b])/r; } s+=(acc/lim); c+=1; } } return c>0?(s/c):0.0; }
+
         function startAudio() {
             if (audioCtx) return;
             try {
@@ -274,16 +369,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 surfaces.push({
                     manifest: () => {
                         try {
-                            if (!rawWindowResponse || rawWindowResponse.length === 0) {
-                                audioGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
-                                return;
-                            }
-                            let sum = 0;
-                            for (const p of rawWindowResponse) sum += Math.abs(p.val);
-                            const avg = sum / rawWindowResponse.length;
-                            const freq = Math.max(20, Math.min(audioCtx.sampleRate / 2, avg * 1e-6 * 440));
-                            audioFilter.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.05);
-                            audioGain.gain.setTargetAtTime(Math.min(0.5, avg * 1e-9), audioCtx.currentTime, 0.05);
+                            const lum = Math.tanh(Math.abs(fieldOmega()) * Math.pow(windowMedianAperture(), 2));
+                            audioFilter.frequency.setTargetAtTime(Math.max(audioCtx.sampleRate / 2048, audioCtx.sampleRate * 0.5 * lum), audioCtx.currentTime, 0.05);
+                            audioGain.gain.setTargetAtTime(lum * 0.5, audioCtx.currentTime, 0.05);
                         } catch {}
                     }
                 });
@@ -375,9 +463,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             registerOscillator('navigator.vibrate.channel.rhythm', Number.EPSILON);
             surfaces.push({
                 manifest: () => {
-                    if (!rawWindowResponse || rawWindowResponse.length === 0) return;
-                    const pulse = Math.floor(rawWindowResponse.length * stableTick) & 1023;
-                    if (pulse === 0) navigator.vibrate(rawWindowResponse.length);
+                    const lum = Math.tanh(Math.abs(fieldOmega()) * Math.pow(windowMedianAperture(), 2));
+                    const pulse = Math.floor(lum * stableTick) & 1023;
+                    if (pulse === 0 && lum > 0) navigator.vibrate(Math.floor(lum * 255));
                 }
             });
         }
@@ -390,13 +478,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                         const n = Math.min(rawWindowResponse.length, 16);
                         if (n === 0) return;
                         let peak = 0;
-                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(rawWindowResponse[i].val));
+                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(decay(rawWindowResponse[i])));
                         if (peak <= 0) return;
                         try {
                             const writer = activeSerialPort.writable.getWriter();
                             const sendBuf = new Uint8Array(n * 4);
                             for (let i = 0; i < n; i++) {
-                                const lum = Math.floor((Math.abs(rawWindowResponse[i].val) / peak) * 255) & 255;
+                                const lum = Math.floor((Math.abs(decay(rawWindowResponse[i])) / peak) * 255) & 255;
                                 sendBuf[i * 4] = lum;
                                 sendBuf[i * 4 + 1] = lum;
                                 sendBuf[i * 4 + 2] = lum;
@@ -420,11 +508,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                         const n = Math.min(rawWindowResponse.length, 16);
                         if (n === 0) return;
                         let peak = 0;
-                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(rawWindowResponse[i].val));
+                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(decay(rawWindowResponse[i])));
                         if (peak <= 0) return;
                         const sendBuf = new Uint8Array(n * 4);
                         for (let i = 0; i < n; i++) {
-                            const lum = Math.floor((Math.abs(rawWindowResponse[i].val) / peak) * 255) & 255;
+                            const lum = Math.floor((Math.abs(decay(rawWindowResponse[i])) / peak) * 255) & 255;
                             sendBuf[i * 4] = lum;
                             sendBuf[i * 4 + 1] = lum;
                             sendBuf[i * 4 + 2] = lum;
@@ -442,7 +530,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                         let peak = 0;
                         for (const p of rawWindowResponse) peak = Math.max(peak, Math.abs(p.val));
                         if (peak <= 0) return;
-                        try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor((Math.abs(rawWindowResponse[0].val) / peak) * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
+                        try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor((Math.abs(decay(rawWindowResponse[0])) / peak) * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
                     }
                 });
             }
@@ -454,11 +542,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                         const n = Math.min(rawWindowResponse.length, 16);
                         if (n === 0) return;
                         let peak = 0;
-                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(rawWindowResponse[i].val));
+                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(decay(rawWindowResponse[i])));
                         if (peak <= 0) return;
                         const sendBuf = new Uint8Array(n * 4);
                         for (let i = 0; i < n; i++) {
-                            const lum = Math.floor((Math.abs(rawWindowResponse[i].val) / peak) * 255) & 255;
+                            const lum = Math.floor((Math.abs(decay(rawWindowResponse[i])) / peak) * 255) & 255;
                             sendBuf[i * 4] = lum;
                             sendBuf[i * 4 + 1] = lum;
                             sendBuf[i * 4 + 2] = lum;
@@ -568,19 +656,25 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             registerGamepads();
             for (const fn of pollFns) { try { fn(); } catch {} }
 
-            const dtClarity = Math.abs(tPresence - prevTPresence);
-            clarity = Math.exp(-dtClarity / (1.0 + measureRms()));
-            prevTPresence = tPresence;
             const transmitList = [];
             for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > Number.EPSILON) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val }); } }
-            syncField(transmitList, windowQueries()).catch(() => {});
+            const windowMoved = Math.abs(xPresence - lastQueryX) >= gridStep || Math.abs(yPresence - lastQueryY) >= gridStep || Math.abs(zPresence - lastQueryZ) >= gridStep || gridStep > lastQueryStep * Φ || lastQueryStep > gridStep * Φ;
+            if (windowMoved || ts - lastQueryTs >= Φ * 1000) {
+                lastQueryX = xPresence; lastQueryY = yPresence; lastQueryZ = zPresence; lastQueryStep = gridStep; lastQueryTs = ts;
+                syncField(transmitList, windowQueries()).catch(() => {});
+            }
             adaptWindow(rawTick);
+            adaptEvalShift();
             manifestWindow();
             const manifestStart = performance.now();
             for (const surface of surfaces) { try { surface.manifest(); } catch {} }
             lastManifestTime = performance.now() - manifestStart;
-            const g = measureRms(); const vC = measureRateOfChange();
+            const omegaNow = fieldOmega();
+            const g = Math.abs(omegaNow);
+            const vC = prevOmegaTs > 0 && ts > prevOmegaTs ? Math.abs(omegaNow - prevOmega) / ((ts - prevOmegaTs) / 1000) : 0;
+            prevOmega = omegaNow; prevOmegaTs = ts;
             certainty = Math.exp(-vC / (g + (1.0 / C)));
+            clarity = Math.exp(-vC / (g + Number.EPSILON));
             if (!debugEl) {
                 debugEl = document.createElement('textarea');
                 debugEl.readOnly = true;
@@ -615,15 +709,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     `  Time: ${tPresence.toFixed(1)}\n` +
                     `  Frame: ${presenceFree ? 'free-fall' : 'anchored'}\n\n` +
                     `Surface\n` +
-                    `  Pixels: ${RX}x${RY}\n` +
+                    `  Pixels: ${RX}x${RY} (eval /${1 << evalShift})\n` +
                     `  Scale: ${gridStep.toExponential(1)} m/px\n` +
-                    `  Oscillators in window: ${rawWindowResponse.length}\n\n` +
+                    `  Oscillators in window: ${rawWindowResponse.length} (empty syncs: ${emptySyncs})\n` +
+                    `  Window omega: ${fieldOmega().toExponential(2)}\n\n` +
                     "System\n" +
                     `  Oscillators: ${oscillators.length}\n` +
                     `  Ring buffer: ${maxFill}/${CAPTURE_RING_SIZE} samples\n` +
                     `  Ticks per second: ${tps}\n\n` +
                     "Performance\n" +
-                    `  GPU: ${gpuWorkerReady ? 'active' : 'none'}\n` +
+                    `  GPU: ${gpu ? 'active' : 'none'}\n` +
+                    `  Field frames: ${fieldFrames}\n` +
                     `  Frame:     ${rawTick.toFixed(1)}ms\n` +
                     `  Manifest:  ${lastManifestTime.toFixed(1)}ms\n\n` +
                     "Field\n" +
@@ -634,7 +730,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     "Connection\n" +
                     `  WebSocket: ${transport.socket ? 'open' : 'closed'}\n` +
                     `  Round trip: ${transport.rtt.toFixed(0)}ms\n\n` +
-                    "Active oscillators\n" +
+                    "Station oscillators\n" +
                     (topLines || "  Waiting for interaction...");
             }
             requestAnimationFrame(ω);

@@ -253,7 +253,7 @@ fn enclose_family(
     q: [f64; 3],
     t2: f64,
     pad: f64,
-    records: &mut Vec<(f64, f64, f64, f64, f64)>,
+    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64)>,
 ) {
     if fam.cells.is_empty() {
         return;
@@ -301,7 +301,7 @@ fn enclose_family(
                         continue;
                     }
                     for (_, val) in &smp.fields {
-                        records.push((*val, p[0], p[1], p[2], smp.r));
+                        records.push((*val, p[0], p[1], p[2], smp.r, smp.epoch, smp.ttl));
                     }
                 }
             }
@@ -314,7 +314,7 @@ fn sense_buffer(
     q: [f64; 3],
     t2: f64,
     pad: f64,
-    records: &mut Vec<(f64, f64, f64, f64, f64)>,
+    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64)>,
 ) {
     let (ex, ey, ez) = earth_position_icrs(t2);
     enclose_family(&buf.terra, [ex, ey, ez], q, t2, pad, records);
@@ -925,7 +925,6 @@ struct Archive {
     sources: Vec<SourceConfig>,
     index_html: Vec<u8>,
     constants_js: Vec<u8>,
-    gpu_worker_js: Vec<u8>,
     field: RwLock<Arc<Buffer>>,
     station: Mutex<StationState>,
     presence: Mutex<HashMap<String, (f64, f64, f64, f64, f64)>>,
@@ -1056,7 +1055,11 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                 emit(&mut s, "200 OK", "text/plain", b"ok");
             } else {
                 match path.as_str() {
-                    "/" => emit(&mut s, "200 OK", "text/html", &archive.index_html),
+                    "/" => {
+                        let page = std::fs::read("static/index.html")
+                            .unwrap_or_else(|_| archive.index_html.clone());
+                        emit(&mut s, "200 OK", "text/html", &page);
+                    }
                     "/time" => {
                         let unix = SystemTime::now()
                             .duration_since(UNIX_EPOCH)
@@ -1123,18 +1126,11 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                             .push_str(&format!("origins={} presence={}\n", origins_n, presence_n));
                         emit(&mut s, "200 OK", "text/plain", report.as_bytes());
                     }
-                    "/constants.js" => emit(
-                        &mut s,
-                        "200 OK",
-                        "application/javascript",
-                        &archive.constants_js,
-                    ),
-                    "/gpu.worker.js" => emit(
-                        &mut s,
-                        "200 OK",
-                        "application/javascript",
-                        &archive.gpu_worker_js,
-                    ),
+                    "/constants.js" => {
+                        let page = std::fs::read("static/constants.js")
+                            .unwrap_or_else(|_| archive.constants_js.clone());
+                        emit(&mut s, "200 OK", "application/javascript", &page);
+                    }
                     _ => {
                         emit_void(&mut s);
                         break;
@@ -1310,7 +1306,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 let qz = f64::from_le_bytes(t_buf);
                 queries.push((qt, qx, qy, qz));
             }
-            let mut records: Vec<(f64, f64, f64, f64, f64)> = Vec::new();
+            let mut records: Vec<(f64, f64, f64, f64, f64, f64, f64)> = Vec::new();
             if !queries.is_empty() {
                 let (t0, x0, y0, z0) = queries[0];
                 let mut extent = 0.0f64;
@@ -1333,17 +1329,19 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 sense_buffer(&station_buf, q, t0, extent, &mut records);
             }
 
-            let mut out = Vec::with_capacity(11 + records.len() * 40);
+            let mut out = Vec::with_capacity(11 + records.len() * 56);
             out.extend_from_slice(&[0xCF, 0x86]);
             out.push(1u8);
             out.extend_from_slice(&id.to_le_bytes());
             out.extend_from_slice(&(records.len() as u32).to_le_bytes());
-            for &(val, x, y, z, r) in &records {
+            for &(val, x, y, z, r, epoch, ttl) in &records {
                 out.extend_from_slice(&x.to_le_bytes());
                 out.extend_from_slice(&y.to_le_bytes());
                 out.extend_from_slice(&z.to_le_bytes());
                 out.extend_from_slice(&val.to_le_bytes());
                 out.extend_from_slice(&r.to_le_bytes());
+                out.extend_from_slice(&epoch.to_le_bytes());
+                out.extend_from_slice(&ttl.to_le_bytes());
             }
             write_ws_binary(&mut stream, &out);
         }
@@ -1845,10 +1843,11 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, res: i32) -
     let res_usize = res.max(0) as usize;
     let lat_str = format!("{:.*}", res_usize, lat);
     let lon_str = format!("{:.*}", res_usize, lon);
-    let lat_min_str = format!("{:.*}", res_usize, lat - (1.0 / Φ));
-    let lat_max_str = format!("{:.*}", res_usize, lat + (1.0 / Φ));
-    let lon_min_str = format!("{:.*}", res_usize, lon - (1.0 / Φ));
-    let lon_max_str = format!("{:.*}", res_usize, lon + (1.0 / Φ));
+    let half_deg = aperture(res) / 111319.0;
+    let lat_min_str = format!("{:.*}", res_usize, lat - half_deg);
+    let lat_max_str = format!("{:.*}", res_usize, lat + half_deg);
+    let lon_min_str = format!("{:.*}", res_usize, lon - half_deg);
+    let lon_max_str = format!("{:.*}", res_usize, lon + half_deg);
 
     template
         .replace("{x}", &format!("{}", x))
@@ -2718,15 +2717,23 @@ fn warm_cache(archive: Arc<Archive>) {
                 continue;
             };
             let pendings = extract_pending(src, &body, now);
+            let may_be_empty = src.extracts.iter().any(|e| {
+                matches!(
+                    e,
+                    Extract::Map { .. } | Extract::GeojsonEvents { .. } | Extract::LastObj { .. }
+                )
+            });
             if pendings.is_empty() {
-                let entry = origins.entry(origin).or_default();
-                entry.zero_yield += 1;
-                if entry.zero_yield & (entry.zero_yield - 1) == 0 {
-                    eprintln!(
-                        "zero_yield x{} {}",
-                        entry.zero_yield,
-                        src.url.split('/').nth(2).unwrap_or("?")
-                    );
+                if !may_be_empty {
+                    let entry = origins.entry(origin).or_default();
+                    entry.zero_yield += 1;
+                    if entry.zero_yield >= 4 && entry.zero_yield & (entry.zero_yield - 1) == 0 {
+                        eprintln!(
+                            "zero_yield x{} {}",
+                            entry.zero_yield,
+                            src.url.split('/').nth(2).unwrap_or("?")
+                        );
+                    }
                 }
             } else {
                 origins.entry(origin).or_default().zero_yield = 0;
@@ -2745,7 +2752,7 @@ fn warm_cache(archive: Arc<Archive>) {
             .unwrap_or_else(|e| e.into_inner())
             .sample
             .clone()
-            .filter(|s| (now - s.epoch).abs() <= s.ttl);
+            .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
         let mut all: Vec<Sample> = Vec::new();
         {
             let old = archive
@@ -2756,7 +2763,7 @@ fn warm_cache(archive: Arc<Archive>) {
             for fam in [&old.terra, &old.inertial] {
                 for v in fam.cells.values() {
                     for s in v {
-                        if (now - s.epoch).abs() <= s.ttl && !refreshed.contains(&s.origin) {
+                        if (now - s.epoch).abs() <= s.ttl * 64.0 && !refreshed.contains(&s.origin) {
                             all.push(s.clone());
                         }
                     }
@@ -2788,7 +2795,6 @@ fn main() {
         sources: load_sources(),
         index_html: std::fs::read("static/index.html").unwrap_or_default(),
         constants_js: std::fs::read("static/constants.js").unwrap_or_default(),
-        gpu_worker_js: std::fs::read("static/gpu.worker.js").unwrap_or_default(),
         field: RwLock::new(Arc::new(build_buffer(Vec::new(), 1.0))),
         station: Mutex::new(StationState {
             sample: None,
@@ -2810,12 +2816,17 @@ fn main() {
         let ar = Arc::clone(&archive);
         thread::spawn(move || warm_cache(ar));
     }
-    if let Ok(listener) = TcpListener::bind(format!("127.0.0.1:{}", port)) {
-        for stream in listener.incoming() {
-            if let Ok(stream) = stream {
-                let ar = Arc::clone(&archive);
-                thread::spawn(move || handle_ingress(stream, ar));
-            }
+    let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
+        Ok(l) => l,
+        Err(e) => {
+            eprintln!("bind 127.0.0.1:{} failed: {}", port, e);
+            std::process::exit(1);
+        }
+    };
+    for stream in listener.incoming() {
+        if let Ok(stream) = stream {
+            let ar = Arc::clone(&archive);
+            thread::spawn(move || handle_ingress(stream, ar));
         }
     }
 }

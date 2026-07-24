@@ -70,13 +70,15 @@ export async function syncFrame(inputs, queries) {
     const oscCount = dvRes.getUint32(o, true); o += 4;
     const result = [];
     for (let i = 0; i < oscCount; i++) {
-        if (o + 40 > bytes.length) break;
+        if (o + 56 > bytes.length) break;
         const x = dvRes.getFloat64(o, true); o += 8;
         const y = dvRes.getFloat64(o, true); o += 8;
         const z = dvRes.getFloat64(o, true); o += 8;
         const val = dvRes.getFloat64(o, true); o += 8;
         const aperture = dvRes.getFloat64(o, true); o += 8;
-        result.push({ x, y, z, val, aperture });
+        const t = dvRes.getFloat64(o, true); o += 8;
+        const ttl = dvRes.getFloat64(o, true); o += 8;
+        result.push({ x, y, z, val, aperture, t, ttl });
     }
     return result;
 }

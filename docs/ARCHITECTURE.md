@@ -47,11 +47,11 @@ Communication is strictly binary, Little-Endian. No strings on the wire.
 **Rust → Browser:**
 - `[0xCF, 0x86]` Magic bytes (UTF-8 φ), `u8` version (1)
 - `u32` request ID, `u32` oscillator count
-- Per oscillator: `f64` x, y, z, val, aperture — one flat array for the whole presence window (every active sample × field, no name merging; the point cloud stays intact).
-## 3: GPU (Browser) — The Mathematikerin (`static/gpu.worker.js`, `static/index.html`)
+- Per oscillator: `f64` x, y, z, val, aperture, t, ttl — one flat array for the whole presence window (every active sample × field, no name merging; the point cloud stays intact). t is the measurement epoch, ttl the freshness expectation; the Mathematikerin folds certainty `e^(−|tQuery − t|/ttl)` client-side in f64 into val_eff (council amendment: never absolute time in f32), so nothing is hard-deleted — oscillators decay exponentially instead of blinking out. Server retention keeps samples until ttl×2⁶, where certainty e^(−64) rests below the display floor exp2(−64).
+## 3: GPU (Browser) — The Mathematikerin (`static/index.html`)
 
 
-The browser is a pure sensor window. The presence window is a 2D surface in the 4D block (constant t, z of the presence), and the native screen pixels are its point cloud: every pixel is one ICRS point `presence + (u − 0.5) · resolution · scale`, evaluated by a WebGPU fragment shader in `gpu.worker.js` on an OffscreenCanvas at native resolution. No grid is sent to the server; the server only sees the surface definition. If the GPU is absent, the window stays black — there is no CPU field evaluation.
+The browser is a pure sensor window. The presence window is a 2D surface in the 4D block (constant t, z of the presence), and the native screen pixels are its point cloud: every pixel is one point of the presence-relative reference frame `(u − 0.5) · resolution · scale`, evaluated by a WebGPU fragment shader on the main thread (the Nebra path — a worker was tried and discarded). Oscillator coordinates are translated to the presence frame in f64 before upload (f32 ulp at 1.5e11 m ICRS is ~16 km; in the presence frame it is ~mm). No grid is sent to the server; the server only sees the surface definition. If the GPU is absent, the window stays black — there is no CPU field evaluation.
 
 ### The Oscillator
 
@@ -79,10 +79,10 @@ No global grids are brute-forced. No abstract temporal topology is calculated. T
 ### Field Permeability (`adaptFieldPermeability`)
 
 The field does not "output." It breathes. The permeability (0.0 = closed, 1.0 = open) follows an exponential relaxation (1st-order ODE) with `naturalLatencyTicks` as τ. No `sin()`, no linear step. 
-
 ### Manifestation (`flow`)
 
-The field manifests in every oscillator that has the capability to radiate. It does not collect "output values" and distribute them to "writers." The physical field coefficients calculated by the GPU are the form through which the field expresses itself. Surfaces (optical, acoustic, kinetic) receive these raw coefficients. They translate the same 4D field into their respective medium.
+
+The field manifests in every oscillator that has the capability to radiate. It does not collect "output values" and distribute them to "writers." One law, five media: `omega(p) = Σ val_eff / (|p − x|² + aperture²)` with `val_eff = val · e^(−|tPresence − t|/ttl)`. The optical surface evaluates it per pixel on the GPU; the acoustic, haptic and hardware surfaces evaluate the same law at the presence point and translate it into their medium (normalization from live data: median window aperture, no constants).
 
 ## 4. Network Transport (`static/constants.js`)
 
