@@ -847,6 +847,8 @@ enum Extract {
     Count(String, String),
     LastRow(String, String),
     LastObj(String, String, String, String),
+    LastLine(String),
+    ObjLast(String, String),
     GeojsonEvents {
         mag_key: String,
         min_mag: f64,
@@ -1639,6 +1641,16 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::Ephemeris(parts[1].to_string()));
                 }
             }
+            "last_line" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::LastLine(parts[1].to_string()));
+                }
+            }
+            "obj_last" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::ObjLast(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
             "last_obj" => {
                 let quoted = parse_quoted_args(line.get(9..).unwrap_or(""));
                 if quoted.len() >= 4 {
@@ -1923,10 +1935,7 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, res: i32) -
         .replace("{minute}", &format!("{:02}", q_minute))
         .replace("{unix_now}", &unix_now)
         .replace("{unix_now_plus_3600}", &unix_now_plus_3600)
-        .replace(
-            "{nasa_key}",
-            &std::env::var("NASA_KEY").unwrap_or_else(|_| "DEMO_KEY".to_string()),
-        )
+        .replace("{nasa_key}", "DEMO_KEY")
 }
 
 fn sha1(data: &[u8]) -> [u8; 20] {
@@ -2130,6 +2139,40 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 if let Some(ref j) = parsed_json {
                     if let Some(v) = jdeep_find_num(j, k) {
                         extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::LastLine(n) => {
+                if let Some(v) = body
+                    .lines()
+                    .filter(|l| {
+                        let t = l.trim();
+                        !t.is_empty() && !t.starts_with('#')
+                    })
+                    .last()
+                    .and_then(|line| {
+                        line.split_whitespace()
+                            .filter_map(|t| t.parse::<f64>().ok())
+                            .last()
+                    })
+                {
+                    extracted.insert(n.clone(), v);
+                }
+            }
+            Extract::ObjLast(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(obj) = jpath_val(j, k) {
+                        if let JsonVal::Obj(m) = obj {
+                            if let Some(last_key) = m.keys().max_by(|a, b| {
+                                let ka = a.parse::<i64>().unwrap_or(0);
+                                let kb = b.parse::<i64>().unwrap_or(0);
+                                ka.cmp(&kb)
+                            }) {
+                                if let Some(val) = m.get(last_key).and_then(scalar_of) {
+                                    extracted.insert(n.clone(), val);
+                                }
+                            }
+                        }
                     }
                 }
             }
