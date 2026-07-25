@@ -1015,6 +1015,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         });
         window.addEventListener('keydown', async (e) => {
             if (e.key !== 'b') return;
+            e.preventDefault();
             try {
                 const parts = (await (await fetch('/station')).text()).split(' ').map(Number);
                 if (parts.length === 6 && parts.every(isFinite) && (parts[0] !== 0 || parts[1] !== 0 || parts[2] !== 0)) {
@@ -1022,8 +1023,26 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                     vPresence = [parts[3], parts[4], parts[5]];
                     t0P = tPresence;
                     keysDown.clear();
+                    return;
                 }
             } catch {}
+            const jd = tPresence / 86400.0 + 2451545.0;
+            const t = (jd - 2451545.0) / 36525.0;
+            const m = 6.239996 + 0.017201969 * t * 36525.0;
+            const eE = 0.0167086;
+            let eAnom = m;
+            for (let i = 0; i < 5; i++) {
+                eAnom = eAnom - (eAnom - eE * Math.sin(eAnom) - m) / (1.0 - eE * Math.cos(eAnom));
+            }
+            const xOrb = 1.495978707e11 * (Math.cos(eAnom) - eE);
+            const yOrb = 1.495978707e11 * Math.sqrt(1.0 - eE * eE) * Math.sin(eAnom);
+            const om = -0.113;
+            const xEcl = xOrb * Math.cos(om) - yOrb * Math.sin(om);
+            const yEcl = xOrb * Math.sin(om) + yOrb * Math.cos(om);
+            pPresence = [xEcl, yEcl * Math.cos(0.409092804), yEcl * Math.sin(0.409092804)];
+            vPresence = [0, 0, 0];
+            t0P = tPresence;
+            keysDown.clear();
         });
         window.addEventListener('error', (e) => { reportState('ERROR', e.message + ' @ ' + e.filename + ':' + e.lineno); e.preventDefault(); });
         window.addEventListener('unhandledrejection', (e) => { reportState('REJECTION', String(e.reason)); e.preventDefault(); });
