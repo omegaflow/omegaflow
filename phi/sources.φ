@@ -7,6 +7,16 @@ field latitude orbital_iss_lat
 field longitude orbital_iss_lon
 field altitude orbital_iss_alt_km
 
+source universe_iss_history
+ttl 10
+res 0
+lat 0
+lon 0
+url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
+field 0.latitude universe_iss_history_lat
+field 0.longitude universe_iss_history_lon
+field 0.altitude universe_iss_history_alt
+
 source anu_quantum_entropy
 ttl 60
 lat -35.2809
@@ -943,6 +953,18 @@ lat 0
 lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_significant_day
+ttl 300
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
 
 source geosphere_usgs_earthquakes_day
 ttl 300
@@ -2540,6 +2562,105 @@ url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&curren
 path current.snowfall cryosphere_snowfall_cm
 path current.snow_depth cryosphere_snow_depth_m
 
+source geosphere_earthquakes_2_5_weekly
+ttl 600
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_earthquake_mag
+field_in properties.sig geosphere_earthquake_significance
+
+source geosphere_earthquakes_4_5_weekly
+ttl 600
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_earthquake_mag
+field_in properties.sig geosphere_earthquake_significance
+
+source geosphere_earthquakes_cenc
+ttl 600
+res 0
+lat 39.9
+lon 116.4
+url https://www.ceic.ac.cn/speedsearch?time=1&type=2&page=1
+count lines geosphere_earthquakes_cenc_count
+
+source geosphere_earthquakes_jma
+ttl 600
+res 0
+lat 35.68
+lon 139.69
+url https://www.jma.go.jp/bosai/quake/data/list.json
+last_line geosphere_earthquakes_jma_recent_mag
+
+source geosphere_earthquakes_m1_day
+ttl 600
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_m1_week
+ttl 600
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
+source geosphere_earthquakes_m2_5_day
+ttl 600
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_m4_5_day
+ttl 600
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_significant_week
+ttl 600
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
 source geosphere_earthquakes_weekly
 ttl 600
 res 0
@@ -2783,6 +2904,17 @@ lon 0
 url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json
 field data.grid.features.0.properties.vtec_assimilated_tecu ionosphere_tec_assimilated_tecu
 field data.grid.features.0.properties.vtec_rms_tecu ionosphere_tec_rms_tecu
+
+source geosphere_earthquakes_m1_month
+ttl 1800
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
 
 source orbital_celestrak_debris
 ttl 1800
@@ -3170,18 +3302,27 @@ last_row (ppm) atmosphere_co2_weekly_ppm
 
 source atmosphere_daily_forecast
 ttl 3600
-res 3
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,showers_sum,snowfall_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration,sunrise,sunset,daylight_duration,sunshine_duration,uv_index_max,weather_code&timezone=auto
-first temperature_2m_max atmosphere_forecast_temp_max_c
-first temperature_2m_min atmosphere_forecast_temp_min_c
-first precipitation_sum atmosphere_forecast_precip_mm
-first precipitation_probability_max atmosphere_forecast_precip_prob_pct
-first wind_speed_10m_max atmosphere_forecast_wind_max_kmh
-first wind_gusts_10m_max atmosphere_forecast_gust_max_kmh
-first shortwave_radiation_sum atmosphere_forecast_radiation_mjm2
-first uv_index_max atmosphere_forecast_uv_max
-first daylight_duration atmosphere_forecast_daylight_s
-first sunshine_duration atmosphere_forecast_sunshine_s
+res 0
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max&timezone=auto
+path daily.temperature_2m_max.0 atmosphere_daily_temp_max_c
+path daily.temperature_2m_min.0 atmosphere_daily_temp_min_c
+path daily.precipitation_probability_max.0 atmosphere_daily_precip_prob_pct
+path daily.windspeed_10m_max.0 atmosphere_daily_wind_max_kms
+
+source atmosphere_ensemble_forecast
+ttl 3600
+res 0
+url https://ensemble-api.open-meteo.com/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto
+path daily.temperature_2m_max.0 atmosphere_ensemble_temp_max_c
+path daily.precipitation_sum.0 atmosphere_ensemble_precip_mm
+
+source atmosphere_marine_daily
+ttl 3600
+res 0
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&daily=wave_height_max,wave_period_max,swell_wave_height_max&timezone=auto
+path daily.wave_height_max.0 atmosphere_marine_wave_height_max_m
+path daily.wave_period_max.0 atmosphere_marine_wave_period_max_s
+path daily.swell_wave_height_max.0 atmosphere_marine_swell_height_max_m
 
 source atmosphere_marine_sst
 ttl 3600
@@ -3230,6 +3371,13 @@ lon 0
 url https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&formatted=0
 path results.day_length atmosphere_day_length_s
 path results.solar_noon atmosphere_solar_noon_iso
+
+source atmosphere_uv_daily
+ttl 3600
+res 0
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&daily=uv_index_max,uv_index_clear_sky_max&timezone=auto
+path daily.uv_index_max.0 atmosphere_uv_index_max
+path daily.uv_index_clear_sky_max.0 atmosphere_uv_index_clear_sky_max
 
 source atmosphere_uv_index
 ttl 3600
@@ -3612,6 +3760,17 @@ lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
+source geosphere_earthquakes_significant_month
+ttl 3600
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
 source geosphere_effis_fires
 res 0
 ttl 3600
@@ -3768,6 +3927,15 @@ lat_key lat
 lon_key lon
 field_in id geosphere_overpass_alpine_huts_id
 
+source geosphere_overpass_archaeological_sites
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="archaeological_site"](around:200000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_archaeological_sites_id
+
 source geosphere_overpass_artworks
 ttl 3600
 res 0
@@ -3848,6 +4016,15 @@ map elements
 lat_key lat
 lon_key lon
 field_in id geosphere_overpass_breweries_id
+
+source geosphere_overpass_bridges
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="bridge"](around:yes,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_bridges_id
 
 source geosphere_overpass_butchers
 ttl 3600
@@ -3957,6 +4134,15 @@ lat_key lat
 lon_key lon
 field_in id geosphere_overpass_compressed_air_id
 
+source geosphere_overpass_construction_zones
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="construction"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_construction_zones_id
+
 source geosphere_overpass_convenience_stores
 ttl 3600
 res 0
@@ -3983,6 +4169,15 @@ map elements
 lat_key lat
 lon_key lon
 field_in id geosphere_overpass_crossings_id
+
+source geosphere_overpass_defibrillators
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["emergency"="defibrillator"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_defibrillators_id
 
 source geosphere_overpass_dentists
 ttl 3600
@@ -4020,6 +4215,15 @@ lat_key lat
 lon_key lon
 field_in id geosphere_embassies_id
 
+source geosphere_overpass_farmland
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="landuse"](around:farmland,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_farmland_id
+
 source geosphere_overpass_fast_food
 ttl 3600
 res 0
@@ -4056,6 +4260,15 @@ lat_key lat
 lon_key lon
 field_in id geosphere_overpass_florists_id
 
+source geosphere_overpass_forests
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="landuse"](around:forest,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_forests_id
+
 source geosphere_overpass_forts
 ttl 3600
 res 0
@@ -4064,6 +4277,15 @@ map elements
 lat_key lat
 lon_key lon
 field_in id geosphere_forts_id
+
+source geosphere_overpass_fountains
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fountain"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_fountains_id
 
 source geosphere_overpass_galleries
 ttl 3600
@@ -4272,6 +4494,15 @@ lat_key lat
 lon_key lon
 field_in id geosphere_overpass_monasteries_id
 
+source geosphere_overpass_monuments
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="monument"](around:200000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_monuments_id
+
 source geosphere_overpass_motorcycle_parkings
 ttl 3600
 res 0
@@ -4280,6 +4511,15 @@ map elements
 lat_key lat
 lon_key lon
 field_in id geosphere_overpass_motorcycle_parkings_id
+
+source geosphere_overpass_music_venues
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="music_venue"](around:100000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_music_venues_id
 
 source geosphere_overpass_nature_reserves
 ttl 3600
@@ -4299,6 +4539,15 @@ lat_key lat
 lon_key lon
 field_in id geosphere_overpass_opticians_id
 
+source geosphere_overpass_palaeontological_sites
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["geological"="palaeontological_site"](around:500000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_palaeontological_sites_id
+
 source geosphere_overpass_parking_lots
 ttl 3600
 res 0
@@ -4316,6 +4565,15 @@ map elements
 lat_key lat
 lon_key lon
 field_in id geosphere_overpass_parks_id
+
+source geosphere_overpass_pet_shops
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="pet"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_pet_shops_id
 
 source geosphere_overpass_pharmacies
 ttl 3600
@@ -4443,6 +4701,15 @@ map elements
 lat_key lat
 lon_key lon
 field_in id geosphere_overpass_recycling_id
+
+source geosphere_overpass_ruins
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="ruins"](around:200000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_ruins_id
 
 source geosphere_overpass_schools
 ttl 3600
@@ -4606,6 +4873,15 @@ lat_key lat
 lon_key lon
 field_in id geosphere_theatres_id
 
+source geosphere_overpass_toilets
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="toilets"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_toilets_id
+
 source geosphere_overpass_townhalls
 ttl 3600
 res 0
@@ -4615,6 +4891,15 @@ lat_key lat
 lon_key lon
 field_in id geosphere_overpass_townhalls_id
 
+source geosphere_overpass_traffic_signals
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="traffic_signals"](around:10000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_traffic_signals_id
+
 source geosphere_overpass_tram_stops
 ttl 3600
 res 0
@@ -4623,6 +4908,15 @@ map elements
 lat_key lat
 lon_key lon
 field_in id geosphere_tram_stops_id
+
+source geosphere_overpass_travel_agents
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="travel_agency"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_travel_agents_id
 
 source geosphere_overpass_trees
 ttl 3600
@@ -4664,7 +4958,7 @@ field_in id geosphere_viewpoint_id
 source geosphere_overpass_vineyards
 ttl 3600
 res 0
-url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["landuse"="vineyard"](around:200000,{lat},{lon});out%20100;
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["landuse"="vineyard"](around:200000,{lat},{lon});out%20100;
 map elements
 lat_key lat
 lon_key lon
@@ -4705,6 +4999,15 @@ map elements
 lat_key lat
 lon_key lon
 field_in id geosphere_watermills_id
+
+source geosphere_overpass_waterways
+ttl 3600
+res 0
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="waterway"](around:river,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_waterways_id
 
 source geosphere_overpass_wayside_shrines
 ttl 3600
@@ -5166,6 +5469,22 @@ res -5
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_sun_distance
 
+source technosphere_npm_downloads
+ttl 3600
+res 0
+lat 0
+lon 0
+url https://api.npmjs.org/downloads/point/last-day/lodash
+field downloads technosphere_npm_lodash_daily
+
+source technosphere_wikipedia_views
+ttl 3600
+res 0
+lat 40.712
+lon -74.006
+url https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json
+field query.random.0.id technosphere_wikipedia_random_id
+
 source titan_vectors
 ttl 3600
 res -3
@@ -5177,6 +5496,18 @@ ttl 3600
 res -3
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ephemeris orbital_triton_distance
+
+source universe_dscovr_epic
+ttl 3600
+res 0
+lat 0
+lon 0
+url https://epic.gsfc.nasa.gov/api/natural/images
+map .
+lat_key centroid_coordinates.lat
+lon_key centroid_coordinates.lon
+field_in version universe_dscovr_version
+field_in identifier universe_dscovr_identifier
 
 source uranus_vectors
 ttl 3600
@@ -5974,6 +6305,62 @@ lat 42.365
 lon -71.105
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json
 last_line exosphere_exoplanets_confirmed_total
+
+source exosphere_donki_cme
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME/?startDate=2024-01-01&endDate=2024-12-31
+count lines exosphere_donki_cme_count_2024
+
+source exosphere_donki_flares
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR/?startDate=2024-01-01&endDate=2024-12-31
+count lines exosphere_donki_flare_count_2024
+
+source exosphere_donki_gst
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/GST/?startDate=2024-01-01&endDate=2024-12-31
+count lines exosphere_donki_gst_count_2024
+
+source exosphere_donki_hss
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS/?startDate=2024-01-01&endDate=2024-12-31
+count lines exosphere_donki_hss_count_2024
+
+source exosphere_donki_ips
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS/?startDate=2024-01-01&endDate=2024-12-31
+count lines exosphere_donki_ips_count_2024
+
+source exosphere_donki_mpc
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/MPC/?startDate=2024-01-01&endDate=2024-12-31
+count lines exosphere_donki_mpc_count_2024
+
+source exosphere_donki_sep
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP/?startDate=2024-01-01&endDate=2024-12-31
+count lines exosphere_donki_sep_count_2024
 
 source exosphere_exoplanet_count
 terra 0
@@ -6996,6 +7383,19 @@ field_in sy_dist universe_exoplanet_distance_pc
 field_in pl_orbper universe_exoplanet_period_d
 field_in pl_rade universe_exoplanet_radius_re
 
+source universe_gaia_astrometric_binaries
+ttl 86400
+res -7
+lat 0
+lon 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
+map data
+lat_key 1
+lon_key 0
+field_in 2 phot_g_mean_mag
+field_in 3 parallax_mas
+field_in 4 ruwe
+
 source universe_gaia_binaries
 ttl 86400
 res 0
@@ -7043,6 +7443,17 @@ lat_key 1
 lon_key 0
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
+
+source universe_gaia_bright_giants
+ttl 86400
+res -7
+lat 0
+lon 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20%3C%208%20AND%20parallax%20%3E%205
+map data
+lat_key 1
+lon_key 0
+field_in 2 par
 
 source universe_gaia_bright_stars
 ttl 86400
@@ -7246,6 +7657,30 @@ lat_key 1
 lon_key 0
 field_in 2 mag_g
 
+source universe_gaia_metal_poor
+ttl 86400
+res -7
+lat 0
+lon 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%200.5%20AND%20phot_g_mean_mag%20%3C%2014%20AND%20parallax%20%3E%202
+map data
+lat_key 1
+lon_key 0
+field_in 2 bp_rp
+
+source universe_gaia_metallicity
+ttl 86400
+res -7
+lat 0
+lon 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cmh_gspphot%20FROM%20gaiadr3.gaia_source%20WHERE%20mh_gspphot%20IS%20NOT%20NULL%20AND%20parallax%20%3E%202
+map data
+lat_key 1
+lon_key 0
+field_in 2 phot_g_mean_mag
+field_in 3 parallax_mas
+field_in 4 metallicity_dex
+
 source universe_gaia_milky_way_disk
 ttl 86400
 res -7
@@ -7434,6 +7869,17 @@ lat_key 1
 lon_key 0
 field_in 2 mag_v
 
+source universe_simbad_carbon_stars_var
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27cr%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+map data
+lat_key 1
+lon_key 0
+field_in 2 mag_v
+
 source universe_simbad_cepheids
 ttl 86400
 res -3
@@ -7568,6 +8014,16 @@ lat_key 1
 lon_key 0
 field_in 2 mag_v
 
+source universe_simbad_hvc
+ttl 86400
+res -4
+lat 0
+lon 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20100%20ra%2Cdec%20FROM%20basic%20WHERE%20otype%3D%27HVC%27
+map data
+lat_key 1
+lon_key 0
+
 source universe_simbad_interstellar_medium
 ttl 86400
 res -4
@@ -7585,6 +8041,17 @@ res -4
 lat 0
 lon 0
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27Ir%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+map data
+lat_key 1
+lon_key 0
+field_in 2 mag_v
+
+source universe_simbad_ism
+ttl 86400
+res -4
+lat 0
+lon 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27ISM%27
 map data
 lat_key 1
 lon_key 0
@@ -7640,6 +8107,17 @@ res 0
 lat 0
 lon 0
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27Mi*%27+AND+flux_V+IS+NOT+NULL
+map data
+lat_key 1
+lon_key 0
+field_in 2 mag_v
+
+source universe_simbad_molecule_clouds
+ttl 86400
+res -4
+lat 0
+lon 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27MolC%27
 map data
 lat_key 1
 lon_key 0
@@ -7701,6 +8179,17 @@ lat_key 1
 lon_key 0
 field_in 2 mag_v
 
+source universe_simbad_proper_motion
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27PM*%27+AND+flux_V+IS+NOT+NULL
+map data
+lat_key 1
+lon_key 0
+field_in 2 mag_v
+
 source universe_simbad_pulsars
 ttl 86400
 res -7
@@ -7724,6 +8213,17 @@ lat_key 1
 lon_key 0
 field_in 2 redshift
 field_in 3 mag_v
+
+source universe_simbad_red_giants
+ttl 86400
+res -3
+lat 0
+lon 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27RG*%27+AND+flux_V+IS+NOT+NULL
+map data
+lat_key 1
+lon_key 0
+field_in 2 mag_v
 
 source universe_simbad_red_supergiants
 ttl 86400
@@ -7879,6 +8379,88 @@ map data
 lat_key 1
 lon_key 0
 field_in 2 mag_v
+
+source universe_simbad_yso
+ttl 86400
+res -3
+lat 0
+lon 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27YSO%27%20AND%20flux_V%20IS%20NOT%20NULL
+map data
+lat_key 1
+lon_key 0
+field_in 2 mag_v
+
+source universe_vizier_2mass
+ttl 86400
+res -7
+lat 0
+lon 0
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+raj2000,dej2000,j_m,h_m+FROM+%22II%2F246%2Fout%22+WHERE+j_m+<+14
+map data
+lat_key 1
+lon_key 0
+field_in 2 j_mag
+field_in 3 h_mag
+
+source universe_vizier_apass
+ttl 86400
+res -7
+lat 0
+lon 0
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+raj2000,dej2000,bmag,vmag+FROM+%22II%2F336%2Fapass9%22+WHERE+bmag+<+13
+map data
+lat_key 1
+lon_key 0
+field_in 2 bmag
+field_in 3 vmag
+
+source universe_vizier_panstarrs
+ttl 86400
+res -7
+lat 0
+lon 0
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+raj2000,dej2000,gmag,rmag+FROM+%22II%2F349%2Fps1%22+WHERE+gmag+<+17
+map data
+lat_key 1
+lon_key 0
+field_in 2 gmag
+field_in 3 rmag
+
+source universe_vizier_ucac4
+ttl 86400
+res -7
+lat 0
+lon 0
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20raj2000%2Cdej2000%2Cjmag%2Chmag%20FROM%20%22I/322A/out%22%20WHERE%20jmag%20%3C%2014
+map .
+lat_key dej2000
+lon_key raj2000
+field_in jmag universe_vizier_jmag
+field_in hmag universe_vizier_hmag
+
+source universe_vizier_ucac5
+ttl 86400
+res -7
+lat 0
+lon 0
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+raj2000,dej2000,jmag+FROM+%22I%2F340%2Fucac5%22+WHERE+jmag+<+14
+map data
+lat_key 1
+lon_key 0
+field_in 2 jmag
+
+source universe_vizier_vsx
+ttl 86400
+res -3
+lat 0
+lon 0
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+raj2000,dej2000,j_mag,v_mag+FROM+%22B%2Fvsx%2Fvsx%22+WHERE+j_mag+<+13
+map data
+lat_key 1
+lon_key 0
+field_in 2 j_mag
+field_in 3 v_mag
 
 source uspto_patents_total
 ttl 86400
@@ -8709,6 +9291,42 @@ res -7
 ttl 604800
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27S*Y%27
 path data.0.0 cosmic_simbad_young_stellar_objects
+
+source geosphere_ne_glaciers
+ttl 604800
+res 0
+lat 0
+lon 0
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_glaciated_areas.geojson
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field_in properties.name geosphere_ne_glacier_name
+field_in properties.scalerank geosphere_ne_glacier_rank
+
+source geosphere_ne_lakes
+ttl 604800
+res 0
+lat 0
+lon 0
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_lakes.geojson
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field_in properties.name geosphere_ne_lake_name
+field_in properties.scalerank geosphere_ne_lake_rank
+
+source geosphere_ne_places
+ttl 604800
+res 0
+lat 0
+lon 0
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_populated_places.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.name geosphere_ne_place_name
+field_in properties.scalerank geosphere_ne_place_rank
 
 source higgs_production_xsec_papers
 ttl 604800
