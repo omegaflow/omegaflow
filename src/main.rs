@@ -656,20 +656,18 @@ fn scalar_of(v: &JsonVal) -> Option<f64> {
 }
 
 fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
+    if path.is_empty() || path == "." {
+        return Some(json);
+    }
     let mut current = json;
     for part in path.split('.') {
-        if let Ok(idx) = part.parse::<usize>() {
-            if let JsonVal::Arr(arr) = current {
-                current = arr.get(idx)?;
-            } else {
-                return None;
-            }
+        if let JsonVal::Obj(map) = current {
+            current = map.get(part)?;
+        } else if let JsonVal::Arr(arr) = current {
+            let idx = part.parse::<usize>().ok()?;
+            current = arr.get(idx)?;
         } else {
-            if let JsonVal::Obj(map) = current {
-                current = map.get(part)?;
-            } else {
-                return None;
-            }
+            return None;
         }
     }
     Some(current)
@@ -2216,7 +2214,17 @@ fn sha1(data: &[u8]) -> [u8; 20] {
 }
 
 fn split_data_line(line: &str) -> Vec<&str> {
-    if line.contains(';') {
+    if line.contains('|') && line.split('|').count() > 2 {
+        line.split('|')
+            .map(|s| s.trim())
+            .filter(|s| !s.is_empty())
+            .collect()
+    } else if line.contains('\t') && line.split('\t').count() > 2 {
+        line.split('\t')
+            .map(|s| s.trim())
+            .filter(|s| !s.is_empty())
+            .collect()
+    } else if line.contains(';') {
         line.split(';')
             .map(|s| s.trim())
             .filter(|s| !s.is_empty())
@@ -2373,7 +2381,8 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     })
                     .last()
                     .and_then(|line| {
-                        line.split_whitespace()
+                        split_data_line(line)
+                            .into_iter()
                             .filter_map(|t| t.parse::<f64>().ok())
                             .last()
                     })
@@ -2535,94 +2544,61 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 fields,
             } => {
                 if let Some(ref j) = parsed_json {
-                    let mut current = j;
-                    let mut path_ok = true;
-                    for part in arr_path.split('.') {
-                        if let Ok(idx) = part.parse::<usize>() {
-                            if let JsonVal::Arr(arr) = current {
-                                current = match arr.get(idx) {
-                                    Some(v) => v,
-                                    None => {
-                                        path_ok = false;
-                                        break;
-                                    }
-                                };
+                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
+                        for v in arr.iter() {
+                            let lat = jpath(v, lat_key);
+                            let lon = jpath(v, lon_key);
+                            let alt = if alt_key.is_empty() {
+                                Some(0.0)
                             } else {
-                                path_ok = false;
-                                break;
-                            }
-                        } else {
-                            if let JsonVal::Obj(map) = current {
-                                current = match map.get(part) {
-                                    Some(v) => v,
-                                    None => {
-                                        path_ok = false;
-                                        break;
+                                jpath(v, alt_key)
+                            };
+                            if let (Some(la), Some(lo), Some(al)) = (lat, lon, alt) {
+                                let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                                for (fk, fn_) in fields {
+                                    if let Some(val) = jpath(v, fk) {
+                                        ev_fields.push((fn_.clone(), val));
                                     }
-                                };
-                            } else {
-                                path_ok = false;
-                                break;
-                            }
-                        }
-                    }
-                    if path_ok {
-                        if let JsonVal::Arr(arr) = current {
-                            for v in arr.iter() {
-                                let lat = jpath(v, lat_key);
-                                let lon = jpath(v, lon_key);
-                                let alt = if alt_key.is_empty() {
-                                    Some(0.0)
-                                } else {
-                                    jpath(v, alt_key)
-                                };
-                                if let (Some(la), Some(lo), Some(al)) = (lat, lon, alt) {
-                                    let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                                    for (fk, fn_) in fields {
-                                        if let Some(val) = jpath(v, fk) {
-                                            ev_fields.push((fn_.clone(), val));
-                                        }
-                                    }
-                                    if ev_fields.is_empty() {
-                                        continue;
-                                    }
-                                    let speed = if vel_key.is_empty() {
-                                        None
-                                    } else {
-                                        jpath(v, vel_key)
-                                    };
-                                    let track = if trk_key.is_empty() {
-                                        None
-                                    } else {
-                                        jpath(v, trk_key)
-                                    };
-                                    let vrate = if vr_key.is_empty() {
-                                        None
-                                    } else {
-                                        jpath(v, vr_key)
-                                    };
-                                    let position = if let (Some(sp), Some(tr)) = (speed, track) {
-                                        PendingPosition::GeodeticFlow {
-                                            lat: la,
-                                            lon: lo,
-                                            alt: al,
-                                            speed: sp,
-                                            track: tr,
-                                            vrate: vrate.unwrap_or(0.0),
-                                        }
-                                    } else {
-                                        PendingPosition::Geodetic {
-                                            lat: la,
-                                            lon: lo,
-                                            alt: al,
-                                        }
-                                    };
-                                    pending.push(PendingSample {
-                                        epoch: now,
-                                        position,
-                                        fields: ev_fields,
-                                    });
                                 }
+                                if ev_fields.is_empty() {
+                                    continue;
+                                }
+                                let speed = if vel_key.is_empty() {
+                                    None
+                                } else {
+                                    jpath(v, vel_key)
+                                };
+                                let track = if trk_key.is_empty() {
+                                    None
+                                } else {
+                                    jpath(v, trk_key)
+                                };
+                                let vrate = if vr_key.is_empty() {
+                                    None
+                                } else {
+                                    jpath(v, vr_key)
+                                };
+                                let position = if let (Some(sp), Some(tr)) = (speed, track) {
+                                    PendingPosition::GeodeticFlow {
+                                        lat: la,
+                                        lon: lo,
+                                        alt: al,
+                                        speed: sp,
+                                        track: tr,
+                                        vrate: vrate.unwrap_or(0.0),
+                                    }
+                                } else {
+                                    PendingPosition::Geodetic {
+                                        lat: la,
+                                        lon: lo,
+                                        alt: al,
+                                    }
+                                };
+                                pending.push(PendingSample {
+                                    epoch: now,
+                                    position,
+                                    fields: ev_fields,
+                                });
                             }
                         }
                     }
