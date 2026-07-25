@@ -750,6 +750,12 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             stableTick = stableTick * (1 - ma()) + rawTick * ma();
             transport.tickTime = stableTick;
 
+            if (rawWindowResponse.length > 0) {
+                const targetScale = windowMedianAperture() * 2.0;
+                const tau = 1000.0;
+                gridStep += (targetScale - gridStep) * (1.0 - Math.exp(-rawTick / tau));
+            }
+
             const zoomRate = Math.pow(2, rawTick / 500);
             if (keysDown.has('-')) gridStep *= zoomRate;
             if (keysDown.has('+')) gridStep /= zoomRate;
