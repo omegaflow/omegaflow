@@ -1502,6 +1502,7 @@ fn load_sources() -> Vec<SourceConfig> {
                     || cur_url.contains("{x}")
                     || cur_url.contains("{y}")
                     || cur_url.contains("{z}")
+                    || cur_url.contains("{grid")
                 {
                     Some(Frame::Query)
                 } else {
@@ -1861,11 +1862,34 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, res: i32) -
     let lat_max_str = format!("{:.*}", res_usize, lat + half_deg);
     let lon_min_str = format!("{:.*}", res_usize, lon - half_deg);
     let lon_max_str = format!("{:.*}", res_usize, lon + half_deg);
+    let (grid_str, grid_lat_str, grid_lon_str) = {
+        let step = half_deg * 0.5;
+        let mut g = Vec::with_capacity(16);
+        let mut gla = Vec::with_capacity(4);
+        let mut glo = Vec::with_capacity(4);
+        for i in 0..4 {
+            for j in 0..4 {
+                g.push(format!(
+                    "{:.*},{:.*}",
+                    res_usize,
+                    lat + (i as f64 - 1.5) * step,
+                    res_usize,
+                    lon + (j as f64 - 1.5) * step
+                ));
+            }
+            gla.push(format!("{:.*}", res_usize, lat + (i as f64 - 1.5) * step));
+            glo.push(format!("{:.*}", res_usize, lon + (i as f64 - 1.5) * step));
+        }
+        (g.join("|"), gla.join(","), glo.join(","))
+    };
 
     template
         .replace("{x}", &format!("{}", x))
         .replace("{y}", &format!("{}", y))
         .replace("{z}", &format!("{}", z))
+        .replace("{grid_lat}", &grid_lat_str)
+        .replace("{grid_lon}", &grid_lon_str)
+        .replace("{grid}", &grid_str)
         .replace("{lat}", &lat_str)
         .replace("{lon}", &lon_str)
         .replace("{lat_min}", &lat_min_str)
@@ -2611,7 +2635,8 @@ fn warm_cache(archive: Arc<Archive>) {
                             || src.url.contains("{lon}")
                             || src.url.contains("{x}")
                             || src.url.contains("{y}")
-                            || src.url.contains("{z}");
+                            || src.url.contains("{z}")
+                            || src.url.contains("{grid");
                         if has_template {
                             for &(_, px, py, pz, extent) in &presences {
                                 let ddx = px - ex;

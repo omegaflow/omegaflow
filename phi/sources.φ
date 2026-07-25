@@ -3866,9 +3866,13 @@ last line paleoclimate_epica_co2_raw
 
 source openelevation_srtm
 ttl 2592000
-res 4
-url https://api.open-elevation.com/api/v1/lookup?locations={lat},{lon}
-path results.0.elevation geosphere_elevation_openelev_m
+res 3
+url https://api.open-elevation.com/api/v1/lookup?locations={grid}
+map results
+lat_key latitude
+lon_key longitude
+alt_key elevation
+field_in elevation geosphere_elevation_openelev_m
 
 source openmeteo_climate_projection
 ttl 2592000
@@ -3880,27 +3884,43 @@ first precipitation_sum atmosphere_climate_precip_mm
 
 source opentopo_eudem25m
 ttl 2592000
-res 4
-url https://api.opentopodata.org/v1/eudem25m?locations={lat},{lon}
-path results.0.elevation geosphere_elevation_eudem25_m
+res 3
+url https://api.opentopodata.org/v1/eudem25m?locations={grid}
+map results
+lat_key location.lat
+lon_key location.lng
+alt_key elevation
+field_in elevation geosphere_elevation_eudem25_m
 
 source opentopo_gebco_bathymetry
 ttl 2592000
 res 2
-url https://api.opentopodata.org/v1/gebco2020?locations={lat},{lon}
-path results.0.elevation hydrosphere_bathymetry_gebco_m
+url https://api.opentopodata.org/v1/gebco2020?locations={grid}
+map results
+lat_key location.lat
+lon_key location.lng
+alt_key elevation
+field_in elevation hydrosphere_bathymetry_gebco_m
 
 source opentopo_mapzen_terrain
 ttl 2592000
-res 4
-url https://api.opentopodata.org/v1/mapzen?locations={lat},{lon}
-path results.0.elevation geosphere_terrain_mapzen_m
+res 3
+url https://api.opentopodata.org/v1/mapzen?locations={grid}
+map results
+lat_key location.lat
+lon_key location.lng
+alt_key elevation
+field_in elevation geosphere_terrain_mapzen_m
 
 source opentopo_srtm30m
 ttl 2592000
-res 4
-url https://api.opentopodata.org/v1/srtm30m?locations={lat},{lon}
-path results.0.elevation geosphere_elevation_srtm30_m
+res 3
+url https://api.opentopodata.org/v1/srtm30m?locations={grid}
+map results
+lat_key location.lat
+lon_key location.lng
+alt_key elevation
+field_in elevation geosphere_elevation_srtm30_m
 
 source overpass_farmland
 ttl 2592000
