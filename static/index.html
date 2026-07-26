@@ -42,6 +42,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let lastManifestTime = 0;
         let stableTick = 0;
         let tPresence = 0;
+        let exposureBoost = 0;
         let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = 0;
         let prevOmega = 0, prevOmegaTs = 0;
         let xPresence = 1.5e11, yPresence = 1.5e11, zPresence = 1.0e10;
@@ -417,7 +418,7 @@ fn presence_probe() {
             const evalW = Math.max(1, RX >> evalShift), evalH = Math.max(1, RY >> evalShift);
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
             const [fr, fu] = orientationFrame();
-            const exposure = Math.max(Math.abs(probedOmega), Math.pow(2, -40));
+            const exposure = Math.max(Math.abs(probedOmega), Math.pow(2, -40)) / Math.pow(2, exposureBoost);
             try {
                 gpu.queue.writeBuffer(fieldBuf, 0, xyzval);
                 gpu.queue.writeBuffer(apertureBuf, 0, meta);
@@ -955,7 +956,7 @@ fn presence_probe() {
                     `  Pixels: ${RX}x${RY} (eval /${1 << evalShift})\n` +
                     `  Scale: ${gridStep.toExponential(1)} m/px\n` +
                     `  Oscillators in window: ${rawWindowResponse.length} (empty syncs: ${emptySyncs})\n` +
-                    `  Window omega: ${probedOmega.toExponential(2)} (exposure)\n\n` +
+                    `  Window omega: ${probedOmega.toExponential(2)} (exposure ${(exposureBoost > 0 ? '+' : '') + exposureBoost}dB)\n\n` +
                     "System\n" +
                     `  Oscillators: ${oscillators.length}\n` +
                     `  Ring buffer: ${maxFill}/${CAPTURE_RING_SIZE} samples\n` +
@@ -1083,6 +1084,10 @@ fn presence_probe() {
                 keysDown.clear();
                 e.preventDefault();
             }
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'e') { exposureBoost = Math.min(exposureBoost + 1, 16); e.preventDefault(); }
+            else if (e.key === 'E') { exposureBoost = Math.max(exposureBoost - 1, -8); e.preventDefault(); }
         });
         window.addEventListener('keydown', (e) => {
             if (e.key === 'g') {
