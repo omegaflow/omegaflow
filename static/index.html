@@ -133,7 +133,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 evalShiftTarget--;
             }
             const dt = rawTick / 1000;
-            evalShiftF += (evalShiftTarget - evalShiftF) * (1.0 - Math.exp2(-dt * 32));
+            evalShiftF += (evalShiftTarget - evalShiftF) * (1.0 - Math.pow(2, -dt * 32));
             evalShift = Math.round(evalShiftF);
         }
 
@@ -320,7 +320,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             const xyzval = new Float32Array(Math.max(n, 1) * 4);
             const meta = new Float32Array(Math.max(n, 1) * 4);
             const τ = Φ;
-            const blend = blendPrev ? Math.exp2(-dt / τ) : 0;
+            const blend = blendPrev ? Math.pow(2, -dt / τ) : 0;
             for (let i = 0; i < n; i++) {
                 const oCur = i < rawWindowResponse.length ? rawWindowResponse[i] : null;
                 const oPrev = i < prevWindowResponse.length ? prevWindowResponse[i] : null;
@@ -428,7 +428,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             if (rawWindowResponse.length === 0) {
                 emptySyncs++;
                 const target = gridStep * Φ;
-                gridStep += (target - gridStep) * (1.0 - Math.exp2(-1.0 / Φ));
+                gridStep += (target - gridStep) * (1.0 - Math.pow(2, -1.0 / Φ));
             }
         }
 
@@ -929,7 +929,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             requestAnimationFrame(ω);
         }
         if (localFlowConsented) {
-            const sensorNames = ['Accelerometer', 'Gyroscope', 'Magnetometer', 'AmbientLightSensor', 'LinearAccelerationSensor', 'GravitySensor', 'AbsoluteOrientationSensor', 'RelativeOrientationSensor'];
+            const sensorNames = ['Accelerometer', 'Gyroscope', 'Magnetometer', 'AmbientLightSensor', 'LinearAccelerationSensor', 'GravitySensor'];
             for (const name of sensorNames) {
                 if (typeof window[name] !== 'undefined') {
                     try {
