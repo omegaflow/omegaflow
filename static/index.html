@@ -238,6 +238,7 @@ fn kernel(d: vec3f, a2: f32, s2: f32) -> f32 {
 @compute @workgroup_size(1)
 fn presence_probe() {
     let count = u32(vp.surface.z);
+    if (count == 0u) { return; }
     let s2 = vp.surface.w * vp.surface.w;
     var omega = 0.0f;
     var gx = 0.0f;
@@ -265,6 +266,7 @@ fn presence_probe() {
 }
 @fragment fn fs(i: V) -> @location(0) vec4f {
     let count = u32(vp.surface.z);
+    if (count == 0u) { discard; }
     let scale = vp.surface.w;
     let w = vp.surface.x;
     let h = vp.surface.y;
@@ -282,7 +284,7 @@ fn presence_probe() {
     }
     let aw = abs(omega);
     let lvl = vp.expose.x;
-    if (aw < lvl * exp2(-16.0)) { discard; }
+    if (lvl <= 0.0 || aw < lvl * exp2(-16.0)) { discard; }
     let t2 = clamp((log2(aw / lvl) + 16.0) / 32.0, 0.0, 1.0);
     let c1 = mix(vec3f(0.0, 0.0, 0.0), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
     let c2 = mix(c1, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
@@ -415,7 +417,7 @@ fn presence_probe() {
             const evalW = Math.max(1, RX >> evalShift), evalH = Math.max(1, RY >> evalShift);
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
             const [fr, fu] = orientationFrame();
-            const exposure = Math.max(Math.abs(probedOmega), Math.pow(2, -64));
+            const exposure = Math.max(Math.abs(probedOmega), Math.pow(2, -40));
             try {
                 gpu.queue.writeBuffer(fieldBuf, 0, xyzval);
                 gpu.queue.writeBuffer(apertureBuf, 0, meta);
