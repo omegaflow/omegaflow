@@ -459,18 +459,6 @@ struct PendingSample {
     fields: Vec<(String, f64)>,
 }
 
-fn effective_ttl(archive: &Archive, url: &str, base_ttl: u64) -> u64 {
-    let host = url.split('/').nth(2).unwrap_or("");
-    archive
-        .ttl_eff
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .get(host)
-        .copied()
-        .map(|t| t as u64)
-        .unwrap_or(base_ttl)
-}
-
 fn origin_stale(
     origins: &HashMap<Origin, OriginState>,
     origin: Origin,
