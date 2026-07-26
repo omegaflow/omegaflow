@@ -459,6 +459,18 @@ struct PendingSample {
     fields: Vec<(String, f64)>,
 }
 
+fn effective_ttl(archive: &Archive, url: &str, base_ttl: u64) -> u64 {
+    let host = url.split('/').nth(2).unwrap_or("");
+    archive
+        .ttl_eff
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .get(host)
+        .copied()
+        .map(|t| t as u64)
+        .unwrap_or(base_ttl)
+}
+
 fn origin_stale(
     origins: &HashMap<Origin, OriginState>,
     origin: Origin,
@@ -1203,6 +1215,7 @@ struct SourceConfig {
     extracts: Vec<Extract>,
     headers: Vec<(String, String)>,
     pos_fields: Option<(String, String, Option<String>, f64)>,
+    ap: Option<f64>,
 }
 
 type FetchTask = (
@@ -1250,6 +1263,7 @@ struct Archive {
     results: Mutex<Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)>>,
     inflight: Mutex<std::collections::HashSet<Origin>>,
     fetch_queue: (Mutex<BinaryHeap<QueuedFetch>>, Condvar),
+    ttl_eff: Mutex<HashMap<String, f64>>,
 }
 struct WsFrame {
     opcode: u8,
@@ -1320,6 +1334,24 @@ fn extract_header(s: &str, n: &str) -> Option<String> {
     None
 }
 
+fn parse_http_headers(text: &str) -> (HashMap<String, String>, String) {
+    let mut headers = HashMap::new();
+    let mut body_start = text.len();
+    for (i, line) in text.lines().enumerate() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
+            body_start = text.lines().take(i + 1).map(|l| l.len() + 1).sum();
+            break;
+        }
+        if let Some(colon) = trimmed.find(':') {
+            let key = trimmed[..colon].trim().to_lowercase();
+            let val = trimmed[colon + 1..].trim().to_string();
+            headers.insert(key, val);
+        }
+    }
+    let body = text[body_start..].to_string();
+    (headers, body)
+}
 fn fetch_with_headers(url: &str, headers: &[(String, String)], ttl: u64) -> Option<String> {
     let connect_t = (((ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64).min(15);
     let max_t = (((ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(30);
@@ -1328,7 +1360,9 @@ fn fetch_with_headers(url: &str, headers: &[(String, String)], ttl: u64) -> Opti
         .arg("-m")
         .arg(max_t.to_string())
         .arg("--connect-timeout")
-        .arg(connect_t.to_string());
+        .arg(connect_t.to_string())
+        .arg("-D")
+        .arg("-");
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
@@ -1773,6 +1807,7 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_ttl: u64 = 0;
     let mut cur_res: i32 = 0;
     let mut cur_res_set = false;
+    let mut cur_ap: Option<f64> = None;
     let mut cur_url = String::new();
     let mut cur_lat: Option<f64> = None;
     let mut cur_lon: Option<f64> = None;
@@ -1844,6 +1879,7 @@ fn load_sources() -> Vec<SourceConfig> {
                         extracts: cur_extracts.clone(),
                         headers: cur_headers.clone(),
                         pos_fields: cur_pos.clone(),
+                        ap: cur_ap,
                     });
                 }
             }
@@ -1865,6 +1901,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_ttl = 0;
                 cur_res = 0;
                 cur_res_set = false;
+                cur_ap = None;
                 cur_url.clear();
                 cur_lat = None;
                 cur_lon = None;
@@ -1885,6 +1922,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_res = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0);
                 cur_res_set = true;
             }
+            "ap" => cur_ap = parts.get(1).and_then(|s| s.parse().ok()),
             "format" => cur_format = parts.get(1).unwrap_or(&"json").to_string(),
             "lat" => {
                 cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
@@ -2541,7 +2579,39 @@ fn fetch_worker(archive: Arc<Archive>) {
                 queue = cvar.wait(queue).unwrap_or_else(|e| e.into_inner());
             }
         };
-        let body = fetch_with_headers(&url, &headers, ttl);
+        let raw = fetch_with_headers(&url, &headers, ttl);
+        let body = raw.as_ref().map(|r| {
+            let (hdrs, b) = parse_http_headers(r);
+            if let Some(max_age) = hdrs.get("cache-control").and_then(|cc| {
+                cc.split(';').find_map(|part| {
+                    let p = part.trim();
+                    if p.starts_with("max-age=") {
+                        p[8..].parse::<f64>().ok()
+                    } else {
+                        None
+                    }
+                })
+            }) {
+                let host = url.split('/').nth(2).unwrap_or("").to_string();
+                archive
+                    .ttl_eff
+                    .lock()
+                    .unwrap_or_else(|e| e.into_inner())
+                    .insert(host, max_age.max(ttl as f64));
+            }
+            if let Some(retry_after) = hdrs
+                .get("retry-after")
+                .and_then(|ra| ra.parse::<f64>().ok())
+            {
+                let host = url.split('/').nth(2).unwrap_or("").to_string();
+                archive
+                    .ttl_eff
+                    .lock()
+                    .unwrap_or_else(|e| e.into_inner())
+                    .insert(host, retry_after.max(ttl as f64));
+            }
+            b
+        });
         archive
             .results
             .lock()
@@ -3344,11 +3414,21 @@ fn materialize(
     if vmax_floor > vmax {
         vmax = vmax_floor;
     }
+    let sample_r = if let Some(ap_deg) = src.ap {
+        let lat_rad = match &pend.position {
+            PendingPosition::Geodetic { lat, .. } => *lat * std::f64::consts::PI / 180.0,
+            PendingPosition::GeodeticFlow { lat, .. } => *lat * std::f64::consts::PI / 180.0,
+            _ => 0.0,
+        };
+        111195.0 * ap_deg * lat_rad.cos()
+    } else {
+        aperture(src.res)
+    };
     Some(Sample {
         origin,
         epoch: pend.epoch,
         ttl: src.ttl.max(1) as f64,
-        r: aperture(src.res),
+        r: sample_r,
         vmax,
         amax,
         p0f,
@@ -3395,6 +3475,11 @@ fn warm_cache(archive: Arc<Archive>) {
             u64,
         )> = Vec::new();
         {
+            let ttl_snapshot: HashMap<String, f64> = archive
+                .ttl_eff
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .clone();
             let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
             let (ex, ey, ez) = earth_position_icrs(now);
             let (mx, my, mz) = mars_position_icrs(now);
@@ -3403,7 +3488,12 @@ fn warm_cache(archive: Arc<Archive>) {
                 match &src.frame {
                     Frame::Ground { lat, lon, alt } => {
                         let origin = (i as u32, 0, 0);
-                        if !origin_stale(&origins, origin, src.ttl, now) {
+                        let eff_ttl = ttl_snapshot
+                            .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
+                            .copied()
+                            .map(|t| t as u64)
+                            .unwrap_or(src.ttl);
+                        if !origin_stale(&origins, origin, eff_ttl, now) {
                             continue;
                         }
                         let pos = geodetic_to_icrs(*lat, *lon, *alt, now);
@@ -3421,7 +3511,16 @@ fn warm_cache(archive: Arc<Archive>) {
                     }
                     Frame::Terra { scale } => {
                         let origin = (i as u32, 0, 0);
-                        if !origin_stale(&origins, origin, src.ttl, now) {
+                        if !origin_stale(
+                            &origins,
+                            origin,
+                            ttl_snapshot
+                                .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
+                                .copied()
+                                .map(|t| t as u64)
+                                .unwrap_or(src.ttl),
+                            now,
+                        ) {
                             continue;
                         }
                         let pos = (ex * scale, ey * scale, ez * scale);
@@ -3439,7 +3538,16 @@ fn warm_cache(archive: Arc<Archive>) {
                     }
                     Frame::Mars { scale } => {
                         let origin = (i as u32, 0, 0);
-                        if !origin_stale(&origins, origin, src.ttl, now) {
+                        if !origin_stale(
+                            &origins,
+                            origin,
+                            ttl_snapshot
+                                .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
+                                .copied()
+                                .map(|t| t as u64)
+                                .unwrap_or(src.ttl),
+                            now,
+                        ) {
                             continue;
                         }
                         let pos = (mx * scale, my * scale, mz * scale);
@@ -3477,7 +3585,16 @@ fn warm_cache(archive: Arc<Archive>) {
                                     region_quantize(lat, src.res),
                                     region_quantize(lon, src.res),
                                 );
-                                if !origin_stale(&origins, origin, src.ttl, now) {
+                                if !origin_stale(
+                                    &origins,
+                                    origin,
+                                    ttl_snapshot
+                                        .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
+                                        .copied()
+                                        .map(|t| t as u64)
+                                        .unwrap_or(src.ttl),
+                                    now,
+                                ) {
                                     continue;
                                 }
                                 tasks.push((
@@ -3492,7 +3609,16 @@ fn warm_cache(archive: Arc<Archive>) {
                             continue;
                         }
                         let origin = (i as u32, 0, 0);
-                        if !origin_stale(&origins, origin, src.ttl, now) {
+                        if !origin_stale(
+                            &origins,
+                            origin,
+                            ttl_snapshot
+                                .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
+                                .copied()
+                                .map(|t| t as u64)
+                                .unwrap_or(src.ttl),
+                            now,
+                        ) {
                             continue;
                         }
                         let celestial = src
@@ -3534,7 +3660,16 @@ fn warm_cache(archive: Arc<Archive>) {
                                 region_quantize(lat, src.res),
                                 region_quantize(lon, src.res),
                             );
-                            if !origin_stale(&origins, origin, src.ttl, now) {
+                            if !origin_stale(
+                                &origins,
+                                origin,
+                                ttl_snapshot
+                                    .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
+                                    .copied()
+                                    .map(|t| t as u64)
+                                    .unwrap_or(src.ttl),
+                                now,
+                            ) {
                                 continue;
                             }
                             tasks.push((
@@ -3684,6 +3819,7 @@ fn main() {
         results: Mutex::new(Vec::new()),
         inflight: Mutex::new(std::collections::HashSet::new()),
         fetch_queue: (Mutex::new(BinaryHeap::new()), Condvar::new()),
+        ttl_eff: Mutex::new(HashMap::new()),
     });
     for _ in 0..8 {
         let ar = Arc::clone(&archive);
