@@ -308,10 +308,8 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             ] });
         }
         let lastN = 0;
-        let gpuPending = false;
         function manifestWindow(ts) {
             if (!gpu) { initFieldGPU(); return; }
-            if (gpuPending) return;
             const dt = prevSyncTs > 0 ? (ts - prevSyncTs) / 1000 : 0;
             const blendPrev = prevWindowResponse.length > 0 && rawWindowResponse.length > 0 && dt < Φ;
             const n = Math.max(rawWindowResponse.length, prevWindowResponse.length);
@@ -364,8 +362,6 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                 pass.draw(3);
                 pass.end();
                 gpu.queue.submit([encoder.finish()]);
-                gpuPending = true;
-                gpu.queue.onSubmittedWorkDone().then(() => { gpuPending = false; });
                 fieldFrames++;
             } catch { gpu = null; }
         }
