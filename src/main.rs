@@ -17,6 +17,10 @@ const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
 const MU_EARTH: f64 = 3.986004418e14;
 const TERRA_DOMAIN: f64 = EARTH_RADIUS * 16.0;
+const PARSEC_M: f64 = 3.085677581e16;
+const C_LIGHT: f64 = 299792458.0;
+const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
+const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
 
 fn compute_gmst(tdb_secs: f64) -> f64 {
     let jd = tdb_secs / 86400.0 + J2000_EPOCH;
@@ -416,6 +420,7 @@ enum PendingPosition {
     StateVector {
         p: [f64; 3],
         v: [f64; 3],
+        track: bool,
     },
 }
 
@@ -1089,6 +1094,20 @@ enum Extract {
     Regex(String, String),
     XmlCount(String, String),
     Ephemeris(String),
+    CelestialMap {
+        arr_path: String,
+        ra_key: String,
+        dec_key: String,
+        dist_key: String,
+        dist_scale: f64,
+        plx_key: String,
+        z_key: String,
+        pmra_key: String,
+        pmdec_key: String,
+        rv_key: String,
+        rv_scale: f64,
+        fields: Vec<(String, String)>,
+    },
 }
 
 enum Frame {
@@ -1707,6 +1726,7 @@ fn load_sources() -> Vec<SourceConfig> {
                             Extract::Map { .. }
                                 | Extract::GeojsonEvents { .. }
                                 | Extract::Ephemeris(_)
+                                | Extract::CelestialMap { .. }
                         )
                     });
                 let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
@@ -1936,10 +1956,82 @@ fn load_sources() -> Vec<SourceConfig> {
                 }
             }
             "field_in" => {
-                if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
-                    if parts.len() >= 3 {
-                        fields.push((parts[1].to_string(), parts[2].to_string()));
+                if parts.len() >= 3 {
+                    match cur_extracts.last_mut() {
+                        Some(Extract::Map { fields, .. })
+                        | Some(Extract::CelestialMap { fields, .. }) => {
+                            fields.push((parts[1].to_string(), parts[2].to_string()));
+                        }
+                        _ => {}
                     }
+                }
+            }
+            "cmap" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::CelestialMap {
+                        arr_path: parts[1].to_string(),
+                        ra_key: String::new(),
+                        dec_key: String::new(),
+                        dist_key: String::new(),
+                        dist_scale: 1.0,
+                        plx_key: String::new(),
+                        z_key: String::new(),
+                        pmra_key: String::new(),
+                        pmdec_key: String::new(),
+                        rv_key: String::new(),
+                        rv_scale: 1.0,
+                        fields: Vec::new(),
+                    });
+                }
+            }
+            "ra_key" => {
+                if let Some(Extract::CelestialMap { ra_key, .. }) = cur_extracts.last_mut() {
+                    *ra_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "dec_key" => {
+                if let Some(Extract::CelestialMap { dec_key, .. }) = cur_extracts.last_mut() {
+                    *dec_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "dist_key" => {
+                if let Some(Extract::CelestialMap {
+                    dist_key,
+                    dist_scale,
+                    ..
+                }) = cur_extracts.last_mut()
+                {
+                    *dist_key = parts.get(1).unwrap_or(&"").to_string();
+                    *dist_scale = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(1.0);
+                }
+            }
+            "plx_key" => {
+                if let Some(Extract::CelestialMap { plx_key, .. }) = cur_extracts.last_mut() {
+                    *plx_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "z_key" => {
+                if let Some(Extract::CelestialMap { z_key, .. }) = cur_extracts.last_mut() {
+                    *z_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "pmra_key" => {
+                if let Some(Extract::CelestialMap { pmra_key, .. }) = cur_extracts.last_mut() {
+                    *pmra_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "pmdec_key" => {
+                if let Some(Extract::CelestialMap { pmdec_key, .. }) = cur_extracts.last_mut() {
+                    *pmdec_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "radvel_key" => {
+                if let Some(Extract::CelestialMap {
+                    rv_key, rv_scale, ..
+                }) = cur_extracts.last_mut()
+                {
+                    *rv_key = parts.get(1).unwrap_or(&"").to_string();
+                    *rv_scale = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(1.0);
                 }
             }
             _ => {}
@@ -2509,7 +2601,11 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                         }
                         pending.push(PendingSample {
                             epoch: now,
-                            position: PendingPosition::StateVector { p: p_now, v },
+                            position: PendingPosition::StateVector {
+                                p: p_now,
+                                v,
+                                track: true,
+                            },
                             fields,
                         });
                     }
@@ -2604,6 +2700,119 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     }
                 }
             }
+            Extract::CelestialMap {
+                arr_path,
+                ra_key,
+                dec_key,
+                dist_key,
+                dist_scale,
+                plx_key,
+                z_key,
+                pmra_key,
+                pmdec_key,
+                rv_key,
+                rv_scale,
+                fields,
+            } => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
+                        for v in arr.iter() {
+                            let (Some(ra_deg), Some(dec_deg)) =
+                                (jpath(v, ra_key), jpath(v, dec_key))
+                            else {
+                                continue;
+                            };
+                            let d = if !plx_key.is_empty() {
+                                match jpath(v, plx_key) {
+                                    Some(plx) if plx > 0.0 => PARSEC_M * 1000.0 / plx,
+                                    _ => {
+                                        if !z_key.is_empty() {
+                                            match jpath(v, z_key) {
+                                                Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
+                                                _ => continue,
+                                            }
+                                        } else if !dist_key.is_empty() {
+                                            match jpath(v, dist_key) {
+                                                Some(dd) if dd > 0.0 => dd * dist_scale,
+                                                _ => continue,
+                                            }
+                                        } else {
+                                            continue;
+                                        }
+                                    }
+                                }
+                            } else if !dist_key.is_empty() {
+                                match jpath(v, dist_key) {
+                                    Some(dd) if dd > 0.0 => dd * dist_scale,
+                                    _ => {
+                                        if !z_key.is_empty() {
+                                            match jpath(v, z_key) {
+                                                Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
+                                                _ => continue,
+                                            }
+                                        } else {
+                                            continue;
+                                        }
+                                    }
+                                }
+                            } else if !z_key.is_empty() {
+                                match jpath(v, z_key) {
+                                    Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
+                                    _ => continue,
+                                }
+                            } else {
+                                continue;
+                            };
+                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            for (fk, fn_) in fields {
+                                if let Some(val) = jpath(v, fk) {
+                                    ev_fields.push((fn_.clone(), val));
+                                }
+                            }
+                            if ev_fields.is_empty() {
+                                continue;
+                            }
+                            let ra = ra_deg.to_radians();
+                            let dec = dec_deg.to_radians();
+                            let (sa, ca) = ra.sin_cos();
+                            let (sd, cd) = dec.sin_cos();
+                            let p_hat = [cd * ca, cd * sa, sd];
+                            let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
+                            let mu_a = if pmra_key.is_empty() {
+                                0.0
+                            } else {
+                                jpath(v, pmra_key).unwrap_or(0.0) * MAS_YR_TO_RAD_S
+                            };
+                            let mu_d = if pmdec_key.is_empty() {
+                                0.0
+                            } else {
+                                jpath(v, pmdec_key).unwrap_or(0.0) * MAS_YR_TO_RAD_S
+                            };
+                            let vr = if rv_key.is_empty() {
+                                0.0
+                            } else {
+                                jpath(v, rv_key).unwrap_or(0.0) * rv_scale
+                            };
+                            let a_hat = [-sa, ca, 0.0];
+                            let d_hat = [-sd * ca, -sd * sa, cd];
+                            let vel = [
+                                d * (mu_a * a_hat[0] + mu_d * d_hat[0]) + vr * p_hat[0],
+                                d * (mu_a * a_hat[1] + mu_d * d_hat[1]) + vr * p_hat[1],
+                                d * (mu_a * a_hat[2] + mu_d * d_hat[2]) + vr * p_hat[2],
+                            ];
+                            pending.push(PendingSample {
+                                epoch: now,
+                                position: PendingPosition::StateVector {
+                                    p,
+                                    v: vel,
+                                    track: false,
+                                },
+                                fields: ev_fields,
+                            });
+                        }
+                    }
+                }
+            }
             Extract::GeojsonEvents {
                 mag_key,
                 min_mag,
@@ -2692,7 +2901,7 @@ fn materialize(
     }
     let mut vmax_floor = 0.0f64;
     let motion = match &pend.position {
-        PendingPosition::StateVector { p, v } => Motion::Linear { p: *p, v: *v },
+        PendingPosition::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
         PendingPosition::Geodetic { lat, lon, alt } => Motion::Ground {
             lat: *lat,
             lon: *lon,
@@ -2752,10 +2961,12 @@ fn materialize(
     };
     let abs = motion.at(pend.epoch, pend.epoch);
     let mut resid_ema = 0.0;
-    if matches!(
-        pend.position,
-        PendingPosition::Source | PendingPosition::StateVector { .. }
-    ) {
+    let track_origin = matches!(pend.position, PendingPosition::Source)
+        || matches!(
+            pend.position,
+            PendingPosition::StateVector { track: true, .. }
+        );
+    if track_origin {
         let entry = origins.entry(origin).or_default();
         if entry.has_prev {
             let dt = (pend.epoch - entry.prev_epoch).abs().max(1.0);
@@ -2911,12 +3122,16 @@ fn warm_cache(archive: Arc<Archive>) {
                         if !origin_stale(&origins, origin, src.ttl, now) {
                             continue;
                         }
+                        let celestial = src
+                            .extracts
+                            .iter()
+                            .any(|e| matches!(e, Extract::CelestialMap { .. }));
                         let prev = origins
                             .get(&origin)
                             .filter(|o| o.has_prev)
                             .map(|o| o.prev_abs);
                         if let Some(pa) = prev {
-                            if !presence_gate(&presences, (pa[0], pa[1], pa[2]), r) {
+                            if !celestial && !presence_gate(&presences, (pa[0], pa[1], pa[2]), r) {
                                 continue;
                             }
                         }
@@ -3003,7 +3218,10 @@ fn warm_cache(archive: Arc<Archive>) {
             let may_be_empty = src.extracts.iter().any(|e| {
                 matches!(
                     e,
-                    Extract::Map { .. } | Extract::GeojsonEvents { .. } | Extract::LastObj { .. }
+                    Extract::Map { .. }
+                        | Extract::GeojsonEvents { .. }
+                        | Extract::LastObj { .. }
+                        | Extract::CelestialMap { .. }
                 )
             });
             if pendings.is_empty() {

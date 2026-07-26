@@ -10,12 +10,11 @@ field altitude orbital_iss_alt_km
 source universe_iss_history
 ttl 10
 res 0
-lat 0
-lon 0
 url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
 field 0.latitude universe_iss_history_lat
 field 0.longitude universe_iss_history_lon
 field 0.altitude universe_iss_history_alt
+pos universe_iss_history_lat universe_iss_history_lon universe_iss_history_alt 1000
 
 source anu_quantum_entropy
 ttl 60
@@ -594,7 +593,7 @@ last a_index magnetosphere_ap_index
 source magnetosphere_solar_wind
 ttl 60
 terra 0.99
-res -4
+res -8
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 last_row bz_gsm magnetosphere_imf_bz_nt
 last_row bt magnetosphere_imf_bt_nt
@@ -839,35 +838,35 @@ last_obj energy ">=1 MeV" flux radiation_proton_flux_1mev
 source solar_events
 ttl 60
 terra 0
-res -5
+res -8
 url https://services.swpc.noaa.gov/json/edited_events.json
 last event magnetosphere_swpc_latest_event
 
 source solar_indices
 ttl 60
 terra 0
-res -5
+res -8
 url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
 last ssn solar_sunspot_number_observed
 
 source solar_radio_flux
 ttl 60
 terra 0
-res -5
+res -8
 url https://services.swpc.noaa.gov/json/solar-radio-flux.json
 last flux solar_radio_flux_observed_sfu
 
 source solar_sunspots
 ttl 60
 terra 0
-res -5
+res -8
 url https://services.swpc.noaa.gov/json/solar_regions.json
 count . solar_active_region_count
 
 source solar_wind
 ttl 60
 terra 0.99
-res -4
+res -8
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
 last_row speed solar_wind_speed_km_s
 last_row density solar_wind_density_cm3
@@ -885,7 +884,7 @@ last flux solar_xray_flux_wm2
 source solar_xray_flares
 ttl 60
 terra 0
-res -5
+res -8
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
 count flares solar_flare_count_7d
 last class_type solar_flare_class_7d
@@ -2321,28 +2320,28 @@ count lines geosphere_seismic_events_iris
 source magnetosphere_noaa_swpc_electron_flux
 ttl 300
 terra 1
-res -5
+res -8
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 last flux radiation_electron_flux_goes
 
 source magnetosphere_noaa_swpc_kp_index
 ttl 300
 terra 1
-res -5
+res -8
 url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
 last Kp magnetosphere_kp_index_noaa
 
 source magnetosphere_noaa_swpc_proton_flux
 ttl 300
 terra 1
-res -5
+res -8
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 last flux radiation_proton_flux_goes
 
 source magnetosphere_noaa_swpc_solar_wind
 ttl 300
 terra 1
-res -5
+res -8
 url https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json
 last_row speed magnetosphere_solar_wind_speed_noaa
 
@@ -2358,8 +2357,8 @@ regex ("totalItems":...,) cosmic_icecube_alert_circular_count
 
 source solar_noaa_swpc_xray_flux
 ttl 300
-terra 1
-res -7
+terra 0
+res -8
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
 last flux solar_xray_flux_goes
 
@@ -3669,10 +3668,9 @@ last dst exosphere_dst_nt
 
 source exosphere_interstellar_object_tracking
 ttl 3600
-terra 0
 res -5
-url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=3I&discovery=true
-field object.fullname cosmic_interstellar_object_latest_name
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris cosmic_interstellar_object_distance
 
 source exosphere_kp_index
 res 0
@@ -5399,7 +5397,7 @@ ephemeris orbital_callisto_distance
 
 source solar_cme
 terra 0
-res -6
+res -8
 ttl 3600
 url https://api.nasa.gov/DONKI/CME?startDate={yesterday}&api_key={nasa_key}
 count cme solar_cme_count_24h
@@ -5407,7 +5405,7 @@ deep activityID solar_cme_latest_id
 
 source solar_energetic_particles
 terra 0
-res -6
+res -8
 ttl 3600
 url https://api.nasa.gov/DONKI/SEP?startDate={yesterday}&api_key={nasa_key}
 count sep solar_sep_count_24h
@@ -5415,7 +5413,7 @@ count sep solar_sep_count_24h
 source solar_flares
 ttl 3600
 terra 0
-res -5
+res -8
 url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&api_key={nasa_key}
 count flares solar_flare_count_24h
 last classType solar_flare_class_latest
@@ -5424,29 +5422,29 @@ deep classType solar_flare_class_latest
 
 source solar_high_speed_streams
 terra 0
-res -6
+res -8
 ttl 3600
 url https://api.nasa.gov/DONKI/HSS?startDate={yesterday}&api_key={nasa_key}
 count hss high_speed_stream_count_24h
 
 source solar_interplanetary_shocks
 terra 0
-res -6
+res -8
 ttl 3600
 url https://api.nasa.gov/DONKI/IPS?startDate={yesterday}&api_key={nasa_key}
 count ips solar_shock_count_24h
 
 source solar_noaa_swpc_flare_count
 ttl 3600
-terra 1
-res -6
+terra 0
+res -8
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
 count lines solar_flare_count_noaa
 
 source solar_noaa_swpc_flares
 ttl 3600
-terra 1
-res -6
+terra 0
+res -8
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
 count lines solar_flare_count_noaa
 
@@ -5459,7 +5457,7 @@ ephemeris orbital_solar_orbiter_distance
 source solar_xclass_flares
 ttl 3600
 terra 0
-res -5
+res -8
 url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&classType=X&api_key={nasa_key}
 count flares solar_xflare_count_24h
 
@@ -6363,21 +6361,17 @@ url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP/?startDate=2024-01-01&endD
 count lines exosphere_donki_sep_count_2024
 
 source exosphere_exoplanet_count
-terra 0
 res -7
 ttl 86400
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT%20COUNT(*)%20FROM%20ps&format=json
-field 0.count(*) nasa_exoplanet_total_count
-
-source exosphere_exoplanets
-terra 0
-res -7
-ttl 86400
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+20+pl_name,pl_orbper,pl_rade,pl_eqt+FROM+pscomppars+WHERE+pl_eqt+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
-count data cosmic_exoplanet_count
-field pl_eqt cosmic_exoplanet_eqt_k
-field pl_orbper cosmic_exoplanet_period_d
-field pl_rade cosmic_exoplanet_radius_re
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+512+ra,dec,sy_dist,pl_eqt,pl_rade,pl_orbper,pl_bmasse+FROM+pscomppars+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
+cmap .
+ra_key ra
+dec_key dec
+dist_key sy_dist 3.085677581e16
+field_in pl_eqt cosmic_exoplanet_eqt_k
+field_in pl_rade cosmic_exoplanet_radius_re
+field_in pl_orbper cosmic_exoplanet_period_d
+field_in pl_bmasse cosmic_exoplanet_mass_earth
 
 source exosphere_f107_flux
 res 0
@@ -6388,11 +6382,15 @@ url https://services.swpc.noaa.gov/json/f107_cm_flux.json
 field 0.flux exosphere_f107_sfu
 
 source exosphere_hot_jupiters
-terra 0
 res -7
 ttl 86400
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT%20COUNT(*)%20FROM%20ps%20WHERE%20pl_orbper%3C1&format=json
-field 0.count(*) nasa_hot_jupiter_count
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+256+ra,dec,sy_dist,pl_eqt,pl_orbper+FROM+pscomppars+WHERE+pl_orbper%3C1+AND+sy_dist+IS+NOT+NULL+ORDER+BY+pl_orbper+ASC&format=json
+cmap .
+ra_key ra
+dec_key dec
+dist_key sy_dist 3.085677581e16
+field_in pl_eqt hot_jupiter_eqt_k
+field_in pl_orbper hot_jupiter_period_d
 
 source geosphere_earthquakes_2015_M5
 ttl 86400
@@ -6632,7 +6630,7 @@ last_row pH_sw hydrosphere_ph_pmel
 source iers_ut1_utc
 ttl 86400
 terra 1
-res -9
+res -2
 url https://maia.usno.navy.mil/ser7/finals2000A.daily
 last_line geosphere_ut1_utc_iers
 
@@ -6976,128 +6974,107 @@ field page.totalCount biosphere_openneuro_datasets_total
 source orbit_celestrak_active
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
 count lines orbital_active_satellites_celestrak
 
 source orbit_celestrak_active_satellites
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
 count lines orbital_active_satellites_celestrak
 
 source orbit_celestrak_all_satellites
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
 count lines orbital_satellites_active_celestrak
 
 source orbit_celestrak_cubesats
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=JSON
 count lines orbital_cubesats_celestrak
 
 source orbit_celestrak_debris
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
 count lines orbital_debris_tracked_celestrak
 
 source orbit_celestrak_debris_analyst
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
 count lines orbital_debris_tracked_celestrak
 
 source orbit_celestrak_engineering_sats
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=engineering&FORMAT=JSON
 count lines orbital_engineering_sats_celestrak
 
 source orbit_celestrak_glonass
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=glonass-ops&FORMAT=JSON
 count lines orbital_glonass_satellites_celestrak
 
 source orbit_celestrak_gps
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=JSON
 count lines orbital_gps_satellites_celestrak
 
 source orbit_celestrak_navigation_sats
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=gnss&FORMAT=JSON
 count lines orbital_navigation_sats_celestrak
 
 source orbit_celestrak_oneweb
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=oneweb&FORMAT=JSON
 count lines orbital_oneweb_satellites_celestrak
 
 source orbit_celestrak_science_sats
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=JSON
 count lines orbital_science_sats_celestrak
 
 source orbit_celestrak_space_stations
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=JSON
 count lines orbital_space_stations_celestrak
 
 source orbit_celestrak_starlink
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=JSON
 count lines orbital_starlink_satellites_celestrak
 
 source orbit_celestrak_weather_sats
 ttl 86400
 terra 1
-res -6
+res -3
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=JSON
 count lines orbital_weather_sats_celestrak
-
-source orbit_jpl_near_earth_asteroids
-ttl 86400
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sg-nea=1&limit=1
-field count orbital_near_earth_asteroids_jpl
-
-source orbit_jpl_near_earth_comets
-ttl 86400
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sg-nec=1&limit=1
-field count orbital_near_earth_comets_jpl
-
-source orbit_jpl_phas
-ttl 86400
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sg-pha=1&limit=1
-field count orbital_phas_jpl
 
 source orbital_apophis_vectors
 ttl 86400
@@ -7315,15 +7292,15 @@ field total biosphere_stackoverflow_questions_total
 
 source sunspot_number_global
 ttl 86400
-terra 1
-res -6
+terra 0
+res -8
 url https://www.sidc.be/silso/DATA/SN_d_tot_V2.0.txt
 last_line solar_sunspot_number_silso
 
 source sunspot_number_monthly
 ttl 86400
-terra 1
-res -6
+terra 0
+res -8
 url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
 last_line solar_sunspot_number_silso
 
@@ -7362,23 +7339,21 @@ field statistics.0.value molecular_proteins_total
 source universe_exoplanet_hosts
 ttl 86400
 res -8
-lat 0
-lon 0
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,pl_name,sy_dist+FROM+ps+ORDER+BY+sy_dist&format=json
-map .
-lat_key dec
-lon_key ra
+cmap .
+dec_key dec
+ra_key ra
+dist_key 3 3.085677581e16
 field_in sy_dist universe_exoplanet_distance_pc
 
 source universe_exoplanet_params
 ttl 86400
 res -8
-lat 0
-lon 0
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,sy_dist,pl_orbper,pl_rade+FROM+ps+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+sy_dist&format=json
-map .
-lat_key dec
-lon_key ra
+cmap .
+dec_key dec
+ra_key ra
+dist_key 2 3.085677581e16
 field_in sy_dist universe_exoplanet_distance_pc
 field_in pl_orbper universe_exoplanet_period_d
 field_in pl_rade universe_exoplanet_radius_re
@@ -7386,37 +7361,34 @@ field_in pl_rade universe_exoplanet_radius_re
 source universe_gaia_astrometric_binaries
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 ruwe
 
 source universe_gaia_binaries
 ttl 86400
-res 0
-lat 0
-lon 0
+res -7
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 field_in 3 parallax_mas
 
 source universe_gaia_blue_stars
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+-0.1+AND+phot_g_mean_mag+<+12
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 bp_rp
@@ -7424,46 +7396,42 @@ field_in 4 bp_rp
 source universe_gaia_blue_stragglers
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.1%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%3E2
-map data
-lat_key 1
-lon_key 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.1%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%3E2
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 bp_rp
 
 source universe_gaia_bright_2000
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+2000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+11
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 
 source universe_gaia_bright_giants
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20%3C%208%20AND%20parallax%20%3E%205
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 par
 
 source universe_gaia_bright_stars
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+7
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 bp_rp
@@ -7471,70 +7439,64 @@ field_in 4 bp_rp
 source universe_gaia_bulge
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%20FROM%20gaiadr3.gaia_source%20WHERE%20SQRT%28POWER%28ra-266.4%2C2%29%2BPOWER%28dec%2B29%2C2%29%29%3C5%20AND%20parallax%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20SQRT%28POWER%28ra-266.4%2C2%29%2BPOWER%28dec%2B29%2C2%29%29%3C5%20AND%20parallax%20IS%20NOT%20NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 
 source universe_gaia_cool_dwarfs
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E2%20AND%20bp_rp%3C4%20AND%20parallax%3E20
-map data
-lat_key 1
-lon_key 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E2%20AND%20bp_rp%3C4%20AND%20parallax%3E20
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 
 source universe_gaia_deep_1000
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+parallax_over_error+>+3
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 
 source universe_gaia_deep_mag
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20BETWEEN%2015%20AND%2018%20AND%20parallax%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 field_in 3 par
 
 source universe_gaia_distant_halo
 ttl 86400
 res -8
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+<+0.3+AND+parallax+>+0+AND+phot_g_mean_mag+<+14
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 
 source universe_gaia_extreme_blue
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%20-0.3%20AND%20phot_g_mean_mag%20%3C%2013
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 field_in 3 par
 field_in 4 bp_rp
@@ -7542,12 +7504,11 @@ field_in 4 bp_rp
 source universe_gaia_extreme_red
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3E%203.5%20AND%20phot_g_mean_mag%20%3C%2014
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 field_in 3 par
 field_in 4 bp_rp
@@ -7555,82 +7516,76 @@ field_in 4 bp_rp
 source universe_gaia_galactic_plane
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%20FROM%20gaiadr3.gaia_source%20WHERE%20ABS%28b%29%3C10%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ABS%28b%29%3C10%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%20IS%20NOT%20NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 
 source universe_gaia_giant_branch
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E1.5%20AND%20bp_rp%3C3%20AND%20phot_g_mean_mag%3C12%20AND%20parallax%3E2
-map data
-lat_key 1
-lon_key 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E1.5%20AND%20bp_rp%3C3%20AND%20phot_g_mean_mag%3C12%20AND%20parallax%3E2
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 
 source universe_gaia_high_parallax_stars
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 bp_rp
 
 source universe_gaia_high_proper_motion
 ttl 86400
-res 0
-lat 0
-lon 0
+res -7
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+50
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 
 source universe_gaia_high_velocity
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20radial_velocity%20IS%20NOT%20NULL%20AND%20ABS%28radial_velocity%29%20%3E%20200
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 field_in 3 par
 
 source universe_gaia_hot_subdwarfs
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.3%20AND%20phot_g_mean_mag%3C15%20AND%20parallax%3E1
-map data
-lat_key 1
-lon_key 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.3%20AND%20phot_g_mean_mag%3C15%20AND%20parallax%3E1
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 
 source universe_gaia_hypervelocity
 ttl 86400
-res 0
-lat 0
-lon 0
+res -7
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
+radvel_key 4 1000
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 radial_velocity_kms
@@ -7638,45 +7593,41 @@ field_in 4 radial_velocity_kms
 source universe_gaia_lmc
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 2
 field_in 2 par
 
 source universe_gaia_main_sequence
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E-0.2%20AND%20bp_rp%3C1%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E5
-map data
-lat_key 1
-lon_key 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E-0.2%20AND%20bp_rp%3C1%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E5
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 
 source universe_gaia_metal_poor
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%200.5%20AND%20phot_g_mean_mag%20%3C%2014%20AND%20parallax%20%3E%202
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 bp_rp
 
 source universe_gaia_metallicity
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cmh_gspphot%20FROM%20gaiadr3.gaia_source%20WHERE%20mh_gspphot%20IS%20NOT%20NULL%20AND%20parallax%20%3E%202
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 metallicity_dex
@@ -7684,12 +7635,11 @@ field_in 4 metallicity_dex
 source universe_gaia_milky_way_disk
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+BETWEEN+0.5+AND+5+AND+parallax_over_error+>+3+AND+phot_g_mean_mag+<+14
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 bp_rp
@@ -7697,35 +7647,33 @@ field_in 4 bp_rp
 source universe_gaia_nearby_1000
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
-map data
-lat_key 1
-lon_key 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 
 source universe_gaia_open_clusters
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 field_in 3 par
 
 source universe_gaia_radial_velocity
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+parallax+>+5
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
+radvel_key 4 1000
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 radial_velocity_kms
@@ -7733,23 +7681,21 @@ field_in 4 radial_velocity_kms
 source universe_gaia_red_clump
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E0.8%20AND%20bp_rp%3C1.2%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E3
-map data
-lat_key 1
-lon_key 0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E0.8%20AND%20bp_rp%3C1.2%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E3
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 bp_rp
 
 source universe_gaia_red_giants
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 bp_rp
@@ -7757,710 +7703,621 @@ field_in 4 bp_rp
 source universe_gaia_rr_lyrae
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.vari_classifier_result%20WHERE%20best_class_name%20%3D%20%27RR%20Lyrae%27
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 field_in 3 par
 
 source universe_gaia_rv_1000
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+12+AND+parallax+>+1
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 
 source universe_gaia_smc
 ttl 86400
 res -7
-lat 0
-lon 0
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 2
 field_in 2 par
 
 source universe_gaia_variable_classified
 ttl 86400
-res -3
-lat 0
-lon 0
+res -7
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.vari_classifier_result+WHERE+phot_g_mean_mag+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 field_in 3 parallax_mas
 
 source universe_gaia_white_dwarfs
 ttl 86400
-res 0
-lat 0
-lon 0
+res -7
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_g
 field_in 3 parallax_mas
 field_in 4 bp_rp
 
 source universe_gaia_young_stars
 ttl 86400
-res -3
-lat 0
-lon 0
+res -7
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+10+AND+phot_g_mean_mag+<+15+AND+bp_rp+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 
 source universe_simbad_agn
 ttl 86400
 res -8
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27AGN%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27AGN%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_blazars
 ttl 86400
 res -8
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27Bla%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Bla%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_brown_dwarfs
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec+FROM+basic+WHERE+otype=%27BD*%27
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,plx_value+FROM+basic+WHERE+otype=%27BD*%27
+cmap data
+dec_key 1
+ra_key 0
+plx_key 2
 
 source universe_simbad_carbon_stars
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27C*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27C*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_carbon_stars_var
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27cr%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27cr%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_cepheids
 ttl 86400
-res -3
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27Ce*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Ce*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_dark_nebulae
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27DNe%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27DNe%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_eclipsing_binaries
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27EB*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27EB*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_emission_stars
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27Em*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Em*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_flare_stars
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27Fl*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Fl*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_galaxies
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+>+0.01
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+>+0.01
+cmap data
+dec_key 1
+ra_key 0
+plx_key 4
+z_key 2
 field_in 2 redshift
 field_in 3 mag_v
 
 source universe_simbad_galaxy_clusters
 ttl 86400
 res -8
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift+FROM+basic+WHERE+otype=%27ClG%27+AND+rvz_redshift+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27ClG%27+AND+rvz_redshift+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
+z_key 2
 field_in 2 redshift
 
 source universe_simbad_gamma_bursts
 ttl 86400
 res -8
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27gam%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27gam%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_giant_stars
 ttl 86400
-res -3
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27HB*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27HB*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_globular_clusters
 ttl 86400
-res -2
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,rvz_redshift+FROM+basic+WHERE+otype=%27GlC%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27GlC%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 4
+z_key 3
 field_in 2 mag_v
 field_in 3 redshift
 
 source universe_simbad_gravitational_lenses
 ttl 86400
 res -8
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27GravLens%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27GravLens%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_herbig_haro
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27HH%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27HH%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_hvc
 ttl 86400
-res -4
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20100%20ra%2Cdec%20FROM%20basic%20WHERE%20otype%3D%27HVC%27
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20100%20ra%2Cdec%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27HVC%27
+cmap data
+dec_key 1
+ra_key 0
+plx_key 2
 
 source universe_simbad_interstellar_medium
 ttl 86400
-res -4
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27ISM%27%20AND%20flux_V%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27ISM%27%20AND%20flux_V%20IS%20NOT%20NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_ir_sources
 ttl 86400
-res -4
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27Ir%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27Ir%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_ism
 ttl 86400
-res -4
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27ISM%27
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27ISM%27
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_long_period
 ttl 86400
-res -4
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27LP%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27LP%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_masers
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27Mas%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Mas%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_microquasars
 ttl 86400
-res -6
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27MQO%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27MQO%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_millisecond_pulsars
 ttl 86400
-res -1
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27ms*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27ms*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_mira_variables
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27Mi*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Mi*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_molecule_clouds
 ttl 86400
-res -4
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27MolC%27
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27MolC%27
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_nebulae
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V+FROM+basic+WHERE+otype+IN+(%27Neb%27,%27PN%27,%27HII%27,%27SNR%27,%27MolC%27)+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype+IN+(%27Neb%27,%27PN%27,%27HII%27,%27SNR%27,%27MolC%27)+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 4
+z_key 2
 field_in 2 redshift
 field_in 3 mag_v
 
 source universe_simbad_novae
 ttl 86400
-res -1
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27Nova%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Nova%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_oh_maser
 ttl 86400
-res -4
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27OH%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27OH%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_oh_masers
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27OH*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27OH*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_pre_ms_stars
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27pr*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27pr*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_proper_motion
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27PM*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27PM*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_pulsars
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V+FROM+basic+WHERE+otype=%27Pulsar%27
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27Pulsar%27
+cmap data
+dec_key 1
+ra_key 0
+plx_key 4
+z_key 2
 field_in 2 redshift
 field_in 3 mag_v
 
 source universe_simbad_quasars
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V+FROM+basic+WHERE+otype=%27QSO%27
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27QSO%27
+cmap data
+dec_key 1
+ra_key 0
+plx_key 4
+z_key 2
 field_in 2 redshift
 field_in 3 mag_v
 
 source universe_simbad_red_giants
 ttl 86400
-res -3
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27RG*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RG*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_red_supergiants
 ttl 86400
-res -6
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27sg*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27sg*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_reflection_nebulae
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27RNeb%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RNeb%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_rr_lyrae
 ttl 86400
-res -3
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27RR*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RR*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_s_stars
 ttl 86400
-res -4
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27S%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27S%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_stellar_associations
 ttl 86400
-res -3
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27Asoc*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Asoc*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_supernova_remnants
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27SNR%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27SNR%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_supernovae
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,rvz_redshift+FROM+basic+WHERE+otype=%27SN%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27SN%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 4
+z_key 3
 field_in 2 mag_v
 field_in 3 redshift
 
 source universe_simbad_symbiotic_stars
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27Sy*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Sy*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_ttauri_stars
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27TT*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27TT*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_variable_stars
 ttl 86400
-res -1
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift+FROM+basic+WHERE+otype=%27V*%27+AND+rvz_redshift+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27V*%27+AND+rvz_redshift+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
+z_key 2
 field_in 2 redshift
 
 source universe_simbad_white_dwarfs
 ttl 86400
-res -1
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27WD*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27WD*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_wolf_rayet_stars
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V+FROM+basic+WHERE+otype=%27WR*%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27WR*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_xray_sources
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27X%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27X%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_young_stellar_objects
 ttl 86400
-res 0
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V+FROM+basic+WHERE+otype=%27S*Y%27+AND+flux_V+IS+NOT+NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27S*Y%27+AND+flux_V+IS+NOT+NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_simbad_yso
 ttl 86400
-res -3
-lat 0
-lon 0
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%20FROM%20basic%20WHERE%20otype%3D%27YSO%27%20AND%20flux_V%20IS%20NOT%20NULL
-map data
-lat_key 1
-lon_key 0
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27YSO%27%20AND%20flux_V%20IS%20NOT%20NULL
+cmap data
+dec_key 1
+ra_key 0
+plx_key 3
 field_in 2 mag_v
 
 source universe_vizier_2mass
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+raj2000,dej2000,j_m,h_m+FROM+%22II%2F246%2Fout%22+WHERE+j_m+<+14
-map data
-lat_key 1
-lon_key 0
-field_in 2 j_mag
-field_in 3 h_mag
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_2mass_gaia_g_mag
 
 source universe_vizier_apass
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+raj2000,dej2000,bmag,vmag+FROM+%22II%2F336%2Fapass9%22+WHERE+bmag+<+13
-map data
-lat_key 1
-lon_key 0
-field_in 2 bmag
-field_in 3 vmag
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,e.bmag,e.vmag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.apassdr9_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.apassdr9+AS+e+ON+x.clean_apassdr9_oid=e.recno+WHERE+g.parallax+>+0+AND+e.bmag+<+13
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_vizier_bmag
+field_in 4 universe_vizier_vmag
 
 source universe_vizier_panstarrs
 ttl 86400
 res -7
-lat 0
-lon 0
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+raj2000,dej2000,gmag,rmag+FROM+%22II%2F349%2Fps1%22+WHERE+gmag+<+17
-map data
-lat_key 1
-lon_key 0
-field_in 2 gmag
-field_in 3 rmag
-
-source universe_vizier_ucac4
-ttl 86400
-res -7
-lat 0
-lon 0
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20raj2000%2Cdej2000%2Cjmag%2Chmag%20FROM%20%22I/322A/out%22%20WHERE%20jmag%20%3C%2014
-map .
-lat_key dej2000
-lon_key raj2000
-field_in jmag universe_vizier_jmag
-field_in hmag universe_vizier_hmag
-
-source universe_vizier_ucac5
-ttl 86400
-res -7
-lat 0
-lon 0
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+raj2000,dej2000,jmag+FROM+%22I%2F340%2Fucac5%22+WHERE+jmag+<+14
-map data
-lat_key 1
-lon_key 0
-field_in 2 jmag
-
-source universe_vizier_vsx
-ttl 86400
-res -3
-lat 0
-lon 0
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+raj2000,dej2000,j_mag,v_mag+FROM+%22B%2Fvsx%2Fvsx%22+WHERE+j_mag+<+13
-map data
-lat_key 1
-lon_key 0
-field_in 2 j_mag
-field_in 3 v_mag
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_panstarrs_gaia_g_mag
 
 source uspto_patents_total
 ttl 86400
@@ -9127,170 +8984,305 @@ url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25
 deep total hydrosphere_spring_count
 
 source exosphere_gaia_nearby_stars
-terra 0
-res -7
 ttl 604800
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
-field data.0.0 gaia_nearby_star_count
+res -7
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax+>+0+ORDER+BY+parallax+DESC
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 gaia_nearby_star_mag
 
 source exosphere_gaia_stars
-terra 0
-res -7
 ttl 604800
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50+source_id,ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+3.0+ORDER+BY+phot_g_mean_mag
-count data cosmic_bright_stars_count
-path data.0.ra cosmic_star_ra
-path data.0.dec cosmic_star_dec
-path data.0.phot_g_mean_mag cosmic_star_magnitude
-path data.0.parallax cosmic_star_parallax_mas
+res -7
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+6+AND+parallax+>+0+ORDER+BY+phot_g_mean_mag
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 cosmic_star_magnitude
 
 source exosphere_gaia_stellar_ages
-terra 0
-res -7
 ttl 604800
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5+source_id,age_flame,mass_flame,teff_gspphot+FROM+gaiadr3.astrophysical_parameters+WHERE+age_flame+IS+NOT+NULL+ORDER+BY+age_flame+DESC
-field age_flame cosmic_oldest_star_age_gyr
-field teff_gspphot cosmic_oldest_star_temp_k
-
-source exosphere_gaia_total_measured_stars
-terra 0
 res -7
-ttl 604800
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax>0
-field data.0.0 gaia_total_measured_star_count
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+128+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,ap.age_flame,ap.teff_gspphot+FROM+gaiadr3.astrophysical_parameters+AS+ap+JOIN+gaiadr3.gaia_source+AS+g+ON+ap.source_id=g.source_id+WHERE+ap.age_flame+IS+NOT+NULL+AND+g.parallax+>+0+ORDER+BY+ap.age_flame+DESC
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 cosmic_oldest_star_age_gyr
+field_in 7 cosmic_oldest_star_temp_k
 
 source exosphere_gaia_variable_stars
-terra 0
-res -7
 ttl 604800
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.vari_classifier_result
-field data.0.0 gaia_variable_star_count
+res -7
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,v.pf+FROM+gaiadr3.vari_cepheid+AS+v+JOIN+gaiadr3.gaia_source+AS+g+ON+v.source_id=g.source_id+WHERE+g.parallax+>+0+ORDER+BY+v.pf+DESC
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 gaia_cepheid_period_d
 
 source exosphere_sdss_cosmic_web_galaxies
-terra 0
-res -7
 ttl 604800
-url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?format=json&cmd=SELECT+TOP+10+*+FROM+SpecObj+WHERE+class=%27GALAXY%27+AND+z+BETWEEN+0.1+AND+0.2
-field 0.Rows sdss_cosmic_web_galaxy_records
+res -7
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?format=json&cmd=SELECT+TOP+1024+ra,dec,z,petroMag_g+FROM+SpecObj+WHERE+class=%27GALAXY%27+AND+z+BETWEEN+0.01+AND+2+AND+petroMag_g+<+19
+cmap 0.Rows
+ra_key ra
+dec_key dec
+z_key z
+field_in petroMag_g sdss_galaxy_mag_g
 
 source exosphere_simbad_brown_dwarfs
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27BD*%27
-path data.0.0 cosmic_simbad_brown_dwarfs
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27BD*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_brown_dwarf_plx_mas
+field_in 6 simbad_brown_dwarf_redshift
 
 source exosphere_simbad_carbon_stars
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27C*%27
-path data.0.0 cosmic_simbad_carbon_stars
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27C*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_carbon_star_plx_mas
+field_in 6 simbad_carbon_star_redshift
 
 source exosphere_simbad_eclipsing_binaries
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27EB*%27
-path data.0.0 cosmic_simbad_eclipsing_binaries
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27EB*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_eclipsing_binary_plx_mas
+field_in 6 simbad_eclipsing_binary_redshift
 
 source exosphere_simbad_galaxies
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Galaxy'
-field data.0.0 simbad_galaxy_count
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_galaxy_plx_mas
+field_in 6 simbad_galaxy_redshift
 
 source exosphere_simbad_galaxy_clusters
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ClG%27
-path data.0.0 cosmic_galaxy_cluster_count
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27ClG%27+AND+rvz_redshift+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_galaxy_cluster_plx_mas
+field_in 6 simbad_galaxy_cluster_redshift
 
 source exosphere_simbad_high_z_galaxies
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+%3E+5
-path data.0.0 cosmic_galaxies_z_gt5
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+%3E+5+ORDER+BY+rvz_redshift+DESC
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 cosmic_galaxies_z_gt5_redshift
 
 source exosphere_simbad_highest_redshift_quasar
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1+main_id,ra,dec,rvz_redshift+FROM+basic+WHERE+otype='QSO'+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
-field data.0.0 simbad_highest_redshift_quasar_z
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+16+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 simbad_highest_redshift_quasar_z
 
 source exosphere_simbad_millisecond_pulsars
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ms*%27
-path data.0.0 cosmic_millisecond_pulsar_count
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27ms*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_millisecond_pulsar_plx_mas
+field_in 6 simbad_millisecond_pulsar_redshift
 
 source exosphere_simbad_novae
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Nova'
-field data.0.0 simbad_nova_count
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Nova%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_nova_plx_mas
+field_in 6 simbad_nova_redshift
 
 source exosphere_simbad_pulsars
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Pulsar'
-field data.0.0 simbad_pulsar_count
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Pulsar%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_pulsar_plx_mas
+field_in 6 simbad_pulsar_redshift
 
 source exosphere_simbad_quasars
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='QSO'
-field data.0.0 simbad_quasar_count
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 simbad_quasar_redshift
 
 source exosphere_simbad_supernovae
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='SN'
-field data.0.0 simbad_supernova_count
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27SN%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_supernova_plx_mas
+field_in 6 simbad_supernova_redshift
 
 source exosphere_simbad_symbiotic_stars
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Sy*%27
-path data.0.0 cosmic_simbad_symbiotic_stars
-
-source exosphere_simbad_total_objects
-terra 0
 res -7
-ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic
-field data.0.0 simbad_total_object_count
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Sy*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_symbiotic_star_plx_mas
+field_in 6 simbad_symbiotic_star_redshift
 
 source exosphere_simbad_white_dwarfs
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WD*'
-field data.0.0 simbad_white_dwarf_count
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27WD*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_white_dwarf_plx_mas
+field_in 6 simbad_white_dwarf_redshift
 
 source exosphere_simbad_wolf_rayet
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27WR*%27
-path data.0.0 cosmic_simbad_wolf_rayet_stars
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27WR*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_wolf_rayet_plx_mas
+field_in 6 simbad_wolf_rayet_redshift
 
 source exosphere_simbad_young_stellar_objects
-terra 0
-res -7
 ttl 604800
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27S*Y%27
-path data.0.0 cosmic_simbad_young_stellar_objects
+res -7
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27S*Y%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_yso_plx_mas
+field_in 6 simbad_yso_redshift
+
 
 source geosphere_ne_glaciers
 ttl 604800
@@ -11633,146 +11625,6 @@ lon 13.576
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=dark+matter+direct+detection+limit+XENONnT+LZ&fields=titles,citation_count
 field hits.hits.0.metadata.citation_count quantum_dark_matter_limit_citations
 
-source exosphere_exoplanet_imaging_confirmed
-ttl 2592000
-res -7
-terra 1
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+as+n+FROM+ps+WHERE+pl_discmethod+LIKE+'%imaging%'&format=votable
-regex "(<TD>...</TD>)" exosphere_exoplanets_imaging_confirmed
-
-source exosphere_exoplanet_rv_confirmed
-ttl 2592000
-res -7
-terra 1
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+as+n+FROM+ps+WHERE+pl_discmethod+LIKE+'%radial%velocity%'&format=votable
-regex "(<TD>...</TD>)" exosphere_exoplanets_rv_confirmed
-
-source exosphere_exoplanet_transit_confirmed
-ttl 2592000
-res -7
-terra 1
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+as+n+FROM+ps+WHERE+pl_discmethod+LIKE+'%transit%'&format=votable
-regex "(<TD>...</TD>)" exosphere_exoplanets_transit_confirmed
-
-source exosphere_gaia_astrometric_solutions
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+astrometric_chi2_al IS NOT NULL&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_astrometric_sources
-
-source exosphere_gaia_bp_rp_stars
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+phot_bp_mean_mag IS NOT NULL AND phot_rp_mean_mag IS NOT NULL&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_bp_rp_stars
-
-source exosphere_gaia_bp_spectra
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+bp_n_cont_transits IS NOT NULL&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_bp_spectra_sources
-
-source exosphere_gaia_dr3_total
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_total_stars
-
-source exosphere_gaia_parallax_stars
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax_over_error>5&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_parallax_stars
-
-source exosphere_gaia_photometric_measurements
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag IS NOT NULL&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_photometric_sources
-
-source exosphere_gaia_quasars
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+class!=6 AND class!=7&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_stars_and_quasars
-
-source exosphere_gaia_rp_spectra
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+rp_n_cont_transits IS NOT NULL&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_rp_spectra_sources
-
-source exosphere_gaia_rv_measurements
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+radial_velocity IS NOT NULL&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_rv_sources
-
-source exosphere_gaia_rv_stars
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+radial_velocity IS NOT NULL&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_rv_stars
-
-source exosphere_gaia_total_sources
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_sources_total
-
-source exosphere_gaia_vari_summary
-ttl 2592000
-res -9
-terra 1
-url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT+COUNT(*)+as+n+FROM+gaiadr3.vari_summary&format=json&request=doQuery&lang=ADQL
-field data.0.0 exosphere_gaia_variable_stars_total
-
-source exosphere_sdss_photometric_objects
-ttl 2592000
-res -7
-terra 1
-url https://skyserver.sdss.org/dr18/en/tools/search/sql.aspx?cmd=SELECT+COUNT(*)+as+n+FROM+PhotoObj&format=csv
-last_line exosphere_sdss_photometric_objects_total
-
-source exosphere_sdss_spectra_total
-ttl 2592000
-res -7
-terra 1
-url https://skyserver.sdss.org/dr18/en/tools/search/sql.aspx?cmd=SELECT+COUNT(*)+as+n+FROM+SpecObj&format=csv
-last_line exosphere_sdss_galaxy_spectra_total
-
-source exosphere_sloan_galaxy_spectra
-ttl 2592000
-res -7
-terra 1
-url https://skyserver.sdss.org/dr18/en/tools/search/sql.aspx?cmd=SELECT+COUNT(*)+as+n+FROM+SpecObj&format=csv
-last_line exosphere_sloan_spectra_total
-
-source exosphere_sloan_photometric_catalog
-ttl 2592000
-res -7
-terra 1
-url https://skyserver.sdss.org/dr18/en/tools/search/sql.aspx?cmd=SELECT+COUNT(*)+as+n+FROM+PhotoObj&format=csv
-last_line exosphere_sloan_photo_total
-
-source exosphere_twomass_point_sources
-ttl 2592000
-res -8
-terra 1
-url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+as+n+FROM+fp_psc&format=votable
-regex "(<TD>...</TD>)" exosphere_twomass_sources_total
-
 source geopages
 ttl 2592000
 res 4
@@ -11918,83 +11770,6 @@ lat 42.454
 lon 13.576
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrinoless+double+beta+decay+limit&fields=titles,citation_count
 field hits.hits.0.metadata.citation_count quantum_double_beta_limit_citations
-
-source orbit_jpl_asteroids_numbered
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&sb-type=d&limit=1
-field count orbital_asteroids_numbered_jpl
-
-source orbit_jpl_asteroids_total
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?limit=1
-field count orbital_asteroids_total_jpl
-
-source orbit_jpl_comet_count
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sg-kind=C&limit=1
-field signature.count orbital_comet_total_jpl
-
-source orbit_jpl_comets_numbered
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=c&sb-type=d&limit=1
-field count orbital_comets_numbered_jpl
-
-source orbit_jpl_comets_total
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=c&limit=1
-field count orbital_comets_total_jpl
-
-source orbit_jpl_mars_crossers
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sg-mca=1&limit=1
-field count orbital_mars_crossers_jpl
-
-source orbit_jpl_neo_count
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sg-kind=A&sg-group=NEO&limit=1
-field signature.count orbital_neo_total_jpl
-
-source orbit_jpl_outer_asteroids
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sg-cta=1&sg-dpo=1&limit=1
-field count orbital_outer_asteroids_jpl
-
-source orbit_jpl_pha_count
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sg-kind=A&sg-group=PHA&limit=1
-field signature.count orbital_pha_total_jpl
-
-source orbit_jpl_small_bodies
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sg-kind=A&sg-group=ALL&limit=1
-field signature.count orbital_small_bodies_total_jpl
-
-source orbit_jpl_small_bodies_count
-ttl 2592000
-terra 1
-res -7
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sg-kind=A&sg-group=ALL&limit=1
-field signature.count orbital_small_bodies_total_jpl
 
 source paleoclimate_dome_fuji_co2
 res 0
