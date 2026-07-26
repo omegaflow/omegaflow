@@ -852,10 +852,10 @@ fn presence_probe() {
             const [fr, fu, ff] = orientationFrame();
             if (keysDown.has('ArrowRight')) { pPresence[0] += fr[0] * panSpeed; pPresence[1] += fr[1] * panSpeed; pPresence[2] += fr[2] * panSpeed; }
             if (keysDown.has('ArrowLeft')) { pPresence[0] -= fr[0] * panSpeed; pPresence[1] -= fr[1] * panSpeed; pPresence[2] -= fr[2] * panSpeed; }
-            if (keysDown.has('ArrowUp')) { pPresence[0] += fu[0] * panSpeed; pPresence[1] += fu[1] * panSpeed; pPresence[2] += fu[2] * panSpeed; }
-            if (keysDown.has('ArrowDown')) { pPresence[0] -= fu[0] * panSpeed; pPresence[1] -= fu[1] * panSpeed; pPresence[2] -= fu[2] * panSpeed; }
-            if (keysDown.has('PageUp')) { pPresence[0] += ff[0] * panSpeed; pPresence[1] += ff[1] * panSpeed; pPresence[2] += ff[2] * panSpeed; }
-            if (keysDown.has('PageDown')) { pPresence[0] -= ff[0] * panSpeed; pPresence[1] -= ff[1] * panSpeed; pPresence[2] -= ff[2] * panSpeed; }
+            if (keysDown.has('ArrowUp')) { pPresence[0] += ff[0] * panSpeed; pPresence[1] += ff[1] * panSpeed; pPresence[2] += ff[2] * panSpeed; }
+            if (keysDown.has('ArrowDown')) { pPresence[0] -= ff[0] * panSpeed; pPresence[1] -= ff[1] * panSpeed; pPresence[2] -= ff[2] * panSpeed; }
+            if (keysDown.has('PageUp')) { pPresence[0] += fu[0] * panSpeed; pPresence[1] += fu[1] * panSpeed; pPresence[2] += fu[2] * panSpeed; }
+            if (keysDown.has('PageDown')) { pPresence[0] -= fu[0] * panSpeed; pPresence[1] -= fu[1] * panSpeed; pPresence[2] -= fu[2] * panSpeed; }
             const gp = navigator.getGamepads ? Array.from(navigator.getGamepads()).find(g => g && g.connected) : null;
             if (gp) {
                 const dz = 1 / 16;
