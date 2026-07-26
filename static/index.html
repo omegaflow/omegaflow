@@ -751,7 +751,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             transport.tickTime = stableTick;
 
             if (rawWindowResponse.length > 0) {
-                const targetScale = windowMedianAperture() * 2.0;
+                const targetScale = Math.max(windowMedianAperture() * 2.0, 1e6);
                 const tau = 1000.0;
                 gridStep += (targetScale - gridStep) * (1.0 - Math.exp(-rawTick / tau));
             }
