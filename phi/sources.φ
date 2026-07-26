@@ -534,10 +534,13 @@ geojson events properties.mag 0.0 seismic_magnitude_mw seismic_depth_m
 source geosphere_usgs_earthquakes_24h
 ttl 60
 res 0
-lat 39.749
-lon -105.221
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 field metadata.count seismic_count_24h
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in geometry.coordinates.2 geosphere_quake_depth_km
+field_in properties.mag geosphere_quake_magnitude
 
 source geosphere_usgs_earthquakes_hour
 ttl 60
@@ -1008,6 +1011,22 @@ lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
 field_in properties.mag geosphere_quake_mag
 field_in properties.sig geosphere_quake_sig
+
+source geosphere_nws_alerts
+ttl 300
+res -2
+lat 0
+lon 0
+url https://api.weather.gov/alerts/active
+count features atmosphere_nws_active_alert_count
+
+source geosphere_nws_tsunami_warnings
+ttl 300
+res -2
+lat 0
+lon 0
+url https://api.weather.gov/alerts/active?event=Tsunami%20Warning
+count features geosphere_tsunami_warning_count
 
 source geosphere_tsunami_alerts_ntwc
 ttl 300
@@ -2502,6 +2521,21 @@ res 0
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto
 field minutely_15.lightning_potential atmosphere_lightning_potential
 
+source atmosphere_metar_global
+ttl 600
+res 0
+lat 0
+lon 0
+url https://aviationweather.gov/api/data/metar?format=json&bbox=-180,-90,180,90
+map .
+lat_key lat
+lon_key lon
+alt_key elev
+field_in temp atmosphere_metar_temp_c
+field_in altim atmosphere_metar_pressure_hpa
+field_in wspd atmosphere_metar_wind_kt
+field_in visib atmosphere_metar_visibility
+
 source atmosphere_pressure_levels
 ttl 600
 res 3
@@ -2517,6 +2551,17 @@ res 1
 url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
 field 0.sensordatavalues.0.value biosphere_pm25_ugm3
 field 0.sensordatavalues.1.value biosphere_pm10_ugm3
+
+source atmosphere_sigmet
+ttl 600
+res -1
+lat 0
+lon 0
+url https://aviationweather.gov/api/data/airsigmet?format=json
+map .
+field_in altitudeHi1 atmosphere_sigmet_alt_hi_ft
+field_in movementDir atmosphere_sigmet_movement_dir
+field_in movementSpd atmosphere_sigmet_movement_spd_kt
 
 source atmosphere_thunderstorm
 ttl 600
@@ -3701,6 +3746,26 @@ res -2
 terra 1
 url https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires
 count events biosphere_eonet_wildfire_count
+
+source cosmos_gaia_dr3_sample
+ttl 86400
+res -7
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+200+ra,dec,parallax,phot_rp_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>10
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 mag_rp
+
+source cosmos_neo_close_approaches
+ttl 3600
+res -6
+terra 0
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+count data cosmos_neo_count
+field data.0.4 cosmos_neo_first_dist_au
+field data.0.7 cosmos_neo_first_v_kms
+field data.0.10 cosmos_neo_first_h_mag
 
 source dockerhub_alpine_pulls
 ttl 3600
@@ -5231,6 +5296,18 @@ lat_key lat
 lon_key lon
 field_in tags.maxspeed geosphere_speed_camera_limit_kmh
 
+source geosphere_usgs_earthquakes_month
+ttl 3600
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in geometry.coordinates.2 geosphere_quake_depth_km
+field_in properties.mag geosphere_quake_magnitude
+
 source geosphere_usgs_significant_earthquakes
 ttl 3600
 res 0
@@ -5279,6 +5356,17 @@ ttl 3600
 res -4
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ephemeris orbital_haumea_distance
+
+source hydrosphere_drifters_hourly
+ttl 3600
+res 0
+lat 0
+lon 0
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+map table.rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_drifter_sst_k
 
 source hydrosphere_erddap_smartbay_spl
 ttl 3600
@@ -5364,6 +5452,21 @@ res -3
 terra 1
 url https://api.nasa.gov/DONKI/MPC?startDate={yesterday}&api_key={nasa_key}
 count mpc magnetopause_crossing_count_24h
+
+source magnetosphere_solar_regions
+ttl 3600
+res -6
+terra 0.99
+url https://services.swpc.noaa.gov/json/solar_regions.json
+map .
+lat_key latitude
+lon_key longitude
+field_in region magnetosphere_sunspot_region
+field_in area magnetosphere_sunspot_area
+field_in number_spots magnetosphere_spot_count
+field_in extent magnetosphere_spot_extent
+field_in spot_class magnetosphere_spot_class
+field_in mag_class magnetosphere_mag_class
 
 source makemake_vectors
 ttl 3600
@@ -6266,6 +6369,24 @@ res 4
 url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count;
 deep nodes technosphere_public_wlan_5km
 
+source biosphere_protected_lands_area
+ttl 86400
+res 3
+lat 0
+lon 0
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
+flatten features
+field_in scalerank biosphere_park_area_rank
+
+source biosphere_protected_lands_point
+ttl 86400
+res 3
+lat 0
+lon 0
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson
+flatten features
+field_in scalerank biosphere_park_rank
+
 source biosphere_restcountries_population
 ttl 86400
 res 0
@@ -6347,6 +6468,13 @@ lon -122.573
 url https://www.chime-frb.ca/catalog
 last_line exosphere_chime_frb_count
 
+source cosmos_mars_landers
+ttl 86400
+res 0
+mars 1
+url https://gist.githubusercontent.com/burritojustice/2d967b31c3bd11165b4439ebe98ecb01/raw/8594b09096f93f723c929c397de49ed7ac8ecc64/mars_landers.geojson
+flatten features
+
 source cosmos_mars_weather
 ttl 86400
 res -4
@@ -6355,6 +6483,24 @@ url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
 path soles.0.min_temp cosmos_mars_min_temp_c
 path soles.0.max_temp cosmos_mars_max_temp_c
 path soles.0.pressure cosmos_mars_pressure_pa
+
+source cosmos_tle_catalog
+ttl 86400
+res -7
+terra 0
+url https://tle.ivanstanojevic.me/api/tle/
+field totalItems cosmos_tle_total_satellites
+count member cosmos_tle_page_count
+field totalItems cosmos_tle_total_satellites
+
+source cosmos_tle_search_iss
+ttl 86400
+res -7
+terra 0
+url https://tle.ivanstanojevic.me/api/tle/?search=ISS&page-size=50
+field totalItems cosmos_tle_iss_related_total
+count member cosmos_tle_iss_related_count
+field member.0.satelliteId cosmos_tle_iss_satellite_id
 
 source cratesio_crates_total
 ttl 86400
@@ -6379,12 +6525,28 @@ lon 0.0
 url https://nsidc.org/data/seaice_index/data/daily/S_seaice_extent_daily.csv
 last_line cryosphere_antarctic_sea_ice_extent_nsidc
 
+source cryosphere_nsidc_antarctic_sea_ice_v4
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+last_line cryosphere_antarctic_sea_ice_extent_nsidc
+
 source cryosphere_nsidc_arctic_sea_ice
 ttl 86400
 res 0
 lat 90.0
 lon 0.0
 url https://nsidc.org/data/seaice_index/data/daily/N_seaice_extent_daily.csv
+last_line cryosphere_arctic_sea_ice_extent_nsidc
+
+source cryosphere_nsidc_arctic_sea_ice_v4
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
 last_line cryosphere_arctic_sea_ice_extent_nsidc
 
 source cryosphere_nsidc_sea_ice
@@ -6721,6 +6883,18 @@ lon -96.702
 url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
 field 0.DSCI hydrosphere_conus_drought_severity_index
 
+source geosphere_usgs_volcanoes_hans
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+map .
+lat_key latitude
+lon_key longitude
+field_in elevation_meters geosphere_volcano_elevation_m
+field_in vnum geosphere_volcano_vnum
+
 source github_repos_total
 ttl 86400
 res 0
@@ -6841,1672 +7015,1743 @@ ttl 86400
 res 0
 lat 18.638
 lon 72.872
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_abg_x_nt
-path Y.-1 magnetosphere_abg_y_nt
-path Z.-1 magnetosphere_abg_z_nt
-path S.-1 magnetosphere_abg_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_abg_x_nt
+path 1.1 magnetosphere_abg_y_nt
+path 1.2 magnetosphere_abg_z_nt
+path 2 magnetosphere_abg_s_nt
 
 source magnetosphere_abk
 ttl 86400
 res 0
 lat 68.358
 lon 18.823
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_abk_x_nt
-path Y.-1 magnetosphere_abk_y_nt
-path Z.-1 magnetosphere_abk_z_nt
-path S.-1 magnetosphere_abk_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_abk_x_nt
+path 1.1 magnetosphere_abk_y_nt
+path 1.2 magnetosphere_abk_z_nt
+path 2 magnetosphere_abk_s_nt
 
 source magnetosphere_abk_hapi
 ttl 86400
 res 0
 lat 68.358
 lon 18.823
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/bestpath X.-1 magnetosphere_abk_x_nt
-path Y.-1 magnetosphere_abk_y_nt
-path Z.-1 magnetosphere_abk_z_nt
-path F.-1 magnetosphere_abk_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_abk_x_nt
+path 1.1 magnetosphere_abk_y_nt
+path 1.2 magnetosphere_abk_z_nt
+path 2 magnetosphere_abk_f_nt
 
 source magnetosphere_aia
 ttl 86400
 res 0
 lat -65.245
 lon -64.25799999999998
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_aia_x_nt
-path Y.-1 magnetosphere_aia_y_nt
-path Z.-1 magnetosphere_aia_z_nt
-path S.-1 magnetosphere_aia_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_aia_x_nt
+path 1.1 magnetosphere_aia_y_nt
+path 1.2 magnetosphere_aia_z_nt
+path 2 magnetosphere_aia_s_nt
 
 source magnetosphere_ars
 ttl 86400
 res 0
 lat 56.433
 lon 58.567
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_ars_x_nt
-path Y.-1 magnetosphere_ars_y_nt
-path Z.-1 magnetosphere_ars_z_nt
-path S.-1 magnetosphere_ars_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ars_x_nt
+path 1.1 magnetosphere_ars_y_nt
+path 1.2 magnetosphere_ars_z_nt
+path 2 magnetosphere_ars_s_nt
 
 source magnetosphere_asp
 ttl 86400
 res 0
 lat -23.762
 lon 133.883
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_asp_x_nt
-path Y.-1 magnetosphere_asp_y_nt
-path Z.-1 magnetosphere_asp_z_nt
-path S.-1 magnetosphere_asp_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_asp_x_nt
+path 1.1 magnetosphere_asp_y_nt
+path 1.2 magnetosphere_asp_z_nt
+path 2 magnetosphere_asp_s_nt
 
 source magnetosphere_asp_hapi
 ttl 86400
 res 0
 lat -23.762
 lon 133.883
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/bestpath X.-1 magnetosphere_asp_x_nt
-path Y.-1 magnetosphere_asp_y_nt
-path Z.-1 magnetosphere_asp_z_nt
-path F.-1 magnetosphere_asp_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_asp_x_nt
+path 1.1 magnetosphere_asp_y_nt
+path 1.2 magnetosphere_asp_z_nt
+path 2 magnetosphere_asp_f_nt
 
 source magnetosphere_bdv
 ttl 86400
 res 0
 lat 49.08
 lon 14.02
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_bdv_x_nt
-path Y.-1 magnetosphere_bdv_y_nt
-path Z.-1 magnetosphere_bdv_z_nt
-path S.-1 magnetosphere_bdv_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bdv_x_nt
+path 1.1 magnetosphere_bdv_y_nt
+path 1.2 magnetosphere_bdv_z_nt
+path 2 magnetosphere_bdv_s_nt
 
 source magnetosphere_bdv_hapi
 ttl 86400
 res 0
 lat 49.08
 lon 14.02
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/bestpath X.-1 magnetosphere_bdv_x_nt
-path Y.-1 magnetosphere_bdv_y_nt
-path Z.-1 magnetosphere_bdv_z_nt
-path F.-1 magnetosphere_bdv_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bdv_x_nt
+path 1.1 magnetosphere_bdv_y_nt
+path 1.2 magnetosphere_bdv_z_nt
+path 2 magnetosphere_bdv_f_nt
 
 source magnetosphere_bel
 ttl 86400
 res 0
 lat 51.836
 lon 20.789
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_bel_x_nt
-path Y.-1 magnetosphere_bel_y_nt
-path Z.-1 magnetosphere_bel_z_nt
-path S.-1 magnetosphere_bel_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bel_x_nt
+path 1.1 magnetosphere_bel_y_nt
+path 1.2 magnetosphere_bel_z_nt
+path 2 magnetosphere_bel_s_nt
 
 source magnetosphere_bel_hapi
 ttl 86400
 res 0
 lat 51.836
 lon 20.789
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/bestpath X.-1 magnetosphere_bel_x_nt
-path Y.-1 magnetosphere_bel_y_nt
-path Z.-1 magnetosphere_bel_z_nt
-path F.-1 magnetosphere_bel_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bel_x_nt
+path 1.1 magnetosphere_bel_y_nt
+path 1.2 magnetosphere_bel_z_nt
+path 2 magnetosphere_bel_f_nt
 
 source magnetosphere_bfo
 ttl 86400
 res 0
 lat 48.331
 lon 8.325
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_bfo_x_nt
-path Y.-1 magnetosphere_bfo_y_nt
-path Z.-1 magnetosphere_bfo_z_nt
-path S.-1 magnetosphere_bfo_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bfo_x_nt
+path 1.1 magnetosphere_bfo_y_nt
+path 1.2 magnetosphere_bfo_z_nt
+path 2 magnetosphere_bfo_s_nt
 
 source magnetosphere_bfo_hapi
 ttl 86400
 res 0
 lat 48.331
 lon 8.325
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/bestpath X.-1 magnetosphere_bfo_x_nt
-path Y.-1 magnetosphere_bfo_y_nt
-path Z.-1 magnetosphere_bfo_z_nt
-path F.-1 magnetosphere_bfo_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bfo_x_nt
+path 1.1 magnetosphere_bfo_y_nt
+path 1.2 magnetosphere_bfo_z_nt
+path 2 magnetosphere_bfo_f_nt
 
 source magnetosphere_bou
 ttl 86400
 res 0
 lat 40.14
 lon -105.233
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_bou_x_nt
-path Y.-1 magnetosphere_bou_y_nt
-path Z.-1 magnetosphere_bou_z_nt
-path S.-1 magnetosphere_bou_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bou_x_nt
+path 1.1 magnetosphere_bou_y_nt
+path 1.2 magnetosphere_bou_z_nt
+path 2 magnetosphere_bou_s_nt
 
 source magnetosphere_bou_hapi
 ttl 86400
 res 0
 lat 40.14
 lon -105.233
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/bestpath X.-1 magnetosphere_bou_x_nt
-path Y.-1 magnetosphere_bou_y_nt
-path Z.-1 magnetosphere_bou_z_nt
-path F.-1 magnetosphere_bou_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bou_x_nt
+path 1.1 magnetosphere_bou_y_nt
+path 1.2 magnetosphere_bou_z_nt
+path 2 magnetosphere_bou_f_nt
 
 source magnetosphere_brw
 ttl 86400
 res 0
 lat 71.32
 lon -156.62
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_brw_x_nt
-path Y.-1 magnetosphere_brw_y_nt
-path Z.-1 magnetosphere_brw_z_nt
-path S.-1 magnetosphere_brw_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_brw_x_nt
+path 1.1 magnetosphere_brw_y_nt
+path 1.2 magnetosphere_brw_z_nt
+path 2 magnetosphere_brw_s_nt
 
 source magnetosphere_brw_hapi
 ttl 86400
 res 0
 lat 71.32
 lon -156.62
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/bestpath X.-1 magnetosphere_brw_x_nt
-path Y.-1 magnetosphere_brw_y_nt
-path Z.-1 magnetosphere_brw_z_nt
-path F.-1 magnetosphere_brw_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_brw_x_nt
+path 1.1 magnetosphere_brw_y_nt
+path 1.2 magnetosphere_brw_z_nt
+path 2 magnetosphere_brw_f_nt
 
 source magnetosphere_bsl
 ttl 86400
 lat 30.35
 lon -89.63999999999999
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_bsl_x_nt
-path Y.-1 magnetosphere_bsl_y_nt
-path Z.-1 magnetosphere_bsl_z_nt
-path S.-1 magnetosphere_bsl_s_nt
-~res 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bsl_x_nt
+path 1.1 magnetosphere_bsl_y_nt
+path 1.2 magnetosphere_bsl_z_nt
+path 2 magnetosphere_bsl_s_nt
+res 0
 
 source magnetosphere_bsl_hapi
 ttl 86400
 res 0
 lat 30.35
 lon -89.63999999999999
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/bestpath X.-1 magnetosphere_bsl_x_nt
-path Y.-1 magnetosphere_bsl_y_nt
-path Z.-1 magnetosphere_bsl_z_nt
-path F.-1 magnetosphere_bsl_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bsl_x_nt
+path 1.1 magnetosphere_bsl_y_nt
+path 1.2 magnetosphere_bsl_z_nt
+path 2 magnetosphere_bsl_f_nt
 
 source magnetosphere_cki
 ttl 86400
 res 0
 lat -12.188
 lon 96.834
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_cki_x_nt
-path Y.-1 magnetosphere_cki_y_nt
-path Z.-1 magnetosphere_cki_z_nt
-path S.-1 magnetosphere_cki_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cki_x_nt
+path 1.1 magnetosphere_cki_y_nt
+path 1.2 magnetosphere_cki_z_nt
+path 2 magnetosphere_cki_s_nt
 
 source magnetosphere_cki_hapi
 ttl 86400
 res 0
 lat -12.188
 lon 96.834
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/bestpath X.-1 magnetosphere_cki_x_nt
-path Y.-1 magnetosphere_cki_y_nt
-path Z.-1 magnetosphere_cki_z_nt
-path F.-1 magnetosphere_cki_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cki_x_nt
+path 1.1 magnetosphere_cki_y_nt
+path 1.2 magnetosphere_cki_z_nt
+path 2 magnetosphere_cki_f_nt
 
 source magnetosphere_clf
 ttl 86400
 res 0
 lat 48.025
 lon 2.26
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_clf_x_nt
-path Y.-1 magnetosphere_clf_y_nt
-path Z.-1 magnetosphere_clf_z_nt
-path S.-1 magnetosphere_clf_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_clf_x_nt
+path 1.1 magnetosphere_clf_y_nt
+path 1.2 magnetosphere_clf_z_nt
+path 2 magnetosphere_clf_s_nt
 
 source magnetosphere_clf_hapi
 ttl 86400
 res 0
 lat 48.025
-lon 2.26 v
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/bestpath X.-1 magnetosphere_clf_x_nt
-path Y.-1 magnetosphere_clf_y_nt
-path Z.-1 magnetosphere_clf_z_nt
-path F.-1 magnetosphere_clf_f_nt
+lon 2.26
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_clf_x_nt
+path 1.1 magnetosphere_clf_y_nt
+path 1.2 magnetosphere_clf_z_nt
+path 2 magnetosphere_clf_f_nt
 
 source magnetosphere_cmo
 ttl 86400
 res 0
 lat 64.87
 lon -147.86
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_cmo_x_nt
-path Y.-1 magnetosphere_cmo_y_nt
-path Z.-1 magnetosphere_cmo_z_nt
-path S.-1 magnetosphere_cmo_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cmo_x_nt
+path 1.1 magnetosphere_cmo_y_nt
+path 1.2 magnetosphere_cmo_z_nt
+path 2 magnetosphere_cmo_s_nt
 
 source magnetosphere_cmo_hapi
 ttl 86400
 res 0
 lat 64.87
 lon -147.86
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/bestpath X.-1 magnetosphere_cmo_x_nt
-path Y.-1 magnetosphere_cmo_y_nt
-path Z.-1 magnetosphere_cmo_z_nt
-path F.-1 magnetosphere_cmo_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cmo_x_nt
+path 1.1 magnetosphere_cmo_y_nt
+path 1.2 magnetosphere_cmo_z_nt
+path 2 magnetosphere_cmo_f_nt
 
 source magnetosphere_cnb
 ttl 86400
 res 0
 lat -35.32
 lon 149.36
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_cnb_x_nt
-path Y.-1 magnetosphere_cnb_y_nt
-path Z.-1 magnetosphere_cnb_z_nt
-path S.-1 magnetosphere_cnb_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cnb_x_nt
+path 1.1 magnetosphere_cnb_y_nt
+path 1.2 magnetosphere_cnb_z_nt
+path 2 magnetosphere_cnb_s_nt
 
 source magnetosphere_cnb_hapi
 ttl 86400
 res 0
 lat -35.32
 lon 149.36
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/bestpath X.-1 magnetosphere_cnb_x_nt
-path Y.-1 magnetosphere_cnb_y_nt
-path Z.-1 magnetosphere_cnb_z_nt
-path F.-1 magnetosphere_cnb_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cnb_x_nt
+path 1.1 magnetosphere_cnb_y_nt
+path 1.2 magnetosphere_cnb_z_nt
+path 2 magnetosphere_cnb_f_nt
 
 source magnetosphere_cpL
 ttl 86400
 res 0
 lat 17.294
 lon 78.919
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_cpl_x_nt
-path Y.-1 magnetosphere_cpl_y_nt
-path S.-1 magnetosphere_cpl_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cpl_x_nt
+path 1.1 magnetosphere_cpl_y_nt
+path 2 magnetosphere_cpl_s_nt
 
 source magnetosphere_csy
 ttl 86400
 res 0
 lat -66.283
 lon 110.533
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_csy_x_nt
-path Y.-1 magnetosphere_csy_y_nt
-path Z.-1 magnetosphere_csy_z_nt
-path S.-1 magnetosphere_csy_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_csy_x_nt
+path 1.1 magnetosphere_csy_y_nt
+path 1.2 magnetosphere_csy_z_nt
+path 2 magnetosphere_csy_s_nt
 
 source magnetosphere_csy_hapi
 ttl 86400
 res 0
 lat -66.283
 lon 110.533
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/bestpath X.-1 magnetosphere_csy_x_nt
-path Y.-1 magnetosphere_csy_y_nt
-path Z.-1 magnetosphere_csy_z_nt
-path F.-1 magnetosphere_csy_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_csy_x_nt
+path 1.1 magnetosphere_csy_y_nt
+path 1.2 magnetosphere_csy_z_nt
+path 2 magnetosphere_csy_f_nt
 
 source magnetosphere_cta
 ttl 86400
 res 0
 lat -20.09
 lon 146.264
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_cta_x_nt
-path Y.-1 magnetosphere_cta_y_nt
-path Z.-1 magnetosphere_cta_z_nt
-path S.-1 magnetosphere_cta_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cta_x_nt
+path 1.1 magnetosphere_cta_y_nt
+path 1.2 magnetosphere_cta_z_nt
+path 2 magnetosphere_cta_s_nt
 
 source magnetosphere_cta_hapi
 ttl 86400
 res 0
 lat -20.09
 lon 146.264
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/bestpath X.-1 magnetosphere_cta_x_nt
-path Y.-1 magnetosphere_cta_y_nt
-path Z.-1 magnetosphere_cta_z_nt
-path F.-1 magnetosphere_cta_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cta_x_nt
+path 1.1 magnetosphere_cta_y_nt
+path 1.2 magnetosphere_cta_z_nt
+path 2 magnetosphere_cta_f_nt
 
 source magnetosphere_cyg
 ttl 86400
 res 0
 lat 36.37
 lon 126.854
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_cyg_x_nt
-path Y.-1 magnetosphere_cyg_y_nt
-path Z.-1 magnetosphere_cyg_z_nt
-path S.-1 magnetosphere_cyg_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cyg_x_nt
+path 1.1 magnetosphere_cyg_y_nt
+path 1.2 magnetosphere_cyg_z_nt
+path 2 magnetosphere_cyg_s_nt
 
 source magnetosphere_cyg_hapi
 ttl 86400
 res 0
 lat 36.37
 lon 126.854
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-
-path X.-1 magnetosphere_cyg_x_nt
-path Y.-1 magnetosphere
-path Z.-1 magnetosphere_cyg_z_nt
-path F.-1 magnetosphere_cyg_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cyg_x_nt
+path 1.1 magnetosphere_cyg_y_nt
+path 1.2 magnetosphere_cyg_z_nt
+path 2 magnetosphere_cyg_f_nt
 
 source magnetosphere_ded
 ttl 86400
 res 0
-lon -148.79 v
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_ded_x_nt
-path Y.-1 magnetosphere_ded_y_nt
-path Z.-1 magnetosphere_ded_z_nt
-path S.-1 magnetosphere_ded_s_nt
-~=lat 70.36
+lon -148.79
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ded_x_nt
+path 1.1 magnetosphere_ded_y_nt
+path 1.2 magnetosphere_ded_z_nt
+path 2 magnetosphere_ded_s_nt
+lat 70.36
 
 source magnetosphere_ded_hapi
 ttl 86400
 res 0
 lat 70.36
 lon -148.79
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best -avail/PT1M/xyzf&parameters=Time,Field_Vector,Field_Magnitude&time.min={yesterday}T00:00:00Z&time.max={yesterday}T23:59:00Z&format=json
-path X.-1 magnetosphere_ded_x_nt
-path Y.-1 magnetosphere_ded_y_nt
-path Z.-1 magnetosphere_ded_z_nt
-path F.-1 magnetosphere_ded_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ded_x_nt
+path 1.1 magnetosphere_ded_y_nt
+path 1.2 magnetosphere_ded_z_nt
+path 2 magnetosphere_ded_f_nt
 
 source magnetosphere_dlt
 ttl 86400
 res 0
 lat 11.95
 lon 108.48
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_dlt_x_nt
-path Y.-1 magnetosphere_dlt_y_nt
-path Z.-1 magnetosphere_dlt_z_nt
-path S.-1 magnetosphere_dlt_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dlt_x_nt
+path 1.1 magnetosphere_dlt_y_nt
+path 1.2 magnetosphere_dlt_z_nt
+path 2 magnetosphere_dlt_s_nt
 
 source magnetosphere_dlt_hapi
 ttl 86400
 res 0
 lat 11.95
 lon 108.48
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/bestpath X.-1 magnetosphere_dlt_x_nt
-path Y.-1 magnetosphere_dlt_y_nt
-path Z.-1 magnetosphere_dlt_z_nt
-path F.-1 magnetosphere_dlt_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dlt_x_nt
+path 1.1 magnetosphere_dlt_y_nt
+path 1.2 magnetosphere_dlt_z_nt
+path 2 magnetosphere_dlt_f_nt
 
 source magnetosphere_dou
 ttl 86400
 res 0
 lat 50.1
 lon 4.6
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_dou_x_nt
-path Y.-1 magnetosphere_dou_y_nt
-path Z.-1 magnetosphere_dou_z_nt
-path S.-1 magnetosphere_dou_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dou_x_nt
+path 1.1 magnetosphere_dou_y_nt
+path 1.2 magnetosphere_dou_z_nt
+path 2 magnetosphere_dou_s_nt
 
 source magnetosphere_dou_hapi
 ttl 86400
 res 0
 lat 50.1
 lon 4.6
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/bestpath X.-1 magnetosphere_dou_x_nt
-path Y.-1 magnetosphere_dou_y_nt
-path Z.-1 magnetosphere_dou_z_nt
-path F.-1 magnetosphere_dou_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dou_x_nt
+path 1.1 magnetosphere_dou_y_nt
+path 1.2 magnetosphere_dou_z_nt
+path 2 magnetosphere_dou_f_nt
 
 source magnetosphere_dur
 ttl 86400
 res 0
 lat 41.65
 lon 14.47
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_dur_x_nt
-path Y.-1 magnetosphere_dur_y_nt
-path Z.-1 magnetosphere_dur_z_nt
-path S.-1 magnetosphere_dur_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dur_x_nt
+path 1.1 magnetosphere_dur_y_nt
+path 1.2 magnetosphere_dur_z_nt
+path 2 magnetosphere_dur_s_nt
 
 source magnetosphere_dur_hapi
 ttl 86400
 res 0
 lat 41.65
 lon 14.47
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/bestpath X.-1 magnetosphere_dur_x_nt
-path Y.-1 magnetosphere_dur_y_nt
-path Z.-1 magnetosphere_dur_z_nt
-path F.-1 magnetosphere_dur_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dur_x_nt
+path 1.1 magnetosphere_dur_y_nt
+path 1.2 magnetosphere_dur_z_nt
+path 2 magnetosphere_dur_f_nt
 
 source magnetosphere_ebr
 ttl 86400
 res 0
 lat 40.957
 lon 0.333
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_ebr_x_nt
-path Y.-1 magnetosphere_ebr_y_nt
-path Z.-1 magnetosphere_ebr_z_nt
-path S.-1 magnetosphere_ebr_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ebr_x_nt
+path 1.1 magnetosphere_ebr_y_nt
+path 1.2 magnetosphere_ebr_z_nt
+path 2 magnetosphere_ebr_s_nt
 
 source magnetosphere_ebr_hapi
 ttl 86400
 res 0
 lat 40.957
 lon 0.333
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/bestpath X.-1 magnetosphere_ebr_x_nt
-path Y.-1 magnetosphere_ebr_y_nt
-path Z.-1 magnetosphere_ebr_z_nt
-path F.-1 magnetosphere_ebr_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ebr_x_nt
+path 1.1 magnetosphere_ebr_y_nt
+path 1.2 magnetosphere_ebr_z_nt
+path 2 magnetosphere_ebr_f_nt
 
 source magnetosphere_eyr
 ttl 86400
 res 0
 lat -43.474
 lon 172.393
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_eyr_x_nt
-path Y.-1 magnetosphere_eyr_y_nt
-path Z.-1 magnetosphere_eyr_z_nt
-path S.-1 magnetosphere_eyr_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_eyr_x_nt
+path 1.1 magnetosphere_eyr_y_nt
+path 1.2 magnetosphere_eyr_z_nt
+path 2 magnetosphere_eyr_s_nt
 
 source magnetosphere_eyr_hapi
 ttl 86400
 res 0
 lat -43.474
 lon 172.393
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/bestpath X.-1 magnetosphere_eyr_x_nt
-path Y.-1 magnetosphere_eyr_y_nt
-path Z.-1 magnetosphere_eyr_z_nt
-path F.-1 magnetosphere_eyr_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_eyr_x_nt
+path 1.1 magnetosphere_eyr_y_nt
+path 1.2 magnetosphere_eyr_z_nt
+path 2 magnetosphere_eyr_f_nt
 
 source magnetosphere_frd
 ttl 86400
 res 0
 lat 38.21
 lon -77.36700000000002
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_frd_x_nt
-path Y.-1 magnetosphere_frd_y_nt
-path Z.-1 magnetosphere_frd_z_nt
-path S.-1 magnetosphere_frd_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_frd_x_nt
+path 1.1 magnetosphere_frd_y_nt
+path 1.2 magnetosphere_frd_z_nt
+path 2 magnetosphere_frd_s_nt
 
 source magnetosphere_frd_hapi
 ttl 86400
 res 0
 lat 38.21
 lon -77.36700000000002
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/bestpath X.-1 magnetosphere_frd_x_nt
-path Y.-1 magnetosphere_frd_y_nt
-path Z.-1 magnetosphere_frd_z_nt
-path F.-1 magnetosphere_frd_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_frd_x_nt
+path 1.1 magnetosphere_frd_y_nt
+path 1.2 magnetosphere_frd_z_nt
+path 2 magnetosphere_frd_f_nt
 
 source magnetosphere_frn
 ttl 86400
 res 0
 lat 37.09
 lon -119.72
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_frn_x_nt
-path Y.-1 magnetosphere_frn_y_nt
-path Z.-1 magnetosphere_frn_z_nt
-path S.-1 magnetosphere_frn_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_frn_x_nt
+path 1.1 magnetosphere_frn_y_nt
+path 1.2 magnetosphere_frn_z_nt
+path 2 magnetosphere_frn_s_nt
 
 source magnetosphere_frn_hapi
 ttl 86400
 res 0
 lat 37.09
 lon -119.72
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/bestpath X.-1 magnetosphere_frn_x_nt
-path Y.-1 magnetosphere_frn_y_nt
-path Z.-1 magnetosphere_frn_z_nt
-path F.-1 magnetosphere_frn_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_frn_x_nt
+path 1.1 magnetosphere_frn_y_nt
+path 1.2 magnetosphere_frn_z_nt
+path 2 magnetosphere_frn_f_nt
 
 source magnetosphere_fur
 ttl 86400
 res 0
 lat 48.17
 lon 11.28
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_fur_x_nt
-path Y.-1 magnetosphere_fur_y_nt
-path Z.-1 magnetosphere_fur_z_nt
-path S.-1 magnetosphere_fur_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_fur_x_nt
+path 1.1 magnetosphere_fur_y_nt
+path 1.2 magnetosphere_fur_z_nt
+path 2 magnetosphere_fur_s_nt
 
 source magnetosphere_fur_hapi
 ttl 86400
 res 0
 lat 48.17
 lon 11.28 V
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/bestpath X.-1 magnetosphere_fur_x_nt
-path Y.-1 magnetosphere_fur_y_nt
-path Z.-1 magnetosphere_fur_z_nt
-path F.-1 magnetosphere_fur_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_fur_x_nt
+path 1.1 magnetosphere_fur_y_nt
+path 1.2 magnetosphere_fur_z_nt
+path 2 magnetosphere_fur_f_nt
 
 source magnetosphere_gan
 ttl 86400
 res 0
 lat -0.695
 lon 73.154
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_gan_x_nt
-path Y.-1 magnetosphere_gan_y_nt
-path Z.-1 magnetosphere_gan_z_nt
-path S.-1 magnetosphere_gan_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_gan_x_nt
+path 1.1 magnetosphere_gan_y_nt
+path 1.2 magnetosphere_gan_z_nt
+path 2 magnetosphere_gan_s_nt
 
 source magnetosphere_gan_hapi
 ttl 86400
 res 0
 lat -0.695
 lon 73.154
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/bestpath X.-1 magnetosphere_gan_x_nt
-path Y.-1 magnetosphere_gan_y_nt
-path Z.-1 magnetosphere_gan_z_nt
-path F.-1 magnetosphere_gan_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_gan_x_nt
+path 1.1 magnetosphere_gan_y_nt
+path 1.2 magnetosphere_gan_z_nt
+path 2 magnetosphere_gan_f_nt
 
 source magnetosphere_gck
 ttl 86400
 res 0
 lat 44.633
 lon 20.767
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_gck_x_nt
-path Y.-1 magnetosphere_gck_y_nt
-path Z.-1 magnetosphere_gck_z_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_gck_x_nt
+path 1.1 magnetosphere_gck_y_nt
+path 1.2 magnetosphere_gck_z_nt
 
 source magnetosphere_gdh
 ttl 86400
 res 0
 lat 69.252
 lon -53.533000000000015
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_gdh_x_nt
-path Y.-1 magnetosphere_gdh_y_nt
-path Z.-1 magnetosphere_gdh_z_nt
-path S.-1 magnetosphere_gdh_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_gdh_x_nt
+path 1.1 magnetosphere_gdh_y_nt
+path 1.2 magnetosphere_gdh_z_nt
+path 2 magnetosphere_gdh_s_nt
 
 source magnetosphere_gng
 ttl 86400
 res 0
 lat -31.356
 lon 115.715
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_gng_x_nt
-path Y.-1 magnetosphere_gng_y_nt
-path Z.-1 magnetosphere_gng_z_nt
-path S.-1 magnetosphere_gng_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_gng_x_nt
+path 1.1 magnetosphere_gng_y_nt
+path 1.2 magnetosphere_gng_z_nt
+path 2 magnetosphere_gng_s_nt
 
 source magnetosphere_gng_hapi
 ttl 86400
 res 0
 lat -31.356
 lon 115.715
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/bestpath X.-1 magnetosphere_gng_x_nt
-path Y.-1 magnetosphere_gng_y_nt
-path Z.-1 magnetosphere_gng_z_nt
-path F.-1 magnetosphere_gng_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_gng_x_nt
+path 1.1 magnetosphere_gng_y_nt
+path 1.2 magnetosphere_gng_z_nt
+path 2 magnetosphere_gng_f_nt
 
 source magnetosphere_gua
 ttl 86400
 res 0
 lat 13.59
 lon 144.87
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_gua_x_nt
-path Y.-1 magnetosphere_gua_y_nt
-path Z.-1 magnetosphere_gua_z_nt
-path S.-1 magnetosphere_gua_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_gua_x_nt
+path 1.1 magnetosphere_gua_y_nt
+path 1.2 magnetosphere_gua_z_nt
+path 2 magnetosphere_gua_s_nt
 
 source magnetosphere_gua_hapi
 ttl 86400
-res O
+res 0
 lat 13.59
 lon 144.87
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/bestpath X.-1 magnetosphere_gua_x_nt
-path Y.-1 magnetosphere_gua_y_nt
-path Z.-1 magnetosphere_gua_z_nt
-path F.-1 magnetosphere_gua_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_gua_x_nt
+path 1.1 magnetosphere_gua_y_nt
+path 1.2 magnetosphere_gua_z_nt
+path 2 magnetosphere_gua_f_nt
 
 source magnetosphere_gui
 ttl 86400
 res 0
 lat 28.321
 lon -16.440999999999974
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_gui_x_nt
-path Y.-1 magnetosphere_gui_y_nt
-path Z.-1 magnetosphere_gui_z_nt
-path S.-1 magnetosphere_gui_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_gui_x_nt
+path 1.1 magnetosphere_gui_y_nt
+path 1.2 magnetosphere_gui_z_nt
+path 2 magnetosphere_gui_s_nt
 
 source magnetosphere_gui_hapi
 ttl 86400
 res 0
 lat 28.321
 lon -16.440999999999974
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/bestpath X.-1 magnetosphere_gui_x_nt
-path Y.-1 magnetosphere_gui_y_nt
-path Z.-1 magnetosphere_gui_z_nt
-path F.-1 magnetosphere_gui_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_gui_x_nt
+path 1.1 magnetosphere_gui_y_nt
+path 1.2 magnetosphere_gui_z_nt
+path 2 magnetosphere_gui_f_nt
 
 source magnetosphere_hbk
 ttl 86400
 res 0
 lat -25.88
 lon 27.71
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_hbk_x_nt
-path Y.-1 magnetosphere_hbk_y_nt
-path Z.-1 magnetosphere_hbk_z_nt
-path S.-1 magnetosphere_hbk_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hbk_x_nt
+path 1.1 magnetosphere_hbk_y_nt
+path 1.2 magnetosphere_hbk_z_nt
+path 2 magnetosphere_hbk_s_nt
 
 source magnetosphere_her
 ttl 86400
 res 0
 lat -34.43
 lon 19.23
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_her_x_nt
-path Y.-1 magnetosphere_her_y_nt
-path Z.-1 magnetosphere_her_z_nt
-path S.-1 magnetosphere_her_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HER/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_her_x_nt
+path 1.1 magnetosphere_her_y_nt
+path 1.2 magnetosphere_her_z_nt
+path 2 magnetosphere_her_s_nt
 
 source magnetosphere_hlp
 ttl 86400
 res 0
 lat 54.603
 lon 18.811
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_hlp_x_nt
-path Y.-1 magnetosphere_hlp_y_nt
-path Z.-1 magnetosphere_hlp_z_nt
-path S.-1 magnetosphere_hlp_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hlp_x_nt
+path 1.1 magnetosphere_hlp_y_nt
+path 1.2 magnetosphere_hlp_z_nt
+path 2 magnetosphere_hlp_s_nt
 
 source magnetosphere_hlp_hapi
 ttl 86400
 res 0
 lat 54.603
 lon 18.811
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/bestpath X.-1 magnetosphere_hlp_x_nt
-path Y.-1 magnetosphere_hlp_y_nt
-path Z.-1 magnetosphere_hlp_z_nt
-path F.-1 magnetosphere_hlp_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hlp_x_nt
+path 1.1 magnetosphere_hlp_y_nt
+path 1.2 magnetosphere_hlp_z_nt
+path 2 magnetosphere_hlp_f_nt
 
 source magnetosphere_hon
 ttl 86400
 res 0
 lat 21.32
 lon -158.0
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_hon_x_nt
-path Y.-1 magnetosphere_hon_y_nt
-path Z.-1 magnetosphere_hon_z_nt
-path S.-1 magnetosphere_hon_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hon_x_nt
+path 1.1 magnetosphere_hon_y_nt
+path 1.2 magnetosphere_hon_z_nt
+path 2 magnetosphere_hon_s_nt
 
 source magnetosphere_hon_hapi
 ttl 86400
 res 0
 lat 21.32
 lon -158.0
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/bestpath X.-1 magnetosphere_hon_x_nt
-path Y.-1 magnetosphere_hon_y_nt
-path Z.-1 magnetosphere_hon_z_nt
-path F.-1 magnetosphere_hon_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hon_x_nt
+path 1.1 magnetosphere_hon_y_nt
+path 1.2 magnetosphere_hon_z_nt
+path 2 magnetosphere_hon_f_nt
 
 source magnetosphere_hrb
 ttl 86400
 res 0
 lat 47.873
 lon 18.19
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_hrb_x_nt
-path Y.-1 magnetosphere_hrb_y_nt
-path Z.-1 magnetosphere_hrb_z_nt
-path S.-1 magnetosphere_hrb_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hrb_x_nt
+path 1.1 magnetosphere_hrb_y_nt
+path 1.2 magnetosphere_hrb_z_nt
+path 2 magnetosphere_hrb_s_nt
 
 source magnetosphere_hrb_hapi
 ttl 86400
 res 0
 lat 47.873
 lon 18.19
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/bestpath X.-1 magnetosphere_hrb_x_nt
-path Y.-1 magnetosphere_hrb_y_nt
-path Z.-1 magnetosphere_hrb_z_nt
-path F.-1 magnetosphere_hrb_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hrb_x_nt
+path 1.1 magnetosphere_hrb_y_nt
+path 1.2 magnetosphere_hrb_z_nt
+path 2 magnetosphere_hrb_f_nt
 
 source magnetosphere_hrn
 ttl 86400
 res 0
 lat 77.0
 lon 15.55
-url https://imag-data.bgs.ac.uk/GIN_Vi/GINServices?
-path X.-1 magnetosphere_hrn_x_nt
-path Y.-1 magnetosphere_hrn_y_nt
-path Z.-1 magnetosphere_hrn_z_nt
-path S.-1 magnetosphere_hrn_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hrn_x_nt
+path 1.1 magnetosphere_hrn_y_nt
+path 1.2 magnetosphere_hrn_z_nt
+path 2 magnetosphere_hrn_s_nt
 
 source magnetosphere_hrn_hapi
 ttl 86400
 res 0
 lat 77.0
 lon 15.55
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/bestpath X.-1 magnetosphere_hrn_x_nt
-path Y.-1 magnetosphere_hrn_y_nt
-path Z.-1 magnetosphere_hrn_z_nt
-path F.-1 magnetosphere_hrn_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hrn_x_nt
+path 1.1 magnetosphere_hrn_y_nt
+path 1.2 magnetosphere_hrn_z_nt
+path 2 magnetosphere_hrn_f_nt
 
 source magnetosphere_hua
 ttl 86400
 res 0
 lat -12.05
-lon -75.32999999999998 v
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_hua_x_nt
-path Y.-1 magnetosphere_hua_y_nt
-path Z.-1 magnetosphere_hua_z_nt
-path S.-1 magnetosphere_hua_s_nt
+lon -75.32999999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hua_x_nt
+path 1.1 magnetosphere_hua_y_nt
+path 1.2 magnetosphere_hua_z_nt
+path 2 magnetosphere_hua_s_nt
 
 source magnetosphere_hyb
 ttl 86400
 res 0
 lat 17.42
 lon 78.55
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_hyb_x_nt
-path Z.-1 magnetosphere_hyb_z_nt
-path S.-1 magnetosphere_hyb_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hyb_x_nt
+path 1.2 magnetosphere_hyb_z_nt
+path 2 magnetosphere_hyb_s_nt
 
 source magnetosphere_hyb_hapi
 ttl 86400
 res 0
 lat 17.42
 lon 78.55
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/bestpath X.-1 magnetosphere_hyb_x_nt
-path Y.-1 magnetosphere_hyb_y_nt
-path Z.-1 magnetosphere_hyb_z_nt
-path F.-1 magnetosphere_hyb_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_hyb_x_nt
+path 1.1 magnetosphere_hyb_y_nt
+path 1.2 magnetosphere_hyb_z_nt
+path 2 magnetosphere_hyb_f_nt
 
 source magnetosphere_ipm
 ttl 86400
 res 0
 lat -27.171
 lon -109.41999999999999
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_ipm_x_nt
-path Y.-1 magnetosphere_ipm_y_nt
-path Z.-1 magnetosphere_ipm_z_nt
-path S.-1 magnetosphere_ipm_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ipm_x_nt
+path 1.1 magnetosphere_ipm_y_nt
+path 1.2 magnetosphere_ipm_z_nt
+path 2 magnetosphere_ipm_s_nt
 
 source magnetosphere_ipm_hapi
 ttl 86400
 res 0
 lon -109.41999999999999
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/bestpath X.-1 magnetosphere_ipm_x_nt
-path Y.-1 magnetosphere_ipm_y_nt
-path Z.-1 magnetosphere_ipm_z_nt
-path F.-1 magnetosphere_ipm_f_nt
-tat -27.171
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ipm_x_nt
+path 1.1 magnetosphere_ipm_y_nt
+path 1.2 magnetosphere_ipm_z_nt
+path 2 magnetosphere_ipm_f_nt
+lat -27.171
 
 source magnetosphere_irt
 ttl 86400
 res 0
 lat 52.17
 lon 104.45
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_irt_x_nt
-path Y.-1 magnetosphere_irt_y_nt
-path Z.-1 magnetosphere_irt_z_nt
-path S.-1 magnetosphere_irt_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_irt_x_nt
+path 1.1 magnetosphere_irt_y_nt
+path 1.2 magnetosphere_irt_z_nt
+path 2 magnetosphere_irt_s_nt
 
 source magnetosphere_izn
 ttl 86400
 res 0
 lat 40.5
 lon 29.72
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_izn_x_nt
-path Y.-1 magnetosphere_izn_y_nt
-path Z.-1 magnetosphere_izn_z_nt
-path S.-1 magnetosphere_izn_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_izn_x_nt
+path 1.1 magnetosphere_izn_y_nt
+path 1.2 magnetosphere_izn_z_nt
+path 2 magnetosphere_izn_s_nt
 
 source magnetosphere_izn_hapi
 ttl 86400
 res 0
 lat 40.5
 lon 29.72
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/bestpath X.-1 magnetosphere_izn_x_nt
-path Y.-1 magnetosphere_izn_y_nt
-path Z.-1 magnetosphere_izn_z_nt
-path F.-1 magnetosphere_izn_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_izn_x_nt
+path 1.1 magnetosphere_izn_y_nt
+path 1.2 magnetosphere_izn_z_nt
+path 2 magnetosphere_izn_f_nt
 
 source magnetosphere_jai
 ttl 86400
 res 0
 lat 26.92
 lon 75.8
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_jai_x_nt
-path Y.-1 magnetosphere_jai_y_nt
-path Z.-1 magnetosphere_jai_z_nt
-path S.-1 magnetosphere_jai_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_jai_x_nt
+path 1.1 magnetosphere_jai_y_nt
+path 1.2 magnetosphere_jai_z_nt
+path 2 magnetosphere_jai_s_nt
 
 source magnetosphere_kak
 ttl 86400
 res 0
 lat 36.232
 lon 140.186
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_kak_x_nt
-path Y.-1 magnetosphere_kak_y_nt
-path Z.-1 magnetosphere_kak_z_nt
-path S.-1 magnetosphere_kak_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kak_x_nt
+path 1.1 magnetosphere_kak_y_nt
+path 1.2 magnetosphere_kak_z_nt
+path 2 magnetosphere_kak_s_nt
 
 source magnetosphere_kak_hapi
 ttl 86400
 res 0
 lat 36.232
 lon 140.186
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/bestpath X.-1 magnetosphere_kak_x_nt
-path Y.-1 magnetosphere_kak_y_nt
-path Z.-1 magnetosphere_kak_z_nt
-path F.-1 magnetosphere_kak_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kak_x_nt
+path 1.1 magnetosphere_kak_y_nt
+path 1.2 magnetosphere_kak_z_nt
+path 2 magnetosphere_kak_f_nt
 
 source magnetosphere_kdu
 ttl 86400
 res 0
 lat -12.69
 lon 132.47 Vv
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_kdu_x_nt
-path Y.-1 magnetosphere_kdu_y_nt
-path Z.-1 magnetosphere_kdu_z_nt
-path S.-1 magnetosphere_kdu_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kdu_x_nt
+path 1.1 magnetosphere_kdu_y_nt
+path 1.2 magnetosphere_kdu_z_nt
+path 2 magnetosphere_kdu_s_nt
 
 source magnetosphere_kdu_hapi
 ttl 86400
 res 0
 lat -12.69
 lon 132.47
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/bestpath X.-1 magnetosphere_kdu_x_nt
-path Y.-1 magnetosphere_kdu_y_nt
-path Z.-1 magnetosphere_kdu_z_nt
-path F.-1 magnetosphere_kdu_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kdu_x_nt
+path 1.1 magnetosphere_kdu_y_nt
+path 1.2 magnetosphere_kdu_z_nt
+path 2 magnetosphere_kdu_f_nt
 
 source magnetosphere_kir
 ttl 86400
 res 0
 lat 67.843
 lon 20.42
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_kir_x_nt
-path Y.-1 magnetosphere_kir_y_nt
-path Z.-1 magnetosphere_kir_z_nt
-path S.-1 magnetosphere_kir_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kir_x_nt
+path 1.1 magnetosphere_kir_y_nt
+path 1.2 magnetosphere_kir_z_nt
+path 2 magnetosphere_kir_s_nt
 
 source magnetosphere_kir_hapi
 ttl 86400
 res 0
 lat 67.843
 lon 20.42 V
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/bestpath X.-1 magnetosphere_kir_x_nt
-path Y.-1 magnetosphere_kir_y_nt
-path Z.-1 magnetosphere_kir_z_nt
-path F.-1 magnetosphere_kir_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kir_x_nt
+path 1.1 magnetosphere_kir_y_nt
+path 1.2 magnetosphere_kir_z_nt
+path 2 magnetosphere_kir_f_nt
 
 source magnetosphere_kmh
 ttl 86400
 res 0
 lat -26.54
 lon 18.11
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_kmh_x_nt
-path Y.-1 magnetosphere_kmh_y_nt
-path Z.-1 magnetosphere_kmh_z_nt
-path S.-1 magnetosphere_kmh_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kmh_x_nt
+path 1.1 magnetosphere_kmh_y_nt
+path 1.2 magnetosphere_kmh_z_nt
+path 2 magnetosphere_kmh_s_nt
 
 source magnetosphere_kny
 ttl 86400
 res 0
 lat 31.42
 lon 130.88
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_kny_x_nt
-path Y.-1 magnetosphere_kny_y_nt
-path Z.-1 magnetosphere_kny_z_nt
-path S.-1 magnetosphere_kny_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kny_x_nt
+path 1.1 magnetosphere_kny_y_nt
+path 1.2 magnetosphere_kny_z_nt
+path 2 magnetosphere_kny_s_nt
 
 source magnetosphere_kny_hapi
 ttl 86400
 res 0
 lat 31.42
 lon 130.88
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/bestpath X.-1 magnetosphere_kny_x_nt
-path Y.-1 magnetosphere_kny_y_nt
-path Z.-1 magnetosphere_kny_z_nt
-path F.-1 magnetosphere_kny_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kny_x_nt
+path 1.1 magnetosphere_kny_y_nt
+path 1.2 magnetosphere_kny_z_nt
+path 2 magnetosphere_kny_f_nt
 
 source magnetosphere_kou
 ttl 86400
 res 0
 lat 5.21
 lon -52.73000000000002
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_kou_x_nt
-path Y.-1 magnetosphere_kou_y_nt
-path Z.-1 magnetosphere_kou_z_nt
-path S.-1 magnetosphere_kou_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kou_x_nt
+path 1.1 magnetosphere_kou_y_nt
+path 1.2 magnetosphere_kou_z_nt
+path 2 magnetosphere_kou_s_nt
 
 source magnetosphere_kou_hapi
 ttl 86400
 res 0
 lat 5.21
 lon -52.73000000000002
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/bestpath X.-1 magnetosphere_kou_x_nt
-path Y.-1 magnetosphere_kou_y_nt
-path Z.-1 magnetosphere_kou_z_nt
-path F.-1 magnetosphere_kou_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_kou_x_nt
+path 1.1 magnetosphere_kou_y_nt
+path 1.2 magnetosphere_kou_z_nt
+path 2 magnetosphere_kou_f_nt
 
 source magnetosphere_lrm_hapi
 ttl 86400
 res 0
 lat -22.22
 lon 114.1
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/bestpath X.-1 magnetosphere_trm_x_nt
-path Y.-1 magnetosphere_trm_y_nt
-path Z.-1 magnetosphere_trm_z_nt
-path F.-1 magnetosphere_lirm_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_trm_x_nt
+path 1.1 magnetosphere_trm_y_nt
+path 1.2 magnetosphere_trm_z_nt
+path 2 magnetosphere_lirm_f_nt
 
 source magnetosphere_lvv
 ttl 86400
 res 0
 lat 49.9
 lon 23.75 Lb
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_lvv_x_nt
-path Y.-1 magnetosphere_lvv_y_nt
-path Z.-1 magnetosphere_lvv_z_nt
-path S.-1 magnetosphere_lvv_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_lvv_x_nt
+path 1.1 magnetosphere_lvv_y_nt
+path 1.2 magnetosphere_lvv_z_nt
+path 2 magnetosphere_lvv_s_nt
 
 source magnetosphere_lyc
 ttl 86400
 res 0
 lat 64.612
 lon 18.748
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_lyc_x_nt
-path Y.-1 magnetosphere_lyc_y_nt
-path Z.-1 magnetosphere_lyc_z_nt
-path S.-1 magnetosphere_lyc_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_lyc_x_nt
+path 1.1 magnetosphere_lyc_y_nt
+path 1.2 magnetosphere_lyc_z_nt
+path 2 magnetosphere_lyc_s_nt
 
 source magnetosphere_lyc_hapi
 ttl 86400
 res 0
 lat 64.612
 lon 18.748
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/bestpath X.-1 magnetosphere_lyc_x_nt
-path Y.-1 magnetosphere_lyc_y_nt
-path Z.-1 magnetosphere_lyc_z_nt
-path F.-1 magnetosphere_lyc_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_lyc_x_nt
+path 1.1 magnetosphere_lyc_y_nt
+path 1.2 magnetosphere_lyc_z_nt
+path 2 magnetosphere_lyc_f_nt
 
 source magnetosphere_mab
 ttl 86400
 res 0
 lat 50.298
 lon 5.682
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_mab_x_nt
-path Y.-1 magnetosphere_mab_y_nt
-path Z.-1 magnetosphere_mab_z_nt
-path S.-1 magnetosphere_mab_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_mab_x_nt
+path 1.1 magnetosphere_mab_y_nt
+path 1.2 magnetosphere_mab_z_nt
+path 2 magnetosphere_mab_s_nt
 
 source magnetosphere_mab_hapi
 ttl 86400
 res 0
 lat 50.298
 lon 5.682
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/bestpath X.-1 magnetosphere_mab_x_nt
-path Y.-1 magnetosphere_mab_y_nt
-path Z.-1 magnetosphere_mab_z_nt
-path F.-1 magnetosphere_mab_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_mab_x_nt
+path 1.1 magnetosphere_mab_y_nt
+path 1.2 magnetosphere_mab_z_nt
+path 2 magnetosphere_mab_f_nt
 
 source magnetosphere_maw
 ttl 86400
 res 0
 lat -67.6
 lon 62.88
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_maw_x_nt
-path Y.-1 magnetosphere_maw_y_nt
-path Z.-1 magnetosphere_maw_z_nt
-path S.-1 magnetosphere_maw_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_maw_x_nt
+path 1.1 magnetosphere_maw_y_nt
+path 1.2 magnetosphere_maw_z_nt
+path 2 magnetosphere_maw_s_nt
 
 source magnetosphere_maw_hapi
 ttl 86400
 res 0
 lat -67.6
 lon 62.88
-path Y.-1 magnetosphere_maw_y_nt
-path Z.-1 magnetosphere_maw_z_nt
-path F.-1 magnetosphere_maw_f_nt
-~url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/bestpath X.-1 magnetosphere_maw_x_nt
+path 1.1 magnetosphere_maw_y_nt
+path 1.2 magnetosphere_maw_z_nt
+path 2 magnetosphere_maw_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best
+path 1.0 magnetosphere_maw_x_nt
 
 source magnetosphere_mcg_hapi
 ttl 86400
 res 0
 lat -54.5
 lon 158.95
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQ/bestpath X.-1 magnetosphere_mcg_x_nt
-path Y.-1 magnetosphere_mcg_y_nt
-path Z.-1 magnetosphere_mcg_z_nt
-path F.-1 magnetosphere_mcg_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_mcg_x_nt
+path 1.1 magnetosphere_mcg_y_nt
+path 1.2 magnetosphere_mcg_z_nt
+path 2 magnetosphere_mcg_f_nt
 
 source magnetosphere_mcqg
 ttl 86400
 res 0
 lat -54.5
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_mcq_x_nt
-path Y.-1 magnetosphere_mcqg_y_nt
-path Z.-1 magnetosphere_mcq_z_nt
-path S.-1 magnetosphere_mcqg_s_nt
-+=lon 158.95
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_mcq_x_nt
+path 1.1 magnetosphere_mcqg_y_nt
+path 1.2 magnetosphere_mcq_z_nt
+path 2 magnetosphere_mcqg_s_nt
+lon 158.95
 
 source magnetosphere_mmb
 ttl 86400
+lat 43.91
 lon 144.19
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_mmb_x_nt
-path Y.-1 magnetosphere_mmb_y_nt
-path Z.-1 magnetosphere_mmb_z_nt
-«res 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_mmb_x_nt
+path 1.1 magnetosphere_mmb_y_nt
+path 1.2 magnetosphere_mmb_z_nt
+res 0
 
 source magnetosphere_mmb_hapi
 ttl 86400
 res 0
 lat 43.91
 lon 144.19
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/bestpath X.-1 magnetosphere_mmb_x_nt
-path Y.-1 magnetosphere_mmb_y_nt
-path Z.-1 magnetosphere_mmb_z_nt
-path F.-1 magnetosphere_mmb_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_mmb_x_nt
+path 1.1 magnetosphere_mmb_y_nt
+path 1.2 magnetosphere_mmb_z_nt
+path 2 magnetosphere_mmb_f_nt
 
 source magnetosphere_nag
 ttl 86400
 lon -45.43299999999999
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_nag_x_nt
-path Y.-1 magnetosphere_nag_y_nt
-path Z.-1 magnetosphere_nag_z_nt
-path S.-1 magnetosphere_nag_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_nag_x_nt
+path 1.1 magnetosphere_nag_y_nt
+path 1.2 magnetosphere_nag_z_nt
+path 2 magnetosphere_nag_s_nt
 ~=3res O
-«lat 61.167
+lat 61.167
 
 source magnetosphere_nck
 ttl 86400
-res O
+res 0
 lat 47.63
 lon 16.72
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_nck_x_nt
-path Y.-1 magnetosphere_nck_y_nt
-path Z.-1 magnetosphere_nck_z_nt
-path S.-1 magnetosphere_nck_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_nck_x_nt
+path 1.1 magnetosphere_nck_y_nt
+path 1.2 magnetosphere_nck_z_nt
+path 2 magnetosphere_nck_s_nt
 
 source magnetosphere_new
 ttl 86400
 res 0
 lat 48.27
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_new_x_nt
-path Y.-1 magnetosphere_new_y_nt
-path Z.-1 magnetosphere_new_z_nt
-path S.-1 magnetosphere_new_s_nt
-«lon -117.12
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_new_x_nt
+path 1.1 magnetosphere_new_y_nt
+path 1.2 magnetosphere_new_z_nt
+path 2 magnetosphere_new_s_nt
+lon -117.12
 
 source magnetosphere_new_hapi
 ttl 86400
-res O
+res 0
 lat 48.27
 lon -117.12
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/bestpath X.-1 magnetosphere_new_x_nt
-path Y.-1 magnetosphere_new_y_nt
-path Z.-1 magnetosphere_new_z_nt
-path F.-1 magnetosphere_new_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_new_x_nt
+path 1.1 magnetosphere_new_y_nt
+path 1.2 magnetosphere_new_z_nt
+path 2 magnetosphere_new_f_nt
 
 source magnetosphere_ngk
 ttl 86400
-res O
-path X.-1 magnetosphere_ngk_x_nt
-path Y.-1 magnetosphere_ngk_y_nt
-path Z.-1 magnetosphere_ngk_z_nt
-path S.-1 magnetosphere_ngk_s_nt
-«lat 52.07
-+ ~Llon 12.68
-~url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
+res 0
+path 1.0 magnetosphere_ngk_x_nt
+path 1.1 magnetosphere_ngk_y_nt
+path 1.2 magnetosphere_ngk_z_nt
+path 2 magnetosphere_ngk_s_nt
+lat 52.07
+lon 12.68
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 
 source magnetosphere_ngk_hapi
 ttl 86400
 res 0
 lat 52.07
 lon 12.68
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/bestpath X.-1 magnetosphere_ngk_x_nt
-path Y.-1 magnetosphere_ngk_y_nt
-path Z.-1 magnetosphere_ngk_z_nt
-path F.-1 magnetosphere_ngk_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ngk_x_nt
+path 1.1 magnetosphere_ngk_y_nt
+path 1.2 magnetosphere_ngk_z_nt
+path 2 magnetosphere_ngk_f_nt
 
 source magnetosphere_nur
 ttl 86400
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_nur_x_nt
-path Y.-1 magnetosphere_nur_y_nt
-path Z.-1 magnetosphere_nur_z_nt
-path S.-1 magnetosphere_nur_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_nur_x_nt
+path 1.1 magnetosphere_nur_y_nt
+path 1.2 magnetosphere_nur_z_nt
+path 2 magnetosphere_nur_s_nt
 ~=res O
-»~=«lat 60.51
-~=lon 24.66
+lat 60.51
+lon 24.66
 
 source magnetosphere_nvs
 ttl 86400
 res 0
 lat 54.85
 lon 83.23
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_nvs_x_nt
-path Y.-1 magnetosphere_nvs_y_nt
-path Z.-1 magnetosphere_nvs_z_nt
-path S.-1 magnetosphere_nvs_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_nvs_x_nt
+path 1.1 magnetosphere_nvs_y_nt
+path 1.2 magnetosphere_nvs_z_nt
+path 2 magnetosphere_nvs_s_nt
 
 source magnetosphere_orc
 ttl 86400
 res 0
 lat -60.737
 lon -44.73700000000002
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_orc_x_nt
-path Y.-1 magnetosphere_orc_y_nt
-path Z.-1 magnetosphere_orc_z_nt
-path S.-1 magnetosphere_orc_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_orc_x_nt
+path 1.1 magnetosphere_orc_y_nt
+path 1.2 magnetosphere_orc_z_nt
+path 2 magnetosphere_orc_s_nt
 
 source magnetosphere_pag
 ttl 86400
 res 0
 lat 42.515
 lon 24.177
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_pag_x_nt
-path Y.-1 magnetosphere_pag_y_nt
-path Z.-1 magnetosphere_pag_z_nt
-path S.-1 magnetosphere_pag_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_pag_x_nt
+path 1.1 magnetosphere_pag_y_nt
+path 1.2 magnetosphere_pag_z_nt
+path 2 magnetosphere_pag_s_nt
 
 source magnetosphere_pag_hapi
 ttl 86400
 res 0
 lat 42.515
 lon 24.177
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/bestpath X.-1 magnetosphere_pag_x_nt
-path Y.-1 magnetosphere_pag_y_nt
-path Z.-1 magnetosphere_pag_z_nt
-path F.-1 magnetosphere_pag_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_pag_x_nt
+path 1.1 magnetosphere_pag_y_nt
+path 1.2 magnetosphere_pag_z_nt
+path 2 magnetosphere_pag_f_nt
 
 source magnetosphere_peg
 ttl 86400
 res 0
 lat 38.1
 lon 23.9
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_peg_x_nt
-path Y.-1 magnetosphere_peg_y_nt
-path Z.-1 magnetosphere_peg_z_nt
-path S.-1 magnetosphere_peg_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_peg_x_nt
+path 1.1 magnetosphere_peg_y_nt
+path 1.2 magnetosphere_peg_z_nt
+path 2 magnetosphere_peg_s_nt
 
 source magnetosphere_phu
 ttl 86400
 res 0
 lat 21.03
 lon 105.96
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_phu_x_nt
-path Y.-1 magnetosphere_phu_y_nt
-path Z.-1 magnetosphere_phu_z_nt
-path S.-1 magnetosphere_phu_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_phu_x_nt
+path 1.1 magnetosphere_phu_y_nt
+path 1.2 magnetosphere_phu_z_nt
+path 2 magnetosphere_phu_s_nt
 
 source magnetosphere_phu_hapi
 ttl 86400
 res 0
 lat 21.03
 lon 105.96
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/bestpath X.-1 magnetosphere_phu_x_nt
-path Y.-1 magnetosphere_phu_y_nt
-path Z.-1 magnetosphere_phu_z_nt
-path F.-1 magnetosphere_phu_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_phu_x_nt
+path 1.1 magnetosphere_phu_y_nt
+path 1.2 magnetosphere_phu_z_nt
+path 2 magnetosphere_phu_f_nt
 
 source magnetosphere_pil
 ttl 86400
 res 0
 lat -31.667
 lon -63.88099999999997
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_pil_x_nt
-path Y.-1 magnetosphere_pil_y_nt
-path Z.-1 magnetosphere_pil_z_nt
-path S.-1 magnetosphere_pil_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_pil_x_nt
+path 1.1 magnetosphere_pil_y_nt
+path 1.2 magnetosphere_pil_z_nt
+path 2 magnetosphere_pil_s_nt
 
 source magnetosphere_ppt
 ttl 86400
 res 0
 lat -17.567
 lon -149.574
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_ppt_x_nt
-path Y.-1 magnetosphere_ppt_y_nt
-path Z.-1 magnetosphere_ppt_z_nt
-path S.-1 magnetosphere_ppt_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ppt_x_nt
+path 1.1 magnetosphere_ppt_y_nt
+path 1.2 magnetosphere_ppt_z_nt
+path 2 magnetosphere_ppt_s_nt
 
 source magnetosphere_ppt_hapi
 ttl 86400
 res 0
 lat -17.567
 lon -149.574
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/bestpath X.-1 magnetosphere_ppt_x_nt
-path Y.-1 magnetosphere_ppt_y_nt
-path Z.-1 magnetosphere_ppt_z_nt
-path F.-1 magnetosphere_ppt_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ppt_x_nt
+path 1.1 magnetosphere_ppt_y_nt
+path 1.2 magnetosphere_ppt_z_nt
+path 2 magnetosphere_ppt_f_nt
 
 source magnetosphere_reu
 ttl 86400
 res 0
 lat -21.206
 lon 55.576
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_reu_x_nt
-path Y.-1 magnetosphere_reu_y_nt
-path Z.-1 magnetosphere_reu_z_nt
-path S.-1 magnetosphere_reu_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_reu_x_nt
+path 1.1 magnetosphere_reu_y_nt
+path 1.2 magnetosphere_reu_z_nt
+path 2 magnetosphere_reu_s_nt
 
 source magnetosphere_reu_hapi
 ttl 86400
 res 0
 lat -21.206
 lon 55.576
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/bestpath X.-1 magnetosphere_reu_x_nt
-path Y.-1 magnetosphere_reu_y_nt
-path Z.-1 magnetosphere_reu_z_nt
-path F.-1 magnetosphere_reu_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_reu_x_nt
+path 1.1 magnetosphere_reu_y_nt
+path 1.2 magnetosphere_reu_z_nt
+path 2 magnetosphere_reu_f_nt
 
 source magnetosphere_sba
 ttl 86400
 res 0
 lat -77.829
 lon 166.671
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_sba_x_nt
-path Y.-1 magnetosphere_sba_y_nt
-path Z.-1 magnetosphere_sba_z_nt
-path S.-1 magnetosphere_sba_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sba_x_nt
+path 1.1 magnetosphere_sba_y_nt
+path 1.2 magnetosphere_sba_z_nt
+path 2 magnetosphere_sba_s_nt
+
+source magnetosphere_schumann_resonance
+ttl 86400
+res -2
+format csv
+lat 0
+lon 0
+url https://zenodo.org/records/15225820/files/NiNo_SR_params_2024.csv
+last_line atmos_schumann_last_val
 
 source magnetosphere_sfs
 ttl 86400
 res 0
 lat 36.667
 lon -5.944999999999993
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_sfs_x_nt
-path Y.-1 magnetosphere_sfs_y_nt
-path Z.-1 magnetosphere_sfs_z_nt
-path S.-1 magnetosphere_sfs_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sfs_x_nt
+path 1.1 magnetosphere_sfs_y_nt
+path 1.2 magnetosphere_sfs_z_nt
+path 2 magnetosphere_sfs_s_nt
 
 source magnetosphere_sfs_hapi
 ttl 86400
 res 0
 lat 36.667
 lon -5.944999999999993
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/bestpath X.-1 magnetosphere_sfs_x_nt
-path Y.-1 magnetosphere_sfs_y_nt
-path Z.-1 magnetosphere_sfs_z
-path F.-1 magnetosphere_sfs_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sfs_x_nt
+path 1.1 magnetosphere_sfs_y_nt
+path 1.2 magnetosphere_sfs_z
+path 2 magnetosphere_sfs_f_nt
 
 source magnetosphere_she
 ttl 86400
 res 0
 lat -15.961
-lon -5.747000000000014 v
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_she_x_nt
-path Y.-1 magnetosphere_she_y_nt
-path Z.-1 magnetosphere_she_z_nt
-path S.-1 magnetosphere_she_s_nt
+lon -5.747000000000014
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_she_x_nt
+path 1.1 magnetosphere_she_y_nt
+path 1.2 magnetosphere_she_z_nt
+path 2 magnetosphere_she_s_nt
 
 source magnetosphere_shu
 ttl 86400
 res 0
 lat 55.35
 lon -160.46
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_shu_x_nt
-path Y.-1 magnetosphere_shu_y_nt
-path Z.-1 magnetosphere_shu_z_nt
-path S.-1 magnetosphere_shu_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_shu_x_nt
+path 1.1 magnetosphere_shu_y_nt
+path 1.2 magnetosphere_shu_z_nt
+path 2 magnetosphere_shu_s_nt
 
 source magnetosphere_shu_hapi
 ttl 86400
 res 0
 lat 55.35
 lon -160.46
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/bestpath X.-1 magnetosphere_shu_x_nt
-path Y.-1 magnetosphere_shu_y_nt
-path Z.-1 magnetosphere_shu_z_nt
-path F.-1 magnetosphere_shu_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_shu_x_nt
+path 1.1 magnetosphere_shu_y_nt
+path 1.2 magnetosphere_shu_z_nt
+path 2 magnetosphere_shu_f_nt
 
 source magnetosphere_sit
 ttl 86400
 res 0
 lat 57.06
 lon -135.33
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_sit_x_nt
-path Y.-1 magnetosphere_sit_y_nt
-path Z.-1 magnetosphere_sit_z_nt
-path S.-1 magnetosphere_sit_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sit_x_nt
+path 1.1 magnetosphere_sit_y_nt
+path 1.2 magnetosphere_sit_z_nt
+path 2 magnetosphere_sit_s_nt
 
 source magnetosphere_sit_hapi
 ttl 86400
 res 0
 lat 57.06
 lon -135.33
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-
-path X.-1 magnetosphere_sit_x_nt
-path Y.-1 magnetosphere_sit_y_nt
-path Z.-1 magnetosphere_sit_z
-path F.-1 magnetosphere_sit_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sit_x_nt
+path 1.1 magnetosphere_sit_y_nt
+path 1.2 magnetosphere_sit_z
+path 2 magnetosphere_sit_f_nt
 
 source magnetosphere_sjg
 ttl 86400
 res 0
 lat 18.11
 lon -66.14999999999998
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_sjg_x_nt
-path Y.-1 magnetosphere_sjg_y_nt
-path Z.-1 magnetosphere_sjg_z_nt
-path S.-1 magnetosphere_sjg_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sjg_x_nt
+path 1.1 magnetosphere_sjg_y_nt
+path 1.2 magnetosphere_sjg_z_nt
+path 2 magnetosphere_sjg_s_nt
 
 source magnetosphere_sjg_hapi
 ttl 86400
 res 0
 lat 18.11
 lon -66.14999999999998
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/bestpath X.-1 magnetosphere_sjg_x_nt
-path Y.-1 magnetosphere_sjg_y_nt
-path Z.-1 magnetosphere_sjg_z_nt
-path F.-1 magnetosphere_sjg_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sjg_x_nt
+path 1.1 magnetosphere_sjg_y_nt
+path 1.2 magnetosphere_sjg_z_nt
+path 2 magnetosphere_sjg_f_nt
 
 source magnetosphere_sod
 ttl 86400
 res 0
 lat 67.37
 lon 26.63
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_sod_x_nt
-path Y.-1 magnetosphere_sod_y_nt
-path Z.-1 magnetosphere_sod_z_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sod_x_nt
+path 1.1 magnetosphere_sod_y_nt
+path 1.2 magnetosphere_sod_z_nt
 
 source magnetosphere_spt
 ttl 86400
 res 0
 lat 39.55
 lon -4.350000000000023
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_spt_x_nt
-path Y.-1 magnetosphere_spt_y_nt
-path S.-1 magnetosphere_spt_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_spt_x_nt
+path 1.1 magnetosphere_spt_y_nt
+path 2 magnetosphere_spt_s_nt
 
 source magnetosphere_spt_hapi
 ttl 86400
-res O
+res 0
 lat 39.55
 lon -4.350000000000023
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/bestpath X.-1 magnetosphere_spt_x_nt
-path Y.-1 magnetosphere_spt_y_nt
-path Z.-1 magnetosphere_spt_z_nt
-path F.-1 magnetosphere_spt_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_spt_x_nt
+path 1.1 magnetosphere_spt_y_nt
+path 1.2 magnetosphere_spt_z_nt
+path 2 magnetosphere_spt_f_nt
 
 source magnetosphere_sua
 ttl 86400
 res 0
 lat 44.68
 lon 26.25
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_sua_x_nt
-path Y.-1 magnetosphere_sua_y_nt
-path Z.-1 magnetosphere_sua_z_nt
-path S.-1 magnetosphere_sua_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sua_x_nt
+path 1.1 magnetosphere_sua_y_nt
+path 1.2 magnetosphere_sua_z_nt
+path 2 magnetosphere_sua_s_nt
 
 source magnetosphere_sua_hapi
 ttl 86400
 res 0
 lat 44.68
 lon 26.25
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/bestpath X.-1 magnetosphere_sua_x_nt
-path Y.-1 magnetosphere_sua_y_nt
-path Z.-1 magnetosphere_sua_z_nt
-path F.-1 magnetosphere_sua_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sua_x_nt
+path 1.1 magnetosphere_sua_y_nt
+path 1.2 magnetosphere_sua_z_nt
+path 2 magnetosphere_sua_f_nt
 
 source magnetosphere_tdc_hapi
 ttl 86400
 res 0
 lat -37.067
 lon -12.315999999999974 A
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/bestpath X.-1 magnetosphere_tdc_x_nt
-path Y.-1 magnetosphere_tdc_y_nt
-path Z.-1 magnetosphere_tdc_z_nt
-path F.-1 magnetosphere_tdc_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_tdc_x_nt
+path 1.1 magnetosphere_tdc_y_nt
+path 1.2 magnetosphere_tdc_z_nt
+path 2 magnetosphere_tdc_f_nt
 
 source magnetosphere_thL
 ttl 86400
 res 0
 lat 77.47
 lon -69.22699999999998
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path Y.-1 magnetosphere_thl_y_nt
-path Z.-1 magnetosphere_thl_z_nt
-path S.-1 magnetosphere_thl_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.1 magnetosphere_thl_y_nt
+path 1.2 magnetosphere_thl_z_nt
+path 2 magnetosphere_thl_s_nt
 
 source magnetosphere_thy
 ttl 86400
 res 0
 lat 46.9
 lon 17.89
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_thy_x_nt
-path Y.-1 magnetosphere_thy_y_nt
-path Z.-1 magnetosphere_thy_z_nt
-path S.-1 magnetosphere_thy_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_thy_x_nt
+path 1.1 magnetosphere_thy_y_nt
+path 1.2 magnetosphere_thy_z_nt
+path 2 magnetosphere_thy_s_nt
 
 source magnetosphere_tirm
 ttl 86400
 res 0
 lat -22.22
 lon 114.1
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_lrm_x_nt
-path Y.-1 magnetosphere_ltrm_y_nt
-path Z.-1 magnetosphere_trm_z_nt
-path S.-1 magnetosphere_ltrm_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_lrm_x_nt
+path 1.1 magnetosphere_ltrm_y_nt
+path 1.2 magnetosphere_trm_z_nt
+path 2 magnetosphere_ltrm_s_nt
 
 source magnetosphere_tlon
 ttl 86400
 res 0
 lat 45.408
 lon 16.659
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_lon_x_nt
-path Y.-1 magnetosphere_lon_y_nt
-path Z.-1 magnetosphere_lon_z_nt
-path S.-1 magnetosphere_lon_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_lon_x_nt
+path 1.1 magnetosphere_lon_y_nt
+path 1.2 magnetosphere_lon_z_nt
+path 2 magnetosphere_lon_s_nt
 
 source magnetosphere_tsu
 ttl 86400
 res 0
 lat -19.202
 lon 17.584
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_tsu_x_nt
-path Y.-1 magnetosphere_tsu_y_nt
-path Z.-1 magnetosphere_tsu_z_nt
-path S.-1 magnetosphere_tsu_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_tsu_x_nt
+path 1.1 magnetosphere_tsu_y_nt
+path 1.2 magnetosphere_tsu_z_nt
+path 2 magnetosphere_tsu_s_nt
 
 source magnetosphere_ttb
 ttl 86400
 res 0
 lat -1.205
 lon -48.51299999999998
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_ttb_x_nt
-path Y.-1 magnetosphere_ttb_y_nt
-path Z.-1 magnetosphere_ttb_z_nt
-path S.-1 magnetosphere_ttb_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ttb_x_nt
+path 1.1 magnetosphere_ttb_y_nt
+path 1.2 magnetosphere_ttb_z_nt
+path 2 magnetosphere_ttb_s_nt
 
 source magnetosphere_ttb_hapi
 ttl 86400
 res 0
 lat -1.205
 lon -48.51299999999998
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/bestpath X.-1 magnetosphere_ttb_x_nt
-path Y.-1 magnetosphere_ttb_y_nt
-path Z.-1 magnetosphere_ttb_z_nt
-path F.-1 magnetosphere_ttb_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ttb_x_nt
+path 1.1 magnetosphere_ttb_y_nt
+path 1.2 magnetosphere_ttb_z_nt
+path 2 magnetosphere_ttb_f_nt
 
 source magnetosphere_tuc
 ttl 86400
 res 0
 lat 32.17
 lon -110.72999999999999
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_tuc_x_nt
-path Y.-1 magnetosphere_tuc_y_nt
-path Z.-1 magnetosphere_tuc_z_nt
-path S.-1 magnetosphere_tuc_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_tuc_x_nt
+path 1.1 magnetosphere_tuc_y_nt
+path 1.2 magnetosphere_tuc_z_nt
+path 2 magnetosphere_tuc_s_nt
 
 source magnetosphere_tuc_hapi
 ttl 86400
-res O
+res 0
 lat 32.17
 lon -110.72999999999999
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/bestpath X.-1 magnetosphere_tuc_x_nt
-path Y.-1 magnetosphere_tuc_y_nt
-path Z.-1 magnetosphere_tuc_z_nt
-path F.-1 magnetosphere_tuc_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_tuc_x_nt
+path 1.1 magnetosphere_tuc_y_nt
+path 1.2 magnetosphere_tuc_z_nt
+path 2 magnetosphere_tuc_f_nt
 
 source magnetosphere_ups
 ttl 86400
 res 0
 lat 59.903
 lon 17.353
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_ups_x_nt
-path Y.-1 magnetosphere_ups_y_nt
-path Z.-1 magnetosphere_ups_z_nt
-path S.-1 magnetosphere_ups_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ups_x_nt
+path 1.1 magnetosphere_ups_y_nt
+path 1.2 magnetosphere_ups_z_nt
+path 2 magnetosphere_ups_s_nt
 
 source magnetosphere_valL
 ttl 86400
 res 0
 lat 51.933
 lon -10.25
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_val_x_nt
-path Y.-1 magnetosphere_val_y_nt
-path Z.-1 magnetosphere_val_z_nt
-path S.-1 magnetosphere_val_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_val_x_nt
+path 1.1 magnetosphere_val_y_nt
+path 1.2 magnetosphere_val_z_nt
+path 2 magnetosphere_val_s_nt
 
 source magnetosphere_vna
 ttl 86400
 res 0 a
 lat -70.683
 lon -8.281999999999982
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_vna_x_nt
-path Y.-1 magnetosphere_vna_y_nt
-path Z.-1 magnetosphere_vna_z_nt
-path S.-1 magnetosphere_vna_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vna_x_nt
+path 1.1 magnetosphere_vna_y_nt
+path 1.2 magnetosphere_vna_z_nt
+path 2 magnetosphere_vna_s_nt
 
 source magnetosphere_vna_hapi
 ttl 86400
 res 0
 lat -22.4
 lon -43.64999999999998
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/bestpath X.-1 magnetosphere_vna_x_nt
-path Y.-1 magnetosphere_vna_y_nt
-path Z.-1 magnetosphere_vna_z_nt
-path F.-1 magnetosphere_vna_f_nt
-path X.-1 magnetosphere_vss_x_nt
-path Z.-1 magnetosphere_vss_z_nt
-path F.-1 magnetosphere_vss_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vna_x_nt
+path 1.1 magnetosphere_vna_y_nt
+path 1.2 magnetosphere_vna_z_nt
+path 2 magnetosphere_vna_f_nt
+path 1.0 magnetosphere_vss_x_nt
+path 1.2 magnetosphere_vss_z_nt
+path 2 magnetosphere_vss_f_nt
 
 source magnetosphere_vos
 ttl 86400
 lat -78.464
 lon 106.835
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_vos_x_nt
-path Y.-1 magnetosphere_vos_y_nt
-path Z.-1 magnetosphere_vos_z_nt
-path S.-1 magnetosphere_vos_s_nt
-~res O
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vos_x_nt
+path 1.1 magnetosphere_vos_y_nt
+path 1.2 magnetosphere_vos_z_nt
+path 2 magnetosphere_vos_s_nt
+res 0
 
 source magnetosphere_vss
 ttl 86400
 res 0
 lat -22.4
 lon -43.64999999999998
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_vss_x_nt
-path Y.-1 magnetosphere_vss_y_nt
-path Z.-1 magnetosphere_vss_z_nt
-path S.-1 magnetosphere_vss_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vss_x_nt
+path 1.1 magnetosphere_vss_y_nt
+path 1.2 magnetosphere_vss_z_nt
+path 2 magnetosphere_vss_s_nt
 
 source magnetosphere_wic
 ttl 86400
 res 0
 lat 47.931
 lon 15.866
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_wic_x_nt
-path Y.-1 magnetosphere_wic_y_nt
-path Z.-1 magnetosphere_wic_z_nt
-path S.-1 magnetosphere_wic_s_
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wic_x_nt
+path 1.1 magnetosphere_wic_y_nt
+path 1.2 magnetosphere_wic_z_nt
+path 2 magnetosphere_wic_s_
 
 source magnetosphere_wic_hapi
 ttl 86400
 res 0
 lat 47.931
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WwIC/best-
-path X.-1 magnetosphere_wic_x_nt
-path Y.-1 magnetosphere_wic_y_nt
-path Z.-1 magnetosphere_wic_z_nt
-path F.-1 magnetosphere_wic_f_nt
+lon 15.866
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wic_x_nt
+path 1.1 magnetosphere_wic_y_nt
+path 1.2 magnetosphere_wic_z_nt
+path 2 magnetosphere_wic_f_nt
 
 source magnetosphere_wng
 ttl 86400
 res 0
 lat 53.725
 lon 9.053
-url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
-path X.-1 magnetosphere_wng_x_nt
-path Y.-1 magnetosphere_wng_y_nt
-path Z.-1 magnetosphere_wng_z_nt
-path S.-1 magnetosphere_wng_s_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wng_x_nt
+path 1.1 magnetosphere_wng_y_nt
+path 1.2 magnetosphere_wng_z_nt
+path 2 magnetosphere_wng_s_nt
 
 source magnetosphere_wng_hapi
 ttl 86400
 res 0
 lat 53.725
 lon 9.053
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/bestpath X.-1 magnetosphere_wng_x_nt
-path Y.-1 magnetosphere_wng_y_nt
-path Z.-1 magnetosphere_wng_z_nt
-path F.-1 magnetosphere_wng_f_nt
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wng_x_nt
+path 1.1 magnetosphere_wng_y_nt
+path 1.2 magnetosphere_wng_z_nt
+path 2 magnetosphere_wng_f_nt
 
 source minor_planet_center_asteroids_total
 ttl 86400
@@ -9115,6 +9360,16 @@ lat 37.774
 lon -122.419
 url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
 field total biosphere_stackoverflow_questions_total
+
+source subatomare_particles
+ttl 86400
+res -8
+terra 0
+format csv
+url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
+last_row ID subatomare_last_pdg_id
+last_row Mass subatomare_last_mass_mev
+last_row Charge subatomare_last_charge
 
 source sunspot_number_global
 ttl 86400
