@@ -593,7 +593,6 @@ res -3
 terra 1
 url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
 last kp_index magnetosphere_kp_index
-last a_index magnetosphere_ap_index
 
 source magnetosphere_solar_wind
 ttl 60
@@ -668,7 +667,6 @@ lon -75.2
 alt 35786023
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 last_obj energy ">=2 MeV" flux radiation_electron_flux_2mev
-last_obj energy ">=0.8 MeV" flux radiation_electron_flux_800kev
 
 source radiation_nmdb_almaty
 ttl 60
@@ -845,7 +843,7 @@ ttl 60
 res -8
 terra 0
 url https://services.swpc.noaa.gov/json/edited_events.json
-last event magnetosphere_swpc_latest_event
+last coded_type magnetosphere_swpc_latest_event
 
 source solar_indices
 ttl 60
@@ -859,7 +857,7 @@ ttl 60
 res -8
 terra 0
 url https://services.swpc.noaa.gov/json/solar-radio-flux.json
-path -1.details.3.flux solar_radio_flux_sfu
+path 0.details.0.flux solar_radio_flux_sfu
 
 source solar_sunspots
 ttl 60
@@ -2455,7 +2453,8 @@ ttl 300
 res -8
 terra 1
 url https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json
-last_row speed magnetosphere_solar_wind_speed_noaa
+last_row 1 magnetosphere_solar_wind_speed_noaa
+last_row 2 magnetosphere_solar_wind_density_noaa
 
 source physics_gcn_icecube_circulars
 ttl 300
@@ -5730,14 +5729,14 @@ ttl 3600
 res -8
 terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
-count lines solar_flare_count_noaa
+count . solar_flare_count_noaa
 
 source solar_noaa_swpc_flares
 ttl 3600
 res -8
 terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
-count lines solar_flare_count_noaa
+count . solar_flare_count_noaa
 
 source solar_orbiter_vectors
 ttl 3600
