@@ -15,6 +15,7 @@ const EARTH_ECC: f64 = 0.0167086;
 const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
+const GAUSS_K: f64 = 0.01720209895;
 const MU_EARTH: f64 = 3.986004418e14;
 const TERRA_DOMAIN: f64 = EARTH_RADIUS * 16.0;
 const PARSEC_M: f64 = 3.085677581e16;
@@ -1169,6 +1170,20 @@ enum Extract {
         geom_path: String,
         fields: Vec<(String, String)>,
     },
+    Rows {
+        fields: Vec<(String, String)>,
+    },
+    KeplerMap {
+        arr_path: String,
+        a_key: String,
+        e_key: String,
+        i_key: String,
+        om_key: String,
+        w_key: String,
+        ma_key: String,
+        epoch_key: String,
+        fields: Vec<(String, String)>,
+    },
 }
 
 enum Frame {
@@ -1791,6 +1806,8 @@ fn load_sources() -> Vec<SourceConfig> {
                                 | Extract::Ephemeris(_)
                                 | Extract::CelestialMap { .. }
                                 | Extract::Flatten { .. }
+                                | Extract::Rows { .. }
+                                | Extract::KeplerMap { .. }
                         )
                     });
                 let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
@@ -2037,12 +2054,32 @@ fn load_sources() -> Vec<SourceConfig> {
                     *geom_path = parts.get(1).unwrap_or(&"").to_string();
                 }
             }
+            "rows" => {
+                cur_extracts.push(Extract::Rows { fields: Vec::new() });
+            }
+            "kepler_map" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::KeplerMap {
+                        arr_path: parts[1].to_string(),
+                        a_key: String::new(),
+                        e_key: String::new(),
+                        i_key: String::new(),
+                        om_key: String::new(),
+                        w_key: String::new(),
+                        ma_key: String::new(),
+                        epoch_key: String::new(),
+                        fields: Vec::new(),
+                    });
+                }
+            }
             "field_in" => {
                 if parts.len() >= 3 {
                     match cur_extracts.last_mut() {
                         Some(Extract::Map { fields, .. })
                         | Some(Extract::CelestialMap { fields, .. })
-                        | Some(Extract::Flatten { fields, .. }) => {
+                        | Some(Extract::Flatten { fields, .. })
+                        | Some(Extract::Rows { fields, .. })
+                        | Some(Extract::KeplerMap { fields, .. }) => {
                             fields.push((parts[1].to_string(), parts[2].to_string()));
                         }
                         _ => {}
@@ -2115,6 +2152,41 @@ fn load_sources() -> Vec<SourceConfig> {
                 {
                     *rv_key = parts.get(1).unwrap_or(&"").to_string();
                     *rv_scale = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(1.0);
+                }
+            }
+            "a_key" => {
+                if let Some(Extract::KeplerMap { a_key, .. }) = cur_extracts.last_mut() {
+                    *a_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "e_key" => {
+                if let Some(Extract::KeplerMap { e_key, .. }) = cur_extracts.last_mut() {
+                    *e_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "i_key" => {
+                if let Some(Extract::KeplerMap { i_key, .. }) = cur_extracts.last_mut() {
+                    *i_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "om_key" => {
+                if let Some(Extract::KeplerMap { om_key, .. }) = cur_extracts.last_mut() {
+                    *om_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "w_key" => {
+                if let Some(Extract::KeplerMap { w_key, .. }) = cur_extracts.last_mut() {
+                    *w_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "ma_key" => {
+                if let Some(Extract::KeplerMap { ma_key, .. }) = cur_extracts.last_mut() {
+                    *ma_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "epoch_key" => {
+                if let Some(Extract::KeplerMap { epoch_key, .. }) = cur_extracts.last_mut() {
+                    *epoch_key = parts.get(1).unwrap_or(&"").to_string();
                 }
             }
             _ => {}
@@ -2843,6 +2915,144 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     }
                 }
             }
+            Extract::Rows { fields } => {
+                if let Frame::Ground { lat, lon, alt } = src.frame {
+                    let col_indices: Vec<(usize, &String)> = fields
+                        .iter()
+                        .filter_map(|(fk, fn_)| {
+                            if let Ok(idx) = fk.parse::<usize>() {
+                                Some((idx, fn_))
+                            } else {
+                                for line in body.lines() {
+                                    let t = line.trim();
+                                    if t.is_empty() {
+                                        continue;
+                                    }
+                                    let s = t.strip_prefix('#').unwrap_or(t).trim();
+                                    if let Some(idx) = split_data_line(s).iter().position(|c| {
+                                        c.eq_ignore_ascii_case(fk) || c.starts_with(fk)
+                                    }) {
+                                        return Some((idx, fn_));
+                                    }
+                                }
+                                None
+                            }
+                        })
+                        .collect();
+                    for line in body.lines() {
+                        let trimmed = line.trim();
+                        if trimmed.is_empty() || trimmed.starts_with('#') {
+                            continue;
+                        }
+                        let cols = split_data_line(trimmed);
+                        let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                        for (idx, fn_) in &col_indices {
+                            if let Some(val) = cols
+                                .get(*idx)
+                                .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok())
+                            {
+                                ev_fields.push((fn_.to_string(), val));
+                            }
+                        }
+                        if ev_fields.is_empty() {
+                            continue;
+                        }
+                        pending.push(PendingSample {
+                            epoch: now,
+                            position: PendingPosition::Geodetic { lat, lon, alt },
+                            fields: ev_fields,
+                        });
+                    }
+                }
+            }
+            Extract::KeplerMap {
+                arr_path,
+                a_key,
+                e_key,
+                i_key,
+                om_key,
+                w_key,
+                ma_key,
+                epoch_key,
+                fields,
+            } => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
+                        let jd_now = tdb_to_jd(now);
+                        for v in arr.iter() {
+                            let (
+                                Some(a_val),
+                                Some(e_val),
+                                Some(i_val),
+                                Some(om_val),
+                                Some(w_val),
+                                Some(ma_val),
+                                Some(epoch_val),
+                            ) = (
+                                jpath(v, a_key),
+                                jpath(v, e_key),
+                                jpath(v, i_key),
+                                jpath(v, om_key),
+                                jpath(v, w_key),
+                                jpath(v, ma_key),
+                                jpath(v, epoch_key),
+                            )
+                            else {
+                                continue;
+                            };
+                            let a_au = a_val.max(1e-10);
+                            let n = GAUSS_K * (1.0 / (a_au * a_au * a_au)).sqrt();
+                            let m = ma_val.to_radians() + n * (jd_now - epoch_val);
+                            let e = e_val.clamp(0.0, 0.999);
+                            let mut e_anom = m;
+                            for _ in 0..5 {
+                                e_anom = e_anom
+                                    - (e_anom - e * e_anom.sin() - m) / (1.0 - e * e_anom.cos());
+                            }
+                            let (cos_e, sin_e) = (e_anom.cos(), e_anom.sin());
+                            let sqrt_1me2 = (1.0 - e * e).sqrt();
+                            let x_orb = a_au * (cos_e - e);
+                            let y_orb = a_au * sqrt_1me2 * sin_e;
+                            let r = a_au * (1.0 - e * cos_e);
+                            let n_rad_s = n / 86400.0;
+                            let vx_orb = -a_au * sin_e * n_rad_s / r;
+                            let vy_orb = a_au * sqrt_1me2 * cos_e * n_rad_s / r;
+                            let (sin_om, cos_om) = om_val.to_radians().sin_cos();
+                            let (sin_i, cos_i) = i_val.to_radians().sin_cos();
+                            let (sin_w, cos_w) = w_val.to_radians().sin_cos();
+                            let x1 = cos_w * x_orb - sin_w * y_orb;
+                            let y1 = sin_w * x_orb + cos_w * y_orb;
+                            let vx1 = cos_w * vx_orb - sin_w * vy_orb;
+                            let vy1 = sin_w * vx_orb + cos_w * vy_orb;
+                            let p = [
+                                (cos_om * x1 - sin_om * cos_i * y1) * AU,
+                                (sin_om * x1 + cos_om * cos_i * y1) * AU,
+                                sin_i * y1 * AU,
+                            ];
+                            let vel = [
+                                (cos_om * vx1 - sin_om * cos_i * vy1) * AU,
+                                (sin_om * vx1 + cos_om * cos_i * vy1) * AU,
+                                sin_i * vy1 * AU,
+                            ];
+                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            for (fk, fn_) in fields {
+                                if let Some(val) = jpath(v, fk) {
+                                    ev_fields.push((fn_.clone(), val));
+                                }
+                            }
+                            pending.push(PendingSample {
+                                epoch: now,
+                                position: PendingPosition::StateVector {
+                                    p,
+                                    v: vel,
+                                    track: false,
+                                },
+                                fields: ev_fields,
+                            });
+                        }
+                    }
+                }
+            }
             Extract::CelestialMap {
                 arr_path,
                 ra_key,
@@ -3386,6 +3596,8 @@ fn warm_cache(archive: Arc<Archive>) {
                         | Extract::LastObj { .. }
                         | Extract::CelestialMap { .. }
                         | Extract::Flatten { .. }
+                        | Extract::Rows { .. }
+                        | Extract::KeplerMap { .. }
                 )
             });
             if pendings.is_empty() {

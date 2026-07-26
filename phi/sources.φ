@@ -423,7 +423,8 @@ ttl 60
 res -2
 terra 1
 url https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0
-field data.bgp_state biosphere_bgp_default_route_state
+count data.bgp_state biosphere_bgp_default_route_count
+path data.nr_routes biosphere_bgp_nr_routes
 
 source biosphere_ripe_bgp_updates
 ttl 60
@@ -600,9 +601,9 @@ ttl 60
 res -8
 terra 0.99
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
-last_row bz_gsm magnetosphere_imf_bz_nt
-last_row bt magnetosphere_imf_bt_nt
-last_row by_gsm magnetosphere_imf_by_nt
+last bz_gsm magnetosphere_imf_bz_nt
+last bt magnetosphere_imf_bt_nt
+last by_gsm magnetosphere_imf_by_nt
 
 source nmdb_mcmurdo_neutron
 ttl 60
@@ -1048,6 +1049,15 @@ lat 38.94900000
 lon -77.36500000
 url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000&parameterCd=00060&siteStatus=all
 path value.timeSeries.0.values.0.value.0.value hydrosphere_river_flow_cfs
+
+source geosphere_usgs_streamflow_bbox
+ttl 300
+res 3
+url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field_in values.0.value.0.value hydrosphere_river_flow_cfs
 
 source hydrosphere_ndbc_buoy_41001
 ttl 300
@@ -2552,6 +2562,17 @@ url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
 field 0.sensordatavalues.0.value biosphere_pm25_ugm3
 field 0.sensordatavalues.1.value biosphere_pm10_ugm3
 
+source atmosphere_sensor_community_global
+ttl 600
+res 2
+url https://data.sensor.community/static/v1/data.json
+map .
+lat_key location.latitude
+lon_key location.longitude
+field_in sensordatavalues.0.value atmosphere_pm10_ugm3
+field_in sensordatavalues.1.value atmosphere_pm25_ugm3
+field_in sensordatavalues.2.value atmosphere_temperature_c
+
 source atmosphere_sigmet
 ttl 600
 res -1
@@ -2902,8 +2923,7 @@ lat 0.0
 lon -75.2
 alt 35786023
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
-last_obj wavelength "0.05-0.4nm" flux solar_euv_flux_short_wm2
-last_obj wavelength "0.1-0.8nm" flux solar_euv_flux_long_wm2
+last value solar_euv_flux_wm2
 
 source solar_surface_radiation
 ttl 600
@@ -3747,6 +3767,26 @@ terra 1
 url https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires
 count events biosphere_eonet_wildfire_count
 
+source cosmos_asteroids_numbered
+ttl 86400
+terra 0
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
+count data cosmos_asteroids_numbered_total
+
+source cosmos_asteroids_positions
+ttl 86400
+res -5
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
+kepler_map data
+a_key a
+e_key e
+i_key i
+om_key om
+w_key w
+ma_key ma
+epoch_key epoch
+field_in H cosmic_asteroid_h_mag
+
 source cosmos_gaia_dr3_sample
 ttl 86400
 res -7
@@ -3857,6 +3897,7 @@ url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
 map coordinates
 lat_key 1
 lon_key 0
+field_in 0 atmosphere_aurora_power_gw
 field_in 2 atmosphere_aurora_probability_pct
 
 source exosphere_dst_index
@@ -4007,11 +4048,14 @@ field_in id geosphere_fuel_station_id
 
 source geosphere_gdacs_disasters
 ttl 3600
-res 0
-lat 38.9072
-lon -77.0369
-url https://gdacs.org/xml/rss.xml
-xml_count item geosphere_disasters_gdacs
+res 2
+url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?alertlevel=red;orange;green
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.eventtype geosphere_disaster_type
+field_in properties.alertlevel geosphere_disaster_alert_level
+field_in properties.severitydata.severity geosphere_disaster_severity
 
 source geosphere_gdacs_disasters_total
 ttl 3600
@@ -5405,7 +5449,7 @@ ttl 3600
 res -2
 terra 1
 url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
-count features ionosphere_global_tec_points
+count . ionosphere_global_tec_points
 
 source juno_vectors
 ttl 3600
@@ -5430,14 +5474,14 @@ ttl 3600
 res -2
 terra 1
 url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
-field forecast_time atmosphere_aurora_forecast_time
+count coordinates atmosphere_aurora_coord_count
 
 source magnetosphere_aurora_nowcast_north
 ttl 3600
 res -2
 terra 1
 url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
-field north_intensity atmosphere_aurora_intensity_north
+count coordinates atmosphere_aurora_coordinate_count
 
 source magnetosphere_geomagnetic_storms
 ttl 3600
@@ -6936,6 +6980,15 @@ lon -125.00
 url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
 last_row surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm
 last_row sea_surface_temperature hydrosphere_sst_ooi_c
+
+source hydrosphere_oisst_sst
+ttl 86400
+res 2
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?sst%5B(last)%5D%5B(0.0)%5D%5B(-89.875):20:(89.875)%5D%5B(-179.875):20:(179.875)%5D
+map table.rows
+lat_key 2
+lon_key 3
+field_in 4 hydrosphere_sst_c
 
 source hydrosphere_pmel_co2_air
 ttl 86400
@@ -13997,30 +14050,37 @@ field hits.hits.0.metadata.citation_count quantum_double_beta_limit_citations
 
 source paleoclimate_dome_fuji_co2
 ttl 2592000
-res 0
+res 2
 format csv
 lat -77.3190
 lon 39.7030
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
-last_row age_bp paleoclimate_domefuji_age_bp
-last_row co2 paleoclimate_domefuji_co2_ppm
+rows
+field_in 0 paleoclimate_domefuji_age_bp
+field_in 1 paleoclimate_domefuji_co2_ppm
 
 source paleoclimate_epica_co2
 ttl 2592000
-res 0
+res 2
 format text
-lat 35.595
-lon -82.551
+lat -75.100
+lon 123.350
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
-last line paleoclimate_epica_co2_raw
+rows
+field_in 3 paleoclimate_epica_age_bp
+field_in 4 paleoclimate_epica_co2_ppm
 
 source paleoclimate_vostok_icecore
 ttl 2592000
+res 2
 format text
 lat -78.464
 lon 106.833
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
-last line paleoclimate_vostok_co2_raw
+rows
+field_in 0 paleoclimate_vostok_depth_m
+field_in 1 paleoclimate_vostok_age_bp
+field_in 2 paleoclimate_vostok_co2_ppm
 
 source physics_cern_opendata_records
 ttl 2592000
