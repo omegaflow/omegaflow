@@ -244,8 +244,8 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         let a2 = mt.x * mt.x;
         if (d2 > a2) { continue; }
         let val_eff = m.w * exp2(-mt.y / max(mt.z, 1.0) * 1.4426950408889634);
-        let s2 = max(a2, scale * scale);
-        omega = omega + val_eff * exp2(-d2 / (2.0 * s2));
+        let n = max(a2, 1.0);
+        omega = omega + val_eff * exp2(-d2 / (2.0 * n)) / (scale * scale);
     }
     let aw = abs(omega);
     let lvl = 0.5 / max(f32(count), 1.0);
