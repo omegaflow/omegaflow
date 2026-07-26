@@ -241,10 +241,11 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         let mt = props[j];
         let d = m.xyz - phi;
         let d2 = dot(d, d);
-        let a2 = max(mt.x * mt.x, scale * scale);
+        let a2 = mt.x * mt.x;
         if (d2 > a2) { continue; }
         let val_eff = m.w * exp2(-mt.y / max(mt.z, 1.0) * 1.4426950408889634);
-        omega = omega + val_eff * exp2(-d2 / (2.0 * a2));
+        let s2 = max(a2, scale * scale);
+        omega = omega + val_eff * exp2(-d2 / (2.0 * s2));
     }
     let aw = abs(omega);
     let lvl = 0.5 / max(f32(count), 1.0);
@@ -258,7 +259,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
 }`;
         let fieldCanvas = document.createElement('canvas');
         fieldCanvas.width = RX; fieldCanvas.height = RY;
-        fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;';
+        fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;background:#0a0908;';
         document.body.appendChild(fieldCanvas);
         let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, vpBuf = null, fieldBuf = null, apertureBuf = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
         async function initFieldGPU() {
@@ -891,7 +892,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                 const topLines = topOsc.slice(0, 12).map(t => `  ${t.u}: ${t.v.toPrecision(4)}`).join('\n');
 
                 debugEl.value =
-                    "omegaflow field\n\n" +
+                    "omegaflow field v2b6d\n\n" +
                     "Presence\n" +
                     `  X: ${xStr}\n` +
                     `  Y: ${yStr}\n` +
