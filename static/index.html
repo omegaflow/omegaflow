@@ -1042,6 +1042,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             pPresence = [xEcl, yEcl * Math.cos(0.409092804), yEcl * Math.sin(0.409092804)];
             vPresence = [0, 0, 0];
             t0P = tPresence;
+            gridStep = 1e11;
             keysDown.clear();
         });
         window.addEventListener('error', (e) => { reportState('ERROR', e.message + ' @ ' + e.filename + ':' + e.lineno); e.preventDefault(); });
