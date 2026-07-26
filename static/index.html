@@ -244,8 +244,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         let a2 = mt.x * mt.x;
         if (d2 > a2) { continue; }
         let val_eff = m.w * exp2(-mt.y / max(mt.z, 1.0) * 1.4426950408889634);
-        let n = max(a2, 1.0);
-        omega = omega + val_eff * exp2(-d2 / (2.0 * n)) / (scale * scale);
+        omega = omega + val_eff * max(0.0, 1.0 - d2 / max(a2, 1.0)) / (d2 + scale * scale);
     }
     let aw = abs(omega);
     let lvl = vp.expose.x;
@@ -369,7 +368,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         let dvRef = null, dvVals = null;
         function fieldOmegaAt(px, py, pz) {
             if (dvRef !== rawWindowResponse) { dvRef = rawWindowResponse; dvVals = rawWindowResponse.map(o => decay(o)); }
-            const px2 = gridStep * gridStep * Math.pow(4, evalShift);
+            const px2 = gridStep * gridStep;
             let omega = 0;
             for (let i = 0; i < rawWindowResponse.length; i++) {
                 const o = rawWindowResponse[i];
