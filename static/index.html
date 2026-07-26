@@ -369,7 +369,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         let dvRef = null, dvVals = null;
         function fieldOmegaAt(px, py, pz) {
             if (dvRef !== rawWindowResponse) { dvRef = rawWindowResponse; dvVals = rawWindowResponse.map(o => decay(o)); }
-            const px2 = gridStep * gridStep;
+            const px2 = gridStep * gridStep * Math.pow(4, evalShift);
             let omega = 0;
             for (let i = 0; i < rawWindowResponse.length; i++) {
                 const o = rawWindowResponse[i];
