@@ -420,7 +420,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         async function syncField(transmitList, queries) {
             const response = await syncFrame(transmitList, queries);
             prevWindowResponse = rawWindowResponse;
-            prevSyncTs = tPresence;
+            prevSyncTs = performance.now();
             rawWindowResponse = response || [];
             if (rawWindowResponse.length === 0) {
                 emptySyncs++;
