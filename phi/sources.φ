@@ -566,7 +566,7 @@ ttl 60
 res -3
 terra 1
 url https://services.swpc.noaa.gov/products/kyoto-dst.json
-last_row dst magnetosphere_dst_index_nt
+last dst magnetosphere_dst_index_nt
 
 source magnetosphere_geomag_forecast
 ttl 60
@@ -583,10 +583,9 @@ lat 0.0
 lon -75.2
 alt 35786023
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
-last_obj satellite "GOES-16" Hp magnetosphere_hp_nt
-last_obj satellite "GOES-16" He magnetosphere_he_nt
-last_obj satellite "GOES-16" Hn magnetosphere_hn_nt
-last_obj satellite "GOES-16" Ht magnetosphere_ht_nt
+last Hp magnetosphere_hp_nt
+last He magnetosphere_he_nt
+last total magnetosphere_bt_nt
 
 source magnetosphere_kp_index
 ttl 60
@@ -860,7 +859,7 @@ ttl 60
 res -8
 terra 0
 url https://services.swpc.noaa.gov/json/solar-radio-flux.json
-last flux solar_radio_flux_observed_sfu
+path -1.details.3.flux solar_radio_flux_sfu
 
 source solar_sunspots
 ttl 60
@@ -874,9 +873,9 @@ ttl 60
 res -8
 terra 0.99
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
-last_row speed solar_wind_speed_km_s
-last_row density solar_wind_density_cm3
-last_row temperature solar_wind_temp_k
+last proton_speed solar_wind_speed_km_s
+last proton_density solar_wind_density_cm3
+last proton_temperature solar_wind_temp_k
 
 source solar_xray
 ttl 60
@@ -892,9 +891,9 @@ ttl 60
 res -8
 terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
-count flares solar_flare_count_7d
-last class_type solar_flare_class_7d
-last begin_time solar_flare_time_7d
+count . solar_flare_count_7d
+last max_class solar_flare_class_7d
+last max_xrlong solar_flare_xray_intensity
 
 source world_open_sky_aircraft
 ttl 60
