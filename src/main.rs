@@ -68,6 +68,26 @@ fn earth_position_icrs(tdb_secs: f64) -> (f64, f64, f64) {
     (x_icrs, y_icrs, z_icrs)
 }
 
+fn mars_position_icrs(tdb_secs: f64) -> (f64, f64, f64) {
+    let jd = tdb_to_jd(tdb_secs);
+    let m = 0.338403 + 0.00914587 * (jd - J2000_EPOCH);
+    let e = 0.09340062;
+    let mut e_anom = m;
+    for _ in 0..5 {
+        e_anom = e_anom - (e_anom - e * e_anom.sin() - m) / (1.0 - e * e_anom.cos());
+    }
+    let a = AU * 1.523679;
+    let x_orb = a * (e_anom.cos() - e);
+    let y_orb = a * (1.0 - e * e).sqrt() * e_anom.sin();
+    let omega: f64 = 5.0019;
+    let x_ecl = x_orb * omega.cos() - y_orb * omega.sin();
+    let y_ecl = x_orb * omega.sin() + y_orb * omega.cos();
+    let x_icrs = x_ecl;
+    let y_icrs = y_ecl * ECLIPTIC_OBLIQUITY.cos();
+    let z_icrs = y_ecl * ECLIPTIC_OBLIQUITY.sin();
+    (x_icrs, y_icrs, z_icrs)
+}
+
 fn geodetic_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f64) {
     let (x_ecef, y_ecef, z_ecef) = geodetic_to_ecef(lat, lon, alt);
     let gmst_rad = compute_gmst(tdb_secs);
@@ -109,9 +129,10 @@ type Origin = (u32, i32, i32);
 
 #[derive(Clone, Copy)]
 enum Motion {
+    Terra { scale: f64 },
+    Mars { scale: f64 },
     Ground { lat: f64, lon: f64, alt: f64 },
     Linear { p: [f64; 3], v: [f64; 3] },
-    Terra { scale: f64 },
 }
 
 impl Motion {
@@ -129,10 +150,17 @@ impl Motion {
                 let (x, y, z) = earth_position_icrs(t);
                 [x * scale, y * scale, z * scale]
             }
+            Motion::Mars { scale } => {
+                let (x, y, z) = mars_position_icrs(t);
+                [x * scale, y * scale, z * scale]
+            }
         }
     }
     fn terra_bound(&self) -> bool {
-        matches!(self, Motion::Ground { .. } | Motion::Terra { .. })
+        matches!(
+            self,
+            Motion::Ground { .. } | Motion::Terra { .. } | Motion::Mars { .. }
+        )
     }
 }
 
@@ -669,7 +697,17 @@ fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
         if let JsonVal::Obj(map) = current {
             current = map.get(part)?;
         } else if let JsonVal::Arr(arr) = current {
-            let idx = part.parse::<usize>().ok()?;
+            let raw_idx: i64 = part.parse().ok()?;
+            let len = arr.len() as i64;
+            let idx = if raw_idx < 0 {
+                let actual = len + raw_idx;
+                if actual < 0 {
+                    return None;
+                }
+                actual as usize
+            } else {
+                raw_idx as usize
+            };
             current = arr.get(idx)?;
         } else {
             return None;
@@ -693,6 +731,24 @@ fn jpath(json: &JsonVal, path: &str) -> Option<f64> {
         return scalar_of(json);
     }
     jpath_val(json, path).and_then(scalar_of)
+}
+
+fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64)> {
+    if let Some(JsonVal::Num(_)) = val.first() {
+        if val.len() >= 2 {
+            if let (Some(lon), Some(lat)) = (scalar_of(&val[0]), scalar_of(&val[1])) {
+                return vec![(lon, lat)];
+            }
+        }
+        return Vec::new();
+    }
+    let mut result = Vec::new();
+    for v in val {
+        if let JsonVal::Arr(inner) = v {
+            result.extend(flatten_geojson_coords(inner));
+        }
+    }
+    result
 }
 
 fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
@@ -1108,11 +1164,17 @@ enum Extract {
         rv_scale: f64,
         fields: Vec<(String, String)>,
     },
+    Flatten {
+        arr_path: String,
+        geom_path: String,
+        fields: Vec<(String, String)>,
+    },
 }
 
 enum Frame {
     Ground { lat: f64, lon: f64, alt: f64 },
     Terra { scale: f64 },
+    Mars { scale: f64 },
     Data,
     Query,
 }
@@ -1701,6 +1763,7 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_lon: Option<f64> = None;
     let mut cur_alt: f64 = 0.0;
     let mut cur_terra: Option<f64> = None;
+    let mut cur_mars: Option<f64> = None;
     let mut cur_pos: Option<(String, String, Option<String>, f64)> = None;
     let mut cur_lat_str = String::new();
     let mut cur_format = String::new();
@@ -1727,6 +1790,7 @@ fn load_sources() -> Vec<SourceConfig> {
                                 | Extract::GeojsonEvents { .. }
                                 | Extract::Ephemeris(_)
                                 | Extract::CelestialMap { .. }
+                                | Extract::Flatten { .. }
                         )
                     });
                 let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
@@ -1737,6 +1801,8 @@ fn load_sources() -> Vec<SourceConfig> {
                     })
                 } else if let Some(scale) = cur_terra {
                     Some(Frame::Terra { scale })
+                } else if let Some(scale) = cur_mars {
+                    Some(Frame::Mars { scale })
                 } else if has_data_position {
                     Some(Frame::Data)
                 } else if cur_url.contains("{lat}")
@@ -1787,6 +1853,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_lon = None;
                 cur_alt = 0.0;
                 cur_terra = None;
+                cur_mars = None;
                 cur_pos = None;
                 cur_lat_str.clear();
                 cur_format.clear();
@@ -1809,6 +1876,7 @@ fn load_sources() -> Vec<SourceConfig> {
             "lon" => cur_lon = parts.get(1).and_then(|s| s.parse().ok()),
             "alt" => cur_alt = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0.0),
             "terra" => cur_terra = parts.get(1).and_then(|s| s.parse().ok()),
+            "mars" => cur_mars = parts.get(1).and_then(|s| s.parse().ok()),
             "pos" => {
                 if parts.len() >= 3 {
                     cur_pos = Some((
@@ -1955,11 +2023,26 @@ fn load_sources() -> Vec<SourceConfig> {
                     *vr_key = parts.get(1).unwrap_or(&"").to_string();
                 }
             }
+            "flatten" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::Flatten {
+                        arr_path: parts[1].to_string(),
+                        geom_path: "geometry".to_string(),
+                        fields: Vec::new(),
+                    });
+                }
+            }
+            "geom_path" => {
+                if let Some(Extract::Flatten { geom_path, .. }) = cur_extracts.last_mut() {
+                    *geom_path = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
             "field_in" => {
                 if parts.len() >= 3 {
                     match cur_extracts.last_mut() {
                         Some(Extract::Map { fields, .. })
-                        | Some(Extract::CelestialMap { fields, .. }) => {
+                        | Some(Extract::CelestialMap { fields, .. })
+                        | Some(Extract::Flatten { fields, .. }) => {
                             fields.push((parts[1].to_string(), parts[2].to_string()));
                         }
                         _ => {}
@@ -2162,6 +2245,26 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, res: i32) -
         let n_min = (secs % 3600) / 60;
         format!("{}-{:02}-{:02}T{:02}:{:02}:00", ty, tm, td, n_h, n_min)
     };
+    let now_minus_1 = {
+        let dt = secs.saturating_sub(60);
+        let (n1_y, n1_m, n1_d) = days_to_ymd(dt / 86400);
+        let n1_h = (dt % 86400) / 3600;
+        let n1_min = (dt % 3600) / 60;
+        format!(
+            "{}-{:02}-{:02}T{:02}:{:02}:00",
+            n1_y, n1_m, n1_d, n1_h, n1_min
+        )
+    };
+    let now_minus_2 = {
+        let dt = secs.saturating_sub(120);
+        let (n2_y, n2_m, n2_d) = days_to_ymd(dt / 86400);
+        let n2_h = (dt % 86400) / 3600;
+        let n2_min = (dt % 3600) / 60;
+        format!(
+            "{}-{:02}-{:02}T{:02}:{:02}:00",
+            n2_y, n2_m, n2_d, n2_h, n2_min
+        )
+    };
     let week_ago = {
         let dt = secs.saturating_sub(604800);
         let (w_y, w_m, w_d) = days_to_ymd(dt / 86400);
@@ -2231,6 +2334,8 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, res: i32) -
         .replace("{t_start}", &yesterday)
         .replace("{t_end}", &today)
         .replace("{now}", &now_iso)
+        .replace("{now_minus_1}", &now_minus_1)
+        .replace("{now_minus_2}", &now_minus_2)
         .replace("{week_ago}", &week_ago)
         .replace("{week_ago_nodashes}", &week_ago_nodashes)
         .replace(
@@ -2700,6 +2805,44 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     }
                 }
             }
+            Extract::Flatten {
+                arr_path,
+                geom_path,
+                fields,
+            } => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
+                        for (idx, v) in arr.iter().enumerate() {
+                            let geom = match jpath_val(v, geom_path) {
+                                Some(g) => g,
+                                None => continue,
+                            };
+                            let coords = match jpath_val(geom, "coordinates") {
+                                Some(JsonVal::Arr(c)) => c,
+                                _ => continue,
+                            };
+                            let vertices = flatten_geojson_coords(coords);
+                            if vertices.is_empty() {
+                                continue;
+                            }
+                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            for (fk, fn_) in fields {
+                                if let Some(val) = jpath(v, fk) {
+                                    ev_fields.push((fn_.clone(), val));
+                                }
+                            }
+                            ev_fields.push(("_flatten_id".to_string(), idx as f64));
+                            for (lon, lat) in vertices {
+                                pending.push(PendingSample {
+                                    epoch: now,
+                                    position: PendingPosition::Geodetic { lat, lon, alt: 0.0 },
+                                    fields: ev_fields.clone(),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
             Extract::CelestialMap {
                 arr_path,
                 ra_key,
@@ -2922,6 +3065,7 @@ fn materialize(
                 alt: *alt,
             },
             Frame::Terra { scale } => Motion::Terra { scale: *scale },
+            Frame::Mars { scale } => Motion::Mars { scale: *scale },
             Frame::Query => {
                 let (lat, lon) = region?;
                 Motion::Ground { lat, lon, alt: 0.0 }
@@ -3043,6 +3187,7 @@ fn warm_cache(archive: Arc<Archive>) {
         {
             let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
             let (ex, ey, ez) = earth_position_icrs(now);
+            let (mx, my, mz) = mars_position_icrs(now);
             for (i, src) in archive.sources.iter().enumerate() {
                 let r = aperture(src.res);
                 match &src.frame {
@@ -3070,6 +3215,24 @@ fn warm_cache(archive: Arc<Archive>) {
                             continue;
                         }
                         let pos = (ex * scale, ey * scale, ez * scale);
+                        if !presence_gate(&presences, pos, r) {
+                            continue;
+                        }
+                        tasks.push((
+                            i,
+                            origin,
+                            None,
+                            render_url(&src.url, pos.0, pos.1, pos.2, now, src.res),
+                            render_headers(src, pos.0, pos.1, pos.2, now),
+                            src.ttl,
+                        ));
+                    }
+                    Frame::Mars { scale } => {
+                        let origin = (i as u32, 0, 0);
+                        if !origin_stale(&origins, origin, src.ttl, now) {
+                            continue;
+                        }
+                        let pos = (mx * scale, my * scale, mz * scale);
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
@@ -3222,6 +3385,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         | Extract::GeojsonEvents { .. }
                         | Extract::LastObj { .. }
                         | Extract::CelestialMap { .. }
+                        | Extract::Flatten { .. }
                 )
             });
             if pendings.is_empty() {
