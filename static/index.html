@@ -221,6 +221,7 @@ struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f };
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
+@group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
 @vertex fn vs(@builtin(vertex_index) i: u32) -> V {
     var p = array<vec2f, 3>(vec2f(-1.0, -1.0), vec2f(3.0, -1.0), vec2f(-1.0, 3.0));
@@ -228,6 +229,39 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
     o.p = vec4f(p[i], 0.0, 1.0);
     o.u = vec2f(p[i].x * 0.5 + 0.5, 0.5 - p[i].y * 0.5);
     return o;
+}
+fn kernel(d: vec3f, a2: f32, s2: f32) -> f32 {
+    let d2 = dot(d, d);
+    if (d2 > a2) { return 0.0; }
+    return max(0.0, 1.0 - d2 / max(a2, 1.0)) / (d2 + s2);
+}
+@compute @workgroup_size(1)
+fn presence_probe() {
+    let count = u32(vp.surface.z);
+    let s2 = vp.surface.w * vp.surface.w;
+    var omega = 0.0f;
+    var gx = 0.0f;
+    var gy = 0.0f;
+    var gz = 0.0f;
+    for (var j = 0u; j < count; j = j + 1u) {
+        let m = field[j];
+        let mt = props[j];
+        let a2 = mt.x * mt.x;
+        let d = m.xyz;
+        let d2 = dot(d, d);
+        if (d2 > a2) { continue; }
+        let val_eff = m.w * exp2(-mt.y / max(mt.z, 1.0) * 1.4426950408889634);
+        let k = max(0.0, 1.0 - d2 / max(a2, 1.0)) / (d2 + s2);
+        omega += val_eff * k;
+        let factor = val_eff * -2.0 * (s2 + a2) / (a2 * (d2 + s2) * (d2 + s2));
+        gx += factor * d.x;
+        gy += factor * d.y;
+        gz += factor * d.z;
+    }
+    probe_out[0] = omega;
+    probe_out[1] = gx;
+    probe_out[2] = gy;
+    probe_out[3] = gz;
 }
 @fragment fn fs(i: V) -> @location(0) vec4f {
     let count = u32(vp.surface.z);
@@ -260,7 +294,8 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         fieldCanvas.width = RX; fieldCanvas.height = RY;
         fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;background:#0a0908;';
         document.body.appendChild(fieldCanvas);
-        let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, vpBuf = null, fieldBuf = null, apertureBuf = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
+        let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, apertureBuf = null, probeBuf = null, probeRead = null, fieldBind = null, probeBind = null, fieldCap = 0, fieldFrames = 0;
+        let probePending = false, probedOmega = 0, probedGradient = [0, 0, 0];
         async function initFieldGPU() {
             if (!navigator.gpu || gpu) return;
             try {
@@ -275,9 +310,10 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                 fieldCtx.configure({ device, format, alphaMode: 'opaque' });
                 const module = device.createShaderModule({ code: fieldShader });
                 fieldLayout = device.createBindGroupLayout({ entries: [
-                    { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } },
-                    { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } },
-                    { binding: 2, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } }
+                    { binding: 0, visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
+                    { binding: 1, visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
+                    { binding: 2, visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
+                    { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
                 ] });
                 fieldPipe = device.createRenderPipeline({
                     layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
@@ -285,6 +321,12 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                     fragment: { module, entryPoint: 'fs', targets: [{ format }] },
                     primitive: { topology: 'triangle-list' }
                 });
+                probePipe = device.createComputePipeline({
+                    layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
+                    compute: { module, entryPoint: 'presence_probe' }
+                });
+                probeBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+                probeRead = device.createBuffer({ size: 16, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
                 vpBuf = device.createBuffer({ size: 64, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
                 gpu = device;
             } catch { gpu = null; }
@@ -303,10 +345,33 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             fieldBind = gpu.createBindGroup({ layout: fieldLayout, entries: [
                 { binding: 0, resource: { buffer: fieldBuf } },
                 { binding: 1, resource: { buffer: apertureBuf } },
-                { binding: 2, resource: { buffer: vpBuf } }
+                { binding: 2, resource: { buffer: vpBuf } },
+                { binding: 3, resource: { buffer: probeBuf } }
             ] });
+            probeBind = fieldBind;
         }
         let lastN = 0;
+        async function probePresence() {
+            if (!gpu || probePending) return;
+            probePending = true;
+            try {
+                const encoder = gpu.createCommandEncoder();
+                const pass = encoder.beginComputePass();
+                pass.setPipeline(probePipe);
+                pass.setBindGroup(0, probeBind);
+                pass.dispatchWorkgroups(1);
+                pass.end();
+                encoder.copyBufferToBuffer(probeBuf, 0, probeRead, 0, 16);
+                gpu.queue.submit([encoder.finish()]);
+                await gpu.queue.onSubmittedWorkDone();
+                await probeRead.mapAsync(GPUMapMode.READ);
+                const data = new Float32Array(probeRead.getMappedRange());
+                probedOmega = data[0];
+                probedGradient = [data[1], data[2], data[3]];
+                probeRead.unmap();
+            } catch {}
+            probePending = false;
+        }
         function manifestWindow(ts) {
             if (!gpu) { initFieldGPU(); return; }
             const dt = prevSyncTs > 0 ? (ts - prevSyncTs) / 1000 : 0;
@@ -350,7 +415,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             const evalW = Math.max(1, RX >> evalShift), evalH = Math.max(1, RY >> evalShift);
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
             const [fr, fu] = orientationFrame();
-            const exposure = Math.max(Math.abs(fieldOmega()), Math.pow(2, -64));
+            const exposure = Math.max(Math.abs(probedOmega), Math.pow(2, -64));
             try {
                 gpu.queue.writeBuffer(fieldBuf, 0, xyzval);
                 gpu.queue.writeBuffer(apertureBuf, 0, meta);
@@ -364,22 +429,8 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                 gpu.queue.submit([encoder.finish()]);
                 fieldFrames++;
             } catch { gpu = null; }
+            probePresence().catch(() => {});
         }
-        let dvRef = null, dvVals = null;
-        function fieldOmegaAt(px, py, pz) {
-            if (dvRef !== rawWindowResponse) { dvRef = rawWindowResponse; dvVals = rawWindowResponse.map(o => decay(o)); }
-            const px2 = gridStep * gridStep;
-            let omega = 0;
-            for (let i = 0; i < rawWindowResponse.length; i++) {
-                const o = rawWindowResponse[i];
-                const dx = o.x - px, dy = o.y - py, dz = o.z - pz;
-                const d2 = dx * dx + dy * dy + dz * dz;
-                if (d2 > o.aperture * o.aperture) continue;
-                omega += dvVals[i] / (d2 + px2);
-            }
-            return omega;
-        }
-        function fieldOmega() { return fieldOmegaAt(xPresence, yPresence, zPresence); }
         let maRef = null, maVal = 1;
         function windowMedianAperture() {
             if (maRef !== rawWindowResponse) {
@@ -458,7 +509,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                 surfaces.push({
                     manifest: () => {
                         try {
-                            const lum = Math.tanh(Math.abs(fieldOmega()) * Math.pow(windowMedianAperture(), 2));
+                            const lum = Math.tanh(Math.abs(probedOmega) * Math.pow(windowMedianAperture(), 2));
                             audioFilter.frequency.setTargetAtTime(Math.max(audioCtx.sampleRate / 2048, audioCtx.sampleRate * lum / 16), audioCtx.currentTime, 0.05);
                             audioGain.gain.setTargetAtTime(lum * 0.5, audioCtx.currentTime, 0.05);
                         } catch {}
@@ -606,7 +657,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             registerOscillator('navigator.vibrate.channel.rhythm', Number.EPSILON);
             surfaces.push({
                 manifest: () => {
-                    const lum = Math.tanh(Math.abs(fieldOmega()) * Math.pow(windowMedianAperture(), 2));
+                    const lum = Math.tanh(Math.abs(probedOmega) * Math.pow(windowMedianAperture(), 2));
                     const pulse = Math.floor(lum * stableTick) & 1023;
                     if (pulse === 0 && lum > 0) navigator.vibrate(Math.floor(lum * 255));
                 }
@@ -823,11 +874,11 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             }
             if (gravityCoupling > 0 && rawWindowResponse.length > 0) {
                 const d = gridStep / 2;
-                const o0 = fieldOmega();
+                const o0 = probedOmega;
                 if (Math.abs(o0) > 0 && isFinite(o0)) {
-                    const gx = (fieldOmegaAt(xPresence + d, yPresence, zPresence) - o0) / d;
-                    const gy = (fieldOmegaAt(xPresence, yPresence + d, zPresence) - o0) / d;
-                    const gz = (fieldOmegaAt(xPresence, yPresence, zPresence + d) - o0) / d;
+                    const gx = probedGradient[0];
+                    const gy = probedGradient[1];
+                    const gz = probedGradient[2];
                     const acc = gravityCoupling * gridStep * rawTick / 1000 / Math.abs(o0);
                     pPresence = [xPresence, yPresence, zPresence];
                     t0P = tPresence;
@@ -856,7 +907,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
             const manifestStart = performance.now();
             for (const surface of surfaces) { try { surface.manifest(); } catch {} }
             lastManifestTime = performance.now() - manifestStart;
-            const omegaNow = fieldOmega();
+            const omegaNow = probedOmega;
             const g = Math.abs(omegaNow);
             const vC = prevOmegaTs > 0 && ts > prevOmegaTs ? Math.abs(omegaNow - prevOmega) / ((ts - prevOmegaTs) / 1000) : 0;
             prevOmega = omegaNow; prevOmegaTs = ts;
@@ -902,7 +953,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
                     `  Pixels: ${RX}x${RY} (eval /${1 << evalShift})\n` +
                     `  Scale: ${gridStep.toExponential(1)} m/px\n` +
                     `  Oscillators in window: ${rawWindowResponse.length} (empty syncs: ${emptySyncs})\n` +
-                    `  Window omega: ${fieldOmega().toExponential(2)} (exposure)\n\n` +
+                    `  Window omega: ${probedOmega.toExponential(2)} (exposure)\n\n` +
                     "System\n" +
                     `  Oscillators: ${oscillators.length}\n` +
                     `  Ring buffer: ${maxFill}/${CAPTURE_RING_SIZE} samples\n` +
