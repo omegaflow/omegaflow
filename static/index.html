@@ -241,7 +241,7 @@ struct V { @builtin(position) p: vec4f, @location(0) u: vec2f };
         let mt = props[j];
         let d = m.xyz - phi;
         let d2 = dot(d, d);
-        let a2 = mt.x * mt.x;
+        let a2 = max(mt.x * mt.x, scale * scale);
         if (d2 > a2) { continue; }
         let val_eff = m.w * exp2(-mt.y / max(mt.z, 1.0) * 1.4426950408889634);
         omega = omega + val_eff * exp2(-d2 / (2.0 * a2));
