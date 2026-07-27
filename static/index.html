@@ -275,7 +275,7 @@ fn presence_probe() {
         } else if (force_type == 5u || force_type == 6u) {
             let a = 1.0 / (extent * 1.41421356237);
             let pid = -2.0 * a / 1.77245385091;
-            gf = d_mag > 0.0 ? pid * exp(-a * a * d2) / d_mag : 0.0;
+            gf = select(0.0, pid * exp(-a * a * d2) / d_mag, d_mag > 0.0);
         } else if (force_type == 4u) {
             let denom = d_mag + soft;
             gf = -sk * (1.0 / max(d_mag * denom, 1e-30) + 1.0 / (extent * extent));
@@ -1048,7 +1048,6 @@ fn presence_probe() {
         window.addEventListener('keyup', (e) => { recordSample('event.keyup.code', e.keyCode); }, { passive: true });
         window.addEventListener('click', (e) => { recordSample('event.click.x', e.clientX); recordSample('event.click.y', e.clientY); }, { passive: true });
         window.addEventListener('resize', () => { RX = window.innerWidth; RY = window.innerHeight; recordSample('event.resize.width', RX); recordSample('event.resize.height', RY); }, { passive: true });
-        window.addEventListener('deviceorientation', (e) => { recordSample('event.deviceorientation.alpha', e.alpha || 0); recordSample('event.deviceorientation.beta', e.beta || 0); recordSample('event.deviceorientation.gamma', e.gamma || 0); }, { passive: true });
         window.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'd' && debugEl) {
                 debugEl.style.display = (debugEl.style.display === 'none') ? 'block' : 'none';
