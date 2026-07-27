@@ -49,21 +49,23 @@ export async function syncFrame(inputs, queries) {
     const buffer = await promise;
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 1) return [];
+    if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 2) return [];
     let o = 3;
     o += 4;
     const oscCount = dvRes.getUint32(o, true); o += 4;
     const result = [];
     for (let i = 0; i < oscCount; i++) {
-        if (o + 56 > bytes.length) break;
+        if (o + 72 > bytes.length) break;
         const x = dvRes.getFloat64(o, true); o += 8;
         const y = dvRes.getFloat64(o, true); o += 8;
         const z = dvRes.getFloat64(o, true); o += 8;
         const val = dvRes.getFloat64(o, true); o += 8;
-        const aperture = dvRes.getFloat64(o, true); o += 8;
+        const extent = dvRes.getFloat64(o, true); o += 8;
         const t = dvRes.getFloat64(o, true); o += 8;
         const ttl = dvRes.getFloat64(o, true); o += 8;
-        result.push({ x, y, z, val, aperture, t, ttl });
+        const tau = dvRes.getFloat64(o, true); o += 8;
+        const force_type = dvRes.getFloat64(o, true); o += 8;
+        result.push({ x, y, z, val, extent, t, ttl, tau, force_type });
     }
     return result;
 }

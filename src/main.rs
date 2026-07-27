@@ -23,6 +23,12 @@ const C_LIGHT: f64 = 299792458.0;
 const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
 const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
 
+const V_SOUND_288: f64 = 343.0;
+const V_P_GRANITE: f64 = 5900.0;
+const V_S_GRANITE: f64 = 2930.0;
+const D_AIR: f64 = 2.0e-5;
+const ALPHA_AIR: f64 = 2.18e-5;
+
 fn compute_gmst(tdb_secs: f64) -> f64 {
     let jd = tdb_secs / 86400.0 + J2000_EPOCH;
     let t = (jd - J2000_EPOCH) / 36525.0;
@@ -170,7 +176,9 @@ struct Sample {
     origin: Origin,
     epoch: f64,
     ttl: f64,
-    r: f64,
+    extent: f64,
+    tau: f64,
+    force_type: f64,
     vmax: f64,
     amax: f64,
     p0f: [f64; 3],
@@ -194,8 +202,8 @@ struct Buffer {
     inertial: Family,
 }
 
-fn aperture(res: i32) -> f64 {
-    EARTH_RADIUS * (std::f64::consts::PI / 180.0) / 10f64.powi(res)
+fn region_quantize(deg: f64, extent: f64) -> i32 {
+    (deg * 111319.0 / extent).round() as i32
 }
 
 fn cell_of(p: [f64; 3], s: f64) -> CellKey {
@@ -236,7 +244,7 @@ fn build_family(samples: Vec<Sample>, cadence: f64) -> Family {
     for s in &samples {
         vmax = vmax.max(s.vmax);
         amax = amax.max(s.amax);
-        rmax = rmax.max(s.r);
+        rmax = rmax.max(s.extent);
         epoch_min = epoch_min.min(s.epoch);
     }
     let rho_cad = rmax + vmax * cadence + 0.5 * amax * cadence * cadence;
@@ -286,7 +294,7 @@ fn enclose_family(
     q: [f64; 3],
     t2: f64,
     pad: f64,
-    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64)>,
+    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
 ) {
     if fam.cells.is_empty() {
         return;
@@ -318,7 +326,7 @@ fn enclose_family(
                 };
                 for smp in samples {
                     let age = (t2 - smp.epoch).abs();
-                    let reach = smp.r + smp.vmax * age + 0.5 * smp.amax * age * age + pad;
+                    let reach = smp.extent + smp.vmax * age + 0.5 * smp.amax * age * age + pad;
                     let dx = smp.p0f[0] - qf[0];
                     let dy = smp.p0f[1] - qf[1];
                     let dz = smp.p0f[2] - qf[2];
@@ -329,12 +337,22 @@ fn enclose_family(
                     let ddx = p[0] - q[0];
                     let ddy = p[1] - q[1];
                     let ddz = p[2] - q[2];
-                    let exact = smp.r + pad;
+                    let exact = smp.extent + pad;
                     if ddx * ddx + ddy * ddy + ddz * ddz > exact * exact {
                         continue;
                     }
                     for (_, val) in &smp.fields {
-                        records.push((*val, p[0], p[1], p[2], smp.r, smp.epoch, smp.ttl));
+                        records.push((
+                            p[0],
+                            p[1],
+                            p[2],
+                            *val,
+                            smp.extent,
+                            smp.epoch,
+                            smp.ttl,
+                            smp.tau,
+                            smp.force_type,
+                        ));
                     }
                 }
             }
@@ -347,7 +365,7 @@ fn sense_buffer(
     q: [f64; 3],
     t2: f64,
     pad: f64,
-    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64)>,
+    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
 ) {
     let (ex, ey, ez) = earth_position_icrs(t2);
     enclose_family(&buf.terra, [ex, ey, ez], q, t2, pad, records);
@@ -471,18 +489,18 @@ fn origin_stale(
     }
 }
 
-fn presence_gate(presences: &[(f64, f64, f64, f64, f64)], pos: (f64, f64, f64), r: f64) -> bool {
-    presences.iter().any(|&(_, x, y, z, extent)| {
-        let reach = r * Φ + extent;
+fn presence_gate(
+    presences: &[(f64, f64, f64, f64, f64)],
+    pos: (f64, f64, f64),
+    extent: f64,
+) -> bool {
+    presences.iter().any(|&(_, x, y, z, range)| {
+        let reach = extent * Φ + range;
         let dx = x - pos.0;
         let dy = y - pos.1;
         let dz = z - pos.2;
         dx * dx + dy * dy + dz * dz <= reach * reach
     })
-}
-
-fn region_quantize(deg: f64, res: i32) -> i32 {
-    (deg * 10f64.powi(res.max(0))).round() as i32
 }
 
 #[derive(Clone, Debug)]
@@ -1186,6 +1204,25 @@ enum Extract {
     },
 }
 
+fn force_constants(force: &str) -> Option<(f64, f64, bool, u8)> {
+    match force {
+        "em" => Some((C_LIGHT, (1.0 / C_LIGHT) * 1024.0, false, 0)),
+        "gravity" => Some((C_LIGHT, (AU / C_LIGHT) / 1024.0, false, 1)),
+        "acoustic" => Some((V_SOUND_288, 1.0 / V_SOUND_288, false, 2)),
+        "seismic-body" => Some((V_P_GRANITE, 1.0 / V_P_GRANITE, false, 3)),
+        "seismic-surface" => Some((V_S_GRANITE, 1.0 / V_S_GRANITE, false, 4)),
+        "thermal" => Some((ALPHA_AIR, 1.0 / ALPHA_AIR, true, 5)),
+        "diffusion" => Some((D_AIR, 1.0 / D_AIR, true, 6)),
+        _ => None,
+    }
+}
+
+fn force_type_of(force: &str) -> f64 {
+    force_constants(force)
+        .map(|(_, _, _, id)| id as f64)
+        .unwrap_or(0.0)
+}
+
 enum Frame {
     Ground { lat: f64, lon: f64, alt: f64 },
     Terra { scale: f64 },
@@ -1198,12 +1235,13 @@ struct SourceConfig {
     ttl: u64,
     url: String,
     frame: Frame,
-    res: i32,
+    force: String,
+    tau: Option<f64>,
+    tau_key: Option<String>,
     format: String,
     extracts: Vec<Extract>,
     headers: Vec<(String, String)>,
     pos_fields: Option<(String, String, Option<String>, f64)>,
-    ap: Option<f64>,
 }
 
 type FetchTask = (
@@ -1605,7 +1643,15 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                             }
                         }
                         station.last_seen = now;
-                        let res = (aperture(0) / acc).log10().floor() as i32;
+                        let acc_extent = if acc > 0.0 {
+                            2f64.powf(
+                                (acc / (EARTH_RADIUS * std::f64::consts::PI / 180.0))
+                                    .log2()
+                                    .ceil(),
+                            )
+                        } else {
+                            1.0
+                        };
                         let alt = st_alt.unwrap_or(0.0);
                         let motion = match (st_spd, st_hdg) {
                             (Some(spd), Some(hdg)) if spd > 0.0 => {
@@ -1618,7 +1664,9 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                             origin: (u32::MAX, 0, 0),
                             epoch: now,
                             ttl: Φ * Φ * station.ema_interval,
-                            r: aperture(res),
+                            extent: acc_extent,
+                            tau: station.ema_interval,
+                            force_type: force_type_of("em"),
                             vmax,
                             amax,
                             p0f,
@@ -1659,7 +1707,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 let qz = f64::from_le_bytes(t_buf);
                 queries.push((qt, qx, qy, qz));
             }
-            let mut records: Vec<(f64, f64, f64, f64, f64, f64, f64)> = Vec::new();
+            let mut records: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> = Vec::new();
             if !queries.is_empty() {
                 let (t0, x0, y0, z0) = queries[0];
                 let mut extent = 0.0f64;
@@ -1682,19 +1730,21 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 sense_buffer(&station_buf, q, t0, extent, &mut records);
             }
 
-            let mut out = Vec::with_capacity(11 + records.len() * 56);
+            let mut out = Vec::with_capacity(11 + records.len() * 72);
             out.extend_from_slice(&[0xCF, 0x86]);
-            out.push(1u8);
+            out.push(2u8);
             out.extend_from_slice(&id.to_le_bytes());
             out.extend_from_slice(&(records.len() as u32).to_le_bytes());
-            for &(val, x, y, z, r, epoch, ttl) in &records {
+            for &(x, y, z, val, extent, epoch, ttl, tau, force_type) in &records {
                 out.extend_from_slice(&x.to_le_bytes());
                 out.extend_from_slice(&y.to_le_bytes());
                 out.extend_from_slice(&z.to_le_bytes());
                 out.extend_from_slice(&val.to_le_bytes());
-                out.extend_from_slice(&r.to_le_bytes());
+                out.extend_from_slice(&extent.to_le_bytes());
                 out.extend_from_slice(&epoch.to_le_bytes());
                 out.extend_from_slice(&ttl.to_le_bytes());
+                out.extend_from_slice(&tau.to_le_bytes());
+                out.extend_from_slice(&force_type.to_le_bytes());
             }
             write_ws_binary(&mut stream, &out);
         }
@@ -1793,9 +1843,9 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
     let content = std::fs::read_to_string("phi/sources.φ").unwrap_or_default();
     let mut cur_ttl: u64 = 0;
-    let mut cur_res: i32 = 0;
-    let mut cur_res_set = false;
-    let mut cur_ap: Option<f64> = None;
+    let mut cur_force = String::new();
+    let mut cur_tau: Option<f64> = None;
+    let mut cur_tau_key: Option<String> = None;
     let mut cur_url = String::new();
     let mut cur_lat: Option<f64> = None;
     let mut cur_lon: Option<f64> = None;
@@ -1813,62 +1863,65 @@ fn load_sources() -> Vec<SourceConfig> {
     macro_rules! flush {
         () => {
             if active {
-                let mut res = cur_res;
-                if !cur_res_set && cur_lat.is_some() {
-                    res = match cur_lat_str.find('.') {
-                        Some(dot) => (cur_lat_str.len() - dot - 1) as i32,
-                        None => 0,
-                    };
-                }
-                let has_data_position = cur_pos.is_some()
-                    || cur_extracts.iter().any(|e| {
-                        matches!(
-                            e,
-                            Extract::Map { .. }
-                                | Extract::GeojsonEvents { .. }
-                                | Extract::Ephemeris(_)
-                                | Extract::CelestialMap { .. }
-                                | Extract::Flatten { .. }
-                                | Extract::Rows { .. }
-                                | Extract::KeplerMap { .. }
-                        )
-                    });
-                let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
-                    Some(Frame::Ground {
-                        lat,
-                        lon,
-                        alt: cur_alt,
-                    })
-                } else if let Some(scale) = cur_terra {
-                    Some(Frame::Terra { scale })
-                } else if let Some(scale) = cur_mars {
-                    Some(Frame::Mars { scale })
-                } else if has_data_position {
-                    Some(Frame::Data)
-                } else if cur_url.contains("{lat}")
-                    || cur_url.contains("{lon}")
-                    || cur_url.contains("{x}")
-                    || cur_url.contains("{y}")
-                    || cur_url.contains("{z}")
-                    || cur_url.contains("{grid")
-                {
-                    Some(Frame::Query)
+                if cur_force.is_empty() {
+                    eprintln!("source refused (no force): {}", cur_name);
+                } else if force_constants(&cur_force).is_none() {
+                    eprintln!(
+                        "source refused (unknown force '{}'): {}",
+                        cur_force, cur_name
+                    );
                 } else {
-                    eprintln!("source refused (no reference frame): {}", cur_name);
-                    None
-                };
-                if let Some(frame) = frame {
-                    sources.push(SourceConfig {
-                        ttl: cur_ttl,
-                        url: cur_url.clone(),
-                        frame,
-                        res,
-                        format: cur_format.clone(),
-                        extracts: cur_extracts.clone(),
-                        headers: cur_headers.clone(),
-                        pos_fields: cur_pos.clone(),
-                        ap: cur_ap,
-                    });
+                    let has_data_position = cur_pos.is_some()
+                        || cur_extracts.iter().any(|e| {
+                            matches!(
+                                e,
+                                Extract::Map { .. }
+                                    | Extract::GeojsonEvents { .. }
+                                    | Extract::Ephemeris(_)
+                                    | Extract::CelestialMap { .. }
+                                    | Extract::Flatten { .. }
+                                    | Extract::Rows { .. }
+                                    | Extract::KeplerMap { .. }
+                            )
+                        });
+                    let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
+                        Some(Frame::Ground {
+                            lat,
+                            lon,
+                            alt: cur_alt,
+                        })
+                    } else if let Some(scale) = cur_terra {
+                        Some(Frame::Terra { scale })
+                    } else if let Some(scale) = cur_mars {
+                        Some(Frame::Mars { scale })
+                    } else if has_data_position {
+                        Some(Frame::Data)
+                    } else if cur_url.contains("{lat}")
+                        || cur_url.contains("{lon}")
+                        || cur_url.contains("{x}")
+                        || cur_url.contains("{y}")
+                        || cur_url.contains("{z}")
+                        || cur_url.contains("{grid")
+                    {
+                        Some(Frame::Query)
+                    } else {
+                        eprintln!("source refused (no reference frame): {}", cur_name);
+                        None
+                    };
+                    if let Some(frame) = frame {
+                        sources.push(SourceConfig {
+                            ttl: cur_ttl,
+                            url: cur_url.clone(),
+                            frame,
+                            force: cur_force.clone(),
+                            tau: cur_tau,
+                            tau_key: cur_tau_key.clone(),
+                            format: cur_format.clone(),
+                            extracts: cur_extracts.clone(),
+                            headers: cur_headers.clone(),
+                            pos_fields: cur_pos.clone(),
+                        });
+                    }
                 }
             }
         };
@@ -1887,9 +1940,9 @@ fn load_sources() -> Vec<SourceConfig> {
             "source" => {
                 flush!();
                 cur_ttl = 0;
-                cur_res = 0;
-                cur_res_set = false;
-                cur_ap = None;
+                cur_force.clear();
+                cur_tau = None;
+                cur_tau_key = None;
                 cur_url.clear();
                 cur_lat = None;
                 cur_lon = None;
@@ -1906,11 +1959,9 @@ fn load_sources() -> Vec<SourceConfig> {
             }
             "url" => cur_url = line.get(4..).unwrap_or("").trim().to_string(),
             "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
-            "res" => {
-                cur_res = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0);
-                cur_res_set = true;
-            }
-            "ap" => cur_ap = parts.get(1).and_then(|s| s.parse().ok()),
+            "force" => cur_force = parts.get(1).unwrap_or(&"").to_string(),
+            "tau" => cur_tau = parts.get(1).and_then(|s| s.parse().ok()),
+            "tau_key" => cur_tau_key = parts.get(1).map(|s| s.to_string()),
             "format" => cur_format = parts.get(1).unwrap_or(&"json").to_string(),
             "lat" => {
                 cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
@@ -2317,7 +2368,7 @@ fn read_ws_frame_raw(stream: &mut TcpStream) -> Option<WsFrame> {
     Some(WsFrame { opcode, payload })
 }
 
-fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, res: i32) -> String {
+fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, extent: f64) -> String {
     let unix = tdb_secs + UNIX_J2000_OFFSET;
     let secs = unix as u64;
     let days = secs / 86400;
@@ -2379,10 +2430,10 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, res: i32) -
     let unix_now_plus_3600 = (secs + 3600).to_string();
 
     let (lat, lon) = icrs_to_geodetic(x, y, z, tdb_secs);
-    let res_usize = res.max(0) as usize;
-    let lat_str = format!("{:.*}", res_usize, lat);
-    let lon_str = format!("{:.*}", res_usize, lon);
-    let half_deg = aperture(res) / 111319.0;
+    let res_usize = 6usize;
+    let lat_str = format!("{:.6}", lat);
+    let lon_str = format!("{:.6}", lon);
+    let half_deg = extent / 111319.0;
     let lat_min_str = format!("{:.*}", res_usize, lat - half_deg);
     let lat_max_str = format!("{:.*}", res_usize, lat + half_deg);
     let lon_min_str = format!("{:.*}", res_usize, lon - half_deg);
@@ -3402,21 +3453,28 @@ fn materialize(
     if vmax_floor > vmax {
         vmax = vmax_floor;
     }
-    let sample_r = if let Some(ap_deg) = src.ap {
-        let lat_rad = match &pend.position {
-            PendingPosition::Geodetic { lat, .. } => *lat * std::f64::consts::PI / 180.0,
-            PendingPosition::GeodeticFlow { lat, .. } => *lat * std::f64::consts::PI / 180.0,
-            _ => 0.0,
-        };
-        111195.0 * ap_deg * lat_rad.cos()
+    let fc = force_constants(&src.force)?;
+    let (v_or_d, tau_default, is_diff, force_type) = fc;
+    let tau = src
+        .tau
+        .or_else(|| {
+            src.tau_key
+                .as_ref()
+                .and_then(|k| pend.fields.iter().find(|(n, _)| n == k).map(|(_, v)| *v))
+        })
+        .unwrap_or(tau_default);
+    let extent = if is_diff {
+        (2.0 * v_or_d * tau).sqrt()
     } else {
-        aperture(src.res)
+        v_or_d * tau
     };
     Some(Sample {
         origin,
         epoch: pend.epoch,
         ttl: src.ttl.max(1) as f64,
-        r: sample_r,
+        extent,
+        tau,
+        force_type: force_type as f64,
         vmax,
         amax,
         p0f,
@@ -3425,10 +3483,17 @@ fn materialize(
     })
 }
 
-fn render_headers(src: &SourceConfig, x: f64, y: f64, z: f64, now: f64) -> Vec<(String, String)> {
+fn render_headers(
+    src: &SourceConfig,
+    x: f64,
+    y: f64,
+    z: f64,
+    now: f64,
+    extent: f64,
+) -> Vec<(String, String)> {
     src.headers
         .iter()
-        .map(|(k, v)| (k.clone(), render_url(v, x, y, z, now, src.res)))
+        .map(|(k, v)| (k.clone(), render_url(v, x, y, z, now, extent)))
         .collect()
 }
 
@@ -3472,7 +3537,18 @@ fn warm_cache(archive: Arc<Archive>) {
             let (ex, ey, ez) = earth_position_icrs(now);
             let (mx, my, mz) = mars_position_icrs(now);
             for (i, src) in archive.sources.iter().enumerate() {
-                let r = aperture(src.res);
+                let fc = force_constants(&src.force);
+                let r = match fc {
+                    Some((v_or_d, tau_default, is_diff, _)) => {
+                        let tau = src.tau.unwrap_or(tau_default);
+                        if is_diff {
+                            (2.0 * v_or_d * tau).sqrt()
+                        } else {
+                            v_or_d * tau
+                        }
+                    }
+                    None => continue,
+                };
                 match &src.frame {
                     Frame::Ground { lat, lon, alt } => {
                         let origin = (i as u32, 0, 0);
@@ -3492,8 +3568,8 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_url(&src.url, pos.0, pos.1, pos.2, now, src.res),
-                            render_headers(src, pos.0, pos.1, pos.2, now),
+                            render_url(&src.url, pos.0, pos.1, pos.2, now, r),
+                            render_headers(src, pos.0, pos.1, pos.2, now, r),
                             src.ttl,
                         ));
                     }
@@ -3519,8 +3595,8 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_url(&src.url, pos.0, pos.1, pos.2, now, src.res),
-                            render_headers(src, pos.0, pos.1, pos.2, now),
+                            render_url(&src.url, pos.0, pos.1, pos.2, now, r),
+                            render_headers(src, pos.0, pos.1, pos.2, now, r),
                             src.ttl,
                         ));
                     }
@@ -3546,8 +3622,8 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_url(&src.url, pos.0, pos.1, pos.2, now, src.res),
-                            render_headers(src, pos.0, pos.1, pos.2, now),
+                            render_url(&src.url, pos.0, pos.1, pos.2, now, r),
+                            render_headers(src, pos.0, pos.1, pos.2, now, r),
                             src.ttl,
                         ));
                     }
@@ -3568,11 +3644,8 @@ fn warm_cache(archive: Arc<Archive>) {
                                     continue;
                                 }
                                 let (lat, lon) = icrs_to_geodetic(px, py, pz, now);
-                                let origin = (
-                                    i as u32,
-                                    region_quantize(lat, src.res),
-                                    region_quantize(lon, src.res),
-                                );
+                                let origin =
+                                    (i as u32, region_quantize(lat, r), region_quantize(lon, r));
                                 if !origin_stale(
                                     &origins,
                                     origin,
@@ -3589,8 +3662,8 @@ fn warm_cache(archive: Arc<Archive>) {
                                     i,
                                     origin,
                                     None,
-                                    render_url(&src.url, px, py, pz, now, src.res),
-                                    render_headers(src, px, py, pz, now),
+                                    render_url(&src.url, px, py, pz, now, r),
+                                    render_headers(src, px, py, pz, now, r),
                                     src.ttl,
                                 ));
                             }
@@ -3628,8 +3701,8 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_url(&src.url, rx, ry, rz, now, src.res),
-                            render_headers(src, rx, ry, rz, now),
+                            render_url(&src.url, rx, ry, rz, now, r),
+                            render_headers(src, rx, ry, rz, now, r),
                             src.ttl,
                         ));
                     }
@@ -3643,11 +3716,8 @@ fn warm_cache(archive: Arc<Archive>) {
                                 continue;
                             }
                             let (lat, lon) = icrs_to_geodetic(px, py, pz, now);
-                            let origin = (
-                                i as u32,
-                                region_quantize(lat, src.res),
-                                region_quantize(lon, src.res),
-                            );
+                            let origin =
+                                (i as u32, region_quantize(lat, r), region_quantize(lon, r));
                             if !origin_stale(
                                 &origins,
                                 origin,
@@ -3664,8 +3734,8 @@ fn warm_cache(archive: Arc<Archive>) {
                                 i,
                                 origin,
                                 Some((lat, lon)),
-                                render_url(&src.url, px, py, pz, now, src.res),
-                                render_headers(src, px, py, pz, now),
+                                render_url(&src.url, px, py, pz, now, r),
+                                render_headers(src, px, py, pz, now, r),
                                 src.ttl,
                             ));
                         }
