@@ -44,6 +44,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let tPresence = 0;
         let exposureBoost = 0;
         let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = 0;
+        let lastManualZoomTs = 0;
         let prevOmega = 0, prevOmegaTs = 0;
         let xPresence = 1.5e11, yPresence = 1.5e11, zPresence = 1.0e10;
         let clarity = 1.0;
@@ -128,8 +129,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         }
         let evalShift = 0, evalShiftF = 0, evalShiftTarget = 0;
         function adaptEvalShift(rawTick) {
+            const maxShift = 2;
             if (stableTick > (1000 / 60) * Φ) {
-                if ((RX >> (evalShiftTarget + 1)) >= 1) evalShiftTarget++;
+                if (evalShiftTarget < maxShift && (RX >> (evalShiftTarget + 1)) >= 1) evalShiftTarget++;
             } else if (stableTick <= 1000 / 60 && evalShiftTarget > 0) {
                 evalShiftTarget--;
             }
@@ -150,7 +152,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         resonanceWs.addEventListener('message', (e) => {
             if (typeof e.data !== 'string') {
                 const buf = new Uint8Array(e.data);
-                if (buf.length < 11 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 1) return;
+                if (buf.length < 11 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 2) return;
                 const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
                 const id = dv.getUint32(3, true);
                 const pending = transport.pending.get(id);
@@ -239,14 +241,16 @@ fn erfc(x: f32) -> f32 {
     return select(y, 2.0 - y, x < 0.0);
 }
 fn field_spatial(d2: f32, d_mag: f32, extent: f32, force_type: u32, s2: f32) -> f32 {
+    let e2 = extent * extent;
     if (force_type == 0u || force_type == 1u) {
-        return 1.0 / (d2 + s2);
+        let denom = max((d2 + s2) * (d2 + s2 + e2), s2 * s2);
+        return e2 / denom;
     } else if (force_type == 5u || force_type == 6u) {
-        return erfc(d_mag / (extent * 1.41421356237));
+        return erfc(d_mag / max(extent * 1.41421356237, s2));
     } else if (force_type == 4u) {
-        return exp(-d2 / (2.0 * extent * extent)) / (d_mag + sqrt(s2));
+        return exp(-d2 / (2.0 * max(e2, s2))) / (d_mag + sqrt(s2));
     } else {
-        return exp(-d2 / (2.0 * extent * extent)) / (d2 + s2);
+        return exp(-d2 / (2.0 * max(e2, s2))) / max(d2 + s2, s2);
     }
 }
 @compute @workgroup_size(1)
@@ -267,11 +271,13 @@ fn presence_probe() {
         let d_mag = sqrt(d2);
         let extent = mt.x;
         let force_type = u32(mt.w);
+        let e2 = extent * extent;
         let sk = field_spatial(d2, d_mag, extent, force_type, s2);
         omega += m.w * sk;
         var gf: f32;
         if (force_type == 0u || force_type == 1u) {
-            gf = -2.0 * sk * sk;
+            let denom = max(d2 + s2 + e2, s2);
+            gf = -sk * 2.0 / denom;
         } else if (force_type == 5u || force_type == 6u) {
             let a = 1.0 / (extent * 1.41421356237);
             let pid = -2.0 * a / 1.77245385091;
@@ -293,10 +299,7 @@ fn presence_probe() {
 }
 @fragment fn fs(i: V) -> @location(0) vec4f {
     let count = u32(vp.surface.z);
-    let starRes = 128.0;
-    let starSeed = fract(sin(dot(floor(i.u.xy * starRes), vec2f(127.1, 311.7))) * 43758.5453);
-    let starBright = max(0.0, pow(starSeed, 64.0) * 0.15);
-    if (count == 0u) { return vec4f(vec3f(starBright), 1.0); }
+    if (count == 0u || vp.expose.x <= 0.0) { return vec4f(vec3f(0.0), 1.0); }
     let scale = vp.surface.w;
     let w = vp.surface.x;
     let h = vp.surface.y;
@@ -314,19 +317,20 @@ fn presence_probe() {
     }
     let aw = abs(omega);
     let lvl = vp.expose.x;
-    if (lvl <= 0.0 || aw < lvl * exp2(-16.0)) { return vec4f(vec3f(starBright), 1.0); }
-    let t2 = clamp((log2(aw / lvl) + 16.0) / 32.0, 0.0, 1.0);
-    let c1 = mix(vec3f(0.0, 0.0, 0.0), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
-    let c2 = mix(c1, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
-    let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
-    let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
-    let fc = c4 + starBright * 0.08;
-    return vec4f(fc, 1.0);
+    if (aw < lvl * exp2(-8.0)) { return vec4f(vec3f(0.0), 1.0); }
+    let t2 = clamp((log2(aw / lvl) + 8.0) / 24.0, 0.0, 1.0);
+    let t2s = t2 * t2 * (3.0 - 2.0 * t2);
+    let c1 = mix(vec3f(0.0, 0.0, 0.0), vec3f(0.0, 0.15, 0.4), clamp(t2s * 4.0, 0.0, 1.0));
+    let c2 = mix(c1, vec3f(0.1, 0.5, 0.9), clamp((t2s - 0.25) * 4.0, 0.0, 1.0));
+    let c3 = mix(c2, vec3f(0.8, 0.6, 0.2), clamp((t2s - 0.5) * 4.0, 0.0, 1.0));
+    let c4 = mix(c3, vec3f(1.0, 0.95, 0.9), clamp((t2s - 0.75) * 4.0, 0.0, 1.0));
+    return vec4f(c4, 1.0);
 }`;
         let fieldCanvas = document.createElement('canvas');
         fieldCanvas.width = RX; fieldCanvas.height = RY;
         fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;background:#0a0908;';
         document.body.appendChild(fieldCanvas);
+        let fieldVisible = true;
         let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, extentBuf = null, probeBuf = null, probeRead = null, fieldBind = null, probeBind = null, fieldCap = 0, fieldFrames = 0;
         let probePending = false, probedOmega = 0, probedGradient = [0, 0, 0];
         async function initFieldGPU() {
@@ -407,10 +411,22 @@ fn presence_probe() {
         }
         function manifestWindow(ts) {
             if (!gpu) { initFieldGPU(); return; }
+            if (!fieldVisible) {
+                try {
+                    const encoder = gpu.createCommandEncoder();
+                    const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
+                    pass.setPipeline(fieldPipe);
+                    pass.setBindGroup(0, fieldBind);
+                    pass.draw(3);
+                    pass.end();
+                    gpu.queue.submit([encoder.finish()]);
+                } catch {}
+                return;
+            }
             const dt = prevSyncTs > 0 ? (ts - prevSyncTs) / 1000 : 0;
-            const blendPrev = prevWindowResponse.length > 0 && rawWindowResponse.length > 0 && dt < Φ;
+            const blendPrev = false;
             const n = Math.max(rawWindowResponse.length, prevWindowResponse.length);
-            while (lastN > 0 && n >= lastN * 2 && (RX >> (evalShiftTarget + 1)) >= 1) evalShiftTarget++;
+            while (lastN > 0 && n >= lastN * 2 && evalShiftTarget < 2 && (RX >> (evalShiftTarget + 1)) >= 1) evalShiftTarget++;
             lastN = n;
             ensureFieldCapacity(n);
             const xyzval = new Float32Array(Math.max(n, 1) * 4);
@@ -518,8 +534,8 @@ fn presence_probe() {
             rawWindowResponse = response || [];
             if (rawWindowResponse.length === 0) {
                 emptySyncs++;
-                const target = gridStep * Φ;
-                gridStep += (target - gridStep) * (1.0 - Math.pow(2, -1.0 / Φ));
+            } else {
+                emptySyncs = 0;
             }
         }
 
@@ -878,8 +894,8 @@ fn presence_probe() {
             transport.tickTime = stableTick;
 
             const zoomRate = Math.pow(2, rawTick / 500);
-            if (keysDown.has('-')) gridStep *= zoomRate;
-            if (keysDown.has('+')) gridStep /= zoomRate;
+            if (keysDown.has('-')) { gridStep *= zoomRate; lastManualZoomTs = performance.now(); }
+            if (keysDown.has('+')) { gridStep /= zoomRate; lastManualZoomTs = performance.now(); }
             if (keysDown.has(',')) tThrustTarget = -64;
             else if (keysDown.has('.')) tThrustTarget = 64;
             else if (pointers.size < 3) tThrustTarget = 0;
@@ -1107,6 +1123,7 @@ fn presence_probe() {
             const mxr = (e.clientX / RX - 0.5) * RX, myr = (0.5 - e.clientY / RY) * RY;
             const oldStep = gridStep;
             gridStep *= Math.pow(2, e.deltaY / 256);
+            lastManualZoomTs = performance.now();
             const d = oldStep - gridStep;
             pPresence[0] += d * (mxr * fr[0] + myr * fu[0]);
             pPresence[1] += d * (mxr * fr[1] + myr * fu[1]);
@@ -1125,6 +1142,7 @@ fn presence_probe() {
             }
         });
         window.addEventListener('keydown', (e) => {
+            if (e.key === 'f') { fieldVisible = !fieldVisible; e.preventDefault(); }
             if (e.key === 'e') { exposureBoost = Math.min(exposureBoost + 1, 16); e.preventDefault(); }
             else if (e.key === 'E') { exposureBoost = Math.max(exposureBoost - 1, -8); e.preventDefault(); }
         });

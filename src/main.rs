@@ -16,7 +16,6 @@ const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
 const GAUSS_K: f64 = 0.01720209895;
-const MU_EARTH: f64 = 3.986004418e14;
 const TERRA_DOMAIN: f64 = EARTH_RADIUS * 16.0;
 const PARSEC_M: f64 = 3.085677581e16;
 const C_LIGHT: f64 = 299792458.0;
@@ -318,43 +317,65 @@ fn enclose_family(
     if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
         return;
     }
-    for cx in lo.0..=hi.0 {
-        for cy in lo.1..=hi.1 {
-            for cz in lo.2..=hi.2 {
-                let Some(samples) = fam.cells.get(&(cx, cy, cz)) else {
-                    continue;
-                };
-                for smp in samples {
-                    let age = (t2 - smp.epoch).abs();
-                    let reach = smp.extent + smp.vmax * age + 0.5 * smp.amax * age * age + pad;
-                    let dx = smp.p0f[0] - qf[0];
-                    let dy = smp.p0f[1] - qf[1];
-                    let dz = smp.p0f[2] - qf[2];
-                    if dx * dx + dy * dy + dz * dz > reach * reach {
-                        continue;
-                    }
-                    let p = smp.motion.at(t2, smp.epoch);
-                    let ddx = p[0] - q[0];
-                    let ddy = p[1] - q[1];
-                    let ddz = p[2] - q[2];
-                    let exact = smp.extent + pad;
-                    if ddx * ddx + ddy * ddy + ddz * ddz > exact * exact {
-                        continue;
-                    }
-                    for (_, val) in &smp.fields {
-                        records.push((
-                            p[0],
-                            p[1],
-                            p[2],
-                            *val,
-                            smp.extent,
-                            smp.epoch,
-                            smp.ttl,
-                            smp.tau,
-                            smp.force_type,
-                        ));
+    let span = ((hi.0 - lo.0 + 1) as u64)
+        .saturating_mul((hi.1 - lo.1 + 1) as u64)
+        .saturating_mul((hi.2 - lo.2 + 1) as u64);
+    let visit: Vec<&Vec<Sample>> = if span > fam.cells.len() as u64 * 4 {
+        fam.cells
+            .iter()
+            .filter(|(ck, _)| {
+                ck.0 >= lo.0
+                    && ck.0 <= hi.0
+                    && ck.1 >= lo.1
+                    && ck.1 <= hi.1
+                    && ck.2 >= lo.2
+                    && ck.2 <= hi.2
+            })
+            .map(|(_, v)| v)
+            .collect()
+    } else {
+        let mut out = Vec::new();
+        for cx in lo.0..=hi.0 {
+            for cy in lo.1..=hi.1 {
+                for cz in lo.2..=hi.2 {
+                    if let Some(samples) = fam.cells.get(&(cx, cy, cz)) {
+                        out.push(samples);
                     }
                 }
+            }
+        }
+        out
+    };
+    for samples in visit {
+        for smp in samples {
+            let age = (t2 - smp.epoch).abs();
+            let reach = smp.extent + smp.vmax * age + 0.5 * smp.amax * age * age + pad;
+            let dx = smp.p0f[0] - qf[0];
+            let dy = smp.p0f[1] - qf[1];
+            let dz = smp.p0f[2] - qf[2];
+            if dx * dx + dy * dy + dz * dz > reach * reach {
+                continue;
+            }
+            let p = smp.motion.at(t2, smp.epoch);
+            let ddx = p[0] - q[0];
+            let ddy = p[1] - q[1];
+            let ddz = p[2] - q[2];
+            let exact = smp.extent + pad;
+            if ddx * ddx + ddy * ddy + ddz * ddz > exact * exact {
+                continue;
+            }
+            for (_, val) in &smp.fields {
+                records.push((
+                    p[0],
+                    p[1],
+                    p[2],
+                    *val,
+                    smp.extent,
+                    smp.epoch,
+                    smp.ttl,
+                    smp.tau,
+                    smp.force_type,
+                ));
             }
         }
     }
@@ -1169,6 +1190,7 @@ enum Extract {
     Regex(String, String),
     XmlCount(String, String),
     Ephemeris(String),
+    Vectors(String),
     CelestialMap {
         arr_path: String,
         ra_key: String,
@@ -1363,19 +1385,26 @@ fn extract_header(s: &str, n: &str) -> Option<String> {
 fn parse_http_headers(text: &str) -> (HashMap<String, String>, String) {
     let mut headers = HashMap::new();
     let mut body_start = text.len();
-    for (i, line) in text.lines().enumerate() {
-        let trimmed = line.trim();
-        if trimmed.is_empty() {
-            body_start = text.lines().take(i + 1).map(|l| l.len() + 1).sum();
+    let mut offset = 0usize;
+    for line in text.split_inclusive('\n') {
+        let line_len = line.len();
+        let content = line.trim_end_matches(['\r', '\n']);
+        if content.is_empty() {
+            body_start = offset + line_len;
             break;
         }
-        if let Some(colon) = trimmed.find(':') {
-            let key = trimmed[..colon].trim().to_lowercase();
-            let val = trimmed[colon + 1..].trim().to_string();
+        if let Some(colon) = content.find(':') {
+            let key = content[..colon].trim().to_lowercase();
+            let val = content[colon + 1..].trim().to_string();
             headers.insert(key, val);
         }
+        offset += line_len;
     }
-    let body = text[body_start..].to_string();
+    let body = if body_start <= text.len() {
+        text[body_start..].to_string()
+    } else {
+        String::new()
+    };
     (headers, body)
 }
 fn fetch_with_headers(url: &str, headers: &[(String, String)], ttl: u64) -> Option<String> {
@@ -1878,6 +1907,7 @@ fn load_sources() -> Vec<SourceConfig> {
                                 Extract::Map { .. }
                                     | Extract::GeojsonEvents { .. }
                                     | Extract::Ephemeris(_)
+                                    | Extract::Vectors(_)
                                     | Extract::CelestialMap { .. }
                                     | Extract::Flatten { .. }
                                     | Extract::Rows { .. }
@@ -1909,13 +1939,21 @@ fn load_sources() -> Vec<SourceConfig> {
                         None
                     };
                     if let Some(frame) = frame {
+                        let auto_tau_key = if cur_tau_key.is_none() && cur_tau.is_none() {
+                            cur_extracts.iter().find_map(|e| match e {
+                                Extract::Ephemeris(n) | Extract::Vectors(n) => Some(n.clone()),
+                                _ => None,
+                            })
+                        } else {
+                            cur_tau_key.clone()
+                        };
                         sources.push(SourceConfig {
                             ttl: cur_ttl,
                             url: cur_url.clone(),
                             frame,
                             force: cur_force.clone(),
                             tau: cur_tau,
-                            tau_key: cur_tau_key.clone(),
+                            tau_key: auto_tau_key,
                             format: cur_format.clone(),
                             extracts: cur_extracts.clone(),
                             headers: cur_headers.clone(),
@@ -2041,6 +2079,11 @@ fn load_sources() -> Vec<SourceConfig> {
             "ephemeris" => {
                 if parts.len() >= 2 {
                     cur_extracts.push(Extract::Ephemeris(parts[1].to_string()));
+                }
+            }
+            "vectors" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::Vectors(parts[1].to_string()));
                 }
             }
             "last_line" => {
@@ -2373,6 +2416,13 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, extent: f64
     let secs = unix as u64;
     let days = secs / 86400;
     let (ty, tm, td) = days_to_ymd(days);
+    let yday = {
+        let cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+        let leap = (ty % 4 == 0 && ty % 100 != 0) || ty % 400 == 0;
+        let base = if tm > 0 { cum[(tm - 1) as usize] } else { 0 };
+        base + td + if leap && tm > 2 { 1 } else { 0 }
+    };
+    let year2 = ty % 100;
     let today = format!("{}-{:02}-{:02}", ty, tm, td);
     let (yy, ym, yd) = days_to_ymd(days - 1);
     let yesterday = format!("{}-{:02}-{:02}", yy, ym, yd);
@@ -2495,8 +2545,10 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, extent: f64
         .replace("{lon_int}", &format!("{}", lon as i32))
         .replace("{hour_ago}", &hour_ago)
         .replace("{year}", &ty.to_string())
+        .replace("{year2}", &format!("{:02}", year2))
         .replace("{month}", &tm.to_string())
         .replace("{day}", &td.to_string())
+        .replace("{yday}", &format!("{:03}", yday))
         .replace("{hour}", &format!("{:02}", q_hour))
         .replace("{minute}", &format!("{:02}", q_minute))
         .replace("{unix_now}", &unix_now)
@@ -2619,6 +2671,11 @@ fn fetch_worker(archive: Arc<Archive>) {
             }
         };
         let raw = fetch_with_headers(&url, &headers, ttl);
+        eprintln!(
+            "FETCH {} {}B",
+            &url[..url.len().min(60)],
+            raw.as_ref().map(|r| r.len()).unwrap_or(0)
+        );
         let body = raw.as_ref().map(|r| {
             let (hdrs, b) = parse_http_headers(r);
             if let Some(max_age) = hdrs.get("cache-control").and_then(|cc| {
@@ -2800,12 +2857,20 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                         if let Some(JsonVal::Str(s)) = m.get("result") {
                             s.clone()
                         } else {
+                            eprintln!("EPH no result key fmt={}", src.format);
                             body.to_string()
                         }
                     } else {
+                        eprintln!("EPH not obj fmt={}", src.format);
                         body.to_string()
                     }
                 } else {
+                    eprintln!(
+                        "EPH parse_json failed fmt={} len={} head={:?}",
+                        src.format,
+                        body.len(),
+                        body.get(..40.min(body.len()))
+                    );
                     body.to_string()
                 };
                 if let Some(soe) = ht.find("$$SOE") {
@@ -2890,6 +2955,106 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                             position: PendingPosition::StateVector {
                                 p: p_now,
                                 v,
+                                track: true,
+                            },
+                            fields,
+                        });
+                    }
+                }
+            }
+            Extract::Vectors(n) => {
+                let ht = if let Some(ref j) = parsed_json {
+                    if let JsonVal::Obj(m) = j {
+                        if let Some(JsonVal::Str(s)) = m.get("result") {
+                            s.clone()
+                        } else {
+                            eprintln!("VEC no result key fmt={}", src.format);
+                            body.to_string()
+                        }
+                    } else {
+                        eprintln!("VEC not obj fmt={}", src.format);
+                        body.to_string()
+                    }
+                } else {
+                    eprintln!(
+                        "VEC parse_json failed fmt={} len={} head={:?}",
+                        src.format,
+                        body.len(),
+                        body.get(..40.min(body.len()))
+                    );
+                    body.to_string()
+                };
+                if let Some(soe) = ht.find("$$SOE") {
+                    let a = &ht[soe + 5..];
+                    let e = a.find("$$EOE").unwrap_or(a.len());
+                    let blk = &a[..e];
+                    let mut cur_jd: Option<f64> = None;
+                    let mut cur_p: Option<[f64; 3]> = None;
+                    let mut cur_v: Option<[f64; 3]> = None;
+                    let mut cur_rg: Option<f64> = None;
+                    for line in blk.lines() {
+                        let t = line.trim();
+                        if t.is_empty() {
+                            continue;
+                        }
+                        let c0 = t.chars().next().unwrap_or(' ');
+                        if c0.is_ascii_digit() {
+                            if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
+                                let p_f = ecliptic_to_field([
+                                    p[0] * 1000.0,
+                                    p[1] * 1000.0,
+                                    p[2] * 1000.0,
+                                ]);
+                                let v_f = ecliptic_to_field([
+                                    v[0] * 1000.0,
+                                    v[1] * 1000.0,
+                                    v[2] * 1000.0,
+                                ]);
+                                let row_epoch = (jd - J2000_EPOCH) * 86400.0;
+                                let mut fields = Vec::new();
+                                if let Some(rg) = cur_rg {
+                                    fields.push((n.clone(), rg * 1000.0));
+                                }
+                                pending.push(PendingSample {
+                                    epoch: row_epoch,
+                                    position: PendingPosition::StateVector {
+                                        p: p_f,
+                                        v: v_f,
+                                        track: true,
+                                    },
+                                    fields,
+                                });
+                            }
+                            cur_jd = t
+                                .split('=')
+                                .next()
+                                .and_then(|s| s.trim().parse::<f64>().ok());
+                            cur_p = None;
+                            cur_v = None;
+                            cur_rg = None;
+                        } else if t.starts_with("VX") {
+                            cur_v = horizons_nums(t, ["VX", "VY", "VZ"]);
+                        } else if t.starts_with('X') {
+                            cur_p = horizons_nums(t, ["X", "Y", "Z"]);
+                        } else if t.starts_with("LT") {
+                            if let Some(r) = horizons_nums(t, ["RG", "LT", "RR"]) {
+                                cur_rg = Some(r[0]);
+                            }
+                        }
+                    }
+                    if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
+                        let p_f = ecliptic_to_field([p[0] * 1000.0, p[1] * 1000.0, p[2] * 1000.0]);
+                        let v_f = ecliptic_to_field([v[0] * 1000.0, v[1] * 1000.0, v[2] * 1000.0]);
+                        let row_epoch = (jd - J2000_EPOCH) * 86400.0;
+                        let mut fields = Vec::new();
+                        if let Some(rg) = cur_rg {
+                            fields.push((n.clone(), rg * 1000.0));
+                        }
+                        pending.push(PendingSample {
+                            epoch: row_epoch,
+                            position: PendingPosition::StateVector {
+                                p: p_f,
+                                v: v_f,
                                 track: true,
                             },
                             fields,
@@ -3361,7 +3526,7 @@ fn materialize(
     if pend.fields.is_empty() {
         return None;
     }
-    let mut vmax_floor = 0.0f64;
+    let vmax_floor = 0.0f64;
     let motion = match &pend.position {
         PendingPosition::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
         PendingPosition::Geodetic { lat, lon, alt } => Motion::Ground {
@@ -3398,27 +3563,7 @@ fn materialize(
                     Some(k) => find(k)? * alt_scale,
                     None => 0.0,
                 };
-                let p = geodetic_to_icrs(lat, lon, alt, pend.epoch);
-                let pa = [p.0, p.1, p.2];
-                let prev = origins.get(&origin).filter(|o| o.has_prev).copied();
-                let v = match prev {
-                    Some(o)
-                        if pend.epoch > o.prev_epoch
-                            && pend.epoch - o.prev_epoch <= src.ttl.max(1) as f64 * Φ * Φ =>
-                    {
-                        let dt = pend.epoch - o.prev_epoch;
-                        [
-                            (pa[0] - o.prev_abs[0]) / dt,
-                            (pa[1] - o.prev_abs[1]) / dt,
-                            (pa[2] - o.prev_abs[2]) / dt,
-                        ]
-                    }
-                    _ => {
-                        vmax_floor = Φ * (MU_EARTH / (EARTH_RADIUS + alt)).sqrt();
-                        [0.0, 0.0, 0.0]
-                    }
-                };
-                Motion::Linear { p: pa, v }
+                Motion::Ground { lat, lon, alt }
             }
         },
     };
@@ -3458,9 +3603,15 @@ fn materialize(
     let tau = src
         .tau
         .or_else(|| {
-            src.tau_key
-                .as_ref()
-                .and_then(|k| pend.fields.iter().find(|(n, _)| n == k).map(|(_, v)| *v))
+            src.tau_key.as_ref().and_then(|k| {
+                pend.fields.iter().find(|(n, _)| n == k).map(|(_, v)| {
+                    if is_diff {
+                        *v / v_or_d
+                    } else {
+                        *v / v_or_d
+                    }
+                })
+            })
         })
         .unwrap_or(tau_default);
     let extent = if is_diff {
@@ -3682,10 +3833,14 @@ fn warm_cache(archive: Arc<Archive>) {
                         ) {
                             continue;
                         }
-                        let celestial = src
-                            .extracts
-                            .iter()
-                            .any(|e| matches!(e, Extract::CelestialMap { .. }));
+                        let celestial = src.extracts.iter().any(|e| {
+                            matches!(
+                                e,
+                                Extract::CelestialMap { .. }
+                                    | Extract::Vectors(_)
+                                    | Extract::Ephemeris(_)
+                            )
+                        });
                         let prev = origins
                             .get(&origin)
                             .filter(|o| o.has_prev)
@@ -3787,6 +3942,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     Extract::Map { .. }
                         | Extract::GeojsonEvents { .. }
                         | Extract::LastObj { .. }
+                        | Extract::Vectors(_)
                         | Extract::CelestialMap { .. }
                         | Extract::Flatten { .. }
                         | Extract::Rows { .. }
@@ -3857,12 +4013,14 @@ fn warm_cache(archive: Arc<Archive>) {
 
 fn main() {
     load_env();
+    let loaded = load_sources();
+    eprintln!("loaded {} sources from phi/sources.φ", loaded.len());
     let port: u16 = std::env::var("PORT")
         .ok()
         .and_then(|s| s.parse().ok())
         .unwrap_or(1111);
     let archive = Arc::new(Archive {
-        sources: load_sources(),
+        sources: loaded,
         index_html: std::fs::read("static/index.html").unwrap_or_default(),
         constants_js: std::fs::read("static/constants.js").unwrap_or_default(),
         field: RwLock::new(Arc::new(build_buffer(Vec::new(), 1.0))),

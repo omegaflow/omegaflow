@@ -10,3 +10,4 @@ server.log
 AGENTS.md
 opencode.json
 reference/
+/phi/*.py
