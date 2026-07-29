@@ -20430,6 +20430,22 @@ field pl_rade radius_earth
 field tfopwg_disp disposition
 dist_key sy_dist
 
+source gbif_occurrence_search
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?limit=100&latitude={lat}&longitude={lon}&radius=100
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field scientificName scientific_name
+field kingdom kingdom
+field phylum phylum
+field class class_name
+field order order_name
+field family family
+field genus genus
+
 source usgs_volcano_monitoring
 ttl 86400
 force em
