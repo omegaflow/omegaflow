@@ -946,7 +946,6 @@ fn presence_probe() {
                 if (gp.buttons[4] && gp.buttons[4].pressed) tThrustTarget = -64;
                 if (gp.buttons[5] && gp.buttons[5].pressed) tThrustTarget = 64;
             }
-            }
             const dtP = tPresence - t0P;
             xPresence = pPresence[0] + vPresence[0] * dtP;
             yPresence = pPresence[1] + vPresence[1] * dtP;
