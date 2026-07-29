@@ -474,11 +474,11 @@ fn presence_probe() {
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
             const [fr, fu] = orientationFrame();
             const medExt = windowMedianExtent();
-            if (rawWindowResponse.length > 0 && medExt > 0 && isFinite(medExt) && prevSyncTs > 0 && (ts - lastManualZoomTs) > Φ * 1000) {
+            if (rawWindowResponse.length > 0 && medExt > 0 && isFinite(medExt) && prevSyncTs > 0 && (ts - lastManualZoomTs) > Φ * 8000) {
                 const nyquistTarget = (medExt * 2) / Math.max(RX, RY);
                 if (nyquistTarget > 0 && isFinite(nyquistTarget)) {
                     const dtFrame = (ts - prevSyncTs) / 1000;
-                    const relax = 1.0 - Math.pow(2, -dtFrame / (Φ * 4));
+                    const relax = 1.0 - Math.pow(2, -dtFrame / (Φ * 16));
                     gridStep += (nyquistTarget - gridStep) * relax;
                 }
             }
@@ -1112,8 +1112,6 @@ fn presence_probe() {
         window.addEventListener('pointercancel', pointerEnd);
         window.addEventListener('contextmenu', (e) => e.preventDefault());
         window.addEventListener('wheel', (e) => {
-            if (e.deltaMode !== 0) return;
-            if (Math.abs(e.deltaY) < 20) return;
             if (e.ctrlKey || e.metaKey) return;
             if (e.shiftKey) {
                 tThrust -= Math.sign(e.deltaY) * 8;
@@ -1122,7 +1120,6 @@ fn presence_probe() {
             }
             gridStep *= Math.pow(2, e.deltaY / 256);
             lastManualZoomTs = performance.now();
-            e.preventDefault();
             e.preventDefault();
         }, { passive: false });
         window.addEventListener('keydown', (e) => { keysDown.add(e.key); });
