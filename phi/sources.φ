@@ -1250,19 +1250,34 @@ field_in altim atmosphere_metar_pressure_hpa
 field_in wspd atmosphere_metar_wind_speed_kt
 field_in wdir atmosphere_metar_wind_direction_deg
 
+source usgs_nwis_water_data
+ttl 600
+force advective
+url https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?limit=100&api_key=DEMO_KEY&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field monitoring_location_id site_id
+field parameter_code param_code
+field value value
+field unit_of_measure unit
+field time observation_time
+field statistic_id statistic_id
+
 source atmosphere_open_meteo_current
 ttl 300
 force advective
 pos atmosphere_lat atmosphere_lon
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,pressure_msl,wind_speed_10m,wind_direction_10m
 path latitude atmosphere_lat
 path longitude atmosphere_lon
 path current.temperature_2m atmosphere_temperature_c
 path current.relative_humidity_2m atmosphere_humidity_pct
 path current.apparent_temperature atmosphere_feels_like_c
 path current.precipitation atmosphere_precipitation_mm
+path current.rain atmosphere_rain_mm
 path current.weather_code atmosphere_weather_code
-path current.surface_pressure atmosphere_pressure_hpa
+path current.pressure_msl atmosphere_pressure_hpa
 path current.wind_speed_10m atmosphere_wind_speed_kmh
 path current.wind_direction_10m atmosphere_wind_direction_deg
 
