@@ -4336,6 +4336,55 @@ field_in attributes.MM month
 lat_key geometry.y
 lon_key geometry.x
 
+source esri_epa_aqs_monitoring
+ttl 3600
+force diffusion
+url https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/AQS_Monitor_Sites/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+map features
+field_in attributes.AQS_Site_ID site_id
+field_in attributes.State state
+field_in attributes.City city
+field_in attributes.POC poc
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_env_canada_wind
+ttl 300
+force advective
+url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.Station_Name station_name
+field_in attributes.Temperature_C temp_c
+field_in attributes.CurrentConditions conditions
+field_in attributes.Wind wind_desc
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_canada_air_quality
+ttl 600
+force diffusion
+url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/AirQualityHealthIndexCanada/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.id observation_id
+field_in attributes.aqhi_type observation_type
+field_in attributes.location_name_en location_en
+field_in attributes.location_name_fr location_fr
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_tide_flooding_outlook
+ttl 86400
+force advective
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Monthly_High_Tide_Flooding_Outlook_Daily_Flood_Likelihood/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.Station_ID station_id
+field_in attributes.Station_Name station_name
+field_in attributes.Latitude latitude
+field_in attributes.Longitude longitude
+field_in attributes.Daily_Flood_Likelihood flood_likelihood
+lat_key geometry.y
+lon_key geometry.x
+
 source nasa_firms_global_active_fires
 ttl 600
 force thermal
