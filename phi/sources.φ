@@ -22423,3 +22423,30 @@ field_in 14 log_m_sun
 lat_key 2
 lon_key 3
 
+source nasa_eonet_events
+ttl 600
+force seismic-body
+url https://eonet.gsfc.nasa.gov/api/v3/events?limit=200&open=true
+map events
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field title event_title
+field categories.0.title category
+field closed closed_date
+
+source ourairports_global
+ttl 86400
+force em
+url https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv
+format csv
+rows
+pos airport_latitude airport_longitude
+field_in 2 airport_type
+field_in 3 airport_name
+field_in 4 airport_latitude
+field_in 5 airport_longitude
+field_in 6 elevation_ft
+field_in 10 municipality
+field_in 11 scheduled_service
+field_in 12 icao_code
+field_in 13 iata_code
