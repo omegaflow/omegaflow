@@ -22450,3 +22450,18 @@ field_in 10 municipality
 field_in 11 scheduled_service
 field_in 12 icao_code
 field_in 13 iata_code
+
+source ripe_atlas_probes
+ttl 86400
+force em
+url https://atlas.ripe.net/api/v2/probes/?status=1&page_size=500&format=json
+map results
+field_in id probe_id
+field_in description description
+field_in country_code country
+field_in asn_v4 asn
+field_in firmware_version fw_version
+field_in type probe_type
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+
