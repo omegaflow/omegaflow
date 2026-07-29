@@ -1250,6 +1250,19 @@ field_in altim atmosphere_metar_pressure_hpa
 field_in wspd atmosphere_metar_wind_speed_kt
 field_in wdir atmosphere_metar_wind_direction_deg
 
+source noaa_coops_water_level_now
+ttl 600
+force advective
+stations https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json
+stations_path stations
+stations_lat lat
+stations_lon lng
+stations_id id
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&station={nearest_station}&format=json&date=today&units=metric&datum=MLLW&time_zone=gmt
+map data
+field v water_level_m
+field t observation_time
+
 source noaa_coops_current_stations
 ttl 86400
 force advective

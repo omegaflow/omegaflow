@@ -6,7 +6,7 @@ use std::process::Command;
 use std::sync::atomic::AtomicU64;
 use std::sync::{Arc, Condvar, Mutex, RwLock};
 use std::thread;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 const Φ: f64 = 1.618033988749895;
 const AU: f64 = 1.495978707e11;
@@ -1418,6 +1418,12 @@ enum Frame {
     Query,
 }
 
+struct StationEntry {
+    id: String,
+    lat: f64,
+    lon: f64,
+}
+
 struct SourceConfig {
     name: String,
     ttl: u64,
@@ -1435,6 +1441,11 @@ struct SourceConfig {
     max_freq: Option<f64>,
     min_freq: Option<f64>,
     body: Option<String>,
+    stations_url: Option<String>,
+    stations_path: String,
+    stations_lat: String,
+    stations_lon: String,
+    stations_id: String,
 }
 
 type FetchTask = (
@@ -1485,6 +1496,7 @@ struct Archive {
     inflight: Mutex<std::collections::HashSet<Origin>>,
     fetch_queue: (Mutex<BinaryHeap<QueuedFetch>>, Condvar),
     ttl_eff: Mutex<HashMap<String, f64>>,
+    stations_cache: Mutex<HashMap<String, (Instant, Arc<Vec<StationEntry>>)>>,
 }
 struct WsFrame {
     opcode: u8,
@@ -1580,7 +1592,12 @@ fn parse_http_headers(text: &str) -> (HashMap<String, String>, String) {
     };
     (headers, body)
 }
-fn fetch_with_headers(url: &str, body: Option<&str>, headers: &[(String, String)], ttl: u64) -> Option<String> {
+fn fetch_with_headers(
+    url: &str,
+    body: Option<&str>,
+    headers: &[(String, String)],
+    ttl: u64,
+) -> Option<String> {
     let connect_t = (((ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64).min(15);
     let max_t = (((ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(30);
     let mut cmd = Command::new("curl");
@@ -2068,6 +2085,11 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_max_freq: Option<f64> = None;
     let mut cur_min_freq: Option<f64> = None;
     let mut cur_body: Option<String> = None;
+    let mut cur_stations_url: Option<String> = None;
+    let mut cur_stations_path = String::from("stations");
+    let mut cur_stations_lat = String::from("lat");
+    let mut cur_stations_lon = String::from("lng");
+    let mut cur_stations_id = String::from("id");
     let mut cur_name = String::new();
     let mut active = false;
 
@@ -2146,6 +2168,11 @@ fn load_sources() -> Vec<SourceConfig> {
                             max_freq: cur_max_freq,
                             min_freq: cur_min_freq,
                             body: cur_body.clone(),
+                            stations_url: cur_stations_url.clone(),
+                            stations_path: cur_stations_path.clone(),
+                            stations_lat: cur_stations_lat.clone(),
+                            stations_lon: cur_stations_lon.clone(),
+                            stations_id: cur_stations_id.clone(),
                         });
                     }
                 }
@@ -2183,6 +2210,11 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_max_freq = None;
                 cur_min_freq = None;
                 cur_body = None;
+                cur_stations_url = None;
+                cur_stations_path = String::from("stations");
+                cur_stations_lat = String::from("lat");
+                cur_stations_lon = String::from("lng");
+                cur_stations_id = String::from("id");
                 cur_extracts.clear();
                 cur_headers.clear();
                 cur_name = parts.get(1).unwrap_or(&"").to_string();
@@ -2194,6 +2226,11 @@ fn load_sources() -> Vec<SourceConfig> {
             "tau" => cur_tau = parts.get(1).and_then(|s| s.parse().ok()),
             "tau_key" => cur_tau_key = parts.get(1).map(|s| s.to_string()),
             "format" => cur_format = parts.get(1).unwrap_or(&"json").to_string(),
+            "stations" => cur_stations_url = parts.get(1).map(|s| s.to_string()),
+            "stations_path" => cur_stations_path = parts.get(1).unwrap_or(&"stations").to_string(),
+            "stations_lat" => cur_stations_lat = parts.get(1).unwrap_or(&"lat").to_string(),
+            "stations_lon" => cur_stations_lon = parts.get(1).unwrap_or(&"lng").to_string(),
+            "stations_id" => cur_stations_id = parts.get(1).unwrap_or(&"id").to_string(),
             "target" => cur_target = parts.get(1).map(|s| s.to_string()),
             "catalog" => cur_catalog = parts.get(1).map(|s| s.to_string()),
             "max_freq" => cur_max_freq = parts.get(1).and_then(|s| s.parse().ok()),
@@ -2755,7 +2792,15 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, extent: f64
         .replace("{nasa_key}", "DEMO_KEY")
 }
 
-fn render_source_url(src: &SourceConfig, x: f64, y: f64, z: f64, tdb: f64, r: f64) -> String {
+fn render_source_url(
+    src: &SourceConfig,
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb: f64,
+    r: f64,
+    archive: Option<&Archive>,
+) -> String {
     let mut url = render_url(&src.url, x, y, z, tdb, r);
     if let Some(ref t) = src.target {
         url = url.replace("{target}", t);
@@ -2769,10 +2814,86 @@ fn render_source_url(src: &SourceConfig, x: f64, y: f64, z: f64, tdb: f64, r: f6
     if let Some(f) = src.min_freq {
         url = url.replace("{min_freq}", &f.to_string());
     }
+    if let Some(ar) = archive {
+        if let Some(ref st_url) = src.stations_url {
+            let cache_key = st_url.clone();
+            let stations = {
+                let mut cache = ar.stations_cache.lock().unwrap_or_else(|e| e.into_inner());
+                if let Some((ts, st)) = cache.get(&cache_key) {
+                    if ts.elapsed().as_secs() < 86400 {
+                        Some(st.clone())
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            };
+            let stations = stations.unwrap_or_else(|| {
+                if let Some(body) = fetch_with_headers(st_url, None, &[], 86400) {
+                    if let Some(j) = parse_json(&body) {
+                        let arr = jpath_val(&j, &src.stations_path).and_then(|v| {
+                            if let JsonVal::Arr(a) = v {
+                                Some(a)
+                            } else {
+                                None
+                            }
+                        });
+                        if let Some(arr) = arr {
+                            let entries: Vec<StationEntry> = arr
+                                .iter()
+                                .filter_map(|s| {
+                                    let id = match jpath_val(s, &src.stations_id)? {
+                                        JsonVal::Str(st) => st.clone(),
+                                        JsonVal::Num(n) => n.to_string(),
+                                        _ => return None,
+                                    };
+                                    let lat = scalar_of(jpath_val(s, &src.stations_lat)?)?;
+                                    let lon = scalar_of(jpath_val(s, &src.stations_lon)?)?;
+                                    Some(StationEntry { id, lat, lon })
+                                })
+                                .collect();
+                            let arc = Arc::new(entries);
+                            let mut cache =
+                                ar.stations_cache.lock().unwrap_or_else(|e| e.into_inner());
+                            cache.insert(cache_key, (Instant::now(), arc.clone()));
+                            arc
+                        } else {
+                            Arc::new(Vec::new())
+                        }
+                    } else {
+                        Arc::new(Vec::new())
+                    }
+                } else {
+                    Arc::new(Vec::new())
+                }
+            });
+            if !stations.is_empty() {
+                let (lat, lon) = icrs_to_geodetic(x, y, z, tdb);
+                let mut best = 0usize;
+                let mut best_d = f64::MAX;
+                for (i, st) in stations.iter().enumerate() {
+                    let d2 = (st.lat - lat).powi(2) + (st.lon - lon).powi(2);
+                    if d2 < best_d {
+                        best_d = d2;
+                        best = i;
+                    }
+                }
+                url = url.replace("{nearest_station}", &stations[best].id);
+            }
+        }
+    }
     url
 }
 
-fn render_source_body(src: &SourceConfig, x: f64, y: f64, z: f64, tdb: f64, r: f64) -> Option<String> {
+fn render_source_body(
+    src: &SourceConfig,
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb: f64,
+    r: f64,
+) -> Option<String> {
     let tmpl = src.body.as_ref()?;
     let mut body = render_url(tmpl, x, y, z, tdb, r);
     if let Some(ref t) = src.target {
@@ -3959,7 +4080,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_source_url(src, pos.0, pos.1, pos.2, now, r),
+                            render_source_url(src, pos.0, pos.1, pos.2, now, r, Some(&*archive)),
                             render_source_body(src, pos.0, pos.1, pos.2, now, r),
                             render_headers(src, pos.0, pos.1, pos.2, now, r),
                             src.ttl,
@@ -3987,7 +4108,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_source_url(src, pos.0, pos.1, pos.2, now, r),
+                            render_source_url(src, pos.0, pos.1, pos.2, now, r, Some(&*archive)),
                             render_source_body(src, pos.0, pos.1, pos.2, now, r),
                             render_headers(src, pos.0, pos.1, pos.2, now, r),
                             src.ttl,
@@ -4015,7 +4136,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_source_url(src, pos.0, pos.1, pos.2, now, r),
+                            render_source_url(src, pos.0, pos.1, pos.2, now, r, Some(&*archive)),
                             render_source_body(src, pos.0, pos.1, pos.2, now, r),
                             render_headers(src, pos.0, pos.1, pos.2, now, r),
                             src.ttl,
@@ -4056,7 +4177,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                     i,
                                     origin,
                                     None,
-                                    render_source_url(src, px, py, pz, now, r),
+                                    render_source_url(src, px, py, pz, now, r, Some(&*archive)),
                                     render_source_body(src, px, py, pz, now, r),
                                     render_headers(src, px, py, pz, now, r),
                                     src.ttl,
@@ -4101,7 +4222,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_source_url(src, rx, ry, rz, now, r),
+                            render_source_url(src, rx, ry, rz, now, r, Some(&*archive)),
                             render_source_body(src, rx, ry, rz, now, r),
                             render_headers(src, rx, ry, rz, now, r),
                             src.ttl,
@@ -4135,7 +4256,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                 i,
                                 origin,
                                 Some((lat, lon)),
-                                render_source_url(src, px, py, pz, now, r),
+                                render_source_url(src, px, py, pz, now, r, Some(&*archive)),
                                 render_source_body(src, px, py, pz, now, r),
                                 render_headers(src, px, py, pz, now, r),
                                 src.ttl,
@@ -4300,6 +4421,7 @@ fn main() {
         inflight: Mutex::new(std::collections::HashSet::new()),
         fetch_queue: (Mutex::new(BinaryHeap::new()), Condvar::new()),
         ttl_eff: Mutex::new(HashMap::new()),
+        stations_cache: Mutex::new(HashMap::new()),
     });
     for _ in 0..8 {
         let ar = Arc::clone(&archive);
@@ -4326,7 +4448,9 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::{votable_to_json, csv_to_json, render_source_url, render_source_body, SourceConfig};
+    use super::{
+        csv_to_json, render_source_body, render_source_url, votable_to_json, SourceConfig,
+    };
 
     #[test]
     fn test_votable_irsa() {
@@ -4407,8 +4531,13 @@ mod tests {
             max_freq: None,
             min_freq: None,
             body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
         };
-        let url = render_source_url(&src, 0.0, 0.0, 0.0, 0.0, 1000.0);
+        let url = render_source_url(&src, 0.0, 0.0, 0.0, 0.0, 1000.0, None);
         assert!(url.contains("Ceres"));
         assert!(url.contains("fp_psc"));
         assert!(!url.contains("{target}"));
@@ -4434,6 +4563,11 @@ mod tests {
             max_freq: None,
             min_freq: None,
             body: Some("{\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}],\"datetime\":\"{today}/{today}\"}".into()),
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
         };
         let body = render_source_body(&src, 0.0, 0.0, 0.0, 0.0, 100000.0);
         assert!(body.is_some());
