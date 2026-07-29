@@ -1004,7 +1004,7 @@ fn presence_probe() {
                     `  X: ${xStr}\n` +
                     `  Y: ${yStr}\n` +
                     `  Z: ${zStr}\n` +
-                    `  Look: (${ffwd.map(v => v.toFixed(3)).join(', ')})\n` +
+                    `  Look: (${ff.map(v => v.toFixed(3)).join(', ')})\n` +
                     `  Time: ${tPresence.toFixed(1)}\n` +
                     `  Pan: ${panNow.toExponential(1)} m/s\n` +
                     `  Velocity: ${Math.hypot(vPresence[0], vPresence[1], vPresence[2]).toExponential(1)} m/s\n\n` +
