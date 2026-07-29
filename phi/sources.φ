@@ -20430,6 +20430,19 @@ field pl_rade radius_earth
 field tfopwg_disp disposition
 dist_key sy_dist
 
+source usgs_volcano_monitoring
+ttl 86400
+force em
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+map .
+lat_key latitude
+lon_key longitude
+field volcano_name name
+field region region_code
+field elevation_meters elevation_m
+field nvews_threat threat_level
+field icao_coordinates icao_grid
+
 source geosphere_icgem_geoid_height
 ttl 2592000
 force em

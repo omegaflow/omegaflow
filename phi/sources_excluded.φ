@@ -57,15 +57,8 @@ field pubDate publication_date
 
 
 
-source usgs_volcano_hazards_usa
-ttl 300
-force seismic-body
-url https://volcanoes.usgs.gov/vhp/feeds/vaalatom.xml
-format text
-rows
-field title volcano_name
-field summary alert_description
-field updated update_time
+# usgs_volcano_hazards_usa — replaced by usgs_volcano_monitoring (HANS public API, JSON, lat/lon)
+# See phi/sources.φ: source usgs_volcano_monitoring
 
 
 
