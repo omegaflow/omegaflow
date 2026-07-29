@@ -720,7 +720,7 @@ last kp_index magnetosphere_kp_index
 source magnetosphere_solar_wind
 ttl 60
 force em
-terra 0.99
+terra 0
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 last bz_gsm magnetosphere_imf_bz_nt
 last bt magnetosphere_imf_bt_nt
@@ -768,8 +768,7 @@ path data.THUL.1h.0.1 cosmic_neutron_flux_thule
 source noaa_goes18_electron_flux
 ttl 60
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 map .
 field_in 0 timestamp_utc
@@ -779,8 +778,7 @@ field_in 2 electron_04mev_flux
 source noaa_goes18_eps_energetic_particles
 ttl 60
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 map .
 field_in 0 timestamp_utc
@@ -791,8 +789,7 @@ field_in 3 flux_100mev_p_cm2s
 source noaa_goes_exis_xrays
 ttl 60
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
 map
 field time_tag observation_time
@@ -802,8 +799,7 @@ field flux_short_0_5_4A flux_0_5_4A_W_m2
 source noaa_goes_r_exis_euv_realtime
 ttl 60
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
 map .
 field_in 0 timestamp_utc
@@ -813,8 +809,7 @@ field_in 2 flux_long_wm2
 source noaa_swpc_alerts_current
 ttl 60
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/products/alerts.json
 map .
 field time_tag alert_time_utc
@@ -824,8 +819,7 @@ field issue_utc issue_time_utc
 source noaa_swpc_geomagnetic_alerts
 ttl 60
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/products/alerts.json
 map
 field issue_time alert_time
@@ -855,8 +849,7 @@ field energy proton_energy_band
 source noaa_swpc_goes_xray_flux
 ttl 60
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 map .
 field 0 datetime_utc
@@ -876,8 +869,7 @@ field energy xray_energy_channel
 source noaa_swpc_solar_events
 ttl 60
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 map
 field time_tag observation_time
@@ -887,8 +879,7 @@ field flux_short_0_5_4A xray_0_5_4A_W_m2
 source noaa_swpc_xray_flares_latest
 ttl 60
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
 map .
 field time_tag flare_time_utc
@@ -1143,7 +1134,7 @@ count . solar_active_region_count
 source solar_wind
 ttl 60
 force em
-terra 0.99
+terra 0
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
 last proton_speed solar_wind_speed_km_s
 last proton_density solar_wind_density_cm3
@@ -1490,16 +1481,12 @@ field 1.location geosphere_cenc_eq_location
 source geosphere_earthquakes
 ttl 300
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_significant_day
 ttl 300
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
 map features
 lat_key geometry.coordinates.1
@@ -3088,7 +3075,7 @@ field type event_type
 source magnetosphere_noaa_imf_bz
 ttl 300
 force em
-terra 0.99
+terra 0
 url https://services.swpc.noaa.gov/products/summary/solar-wind-mag-field.json
 path 0.bz_gsm magnetosphere_imf_bz_nt
 path 0.bt magnetosphere_imf_bt_nt
@@ -3254,8 +3241,7 @@ field dst dst_index_nt
 source noaa_swpc_goes_electron_1day
 ttl 300
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json
 map .
 field time_tag observation_time_utc
@@ -3269,8 +3255,7 @@ field satellite satellite_id
 source noaa_swpc_goes_integral_protons_1day
 ttl 300
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 map .
 field 0 datetime_utc
@@ -3281,8 +3266,7 @@ field 3 p_gt100mev_pfu
 source noaa_swpc_goes_sep_7day_proton_flux
 ttl 300
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-7-day.json
 map .
 field 0 time_tag
@@ -3293,8 +3277,7 @@ field 3 p_gt100mev_pfu
 source noaa_swpc_goes_sep_proton_flux
 ttl 300
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 map .
 field 0 datetime_utc
@@ -3432,7 +3415,7 @@ last flux solar_xray_flux_goes
 source solar_wind_speed
 ttl 300
 force em
-terra 0.99
+terra 0
 url https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json
 path 0.proton_speed solar_wind_speed_kms
 
@@ -3672,8 +3655,6 @@ field minutely_15.lightning_potential atmosphere_lightning_potential
 source atmosphere_metar_global
 ttl 600
 force acoustic
-lat 0
-lon 0
 url https://aviationweather.gov/api/data/metar?format=json&bbox=-180,-90,180,90
 map .
 lat_key lat
@@ -4202,8 +4183,6 @@ field_in dirasakan geosphere_bmkg_felt
 source geosphere_earthquakes_2_5_weekly
 ttl 600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
 map features
 lat_key geometry.coordinates.1
@@ -4214,8 +4193,6 @@ field_in properties.sig geosphere_earthquake_significance
 source geosphere_earthquakes_4_5_weekly
 ttl 600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
 map features
 lat_key geometry.coordinates.1
@@ -4256,8 +4233,6 @@ last_line geosphere_earthquakes_jma_recent_mag
 source geosphere_earthquakes_m1_day
 ttl 600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
 map features
 lat_key geometry.coordinates.1
@@ -4268,8 +4243,6 @@ field_in properties.sig geosphere_quake_sig
 source geosphere_earthquakes_m1_week
 ttl 600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
 map features
 lat_key geometry.coordinates.1
@@ -4279,8 +4252,6 @@ field_in properties.mag geosphere_quake_mag
 source geosphere_earthquakes_m2_5_day
 ttl 600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
 map features
 lat_key geometry.coordinates.1
@@ -4291,8 +4262,6 @@ field_in properties.sig geosphere_quake_sig
 source geosphere_earthquakes_m4_5_day
 ttl 600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
 map features
 lat_key geometry.coordinates.1
@@ -4303,8 +4272,6 @@ field_in properties.sig geosphere_quake_sig
 source geosphere_earthquakes_significant_week
 ttl 600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
 map features
 lat_key geometry.coordinates.1
@@ -4329,8 +4296,6 @@ alt_key geometry.coordinates.2
 source geosphere_earthquakes_weekly
 ttl 600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={week_ago}&endtime={today}&minmagnitude=2.5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
@@ -4536,8 +4501,7 @@ field t observation_time
 source noaa_swpc_goes_flare_event_archive
 ttl 600
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 map .
 field_in 0 timestamp_utc
@@ -4547,8 +4511,7 @@ field_in 2 flux_long_wm2
 source noaa_swpc_goes_xrays_7day
 ttl 600
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 map .
 field time_tag xray_time_utc
@@ -4647,14 +4610,6 @@ map coordinates
 lat_key 1
 lon_key 0
 field_in 2 aurora_intensity
-
-source technosphere_bitcoin_blocks
-ttl 600
-force em
-lat 0
-lon 0
-url https://blockchain.info/q/getblockcount
-last_line technosphere_bitcoin_block_count
 
 source usgs_nwis_water_data
 ttl 600
@@ -4843,8 +4798,7 @@ field_in properties.tec ionosphere_tec_value
 source ionosphere_total_electron_content
 ttl 900
 force em
-lat 0
-lon 0
+terra 0
 url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json
 field data.grid.features.0.properties.vtec_assimilated_tecu ionosphere_tec_assimilated_tecu
 field data.grid.features.0.properties.vtec_rms_tecu ionosphere_tec_rms_tecu
@@ -4979,8 +4933,6 @@ field_in elev station_elevation_m
 source geosphere_earthquakes_m1_month
 ttl 1800
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
 map features
 lat_key geometry.coordinates.1
@@ -6074,8 +6026,6 @@ field count biosphere_gbif_occurrence_count
 source biosphere_gbif_occurrences
 ttl 3600
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=1&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -6457,8 +6407,7 @@ extent 1.04e-5
 source exosphere_ace_magnetometer
 ttl 3600
 force em
-lat 0
-lon 0
+terra 0
 url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
 field 0.gsm_bx exosphere_ace_bx_gsm_nt
 field 0.gsm_by exosphere_ace_by_gsm_nt
@@ -6468,8 +6417,7 @@ field 0.bt exosphere_ace_bt_nt
 source exosphere_ace_solar_wind
 ttl 3600
 force em
-lat 0
-lon 0
+terra 0
 url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
 field 0.speed exosphere_ace_speed_kms
 field 0.dens exosphere_ace_dens_ncc
@@ -6488,8 +6436,7 @@ field_in 2 atmosphere_aurora_probability_pct
 source exosphere_dst_index
 ttl 3600
 force em
-lat 0
-lon 0
+terra 1
 url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
 last dst exosphere_dst_nt
 
@@ -6502,8 +6449,7 @@ ephemeris cosmic_interstellar_object_distance
 source exosphere_kp_index
 ttl 3600
 force em
-lat 0
-lon 0
+terra 1
 url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
 last estimated_kp exosphere_kp_estimated
 
@@ -6733,16 +6679,12 @@ geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 source geosphere_earthquakes_m3_monthly
 ttl 3600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_significant_month
 ttl 3600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
 map features
 lat_key geometry.coordinates.1
@@ -6863,8 +6805,6 @@ path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
 source geosphere_usgs_earthquakes_month
 ttl 3600
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
 map features
 lat_key geometry.coordinates.1
@@ -6982,8 +6922,6 @@ field_in return_period hydrosphere_glofas_return_period_years
 source hydrosphere_drifters_hourly
 ttl 3600
 force em
-lat 0
-lon 0
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
 map table.rows
 lat_key 0
@@ -7327,8 +7265,7 @@ ephemeris orbital_jwst_distance
 source lasp_fism2_euv_hr_model
 ttl 3600
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
 format text
 rows
@@ -7351,8 +7288,7 @@ field f107_adj f107_adjusted_sfu
 source lasp_lisird_tsis1_tsi_daily
 ttl 3600
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
 format text
 rows
@@ -7363,8 +7299,7 @@ field uncertainty tsi_uncertainty_W_m2
 source lasp_sdo_eve_l3_ssi_1nm
 ttl 3600
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today}
 format text
 rows
@@ -7390,7 +7325,7 @@ count coordinates atmosphere_aurora_coordinate_count
 source magnetosphere_solar_regions
 ttl 3600
 force em
-terra 0.99
+terra 0
 url https://services.swpc.noaa.gov/json/solar_regions.json
 map .
 lat_key latitude
@@ -7567,8 +7502,7 @@ field 6 vmag
 source nasa_power_solar_radiation
 ttl 3600
 force em
-lat 0
-lon 0
+terra 0
 url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
 obj_last value biosphere_solar_radiation_power
 
@@ -8069,8 +8003,7 @@ lon_key dec
 source nso_gong_synoptic_magnetogram_metadata
 ttl 3600
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json
 map .
 field filename magnetogram_filename
@@ -8477,16 +8410,14 @@ field_in value radiation_safecast_cpm
 source radiation_solar_shortwave
 ttl 3600
 force em
-lat 0
-lon 0
+terra 0
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation
 field current.shortwave_radiation radiation_shortwave_openmeteo
 
 source radiation_solar_uv_index
 ttl 3600
 force em
-lat 0
-lon 0
+terra 0
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=uv_index
 field current.uv_index radiation_uv_index_openmeteo
 
@@ -8587,14 +8518,6 @@ field fcsts.0.visib forecast_visibility_sm
 field validTimeFrom valid_from
 field validTimeTo valid_to
 
-source technosphere_npm_downloads
-ttl 3600
-force em
-lat 0
-lon 0
-url https://api.npmjs.org/downloads/point/last-day/lodash
-field downloads technosphere_npm_lodash_daily
-
 source technosphere_wikipedia_views
 ttl 3600
 force em
@@ -8645,8 +8568,6 @@ extent 9.04e-6
 source universe_dscovr_epic
 ttl 3600
 force em
-lat 0
-lon 0
 url https://epic.gsfc.nasa.gov/api/natural/images
 map .
 lat_key centroid_coordinates.lat
@@ -9171,8 +9092,6 @@ obj_last value biosphere_unemployment_eu_eurostat
 source biosphere_gbif_amphibians
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -9182,8 +9101,6 @@ field_in key biosphere_gbif_amphibian_key
 source biosphere_gbif_arachnids
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
 map results
 lat_key decimalLatitude
@@ -9193,8 +9110,6 @@ field_in key biosphere_gbif_arachnid_key
 source biosphere_gbif_arthropods
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -9217,8 +9132,6 @@ field_in locality biosphere_gbif_biodiversity_locality
 source biosphere_gbif_birds
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -9239,8 +9152,6 @@ field_in locality biosphere_gbif_bird_locality
 source biosphere_gbif_cnidaria
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -9250,8 +9161,6 @@ field_in key biosphere_gbif_cnidarian_key
 source biosphere_gbif_cnidarians
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
 map results
 lat_key decimalLatitude
@@ -9261,8 +9170,6 @@ field_in key biosphere_gbif_cnidarian_key
 source biosphere_gbif_echinoderms
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -9272,8 +9179,6 @@ field_in key biosphere_gbif_echinoderm_key
 source biosphere_gbif_fungi
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -9283,8 +9188,6 @@ field_in key biosphere_gbif_fungi_key
 source biosphere_gbif_insects
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -9294,8 +9197,6 @@ field_in key biosphere_gbif_insect_key
 source biosphere_gbif_mammals
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -9325,8 +9226,6 @@ field count biosphere_migratory_bird_records_this_month
 source biosphere_gbif_mollusks
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -9336,8 +9235,6 @@ field_in key biosphere_gbif_mollusk_key
 source biosphere_gbif_occurrences_precise
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
 map results
 lat_key decimalLatitude
@@ -9348,8 +9245,6 @@ field_in coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
 source biosphere_gbif_plants
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -9371,8 +9266,6 @@ field_in eventDate biosphere_gbif_plant_date
 source biosphere_gbif_reptiles
 ttl 86400
 force em
-lat 0
-lon 0
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
@@ -10174,56 +10067,49 @@ last_line exosphere_exoplanets_confirmed_total
 source exosphere_donki_cme
 ttl 86400
 force em
-lat 0
-lon 0
+terra 0
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME/?startDate=2024-01-01&endDate=2024-12-31
 count lines exosphere_donki_cme_count_2024
 
 source exosphere_donki_flares
 ttl 86400
 force em
-lat 0
-lon 0
+terra 0
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR/?startDate=2024-01-01&endDate=2024-12-31
 count lines exosphere_donki_flare_count_2024
 
 source exosphere_donki_gst
 ttl 86400
 force em
-lat 0
-lon 0
+terra 0
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/GST/?startDate=2024-01-01&endDate=2024-12-31
 count lines exosphere_donki_gst_count_2024
 
 source exosphere_donki_hss
 ttl 86400
 force em
-lat 0
-lon 0
+terra 0
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS/?startDate=2024-01-01&endDate=2024-12-31
 count lines exosphere_donki_hss_count_2024
 
 source exosphere_donki_ips
 ttl 86400
 force em
-lat 0
-lon 0
+terra 0
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS/?startDate=2024-01-01&endDate=2024-12-31
 count lines exosphere_donki_ips_count_2024
 
 source exosphere_donki_mpc
 ttl 86400
 force em
-lat 0
-lon 0
+terra 0
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/MPC/?startDate=2024-01-01&endDate=2024-12-31
 count lines exosphere_donki_mpc_count_2024
 
 source exosphere_donki_sep
 ttl 86400
 force em
-lat 0
-lon 0
+terra 0
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP/?startDate=2024-01-01&endDate=2024-12-31
 count lines exosphere_donki_sep_count_2024
 
@@ -10243,8 +10129,7 @@ dist_key sy_dist 3.085677581e16
 source exosphere_f107_flux
 ttl 86400
 force em
-lat 0
-lon 0
+terra 0
 url https://services.swpc.noaa.gov/json/f107_cm_flux.json
 field 0.flux exosphere_f107_sfu
 
@@ -10426,112 +10311,84 @@ field_in spatial_extent.bbox.3 geosphere_clms_bbox_maxy
 source geosphere_earthquakes_2015_M5
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2016_M5
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2017_M5
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2018_M5
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2019_M5
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2020_M5
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2021_M5
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2022_M5
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2023_M5
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2024_M5
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_historical
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_m4_decade
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_m6_historical
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_usgs_m4plus_decade
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4.5&limit=300
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
@@ -10662,8 +10519,6 @@ field 0.DSCI hydrosphere_conus_drought_severity_index
 source geosphere_usgs_volcanoes_hans
 ttl 86400
 force seismic-surface
-lat 0
-lon 0
 url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
 map .
 lat_key latitude
@@ -12478,8 +12333,7 @@ field properties.landsat:collection_number collection_number
 source lasp_lisird_tsis1_hybrid_reference_spectrum
 ttl 86400
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://lasp.colorado.edu/lisird/latis/dap/tsis1_hsrs.csv
 format text
 rows
@@ -14856,8 +14710,6 @@ field year last_eruption_year
 source nist_codata_fundamental_constants
 ttl 86400
 force em
-lat 0.0
-lon 0.0
 url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
 format text
 rows
@@ -15578,8 +15430,7 @@ field total biosphere_npm_packages_total
 source nso_gong_ring_diagram_flow_maps
 ttl 86400
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json
 map .
 field filename ring_diagram_filename
@@ -16028,8 +15879,7 @@ extent 3.16e-6
 source orbital_earth_mass
 ttl 86400
 force em
-lat 0
-lon 0
+terra 1.0
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=399&OBJ_DATA=YES
 regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
 
@@ -16044,40 +15894,35 @@ field count cosmic_fireball_count
 source orbital_jupiter_mass
 ttl 86400
 force em
-lat 0
-lon 0
+terra 5.2
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=599&OBJ_DATA=YES
 regex \(kg\).\W*([0-9.]+) orbital_jupiter_mass_x10_24_kg
 
 source orbital_mars_mass
 ttl 86400
 force em
-lat 0
-lon 0
+terra 1.5
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=499&OBJ_DATA=YES
 regex \(kg\).\W*([0-9.]+) orbital_mars_mass_x10_24_kg
 
 source orbital_mercury_mass
 ttl 86400
 force em
-lat 0
-lon 0
+terra 0.4
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=199&OBJ_DATA=YES
 regex \(kg\).\W*([0-9.]+) orbital_mercury_mass_x10_24_kg
 
 source orbital_neptune_mass
 ttl 86400
 force em
-lat 0
-lon 0
+terra 30.0
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=899&OBJ_DATA=YES
 regex \(kg\).\W*([0-9.]+) orbital_neptune_mass_x10_24_kg
 
 source orbital_saturn_mass
 ttl 86400
 force em
-lat 0
-lon 0
+terra 9.6
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=699&OBJ_DATA=YES
 regex \(kg\).\W*([0-9.]+) orbital_saturn_mass_x10_24_kg
 
@@ -16092,16 +15937,14 @@ field count nasa_sentry_risk_object_count
 source orbital_uranus_mass
 ttl 86400
 force em
-lat 0
-lon 0
+terra 19.2
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=799&OBJ_DATA=YES
 regex \(kg\).\W*([0-9.]+) orbital_uranus_mass_x10_24_kg
 
 source orbital_venus_mass
 ttl 86400
 force em
-lat 0
-lon 0
+terra 0.7
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=299&OBJ_DATA=YES
 regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg
 
@@ -19740,8 +19583,6 @@ field_in properties.name geosphere_meteorite_name
 source geosphere_ne_10m_places
 ttl 604800
 force em
-lat 0
-lon 0
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places_simple.geojson
 map features
 lat_key geometry.coordinates.1
@@ -19752,8 +19593,6 @@ field_in properties.scalerank geosphere_place_rank
 source geosphere_ne_glaciers
 ttl 604800
 force em
-lat 0
-lon 0
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_glaciated_areas.geojson
 map features
 lat_key geometry.coordinates.0.0.1
@@ -19764,8 +19603,6 @@ field_in properties.scalerank geosphere_ne_glacier_rank
 source geosphere_ne_lakes
 ttl 604800
 force em
-lat 0
-lon 0
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_lakes.geojson
 map features
 lat_key geometry.coordinates.0.0.1
@@ -19776,8 +19613,6 @@ field_in properties.scalerank geosphere_ne_lake_rank
 source geosphere_ne_places
 ttl 604800
 force em
-lat 0
-lon 0
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_populated_places.geojson
 map features
 lat_key geometry.coordinates.1
@@ -19788,8 +19623,6 @@ field_in properties.scalerank geosphere_ne_place_rank
 source geosphere_unesco_heritage
 ttl 604800
 force em
-lat 0
-lon 0
 url https://gist.githubusercontent.com/rsicarelli/ba4b383a7b56c2f4292597e8c0965cc7/raw/a421c3ba23938f6963b120c6372ac74ca3186052/real.planet.world-heritage.json
 map .
 lat_key lat
@@ -19810,8 +19643,6 @@ field_in properties.PEI geosphere_volcano_pei
 source geosphere_world_volcanoes
 ttl 604800
 force em
-lat 0
-lon 0
 url https://gist.githubusercontent.com/vasturiano/3c27138769a04d1780562ce04afbedf2/raw/83dde896972fad0f1f823191ea90e3d451d3977a/world_volcanoes.json
 map .
 lat_key lat
@@ -19852,8 +19683,6 @@ lon_key dec
 source molecular_periodic_elements
 ttl 604800
 force em
-lat 0
-lon 0
 url https://raw.githubusercontent.com/Bowserinator/Periodic-Table-JSON/master/PeriodicTableJSON.json
 map elements
 field_in atomic_mass molecular_element_mass_u
