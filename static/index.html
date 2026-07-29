@@ -1121,15 +1121,9 @@ fn presence_probe() {
                 e.preventDefault();
                 return;
             }
-            const [fr, fu] = orientationFrame();
-            const mxr = (e.clientX / RX - 0.5) * RX, myr = (0.5 - e.clientY / RY) * RY;
-            const oldStep = gridStep;
             gridStep *= Math.pow(2, e.deltaY / 256);
             lastManualZoomTs = performance.now();
-            const d = oldStep - gridStep;
-            pPresence[0] += d * (mxr * fr[0] + myr * fu[0]);
-            pPresence[1] += d * (mxr * fr[1] + myr * fu[1]);
-            pPresence[2] += d * (mxr * fr[2] + myr * fu[2]);
+            e.preventDefault();
             e.preventDefault();
         }, { passive: false });
         window.addEventListener('keydown', (e) => { keysDown.add(e.key); });
