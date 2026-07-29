@@ -828,8 +828,7 @@ field message alert_text
 source noaa_swpc_geomagnetic_storm_alerts
 ttl 60
 force em
-lat 0.0
-lon 0.0
+terra 1
 url https://services.swpc.noaa.gov/products/alerts.json
 map .
 field_in 0 timestamp_utc
@@ -3231,8 +3230,7 @@ field aurora_probability aurora_probability
 source noaa_swpc_dst_real_time
 ttl 300
 force em
-lat 0.0
-lon 0.0
+terra 1
 url https://services.swpc.noaa.gov/products/kyoto-dst.json
 map .
 field time_tag dst_time_utc
@@ -3241,7 +3239,7 @@ field dst dst_index_nt
 source noaa_swpc_goes_electron_1day
 ttl 300
 force em
-terra 0
+terra 1
 url https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json
 map .
 field time_tag observation_time_utc
@@ -3255,7 +3253,7 @@ field satellite satellite_id
 source noaa_swpc_goes_integral_protons_1day
 ttl 300
 force em
-terra 0
+terra 1
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 map .
 field 0 datetime_utc
@@ -3266,7 +3264,7 @@ field 3 p_gt100mev_pfu
 source noaa_swpc_goes_sep_7day_proton_flux
 ttl 300
 force em
-terra 0
+terra 1
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-7-day.json
 map .
 field 0 time_tag
@@ -3277,7 +3275,7 @@ field 3 p_gt100mev_pfu
 source noaa_swpc_goes_sep_proton_flux
 ttl 300
 force em
-terra 0
+terra 1
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 map .
 field 0 datetime_utc
@@ -3288,8 +3286,7 @@ field 3 p100_flux_pfu
 source noaa_swpc_kp_index_realtime
 ttl 300
 force em
-lat 0.0
-lon 0.0
+terra 1
 url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
 map .
 field 0 datetime_utc
@@ -3300,8 +3297,7 @@ field 3 kp_fraction
 source noaa_swpc_kp_planetary_index
 ttl 300
 force em
-lat 0.0
-lon 0.0
+terra 1
 url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
 map .
 field time_tag observation_time_utc
@@ -3311,8 +3307,7 @@ field kp_estimated estimated_kp
 source noaa_swpc_solar_region_magnetic_classes
 ttl 300
 force em
-lat 0.0
-lon 0.0
+terra 0
 url https://services.swpc.noaa.gov/json/solar_regions.json
 map .
 field obsTime observation_time_utc
@@ -3396,7 +3391,7 @@ field 2 radiation_oulu_count_rate
 source solar_noaa_Integrated_irradiance
 ttl 300
 force em
-terra 1
+terra 0
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
 map .
 field_in begin_time solar_flare_begin_time
@@ -4798,7 +4793,7 @@ field_in properties.tec ionosphere_tec_value
 source ionosphere_total_electron_content
 ttl 900
 force em
-terra 0
+terra 1
 url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json
 field data.grid.features.0.properties.vtec_assimilated_tecu ionosphere_tec_assimilated_tecu
 field data.grid.features.0.properties.vtec_rms_tecu ionosphere_tec_rms_tecu
