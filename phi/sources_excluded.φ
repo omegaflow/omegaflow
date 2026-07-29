@@ -44,21 +44,9 @@ field_in 4 energy
 field_in 5 signalness
 
 
-source gdacs_disaster_alerts
-ttl 300
-force seismic-body
-url https://www.gdacs.org/xml/rss.xml
-format text
-rows
-field title alert_title
-field description alert_description
-field pubDate publication_date
-
-
-
-
+# gdacs_disaster_alerts — replaced by GDACS SEARCH GeoJSON API (earthlens source)
 # usgs_volcano_hazards_usa — replaced by usgs_volcano_monitoring (HANS public API, JSON, lat/lon)
-# See phi/sources.φ: source usgs_volcano_monitoring
+# See phi/sources.φ: gdacs_disaster_alerts, usgs_volcano_monitoring
 
 
 

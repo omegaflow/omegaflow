@@ -20443,6 +20443,22 @@ field elevation_meters elevation_m
 field nvews_threat threat_level
 field icao_coordinates icao_grid
 
+source gdacs_disaster_alerts
+ttl 300
+force seismic-body
+url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field eventtype hazard_type
+field eventname event_name
+field eventid event_id
+field alertlevel alert_level
+field alertscore alert_score
+field country country
+field fromdate start_date
+field todate end_date
+
 source geosphere_icgem_geoid_height
 ttl 2592000
 force em
