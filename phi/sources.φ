@@ -22014,6 +22014,20 @@ field collection collection
 field properties.datetime observation_time
 field properties.eo:cloud_cover cloud_cover_pct
 
+source earthscope_fdsn_stations
+ttl 86400
+force acoustic
+url https://service.earthscope.org/fdsnws/station/1/query?format=text&limit=50000
+format text
+rows
+pos station_latitude station_longitude
+field_in 0 network_code
+field_in 1 station_code
+field_in 2 station_latitude
+field_in 3 station_longitude
+field_in 4 station_elevation_m
+field_in 5 site_name
+
 source noaa_ghcnd_station_inventory
 ttl 86400
 force thermal
