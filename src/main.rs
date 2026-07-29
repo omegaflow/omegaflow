@@ -361,7 +361,8 @@ fn enclose_family(
             let ddy = p[1] - q[1];
             let ddz = p[2] - q[2];
             let exact = smp.extent + pad;
-            if ddx * ddx + ddy * ddy + ddz * ddz > exact * exact {
+            let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
+            if dist2 > exact * exact {
                 continue;
             }
             for (_, val) in &smp.fields {
@@ -726,6 +727,169 @@ fn scalar_of(v: &JsonVal) -> Option<f64> {
         JsonVal::Str(s) => s.parse().ok(),
         _ => None,
     }
+}
+
+fn votable_to_json(votable: &str) -> Option<String> {
+    let b = votable;
+    let mut cols: Vec<&str> = Vec::new();
+    let mut pos = 0;
+    while let Some(f_start) = b[pos..].find("<FIELD") {
+        let tag_start = pos + f_start;
+        let rest = &b[tag_start + 6..];
+        if let Some(na) = rest.find("name=\"") {
+            let vs = na + 6;
+            if let Some(ve) = rest[vs..].find('"') {
+                cols.push(&rest[vs..vs + ve]);
+            }
+        }
+        pos = tag_start + 6 + 1;
+    }
+    let tds = b.find("<TABLEDATA>")?;
+    let tde = b[tds + 11..].find("</TABLEDATA>")?;
+    let td = &b[tds + 11..tds + 11 + tde];
+    let mut rows: Vec<String> = Vec::new();
+    for tr in td.split("</TR>") {
+        let t = tr.trim();
+        if !t.starts_with("<TR>") {
+            continue;
+        }
+        let inner = &t[4..];
+        let mut vals: Vec<&str> = Vec::new();
+        for td_cell in inner.split("</TD>") {
+            let c = td_cell.trim();
+            if c.is_empty() {
+                continue;
+            }
+            if let Some(s) = c.find("<TD>") {
+                vals.push(c[s + 4..].trim());
+            }
+        }
+        if vals.is_empty() {
+            continue;
+        }
+        let mut o = String::from("{");
+        for (i, v) in vals.iter().enumerate() {
+            if i > 0 {
+                o.push(',');
+            }
+            if i < cols.len() {
+                o.push('"');
+                o.push_str(cols[i]);
+                o.push('"');
+                o.push(':');
+                if v.parse::<f64>().is_ok() {
+                    o.push_str(v);
+                } else {
+                    o.push('"');
+                    o.push_str(v);
+                    o.push('"');
+                }
+            }
+        }
+        o.push('}');
+        rows.push(o);
+    }
+    if rows.is_empty() {
+        return None;
+    }
+    Some(format!("{{\"data\":[{}]}}", rows.join(",")))
+}
+
+fn csv_to_json(csv: &str) -> Option<String> {
+    let lines: Vec<&str> = csv
+        .lines()
+        .map(|l| l.trim())
+        .filter(|l| !l.is_empty())
+        .collect();
+    if lines.is_empty() {
+        return None;
+    }
+    let header_idx = lines.iter().position(|l| !l.starts_with('#'));
+    let header_idx = header_idx?;
+    let header_line = lines[header_idx];
+    let delim = if header_line.contains('\t') {
+        '\t'
+    } else if header_line.contains('|') && header_line.split('|').count() > 2 {
+        '|'
+    } else {
+        ','
+    };
+    let cols: Vec<String> = split_csv_line(header_line, delim)
+        .into_iter()
+        .map(|c| c.trim_matches('"').to_string())
+        .collect();
+    if cols.is_empty() {
+        return None;
+    }
+    let mut rows: Vec<String> = Vec::new();
+    for line in lines.iter().skip(header_idx + 1) {
+        if line.starts_with('#') {
+            continue;
+        }
+        let vals = split_csv_line(line, delim);
+        if vals.is_empty() {
+            continue;
+        }
+        let mut o = String::from("{");
+        for (i, v) in vals.iter().enumerate() {
+            if i > 0 {
+                o.push(',');
+            }
+            let col_name = if i < cols.len() {
+                &cols[i]
+            } else {
+                &format!("col{}", i)
+            };
+            o.push('"');
+            o.push_str(col_name);
+            o.push('"');
+            o.push(':');
+            let cleaned = v.trim_matches('"');
+            if cleaned.parse::<f64>().is_ok() {
+                o.push_str(cleaned);
+            } else {
+                o.push('"');
+                o.push_str(cleaned);
+                o.push('"');
+            }
+        }
+        o.push('}');
+        rows.push(o);
+    }
+    if rows.is_empty() {
+        return None;
+    }
+    Some(format!("{{\"data\":[{}]}}", rows.join(",")))
+}
+
+fn split_csv_line(line: &str, delim: char) -> Vec<String> {
+    let mut result: Vec<String> = Vec::new();
+    let mut current = String::new();
+    let mut in_quotes = false;
+    let mut chars = line.chars();
+    while let Some(c) = chars.next() {
+        if in_quotes {
+            if c == '"' {
+                if let Some('"') = chars.clone().next() {
+                    current.push('"');
+                    chars.next();
+                } else {
+                    in_quotes = false;
+                }
+            } else {
+                current.push(c);
+            }
+        } else if c == '"' {
+            in_quotes = true;
+        } else if c == delim {
+            result.push(current.trim().to_string());
+            current = String::new();
+        } else {
+            current.push(c);
+        }
+    }
+    result.push(current.trim().to_string());
+    result
 }
 
 fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
@@ -1235,6 +1399,7 @@ fn force_constants(force: &str) -> Option<(f64, f64, bool, u8)> {
         "seismic-surface" => Some((V_S_GRANITE, 1.0 / V_S_GRANITE, false, 4)),
         "thermal" => Some((ALPHA_AIR, 1.0 / ALPHA_AIR, true, 5)),
         "diffusion" => Some((D_AIR, 1.0 / D_AIR, true, 6)),
+        "advective" => Some((10.0, 0.1, false, 7)),
         _ => None,
     }
 }
@@ -1254,6 +1419,7 @@ enum Frame {
 }
 
 struct SourceConfig {
+    name: String,
     ttl: u64,
     url: String,
     frame: Frame,
@@ -1264,6 +1430,11 @@ struct SourceConfig {
     extracts: Vec<Extract>,
     headers: Vec<(String, String)>,
     pos_fields: Option<(String, String, Option<String>, f64)>,
+    target: Option<String>,
+    catalog: Option<String>,
+    max_freq: Option<f64>,
+    min_freq: Option<f64>,
+    body: Option<String>,
 }
 
 type FetchTask = (
@@ -1271,11 +1442,13 @@ type FetchTask = (
     Origin,
     Option<(f64, f64)>,
     String,
+    Option<String>,
     Vec<(String, String)>,
     u64,
 );
 
 struct QueuedFetch {
+    priority: u8,
     ttl: u64,
     seq: u64,
     task: FetchTask,
@@ -1283,7 +1456,7 @@ struct QueuedFetch {
 
 impl PartialEq for QueuedFetch {
     fn eq(&self, o: &Self) -> bool {
-        (self.ttl, self.seq) == (o.ttl, o.seq)
+        (self.priority, self.ttl, self.seq) == (o.priority, o.ttl, o.seq)
     }
 }
 impl Eq for QueuedFetch {}
@@ -1294,7 +1467,7 @@ impl PartialOrd for QueuedFetch {
 }
 impl Ord for QueuedFetch {
     fn cmp(&self, o: &Self) -> std::cmp::Ordering {
-        (o.ttl, o.seq).cmp(&(self.ttl, self.seq))
+        (o.priority, o.ttl, o.seq).cmp(&(self.priority, self.ttl, self.seq))
     }
 }
 
@@ -1407,7 +1580,7 @@ fn parse_http_headers(text: &str) -> (HashMap<String, String>, String) {
     };
     (headers, body)
 }
-fn fetch_with_headers(url: &str, headers: &[(String, String)], ttl: u64) -> Option<String> {
+fn fetch_with_headers(url: &str, body: Option<&str>, headers: &[(String, String)], ttl: u64) -> Option<String> {
     let connect_t = (((ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64).min(15);
     let max_t = (((ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(30);
     let mut cmd = Command::new("curl");
@@ -1418,6 +1591,10 @@ fn fetch_with_headers(url: &str, headers: &[(String, String)], ttl: u64) -> Opti
         .arg(connect_t.to_string())
         .arg("-D")
         .arg("-");
+    if let Some(b) = body {
+        cmd.arg("-X").arg("POST");
+        cmd.arg("-d").arg(b);
+    }
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
@@ -1886,6 +2063,11 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_format = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
     let mut cur_headers: Vec<(String, String)> = Vec::new();
+    let mut cur_target: Option<String> = None;
+    let mut cur_catalog: Option<String> = None;
+    let mut cur_max_freq: Option<f64> = None;
+    let mut cur_min_freq: Option<f64> = None;
+    let mut cur_body: Option<String> = None;
     let mut cur_name = String::new();
     let mut active = false;
 
@@ -1948,6 +2130,7 @@ fn load_sources() -> Vec<SourceConfig> {
                             cur_tau_key.clone()
                         };
                         sources.push(SourceConfig {
+                            name: cur_name.clone(),
                             ttl: cur_ttl,
                             url: cur_url.clone(),
                             frame,
@@ -1958,6 +2141,11 @@ fn load_sources() -> Vec<SourceConfig> {
                             extracts: cur_extracts.clone(),
                             headers: cur_headers.clone(),
                             pos_fields: cur_pos.clone(),
+                            target: cur_target.clone(),
+                            catalog: cur_catalog.clone(),
+                            max_freq: cur_max_freq,
+                            min_freq: cur_min_freq,
+                            body: cur_body.clone(),
                         });
                     }
                 }
@@ -1990,6 +2178,11 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_pos = None;
                 cur_lat_str.clear();
                 cur_format.clear();
+                cur_target = None;
+                cur_catalog = None;
+                cur_max_freq = None;
+                cur_min_freq = None;
+                cur_body = None;
                 cur_extracts.clear();
                 cur_headers.clear();
                 cur_name = parts.get(1).unwrap_or(&"").to_string();
@@ -2001,6 +2194,12 @@ fn load_sources() -> Vec<SourceConfig> {
             "tau" => cur_tau = parts.get(1).and_then(|s| s.parse().ok()),
             "tau_key" => cur_tau_key = parts.get(1).map(|s| s.to_string()),
             "format" => cur_format = parts.get(1).unwrap_or(&"json").to_string(),
+            "target" => cur_target = parts.get(1).map(|s| s.to_string()),
+            "catalog" => cur_catalog = parts.get(1).map(|s| s.to_string()),
+            "max_freq" => cur_max_freq = parts.get(1).and_then(|s| s.parse().ok()),
+            "min_freq" => cur_min_freq = parts.get(1).and_then(|s| s.parse().ok()),
+            "body" => cur_body = Some(line.get(5..).unwrap_or("").trim().to_string()),
+            "verify" => {} // ignored, kept for compat
             "lat" => {
                 cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
                 cur_lat = cur_lat_str.parse().ok();
@@ -2556,6 +2755,41 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, extent: f64
         .replace("{nasa_key}", "DEMO_KEY")
 }
 
+fn render_source_url(src: &SourceConfig, x: f64, y: f64, z: f64, tdb: f64, r: f64) -> String {
+    let mut url = render_url(&src.url, x, y, z, tdb, r);
+    if let Some(ref t) = src.target {
+        url = url.replace("{target}", t);
+    }
+    if let Some(ref c) = src.catalog {
+        url = url.replace("{catalog}", c);
+    }
+    if let Some(f) = src.max_freq {
+        url = url.replace("{max_freq}", &f.to_string());
+    }
+    if let Some(f) = src.min_freq {
+        url = url.replace("{min_freq}", &f.to_string());
+    }
+    url
+}
+
+fn render_source_body(src: &SourceConfig, x: f64, y: f64, z: f64, tdb: f64, r: f64) -> Option<String> {
+    let tmpl = src.body.as_ref()?;
+    let mut body = render_url(tmpl, x, y, z, tdb, r);
+    if let Some(ref t) = src.target {
+        body = body.replace("{target}", t);
+    }
+    if let Some(ref c) = src.catalog {
+        body = body.replace("{catalog}", c);
+    }
+    if let Some(f) = src.max_freq {
+        body = body.replace("{max_freq}", &f.to_string());
+    }
+    if let Some(f) = src.min_freq {
+        body = body.replace("{min_freq}", &f.to_string());
+    }
+    Some(body)
+}
+
 fn sha1(data: &[u8]) -> [u8; 20] {
     let mut h: [u32; 5] = [0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0];
     let bl = (data.len() as u64) * 8;
@@ -2660,7 +2894,7 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
 
 fn fetch_worker(archive: Arc<Archive>) {
     loop {
-        let (i, origin, region, url, headers, ttl) = {
+        let (i, origin, region, url, body, headers, ttl) = {
             let (lock, cvar) = &archive.fetch_queue;
             let mut queue = lock.lock().unwrap_or_else(|e| e.into_inner());
             loop {
@@ -2670,10 +2904,11 @@ fn fetch_worker(archive: Arc<Archive>) {
                 queue = cvar.wait(queue).unwrap_or_else(|e| e.into_inner());
             }
         };
-        let raw = fetch_with_headers(&url, &headers, ttl);
+        let raw = fetch_with_headers(&url, body.as_deref(), &headers, ttl);
         eprintln!(
-            "FETCH {} {}B",
-            &url[..url.len().min(60)],
+            "FETCH {} {} {}B",
+            archive.sources[i].name,
+            url,
             raw.as_ref().map(|r| r.len()).unwrap_or(0)
         );
         let body = raw.as_ref().map(|r| {
@@ -2726,6 +2961,10 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
     let mut extracted: HashMap<String, f64> = HashMap::new();
     let parsed_json = if src.format == "json" || src.format.is_empty() {
         parse_json(body)
+    } else if src.format == "votable" {
+        votable_to_json(body).and_then(|j| parse_json(&j))
+    } else if src.format == "csv" {
+        csv_to_json(body).and_then(|j| parse_json(&j))
     } else {
         None
     };
@@ -3675,6 +3914,7 @@ fn warm_cache(archive: Arc<Archive>) {
             Origin,
             Option<(f64, f64)>,
             String,
+            Option<String>,
             Vec<(String, String)>,
             u64,
         )> = Vec::new();
@@ -3719,7 +3959,8 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_url(&src.url, pos.0, pos.1, pos.2, now, r),
+                            render_source_url(src, pos.0, pos.1, pos.2, now, r),
+                            render_source_body(src, pos.0, pos.1, pos.2, now, r),
                             render_headers(src, pos.0, pos.1, pos.2, now, r),
                             src.ttl,
                         ));
@@ -3746,7 +3987,8 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_url(&src.url, pos.0, pos.1, pos.2, now, r),
+                            render_source_url(src, pos.0, pos.1, pos.2, now, r),
+                            render_source_body(src, pos.0, pos.1, pos.2, now, r),
                             render_headers(src, pos.0, pos.1, pos.2, now, r),
                             src.ttl,
                         ));
@@ -3773,7 +4015,8 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_url(&src.url, pos.0, pos.1, pos.2, now, r),
+                            render_source_url(src, pos.0, pos.1, pos.2, now, r),
+                            render_source_body(src, pos.0, pos.1, pos.2, now, r),
                             render_headers(src, pos.0, pos.1, pos.2, now, r),
                             src.ttl,
                         ));
@@ -3813,7 +4056,8 @@ fn warm_cache(archive: Arc<Archive>) {
                                     i,
                                     origin,
                                     None,
-                                    render_url(&src.url, px, py, pz, now, r),
+                                    render_source_url(src, px, py, pz, now, r),
+                                    render_source_body(src, px, py, pz, now, r),
                                     render_headers(src, px, py, pz, now, r),
                                     src.ttl,
                                 ));
@@ -3850,13 +4094,15 @@ fn warm_cache(archive: Arc<Archive>) {
                                 continue;
                             }
                         }
+                        let (_, px, py, pz, _) = presences[0];
                         let (rx, ry, rz) =
-                            prev.map(|pa| (pa[0], pa[1], pa[2])).unwrap_or((ex, ey, ez));
+                            prev.map(|pa| (pa[0], pa[1], pa[2])).unwrap_or((px, py, pz));
                         tasks.push((
                             i,
                             origin,
                             None,
-                            render_url(&src.url, rx, ry, rz, now, r),
+                            render_source_url(src, rx, ry, rz, now, r),
+                            render_source_body(src, rx, ry, rz, now, r),
                             render_headers(src, rx, ry, rz, now, r),
                             src.ttl,
                         ));
@@ -3889,7 +4135,8 @@ fn warm_cache(archive: Arc<Archive>) {
                                 i,
                                 origin,
                                 Some((lat, lon)),
-                                render_url(&src.url, px, py, pz, now, r),
+                                render_source_url(src, px, py, pz, now, r),
+                                render_source_body(src, px, py, pz, now, r),
                                 render_headers(src, px, py, pz, now, r),
                                 src.ttl,
                             ));
@@ -3897,9 +4144,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     }
                 }
             }
-        }
 
-        {
             let mut inflight = archive.inflight.lock().unwrap_or_else(|e| e.into_inner());
             let (lock, cvar) = &archive.fetch_queue;
             let mut queue = lock.lock().unwrap_or_else(|e| e.into_inner());
@@ -3909,7 +4154,8 @@ fn warm_cache(archive: Arc<Archive>) {
                     continue;
                 }
                 queue.push(QueuedFetch {
-                    ttl: task.5,
+                    priority: if origins.get(&task.1).is_none() { 0 } else { 1 },
+                    ttl: task.6,
                     seq: FETCH_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
                     task,
                 });
@@ -3964,6 +4210,24 @@ fn warm_cache(archive: Arc<Archive>) {
             } else {
                 origins.entry(origin).or_default().zero_yield = 0;
                 refreshed.insert(origin);
+                let field_names: Vec<&str> = src
+                    .extracts
+                    .iter()
+                    .filter_map(|e| match e {
+                        Extract::Field(_, n)
+                        | Extract::First(_, n)
+                        | Extract::Last(_, n)
+                        | Extract::Path(_, n)
+                        | Extract::Deep(_, n) => Some(n.as_str()),
+                        _ => None,
+                    })
+                    .collect();
+                eprintln!(
+                    "PARSED {}: {} samples [{}]",
+                    src.name,
+                    pendings.len(),
+                    field_names.join(", ")
+                );
             }
             for pend in pendings {
                 if let Some(smp) = materialize(src, origin, region, pend, &mut origins) {
@@ -4057,5 +4321,125 @@ fn main() {
             let ar = Arc::clone(&archive);
             thread::spawn(move || handle_ingress(stream, ar));
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{votable_to_json, csv_to_json, render_source_url, render_source_body, SourceConfig};
+
+    #[test]
+    fn test_votable_irsa() {
+        let xml = include_str!("../test_data/irsa_votable.xml");
+        let result = votable_to_json(xml);
+        assert!(result.is_some());
+        let json = result.unwrap();
+        assert!(json.contains("150.167002"));
+        assert_eq!(json.matches("\"ra\"").count(), 3);
+    }
+
+    #[test]
+    fn test_votable_mast() {
+        let xml = include_str!("../test_data/mast_caom_votable.xml");
+        let result = votable_to_json(xml);
+        assert!(result.is_some());
+        let json = result.unwrap();
+        assert!(json.contains("149.96846"));
+        assert_eq!(json.matches("\"s_ra\"").count(), 3);
+    }
+
+    #[test]
+    fn test_csv_basic() {
+        let csv = "ra,dec,parallax,mag_g\n56.75,24.12,1.23,12.34\n57.12,23.78,0.98,13.45";
+        let result = csv_to_json(csv);
+        assert!(result.is_some());
+        let json = result.unwrap();
+        assert!(json.contains("56.75"));
+        assert_eq!(json.matches("\"ra\"").count(), 2);
+    }
+
+    #[test]
+    fn test_csv_quoted() {
+        let csv = "\"name\",\"value\"\n\"foo,bar\",123\n\"baz\",456";
+        let result = csv_to_json(csv);
+        assert!(result.is_some());
+        let json = result.unwrap();
+        assert!(json.contains("foo,bar"));
+        assert_eq!(json.matches("\"name\"").count(), 2);
+    }
+
+    #[test]
+    fn test_csv_comment_lines() {
+        let csv = "# header comment\nra,dec\n# data comment\n1.0,2.0\n3.0,4.0";
+        let result = csv_to_json(csv);
+        assert!(result.is_some());
+        let json = result.unwrap();
+        assert_eq!(json.matches("\"ra\"").count(), 2);
+    }
+
+    #[test]
+    fn test_csv_alfalfa() {
+        let csv = include_str!("../test_data/alfalfa_sample.csv");
+        let result = csv_to_json(csv);
+        assert!(result.is_some());
+        let json = result.unwrap();
+        assert!(json.contains("0.01042"));
+        assert!(json.contains("456-013"));
+        assert_eq!(json.matches("\"AGCNr\"").count(), 5);
+    }
+
+    #[test]
+    fn test_render_source_url_substitutions() {
+        let src = SourceConfig {
+            name: "test".into(),
+            ttl: 100,
+            url: "https://example.com?sstr={target}&from={catalog}".into(),
+            frame: super::Frame::Query,
+            force: "em".into(),
+            tau: None,
+            tau_key: None,
+            format: "json".into(),
+            extracts: vec![],
+            headers: vec![],
+            pos_fields: None,
+            target: Some("Ceres".into()),
+            catalog: Some("fp_psc".into()),
+            max_freq: None,
+            min_freq: None,
+            body: None,
+        };
+        let url = render_source_url(&src, 0.0, 0.0, 0.0, 0.0, 1000.0);
+        assert!(url.contains("Ceres"));
+        assert!(url.contains("fp_psc"));
+        assert!(!url.contains("{target}"));
+        assert!(!url.contains("{catalog}"));
+    }
+
+    #[test]
+    fn test_post_body_rendering() {
+        let src = SourceConfig {
+            name: "test_post".into(),
+            ttl: 100,
+            url: "https://earth-search.aws.element84.com/v0/search".into(),
+            frame: super::Frame::Query,
+            force: "em".into(),
+            tau: None,
+            tau_key: None,
+            format: "json".into(),
+            extracts: vec![],
+            headers: vec![("Content-Type".into(), "application/stac+json".into())],
+            pos_fields: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: Some("{\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}],\"datetime\":\"{today}/{today}\"}".into()),
+        };
+        let body = render_source_body(&src, 0.0, 0.0, 0.0, 0.0, 100000.0);
+        assert!(body.is_some());
+        let b = body.unwrap();
+        assert!(b.contains("bbox"));
+        assert!(!b.contains("{lon_min}"));
+        assert!(!b.contains("{today}"));
     }
 }

@@ -1,0 +1,141 @@
+# Excluded from sources.φ
+# These cannot produce positioned oscillators (no positional frame,
+# HTML-scraping only, or binary/non-GET responses).
+
+source nmdb_realtime_all_stations
+ttl 60
+force em
+url https://www.nmdb.eu/nest/data/realtime.txt
+format text
+rows
+field_in 0 timestamp_utc
+field_in 1 count_rate_cps
+field_in 2 station_code
+
+
+source amon_icecube_bronze_events
+ttl 300
+force em
+lat 0
+lon 0
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+format text
+rows
+field_in 0 event_type
+field_in 1 event_id
+field_in 2 ra_deg
+field_in 3 dec_deg
+field_in 4 energy
+field_in 5 signalness
+
+
+source amon_icecube_gold_events
+ttl 300
+force em
+lat 0
+lon 0
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+format text
+rows
+field_in 0 event_type
+field_in 1 event_id
+field_in 2 ra_deg
+field_in 3 dec_deg
+field_in 4 energy
+field_in 5 signalness
+
+
+source gdacs_disaster_alerts
+ttl 300
+force seismic-body
+url https://www.gdacs.org/xml/rss.xml
+format text
+rows
+field title alert_title
+field description alert_description
+field pubDate publication_date
+
+
+
+
+source usgs_volcano_hazards_usa
+ttl 300
+force seismic-body
+url https://volcanoes.usgs.gov/vhp/feeds/vaalatom.xml
+format text
+rows
+field title volcano_name
+field summary alert_description
+field updated update_time
+
+
+
+
+
+source gldas_soil_temperature
+ttl 86400
+force thermal
+url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilTMP0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
+format text
+rows
+field 0 timestamp
+field 1 soil_temp_0_10cm_k
+
+
+source mpc_observatory_codes
+ttl 86400
+force gravity
+url https://www.minorplanetcenter.net/iau/lists/ObsCodes.html
+format text
+rows
+lat_key lat
+lon_key lon
+field 0 obs_code
+field 1 longitude_deg
+field 2 rho_cos_phi
+field 3 rho_sin_phi
+field 4 observatory_name
+
+
+source nasa_gldas_soil_moisture_global
+ttl 86400
+force diffusion
+url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilMoi0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
+format text
+rows
+field_in 0 timestamp_utc
+field_in 1 soil_moisture_0_10cm_kgm2
+
+
+
+source smithsonian_gvp_weekly_rss
+ttl 86400
+force seismic-body
+url https://volcano.si.edu/news/WeeklyVolcanoRSS.xml
+format text
+rows
+field title volcano_report_title
+field description activity_description
+field pubDate publication_date
+
+
+source geosphere_icgem_geoid_height
+ttl 2592000
+force em
+url https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf
+format csv
+last_row undulate geosphere_geoid_height_m
+
+
+source nist_codata_2022
+ttl 31536000
+force diffusion
+url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
+format text
+rows
+field 0 quantity_name
+field 1 value_str
+field 2 uncertainty_str
+field 3 unit
+
+

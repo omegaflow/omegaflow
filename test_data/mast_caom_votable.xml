@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Produced with MAST VOTable encoder version 1.0 -->
+<VOTABLE version="1.4" xmlns="http://www.ivoa.net/xml/VOTable/v1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.3 http://www.ivoa.net/xml/VOTable/v1.3">
+<RESOURCE type="results">
+<INFO name="QUERY_STATUS" value="OK"/>
+<INFO name="QUERY" value="SELECT TOP 3 s_ra,s_dec,obs_id,obs_collection,instrument_name,target_name FROM ivoa.obscore WHERE CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',150.0,2.0,0.1))=1"/>
+<TABLE>
+<FIELD name="s_ra" datatype="double" utype="obscore:char.spatialaxis.coverage.location.coord.position2d.value2.c1" unit="deg" ucd="pos.eq.ra">
+<DESCRIPTION>ra of central coordinates</DESCRIPTION></FIELD>
+<FIELD name="s_dec" datatype="double" utype="obscore:char.spatialaxis.coverage.location.coord.position2d.value2.c2" unit="deg" ucd="pos.eq.dec">
+<DESCRIPTION>dec of central coordinates</DESCRIPTION></FIELD>
+<FIELD name="obs_id" datatype="char" arraysize="*" utype="obscore:dataid.observationid" ucd="meta.id">
+<DESCRIPTION>internal dataset identifier</DESCRIPTION></FIELD>
+<FIELD name="obs_collection" datatype="char" arraysize="*" utype="obscore:dataid.collection" ucd="meta.id">
+<DESCRIPTION>name of data collection</DESCRIPTION></FIELD>
+<FIELD name="instrument_name" datatype="char" arraysize="*" utype="obscore:provenance.obsconfig.instrument.name" ucd="meta.id;instr">
+<DESCRIPTION>instrument name</DESCRIPTION></FIELD>
+<FIELD name="target_name" datatype="char" arraysize="*" utype="obscore:target.name" ucd="meta.id;src">
+<DESCRIPTION>name of target</DESCRIPTION></FIELD>
+<DATA>
+<TABLEDATA>
+<TR><TD>149.96846</TD><TD>2.0072666666666668</TD><TD>jw05893002001_02101_00005_nrca4</TD><TD>JWST</TD><TD>NIRCAM/IMAGE</TD><TD>C3D-02_CWEBTILE-6-7</TD></TR>
+<TR><TD>149.96846</TD><TD>2.0072666666666668</TD><TD>jw05893002001_02101_00005_nrca4</TD><TD>JWST</TD><TD>NIRCAM/IMAGE</TD><TD>C3D-02_CWEBTILE-6-7</TD></TR>
+<TR><TD>149.96846</TD><TD>2.0072666666666668</TD><TD>jw05893002001_02101_00005_nrca4</TD><TD>JWST</TD><TD>NIRCAM/IMAGE</TD><TD>C3D-02_CWEBTILE-6-7</TD></TR>
+</TABLEDATA>
+</DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>

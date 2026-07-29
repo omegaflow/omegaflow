@@ -1,0 +1,494 @@
+{
+  "splatalogue": {
+    "name": "splatalogue",
+    "ttl": 2592000,
+    "force": "em",
+    "url": "https://splatalogue.online/splata-slap/advanceded/false?chemical_element=&chemical_element_min=&chemical_element_max=&max_frequency={max_freq}&min_frequency={min_freq}",
+    "notes": "Splatalogue molecular line database. Returns JSON. Query by frequency range.",
+    "tier": "json_rest"
+  },
+  "jplsbdb": {
+    "name": "jpl_sbdb",
+    "ttl": 86400,
+    "force": "em",
+    "url": "https://ssd-api.jpl.nasa.gov/sbdb.api?sstr={target}",
+    "map_path": "object",
+    "fields": {
+      "fullname": "name",
+      "spkid": "id",
+      "orbit_class.code": "orbit_class",
+      "epoch": "epoch",
+      "e": "eccentricity",
+      "a": "semi_major_axis_au",
+      "q": "perihelion_au",
+      "i": "inclination_deg",
+      "node": "longitude_node_deg",
+      "per": "perihelion_arg_deg",
+      "tp": "perihelion_time",
+      "n": "mean_motion_deg_per_day",
+      "ma": "mean_anomaly_deg",
+      "H": "abs_magnitude"
+    },
+    "notes": "JPL Small-Body Database. GET with sstr=target name. No RA/Dec (orbital elements).",
+    "tier": "json_rest"
+  },
+  "oac": {
+    "name": "oac_astrocats",
+    "ttl": 86400,
+    "force": "em",
+    "url": "https://api.astrocats.space/{target}/",
+    "lat_key": "ra",
+    "lon_key": "dec",
+    "fields": {
+      "name": "name",
+      "claimedtype": "type",
+      "redshift": "redshift"
+    },
+    "notes": "Open Astronomy Catalog. Returns JSON with transient metadata. Single-object response.",
+    "tier": "json_rest"
+  },
+  "gemini": {
+    "name": "gemini_archive",
+    "ttl": 3600,
+    "force": "em",
+    "url": "https://archive.gemini.edu/jsonsummary/notengineering/NotFail/",
+    "map_path": ".",
+    "lat_key": "ra",
+    "lon_key": "dec",
+    "fields": {
+      "object": "target",
+      "instrument": "instrument",
+      "observation_id": "observation_id",
+      "utc": "observation_date"
+    },
+    "notes": "Gemini archive JSON summary. Returns array of objects. Append filters to URL path.",
+    "tier": "json_rest"
+  },
+  "mast": {
+    "name": "mast_caom",
+    "ttl": 3600,
+    "force": "em",
+    "tap_url": "https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync",
+    "pos_fields": [
+      "s_ra",
+      "s_dec"
+    ],
+    "json_format": "object",
+    "default_table": "caom.Observation",
+    "fields": {
+      "s_ra": "ra_deg",
+      "s_dec": "dec_deg",
+      "obs_id": "observation_id",
+      "obs_collection": "collection",
+      "instrument_name": "instrument",
+      "filters": "filters",
+      "target_name": "target",
+      "calib_level": "calibration_level"
+    },
+    "adql_template": "SELECT TOP 200 s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level FROM caom.Observation WHERE CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1",
+    "format_support": [
+      "votable",
+      "json"
+    ],
+    "notes": "MAST CAOM TAP via /vo-tap. Supports FORMAT=json. Returns object-array JSON.",
+    "tier": "tap_adql"
+  },
+  "gaia": {
+    "name": "gaia_dr3",
+    "ttl": 2592000,
+    "force": "em",
+    "tap_url": "https://gea.esac.esa.int/tap-server/tap/sync",
+    "default_table": "gaiadr3.gaia_source",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "json_format": "array",
+    "fields": {
+      "ra": "ra_deg",
+      "dec": "dec_deg",
+      "parallax": "parallax_mas",
+      "pmra": "pmra_mas_per_yr",
+      "pmdec": "pmdec_mas_per_yr",
+      "phot_g_mean_mag": "mag_g",
+      "phot_bp_mean_mag": "mag_bp",
+      "phot_rp_mean_mag": "mag_rp",
+      "radial_velocity": "radial_velocity_km_s"
+    },
+    "adql_template": "SELECT TOP 200 ra,dec,parallax,pmra,pmdec,phot_g_mean_mag,phot_bp_mean_mag,phot_rp_mean_mag,radial_velocity FROM gaiadr3.gaia_source WHERE 1=CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))",
+    "format_support": [
+      "votable",
+      "json"
+    ],
+    "notes": "Gaia DR3 TAP. Supports FORMAT=json (returns array-of-arrays). Use /sync for GET.",
+    "tier": "tap_adql"
+  },
+  "simbad": {
+    "name": "simbad",
+    "ttl": 604800,
+    "force": "em",
+    "tap_url": "https://simbad.cds.unistra.fr/simbad/sim-tap",
+    "default_table": "basic",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "fields": {
+      "main_id": "name",
+      "ra": "ra_deg",
+      "dec": "dec_deg",
+      "coo_err_maj": "pos_error_mas",
+      "plx_value": "parallax_mas",
+      "pmra": "pmra_mas_per_yr",
+      "pmdec": "pmdec_mas_per_yr",
+      "rv_value": "radial_velocity_km_s",
+      "sp_type": "spectral_type"
+    },
+    "adql_template": "SELECT TOP 200 {fields} FROM {table} WHERE CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "SIMBAD TAP. VOTable only. Server unreachable as of 2026-07-28.",
+    "tier": "tap_adql"
+  },
+  "vizier": {
+    "name": "vizier",
+    "ttl": 2592000,
+    "force": "em",
+    "tap_url": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync",
+    "pos_fields": [
+      "RAJ2000",
+      "DEJ2000"
+    ],
+    "fields": {
+      "RAJ2000": "ra_deg",
+      "DEJ2000": "dec_deg"
+    },
+    "adql_template": "SELECT TOP 200 * FROM \"{catalog}\" WHERE CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "VizieR TAP. Catalog name required (e.g. 'I/355/gaiadr3'). VOTable only.",
+    "tier": "tap_adql"
+  },
+  "heasarc": {
+    "name": "heasarc",
+    "ttl": 3600,
+    "force": "em",
+    "tap_url": "https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "fields": {
+      "ra": "ra_deg",
+      "dec": "dec_deg",
+      "name": "source_name",
+      "t_scid": "target_class"
+    },
+    "adql_template": "SELECT TOP 200 {fields} FROM {catalog} WHERE CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "HEASARC TAP. Catalog required (e.g. 'hst'). VOTable only.",
+    "tier": "tap_adql"
+  },
+  "irsa": {
+    "name": "irsa",
+    "ttl": 604800,
+    "force": "em",
+    "tap_url": "https://irsa.ipac.caltech.edu/TAP/sync",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "fields": {
+      "ra": "ra_deg",
+      "dec": "dec_deg",
+      "designation": "name",
+      "j_m": "mag_j",
+      "h_m": "mag_h",
+      "k_m": "mag_k"
+    },
+    "adql_template": "SELECT TOP 200 {fields} FROM {catalog} WHERE CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "IRSA TAP. Catalog required (e.g. 'fp_psc'). VOTable only.",
+    "tier": "tap_adql"
+  },
+  "ned": {
+    "name": "ned",
+    "ttl": 2592000,
+    "force": "em",
+    "tap_url": "https://ned.ipac.caltech.edu/tap/sync",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "default_table": "ned.source",
+    "fields": {
+      "ra": "ra_deg",
+      "dec": "dec_deg",
+      "preferredname": "name",
+      "redshift": "redshift",
+      "vel": "velocity_km_s"
+    },
+    "adql_template": "SELECT TOP 200 ra,dec,preferredname,redshift,vel FROM {table} WHERE CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "NED TAP. VOTable only.",
+    "tier": "tap_adql"
+  },
+  "cadc": {
+    "name": "cadc",
+    "ttl": 3600,
+    "force": "em",
+    "tap_url": "https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "fields": {
+      "ra": "ra_deg",
+      "dec": "dec_deg",
+      "target": "target_name",
+      "obsid": "observation_id",
+      "collection": "collection"
+    },
+    "adql_template": "SELECT TOP 200 {fields} FROM caom2.Observation WHERE CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "CADC TAP (ARGUS). VOTable only.",
+    "tier": "tap_adql"
+  },
+  "noirlab": {
+    "name": "noirlab_archive",
+    "ttl": 3600,
+    "force": "em",
+    "tap_url": "https://astroarchive.noirlab.edu/tap/sync",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "default_table": "ivoa.obscore",
+    "fields": {
+      "ra": "ra_deg",
+      "dec": "dec_deg",
+      "instrument": "instrument",
+      "obs_id": "observation_id"
+    },
+    "adql_template": "SELECT TOP 200 ra,dec,instrument,obs_id FROM {table} WHERE CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "NOIRLab Astro Data Archive. TAP. VOTable.",
+    "tier": "tap_adql"
+  },
+  "eso": {
+    "name": "eso_archive",
+    "ttl": 3600,
+    "force": "em",
+    "tap_url": "http://archive.eso.org/tap_obs/sync",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "fields": {
+      "ra": "ra_deg",
+      "dec": "dec_deg",
+      "target": "target_name",
+      "instrument": "instrument",
+      "obstime": "observation_time"
+    },
+    "adql_template": "SELECT TOP 200 {fields} FROM ivoa.obscore WHERE CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "ESO TAP (obs TAP). VOTable only.",
+    "tier": "tap_adql"
+  },
+  "nrao": {
+    "name": "nrao_archive",
+    "ttl": 3600,
+    "force": "em",
+    "tap_url": "https://archive.nrao.edu/tap/sync",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "fields": {
+      "ra": "ra_deg",
+      "dec": "dec_deg",
+      "obs_id": "observation_id",
+      "project": "project_code"
+    },
+    "adql_template": "SELECT TOP 200 {fields} FROM ivoa.obscore WHERE CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "NRAO TAP (VLA/VLBA). VOTable only.",
+    "tier": "tap_adql"
+  },
+  "alma": {
+    "name": "alma_archive",
+    "ttl": 3600,
+    "force": "em",
+    "tap_url": "https://almascience.org/tap/sync",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "default_table": "ivoa.obscore",
+    "fields": {
+      "ra": "ra_deg",
+      "dec": "dec_deg",
+      "source_name": "target",
+      "project_code": "project"
+    },
+    "adql_template": "SELECT TOP 200 ra,dec,source_name,project_code FROM {table} WHERE CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "ALMA TAP. VOTable.",
+    "tier": "tap_adql"
+  },
+  "esasky": {
+    "name": "esasky",
+    "ttl": 3600,
+    "force": "em",
+    "tap_url": "https://sky.esa.int/esasky-tap/tap/sync",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "default_table": "ivoa.obscore",
+    "adql_template": "SELECT TOP 200 * FROM {table} WHERE CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1",
+    "format_support": [
+      "votable"
+    ],
+    "notes": "ESA Sky TAP. VOTable.",
+    "tier": "tap_adql"
+  },
+  "alfalfa": {
+    "name": "alfalfa_catalog",
+    "ttl": 2592000,
+    "force": "em",
+    "url": "http://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv",
+    "notes": "ALFALFA HI catalog. CSV. Use `format csv` + `field_in <idx> <name>`.",
+    "tier": "text_other"
+  },
+  "fermi": {
+    "name": "fermi_lat",
+    "ttl": 604800,
+    "force": "em",
+    "url": "https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi",
+    "notes": "Fermi LAT data query CGI. POST form-based, returns VOTable.",
+    "tier": "text_other"
+  },
+  "sdss": {
+    "name": "sdss_skyserver",
+    "ttl": 2592000,
+    "force": "em",
+    "url": "https://skyserver.sdss.org/dr18/en/tools/search/x_sql.aspx",
+    "pos_fields": [
+      "ra",
+      "dec"
+    ],
+    "notes": "SDSS SkyServer SQL. POST form-based. Can use GET with cmd= param.",
+    "tier": "text_other"
+  },
+  "jplhorizons": {
+    "name": "jpl_horizons",
+    "ttl": 86400,
+    "force": "em",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
+    "method": "GET",
+    "params": {
+      "format": "json",
+      "COMMAND": "\"{target}\"",
+      "EPHEM_TYPE": "OBSERVER",
+      "QUANTITIES": "\"1,2,3,4,5,6,7,8,9\"",
+      "START_TIME": "\"{start}\"",
+      "STOP_TIME": "\"{stop}\"",
+      "STEP_SIZE": "\"1d\"",
+      "CSV_FORMAT": "YES"
+    },
+    "notes": "JPL Horizons. Use format=json&CSV_FORMAT=YES for JSON. Target=planet/asteroid ID.",
+    "tier": "text_other"
+  },
+  "mpc": {
+    "name": "mpc_ephemeris",
+    "ttl": 86400,
+    "force": "em",
+    "url": "https://cgi.minorplanetcenter.net/cgi-bin/mpeph2.cgi",
+    "notes": "MPC ephemeris service. POST form-based, returns text table.",
+    "tier": "text_other"
+  },
+  "nist": {
+    "name": "nist_spectral_lines",
+    "ttl": 2592000,
+    "force": "em",
+    "url": "http://physics.nist.gov/cgi-bin/ASD/lines1.pl",
+    "notes": "NIST ASD. GET with params, returns HTML table.",
+    "tier": "text_other"
+  },
+  "skyview": {
+    "name": "skyview",
+    "ttl": 2592000,
+    "force": "em",
+    "url": "https://skyview.gsfc.nasa.gov/current/cgi/basicform.pl",
+    "notes": "SkyView image cutout service. Form-based, returns FITS/images.",
+    "tier": "text_other"
+  },
+  "hips2fits": {
+    "name": "hips2fits",
+    "ttl": 2592000,
+    "force": "em",
+    "url": "https://alasky.cds.unistra.fr/hips-image-services/hips2fits",
+    "notes": "HiPS to FITS cutout service. GET with position/size/FOV params.",
+    "tier": "text_other"
+  },
+  "mocserver": {
+    "name": "mocserver",
+    "ttl": 2592000,
+    "force": "em",
+    "url": "https://alasky.unistra.fr/MocServer/query",
+    "notes": "MOC (Multi-Order Coverage) server. GET with position/order params.",
+    "tier": "text_other"
+  },
+  "svo_fps": {
+    "name": "svo_filter_profile",
+    "ttl": 2592000,
+    "force": "em",
+    "url": "https://svo2.cab.inta-csic.es/theory/fps/fps.php",
+    "notes": "SVO Filter Profile Service. GET with filter name, returns VOTable.",
+    "tier": "text_other"
+  },
+  "ogle": {
+    "name": "ogle_extinction",
+    "ttl": 2592000,
+    "force": "em",
+    "url": "https://ogle.astrouwu.edu.pl/cgi-ogle/getext.py",
+    "notes": "OGLE extinction map. GET with l/b coords.",
+    "tier": "text_other"
+  },
+  "magpis": {
+    "name": "magpis_cutout",
+    "ttl": 2592000,
+    "force": "em",
+    "url": "https://third.ucllnl.org/cgi-bin/gpscutout",
+    "notes": "MAGPIS Galactic Plane Survey cutout. Form-based, returns FITS.",
+    "tier": "text_other"
+  },
+  "casda": {
+    "name": "casda_sia",
+    "ttl": 3600,
+    "force": "em",
+    "url": "https://casda.csiro.au/casda_vo_tools/sia2/query",
+    "notes": "CASDA SIA2 (ASKAP). GET with POS/SIZE params, returns VOTable.",
+    "tier": "text_other"
+  }
+}
