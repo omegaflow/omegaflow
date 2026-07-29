@@ -22143,8 +22143,9 @@ force em
 url https://api.astrocats.space/{target}/
 verify false
 target SN2014J
-lat_key ra
-lon_key dec
+pos ra_deg dec_deg
+field ra ra_deg
+field dec dec_deg
 field name name
 field claimedtype type
 field redshift redshift
@@ -22164,8 +22165,9 @@ force em
 url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
-field source_name target
-field project_code project
+map data
+field_in source_name target
+field_in project_code project
 lat_key ra
 lon_key dec
 
@@ -22175,9 +22177,10 @@ force em
 url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+target,+obsid,+collection+FROM+caom2.Observation+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
-field target target_name
-field obsid observation_id
-field collection collection
+map data
+field_in target target_name
+field_in obsid observation_id
+field_in collection collection
 lat_key ra
 lon_key dec
 
@@ -22187,6 +22190,7 @@ force em
 url https://sky.esa.int/esasky-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
+map data
 lat_key ra
 lon_key dec
 
@@ -22196,9 +22200,10 @@ force em
 url http://archive.eso.org/tap_obs/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+target,+instrument,+obstime+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
-field target target_name
-field instrument instrument
-field obstime observation_time
+map data
+field_in target target_name
+field_in instrument instrument
+field_in obstime observation_time
 lat_key ra
 lon_key dec
 
@@ -22227,8 +22232,9 @@ force em
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+name,+t_scid+FROM+hst+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
-field name source_name
-field t_scid target_class
+map data
+field_in name source_name
+field_in t_scid target_class
 lat_key ra
 lon_key dec
 
@@ -22238,10 +22244,11 @@ force em
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+designation,+j_m,+h_m,+k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
-field designation name
-field j_m mag_j
-field h_m mag_h
-field k_m mag_k
+map data
+field_in designation name
+field_in j_m mag_j
+field_in h_m mag_h
+field_in k_m mag_k
 lat_key ra
 lon_key dec
 
@@ -22269,9 +22276,10 @@ force em
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
-field preferredname name
-field redshift redshift
-field vel velocity_km_s
+map data
+field_in preferredname name
+field_in redshift redshift
+field_in vel velocity_km_s
 lat_key ra
 lon_key dec
 
@@ -22281,8 +22289,9 @@ force em
 url https://astroarchive.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,instrument,obs_id+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
-field instrument instrument
-field obs_id observation_id
+map data
+field_in instrument instrument
+field_in obs_id observation_id
 lat_key ra
 lon_key dec
 
@@ -22292,8 +22301,9 @@ force em
 url https://archive.nrao.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+obs_id,+project+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
-field obs_id observation_id
-field project project_code
+map data
+field_in obs_id observation_id
+field_in project project_code
 lat_key ra
 lon_key dec
 
@@ -22303,13 +22313,14 @@ force em
 url https://simbad.cds.unistra.fr/simbad/sim-tap?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+main_id,+ra,+dec,+coo_err_maj,+plx_value,+pmra,+pmdec,+rv_value,+sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
-field main_id name
-field coo_err_maj pos_error_mas
-field plx_value parallax_mas
-field pmra pmra_mas_per_yr
-field pmdec pmdec_mas_per_yr
-field rv_value radial_velocity_km_s
-field sp_type spectral_type
+map data
+field_in main_id name
+field_in coo_err_maj pos_error_mas
+field_in plx_value parallax_mas
+field_in pmra pmra_mas_per_yr
+field_in pmdec pmdec_mas_per_yr
+field_in rv_value radial_velocity_km_s
+field_in sp_type spectral_type
 lat_key ra
 lon_key dec
 
@@ -22319,7 +22330,9 @@ force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+"{catalog}"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
+map data
 catalog I/355/gaiadr3
+map data
 lat_key RAJ2000
 lon_key DEJ2000
 
