@@ -1250,6 +1250,17 @@ field_in altim atmosphere_metar_pressure_hpa
 field_in wspd atmosphere_metar_wind_speed_kt
 field_in wdir atmosphere_metar_wind_direction_deg
 
+source noaa_coops_current_stations
+ttl 86400
+force advective
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=currents
+map stations
+lat_key lat
+lon_key lng
+field id station_id
+field name station_name
+field state state
+
 source usgs_nwis_water_data
 ttl 600
 force advective
