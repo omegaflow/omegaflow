@@ -22150,15 +22150,6 @@ field name name
 field claimedtype type
 field redshift redshift
 
-source splatalogue
-ttl 2592000
-force em
-url https://splatalogue.online/splata-slap/advanceded/false?chemical_element=&chemical_element_min=&chemical_element_max=&max_frequency={max_freq}&min_frequency={min_freq}
-verify false
-max_freq 100000
-min_freq 1000
-
-
 source alma_archive
 ttl 3600
 force em
@@ -22362,74 +22353,3 @@ field_in 14 log_m_sun
 lat_key 2
 lon_key 3
 
-source casda_sia
-ttl 3600
-force em
-url https://casda.csiro.au/casda_vo_tools/sia2/query
-verify false
-
-source fermi_lat
-ttl 604800
-force em
-url https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi
-verify false
-
-source hips2fits
-ttl 2592000
-force em
-url https://alasky.cds.unistra.fr/hips-image-services/hips2fits
-verify false
-
-source jpl_horizons
-ttl 86400
-force em
-url https://ssd.jpl.nasa.gov/api/horizons.api
-verify false
-
-source magpis_cutout
-ttl 2592000
-force em
-url https://third.ucllnl.org/cgi-bin/gpscutout
-verify false
-
-source mocserver
-ttl 2592000
-force em
-url https://alasky.unistra.fr/MocServer/query
-verify false
-
-source mpc_ephemeris
-ttl 86400
-force em
-url https://cgi.minorplanetcenter.net/cgi-bin/mpeph2.cgi
-verify false
-
-source nist_spectral_lines
-ttl 2592000
-force em
-url http://physics.nist.gov/cgi-bin/ASD/lines1.pl
-verify false
-
-source ogle_extinction
-ttl 2592000
-force em
-url https://ogle.astrouwu.edu.pl/cgi-ogle/getext.py
-verify false
-
-source sdss_skyserver
-ttl 2592000
-force em
-url https://skyserver.sdss.org/dr18/en/tools/search/x_sql.aspx
-verify false
-
-source skyview
-ttl 2592000
-force em
-url https://skyview.gsfc.nasa.gov/current/cgi/basicform.pl
-verify false
-
-source svo_filter_profile
-ttl 2592000
-force em
-url https://svo2.cab.inta-csic.es/theory/fps/fps.php
-verify false
