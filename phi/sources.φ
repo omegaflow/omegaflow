@@ -4385,6 +4385,314 @@ field_in attributes.Daily_Flood_Likelihood flood_likelihood
 lat_key geometry.y
 lon_key geometry.x
 
+source esri_active_hurricanes_sampler
+ttl 600
+force advective
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.STORMNAME stormname
+field_in attributes.STORMTYPE stormtype
+field_in attributes.ADVDATE advdate
+field_in attributes.ADVISNUM advisnum
+field_in attributes.STORMNUM stormnum
+field_in attributes.FCSTPRD fcstprd
+field_in attributes.BASIN basin
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_active_hurricanes_v1
+ttl 600
+force advective
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.STORMNAME stormname
+field_in attributes.STORMTYPE stormtype
+field_in attributes.ADVDATE advdate
+field_in attributes.ADVISNUM advisnum
+field_in attributes.STORMNUM stormnum
+field_in attributes.FCSTPRD fcstprd
+field_in attributes.BASIN basin
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_air_quality_pm25_latest_results
+ttl 600
+force diffusion
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.location_id location_id
+field_in attributes.city city
+field_in attributes.location location
+field_in attributes.country country
+field_in attributes.lastUpdated lastupdated
+field_in attributes.value value
+field_in attributes.unit unit
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_alternate_fuel
+ttl 86400
+force em
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Alternate_Fuel/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.Station_Id station_id
+field_in attributes.Station_Name station_name
+field_in attributes.Fuel_Type fuel_type
+field_in attributes.Address address
+field_in attributes.City city
+field_in attributes.State state
+field_in attributes.Zipcode zipcode
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_asam_events_v1
+ttl 600
+force em
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/ASAM_events_V1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.reference reference
+field_in attributes.dateofocc dateofocc
+field_in attributes.subreg subreg
+field_in attributes.hostility_d hostility_d
+field_in attributes.victim_d victim_d
+field_in attributes.description description
+field_in attributes.hostilitytype_l hostilitytype_l
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_coral_reef_stations
+ttl 3600
+force diffusion
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Coral_Reef_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.name name
+field_in attributes.date date
+field_in attributes.sst sst
+field_in attributes.ssta ssta
+field_in attributes.hs hs
+field_in attributes.dhw dhw
+field_in attributes.alert alert
+field_in attributes.ts_fig ts_fig
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_historical_quakes
+ttl 3600
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Historical_Quakes/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.id id
+field_in attributes.code code
+field_in attributes.detail detail
+field_in attributes.gap gap
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_inat_preuc_view
+ttl 3600
+force diffusion
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/iNat_PreUC_View/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.observation_uuid observation_uuid
+field_in attributes.user_name user_name
+field_in attributes.user_login user_login
+field_in attributes.user_id user_id
+field_in attributes.taxon_id taxon_id
+field_in attributes.observed_on observed_on
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_inaturalist
+ttl 3600
+force diffusion
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/iNaturalist/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.observation_id observation_id
+field_in attributes.taxon_id taxon_id
+field_in attributes.taxon_category_name taxon_category_name
+field_in attributes.observer_id observer_id
+field_in attributes.observed_on observed_on
+field_in attributes.observed_on_month observed_on_month
+field_in attributes.observed_on_year observed_on_year
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_live_stream_gauges_v1
+ttl 600
+force advective
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Live_Stream_Gauges_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.stationid stationid
+field_in attributes.stationurl stationurl
+field_in attributes.graphurl graphurl
+field_in attributes.org org
+field_in attributes.stage_ft stage_ft
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_modis_thermal_v1
+ttl 600
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/MODIS_Thermal_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.BRIGHTNESS brightness
+field_in attributes.SCAN scan
+field_in attributes.TRACK track
+field_in attributes.SATELLITE satellite
+field_in attributes.CONFIDENCE confidence
+field_in attributes.VERSION version
+field_in attributes.BRIGHT_T31 bright_t31
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_monitored_volcanos
+ttl 3600
+force em
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Monitored_Global_USGS_Volcanos/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.Volcano_Name name
+field_in attributes.Observation observation
+field_in attributes.Alert_Level alert_level
+field_in attributes.Color_Code color_code
+field_in attributes.Region region
+field_in attributes.Threat threat
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_storm_reports_sampler
+ttl 600
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_storm_reports_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.UTC_DATETIME utc_datetime
+field_in attributes.HAIL_SIZE hail_size
+field_in attributes.LOCATION location
+field_in attributes.COUNTY county
+field_in attributes.STATE state
+field_in attributes.LATITUDE latitude
+field_in attributes.LONGITUDE longitude
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_storm_reports_v1
+ttl 600
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_storm_reports_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.UTC_DATETIME utc_datetime
+field_in attributes.HAIL_SIZE hail_size
+field_in attributes.LOCATION location
+field_in attributes.COUNTY county
+field_in attributes.STATE state
+field_in attributes.LATITUDE latitude
+field_in attributes.LONGITUDE longitude
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_temp_latest
+ttl 3600
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_latest/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.Date_ date_
+field_in attributes.Anomaly anomaly
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_temp_historic
+ttl 86400
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_historic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.Date_ date_
+field_in attributes.Anomaly anomaly
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_temp_yearly_historic
+ttl 86400
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_yearly_historic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.Date_ date_
+field_in attributes.Anomaly anomaly
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_recent_hurricanes_v1
+ttl 600
+force advective
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Recent_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.STORMNAME stormname
+field_in attributes.DTG dtg
+field_in attributes.YEAR year
+field_in attributes.MONTH month
+field_in attributes.DAY day
+field_in attributes.HHMM hhmm
+field_in attributes.TAU tau
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_usa_wildfires_v1
+ttl 600
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USA_Wildfires_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.IncidentName incidentname
+field_in attributes.IncidentTypeCategory incidenttypecategory
+field_in attributes.DailyAcres dailyacres
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_usgs_seismic_data_v1
+ttl 600
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.id id
+field_in attributes.mag mag
+field_in attributes.eventType eventtype
+field_in attributes.sig sig
+field_in attributes.alert alert
+field_in attributes.place place
+field_in attributes.hoursOld hoursold
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_wildfire_aggregated_v1
+ttl 600
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Wildfire_aggregated_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.IRWINID irwinid
+field_in attributes.sum_p0010001 sum_p0010001
+field_in attributes.sum_h0010001 sum_h0010001
+field_in attributes.sum_estimatedunder18pop sum_estimatedunder18pop
+field_in attributes.sum_estimated18to64pop sum_estimated18to64pop
+field_in attributes.sum_estimated65pluspop sum_estimated65pluspop
+field_in attributes.sum_estimated0_14pop sum_estimated0_14pop
+lat_key geometry.y
+lon_key geometry.x
+
 source nasa_firms_global_active_fires
 ttl 600
 force thermal
