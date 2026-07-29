@@ -1250,6 +1250,55 @@ field_in altim atmosphere_metar_pressure_hpa
 field_in wspd atmosphere_metar_wind_speed_kt
 field_in wdir atmosphere_metar_wind_direction_deg
 
+source esri_viirs_thermal_hotspots
+ttl 600
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+map features
+field_in attributes.latitude latitude
+field_in attributes.longitude longitude
+field_in attributes.bright_ti4 brightness_k
+field_in attributes.frp fire_radiative_power
+field_in attributes.acq_date acq_date
+field_in attributes.satellite satellite
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_lightning_global
+ttl 300
+force em
+url https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+map features
+field_in attributes.type strike_type
+field_in attributes.intensity intensity_ka
+field_in attributes.multiplicity multiplicity
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_cwfis_hotspots
+ttl 600
+force thermal
+url https://services.arcgis.com/txWDfZ2LIgzmw5Ts/arcgis/rest/services/Hotspots_(CWFIS)/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+map features
+field_in attributes.lat latitude
+field_in attributes.lon longitude
+field_in attributes.rep_date report_date
+field_in attributes.source source_sensor
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_ocean_buoys
+ttl 3600
+force diffusion
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/OADS_Moorings/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.Mooring_Name mooring_name
+field_in attributes.Lon longitude
+field_in attributes.Lat latitude
+field_in attributes.Description_Link description_url
+lat_key geometry.y
+lon_key geometry.x
+
 source nasa_firms_global_active_fires
 ttl 600
 force thermal
