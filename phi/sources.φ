@@ -1309,8 +1309,7 @@ last data.1.data biosphere_renewable_share_pct
 source biosphere_inaturalist_observations
 ttl 300
 force em
-lat 0
-lon 0
+terra 1
 url https://api.inaturalist.org/v1/observations?per_page=1
 field total_results biosphere_inaturalist_obs_count
 
@@ -1602,8 +1601,7 @@ field_in energy flare_energy_w_m2
 source gracedb_lvk_o4_public_superevents
 ttl 300
 force gravity
-lat 0.0
-lon 0.0
+terra 0
 url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200
 map superevents
 field superevent_id event_id
@@ -3045,8 +3043,7 @@ field epoch approach_time_jd
 source jpl_horizons_iss_observer
 ttl 300
 force gravity
-lat 0.0
-lon 0.0
+terra 1
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
 format text
 rows
@@ -3118,8 +3115,7 @@ last_row 2 magnetosphere_solar_wind_density_noaa
 source nmdb_global_forbush_composite
 ttl 300
 force em
-lat 0.0
-lon 0.0
+terra 1
 url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&stations[]=JUNG&stations[]=THUL&stations[]=NEWK&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
 format text
 rows
@@ -3635,9 +3631,7 @@ field_in effective atmosphere_cma_alert_time
 source atmosphere_jetstream_250hpa
 ttl 600
 force em
-lat 0.0
-lon 0.0
-url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa
 last hourly.windspeed_250hPa atmosphere_jetstream_250hpa_ms
 
 source atmosphere_lightning
