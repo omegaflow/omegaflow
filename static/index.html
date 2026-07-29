@@ -58,6 +58,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         φ['server.time'] = parseFloat(await (await fetch('/time')).text());
         tPresence = φ['server.time'];
         let pPresence = [0, 0, 0], vPresence = [0, 0, 0], t0P = tPresence;
+        let gravityCoupling = 0;
         let qOrientation = [1, 0, 0, 0];
         function qMul(a, b) {
             return [
@@ -474,11 +475,11 @@ fn presence_probe() {
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
             const [fr, fu] = orientationFrame();
             const medExt = windowMedianExtent();
-            if (rawWindowResponse.length > 0 && medExt > 0 && isFinite(medExt) && prevSyncTs > 0 && (ts - lastManualZoomTs) > Φ * 8000) {
+            if (rawWindowResponse.length > 0 && medExt > 0 && isFinite(medExt) && prevSyncTs > 0 && (ts - lastManualZoomTs) > Φ * 1000) {
                 const nyquistTarget = (medExt * 2) / Math.max(RX, RY);
                 if (nyquistTarget > 0 && isFinite(nyquistTarget)) {
                     const dtFrame = (ts - prevSyncTs) / 1000;
-                    const relax = 1.0 - Math.pow(2, -dtFrame / (Φ * 16));
+                    const relax = 1.0 - Math.pow(2, -dtFrame / (Φ * 4));
                     gridStep += (nyquistTarget - gridStep) * relax;
                 }
             }
@@ -921,13 +922,6 @@ fn presence_probe() {
             if (keysDown.has('ArrowDown')) { pPresence[0] -= ff[0] * panSpeed; pPresence[1] -= ff[1] * panSpeed; pPresence[2] -= ff[2] * panSpeed; }
             if (keysDown.has('PageUp')) { pPresence[0] += fu[0] * panSpeed; pPresence[1] += fu[1] * panSpeed; pPresence[2] += fu[2] * panSpeed; }
             if (keysDown.has('PageDown')) { pPresence[0] -= fu[0] * panSpeed; pPresence[1] -= fu[1] * panSpeed; pPresence[2] -= fu[2] * panSpeed; }
-            const rotSpeed = 2.0 * rawTick / 1000;
-            if (keysDown.has('q')) qOrientation = qNorm(qMul(qAxisAngle(fu, rotSpeed), qOrientation));
-            if (keysDown.has('e')) qOrientation = qNorm(qMul(qAxisAngle(fu, -rotSpeed), qOrientation));
-            if (keysDown.has('r')) qOrientation = qNorm(qMul(qAxisAngle(fr, rotSpeed), qOrientation));
-            if (keysDown.has('f')) qOrientation = qNorm(qMul(qAxisAngle(fr, -rotSpeed), qOrientation));
-            if (keysDown.has('z')) qOrientation = qNorm(qMul(qAxisAngle(ff, rotSpeed), qOrientation));
-            if (keysDown.has('x')) qOrientation = qNorm(qMul(qAxisAngle(ff, -rotSpeed), qOrientation));
             const gp = navigator.getGamepads ? Array.from(navigator.getGamepads()).find(g => g && g.connected) : null;
             if (gp) {
                 const dz = 1 / 16;
@@ -945,6 +939,21 @@ fn presence_probe() {
                 if (gp.buttons[7] && gp.buttons[7].value > 0) gridStep /= Math.pow(2, gp.buttons[7].value * rawTick / 500);
                 if (gp.buttons[4] && gp.buttons[4].pressed) tThrustTarget = -64;
                 if (gp.buttons[5] && gp.buttons[5].pressed) tThrustTarget = 64;
+            }
+            if (gravityCoupling > 0 && rawWindowResponse.length > 0) {
+                const d = gridStep / 2;
+                const o0 = probedOmega;
+                if (Math.abs(o0) > 0 && isFinite(o0)) {
+                    const gx = probedGradient[0];
+                    const gy = probedGradient[1];
+                    const gz = probedGradient[2];
+                    const acc = gravityCoupling * gridStep * rawTick / 1000 / Math.abs(o0);
+                    pPresence = [xPresence, yPresence, zPresence];
+                    t0P = tPresence;
+                    vPresence[0] += gx * acc;
+                    vPresence[1] += gy * acc;
+                    vPresence[2] += gz * acc;
+                }
             }
             const dtP = tPresence - t0P;
             xPresence = pPresence[0] + vPresence[0] * dtP;
@@ -1003,10 +1012,11 @@ fn presence_probe() {
                     `  X: ${xStr}\n` +
                     `  Y: ${yStr}\n` +
                     `  Z: ${zStr}\n` +
-                    `  Look: (${ff.map(v => v.toFixed(3)).join(', ')})\n` +
                     `  Time: ${tPresence.toFixed(1)}\n` +
                     `  Pan: ${panNow.toExponential(1)} m/s\n` +
-                    `  Velocity: ${Math.hypot(vPresence[0], vPresence[1], vPresence[2]).toExponential(1)} m/s\n\n` +
+                    `  Velocity: ${Math.hypot(vPresence[0], vPresence[1], vPresence[2]).toExponential(1)} m/s\n` +
+                    `  Gravity shoes: ${gravityCoupling === 0 ? 'off' : '×' + gravityCoupling}\n` +
+                    `  Forward: (${ff.map(v => v.toFixed(2)).join(', ')})\n\n` +
                     `Surface\n` +
                     `  Pixels: ${RX}x${RY} (eval /${1 << evalShift})\n` +
                     `  Scale: ${gridStep.toExponential(1)} m/px\n` +
@@ -1101,6 +1111,7 @@ fn presence_probe() {
                     pPresence[2] -= fr[2] * dmx * gridStep - fu[2] * dmy * gridStep;
                     const da = angle - pinchPrev.angle;
                     if (da !== 0) qOrientation = qNorm(qMul(qAxisAngle(ff, da), qOrientation));
+                    if (dy !== 0) qOrientation = qNorm(qMul(qAxisAngle(fr, dy / 256), qOrientation));
                 }
                 pinchPrev = { spread, angle, mid };
             } else if (pointers.size >= 3) {
@@ -1112,14 +1123,20 @@ fn presence_probe() {
         window.addEventListener('pointercancel', pointerEnd);
         window.addEventListener('contextmenu', (e) => e.preventDefault());
         window.addEventListener('wheel', (e) => {
-            if (e.ctrlKey || e.metaKey) return;
             if (e.shiftKey) {
                 tThrust -= Math.sign(e.deltaY) * 8;
                 e.preventDefault();
                 return;
             }
+            const [fr, fu] = orientationFrame();
+            const mxr = (e.clientX / RX - 0.5) * RX, myr = (0.5 - e.clientY / RY) * RY;
+            const oldStep = gridStep;
             gridStep *= Math.pow(2, e.deltaY / 256);
             lastManualZoomTs = performance.now();
+            const d = oldStep - gridStep;
+            pPresence[0] += d * (mxr * fr[0] + myr * fu[0]);
+            pPresence[1] += d * (mxr * fr[1] + myr * fu[1]);
+            pPresence[2] += d * (mxr * fr[2] + myr * fu[2]);
             e.preventDefault();
         }, { passive: false });
         window.addEventListener('keydown', (e) => { keysDown.add(e.key); });
@@ -1137,6 +1154,15 @@ fn presence_probe() {
             if (e.key === 'f') { fieldVisible = !fieldVisible; e.preventDefault(); }
             if (e.key === 'e') { exposureBoost = Math.min(exposureBoost + 1, 16); e.preventDefault(); }
             else if (e.key === 'E') { exposureBoost = Math.max(exposureBoost - 1, -8); e.preventDefault(); }
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'g') {
+                gravityCoupling = gravityCoupling === 0 ? 1 : gravityCoupling * 2;
+                e.preventDefault();
+            } else if (e.key === 'G') {
+                gravityCoupling = gravityCoupling <= 1 ? 0 : gravityCoupling / 2;
+                e.preventDefault();
+            }
         });
         window.addEventListener('keydown', async (e) => {
             if (e.key !== 'b') return;
