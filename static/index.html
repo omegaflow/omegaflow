@@ -471,7 +471,9 @@ fn presence_probe() {
                 meta[i * 4 + 2] = 0;
                 meta[i * 4 + 3] = fforce;
             }
-            const evalW = Math.max(1, RX >> evalShift), evalH = Math.max(1, RY >> evalShift);
+            const dpr = window.devicePixelRatio || 1;
+            const evalW = Math.floor(RX * dpr);
+            const evalH = Math.floor(RY * dpr);
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
             const [fr, fu] = orientationFrame();
             const medExt = windowMedianExtent();
@@ -1104,14 +1106,19 @@ fn presence_probe() {
                 const angle = Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x);
                 if (pinchPrev) {
                     const ratio = spread / pinchPrev.spread;
-                    if (ratio > 0 && isFinite(ratio) && ratio !== 1) gridStep /= ratio;
                     const dmx = mid[0] - pinchPrev.mid[0], dmy = mid[1] - pinchPrev.mid[1];
+                    if (ratio > 0 && isFinite(ratio) && Math.abs(ratio - 1.0) > 0.01) {
+                        gridStep /= ratio;
+                        lastManualZoomTs = performance.now();
+                    } else if (Math.abs(dmy) > 4 && Math.abs(dmx) < Math.abs(dmy) * 2) {
+                        gridStep *= Math.pow(2, dmy / 512);
+                        lastManualZoomTs = performance.now();
+                    }
                     pPresence[0] -= fr[0] * dmx * gridStep - fu[0] * dmy * gridStep;
                     pPresence[1] -= fr[1] * dmx * gridStep - fu[1] * dmy * gridStep;
                     pPresence[2] -= fr[2] * dmx * gridStep - fu[2] * dmy * gridStep;
                     const da = angle - pinchPrev.angle;
                     if (da !== 0) qOrientation = qNorm(qMul(qAxisAngle(ff, da), qOrientation));
-                    if (dy !== 0) qOrientation = qNorm(qMul(qAxisAngle(fr, dy / 256), qOrientation));
                 }
                 pinchPrev = { spread, angle, mid };
             } else if (pointers.size >= 3) {

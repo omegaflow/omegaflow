@@ -1355,8 +1355,7 @@ field rain_trace rain_mm
 source cdaweb_ace_solar_wind_l1
 ttl 300
 force em
-lat 0.0
-lon 0.0
+terra 0.99
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&parameters=BGSEc,Magnitude&time.min={today}T00:00:00.000Z&time.max={today}T23:59:59.000Z&format=csv
 format text
 rows
