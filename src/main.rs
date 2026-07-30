@@ -4141,9 +4141,16 @@ fn warm_cache(archive: Arc<Archive>) {
                 .warm_cache_mutex
                 .lock()
                 .unwrap_or_else(|e| e.into_inner());
-            let _ = archive
-                .warm_cache_cv
-                .wait_timeout(lock, std::time::Duration::from_secs_f64(cadence));
+            let still_empty = archive
+                .presence
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .is_empty();
+            if still_empty {
+                let _ = archive
+                    .warm_cache_cv
+                    .wait_timeout(lock, std::time::Duration::from_secs_f64(cadence));
+            }
             continue;
         }
 
