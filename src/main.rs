@@ -287,6 +287,20 @@ fn build_buffer(samples: Vec<Sample>, cadence: f64) -> Buffer {
     }
 }
 
+fn force_constants_by_id(id: f64) -> Option<(f64, bool)> {
+    match id as u8 {
+        0 => Some((C_LIGHT, false)),
+        1 => Some((C_LIGHT, false)),
+        2 => Some((V_SOUND_288, false)),
+        3 => Some((V_P_GRANITE, false)),
+        4 => Some((V_S_GRANITE, false)),
+        5 => Some((ALPHA_AIR, true)),
+        6 => Some((D_AIR, true)),
+        7 => Some((10.0, false)),
+        _ => None,
+    }
+}
+
 fn enclose_family(
     fam: &Family,
     anchor: [f64; 3],
@@ -353,8 +367,24 @@ fn enclose_family(
             let dx = smp.p0f[0] - qf[0];
             let dy = smp.p0f[1] - qf[1];
             let dz = smp.p0f[2] - qf[2];
-            if dx * dx + dy * dy + dz * dz > reach * reach {
+            let dist2_p0f = dx * dx + dy * dy + dz * dz;
+            if dist2_p0f > reach * reach {
                 continue;
+            }
+            if let Some((v_or_d, is_diff)) = force_constants_by_id(smp.force_type) {
+                if smp.tau > 0.0 && age > smp.tau * 64.0 {
+                    continue;
+                }
+                if is_diff {
+                    if 2.0 * v_or_d * age < dist2_p0f {
+                        continue;
+                    }
+                } else {
+                    let max_causal_dist = v_or_d * age;
+                    if dist2_p0f > max_causal_dist * max_causal_dist {
+                        continue;
+                    }
+                }
             }
             let p = smp.motion.at(t2, smp.epoch);
             let ddx = p[0] - q[0];
