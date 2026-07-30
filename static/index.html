@@ -227,7 +227,7 @@ struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f };
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f };
 
-const DISPLAY_GAMUT_SATURATION: f32 = 0.8;
+const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
 
 fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let c = (1.0 - abs(2.0 * l - 1.0)) * s;
@@ -293,7 +293,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let f_type = u32(mt.w);
     let hue_center = f32(f_type) / 8.0;
     let tau_freq = 1.0 / max(tau, 1e-9);
-    let color_shift = clamp(log2(tau_freq) / 16.0, -0.125, 0.125);
+    let color_shift = clamp(log2(tau_freq) / 12.0, -0.25, 0.25);
     let hue = fract(hue_center + color_shift);
     let lum = clamp(log2(abs(val) / max(lvl, 1e-20)) / 8.0 + 0.5, 0.0, 1.0);
     let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
