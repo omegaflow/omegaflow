@@ -463,9 +463,13 @@ fn presence_probe() {
                 probedOmega = data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7];
                 probeRead.unmap();
             } catch {}
+            let total = 0;
+            for (let fi = 0; fi < rawWindowResponse.length; fi++) {
+                total += rawWindowResponse[fi].decay() || 0;
+            }
+            probedOmega = total;
+            for (let k = 0; k < 8; k++) probedOmegas[k] = 0;
             probePending = false;
-        }
-        function manifestWindow(ts) {
             if (!gpu) { initFieldGPU(); return; }
             if (!fieldVisible) {
                 try {
@@ -1092,6 +1096,14 @@ fn presence_probe() {
         fieldCanvas.style.touchAction = 'none';
         window.addEventListener('pointerdown', (e) => {
             pointers.set(e.pointerId, { x: e.clientX, y: e.clientY, button: e.button });
+            if (pointers.size === 2) {
+                const pts = [...pointers.values()];
+                pinchPrev = { 
+                    spread: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y),
+                    angle: Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x),
+                    mid: [(pts[0].x + pts[1].x) / 2, (pts[0].y + pts[1].y) / 2]
+                };
+            }
         });
         window.addEventListener('pointermove', (e) => {
             const p = pointers.get(e.pointerId);
@@ -1116,7 +1128,7 @@ fn presence_probe() {
                 if (pinchPrev) {
                     const dmy = mid[1] - pinchPrev.mid[1];
                     if (Math.abs(dmy) > 4) {
-                        gridStep *= Math.pow(2, dmy / 512);
+                        gridStep /= Math.pow(2, dmy / 512);
                         lastManualZoomTs = performance.now();
                     }
                     const da = angle - pinchPrev.angle;
