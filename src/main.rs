@@ -4561,6 +4561,11 @@ fn main() {
         thread::spawn(move || fetch_worker(ar));
     }
     {
+        archive
+            .presence
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .insert("0_0_0".to_string(), (tdb_now(), 0.0, 0.0, 0.0, 1e11));
         let ar = Arc::clone(&archive);
         thread::spawn(move || warm_cache(ar));
     }
