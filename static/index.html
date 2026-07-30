@@ -379,7 +379,7 @@ fn presence_probe() {
         fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;background:#0a0908;';
         document.body.appendChild(fieldCanvas);
         let fieldVisible = true;
-        let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, extentBuf = null, probeBuf = null, probeRead = null, fieldBind = null, probeBind = null, fieldCap = 0, fieldFrames = 0;
+        let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, extentBuf = null, probeBuf = null, probeRead = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
         let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0,0];
         async function initFieldGPU() {
             if (!navigator.gpu || gpu) return;
@@ -450,7 +450,7 @@ fn presence_probe() {
                 const encoder = gpu.createCommandEncoder();
                 const pass = encoder.beginComputePass();
                 pass.setPipeline(probePipe);
-                pass.setBindGroup(0, probeBind);
+                pass.setBindGroup(0, fieldBind);
                 pass.dispatchWorkgroups(1);
                 pass.end();
                 encoder.copyBufferToBuffer(probeBuf, 0, probeRead, 0, 32);
