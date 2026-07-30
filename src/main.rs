@@ -369,7 +369,19 @@ fn enclose_family(
     for samples in visit {
         for smp in samples {
             let age = (t2 - smp.epoch).abs();
-            let reach = smp.extent + smp.vmax * age + 0.5 * smp.amax * age * age + pad;
+            let causal_reach =
+                if let Some((v_or_d, is_diff)) = force_constants_by_id(smp.force_type) {
+                    let lifetime = smp.ttl;
+                    if is_diff {
+                        (2.0 * v_or_d * lifetime).sqrt()
+                    } else {
+                        v_or_d * lifetime
+                    }
+                } else {
+                    0.0
+                };
+            let reach =
+                smp.extent.max(causal_reach) + smp.vmax * age + 0.5 * smp.amax * age * age + pad;
             let dx = smp.p0f[0] - qf[0];
             let dy = smp.p0f[1] - qf[1];
             let dz = smp.p0f[2] - qf[2];
