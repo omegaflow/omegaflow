@@ -4553,7 +4553,7 @@ source solar_dscovr_epic
 ttl 600
 force em
 
-terra 0.99
+terra 1
 url https://epic.gsfc.nasa.gov/api/natural
 map .
 field_in identifier solar_epic_image_id
