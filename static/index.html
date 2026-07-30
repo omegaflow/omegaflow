@@ -454,7 +454,7 @@ fn presence_probe() {
                 pass.setBindGroup(0, probeBind);
                 pass.dispatchWorkgroups(1);
                 pass.end();
-                encoder.copyBufferToBuffer(probeBuf, 0, probeRead, 0, 16);
+                encoder.copyBufferToBuffer(probeBuf, 0, probeRead, 0, 32);
                 gpu.queue.submit([encoder.finish()]);
                 await gpu.queue.onSubmittedWorkDone();
                 await probeRead.mapAsync(GPUMapMode.READ);
