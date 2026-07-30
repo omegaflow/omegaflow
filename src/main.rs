@@ -4068,9 +4068,15 @@ fn warm_cache(archive: Arc<Archive>) {
             .cloned()
             .collect();
         if presences.is_empty() {
+            eprintln!("WARM: no presences, sleep {cadence}s");
             thread::sleep(std::time::Duration::from_secs(cadence as u64));
             continue;
         }
+        eprintln!(
+            "WARM: {} presences, {} sources",
+            presences.len(),
+            archive.sources.len()
+        );
 
         let mut tasks: Vec<(
             usize,
@@ -4145,6 +4151,12 @@ fn warm_cache(archive: Arc<Archive>) {
                         let pos = (ex * scale, ey * scale, ez * scale);
                         if !presence_gate(&presences, pos, r) {
                             continue;
+                        }
+                        if scale < &0.01 {
+                            eprintln!(
+                                "TERRA0 TASK: {} (pos=({:.0},{:.0},{:.0}))",
+                                src.name, pos.0, pos.1, pos.2
+                            );
                         }
                         tasks.push((
                             i,
