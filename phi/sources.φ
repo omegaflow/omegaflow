@@ -3040,18 +3040,12 @@ field h_mag absolute_magnitude
 field diameter estimated_diameter_km
 field epoch approach_time_jd
 
-source jpl_horizons_iss_observer
+source jpl_horizons_iss_vectors
 ttl 300
-force gravity
-terra 1
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
 format text
-rows
-field 0 epoch_jd
-field 1 ra_deg
-field 2 dec_deg
-field 3 distance_au
-field 4 solar_distance_au
+vectors iss_position
 
 source koeri_turkey_earthquakes
 ttl 300
