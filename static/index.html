@@ -227,6 +227,23 @@ struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f };
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f };
 
+const DISPLAY_GAMUT_SATURATION: f32 = 0.8;
+
+fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
+    let c = (1.0 - abs(2.0 * l - 1.0)) * s;
+    let hp = h * 6.0;
+    let x = c * (1.0 - abs(hp % 2.0 - 1.0));
+    let m = l - c * 0.5;
+    var rgb01: vec3f;
+    if (hp < 1.0)       { rgb01 = vec3f(c, x, 0.0); }
+    else if (hp < 2.0)  { rgb01 = vec3f(x, c, 0.0); }
+    else if (hp < 3.0)  { rgb01 = vec3f(0.0, c, x); }
+    else if (hp < 4.0)  { rgb01 = vec3f(0.0, x, c); }
+    else if (hp < 5.0)  { rgb01 = vec3f(x, 0.0, c); }
+    else                { rgb01 = vec3f(c, 0.0, x); }
+    return rgb01 + vec3f(m);
+}
+
 @vertex fn vs(@builtin(vertex_index) i: u32) -> VOut {
     let count = u32(vp.surface.z);
     var out: VOut;
@@ -272,14 +289,15 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1
 
     let lvl = vp.expose.x;
     if (lvl <= 0.0) { return out; }
-    let aw = abs(val);
-    let t2 = clamp((log2(aw / lvl) + 8.0) / 24.0, 0.0, 1.0);
-    let t2s = t2 * t2 * (3.0 - 2.0 * t2);
-    let c1 = mix(vec3f(0.0, 0.0, 0.0), vec3f(0.0, 0.15, 0.4), clamp(t2s * 4.0, 0.0, 1.0));
-    let c2 = mix(c1, vec3f(0.1, 0.5, 0.9), clamp((t2s - 0.25) * 4.0, 0.0, 1.0));
-    let c3 = mix(c2, vec3f(0.8, 0.6, 0.2), clamp((t2s - 0.5) * 4.0, 0.0, 1.0));
-    let c4 = mix(c3, vec3f(1.0, 0.95, 0.9), clamp((t2s - 0.75) * 4.0, 0.0, 1.0));
-    out.color = c4;
+
+    let f_type = u32(mt.w);
+    let hue_center = f32(f_type) / 8.0;
+    let tau_freq = 1.0 / max(tau, 1e-9);
+    let color_shift = clamp(log2(tau_freq) / 16.0, -0.125, 0.125);
+    let hue = fract(hue_center + color_shift);
+    let lum = clamp(log2(abs(val) / max(lvl, 1e-40)) / 8.0 + 0.5, 0.0, 1.0);
+    let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
+    out.color = rgb;
     return out;
 }
 
@@ -332,7 +350,7 @@ fn presence_probe() {
         let force_type = u32(mt.w);
 
         let val_eff = m.w * exp(-retarded_dt / max(tau, 1e-9));
-        let sk = field_spatial(d2, d_mag, extent, force_type, soft);
+        let sk = field_spatial(d2, d_mag, extent, force_type, 1e-9);
 
         if (force_type < 8u) {
             omegas[force_type] += val_eff * sk;
@@ -1016,13 +1034,14 @@ fn presence_probe() {
                     `  Oscillators in window: ${rawWindowResponse.length} (empty syncs: ${emptySyncs})\n` +
                     `  Window omega: ${probedOmega.toExponential(2)} (exposure ${(exposureBoost > 0 ? '+' : '') + exposureBoost}dB)\n` +
                     "\nField (8 Forces)\n" +
-                    `  EM:       ${probedOmegas[0].toExponential(2)}\n` +
-                    `  Gravity:  ${probedOmegas[1].toExponential(2)}\n` +
-                    `  Acoustic: ${probedOmegas[2].toExponential(2)}\n` +
-                    `  Seismic:  ${probedOmegas[4].toExponential(2)}\n` +
-                    `  Thermal:  ${probedOmegas[5].toExponential(2)}\n` +
-                    `  Diffusion:${probedOmegas[6].toExponential(2)}\n` +
-                    `  Advective:${probedOmegas[7].toExponential(2)}\n` +
+                    `  EM (Electromagnetic): ${probedOmegas[0].toExponential(2)}\n` +
+                    `  Gravity (Gravitational): ${probedOmegas[1].toExponential(2)}\n` +
+                    `  Acoustic (Sound): ${probedOmegas[2].toExponential(2)}\n` +
+                    `  SeismicBody (P-wave): ${probedOmegas[3].toExponential(2)}\n` +
+                    `  SeismicSurface (S-wave): ${probedOmegas[4].toExponential(2)}\n` +
+                    `  Thermal (Heat): ${probedOmegas[5].toExponential(2)}\n` +
+                    `  Diffusion (Matter): ${probedOmegas[6].toExponential(2)}\n` +
+                    `  Advective (Wind): ${probedOmegas[7].toExponential(2)}\n` +
                     `  Total Omega: ${probedOmega.toExponential(2)}\n\n` +
                     "System\n" +
                     `  Oscillators: ${oscillators.length}\n` +
@@ -1158,35 +1177,28 @@ fn presence_probe() {
             else if (e.key === 'E') { exposureBoost = Math.max(exposureBoost - 1, -8); e.preventDefault(); }
         });
         window.addEventListener('keydown', async (e) => {
+            if (e.key === 's') {
+                e.preventDefault();
+                try {
+                    const parts = (await (await fetch('/station')).text()).split(' ').map(Number);
+                    if (parts.length === 6 && parts.every(isFinite) && (parts[0] !== 0 || parts[1] !== 0 || parts[2] !== 0)) {
+                        pPresence = [parts[0], parts[1], parts[2]];
+                        vPresence = [parts[3], parts[4], parts[5]];
+                        t0P = tPresence;
+                        gridStep = 1e11;
+                        qOrientation = [1, 0, 0, 0];
+                        keysDown.clear();
+                        return;
+                    }
+                } catch {}
+            }
             if (e.key !== 'b') return;
             e.preventDefault();
-            try {
-                const parts = (await (await fetch('/station')).text()).split(' ').map(Number);
-                if (parts.length === 6 && parts.every(isFinite) && (parts[0] !== 0 || parts[1] !== 0 || parts[2] !== 0)) {
-                    pPresence = [parts[0], parts[1], parts[2]];
-                    vPresence = [parts[3], parts[4], parts[5]];
-                    t0P = tPresence;
-                    keysDown.clear();
-                    return;
-                }
-            } catch {}
-            const jd = tPresence / 86400.0 + 2451545.0;
-            const t = (jd - 2451545.0) / 36525.0;
-            const m = 6.239996 + 0.017201969 * t * 36525.0;
-            const eE = 0.0167086;
-            let eAnom = m;
-            for (let i = 0; i < 5; i++) {
-                eAnom = eAnom - (eAnom - eE * Math.sin(eAnom) - m) / (1.0 - eE * Math.cos(eAnom));
-            }
-            const xOrb = 1.495978707e11 * (Math.cos(eAnom) - eE);
-            const yOrb = 1.495978707e11 * Math.sqrt(1.0 - eE * eE) * Math.sin(eAnom);
-            const om = -0.113;
-            const xEcl = xOrb * Math.cos(om) - yOrb * Math.sin(om);
-            const yEcl = xOrb * Math.sin(om) + yOrb * Math.cos(om);
-            pPresence = [xEcl, yEcl * Math.cos(0.409092804), yEcl * Math.sin(0.409092804)];
+            pPresence = [0, 0, 0];
             vPresence = [0, 0, 0];
             t0P = tPresence;
             gridStep = 1e11;
+            qOrientation = [1, 0, 0, 0];
             keysDown.clear();
         });
         window.addEventListener('error', (e) => { reportState('ERROR', e.message + ' @ ' + e.filename + ':' + e.lineno); e.preventDefault(); });
