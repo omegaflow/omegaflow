@@ -371,19 +371,9 @@ fn enclose_family(
             if dist2_p0f > reach * reach {
                 continue;
             }
-            if let Some((v_or_d, is_diff)) = force_constants_by_id(smp.force_type) {
+            if let Some((_v_or_d, _is_diff)) = force_constants_by_id(smp.force_type) {
                 if smp.tau > 0.0 && age > smp.tau * 64.0 {
                     continue;
-                }
-                if is_diff {
-                    if 2.0 * v_or_d * age < dist2_p0f {
-                        continue;
-                    }
-                } else {
-                    let max_causal_dist = v_or_d * age;
-                    if dist2_p0f > max_causal_dist * max_causal_dist {
-                        continue;
-                    }
                 }
             }
             let p = smp.motion.at(t2, smp.epoch);

@@ -266,7 +266,7 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1
     let point_size_px = max((extent / dist), 1.0) * 2.0;
     clip.x += (quad[vid].x * point_size_px) / w * 2.0;
     clip.y += (quad[vid].y * point_size_px) / h * 2.0;
-    
+
     out.pos = vec4f(clip, 0.0, 1.0);
     out.uv = quad[vid];
 
@@ -295,7 +295,7 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, force_type: u32, global_scale
     let perceptual_extent = max(extent, global_scale);
     let e2 = perceptual_extent * perceptual_extent;
     let s2 = global_scale * global_scale;
-    
+
     if (force_type == 0u || force_type == 1u) {
         let denom = max((d2 + s2) * (d2 + s2 + e2), s2 * s2);
         return e2 / denom;
@@ -311,12 +311,12 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, force_type: u32, global_scale
 @compute @workgroup_size(1)
 fn presence_probe() {
     let count = u32(vp.surface.z);
-    if (count == 0u) { 
+    if (count == 0u) {
         for (var i: u32 = 0u; i < 8u; i = i + 1u) { probe_out[i] = 0.0f; }
-        return; 
+        return;
     }
     let soft = vp.surface.w;
-    
+
     var omegas: array<f32, 8>;
     for (var i: u32 = 0u; i < 8u; i = i + 1u) { omegas[i] = 0.0f; }
 
@@ -330,15 +330,15 @@ fn presence_probe() {
         let retarded_dt = mt.y;
         let tau = mt.z;
         let force_type = u32(mt.w);
-        
+
         let val_eff = m.w * exp(-retarded_dt / max(tau, 1e-9));
         let sk = field_spatial(d2, d_mag, extent, force_type, soft);
-        
+
         if (force_type < 8u) {
             omegas[force_type] += val_eff * sk;
         }
     }
-    
+
     for (var i: u32 = 0u; i < 8u; i = i + 1u) {
         probe_out[i] = omegas[i];
     }
@@ -347,11 +347,11 @@ fn presence_probe() {
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
     let dist = length(in.uv);
     if (dist > 1.0) { discard; }
-    
+
     let intensity = exp(-dist * dist * 4.0);
     let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
     let analog_intensity = intensity * (0.85 + noise * 0.15);
-    
+
     return vec4f(in.color * analog_intensity, analog_intensity);
 }
 `;
@@ -768,21 +768,12 @@ fn presence_probe() {
                 surfaces.push({
                     manifest: () => {
                         if (!activeSerialPort || !activeSerialPort.writable) return;
-                        const n = Math.min(rawWindowResponse.length, 16);
-                        if (n === 0) return;
-                        let peak = 0;
-                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(decay(rawWindowResponse[i])));
+                        let peak = Math.abs(omegaNow);
                         if (peak <= 0) return;
                         try {
                             const writer = activeSerialPort.writable.getWriter();
-                            const sendBuf = new Uint8Array(n * 4);
-                            for (let i = 0; i < n; i++) {
-                                const lum = Math.floor((Math.abs(decay(rawWindowResponse[i])) / peak) * 255) & 255;
-                                sendBuf[i * 4] = lum;
-                                sendBuf[i * 4 + 1] = lum;
-                                sendBuf[i * 4 + 2] = lum;
-                                sendBuf[i * 4 + 3] = lum;
-                            }
+                            const lum = Math.min(255, Math.floor(peak * 255));
+                            const sendBuf = new Uint8Array([lum, lum, lum, lum]);
                             writer.write(sendBuf);
                             writer.releaseLock();
                         } catch {}
@@ -798,20 +789,13 @@ fn presence_probe() {
                         if (!alt) return;
                         const outEp = alt.endpoints.find(e => e.direction === 'out');
                         if (!outEp) return;
-                        const n = Math.min(rawWindowResponse.length, 16);
-                        if (n === 0) return;
-                        let peak = 0;
-                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(decay(rawWindowResponse[i])));
+                        let peak = Math.abs(omegaNow);
                         if (peak <= 0) return;
-                        const sendBuf = new Uint8Array(n * 4);
-                        for (let i = 0; i < n; i++) {
-                            const lum = Math.floor((Math.abs(decay(rawWindowResponse[i])) / peak) * 255) & 255;
-                            sendBuf[i * 4] = lum;
-                            sendBuf[i * 4 + 1] = lum;
-                            sendBuf[i * 4 + 2] = lum;
-                            sendBuf[i * 4 + 3] = lum;
-                        }
-                        try { activeUsbDevice.transferOut(outEp.endpointNumber, sendBuf); } catch {}
+                        try {
+                            const lum = Math.min(255, Math.floor(peak * 255));
+                            const sendBuf = new Uint8Array([lum, lum, lum, lum]);
+                            activeUsbDevice.transferOut(outEp.endpointNumber, sendBuf);
+                        } catch {}
                     }
                 });
             }
@@ -819,11 +803,14 @@ fn presence_probe() {
                 registerOscillator('navigator.bluetooth.channel.tx', Number.EPSILON);
                 surfaces.push({
                     manifest: () => {
-                        if (!activeBtChar || rawWindowResponse.length === 0) return;
-                        let peak = 0;
-                        for (const p of rawWindowResponse) peak = Math.max(peak, Math.abs(p.val));
+                        if (!activeBtChar) return;
+                        let peak = Math.abs(omegaNow);
                         if (peak <= 0) return;
-                        try { const buf = new DataView(new ArrayBuffer(1)); buf.setUint8(0, Math.floor((Math.abs(decay(rawWindowResponse[0])) / peak) * 255)); activeBtChar.writeValue(buf.buffer); } catch {}
+                        try {
+                            const buf = new DataView(new ArrayBuffer(1));
+                            buf.setUint8(0, Math.min(255, Math.floor(peak * 255)));
+                            activeBtChar.writeValue(buf.buffer);
+                        } catch {}
                     }
                 });
             }
@@ -832,20 +819,13 @@ fn presence_probe() {
                 surfaces.push({
                     manifest: () => {
                         if (!activeHidDevice || !activeHidDevice.opened) return;
-                        const n = Math.min(rawWindowResponse.length, 16);
-                        if (n === 0) return;
-                        let peak = 0;
-                        for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(decay(rawWindowResponse[i])));
+                        let peak = Math.abs(omegaNow);
                         if (peak <= 0) return;
-                        const sendBuf = new Uint8Array(n * 4);
-                        for (let i = 0; i < n; i++) {
-                            const lum = Math.floor((Math.abs(decay(rawWindowResponse[i])) / peak) * 255) & 255;
-                            sendBuf[i * 4] = lum;
-                            sendBuf[i * 4 + 1] = lum;
-                            sendBuf[i * 4 + 2] = lum;
-                            sendBuf[i * 4 + 3] = lum;
-                        }
-                        for (const coll of activeHidDevice.collections) { for (const inp of coll.inputReports) { try { activeHidDevice.sendReport(inp.reportId, sendBuf); } catch {} } }
+                        try {
+                            const lum = Math.min(255, Math.floor(peak * 255));
+                            const sendBuf = new Uint8Array([lum, lum, lum, lum]);
+                            for (const coll of activeHidDevice.collections) { for (const inp of coll.inputReports) { activeHidDevice.sendReport(inp.reportId, sendBuf); } }
+                        } catch {}
                     }
                 });
             }
@@ -1023,7 +1003,7 @@ fn presence_probe() {
                 const topLines = topOsc.slice(0, 12).map(t => `  ${t.u}: ${t.v.toPrecision(4)}`).join('\n');
 
                 debugEl.value =
-                    "omegaflow field v2b6d\n\n" +
+                    "omegaflow field\n\n" +
                     "Presence\n" +
                     `  X: ${xStr}\n` +
                     `  Y: ${yStr}\n` +
@@ -1035,7 +1015,16 @@ fn presence_probe() {
                     `  Pixels: ${RX}x${RY} (eval /${1 << evalShift})\n` +
                     `  Scale: ${gridStep.toExponential(1)} m/px\n` +
                     `  Oscillators in window: ${rawWindowResponse.length} (empty syncs: ${emptySyncs})\n` +
-                    `  Window omega: ${probedOmega.toExponential(2)} (exposure ${(exposureBoost > 0 ? '+' : '') + exposureBoost}dB)\n\n` +
+                    `  Window omega: ${probedOmega.toExponential(2)} (exposure ${(exposureBoost > 0 ? '+' : '') + exposureBoost}dB)\n` +
+                    "\nField (8 Forces)\n" +
+                    `  EM:       ${probedOmegas[0].toExponential(2)}\n` +
+                    `  Gravity:  ${probedOmegas[1].toExponential(2)}\n` +
+                    `  Acoustic: ${probedOmegas[2].toExponential(2)}\n` +
+                    `  Seismic:  ${probedOmegas[4].toExponential(2)}\n` +
+                    `  Thermal:  ${probedOmegas[5].toExponential(2)}\n` +
+                    `  Diffusion:${probedOmegas[6].toExponential(2)}\n` +
+                    `  Advective:${probedOmegas[7].toExponential(2)}\n` +
+                    `  Total Omega: ${probedOmega.toExponential(2)}\n\n` +
                     "System\n" +
                     `  Oscillators: ${oscillators.length}\n` +
                     `  Ring buffer: ${maxFill}/${CAPTURE_RING_SIZE} samples\n` +
@@ -1045,11 +1034,6 @@ fn presence_probe() {
                     `  Field frames: ${fieldFrames}\n` +
                     `  Frame:     ${rawTick.toFixed(1)}ms\n` +
                     `  Manifest:  ${lastManifestTime.toFixed(1)}ms\n\n` +
-                    "Field\n" +
-                    `  Certainty:      ${certainty.toFixed(4)}\n` +
-                    `  Clarity:        ${clarity.toFixed(4)}\n` +
-                    `  Gravity:        ${g.toFixed(3)}\n` +
-                    `  Rate of change: ${vC.toFixed(4)}\n\n` +
                     "Connection\n" +
                     `  WebSocket: ${transport.socket ? 'open' : 'closed'}\n` +
                     `  Round trip: ${transport.rtt.toFixed(0)}ms\n\n` +
