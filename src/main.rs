@@ -11,12 +11,14 @@ use std::time::{Instant, SystemTime, UNIX_EPOCH};
 const Φ: f64 = 1.618033988749895;
 const AU: f64 = 1.495978707e11;
 const EARTH_RADIUS: f64 = 6378137.0;
+const MARS_RADIUS: f64 = 3396190.0;
+const MARS_ECC: f64 = 0.0934123;
 const EARTH_ECC: f64 = 0.0167086;
 const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
 const GAUSS_K: f64 = 0.01720209895;
-const TERRA_DOMAIN: f64 = EARTH_RADIUS * 16.0;
+const EARTH_DOMAIN: f64 = EARTH_RADIUS * 16.0;
 const PARSEC_M: f64 = 3.085677581e16;
 const C_LIGHT: f64 = 299792458.0;
 const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
@@ -135,16 +137,17 @@ type Origin = (u32, i32, i32);
 
 #[derive(Clone, Copy)]
 enum Motion {
-    Terra { scale: f64 },
-    Mars { scale: f64 },
-    Ground { lat: f64, lon: f64, alt: f64 },
+    Ecliptic { scale: f64 },
+    Areocentric { scale: f64 },
+    WGS84 { lat: f64, lon: f64, alt: f64 },
+    IAU2000 { lat: f64, lon: f64, alt: f64 },
     Linear { p: [f64; 3], v: [f64; 3] },
 }
 
 impl Motion {
     fn at(&self, t: f64, epoch: f64) -> [f64; 3] {
         match self {
-            Motion::Ground { lat, lon, alt } => {
+            Motion::IAU2000 { lat, lon, alt } | Motion::WGS84 { lat, lon, alt } => {
                 let (x, y, z) = geodetic_to_icrs(*lat, *lon, *alt, t);
                 [x, y, z]
             }
@@ -152,20 +155,23 @@ impl Motion {
                 let dt = t - epoch;
                 [p[0] + v[0] * dt, p[1] + v[1] * dt, p[2] + v[2] * dt]
             }
-            Motion::Terra { scale } => {
+            Motion::Ecliptic { scale } => {
                 let (x, y, z) = earth_position_icrs(t);
                 [x * scale, y * scale, z * scale]
             }
-            Motion::Mars { scale } => {
+            Motion::Areocentric { scale } => {
                 let (x, y, z) = mars_position_icrs(t);
                 [x * scale, y * scale, z * scale]
             }
         }
     }
-    fn terra_bound(&self) -> bool {
+    fn planet_bound(&self) -> bool {
         matches!(
             self,
-            Motion::Ground { .. } | Motion::Terra { .. } | Motion::Mars { .. }
+            Motion::WGS84 { .. }
+                | Motion::IAU2000 { .. }
+                | Motion::Ecliptic { .. }
+                | Motion::Areocentric { .. }
         )
     }
 }
@@ -197,7 +203,7 @@ struct Family {
 }
 
 struct Buffer {
-    terra: Family,
+    planet: Family,
     inertial: Family,
 }
 
@@ -215,7 +221,7 @@ fn cell_of(p: [f64; 3], s: f64) -> CellKey {
 
 fn relative_frame_position(motion: &Motion, t: f64, epoch: f64) -> [f64; 3] {
     let p = motion.at(t, epoch);
-    if motion.terra_bound() {
+    if motion.planet_bound() {
         let (ex, ey, ez) = earth_position_icrs(t);
         [p[0] - ex, p[1] - ey, p[2] - ez]
     } else {
@@ -279,10 +285,10 @@ fn build_family(samples: Vec<Sample>, cadence: f64) -> Family {
 }
 
 fn build_buffer(samples: Vec<Sample>, cadence: f64) -> Buffer {
-    let (terra, inertial): (Vec<Sample>, Vec<Sample>) =
-        samples.into_iter().partition(|s| s.motion.terra_bound());
+    let (planet_samples, inertial): (Vec<Sample>, Vec<Sample>) =
+        samples.into_iter().partition(|s| s.motion.planet_bound());
     Buffer {
-        terra: build_family(terra, cadence),
+        planet: build_family(planet_samples, cadence),
         inertial: build_family(inertial, cadence),
     }
 }
@@ -410,7 +416,7 @@ fn sense_buffer(
     records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
 ) {
     let (ex, ey, ez) = earth_position_icrs(t2);
-    enclose_family(&buf.terra, [ex, ey, ez], q, t2, pad, records);
+    enclose_family(&buf.planet, [ex, ey, ez], q, t2, pad, records);
     enclose_family(&buf.inertial, [0.0, 0.0, 0.0], q, t2, pad, records);
 }
 
@@ -1432,9 +1438,10 @@ fn force_type_of(force: &str) -> f64 {
 }
 
 enum Frame {
-    Ground { lat: f64, lon: f64, alt: f64 },
-    Terra { scale: f64 },
-    Mars { scale: f64 },
+    WGS84 { lat: f64, lon: f64, alt: f64 },
+    Ecliptic { scale: f64 },
+    Areocentric { scale: f64 },
+    IAU2000 { lat: f64, lon: f64, alt: f64 },
     Data,
     Query,
 }
@@ -1518,6 +1525,8 @@ struct Archive {
     fetch_queue: (Mutex<BinaryHeap<QueuedFetch>>, Condvar),
     ttl_eff: Mutex<HashMap<String, f64>>,
     stations_cache: Mutex<HashMap<String, (Instant, Arc<Vec<StationEntry>>)>>,
+    warm_cache_mutex: Mutex<()>,
+    warm_cache_cv: Condvar,
 }
 struct WsFrame {
     opcode: u8,
@@ -1719,7 +1728,7 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                             .unwrap_or_else(|e| e.into_inner())
                             .clone();
                         let mut report = String::new();
-                        for (fname, fam) in [("terra", &buf.terra), ("inertial", &buf.inertial)] {
+                        for (fname, fam) in [("terra", &buf.planet), ("inertial", &buf.inertial)] {
                             let mut n = 0usize;
                             let mut field_names: std::collections::HashSet<&str> =
                                 std::collections::HashSet::new();
@@ -1901,7 +1910,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                             (Some(spd), Some(hdg)) if spd > 0.0 => {
                                 flow_motion(lat, lon, alt, spd, hdg, 0.0, now)
                             }
-                            _ => Motion::Ground { lat, lon, alt },
+                            _ => Motion::WGS84 { lat, lon, alt },
                         };
                         let (vmax, amax, p0f) = law_bounds(&motion, now, 0.0);
                         let sample = Sample {
@@ -1969,6 +1978,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                         format!("{}_{}_{}", x0 as i64, y0 as i64, z0 as i64),
                         (t0, x0, y0, z0, extent),
                     );
+                archive.warm_cache_cv.notify_one();
                 let q = [x0, y0, z0];
                 sense_buffer(&field, q, t0, extent, &mut records);
                 sense_buffer(&station_buf, q, t0, extent, &mut records);
@@ -2096,6 +2106,7 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_alt: f64 = 0.0;
     let mut cur_terra: Option<f64> = None;
     let mut cur_mars: Option<f64> = None;
+    let mut cur_mars_surface = false;
     let mut cur_pos: Option<(String, String, Option<String>, f64)> = None;
     let mut cur_lat_str = String::new();
     let mut cur_format = String::new();
@@ -2140,15 +2151,23 @@ fn load_sources() -> Vec<SourceConfig> {
                             )
                         });
                     let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
-                        Some(Frame::Ground {
-                            lat,
-                            lon,
-                            alt: cur_alt,
-                        })
+                        if cur_mars_surface {
+                            Some(Frame::IAU2000 {
+                                lat,
+                                lon,
+                                alt: cur_alt,
+                            })
+                        } else {
+                            Some(Frame::WGS84 {
+                                lat,
+                                lon,
+                                alt: cur_alt,
+                            })
+                        }
                     } else if let Some(scale) = cur_terra {
-                        Some(Frame::Terra { scale })
+                        Some(Frame::Ecliptic { scale })
                     } else if let Some(scale) = cur_mars {
-                        Some(Frame::Mars { scale })
+                        Some(Frame::Areocentric { scale })
                     } else if has_data_position {
                         Some(Frame::Data)
                     } else if cur_url.contains("{lat}")
@@ -2223,6 +2242,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_alt = 0.0;
                 cur_terra = None;
                 cur_mars = None;
+                cur_mars_surface = false;
                 cur_pos = None;
                 cur_lat_str.clear();
                 cur_format.clear();
@@ -2258,14 +2278,22 @@ fn load_sources() -> Vec<SourceConfig> {
             "min_freq" => cur_min_freq = parts.get(1).and_then(|s| s.parse().ok()),
             "body" => cur_body = Some(line.get(5..).unwrap_or("").trim().to_string()),
             "verify" => {} // ignored, kept for compat
-            "lat" => {
+            "wgs84" => {
                 cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
                 cur_lat = cur_lat_str.parse().ok();
+                cur_lon = parts.get(2).and_then(|s| s.parse().ok());
+                cur_alt = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0);
             }
-            "lon" => cur_lon = parts.get(1).and_then(|s| s.parse().ok()),
-            "alt" => cur_alt = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0.0),
-            "terra" => cur_terra = parts.get(1).and_then(|s| s.parse().ok()),
-            "mars" => cur_mars = parts.get(1).and_then(|s| s.parse().ok()),
+            "iau2000" => {
+                cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
+                cur_lat = cur_lat_str.parse().ok();
+                cur_lon = parts.get(2).and_then(|s| s.parse().ok());
+                cur_alt = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+                cur_mars_surface = true;
+            }
+            "ecliptic" => cur_terra = parts.get(1).and_then(|s| s.parse().ok()),
+            "ssb" => cur_terra = Some(0.0),
+            "areocentric" => cur_mars = parts.get(1).and_then(|s| s.parse().ok()),
             "pos" => {
                 if parts.len() >= 3 {
                     cur_pos = Some((
@@ -3096,6 +3124,7 @@ fn fetch_worker(archive: Arc<Archive>) {
             .lock()
             .unwrap_or_else(|e| e.into_inner())
             .push((i, origin, region, body));
+        archive.warm_cache_cv.notify_one();
         archive
             .inflight
             .lock()
@@ -3592,7 +3621,8 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 }
             }
             Extract::Rows { fields } => {
-                if let Frame::Ground { lat, lon, alt } = src.frame {
+                if let Frame::WGS84 { lat, lon, alt } | Frame::IAU2000 { lat, lon, alt } = src.frame
+                {
                     let col_indices: Vec<(usize, &String)> = fields
                         .iter()
                         .filter_map(|(fk, fn_)| {
@@ -3931,7 +3961,7 @@ fn materialize(
     let vmax_floor = 0.0f64;
     let motion = match &pend.position {
         PendingPosition::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
-        PendingPosition::Geodetic { lat, lon, alt } => Motion::Ground {
+        PendingPosition::Geodetic { lat, lon, alt } => Motion::WGS84 {
             lat: *lat,
             lon: *lon,
             alt: *alt,
@@ -3945,16 +3975,21 @@ fn materialize(
             vrate,
         } => flow_motion(*lat, *lon, *alt, *speed, *track, *vrate, pend.epoch),
         PendingPosition::Source => match &src.frame {
-            Frame::Ground { lat, lon, alt } => Motion::Ground {
+            Frame::WGS84 { lat, lon, alt } => Motion::WGS84 {
                 lat: *lat,
                 lon: *lon,
                 alt: *alt,
             },
-            Frame::Terra { scale } => Motion::Terra { scale: *scale },
-            Frame::Mars { scale } => Motion::Mars { scale: *scale },
+            Frame::IAU2000 { lat, lon, alt } => Motion::IAU2000 {
+                lat: *lat,
+                lon: *lon,
+                alt: *alt,
+            },
+            Frame::Ecliptic { scale } => Motion::Ecliptic { scale: *scale },
+            Frame::Areocentric { scale } => Motion::Areocentric { scale: *scale },
             Frame::Query => {
                 let (lat, lon) = region?;
-                Motion::Ground { lat, lon, alt: 0.0 }
+                Motion::WGS84 { lat, lon, alt: 0.0 }
             }
             Frame::Data => {
                 let (latf, lonf, altf, alt_scale) = src.pos_fields.as_ref()?;
@@ -3965,7 +4000,7 @@ fn materialize(
                     Some(k) => find(k)? * alt_scale,
                     None => 0.0,
                 };
-                Motion::Ground { lat, lon, alt }
+                Motion::WGS84 { lat, lon, alt }
             }
         },
     };
@@ -4068,15 +4103,15 @@ fn warm_cache(archive: Arc<Archive>) {
             .cloned()
             .collect();
         if presences.is_empty() {
-            eprintln!("WARM: no presences, sleep {cadence}s");
-            thread::sleep(std::time::Duration::from_secs(cadence as u64));
+            let lock = archive
+                .warm_cache_mutex
+                .lock()
+                .unwrap_or_else(|e| e.into_inner());
+            let _ = archive
+                .warm_cache_cv
+                .wait_timeout(lock, std::time::Duration::from_secs_f64(cadence));
             continue;
         }
-        eprintln!(
-            "WARM: {} presences, {} sources",
-            presences.len(),
-            archive.sources.len()
-        );
 
         let mut tasks: Vec<(
             usize,
@@ -4099,18 +4134,19 @@ fn warm_cache(archive: Arc<Archive>) {
             for (i, src) in archive.sources.iter().enumerate() {
                 let fc = force_constants(&src.force);
                 let r = match fc {
-                    Some((v_or_d, tau_default, is_diff, _)) => {
+                    Some((v_or_d, tau_default, is_diff, _force_id)) => {
                         let tau = src.tau.unwrap_or(tau_default);
+                        let reach_time = src.ttl as f64 + tau;
                         if is_diff {
-                            (2.0 * v_or_d * tau).sqrt()
+                            (2.0 * v_or_d * reach_time).sqrt()
                         } else {
-                            v_or_d * tau
+                            v_or_d * reach_time
                         }
                     }
                     None => continue,
                 };
                 match &src.frame {
-                    Frame::Ground { lat, lon, alt } => {
+                    Frame::WGS84 { lat, lon, alt } | Frame::IAU2000 { lat, lon, alt } => {
                         let origin = (i as u32, 0, 0);
                         let eff_ttl = ttl_snapshot
                             .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -4134,7 +4170,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             src.ttl,
                         ));
                     }
-                    Frame::Terra { scale } => {
+                    Frame::Ecliptic { scale } => {
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
                             &origins,
@@ -4152,12 +4188,6 @@ fn warm_cache(archive: Arc<Archive>) {
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
-                        if scale < &0.01 {
-                            eprintln!(
-                                "TERRA0 TASK: {} (pos=({:.0},{:.0},{:.0}))",
-                                src.name, pos.0, pos.1, pos.2
-                            );
-                        }
                         tasks.push((
                             i,
                             origin,
@@ -4168,7 +4198,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             src.ttl,
                         ));
                     }
-                    Frame::Mars { scale } => {
+                    Frame::Areocentric { scale } => {
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
                             &origins,
@@ -4208,7 +4238,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                 let ddx = px - ex;
                                 let ddy = py - ey;
                                 let ddz = pz - ez;
-                                let domain = TERRA_DOMAIN + extent;
+                                let domain = EARTH_DOMAIN + extent;
                                 if ddx * ddx + ddy * ddy + ddz * ddz > domain * domain {
                                     continue;
                                 }
@@ -4287,7 +4317,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             let ddx = px - ex;
                             let ddy = py - ey;
                             let ddz = pz - ez;
-                            let domain = TERRA_DOMAIN + extent;
+                            let domain = EARTH_DOMAIN + extent;
                             if ddx * ddx + ddy * ddy + ddz * ddz > domain * domain {
                                 continue;
                             }
@@ -4425,7 +4455,7 @@ fn warm_cache(archive: Arc<Archive>) {
                 .read()
                 .unwrap_or_else(|e| e.into_inner())
                 .clone();
-            for fam in [&old.terra, &old.inertial] {
+            for fam in [&old.planet, &old.inertial] {
                 for v in fam.cells.values() {
                     for s in v {
                         if (now - s.epoch).abs() <= s.ttl * 64.0 && !refreshed.contains(&s.origin) {
@@ -4446,7 +4476,13 @@ fn warm_cache(archive: Arc<Archive>) {
             .lock()
             .unwrap_or_else(|e| e.into_inner())
             .retain(|_, o| (now - o.fetched).abs() < o.ttl.max(1.0) * 64.0);
-        thread::sleep(std::time::Duration::from_secs(cadence as u64));
+        let lock = archive
+            .warm_cache_mutex
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
+        let _ = archive
+            .warm_cache_cv
+            .wait_timeout(lock, std::time::Duration::from_secs_f64(cadence));
     }
 }
 
@@ -4476,6 +4512,8 @@ fn main() {
         fetch_queue: (Mutex::new(BinaryHeap::new()), Condvar::new()),
         ttl_eff: Mutex::new(HashMap::new()),
         stations_cache: Mutex::new(HashMap::new()),
+        warm_cache_mutex: Mutex::new(()),
+        warm_cache_cv: Condvar::new(),
     });
     for _ in 0..8 {
         let ar = Arc::clone(&archive);
