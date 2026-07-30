@@ -12,7 +12,6 @@ const Φ: f64 = 1.618033988749895;
 const AU: f64 = 1.495978707e11;
 const EARTH_RADIUS: f64 = 6378137.0;
 const MARS_RADIUS: f64 = 3396190.0;
-const MARS_ECC: f64 = 0.0934123;
 const EARTH_ECC: f64 = 0.0167086;
 const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const J2000_EPOCH: f64 = 2451545.0;
@@ -109,6 +108,25 @@ fn geodetic_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f
     (x_ecl + ex, y_ecl + ey, z_ecl + ez)
 }
 
+fn iau2000_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f64) {
+    let lat_rad = lat.to_radians();
+    let lon_rad = lon.to_radians();
+    let r = MARS_RADIUS + alt;
+    let x_body = r * lat_rad.cos() * lon_rad.cos();
+    let y_body = r * lat_rad.cos() * lon_rad.sin();
+    let z_body = r * lat_rad.sin();
+    let mars_day = 88642.66;
+    let rot = (tdb_secs / mars_day).fract() * std::f64::consts::TAU;
+    let x_eci = x_body * rot.cos() + y_body * rot.sin();
+    let y_eci = -x_body * rot.sin() + y_body * rot.cos();
+    let z_eci = z_body;
+    let x_ecl = x_eci;
+    let y_ecl = y_eci * ECLIPTIC_OBLIQUITY.cos() + z_eci * ECLIPTIC_OBLIQUITY.sin();
+    let z_ecl = -y_eci * ECLIPTIC_OBLIQUITY.sin() + z_eci * ECLIPTIC_OBLIQUITY.cos();
+    let (mx, my, mz) = mars_position_icrs(tdb_secs);
+    (x_ecl + mx, y_ecl + my, z_ecl + mz)
+}
+
 fn icrs_to_geodetic(x: f64, y: f64, z: f64, tdb_secs: f64) -> (f64, f64) {
     let (ex, ey, ez) = earth_position_icrs(tdb_secs);
     let x_ecl = x - ex;
@@ -147,8 +165,12 @@ enum Motion {
 impl Motion {
     fn at(&self, t: f64, epoch: f64) -> [f64; 3] {
         match self {
-            Motion::IAU2000 { lat, lon, alt } | Motion::WGS84 { lat, lon, alt } => {
+            Motion::WGS84 { lat, lon, alt } => {
                 let (x, y, z) = geodetic_to_icrs(*lat, *lon, *alt, t);
+                [x, y, z]
+            }
+            Motion::IAU2000 { lat, lon, alt } => {
+                let (x, y, z) = iau2000_to_icrs(*lat, *lon, *alt, t);
                 [x, y, z]
             }
             Motion::Linear { p, v } => {
