@@ -43,6 +43,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let stableTick = 0;
         let tPresence = 0;
         let exposureBoost = 0;
+        let exposureF = 0;
         let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = 0;
         let lastManualZoomTs = 0;
         let prevOmega = 0, prevOmegaTs = 0;
@@ -269,7 +270,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let retarded_dt = mt.y;
     let tau = mt.z;
 
-    let val = raw_val * exp(-retarded_dt / max(tau, 1e-9));
+    let val = raw_val * exp(-retarded_dt / max(mt.z, 1e-9));
 
     let w = vp.surface.x;
     let h = vp.surface.y;
@@ -349,7 +350,7 @@ fn presence_probe() {
         let tau = mt.z;
         let force_type = u32(mt.w);
 
-        let val_eff = m.w * exp(-retarded_dt / max(tau, 1e-9));
+        let val_eff = m.w * exp(-retarded_dt / max(mt.z, 1e-9));
         let sk = field_spatial(d2, d_mag, extent, force_type, 1.0);
 
         if (force_type < 8u) {
@@ -425,7 +426,6 @@ fn presence_probe() {
             } catch { gpu = null; }
         }
         initFieldGPU();
-        function decay(o) { const w = o.val * Math.exp(-Math.abs(tPresence - o.t) / o.ttl); return isFinite(w) ? w : 0; }
         function ensureFieldCapacity(n) {
             if (fieldCap > 0 && n <= fieldCap) return;
             let c = 256;
@@ -441,7 +441,6 @@ fn presence_probe() {
                 { binding: 2, resource: { buffer: vpBuf } },
                 { binding: 3, resource: { buffer: probeBuf } }
             ] });
-            probeBind = fieldBind;
         }
         let lastN = 0;
         async function probePresence() {
@@ -462,14 +461,7 @@ fn presence_probe() {
                 probedOmegas = [data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]];
                 probedOmega = data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7];
                 probeRead.unmap();
-            } catch {}
-            let total = 0;
-            for (let fi = 0; fi < rawWindowResponse.length; fi++) {
-                total += rawWindowResponse[fi].decay() || 0;
-            }
-            probedOmega = total;
-            for (let k = 0; k < 8; k++) probedOmegas[k] = 0;
-            probePending = false;
+            } catch {} finally { probePending = false; }
         }
 
         function manifestWindow(ts) {
@@ -487,11 +479,10 @@ fn presence_probe() {
                 return;
             }
             const dt = prevSyncTs > 0 ? (ts - prevSyncTs) / 1000 : 0;
-            const blendPrev = false;
-            const n = Math.max(rawWindowResponse.length, prevWindowResponse.length);
-            while (lastN > 0 && n >= lastN * 2 && evalShiftTarget < 2 && (RX >> (evalShiftTarget + 1)) >= 1) evalShiftTarget++;
-            lastN = n;
-            ensureFieldCapacity(n);
+            let nPeak = 0;
+            const n = rawWindowResponse.length;
+            nPeak = Math.max(n, nPeak * Math.pow(2, -dt / Φ));
+            ensureFieldCapacity(Math.max(n, Math.ceil(nPeak)));
             const xyzval = new Float32Array(Math.max(n, 1) * 4);
             const meta = new Float32Array(Math.max(n, 1) * 4);
             const τ = Φ;
@@ -524,14 +515,14 @@ fn presence_probe() {
                 const dz = fz - zPresence;
                 const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
                 const retarded_dt = Math.max(0.0, Math.abs(fdt) - d / c_js);
-                const tau = o ? o.tau : 1.0;
+                const ttl = o && o.ttl ? o.ttl : 60.0;
                 xyzval[i * 4] = dx;
                 xyzval[i * 4 + 1] = dy;
                 xyzval[i * 4 + 2] = dz;
                 xyzval[i * 4 + 3] = fv;
                 meta[i * 4] = fext;
                 meta[i * 4 + 1] = retarded_dt;
-                meta[i * 4 + 2] = tau;
+                meta[i * 4 + 2] = ttl;
                 meta[i * 4 + 3] = fforce;
             }
             const dpr = window.devicePixelRatio || 1;
@@ -539,7 +530,8 @@ fn presence_probe() {
             const evalH = Math.floor(RY * dpr);
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
             const [fr, fu] = orientationFrame();
-            const exposure = Math.max(Math.abs(probedOmega), Math.pow(2, -40)) / Math.pow(2, exposureBoost);
+            exposureF += (Math.abs(probedOmega) - exposureF) * (1 - Math.pow(2, -dt / Φ));
+            const exposure = Math.max(exposureF, Math.pow(2, -40)) / Math.pow(2, exposureBoost);
             try {
                 gpu.queue.writeBuffer(fieldBuf, 0, xyzval);
                 gpu.queue.writeBuffer(extentBuf, 0, meta);
@@ -1119,9 +1111,8 @@ fn presence_probe() {
                     if (dx !== 0) qOrientation = qNorm(qMul(qAxisAngle(fu, dx / 256), qOrientation));
                     if (dy !== 0) qOrientation = qNorm(qMul(qAxisAngle(fr, dy / 256), qOrientation));
                 } else {
-                    pPresence[0] -= fr[0] * dx * gridStep - fu[0] * dy * gridStep;
-                    pPresence[1] -= fr[1] * dx * gridStep - fu[1] * dy * gridStep;
-                    pPresence[2] -= fr[2] * dx * gridStep - fu[2] * dy * gridStep;
+                    if (dx !== 0) qOrientation = qNorm(qMul(qAxisAngle(fu, dx / 256), qOrientation));
+                    if (dy !== 0) qOrientation = qNorm(qMul(qAxisAngle(fr, dy / 256), qOrientation));
                 }
             } else if (pointers.size === 2) {
                 const pts = [...pointers.values()];
@@ -1139,7 +1130,7 @@ fn presence_probe() {
                 }
                 pinchPrev = { spread, angle, mid };
             } else if (pointers.size >= 3) {
-                tThrustTarget = -dy * 64 / 256;
+                tThrustTarget = Math.max(-4, Math.min(4, -dy / 64));
             }
         });
         const pointerEnd = (e) => { pointers.delete(e.pointerId); pinchPrev = null; if (pointers.size < 3) tThrustTarget = 0; };
