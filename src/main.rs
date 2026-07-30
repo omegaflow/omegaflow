@@ -1350,6 +1350,7 @@ enum Extract {
         trk_key: String,
         vr_key: String,
         fields: Vec<(String, String)>,
+        lon_sign: Option<String>,
     },
     Regex(String, String),
     XmlCount(String, String),
@@ -2363,6 +2364,7 @@ fn load_sources() -> Vec<SourceConfig> {
                         trk_key: String::new(),
                         vr_key: String::new(),
                         fields: Vec::new(),
+                        lon_sign: None,
                     });
                 }
             }
@@ -2394,6 +2396,11 @@ fn load_sources() -> Vec<SourceConfig> {
             "vr_key" => {
                 if let Some(Extract::Map { vr_key, .. }) = cur_extracts.last_mut() {
                     *vr_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "lon_sign" => {
+                if let Some(Extract::Map { lon_sign, .. }) = cur_extracts.last_mut() {
+                    *lon_sign = parts.get(1).map(|s| s.to_string());
                 }
             }
             "flatten" => {
@@ -2818,7 +2825,7 @@ fn render_source_url(
         if let Some(ref st_url) = src.stations_url {
             let cache_key = st_url.clone();
             let stations = {
-                let mut cache = ar.stations_cache.lock().unwrap_or_else(|e| e.into_inner());
+                let cache = ar.stations_cache.lock().unwrap_or_else(|e| e.into_inner());
                 if let Some((ts, st)) = cache.get(&cache_key) {
                     if ts.elapsed().as_secs() < 86400 {
                         Some(st.clone())
@@ -3449,6 +3456,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 trk_key,
                 vr_key,
                 fields,
+                lon_sign,
             } => {
                 if let Some(ref j) = parsed_json {
                     if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
@@ -3470,6 +3478,20 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                 if ev_fields.is_empty() {
                                     continue;
                                 }
+                                let mut lon_val = lo;
+                                if let Some(sign_key) = lon_sign {
+                                    if let Some(vv) = jpath_val(v, sign_key) {
+                                        if let JsonVal::Str(s) = vv {
+                                            if s.contains('W')
+                                                || s.contains('w')
+                                                || s.contains('S')
+                                                || s.contains('s')
+                                            {
+                                                lon_val = -lo;
+                                            }
+                                        }
+                                    }
+                                }
                                 let speed = if vel_key.is_empty() {
                                     None
                                 } else {
@@ -3488,7 +3510,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                 let position = if let (Some(sp), Some(tr)) = (speed, track) {
                                     PendingPosition::GeodeticFlow {
                                         lat: la,
-                                        lon: lo,
+                                        lon: lon_val,
                                         alt: al,
                                         speed: sp,
                                         track: tr,
@@ -3497,7 +3519,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                 } else {
                                     PendingPosition::Geodetic {
                                         lat: la,
-                                        lon: lo,
+                                        lon: lon_val,
                                         alt: al,
                                     }
                                 };

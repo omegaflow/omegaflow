@@ -22287,6 +22287,7 @@ url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
 map data
 lat_key 3
 lon_key 5
+lon_sign 6
 field_in 0 event_date
 field_in 1 energy
 field_in 2 impact_energy_kt
