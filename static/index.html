@@ -470,6 +470,9 @@ fn presence_probe() {
             probedOmega = total;
             for (let k = 0; k < 8; k++) probedOmegas[k] = 0;
             probePending = false;
+        }
+
+        function manifestWindow(ts) {
             if (!gpu) { initFieldGPU(); return; }
             if (!fieldVisible) {
                 try {
