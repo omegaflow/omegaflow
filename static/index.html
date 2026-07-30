@@ -350,7 +350,7 @@ fn presence_probe() {
         let force_type = u32(mt.w);
 
         let val_eff = m.w * exp(-retarded_dt / max(tau, 1e-9));
-        let sk = field_spatial(d2, d_mag, extent, force_type, 1e-9);
+        let sk = field_spatial(d2, d_mag, extent, force_type, 1.0);
 
         if (force_type < 8u) {
             omegas[force_type] += val_eff * sk;
