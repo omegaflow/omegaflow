@@ -931,9 +931,6 @@ fn presence_probe() {
             stableTick = stableTick * (1 - ma()) + rawTick * ma();
             transport.tickTime = stableTick;
 
-            const zoomRate = Math.pow(2, rawTick / 500);
-            if (keysDown.has('-')) { gridStep *= zoomRate; lastManualZoomTs = performance.now(); }
-            if (keysDown.has('+')) { gridStep /= zoomRate; lastManualZoomTs = performance.now(); }
             if (keysDown.has(',')) tThrustTarget = -64;
             else if (keysDown.has('.')) tThrustTarget = 64;
             else if (pointers.size < 3) tThrustTarget = 0;
@@ -964,8 +961,6 @@ fn presence_probe() {
                 pPresence[0] += (fr[0] * strafe - ff[0] * thrust) * gSpeed;
                 pPresence[1] += (fr[1] * strafe - ff[1] * thrust) * gSpeed;
                 pPresence[2] += (fr[2] * strafe - ff[2] * thrust) * gSpeed;
-                if (gp.buttons[6] && gp.buttons[6].value > 0) gridStep *= Math.pow(2, gp.buttons[6].value * rawTick / 500);
-                if (gp.buttons[7] && gp.buttons[7].value > 0) gridStep /= Math.pow(2, gp.buttons[7].value * rawTick / 500);
                 if (gp.buttons[4] && gp.buttons[4].pressed) tThrustTarget = -64;
                 if (gp.buttons[5] && gp.buttons[5].pressed) tThrustTarget = 64;
             }
@@ -1119,18 +1114,11 @@ fn presence_probe() {
                 const spread = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
                 const angle = Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x);
                 if (pinchPrev) {
-                    const ratio = spread / pinchPrev.spread;
-                    const dmx = mid[0] - pinchPrev.mid[0], dmy = mid[1] - pinchPrev.mid[1];
-                    if (ratio > 0 && isFinite(ratio) && Math.abs(ratio - 1.0) > 0.01) {
-                        gridStep /= ratio;
-                        lastManualZoomTs = performance.now();
-                    } else if (Math.abs(dmy) > 4 && Math.abs(dmx) < Math.abs(dmy) * 2) {
+                    const dmy = mid[1] - pinchPrev.mid[1];
+                    if (Math.abs(dmy) > 4) {
                         gridStep *= Math.pow(2, dmy / 512);
                         lastManualZoomTs = performance.now();
                     }
-                    pPresence[0] -= fr[0] * dmx * gridStep - fu[0] * dmy * gridStep;
-                    pPresence[1] -= fr[1] * dmx * gridStep - fu[1] * dmy * gridStep;
-                    pPresence[2] -= fr[2] * dmx * gridStep - fu[2] * dmy * gridStep;
                     const da = angle - pinchPrev.angle;
                     if (da !== 0) qOrientation = qNorm(qMul(qAxisAngle(ff, da), qOrientation));
                 }
@@ -1143,23 +1131,6 @@ fn presence_probe() {
         window.addEventListener('pointerup', pointerEnd);
         window.addEventListener('pointercancel', pointerEnd);
         window.addEventListener('contextmenu', (e) => e.preventDefault());
-        window.addEventListener('wheel', (e) => {
-            if (e.shiftKey) {
-                tThrust -= Math.sign(e.deltaY) * 8;
-                e.preventDefault();
-                return;
-            }
-            const [fr, fu] = orientationFrame();
-            const mxr = (e.clientX / RX - 0.5) * RX, myr = (0.5 - e.clientY / RY) * RY;
-            const oldStep = gridStep;
-            gridStep *= Math.pow(2, e.deltaY / 256);
-            lastManualZoomTs = performance.now();
-            const d = oldStep - gridStep;
-            pPresence[0] += d * (mxr * fr[0] + myr * fu[0]);
-            pPresence[1] += d * (mxr * fr[1] + myr * fu[1]);
-            pPresence[2] += d * (mxr * fr[2] + myr * fu[2]);
-            e.preventDefault();
-        }, { passive: false });
         window.addEventListener('keydown', (e) => { keysDown.add(e.key); });
         window.addEventListener('keyup', (e) => { keysDown.delete(e.key); });
         window.addEventListener('keydown', (e) => {
