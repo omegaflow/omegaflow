@@ -4527,6 +4527,20 @@ field_in wave_height oceanography_incois_wave_height_m
 field_in arrival_time oceanography_incois_arrival_time
 field_in significance oceanography_incois_significance
 
+source open_meteo_airquality_full
+ttl 600
+force diffusion
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,aerosol_optical_depth&timezone=auto
+path latitude atmosphere_lat
+path longitude atmosphere_lon
+path current.pm10 atmosphere_pm10_ugm3
+path current.pm2_5 atmosphere_pm25_ugm3
+path current.carbon_monoxide atmosphere_co_ugm3
+path current.nitrogen_dioxide atmosphere_no2_ugm3
+path current.sulphur_dioxide atmosphere_so2_ugm3
+path current.ozone atmosphere_o3_ugm3
+path current.aerosol_optical_depth atmosphere_aod
+
 source physics_gcn_ligo_circulars
 ttl 600
 force em
@@ -9611,6 +9625,20 @@ rows
 lat_key latitude
 lon_key longitude
 field sst_anom sst_anomaly_c
+
+source cneos_fireballs_infrasound
+ttl 86400
+force acoustic
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
+map data
+lat_key 3
+lon_key 5
+lon_sign 6
+field_in 0 event_date
+field_in 1 energy
+field_in 2 impact_energy_kt
+field_in 7 altitude_km
+field_in 8 velocity_kms
 
 source cosmos_asteroids_numbered
 ttl 86400
@@ -22279,31 +22307,3 @@ catalog I/355/gaiadr3
 map data
 lat_key RAJ2000
 lon_key DEJ2000
-
-source cneos_fireballs_infrasound
-ttl 86400
-force acoustic
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
-map data
-lat_key 3
-lon_key 5
-lon_sign 6
-field_in 0 event_date
-field_in 1 energy
-field_in 2 impact_energy_kt
-field_in 7 altitude_km
-field_in 8 velocity_kms
-
-source open_meteo_airquality_full
-ttl 600
-force diffusion
-url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,aerosol_optical_depth&timezone=auto
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path current.pm10 atmosphere_pm10_ugm3
-path current.pm2_5 atmosphere_pm25_ugm3
-path current.carbon_monoxide atmosphere_co_ugm3
-path current.nitrogen_dioxide atmosphere_no2_ugm3
-path current.sulphur_dioxide atmosphere_so2_ugm3
-path current.ozone atmosphere_o3_ugm3
-path current.aerosol_optical_depth atmosphere_aod
