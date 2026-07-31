@@ -66,6 +66,7 @@ export async function syncFrame(inputs, queries) {
 
     const field = new Float32Array(oscCount * 8);
     const meta = new Float32Array(oscCount * 4);
+    const px = queries[0]?.x || 0, py = queries[0]?.y || 0, pz = queries[0]?.z || 0;
 
     for (let i = 0; i < oscCount; i++) {
         if (o + 72 > bytes.length) break;
@@ -80,9 +81,9 @@ export async function syncFrame(inputs, queries) {
         const force_type = dvRes.getFloat64(o, true); o += 8;
 
         const fOff = i * 8;
-        field[fOff] = x;
-        field[fOff + 1] = y;
-        field[fOff + 2] = z;
+        field[fOff] = x - px;
+        field[fOff + 1] = y - py;
+        field[fOff + 2] = z - pz;
         field[fOff + 3] = val;
         field[fOff + 4] = t;
         field[fOff + 5] = ttl;

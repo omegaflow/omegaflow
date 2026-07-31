@@ -258,8 +258,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     );
 
     let m = field[id * 2u];
-    let abs_pos = m.xyz;
-    let d = abs_pos - vp.presence.xyz;
+    let d = m.xyz;
     let val = m.w;
     let tm = field[id * 2u + 1u];
     let mt = props[id];
@@ -336,8 +335,7 @@ fn presence_probe() {
     for (var j = 0u; j < count; j = j + 1u) {
         let m = field[j * 2u];
         let tm = field[j * 2u + 1u];
-        let abs_pos = m.xyz;
-        let d = abs_pos - vp.presence.xyz;
+        let d = m.xyz;
         let d2 = dot(d, d);
         let d_mag = sqrt(d2);
         let mt = props[j];
