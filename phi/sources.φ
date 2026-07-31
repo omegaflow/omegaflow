@@ -20180,7 +20180,6 @@ lon_key longitude
 field elevation_m hydrosphere_ndbc_station_elevation_m
 field station_type hydrosphere_ndbc_station_type
 
-
 source neutrino_oscillation_papers
 ttl 604800
 force em
@@ -21316,13 +21315,6 @@ url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=jso
 wgs84 38.899 -77.043
 field 1.0.value biosphere_death_rate_per_1000
 
-source biosphere_worldbank_gdp_growth_DEU
-ttl 2592000
-force em
-url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
-wgs84 52.520 13.405
-field 1.0.value biosphere_gdp_growth_pct_DEU
-
 source biosphere_worldbank_gdp_growth_afghanistan
 ttl 2592000
 force em
@@ -21700,6 +21692,13 @@ force em
 url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
 wgs84 55.68 12.57
 field 1.0.value biosphere_gdp_growth_denmark_pct
+
+source biosphere_worldbank_gdp_growth_DEU
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+wgs84 52.520 13.405
+field 1.0.value biosphere_gdp_growth_pct_DEU
 
 source biosphere_worldbank_gdp_growth_djibouti
 ttl 2592000
