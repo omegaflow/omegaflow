@@ -6197,14 +6197,14 @@ field pull_count biosphere_software_ubuntu_pulls_dockerhub
 
 source earth_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_earth_distance
 extent 4.26e-5
 
 source enceladus_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ephemeris orbital_enceladus_distance
 extent 1.68e-6
@@ -6379,7 +6379,7 @@ field year year
 
 source europa_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ephemeris orbital_europa_distance
 extent 1.04e-5
@@ -6454,7 +6454,7 @@ field_in duration duration_s
 
 source ganymede_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ephemeris orbital_ganymede_distance
 extent 1.76e-5
@@ -7057,7 +7057,7 @@ field place_guess locality
 
 source io_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27501%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ephemeris orbital_io_distance
 extent 1.22e-5
@@ -7173,7 +7173,7 @@ ephemeris orbital_juno_distance
 
 source jupiter_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_jupiter_distance
 extent 4.67e-4
@@ -7267,7 +7267,7 @@ extent 4.78e-6
 
 source mars_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_mars_distance
 extent 2.27e-5
@@ -7367,7 +7367,7 @@ field em_max wavelength_max_m
 
 source mercury_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_mercury_distance
 extent 1.63e-5
@@ -7387,7 +7387,7 @@ field altim pressure_hpa
 
 source moon_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_moon_distance
 extent 1.16e-5
@@ -7547,7 +7547,7 @@ field imp impact_flag
 
 source neptune_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_neptune_distance
 extent 1.65e-4
@@ -8220,7 +8220,7 @@ field fields.country.0.name primary_country
 
 source saturn_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27699%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_saturn_distance
 extent 3.89e-4
@@ -8242,7 +8242,7 @@ field properties.eo:cloud_cover cloud_cover_pct
 
 source solar_callisto_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27504%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ephemeris orbital_callisto_distance
 extent 1.61e-5
@@ -8285,7 +8285,7 @@ ephemeris orbital_solar_orbiter_distance
 
 source sun_vectors
 ttl 3600
-force em
+force em gravity thermal
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_sun_distance
 extent 0.004650
@@ -8338,14 +8338,14 @@ field properties.uf state
 
 source titan_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27606%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ephemeris orbital_titan_distance
 extent 1.72e-5
 
 source triton_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ephemeris orbital_triton_distance
 extent 9.04e-6
@@ -8389,7 +8389,7 @@ field_in 8 velocity_kms
 
 source uranus_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27799%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_uranus_distance
 extent 1.70e-4
@@ -8463,7 +8463,7 @@ field EndDate activity_end_date
 
 source venus_vectors
 ttl 3600
-force em
+force em gravity
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27299%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
 ephemeris orbital_venus_distance
 extent 4.05e-5

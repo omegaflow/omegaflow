@@ -4318,9 +4318,9 @@ fn materialize(
     region: Option<(f64, f64)>,
     pend: PendingSample,
     origins: &mut HashMap<Origin, OriginState>,
-) -> Option<Sample> {
+) -> Vec<Sample> {
     if pend.fields.is_empty() {
-        return None;
+        return vec![];
     }
     let vmax_floor = 0.0f64;
     let motion = match &pend.position {
@@ -4352,16 +4352,23 @@ fn materialize(
             Frame::Ecliptic { scale } => Motion::Ecliptic { scale: *scale },
             Frame::Areocentric { scale } => Motion::Areocentric { scale: *scale },
             Frame::Query => {
-                let (lat, lon) = region?;
+                let Some((lat, lon)) = region else {
+                    return vec![];
+                };
                 Motion::WGS84 { lat, lon, alt: 0.0 }
             }
             Frame::Data => {
-                let (latf, lonf, altf, alt_scale) = src.pos_fields.as_ref()?;
+                let Some((latf, lonf, altf, alt_scale)) = src.pos_fields.as_ref() else {
+                    return vec![];
+                };
                 let find = |k: &str| pend.fields.iter().find(|(n, _)| n == k).map(|(_, v)| *v);
-                let lat = find(latf)?;
-                let lon = find(lonf)?;
+                let Some(lat) = find(latf) else { return vec![] };
+                let Some(lon) = find(lonf) else { return vec![] };
                 let alt = match altf {
-                    Some(k) => find(k)? * alt_scale,
+                    Some(k) => {
+                        let Some(v) = find(k) else { return vec![] };
+                        v * alt_scale
+                    }
                     None => 0.0,
                 };
                 Motion::WGS84 { lat, lon, alt }
@@ -4370,7 +4377,7 @@ fn materialize(
     };
     let abs = motion.at(pend.epoch, pend.epoch);
     if abs[0].is_nan() || abs[1].is_nan() || abs[2].is_nan() || pend.epoch.is_nan() {
-        return None;
+        return vec![];
     }
     let mut resid_ema = 0.0;
     let track_origin = matches!(pend.position, PendingPosition::Source)
@@ -4400,13 +4407,20 @@ fn materialize(
     }
     let (mut vmax, amax, p0f) = law_bounds(&motion, pend.epoch, resid_ema);
     if p0f[0].is_nan() || p0f[1].is_nan() || p0f[2].is_nan() || vmax.is_nan() || amax.is_nan() {
-        return None;
+        return vec![];
     }
     if vmax_floor > vmax {
         vmax = vmax_floor;
     }
-    let fc = force_constants(&src.force)?;
-    let (v_or_d, tau_default, is_diff, force_type) = fc;
+    let forces: Vec<(f64, f64, bool, u8)> = src
+        .force
+        .split_whitespace()
+        .filter_map(|f| force_constants(f))
+        .collect();
+    if forces.is_empty() {
+        return vec![];
+    }
+    let (v_or_d, tau_default, is_diff, _) = forces[0];
     let tau = src
         .tau
         .or_else(|| {
@@ -4428,26 +4442,30 @@ fn materialize(
         v_or_d * reach_time
     };
     if extent.is_nan() || tau.is_nan() {
-        return None;
+        return vec![];
     }
     let clean_fields: Vec<(String, f64)> = pend
         .fields
-        .into_iter()
+        .iter()
         .filter(|(_, v)| !v.is_nan() && v.is_finite())
+        .cloned()
         .collect();
-    Some(Sample {
-        origin,
-        epoch: pend.epoch,
-        ttl: src.ttl.max(1) as f64,
-        extent,
-        tau,
-        force_type: force_type as f64,
-        vmax,
-        amax,
-        p0f,
-        motion,
-        fields: clean_fields,
-    })
+    forces
+        .into_iter()
+        .map(|(_, _, _, force_type)| Sample {
+            origin,
+            epoch: pend.epoch,
+            ttl: src.ttl.max(1) as f64,
+            extent,
+            tau,
+            force_type: force_type as f64,
+            vmax,
+            amax,
+            p0f,
+            motion,
+            fields: clean_fields.clone(),
+        })
+        .collect()
 }
 
 fn render_headers(
@@ -4556,19 +4574,27 @@ fn warm_cache(archive: Arc<Archive>) {
             let (ex, ey, ez) = earth_position_icrs(now);
             let (mx, my, mz) = mars_position_icrs(now);
             for (i, src) in archive.sources.iter().enumerate() {
-                let fc = force_constants(&src.force);
-                let r = match fc {
-                    Some((v_or_d, tau_default, is_diff, _force_id)) => {
-                        let tau = src.tau.unwrap_or(tau_default);
-                        let reach_time = src.ttl as f64 + tau;
-                        if is_diff {
-                            (2.0 * v_or_d * reach_time).sqrt()
-                        } else {
-                            v_or_d * reach_time
+                let r = {
+                    let mut max_r = 0.0f64;
+                    for f in src.force.split_whitespace() {
+                        if let Some((v_or_d, tau_default, is_diff, _)) = force_constants(f) {
+                            let tau = src.tau.unwrap_or(tau_default);
+                            let reach_time = src.ttl as f64 + tau;
+                            let this_r = if is_diff {
+                                (2.0 * v_or_d * reach_time).sqrt()
+                            } else {
+                                v_or_d * reach_time
+                            };
+                            if this_r > max_r {
+                                max_r = this_r;
+                            }
                         }
                     }
-                    None => continue,
+                    max_r
                 };
+                if r == 0.0 {
+                    continue;
+                }
                 match &src.frame {
                     Frame::WGS84 { lat, lon, alt } | Frame::IAU2000 { lat, lon, alt } => {
                         let origin = (i as u32, 0, 0);
@@ -4890,7 +4916,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     );
                 }
                 for pend in pendings {
-                    if let Some(smp) = materialize(src, origin, region, pend, &mut origins) {
+                    for smp in materialize(src, origin, region, pend, &mut origins) {
                         new_samples.push(smp);
                     }
                 }
