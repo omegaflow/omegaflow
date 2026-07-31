@@ -901,20 +901,45 @@ fn csv_to_json(csv: &str) -> Option<String> {
     if lines.is_empty() {
         return None;
     }
-    let header_idx = lines.iter().position(|l| !l.starts_with('#'));
-    let header_idx = header_idx?;
-    let header_line = lines[header_idx];
+    let header_idx = match lines.iter().position(|l| !l.starts_with('#')) {
+        Some(0) => 0,
+        Some(i) => {
+            if lines[0].starts_with('#')
+                && lines[0].trim_start_matches('#').split_whitespace().count() > 1
+                && lines[i]
+                    .split_whitespace()
+                    .next()
+                    .map(|t| t.parse::<f64>().is_ok())
+                    == Some(true)
+            {
+                0
+            } else {
+                i
+            }
+        }
+        None => 0,
+    };
+    let header_line = lines[header_idx].trim_start_matches('#');
     let delim = if header_line.contains('\t') {
         '\t'
     } else if header_line.contains('|') && header_line.split('|').count() > 2 {
         '|'
-    } else {
+    } else if header_line.contains(',') && header_line.split(',').count() > 2 {
         ','
+    } else {
+        ' '
     };
-    let cols: Vec<String> = split_csv_line(header_line, delim)
-        .into_iter()
-        .map(|c| c.trim_matches('"').to_string())
-        .collect();
+    let cols: Vec<String> = if delim == ' ' {
+        header_line
+            .split_whitespace()
+            .map(|c| c.trim_matches('"').to_string())
+            .collect()
+    } else {
+        split_csv_line(header_line, delim)
+            .into_iter()
+            .map(|c| c.trim_matches('"').to_string())
+            .collect()
+    };
     if cols.is_empty() {
         return None;
     }
@@ -923,7 +948,11 @@ fn csv_to_json(csv: &str) -> Option<String> {
         if line.starts_with('#') {
             continue;
         }
-        let vals = split_csv_line(line, delim);
+        let vals: Vec<String> = if delim == ' ' {
+            line.split_whitespace().map(|s| s.to_string()).collect()
+        } else {
+            split_csv_line(line, delim)
+        };
         if vals.is_empty() {
             continue;
         }
@@ -3341,14 +3370,16 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 }
             }
             Extract::LastRow(k, n) => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(v) = j2d_last_row(j, k) {
-                        extracted.insert(n.clone(), v);
-                    }
-                } else {
+                if src.format == "csv" {
                     if let Some(v) = text_last_col(body, k) {
                         extracted.insert(n.clone(), v);
                     }
+                } else if let Some(ref j) = parsed_json {
+                    if let Some(v) = j2d_last_row(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                } else if let Some(v) = text_last_col(body, k) {
+                    extracted.insert(n.clone(), v);
                 }
             }
             Extract::Path(k, n) => {

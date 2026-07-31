@@ -1914,19 +1914,6 @@ last_row DPD hydrosphere_buoy_41001_dominant_period
 last_row PRES hydrosphere_buoy_41001_pressure
 last_row WTMP hydrosphere_buoy_41001_water_temp
 
-source hydrosphere_ndbc_buoy_41001
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
-wgs84 34.7 -72.4
-format csv
-last_row WDIR hydrosphere_buoy_41001_wind_dir
-last_row WSPD hydrosphere_buoy_41001_wind_speed
-last_row WVHT hydrosphere_buoy_41001_wave_height
-last_row DPD hydrosphere_buoy_41001_dominant_period
-last_row PRES hydrosphere_buoy_41001_pressure
-last_row WTMP hydrosphere_buoy_41001_water_temp
-
 source hydrosphere_ndbc_buoy_42001
 ttl 300
 force acoustic
@@ -1939,32 +1926,6 @@ last_row WVHT hydrosphere_buoy_42001_wave_height
 last_row DPD hydrosphere_buoy_42001_dominant_period
 last_row PRES hydrosphere_buoy_42001_pressure
 last_row WTMP hydrosphere_buoy_42001_water_temp
-
-source hydrosphere_ndbc_buoy_42001
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
-wgs84 25.90 -89.67
-format csv
-last_row WDIR hydrosphere_buoy_42001_wind_dir
-last_row WSPD hydrosphere_buoy_42001_wind_speed
-last_row WVHT hydrosphere_buoy_42001_wave_height
-last_row DPD hydrosphere_buoy_42001_dominant_period
-last_row PRES hydrosphere_buoy_42001_pressure
-last_row WTMP hydrosphere_buoy_42001_water_temp
-
-source hydrosphere_ndbc_buoy_42002
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
-wgs84 25.16 -94.42
-format csv
-last_row WDIR hydrosphere_buoy_42002_wind_dir
-last_row WSPD hydrosphere_buoy_42002_wind_speed
-last_row WVHT hydrosphere_buoy_42002_wave_height
-last_row DPD hydrosphere_buoy_42002_dominant_period
-last_row PRES hydrosphere_buoy_42002_pressure
-last_row WTMP hydrosphere_buoy_42002_water_temp
 
 source hydrosphere_ndbc_buoy_42002
 ttl 300
@@ -1992,19 +1953,6 @@ last_row DPD hydrosphere_buoy_42036_dominant_period
 last_row PRES hydrosphere_buoy_42036_pressure
 last_row WTMP hydrosphere_buoy_42036_water_temp
 
-source hydrosphere_ndbc_buoy_42036
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
-wgs84 28.50 -84.52
-format csv
-last_row WDIR hydrosphere_buoy_42036_wind_dir
-last_row WSPD hydrosphere_buoy_42036_wind_speed
-last_row WVHT hydrosphere_buoy_42036_wave_height
-last_row DPD hydrosphere_buoy_42036_dominant_period
-last_row PRES hydrosphere_buoy_42036_pressure
-last_row WTMP hydrosphere_buoy_42036_water_temp
-
 source hydrosphere_ndbc_buoy_42040
 ttl 300
 force acoustic
@@ -2017,32 +1965,6 @@ last_row WVHT hydrosphere_buoy_42040_wave_height
 last_row DPD hydrosphere_buoy_42040_dominant_period
 last_row PRES hydrosphere_buoy_42040_pressure
 last_row WTMP hydrosphere_buoy_42040_water_temp
-
-source hydrosphere_ndbc_buoy_42040
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
-wgs84 29.22 -88.23
-format csv
-last_row WDIR hydrosphere_buoy_42040_wind_dir
-last_row WSPD hydrosphere_buoy_42040_wind_speed
-last_row WVHT hydrosphere_buoy_42040_wave_height
-last_row DPD hydrosphere_buoy_42040_dominant_period
-last_row PRES hydrosphere_buoy_42040_pressure
-last_row WTMP hydrosphere_buoy_42040_water_temp
-
-source hydrosphere_ndbc_buoy_42055
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
-wgs84 22.14 -91.39
-format csv
-last_row WDIR hydrosphere_buoy_42055_wind_dir
-last_row WSPD hydrosphere_buoy_42055_wind_speed
-last_row WVHT hydrosphere_buoy_42055_wave_height
-last_row DPD hydrosphere_buoy_42055_dominant_period
-last_row PRES hydrosphere_buoy_42055_pressure
-last_row WTMP hydrosphere_buoy_42055_water_temp
 
 source hydrosphere_ndbc_buoy_42055
 ttl 300
@@ -2070,19 +1992,6 @@ last_row DPD hydrosphere_buoy_44009_dominant_period
 last_row PRES hydrosphere_buoy_44009_pressure
 last_row WTMP hydrosphere_buoy_44009_water_temp
 
-source hydrosphere_ndbc_buoy_44009
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
-wgs84 38.46 -74.70
-format csv
-last_row WDIR hydrosphere_buoy_44009_wind_dir
-last_row WSPD hydrosphere_buoy_44009_wind_speed
-last_row WVHT hydrosphere_buoy_44009_wave_height
-last_row DPD hydrosphere_buoy_44009_dominant_period
-last_row PRES hydrosphere_buoy_44009_pressure
-last_row WTMP hydrosphere_buoy_44009_water_temp
-
 source hydrosphere_ndbc_buoy_44013
 ttl 300
 force acoustic
@@ -2095,32 +2004,6 @@ last_row WVHT hydrosphere_buoy_44013_wave_height
 last_row DPD hydrosphere_buoy_44013_dominant_period
 last_row PRES hydrosphere_buoy_44013_pressure
 last_row WTMP hydrosphere_buoy_44013_water_temp
-
-source hydrosphere_ndbc_buoy_44013
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44013.txt
-wgs84 42.35 -70.69
-format csv
-last_row WDIR hydrosphere_buoy_44013_wind_dir
-last_row WSPD hydrosphere_buoy_44013_wind_speed
-last_row WVHT hydrosphere_buoy_44013_wave_height
-last_row DPD hydrosphere_buoy_44013_dominant_period
-last_row PRES hydrosphere_buoy_44013_pressure
-last_row WTMP hydrosphere_buoy_44013_water_temp
-
-source hydrosphere_ndbc_buoy_44014
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44014.txt
-wgs84 36.61 -74.84
-format csv
-last_row WDIR hydrosphere_buoy_44014_wind_dir
-last_row WSPD hydrosphere_buoy_44014_wind_speed
-last_row WVHT hydrosphere_buoy_44014_wave_height
-last_row DPD hydrosphere_buoy_44014_dominant_period
-last_row PRES hydrosphere_buoy_44014_pressure
-last_row WTMP hydrosphere_buoy_44014_water_temp
 
 source hydrosphere_ndbc_buoy_44014
 ttl 300
@@ -2148,19 +2031,6 @@ last_row DPD hydrosphere_buoy_44025_dominant_period
 last_row PRES hydrosphere_buoy_44025_pressure
 last_row WTMP hydrosphere_buoy_44025_water_temp
 
-source hydrosphere_ndbc_buoy_44025
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44025.txt
-wgs84 40.25 -73.17
-format csv
-last_row WDIR hydrosphere_buoy_44025_wind_dir
-last_row WSPD hydrosphere_buoy_44025_wind_speed
-last_row WVHT hydrosphere_buoy_44025_wave_height
-last_row DPD hydrosphere_buoy_44025_dominant_period
-last_row PRES hydrosphere_buoy_44025_pressure
-last_row WTMP hydrosphere_buoy_44025_water_temp
-
 source hydrosphere_ndbc_buoy_46001
 ttl 300
 force acoustic
@@ -2173,32 +2043,6 @@ last_row WVHT hydrosphere_buoy_46001_wave_height
 last_row DPD hydrosphere_buoy_46001_dominant_period
 last_row PRES hydrosphere_buoy_46001_pressure
 last_row WTMP hydrosphere_buoy_46001_water_temp
-
-source hydrosphere_ndbc_buoy_46001
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
-wgs84 56.30 -148.17
-format csv
-last_row WDIR hydrosphere_buoy_46001_wind_dir
-last_row WSPD hydrosphere_buoy_46001_wind_speed
-last_row WVHT hydrosphere_buoy_46001_wave_height
-last_row DPD hydrosphere_buoy_46001_dominant_period
-last_row PRES hydrosphere_buoy_46001_pressure
-last_row WTMP hydrosphere_buoy_46001_water_temp
-
-source hydrosphere_ndbc_buoy_46002
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46002.txt
-wgs84 42.67 -124.82
-format csv
-last_row WDIR hydrosphere_buoy_46002_wind_dir
-last_row WSPD hydrosphere_buoy_46002_wind_speed
-last_row WVHT hydrosphere_buoy_46002_wave_height
-last_row DPD hydrosphere_buoy_46002_dominant_period
-last_row PRES hydrosphere_buoy_46002_pressure
-last_row WTMP hydrosphere_buoy_46002_water_temp
 
 source hydrosphere_ndbc_buoy_46002
 ttl 300
@@ -2226,19 +2070,6 @@ last_row DPD hydrosphere_buoy_46005_dominant_period
 last_row PRES hydrosphere_buoy_46005_pressure
 last_row WTMP hydrosphere_buoy_46005_water_temp
 
-source hydrosphere_ndbc_buoy_46005
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46005.txt
-wgs84 46.06 -124.96
-format csv
-last_row WDIR hydrosphere_buoy_46005_wind_dir
-last_row WSPD hydrosphere_buoy_46005_wind_speed
-last_row WVHT hydrosphere_buoy_46005_wave_height
-last_row DPD hydrosphere_buoy_46005_dominant_period
-last_row PRES hydrosphere_buoy_46005_pressure
-last_row WTMP hydrosphere_buoy_46005_water_temp
-
 source hydrosphere_ndbc_buoy_46006
 ttl 300
 force acoustic
@@ -2251,32 +2082,6 @@ last_row WVHT hydrosphere_buoy_46006_wave_height
 last_row DPD hydrosphere_buoy_46006_dominant_period
 last_row PRES hydrosphere_buoy_46006_pressure
 last_row WTMP hydrosphere_buoy_46006_water_temp
-
-source hydrosphere_ndbc_buoy_46006
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46006.txt
-wgs84 55.06 -137.07
-format csv
-last_row WDIR hydrosphere_buoy_46006_wind_dir
-last_row WSPD hydrosphere_buoy_46006_wind_speed
-last_row WVHT hydrosphere_buoy_46006_wave_height
-last_row DPD hydrosphere_buoy_46006_dominant_period
-last_row PRES hydrosphere_buoy_46006_pressure
-last_row WTMP hydrosphere_buoy_46006_water_temp
-
-source hydrosphere_ndbc_buoy_46012
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46012.txt
-wgs84 37.36 -122.88
-format csv
-last_row WDIR hydrosphere_buoy_46012_wind_dir
-last_row WSPD hydrosphere_buoy_46012_wind_speed
-last_row WVHT hydrosphere_buoy_46012_wave_height
-last_row DPD hydrosphere_buoy_46012_dominant_period
-last_row PRES hydrosphere_buoy_46012_pressure
-last_row WTMP hydrosphere_buoy_46012_water_temp
 
 source hydrosphere_ndbc_buoy_46012
 ttl 300
@@ -2304,19 +2109,6 @@ last_row DPD hydrosphere_buoy_46013_dominant_period
 last_row PRES hydrosphere_buoy_46013_pressure
 last_row WTMP hydrosphere_buoy_46013_water_temp
 
-source hydrosphere_ndbc_buoy_46013
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46013.txt
-wgs84 38.24 -123.30
-format csv
-last_row WDIR hydrosphere_buoy_46013_wind_dir
-last_row WSPD hydrosphere_buoy_46013_wind_speed
-last_row WVHT hydrosphere_buoy_46013_wave_height
-last_row DPD hydrosphere_buoy_46013_dominant_period
-last_row PRES hydrosphere_buoy_46013_pressure
-last_row WTMP hydrosphere_buoy_46013_water_temp
-
 source hydrosphere_ndbc_buoy_46022
 ttl 300
 force acoustic
@@ -2329,32 +2121,6 @@ last_row WVHT hydrosphere_buoy_46022_wave_height
 last_row DPD hydrosphere_buoy_46022_dominant_period
 last_row PRES hydrosphere_buoy_46022_pressure
 last_row WTMP hydrosphere_buoy_46022_water_temp
-
-source hydrosphere_ndbc_buoy_46022
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46022.txt
-wgs84 40.74 -124.54
-format csv
-last_row WDIR hydrosphere_buoy_46022_wind_dir
-last_row WSPD hydrosphere_buoy_46022_wind_speed
-last_row WVHT hydrosphere_buoy_46022_wave_height
-last_row DPD hydrosphere_buoy_46022_dominant_period
-last_row PRES hydrosphere_buoy_46022_pressure
-last_row WTMP hydrosphere_buoy_46022_water_temp
-
-source hydrosphere_ndbc_buoy_46025
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46025.txt
-wgs84 33.75 -119.20
-format csv
-last_row WDIR hydrosphere_buoy_46025_wind_dir
-last_row WSPD hydrosphere_buoy_46025_wind_speed
-last_row WVHT hydrosphere_buoy_46025_wave_height
-last_row DPD hydrosphere_buoy_46025_dominant_period
-last_row PRES hydrosphere_buoy_46025_pressure
-last_row WTMP hydrosphere_buoy_46025_water_temp
 
 source hydrosphere_ndbc_buoy_46025
 ttl 300
@@ -2382,19 +2148,6 @@ last_row DPD hydrosphere_buoy_46026_dominant_period
 last_row PRES hydrosphere_buoy_46026_pressure
 last_row WTMP hydrosphere_buoy_46026_water_temp
 
-source hydrosphere_ndbc_buoy_46026
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46026.txt
-wgs84 37.75 -122.84
-format csv
-last_row WDIR hydrosphere_buoy_46026_wind_dir
-last_row WSPD hydrosphere_buoy_46026_wind_speed
-last_row WVHT hydrosphere_buoy_46026_wave_height
-last_row DPD hydrosphere_buoy_46026_dominant_period
-last_row PRES hydrosphere_buoy_46026_pressure
-last_row WTMP hydrosphere_buoy_46026_water_temp
-
 source hydrosphere_ndbc_buoy_46027
 ttl 300
 force acoustic
@@ -2407,32 +2160,6 @@ last_row WVHT hydrosphere_buoy_46027_wave_height
 last_row DPD hydrosphere_buoy_46027_dominant_period
 last_row PRES hydrosphere_buoy_46027_pressure
 last_row WTMP hydrosphere_buoy_46027_water_temp
-
-source hydrosphere_ndbc_buoy_46027
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46027.txt
-wgs84 41.85 -124.38
-format csv
-last_row WDIR hydrosphere_buoy_46027_wind_dir
-last_row WSPD hydrosphere_buoy_46027_wind_speed
-last_row WVHT hydrosphere_buoy_46027_wave_height
-last_row DPD hydrosphere_buoy_46027_dominant_period
-last_row PRES hydrosphere_buoy_46027_pressure
-last_row WTMP hydrosphere_buoy_46027_water_temp
-
-source hydrosphere_ndbc_buoy_46029
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46029.txt
-wgs84 46.12 -124.51
-format csv
-last_row WDIR hydrosphere_buoy_46029_wind_dir
-last_row WSPD hydrosphere_buoy_46029_wind_speed
-last_row WVHT hydrosphere_buoy_46029_wave_height
-last_row DPD hydrosphere_buoy_46029_dominant_period
-last_row PRES hydrosphere_buoy_46029_pressure
-last_row WTMP hydrosphere_buoy_46029_water_temp
 
 source hydrosphere_ndbc_buoy_46029
 ttl 300
@@ -2460,19 +2187,6 @@ last_row DPD hydrosphere_buoy_46047_dominant_period
 last_row PRES hydrosphere_buoy_46047_pressure
 last_row WTMP hydrosphere_buoy_46047_water_temp
 
-source hydrosphere_ndbc_buoy_46047
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46047.txt
-wgs84 32.42 -119.53
-format csv
-last_row WDIR hydrosphere_buoy_46047_wind_dir
-last_row WSPD hydrosphere_buoy_46047_wind_speed
-last_row WVHT hydrosphere_buoy_46047_wave_height
-last_row DPD hydrosphere_buoy_46047_dominant_period
-last_row PRES hydrosphere_buoy_46047_pressure
-last_row WTMP hydrosphere_buoy_46047_water_temp
-
 source hydrosphere_ndbc_buoy_46053
 ttl 300
 force acoustic
@@ -2485,32 +2199,6 @@ last_row WVHT hydrosphere_buoy_46053_wave_height
 last_row DPD hydrosphere_buoy_46053_dominant_period
 last_row PRES hydrosphere_buoy_46053_pressure
 last_row WTMP hydrosphere_buoy_46053_water_temp
-
-source hydrosphere_ndbc_buoy_46053
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46053.txt
-wgs84 34.26 -119.86
-format csv
-last_row WDIR hydrosphere_buoy_46053_wind_dir
-last_row WSPD hydrosphere_buoy_46053_wind_speed
-last_row WVHT hydrosphere_buoy_46053_wave_height
-last_row DPD hydrosphere_buoy_46053_dominant_period
-last_row PRES hydrosphere_buoy_46053_pressure
-last_row WTMP hydrosphere_buoy_46053_water_temp
-
-source hydrosphere_ndbc_buoy_46054
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46054.txt
-wgs84 34.27 -120.68
-format csv
-last_row WDIR hydrosphere_buoy_46054_wind_dir
-last_row WSPD hydrosphere_buoy_46054_wind_speed
-last_row WVHT hydrosphere_buoy_46054_wave_height
-last_row DPD hydrosphere_buoy_46054_dominant_period
-last_row PRES hydrosphere_buoy_46054_pressure
-last_row WTMP hydrosphere_buoy_46054_water_temp
 
 source hydrosphere_ndbc_buoy_46054
 ttl 300
@@ -2538,19 +2226,6 @@ last_row DPD hydrosphere_buoy_46059_dominant_period
 last_row PRES hydrosphere_buoy_46059_pressure
 last_row WTMP hydrosphere_buoy_46059_water_temp
 
-source hydrosphere_ndbc_buoy_46059
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46059.txt
-wgs84 38.07 -124.03
-format csv
-last_row WDIR hydrosphere_buoy_46059_wind_dir
-last_row WSPD hydrosphere_buoy_46059_wind_speed
-last_row WVHT hydrosphere_buoy_46059_wave_height
-last_row DPD hydrosphere_buoy_46059_dominant_period
-last_row PRES hydrosphere_buoy_46059_pressure
-last_row WTMP hydrosphere_buoy_46059_water_temp
-
 source hydrosphere_ndbc_buoy_46069
 ttl 300
 force acoustic
@@ -2563,32 +2238,6 @@ last_row WVHT hydrosphere_buoy_46069_wave_height
 last_row DPD hydrosphere_buoy_46069_dominant_period
 last_row PRES hydrosphere_buoy_46069_pressure
 last_row WTMP hydrosphere_buoy_46069_water_temp
-
-source hydrosphere_ndbc_buoy_46069
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46069.txt
-wgs84 33.66 -120.20
-format csv
-last_row WDIR hydrosphere_buoy_46069_wind_dir
-last_row WSPD hydrosphere_buoy_46069_wind_speed
-last_row WVHT hydrosphere_buoy_46069_wave_height
-last_row DPD hydrosphere_buoy_46069_dominant_period
-last_row PRES hydrosphere_buoy_46069_pressure
-last_row WTMP hydrosphere_buoy_46069_water_temp
-
-source hydrosphere_ndbc_buoy_46086
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46086.txt
-wgs84 32.49 -118.02
-format csv
-last_row WDIR hydrosphere_buoy_46086_wind_dir
-last_row WSPD hydrosphere_buoy_46086_wind_speed
-last_row WVHT hydrosphere_buoy_46086_wave_height
-last_row DPD hydrosphere_buoy_46086_dominant_period
-last_row PRES hydrosphere_buoy_46086_pressure
-last_row WTMP hydrosphere_buoy_46086_water_temp
 
 source hydrosphere_ndbc_buoy_46086
 ttl 300
@@ -2616,32 +2265,6 @@ last_row DPD hydrosphere_buoy_51000_dominant_period
 last_row PRES hydrosphere_buoy_51000_pressure
 last_row WTMP hydrosphere_buoy_51000_water_temp
 
-source hydrosphere_ndbc_buoy_51000
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51000.txt
-wgs84 23.52 -153.82
-format csv
-last_row WDIR hydrosphere_buoy_51000_wind_dir
-last_row WSPD hydrosphere_buoy_51000_wind_speed
-last_row WVHT hydrosphere_buoy_51000_wave_height
-last_row DPD hydrosphere_buoy_51000_dominant_period
-last_row PRES hydrosphere_buoy_51000_pressure
-last_row WTMP hydrosphere_buoy_51000_water_temp
-
-source hydrosphere_ndbc_buoy_51001
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
-wgs84 24.44 -162.00
-format csv
-last_row WDIR hydrosphere_buoy_51001_wind_dir
-last_row WSPD hydrosphere_buoy_51001_wind_speed
-last_row WVHT hydrosphere_buoy_51001_wave_height
-last_row DPD hydrosphere_buoy_51001_dominant_period
-last_row PRES hydrosphere_buoy_51001_pressure
-last_row WTMP hydrosphere_buoy_51001_water_temp
-
 source hydrosphere_ndbc_buoy_51001
 ttl 300
 force acoustic
@@ -2667,32 +2290,6 @@ last_row WVHT hydrosphere_buoy_51002_wave_height
 last_row DPD hydrosphere_buoy_51002_dominant_period
 last_row PRES hydrosphere_buoy_51002_pressure
 last_row WTMP hydrosphere_buoy_51002_water_temp
-
-source hydrosphere_ndbc_buoy_51002
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51002.txt
-wgs84 17.14 -157.80
-format csv
-last_row WDIR hydrosphere_buoy_51002_wind_dir
-last_row WSPD hydrosphere_buoy_51002_wind_speed
-last_row WVHT hydrosphere_buoy_51002_wave_height
-last_row DPD hydrosphere_buoy_51002_dominant_period
-last_row PRES hydrosphere_buoy_51002_pressure
-last_row WTMP hydrosphere_buoy_51002_water_temp
-
-source hydrosphere_ndbc_buoy_51004
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51004.txt
-wgs84 17.56 -152.39
-format csv
-last_row WDIR hydrosphere_buoy_51004_wind_dir
-last_row WSPD hydrosphere_buoy_51004_wind_speed
-last_row WVHT hydrosphere_buoy_51004_wave_height
-last_row DPD hydrosphere_buoy_51004_dominant_period
-last_row PRES hydrosphere_buoy_51004_pressure
-last_row WTMP hydrosphere_buoy_51004_water_temp
 
 source hydrosphere_ndbc_buoy_51004
 ttl 300
@@ -3723,21 +3320,6 @@ field WMO_WIND max_wind_kt
 field WMO_PRES min_pressure_hpa
 field DIST2LAND dist_to_land_km
 field SUBBASIN subbasin_code
-
-source noaa_ndbc_dart_realtime_pressure
-ttl 300
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51407.dart
-wgs84 19.63 -156.49
-format text
-rows
-field 0 year
-field 1 month
-field 2 day
-field 3 hour
-field 4 minute
-field 5 bottom_pressure_decibar
-field 6 bpr_anomaly_mm
 
 source noaa_ndbc_dart_realtime_pressure
 ttl 300
@@ -5531,23 +5113,6 @@ field_in 18 water_temp_c
 field_in 17 air_temp_c
 field_in 15 pressure_hpa
 
-source ndbc_buoys_north_pacific
-ttl 1800
-force acoustic
-url https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt
-format text
-rows
-lat_key 1
-lon_key 2
-field_in 0 station_id
-field_in 8 wind_dir_deg
-field_in 9 wind_speed_ms
-field_in 11 wave_height_m
-field_in 12 dominant_period_s
-field_in 18 water_temp_c
-field_in 17 air_temp_c
-field_in 15 pressure_hpa
-
 source nhc_active_atlantic_hurricanes
 ttl 1800
 force thermal
@@ -6779,19 +6344,6 @@ field_in attributes.MM month
 lat_key geometry.y
 lon_key geometry.x
 
-source esri_ndbc_buoy_obs
-ttl 3600
-force acoustic
-url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
-map features
-field_in attributes.STN station_id
-field_in attributes.LAT latitude
-field_in attributes.LON longitude
-field_in attributes.YYYY year
-field_in attributes.MM month
-lat_key geometry.y
-lon_key geometry.x
-
 source esri_noaa_temp_latest
 ttl 3600
 force thermal
@@ -7923,32 +7475,6 @@ field station_id station_id
 field site station_name
 field owner owner
 
-source ndbc_active_stations
-ttl 3600
-force diffusion
-url https://www.ndbc.noaa.gov/activestations.xml
-format text
-rows
-lat_key lat
-lon_key lon
-field station_id station_id
-field site station_name
-field owner owner
-
-source ndbc_dart_21413_nwpacific
-ttl 3600
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
-wgs84 38.7 148.7
-format text
-rows
-field_in 0 year
-field_in 1 month
-field_in 2 day
-field_in 3 hour
-field_in 6 data_type
-field_in 7 sea_level_height_m
-
 source ndbc_dart_21413_nwpacific
 ttl 3600
 force acoustic
@@ -7976,50 +7502,11 @@ field_in 2 day
 field_in 3 hour
 field_in 7 sea_level_height_m
 
-source ndbc_dart_23401_indian_ocean
-ttl 3600
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
-wgs84 -8.4 67.5
-format text
-rows
-field_in 0 year
-field_in 1 month
-field_in 2 day
-field_in 3 hour
-field_in 7 sea_level_height_m
-
 source ndbc_dart_32401_spac
 ttl 3600
 force acoustic
 url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
 wgs84 -19.6 -162.1
-format text
-rows
-field_in 0 year
-field_in 1 month
-field_in 2 day
-field_in 3 hour
-field_in 7 sea_level_height_m
-
-source ndbc_dart_32401_spac
-ttl 3600
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
-wgs84 -19.6 -162.1
-format text
-rows
-field_in 0 year
-field_in 1 month
-field_in 2 day
-field_in 3 hour
-field_in 7 sea_level_height_m
-
-source ndbc_dart_41420_caribbean
-ttl 3600
-force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
-wgs84 17.9 -74.9
 format text
 rows
 field_in 0 year
@@ -15226,22 +14713,6 @@ field date obs_date
 field max_depth max_depth_m
 field temp_surface surface_temp_c
 field sal_surface surface_sal_psu
-
-source noaa_ndbc_dart_buoys_metadata
-ttl 86400
-force acoustic
-url https://www.ndbc.noaa.gov/activestations.xml
-format text
-rows
-lat_key lat
-lon_key lon
-field id station_id
-field name station_name
-field type sensor_type
-field elev depth_m
-field pgm program_code
-field met has_met_sensor
-field currents has_current_sensor
 
 source noaa_ndbc_dart_buoys_metadata
 ttl 86400
