@@ -538,9 +538,10 @@ fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
     };
     let a = y / 100;
     let b = 2 - a + a / 4;
-    let days =
+    let jdn =
         (365.25 * (y + 4716) as f64) as i64 + (30.6001 * (m + 1) as f64) as i64 + day as i64 + b
             - 1524;
+    let days = jdn - 2440588;
     if days < 0 {
         None
     } else {
@@ -4774,8 +4775,29 @@ fn warm_cache(archive: Arc<Archive>) {
                             Extract::Field(_, n)
                             | Extract::First(_, n)
                             | Extract::Last(_, n)
+                            | Extract::Count(_, n)
+                            | Extract::LastRow(_, n)
+                            | Extract::LastObj(_, _, _, n)
+                            | Extract::ObjLast(_, n)
                             | Extract::Path(_, n)
-                            | Extract::Deep(_, n) => Some(n.as_str()),
+                            | Extract::Deep(_, n)
+                            | Extract::Regex(_, n)
+                            | Extract::XmlCount(_, n)
+                            | Extract::Ephemeris(n)
+                            | Extract::Vectors(n)
+                            | Extract::LastLine(n) => Some(n.as_str()),
+                            Extract::Map { fields, .. }
+                            | Extract::CelestialMap { fields, .. }
+                            | Extract::KeplerMap { fields, .. }
+                            | Extract::Rows { fields, .. }
+                            | Extract::Flatten { fields, .. }
+                            | Extract::CmrPolygon { fields, .. }
+                            | Extract::CelestialPolygon { fields, .. } => {
+                                Some(fields.first().map(|(_, n)| n.as_str()).unwrap_or(""))
+                            }
+                            Extract::GeojsonEvents { outputs, .. } => {
+                                Some(outputs.first().map(|s| s.as_str()).unwrap_or(""))
+                            }
                             _ => None,
                         })
                         .collect();
@@ -5063,7 +5085,9 @@ mod tests {
         };
         let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
         let now = super::tdb_now();
-        let pending = extract_pending(&src, body, now);
+        let expected_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
+        eprintln!("now={} expected_epoch={}", now, expected_epoch);
+        let pending = super::extract_pending(&src, body, now);
         assert_eq!(pending.len(), 2);
         let p0 = &pending[0];
         assert!(p0.epoch < now);
@@ -5085,5 +5109,31 @@ mod tests {
             }
             _ => panic!("expected Geodetic position"),
         }
+    }
+
+    #[test]
+    fn test_ymd_days_roundtrip() {
+        for (y, m, d) in [
+            (1970, 1, 1),
+            (2000, 2, 29),
+            (2026, 7, 31),
+            (2026, 12, 31),
+            (2026, 1, 1),
+        ] {
+            let days = super::ymd_to_days(y, m, d).unwrap();
+            let (y2, m2, d2) = super::days_to_ymd(days);
+            assert_eq!(
+                (y2 as i64, m2, d2),
+                (y, m, d),
+                "roundtrip {} {}-{}-{}",
+                days,
+                y,
+                m,
+                d
+            );
+        }
+        assert_eq!(super::ymd_to_days(1970, 1, 1).unwrap(), 0);
+        assert!(super::ymd_to_days(1900, 1, 1).is_none());
+        assert_eq!(super::ymd_to_days(1970, 1, 1).unwrap(), 0);
     }
 }
