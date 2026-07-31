@@ -213,7 +213,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
 struct VP { surface: vec4f, right: vec4f, up: vec4f, expose_lo: vec4f, expose_hi: vec4f, presence: vec4f };
 const C_LIGHT: f32 = 299792458.0;
 fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32) -> f32 {
-    let retarded = max(0.0, abs(vp.presence.x - t) - d_mag / C_LIGHT);
+    let retarded = max(0.0, abs(vp.presence.w - t) - d_mag / C_LIGHT);
     return raw * exp(-retarded / max(ttl, 1e-9));
 }
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
@@ -258,7 +258,8 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     );
 
     let m = field[id * 2u];
-    let d = m.xyz;
+    let abs_pos = m.xyz;
+    let d = abs_pos - vp.presence.xyz;
     let val = m.w;
     let tm = field[id * 2u + 1u];
     let mt = props[id];
@@ -335,7 +336,8 @@ fn presence_probe() {
     for (var j = 0u; j < count; j = j + 1u) {
         let m = field[j * 2u];
         let tm = field[j * 2u + 1u];
-        let d = m.xyz;
+        let abs_pos = m.xyz;
+        let d = abs_pos - vp.presence.xyz;
         let d2 = dot(d, d);
         let d_mag = sqrt(d2);
         let mt = props[j];
@@ -427,8 +429,6 @@ fn presence_probe() {
             if (metaBuf) metaBuf.destroy();
             fieldBuf = gpu.createBuffer({ size: fieldCap * 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
             metaBuf = gpu.createBuffer({ size: fieldCap * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
-            xyzval = new Float32Array(fieldCap * 8);
-            meta = new Float32Array(fieldCap * 4);
             fieldBind = gpu.createBindGroup({ layout: fieldLayout, entries: [
                 { binding: 0, resource: { buffer: fieldBuf } },
                 { binding: 1, resource: { buffer: metaBuf } },
@@ -473,17 +473,11 @@ fn presence_probe() {
             }
             const dt = rawTick / 1000;
             const n = rawWindowResponse.count;
-            fieldCount = n;
             ensureFieldCapacity(n);
-            const moved = Math.abs(xPresence - lastFoldX) + Math.abs(yPresence - lastFoldY) + Math.abs(zPresence - lastFoldZ);
-            if (moved > gridStep * 0.5 || lastFoldResp !== rawWindowResponse) {
+            if (lastFoldResp !== rawWindowResponse) {
                 lastFoldResp = rawWindowResponse;
-                lastFoldX = xPresence; lastFoldY = yPresence; lastFoldZ = zPresence;
                 const raw = rawWindowResponse.field;
                 const rawm = rawWindowResponse.meta;
-                xyzval.fill(0); meta.fill(0);
-                xyzval.set(raw.subarray(0, n * 8));
-                meta.set(rawm.subarray(0, n * 4));
                 const fref = new Float64Array(8);
                 for (let i = 0; i < n; i++) {
                     const ft = rawm[i * 4 + 2] | 0;
@@ -492,8 +486,8 @@ fn presence_probe() {
                 const relax = 1 - Math.pow(2, -dt / Φ);
                 for (let i = 0; i < 8; i++) forceExposeF[i] += (fref[i] - forceExposeF[i]) * relax;
                 try {
-                    gpu.queue.writeBuffer(fieldBuf, 0, xyzval);
-                    gpu.queue.writeBuffer(metaBuf, 0, meta);
+                    gpu.queue.writeBuffer(fieldBuf, 0, raw.subarray(0, n * 8));
+                    gpu.queue.writeBuffer(metaBuf, 0, rawm.subarray(0, n * 4));
                 } catch {}
             }
             const dpr = window.devicePixelRatio || 1;
@@ -505,7 +499,7 @@ fn presence_probe() {
             const lvls = new Float32Array(8);
             for (let i = 0; i < 8; i++) lvls[i] = Math.max(forceExposeF[i], Math.pow(2, -10)) / boost;
             try {
-                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], 0, fu[0], fu[1], fu[2], 0, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], lvls[7], tPresence, 0, 0, 0]));
+                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], 0, fu[0], fu[1], fu[2], 0, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], lvls[7], xPresence, yPresence, zPresence, tPresence]));
                 const encoder = gpu.createCommandEncoder();
                 const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
                 pass.setPipeline(fieldPipe);
@@ -553,10 +547,7 @@ fn presence_probe() {
             osc.median = osc.median * (1 - ma()) + value * ma();
         }
         let rawWindowResponse = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
-        let lastFoldResp = null, lastFoldX = NaN, lastFoldY = NaN, lastFoldZ = NaN;
-        let xyzval = new Float32Array(0);
-        let meta = new Float32Array(0);
-        let fieldCount = 0;
+        let lastFoldResp = null;
         async function syncField(transmitList, queries) {
             const response = await syncFrame(transmitList, queries);
             rawWindowResponse = response || rawWindowResponse;

@@ -2,20 +2,24 @@ export const C = 299792458.0;
 export const Φ = 1.618033988749895;
 export const φ = {};
 export const transport = { socket: null, pending: new Map(), seq: 0, tickTime: 16, rtt: 0, srtt: 0, rttvar: 0 };
+
 export function updateRtt(sampleRtt) {
     if (transport.srtt === 0) { transport.srtt = sampleRtt; transport.rttvar = sampleRtt / 2; }
     else { transport.rttvar = 0.75 * transport.rttvar + 0.25 * Math.abs(sampleRtt - transport.srtt); transport.srtt = 0.875 * transport.srtt + 0.125 * sampleRtt; }
     transport.rtt = transport.srtt;
 }
+
 export function getRto() {
     if (transport.srtt === 0) return 5000;
     return Math.max(100, Math.min(transport.srtt + 4 * Math.max(transport.rttvar, 1), 5000));
 }
+
 export async function syncFrame(inputs, queries) {
     inputs = inputs || [];
     queries = queries || [];
-    const empty = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
-    if (inputs.length === 0 && queries.length === 0) return empty;
+    const emptyResp = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
+    if (inputs.length === 0 && queries.length === 0) return emptyResp;
+
     let inputBytes = 0;
     for (const inp of inputs) inputBytes += 9 + new TextEncoder().encode(inp.name).length;
     const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32);
@@ -37,8 +41,10 @@ export async function syncFrame(inputs, queries) {
         dv.setFloat64(off, q.y, true); off += 8;
         dv.setFloat64(off, q.z, true); off += 8;
     }
+
     const startTime = performance.now();
-    if (!transport.socket || transport.socket.readyState !== WebSocket.OPEN) return empty;
+    if (!transport.socket || transport.socket.readyState !== WebSocket.OPEN) return emptyResp;
+
     const promise = new Promise((resolve, reject) => {
         const timeoutDuration = getRto();
         const timeout = setTimeout(() => {
@@ -46,17 +52,21 @@ export async function syncFrame(inputs, queries) {
         }, timeoutDuration);
         transport.pending.set(id, { resolve, reject, timeout, startTime });
     });
-        transport.socket.send(new Uint8Array(buf));
+
+    transport.socket.send(new Uint8Array(buf));
     const buffer = await promise;
+
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 2) return empty;
-    const oscCount = dvRes.getUint32(7, true);
+    if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 2) return emptyResp;
+
+    let o = 3;
+    o += 4;
+    const oscCount = dvRes.getUint32(o, true); o += 4;
+
     const field = new Float32Array(oscCount * 8);
     const meta = new Float32Array(oscCount * 4);
-    const px = queries[0]?.x || 0, py = queries[0]?.y || 0, pz = queries[0]?.z || 0;
-    let o = 11;
-    let n = 0;
+
     for (let i = 0; i < oscCount; i++) {
         if (o + 72 > bytes.length) break;
         const x = dvRes.getFloat64(o, true); o += 8;
@@ -68,18 +78,22 @@ export async function syncFrame(inputs, queries) {
         const ttl = dvRes.getFloat64(o, true); o += 8;
         const tau = dvRes.getFloat64(o, true); o += 8;
         const force_type = dvRes.getFloat64(o, true); o += 8;
-        const b = i * 8;
-        field[b] = x - px;
-        field[b + 1] = y - py;
-        field[b + 2] = z - pz;
-        field[b + 3] = val;
-        field[b + 4] = t;
-        field[b + 5] = ttl;
-        const mb = i * 4;
-        meta[mb] = extent;
-        meta[mb + 1] = tau;
-        meta[mb + 2] = force_type;
-        n++;
+
+        const fOff = i * 8;
+        field[fOff] = x;
+        field[fOff + 1] = y;
+        field[fOff + 2] = z;
+        field[fOff + 3] = val;
+        field[fOff + 4] = t;
+        field[fOff + 5] = ttl;
+        field[fOff + 6] = 0;
+        field[fOff + 7] = 0;
+
+        const mOff = i * 4;
+        meta[mOff] = extent;
+        meta[mOff + 1] = tau;
+        meta[mOff + 2] = force_type;
+        meta[mOff + 3] = 0;
     }
-    return { field, meta, count: n };
+    return { field, meta, count: oscCount };
 }
