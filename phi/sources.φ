@@ -17709,7 +17709,7 @@ cmap data
 ra_key ra
 dec_key dec
 plx_key default_plx
-field_in period batse_pulsar_period_s
+field_in obsid batse_pulsar_obsid
 
 source astro_chandra_master
 ttl 604800
@@ -18032,7 +18032,7 @@ cmap data
 ra_key ra
 dec_key dec
 plx_key default_plx
-field_in flux_20_40 integral_agn_flux
+field_in sb_flux integral_agn_flux
 
 source astro_integral_bsc
 ttl 604800
@@ -18053,7 +18053,7 @@ cmap data
 ra_key ra
 dec_key dec
 plx_key default_plx
-field_in flux_20_40 integral_isgri_flux
+field_in distance integral_isgri_distance
 
 source astro_integral_var
 ttl 604800
@@ -18099,7 +18099,7 @@ cmap data
 ra_key ra
 dec_key dec
 plx_key default_plx
-field_in flux_4_10 maxi_master_flux
+field_in time maxi_master_time
 
 source astro_maxi_ssc
 ttl 604800
@@ -18159,7 +18159,7 @@ cmap data
 ra_key ra
 dec_key dec
 plx_key default_plx
-field_in exposure rxte_slew_exposure_s
+field_in stop_time rxte_slew_stop_time
 
 source astro_sdss_galaxies
 ttl 604800
@@ -18528,6 +18528,17 @@ ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
 
+source astro_vizier_dla
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_dla.json
+cmap data
+ra_key _RA
+dec_key _DE
+plx_key default_plx
+field_in zabs dla_redshift
+field_in NHI dla_neutral_hydrogen
+
 source astro_vizier_first
 ttl 604800
 force em
@@ -18677,6 +18688,17 @@ field_in Name vizier_prigozhin_pulsars_Name
 field_in imag vizier_prigozhin_pulsars_imag
 field_in zphot vizier_prigozhin_pulsars_zphot
 
+source astro_vizier_qso_variable
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_qso_variable.json
+cmap data
+ra_key _RA
+dec_key _DE
+plx_key default_plx
+field_in Mass qso_variable_mass
+field_in Dist qso_variable_dist_pc
+
 source astro_vizier_sdss_qso
 ttl 604800
 force em
@@ -18707,6 +18729,9 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_tycho2.json
 cmap data
+ra_key RAmdeg
+dec_key DEmdeg
+plx_key default_plx
 field_in recno astro_vizier_tycho2_recno
 field_in TYC1 astro_vizier_tycho2_TYC1
 field_in TYC2 astro_vizier_tycho2_TYC2
@@ -18770,6 +18795,18 @@ field_in Jmag astro_vizier_ucac5_Jmag
 field_in Hmag astro_vizier_ucac5_Hmag
 field_in Kmag astro_vizier_ucac5_Kmag
 
+source astro_vizier_variable_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_variable_stars.json
+cmap data
+ra_key _RA
+dec_key _DE
+plx_key default_plx
+field_in a variable_star_semimajor
+field_in e variable_star_eccentricity
+field_in i variable_star_inclination
+
 source astro_vizier_vsx_variables
 ttl 604800
 force em
@@ -18781,6 +18818,17 @@ field_in recno vizier_vsx_variables_recno
 field_in OID vizier_vsx_variables_OID
 field_in Name vizier_vsx_variables_Name
 field_in V vizier_vsx_variables_V
+
+source astro_vizier_xmm4d13s
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_xmm4d13s.json
+cmap data
+ra_key RA_ICRS
+dec_key DE_ICRS
+plx_key default_plx
+field_in Flux1 xmm4d13_flux1
+field_in Flux2 xmm4d13_flux2
 
 source astro_vizier_young_stars
 ttl 604800
@@ -20846,6 +20894,13 @@ url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=jso
 wgs84 38.899 -77.043
 field 1.0.value biosphere_death_rate_per_1000
 
+source biosphere_worldbank_gdp_growth_DEU
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+wgs84 52.520 13.405
+field 1.0.value biosphere_gdp_growth_pct_DEU
+
 source biosphere_worldbank_gdp_growth_afghanistan
 ttl 2592000
 force em
@@ -21223,13 +21278,6 @@ force em
 url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
 wgs84 55.68 12.57
 field 1.0.value biosphere_gdp_growth_denmark_pct
-
-source biosphere_worldbank_gdp_growth_DEU
-ttl 2592000
-force em
-url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
-wgs84 52.520 13.405
-field 1.0.value biosphere_gdp_growth_pct_DEU
 
 source biosphere_worldbank_gdp_growth_djibouti
 ttl 2592000
