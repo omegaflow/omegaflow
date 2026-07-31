@@ -1,9 +1,8 @@
 #![allow(mixed_script_confusables)]
-use std::collections::{BinaryHeap, HashMap};
+use std::collections::HashMap;
 use std::io::{Cursor, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::process::Command;
-use std::sync::atomic::AtomicU64;
 use std::sync::{Arc, Condvar, Mutex, RwLock};
 use std::thread;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
@@ -17,7 +16,6 @@ const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
 const GAUSS_K: f64 = 0.01720209895;
-const EARTH_DOMAIN: f64 = EARTH_RADIUS * 16.0;
 const PARSEC_M: f64 = 3.085677581e16;
 const C_LIGHT: f64 = 299792458.0;
 const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
@@ -1435,6 +1433,15 @@ enum Extract {
         geom_path: String,
         fields: Vec<(String, String)>,
     },
+    CmrPolygon {
+        arr_path: String,
+        fields: Vec<(String, String)>,
+    },
+    CelestialPolygon {
+        arr_path: String,
+        radius: f64,
+        fields: Vec<(String, String)>,
+    },
     Rows {
         fields: Vec<(String, String)>,
     },
@@ -1449,6 +1456,7 @@ enum Extract {
         epoch_key: String,
         fields: Vec<(String, String)>,
     },
+    Hapi(Vec<(String, String)>),
 }
 
 fn force_constants(force: &str) -> Option<(f64, f64, bool, u8)> {
@@ -1510,42 +1518,6 @@ struct SourceConfig {
     stations_id: String,
 }
 
-type FetchTask = (
-    usize,
-    Origin,
-    Option<(f64, f64)>,
-    String,
-    Option<String>,
-    Vec<(String, String)>,
-    u64,
-);
-
-struct QueuedFetch {
-    priority: u8,
-    ttl: u64,
-    seq: u64,
-    task: FetchTask,
-}
-
-impl PartialEq for QueuedFetch {
-    fn eq(&self, o: &Self) -> bool {
-        (self.priority, self.ttl, self.seq) == (o.priority, o.ttl, o.seq)
-    }
-}
-impl Eq for QueuedFetch {}
-impl PartialOrd for QueuedFetch {
-    fn partial_cmp(&self, o: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(o))
-    }
-}
-impl Ord for QueuedFetch {
-    fn cmp(&self, o: &Self) -> std::cmp::Ordering {
-        (o.priority, o.ttl, o.seq).cmp(&(self.priority, self.ttl, self.seq))
-    }
-}
-
-static FETCH_SEQ: AtomicU64 = AtomicU64::new(0);
-
 struct Archive {
     sources: Vec<SourceConfig>,
     index_html: Vec<u8>,
@@ -1554,9 +1526,6 @@ struct Archive {
     station: Mutex<StationState>,
     presence: Mutex<HashMap<String, (f64, f64, f64, f64, f64)>>,
     origins: Mutex<HashMap<Origin, OriginState>>,
-    results: Mutex<Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)>>,
-    inflight: Mutex<std::collections::HashSet<Origin>>,
-    fetch_queue: (Mutex<BinaryHeap<QueuedFetch>>, Condvar),
     ttl_eff: Mutex<HashMap<String, f64>>,
     stations_cache: Mutex<HashMap<String, (Instant, Arc<Vec<StationEntry>>)>>,
     warm_cache_mutex: Mutex<()>,
@@ -1631,47 +1600,20 @@ fn extract_header(s: &str, n: &str) -> Option<String> {
     None
 }
 
-fn parse_http_headers(text: &str) -> (HashMap<String, String>, String) {
-    let mut headers = HashMap::new();
-    let mut body_start = text.len();
-    let mut offset = 0usize;
-    for line in text.split_inclusive('\n') {
-        let line_len = line.len();
-        let content = line.trim_end_matches(['\r', '\n']);
-        if content.is_empty() {
-            body_start = offset + line_len;
-            break;
-        }
-        if let Some(colon) = content.find(':') {
-            let key = content[..colon].trim().to_lowercase();
-            let val = content[colon + 1..].trim().to_string();
-            headers.insert(key, val);
-        }
-        offset += line_len;
-    }
-    let body = if body_start <= text.len() {
-        text[body_start..].to_string()
-    } else {
-        String::new()
-    };
-    (headers, body)
-}
-fn fetch_with_headers(
+fn fetch_one(
     url: &str,
     body: Option<&str>,
     headers: &[(String, String)],
     ttl: u64,
 ) -> Option<String> {
-    let connect_t = (((ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64).min(15);
-    let max_t = (((ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(30);
+    let connect_t = (((ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64).min(5);
+    let max_t = (((ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(15);
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
         .arg("-m")
         .arg(max_t.to_string())
         .arg("--connect-timeout")
-        .arg(connect_t.to_string())
-        .arg("-D")
-        .arg("-");
+        .arg(connect_t.to_string());
     if let Some(b) = body {
         cmd.arg("-X").arg("POST");
         cmd.arg("-d").arg(b);
@@ -1686,6 +1628,113 @@ fn fetch_with_headers(
     } else {
         None
     }
+}
+
+fn batch_fetch(
+    tasks: Vec<(
+        usize,
+        Origin,
+        Option<(f64, f64)>,
+        String,
+        Option<String>,
+        Vec<(String, String)>,
+        u64,
+    )>,
+    sources: &[SourceConfig],
+    ttl_eff: &Mutex<HashMap<String, f64>>,
+) -> Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)> {
+    if tasks.is_empty() {
+        return Vec::new();
+    }
+    let pid = std::process::id();
+    let ts = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis())
+        .unwrap_or(0);
+    let batch_dir = format!("/tmp/omegaflow_batch_{}_{}", pid, ts);
+    std::fs::create_dir_all(&batch_dir).ok();
+
+    let mut cmd = Command::new("curl");
+    cmd.arg("--parallel");
+    cmd.arg("--parallel-max").arg("100");
+    cmd.arg("-s");
+
+    for (n, task) in tasks.iter().enumerate() {
+        let (_i, _origin, _region, url, body, headers, ttl) = task;
+        if n > 0 {
+            cmd.arg("--next");
+        }
+        cmd.arg("-o").arg(format!("{}/b_{}", batch_dir, n));
+        cmd.arg("-D").arg(format!("{}/h_{}", batch_dir, n));
+
+        let connect_t = (((*ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64).min(5);
+        let max_t = (((*ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(15);
+        cmd.arg("-m").arg(max_t.to_string());
+        cmd.arg("--connect-timeout").arg(connect_t.to_string());
+
+        if let Some(b) = body {
+            cmd.arg("-X").arg("POST");
+            cmd.arg("-d").arg(b);
+        }
+        for (k, v) in headers {
+            cmd.arg("-H").arg(format!("{}: {}", k, v));
+        }
+        cmd.arg(url);
+    }
+
+    cmd.output().ok();
+
+    let mut results: Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)> =
+        Vec::with_capacity(tasks.len());
+
+    for (n, task) in tasks.iter().enumerate() {
+        let (i, origin, region, url, _body, _headers, ttl) = task;
+        let body_file = format!("{}/b_{}", batch_dir, n);
+        let hdr_file = format!("{}/h_{}", batch_dir, n);
+
+        let body_raw = std::fs::read_to_string(&body_file).ok();
+        if let Some(ref hdr) = std::fs::read_to_string(&hdr_file).ok() {
+            for line in hdr.lines() {
+                let line_lower = line.to_lowercase();
+                if let Some(v) = line_lower.strip_prefix("cache-control:") {
+                    for part in v.split(';') {
+                        let p = part.trim();
+                        if let Some(ma) = p.strip_prefix("max-age=") {
+                            if let Ok(max_age) = ma.trim().parse::<f64>() {
+                                let host = url.split('/').nth(2).unwrap_or("").to_string();
+                                ttl_eff
+                                    .lock()
+                                    .unwrap_or_else(|e| e.into_inner())
+                                    .insert(host, max_age.max(*ttl as f64));
+                            }
+                        }
+                    }
+                }
+                if line_lower.starts_with("retry-after:") {
+                    let val = line.splitn(2, ':').nth(1).unwrap_or("").trim();
+                    if let Ok(ra) = val.parse::<f64>() {
+                        let host = url.split('/').nth(2).unwrap_or("").to_string();
+                        ttl_eff
+                            .lock()
+                            .unwrap_or_else(|e| e.into_inner())
+                            .insert(host, ra.max(*ttl as f64));
+                    }
+                }
+            }
+        }
+        eprintln!(
+            "FETCH {} {} {}B",
+            sources[*i].name,
+            url,
+            body_raw.as_ref().map(|r| r.len()).unwrap_or(0)
+        );
+        results.push((*i, *origin, *region, body_raw));
+        std::fs::remove_file(&body_file).ok();
+        std::fs::remove_file(&hdr_file).ok();
+    }
+
+    std::fs::remove_dir_all(&batch_dir).ok();
+    results
 }
 
 fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
@@ -2180,6 +2229,8 @@ fn load_sources() -> Vec<SourceConfig> {
                                     | Extract::Vectors(_)
                                     | Extract::CelestialMap { .. }
                                     | Extract::Flatten { .. }
+                                    | Extract::CmrPolygon { .. }
+                                    | Extract::CelestialPolygon { .. }
                                     | Extract::Rows { .. }
                                     | Extract::KeplerMap { .. }
                             )
@@ -2415,6 +2466,17 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::ObjLast(parts[1].to_string(), parts[2].to_string()));
                 }
             }
+            "hapi" => {
+                if parts.len() >= 3 {
+                    let param = parts[1].to_string();
+                    let name = parts[2].to_string();
+                    if let Some(Extract::Hapi(fields)) = cur_extracts.last_mut() {
+                        fields.push((param, name));
+                    } else {
+                        cur_extracts.push(Extract::Hapi(vec![(param, name)]));
+                    }
+                }
+            }
             "last_obj" => {
                 let quoted = parse_quoted_args(line.get(9..).unwrap_or(""));
                 if quoted.len() >= 4 {
@@ -2494,6 +2556,28 @@ fn load_sources() -> Vec<SourceConfig> {
                     });
                 }
             }
+            "cmr_polygon" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::CmrPolygon {
+                        arr_path: parts[1].to_string(),
+                        fields: Vec::new(),
+                    });
+                }
+            }
+            "celestial_polygon" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::CelestialPolygon {
+                        arr_path: parts[1].to_string(),
+                        radius: 0.0,
+                        fields: Vec::new(),
+                    });
+                }
+            }
+            "radius" => {
+                if let Some(Extract::CelestialPolygon { radius, .. }) = cur_extracts.last_mut() {
+                    *radius = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+                }
+            }
             "geom_path" => {
                 if let Some(Extract::Flatten { geom_path, .. }) = cur_extracts.last_mut() {
                     *geom_path = parts.get(1).unwrap_or(&"").to_string();
@@ -2523,6 +2607,8 @@ fn load_sources() -> Vec<SourceConfig> {
                         Some(Extract::Map { fields, .. })
                         | Some(Extract::CelestialMap { fields, .. })
                         | Some(Extract::Flatten { fields, .. })
+                        | Some(Extract::CmrPolygon { fields, .. })
+                        | Some(Extract::CelestialPolygon { fields, .. })
                         | Some(Extract::Rows { fields, .. })
                         | Some(Extract::KeplerMap { fields, .. }) => {
                             fields.push((parts[1].to_string(), parts[2].to_string()));
@@ -2919,7 +3005,7 @@ fn render_source_url(
                 }
             };
             let stations = stations.unwrap_or_else(|| {
-                if let Some(body) = fetch_with_headers(st_url, None, &[], 86400) {
+                if let Some(body) = fetch_one(st_url, None, &[], 86400) {
                     if let Some(j) = parse_json(&body) {
                         let arr = jpath_val(&j, &src.stations_path).and_then(|v| {
                             if let JsonVal::Arr(a) = v {
@@ -3100,71 +3186,6 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
         let _ = stream.write_all(&h);
     }
     let _ = stream.write_all(data);
-}
-
-fn fetch_worker(archive: Arc<Archive>) {
-    loop {
-        let (i, origin, region, url, body, headers, ttl) = {
-            let (lock, cvar) = &archive.fetch_queue;
-            let mut queue = lock.lock().unwrap_or_else(|e| e.into_inner());
-            loop {
-                if let Some(qf) = queue.pop() {
-                    break qf.task;
-                }
-                queue = cvar.wait(queue).unwrap_or_else(|e| e.into_inner());
-            }
-        };
-        let raw = fetch_with_headers(&url, body.as_deref(), &headers, ttl);
-        eprintln!(
-            "FETCH {} {} {}B",
-            archive.sources[i].name,
-            url,
-            raw.as_ref().map(|r| r.len()).unwrap_or(0)
-        );
-        let body = raw.as_ref().map(|r| {
-            let (hdrs, b) = parse_http_headers(r);
-            if let Some(max_age) = hdrs.get("cache-control").and_then(|cc| {
-                cc.split(';').find_map(|part| {
-                    let p = part.trim();
-                    if p.starts_with("max-age=") {
-                        p[8..].parse::<f64>().ok()
-                    } else {
-                        None
-                    }
-                })
-            }) {
-                let host = url.split('/').nth(2).unwrap_or("").to_string();
-                archive
-                    .ttl_eff
-                    .lock()
-                    .unwrap_or_else(|e| e.into_inner())
-                    .insert(host, max_age.max(ttl as f64));
-            }
-            if let Some(retry_after) = hdrs
-                .get("retry-after")
-                .and_then(|ra| ra.parse::<f64>().ok())
-            {
-                let host = url.split('/').nth(2).unwrap_or("").to_string();
-                archive
-                    .ttl_eff
-                    .lock()
-                    .unwrap_or_else(|e| e.into_inner())
-                    .insert(host, retry_after.max(ttl as f64));
-            }
-            b
-        });
-        archive
-            .results
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push((i, origin, region, body));
-        archive.warm_cache_cv.notify_one();
-        archive
-            .inflight
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .remove(&origin);
-    }
 }
 
 fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSample> {
@@ -3654,6 +3675,100 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     }
                 }
             }
+            Extract::CmrPolygon { arr_path, fields } => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
+                        for (idx, v) in arr.iter().enumerate() {
+                            let polys = match jpath_val(v, "polygons") {
+                                Some(JsonVal::Arr(p)) => p,
+                                _ => continue,
+                            };
+                            let mut vertices: Vec<(f64, f64)> = Vec::new();
+                            for ring_list in polys {
+                                if let JsonVal::Arr(rings) = ring_list {
+                                    for ring_str_val in rings {
+                                        if let JsonVal::Str(s) = ring_str_val {
+                                            let nums: Vec<f64> = s
+                                                .split_whitespace()
+                                                .filter_map(|n| n.parse().ok())
+                                                .collect();
+                                            for pair in nums.chunks(2) {
+                                                if pair.len() == 2 {
+                                                    vertices.push((pair[1], pair[0]));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if vertices.is_empty() {
+                                continue;
+                            }
+                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            for (fk, fn_) in fields {
+                                if let Some(val) = jpath(v, fk) {
+                                    ev_fields.push((fn_.clone(), val));
+                                }
+                            }
+                            ev_fields.push(("_cmr_id".to_string(), idx as f64));
+                            for (lon, lat) in vertices {
+                                pending.push(PendingSample {
+                                    epoch: now,
+                                    position: PendingPosition::Geodetic { lat, lon, alt: 0.0 },
+                                    fields: ev_fields.clone(),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            Extract::CelestialPolygon {
+                arr_path,
+                radius,
+                fields,
+            } => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
+                        for (idx, v) in arr.iter().enumerate() {
+                            let geom = match jpath_val(v, "geometry") {
+                                Some(g) => g,
+                                None => continue,
+                            };
+                            let coords = match jpath_val(geom, "coordinates") {
+                                Some(JsonVal::Arr(c)) => c,
+                                _ => continue,
+                            };
+                            let vertices = flatten_geojson_coords(coords);
+                            if vertices.is_empty() || *radius <= 0.0 {
+                                continue;
+                            }
+                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            for (fk, fn_) in fields {
+                                if let Some(val) = jpath(v, fk) {
+                                    ev_fields.push((fn_.clone(), val));
+                                }
+                            }
+                            ev_fields.push(("_cpoly_id".to_string(), idx as f64));
+                            for (ra_deg, dec_deg) in vertices {
+                                let ra = ra_deg.to_radians();
+                                let dec = dec_deg.to_radians();
+                                let (sa, ca) = ra.sin_cos();
+                                let (sd, cd) = dec.sin_cos();
+                                let p = [cd * ca * radius, cd * sa * radius, sd * radius];
+                                pending.push(PendingSample {
+                                    epoch: now,
+                                    position: PendingPosition::StateVector {
+                                        p,
+                                        v: [0.0, 0.0, 0.0],
+                                        track: false,
+                                    },
+                                    fields: ev_fields.clone(),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
             Extract::Rows { fields } => {
                 if let Frame::WGS84 { lat, lon, alt } | Frame::IAU2000 { lat, lon, alt } = src.frame
                 {
@@ -3966,6 +4081,35 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     }
                 }
             }
+            Extract::Hapi(pairs) => {
+                if let Some(ref j) = parsed_json {
+                    if let JsonVal::Obj(root) = j {
+                        if let (Some(JsonVal::Arr(data)), Some(JsonVal::Arr(params))) =
+                            (root.get("data"), root.get("parameters"))
+                        {
+                            let mut col: HashMap<String, usize> = HashMap::new();
+                            for (i, p) in params.iter().enumerate() {
+                                if let JsonVal::Obj(po) = p {
+                                    if let Some(JsonVal::Str(nn)) = po.get("name") {
+                                        col.insert(nn.clone(), i);
+                                    }
+                                }
+                            }
+                            if let Some(last_row) = data.last() {
+                                if let JsonVal::Arr(row) = last_row {
+                                    for (param, name) in pairs {
+                                        if let Some(&idx) = col.get(param) {
+                                            if let Some(val) = row.get(idx).and_then(scalar_of) {
+                                                extracted.insert(name.clone(), val);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     if !extracted.is_empty() {
@@ -4039,6 +4183,9 @@ fn materialize(
         },
     };
     let abs = motion.at(pend.epoch, pend.epoch);
+    if abs[0].is_nan() || abs[1].is_nan() || abs[2].is_nan() || pend.epoch.is_nan() {
+        return None;
+    }
     let mut resid_ema = 0.0;
     let track_origin = matches!(pend.position, PendingPosition::Source)
         || matches!(
@@ -4066,6 +4213,9 @@ fn materialize(
         entry.has_prev = true;
     }
     let (mut vmax, amax, p0f) = law_bounds(&motion, pend.epoch, resid_ema);
+    if p0f[0].is_nan() || p0f[1].is_nan() || p0f[2].is_nan() || vmax.is_nan() || amax.is_nan() {
+        return None;
+    }
     if vmax_floor > vmax {
         vmax = vmax_floor;
     }
@@ -4085,11 +4235,20 @@ fn materialize(
             })
         })
         .unwrap_or(tau_default);
+    let reach_time = src.ttl as f64 + tau;
     let extent = if is_diff {
-        (2.0 * v_or_d * tau).sqrt()
+        (2.0 * v_or_d * reach_time).sqrt()
     } else {
-        v_or_d * tau
+        v_or_d * reach_time
     };
+    if extent.is_nan() || tau.is_nan() {
+        return None;
+    }
+    let clean_fields: Vec<(String, f64)> = pend
+        .fields
+        .into_iter()
+        .filter(|(_, v)| !v.is_nan() && v.is_finite())
+        .collect();
     Some(Sample {
         origin,
         epoch: pend.epoch,
@@ -4101,7 +4260,7 @@ fn materialize(
         amax,
         p0f,
         motion,
-        fields: pend.fields,
+        fields: clean_fields,
     })
 }
 
@@ -4163,6 +4322,7 @@ fn warm_cache(archive: Arc<Archive>) {
             Vec<(String, String)>,
             u64,
         )> = Vec::new();
+        let mut task_prios: Vec<u8> = Vec::new();
         {
             let ttl_snapshot: HashMap<String, f64> = archive
                 .ttl_eff
@@ -4172,6 +4332,26 @@ fn warm_cache(archive: Arc<Archive>) {
             let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
             let (ex, ey, ez) = earth_position_icrs(now);
             let (mx, my, mz) = mars_position_icrs(now);
+            let fetch_prio = |pos: (f64, f64, f64), r: f64, is_new: bool| -> u8 {
+                if is_new {
+                    return 0;
+                }
+                let mut min_d = f64::INFINITY;
+                for &(_, px, py, pz, _) in &presences {
+                    let dx = px - pos.0;
+                    let dy = py - pos.1;
+                    let dz = pz - pos.2;
+                    let d = (dx * dx + dy * dy + dz * dz).sqrt();
+                    if d < min_d {
+                        min_d = d;
+                    }
+                }
+                if r > 0.0 {
+                    ((min_d / r).min(1.0) * 200.0) as u8
+                } else {
+                    0
+                }
+            };
             for (i, src) in archive.sources.iter().enumerate() {
                 let fc = force_constants(&src.force);
                 let r = match fc {
@@ -4201,6 +4381,8 @@ fn warm_cache(archive: Arc<Archive>) {
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
+                        let is_new = origins.get(&origin).is_none();
+                        task_prios.push(fetch_prio(pos, r, is_new));
                         tasks.push((
                             i,
                             origin,
@@ -4229,6 +4411,8 @@ fn warm_cache(archive: Arc<Archive>) {
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
+                        let is_new = origins.get(&origin).is_none();
+                        task_prios.push(fetch_prio(pos, r, is_new));
                         tasks.push((
                             i,
                             origin,
@@ -4257,6 +4441,8 @@ fn warm_cache(archive: Arc<Archive>) {
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
+                        let is_new = origins.get(&origin).is_none();
+                        task_prios.push(fetch_prio(pos, r, is_new));
                         tasks.push((
                             i,
                             origin,
@@ -4275,12 +4461,8 @@ fn warm_cache(archive: Arc<Archive>) {
                             || src.url.contains("{z}")
                             || src.url.contains("{grid");
                         if has_template {
-                            for &(_, px, py, pz, extent) in &presences {
-                                let ddx = px - ex;
-                                let ddy = py - ey;
-                                let ddz = pz - ez;
-                                let domain = EARTH_DOMAIN + extent;
-                                if ddx * ddx + ddy * ddy + ddz * ddz > domain * domain {
+                            for &(_, px, py, pz, _) in &presences {
+                                if !presence_gate(&presences, (px, py, pz), r) {
                                     continue;
                                 }
                                 let (lat, lon) = icrs_to_geodetic(px, py, pz, now);
@@ -4298,6 +4480,8 @@ fn warm_cache(archive: Arc<Archive>) {
                                 ) {
                                     continue;
                                 }
+                                let is_new = origins.get(&origin).is_none();
+                                task_prios.push(fetch_prio((px, py, pz), r, is_new));
                                 tasks.push((
                                     i,
                                     origin,
@@ -4323,26 +4507,20 @@ fn warm_cache(archive: Arc<Archive>) {
                         ) {
                             continue;
                         }
-                        let celestial = src.extracts.iter().any(|e| {
-                            matches!(
-                                e,
-                                Extract::CelestialMap { .. }
-                                    | Extract::Vectors(_)
-                                    | Extract::Ephemeris(_)
-                            )
-                        });
                         let prev = origins
                             .get(&origin)
                             .filter(|o| o.has_prev)
                             .map(|o| o.prev_abs);
                         if let Some(pa) = prev {
-                            if !celestial && !presence_gate(&presences, (pa[0], pa[1], pa[2]), r) {
+                            if !presence_gate(&presences, (pa[0], pa[1], pa[2]), r) {
                                 continue;
                             }
                         }
                         let (_, px, py, pz, _) = presences[0];
                         let (rx, ry, rz) =
                             prev.map(|pa| (pa[0], pa[1], pa[2])).unwrap_or((px, py, pz));
+                        let is_new = origins.get(&origin).is_none();
+                        task_prios.push(fetch_prio((rx, ry, rz), r, is_new));
                         tasks.push((
                             i,
                             origin,
@@ -4354,12 +4532,8 @@ fn warm_cache(archive: Arc<Archive>) {
                         ));
                     }
                     Frame::Query => {
-                        for &(_, px, py, pz, extent) in &presences {
-                            let ddx = px - ex;
-                            let ddy = py - ey;
-                            let ddz = pz - ez;
-                            let domain = EARTH_DOMAIN + extent;
-                            if ddx * ddx + ddy * ddy + ddz * ddz > domain * domain {
+                        for &(_, px, py, pz, _) in &presences {
+                            if !presence_gate(&presences, (px, py, pz), r) {
                                 continue;
                             }
                             let (lat, lon) = icrs_to_geodetic(px, py, pz, now);
@@ -4377,6 +4551,8 @@ fn warm_cache(archive: Arc<Archive>) {
                             ) {
                                 continue;
                             }
+                            let is_new = origins.get(&origin).is_none();
+                            task_prios.push(fetch_prio((px, py, pz), r, is_new));
                             tasks.push((
                                 i,
                                 origin,
@@ -4390,128 +4566,119 @@ fn warm_cache(archive: Arc<Archive>) {
                     }
                 }
             }
-
-            let mut inflight = archive.inflight.lock().unwrap_or_else(|e| e.into_inner());
-            let (lock, cvar) = &archive.fetch_queue;
-            let mut queue = lock.lock().unwrap_or_else(|e| e.into_inner());
-            let mut queued = 0usize;
-            for task in tasks {
-                if !inflight.insert(task.1) {
-                    continue;
-                }
-                queue.push(QueuedFetch {
-                    priority: if origins.get(&task.1).is_none() { 0 } else { 1 },
-                    ttl: task.6,
-                    seq: FETCH_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
-                    task,
-                });
-                queued += 1;
-            }
-            if queued > 0 {
-                cvar.notify_all();
-            }
         }
+
+        let mut indexed: Vec<_> = tasks.into_iter().zip(task_prios.into_iter()).collect();
+        indexed.sort_by_key(|&(_, p)| p);
+        let tasks: Vec<_> = indexed.into_iter().map(|(t, _)| t).collect();
 
         let mut new_samples: Vec<Sample> = Vec::new();
         let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
-        let results: Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)> =
-            std::mem::take(&mut *archive.results.lock().unwrap_or_else(|e| e.into_inner()));
-        for (src_idx, origin, region, body_opt) in results {
-            let src = &archive.sources[src_idx];
-            let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
-            {
-                let entry = origins.entry(origin).or_default();
-                entry.fetched = now;
-                entry.ttl = src.ttl as f64;
-            }
-            let Some(body) = body_opt else {
-                continue;
-            };
-            let pendings = extract_pending(src, &body, now);
-            let may_be_empty = src.extracts.iter().any(|e| {
-                matches!(
-                    e,
-                    Extract::Map { .. }
-                        | Extract::GeojsonEvents { .. }
-                        | Extract::LastObj { .. }
-                        | Extract::Vectors(_)
-                        | Extract::CelestialMap { .. }
-                        | Extract::Flatten { .. }
-                        | Extract::Rows { .. }
-                        | Extract::KeplerMap { .. }
-                )
-            });
-            if pendings.is_empty() {
-                if !may_be_empty {
+        for chunk in tasks.chunks(25) {
+            let chunk_tasks: Vec<_> = chunk.to_vec();
+            let chunk_results = batch_fetch(chunk_tasks, &archive.sources, &archive.ttl_eff);
+            for (src_idx, origin, region, body_opt) in chunk_results {
+                let src = &archive.sources[src_idx];
+                let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+                {
                     let entry = origins.entry(origin).or_default();
-                    entry.zero_yield += 1;
-                    if entry.zero_yield >= 4 && entry.zero_yield & (entry.zero_yield - 1) == 0 {
-                        eprintln!(
-                            "zero_yield x{} {}",
-                            entry.zero_yield,
-                            src.url.split('/').nth(2).unwrap_or("?")
-                        );
+                    entry.fetched = now;
+                    entry.ttl = src.ttl as f64;
+                }
+                let Some(body) = body_opt else {
+                    continue;
+                };
+                let pendings = extract_pending(src, &body, now);
+                let may_be_empty = src.extracts.iter().any(|e| {
+                    matches!(
+                        e,
+                        Extract::Map { .. }
+                            | Extract::GeojsonEvents { .. }
+                            | Extract::LastObj { .. }
+                            | Extract::Vectors(_)
+                            | Extract::CelestialMap { .. }
+                            | Extract::Flatten { .. }
+                            | Extract::CmrPolygon { .. }
+                            | Extract::CelestialPolygon { .. }
+                            | Extract::Rows { .. }
+                            | Extract::KeplerMap { .. }
+                    )
+                });
+                if pendings.is_empty() {
+                    if !may_be_empty {
+                        let entry = origins.entry(origin).or_default();
+                        entry.zero_yield += 1;
+                        if entry.zero_yield >= 4 && entry.zero_yield & (entry.zero_yield - 1) == 0 {
+                            eprintln!(
+                                "zero_yield x{} {}",
+                                entry.zero_yield,
+                                src.url.split('/').nth(2).unwrap_or("?")
+                            );
+                        }
+                    }
+                } else {
+                    origins.entry(origin).or_default().zero_yield = 0;
+                    refreshed.insert(origin);
+                    let field_names: Vec<&str> = src
+                        .extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(_, n)
+                            | Extract::First(_, n)
+                            | Extract::Last(_, n)
+                            | Extract::Path(_, n)
+                            | Extract::Deep(_, n) => Some(n.as_str()),
+                            _ => None,
+                        })
+                        .collect();
+                    eprintln!(
+                        "PARSED {}: {} samples [{}]",
+                        src.name,
+                        pendings.len(),
+                        field_names.join(", ")
+                    );
+                }
+                for pend in pendings {
+                    if let Some(smp) = materialize(src, origin, region, pend, &mut origins) {
+                        new_samples.push(smp);
                     }
                 }
-            } else {
-                origins.entry(origin).or_default().zero_yield = 0;
-                refreshed.insert(origin);
-                let field_names: Vec<&str> = src
-                    .extracts
-                    .iter()
-                    .filter_map(|e| match e {
-                        Extract::Field(_, n)
-                        | Extract::First(_, n)
-                        | Extract::Last(_, n)
-                        | Extract::Path(_, n)
-                        | Extract::Deep(_, n) => Some(n.as_str()),
-                        _ => None,
-                    })
-                    .collect();
-                eprintln!(
-                    "PARSED {}: {} samples [{}]",
-                    src.name,
-                    pendings.len(),
-                    field_names.join(", ")
-                );
             }
-            for pend in pendings {
-                if let Some(smp) = materialize(src, origin, region, pend, &mut origins) {
-                    new_samples.push(smp);
-                }
-            }
-        }
 
-        let station_sample = archive
-            .station
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .sample
-            .clone()
-            .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
-        let mut all: Vec<Sample> = Vec::new();
-        {
-            let old = archive
-                .field
-                .read()
+            let station_sample = archive
+                .station
+                .lock()
                 .unwrap_or_else(|e| e.into_inner())
-                .clone();
-            for fam in [&old.planet, &old.inertial] {
-                for v in fam.cells.values() {
-                    for s in v {
-                        if (now - s.epoch).abs() <= s.ttl * 64.0 && !refreshed.contains(&s.origin) {
-                            all.push(s.clone());
+                .sample
+                .clone()
+                .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
+            let mut all: Vec<Sample> = Vec::new();
+            {
+                let old = archive
+                    .field
+                    .read()
+                    .unwrap_or_else(|e| e.into_inner())
+                    .clone();
+                for fam in [&old.planet, &old.inertial] {
+                    for v in fam.cells.values() {
+                        for s in v {
+                            if (now - s.epoch).abs() <= s.ttl * 64.0
+                                && !refreshed.contains(&s.origin)
+                            {
+                                all.push(s.clone());
+                            }
                         }
                     }
                 }
             }
+            all.extend(new_samples.iter().cloned());
+            if let Some(ref s) = station_sample {
+                all.push(s.clone());
+            }
+            let partial = Arc::new(build_buffer(all, cadence));
+            *archive.field.write().unwrap_or_else(|e| e.into_inner()) = partial;
         }
-        all.extend(new_samples);
-        if let Some(s) = station_sample {
-            all.push(s);
-        }
-        let next = Arc::new(build_buffer(all, cadence));
-        *archive.field.write().unwrap_or_else(|e| e.into_inner()) = next;
+
         archive
             .origins
             .lock()
@@ -4548,18 +4715,11 @@ fn main() {
         }),
         presence: Mutex::new(HashMap::new()),
         origins: Mutex::new(HashMap::new()),
-        results: Mutex::new(Vec::new()),
-        inflight: Mutex::new(std::collections::HashSet::new()),
-        fetch_queue: (Mutex::new(BinaryHeap::new()), Condvar::new()),
         ttl_eff: Mutex::new(HashMap::new()),
         stations_cache: Mutex::new(HashMap::new()),
         warm_cache_mutex: Mutex::new(()),
         warm_cache_cv: Condvar::new(),
     });
-    for _ in 0..8 {
-        let ar = Arc::clone(&archive);
-        thread::spawn(move || fetch_worker(ar));
-    }
     {
         archive
             .presence

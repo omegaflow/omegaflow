@@ -589,18 +589,6 @@ url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.ge
 wgs84 39.749 -105.221
 path features.0.properties.rms geosphere_earth_hum_rms
 
-source incois_erddap_tsunami_bpr_buoys
-ttl 60
-force acoustic
-url https://erddap.incois.gov.in/erddap/tabledap/INCOIS_TSUNAMI_BPR.csv?latitude,longitude,time,water_pressure,sea_floor_depth&time>={today}T00:00:00Z&orderBy(%22time%22)
-format text
-rows
-lat_key latitude
-lon_key longitude
-field water_pressure bottom_pressure_mbar
-field sea_floor_depth depth_m
-field time measurement_time
-
 source ingv_italy_earthquakes
 ttl 60
 force seismic-body
@@ -679,41 +667,6 @@ url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 last bz_gsm magnetosphere_imf_bz_nt
 last bt magnetosphere_imf_bt_nt
 last by_gsm magnetosphere_imf_by_nt
-
-source nmdb_oulu_neutron_monitor
-ttl 60
-force em
-url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
-wgs84 65.05 25.47
-format text
-rows
-field 0 datetime_utc
-field 1 oulu_count_rate_cph
-field 2 oulu_correction_factor
-
-source nmdb_southpole_neutron
-ttl 60
-force em
-url http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 -90.0 0.0
-path data.SOPO.1h.0.1 cosmic_neutron_flux_southpole
-
-source nmdb_southpole_neutron_monitor
-ttl 60
-force em
-url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
-wgs84 -90.0 0.0
-format text
-rows
-field 0 datetime_utc
-field 1 sopo_count_rate_cph
-
-source nmdb_thule_neutron
-ttl 60
-force em
-url http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 76.53 -68.74
-path data.THUL.1h.0.1 cosmic_neutron_flux_thule
 
 source noaa_goes18_electron_flux
 ttl 60
@@ -861,146 +814,6 @@ force diffusion
 ssb
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 last_obj energy ">=2 MeV" flux radiation_electron_flux_2mev
-
-source radiation_nmdb_almaty
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 43.18 76.93
-path data.ALMT.1h.0.1 cosmic_neutron_flux_almaty
-
-source radiation_nmdb_austin
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 30.27 -97.74
-path data.AUST.1h.0.1 cosmic_neutron_flux_austin
-
-source radiation_nmdb_boulder
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 40.01 -105.27
-path data.BOUL.1h.0.1 cosmic_neutron_flux_boulder
-
-source radiation_nmdb_cape_town
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 -33.93 18.47
-path data.CTWN.1h.0.1 cosmic_neutron_flux_cape_town
-
-source radiation_nmdb_dome_c
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 -75.1 123.36
-path data.DOMC.1h.0.1 cosmic_neutron_flux_dome_c
-
-source radiation_nmdb_ermawan
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 -6.89 107.59
-path data.ERMN.1h.0.1 cosmic_neutron_flux_ermawan
-
-source radiation_nmdb_fort_smith
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 60.02 -111.93
-path data.FSMT.1h.0.1 cosmic_neutron_flux_fort_smith
-
-source radiation_nmdb_goose_bay
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 53.32 -60.42
-path data.GOOS.1h.0.1 cosmic_neutron_flux_goose_bay
-
-source radiation_nmdb_halifax
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 44.63 -63.59
-path data.HALF.1h.0.1 cosmic_neutron_flux_halifax
-
-source radiation_nmdb_inuvik
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 68.36 -133.72
-path data.INVK.1h.0.1 cosmic_neutron_flux_inuvik
-
-source radiation_nmdb_kerguelen
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 -49.35 70.25
-path data.KERG.1h.0.1 cosmic_neutron_flux_kerguelen
-
-source radiation_nmdb_kiel
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 54.34 10.12
-path data.KIEL.1h.0.1 cosmic_neutron_flux_kiel
-
-source radiation_nmdb_moscow
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 55.75 37.57
-path data.MOSC.1h.0.1 cosmic_neutron_flux_moscow
-
-source radiation_nmdb_nain
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 56.55 -61.67
-path data.NAIN.1h.0.1 cosmic_neutron_flux_nain
-
-source radiation_nmdb_norilsk
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 69.35 88.2
-path data.NRLK.1h.0.1 cosmic_neutron_flux_norilsk
-
-source radiation_nmdb_peawanuck
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 54.99 -85.44
-path data.PWNK.1h.0.1 cosmic_neutron_flux_peawanuck
-
-source radiation_nmdb_reykjavik
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 64.14 -21.9
-path data.REYK.1h.0.1 cosmic_neutron_flux_reykjavik
-
-source radiation_nmdb_san_antonio
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 -62.09 -58.4
-path data.SANA.1h.0.1 cosmic_neutron_flux_san_antonio
-
-source radiation_nmdb_tbilisi
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 41.72 44.76
-path data.TBLS.1h.0.1 cosmic_neutron_flux_tbilisi
-
-source radiation_nmdb_ulan_bator
-ttl 60
-force diffusion
-url http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start={yesterday}&end={today}&format=json&bins=3600
-wgs84 47.92 106.92
-path data.ULNB.1h.0.1 cosmic_neutron_flux_ulan_bator
 
 source radiation_proton_flux
 ttl 60
@@ -1182,6 +995,163 @@ field Kp kp_index
 field a_running kp_a_running
 field station_count kp_station_count
 
+source arcgis_air_quality_pm25
+ttl 300
+force diffusion
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/0/query?where=1%3D1&outFields=value,value_2,parameter,city,country,lastUpdated&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.value pm25_concentration
+field properties.value_2 pm25_value_2
+
+source arcgis_earthquake_3d
+ttl 300
+force seismic-body
+url https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/Earthquake_Archive_3D/FeatureServer/0/query?where=1%3D1&outFields=mag,kmDepth,felt,cdi,mmi,tsunami,sig,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag quake3d_magnitude
+field properties.sig quake3d_significance
+field properties.felt quake3d_felt_reports
+field properties.kmDepth quake3d_depth_km
+field properties.cdi quake3d_cdi_intensity
+field properties.mmi quake3d_mmi_intensity
+field properties.tsunami quake3d_tsunami_flag
+
+# === GCOOS ArcGIS Buoys (31 stations, 2026-07-30) ===
+
+source arcgis_goes_bolides
+ttl 300
+force em
+url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,detected_duration,detected_energy,detected_latitude,detected_longitude&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.detected_duration goes_bolide_duration_s
+field properties.detected_energy goes_bolide_energy_tj
+
+source arcgis_gsn_seismic
+ttl 300
+force seismic-body
+url https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/gNnAj/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.f4 gsn_seismic_latitude
+field properties.f5 gsn_seismic_longitude
+field properties.f6 gsn_seismic_elevation_m
+
+# === Pre-built astronomical catalogs (GitHub CDN, 2026-07-30) ===
+# Source: Gaia DR3 (2022), Fermi 4FGL/4LAC DR4
+# Build script: /tmp/build_catalogs.py
+
+
+# === Pre-built astronomical catalogs (CDN, 2026-07-30) ===
+# Source: Gaia DR3 + HEASARC + VizieR, built with /tmp/build_all_catalogs.py
+# All serve from raw.githubusercontent.com/omegaflow/astro-catalogs/main/
+
+source arcgis_historical_quakes
+ttl 300
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Historical_Quakes/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,depth,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag quake_magnitude
+field properties.sig quake_significance
+field properties.depth quake_depth_km
+field properties.felt quake_felt_reports
+field properties.cdi quake_cdi_intensity
+field properties.mmi quake_mmi_intensity
+field properties.tsunami quake_tsunami_flag
+
+source arcgis_metar_weather
+ttl 300
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/0/query?where=1%3D1&outFields=LATITUDE,LONGITUDE,TEMP,DEW_POINT,R_HUMIDITY,WIND_DIRECT,WIND_SPEED,WIND_GUST,WIND_CHILL,PRESSURE,VISIBILITY,HEAT_INDEX,ELEVATION&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.TEMP metar_temp_f
+field properties.DEW_POINT metar_dew_point_f
+field properties.R_HUMIDITY metar_humidity_pct
+field properties.WIND_SPEED metar_wind_speed_kt
+field properties.WIND_GUST metar_wind_gust_kt
+field properties.PRESSURE metar_pressure_mb
+field properties.VISIBILITY metar_visibility_mi
+field properties.HEAT_INDEX metar_heat_index_f
+field properties.ELEVATION metar_elevation_m
+
+source arcgis_ntad_dams
+ttl 300
+force gravity
+url https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Dams/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,nidHeight,damHeight&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.nidHeight ntad_dam_nid_height_m
+field properties.damHeight ntad_dam_height_m
+
+# === ArcGIS GSN Seismic Stations (150 stations, 2026-07-30) ===
+source arcgis_satellite_fire
+ttl 300
+force thermal
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/NOAA_Satellite_Fire_Detections_(v1)/FeatureServer/0/query?where=1%3D1&outFields=Lon,Lat,FRP,Satellite,Method,YearDay&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.FRP satellite_fire_frp_mw
+
+source arcgis_satellite_positions
+ttl 300
+force em
+url https://services5.arcgis.com/t2t1phUp5Bj3z8Lp/arcgis/rest/services/Satellite_Point/FeatureServer/0/query?where=1%3D1&outFields=sat_name,altitude_km,velocity_kmps,inclination,norad_cat_id&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.altitude_km satellite_altitude_km
+field properties.velocity_kmps satellite_velocity_kmps
+field properties.inclination satellite_inclination_rad
+field properties.norad_cat_id satellite_norad_id
+
+# === ArcGIS NTAD Dams (92,766 records, 2026-07-30) ===
+source arcgis_space_weather_scales
+ttl 300
+force gravity
+ssb
+url https://services3.arcgis.com/UJlXKlDHq85VvxWm/arcgis/rest/services/SpaceWeatherCurrent/FeatureServer/0/query?where=1%3D1&orderByFields=OBJECTID+DESC&resultRecordCount=1&returnGeometry=false&outFields=date_time_current,Geomagnetic,RadioBlackouts,RadiationStorms&f=json
+path features.0.attributes.Geomagnetic space_weather_geomagnetic_scale
+path features.0.attributes.RadioBlackouts space_weather_radio_blackout_scale
+path features.0.attributes.RadiationStorms space_weather_radiation_storm_scale
+
+source arcgis_usgs_seismic
+ttl 300
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,longitude,latitude,depth&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag usgs_magnitude
+field properties.sig usgs_significance
+field properties.depth usgs_depth_km
+field properties.felt usgs_felt_reports
+field properties.cdi usgs_cdi_intensity
+field properties.tsunami usgs_tsunami_flag
+
+source arcgis_viirs_fire
+ttl 300
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,bright_ti4,bright_ti5,frp,confidence&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.bright_ti4 viirs_brightness_ti4_k
+field properties.bright_ti5 viirs_brightness_ti5_k
+field properties.frp viirs_fire_radiative_power_mw
+field properties.confidence viirs_confidence_pct
+
 source atmosphere_noaa_metar
 ttl 300
 force acoustic
@@ -1291,6 +1261,15 @@ field 2 by_gse_nT
 field 3 bz_gse_nT
 field 4 b_magnitude_nT
 
+source cdaweb_dscovr_imf
+ttl 300
+force gravity
+ssb
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min=2026-07-01T00:00:00Z&time.max=2026-07-13T23:59:59Z&parameters=Time,B1F1&format=json
+hapi B1F1 exosphere_mag_bt_nt
+
+# === NASA OMNI Combined Solar Wind + IMF (2026-07-30) ===
+
 source emsc_felt_earthquake_reports
 ttl 300
 force seismic-body
@@ -1373,6 +1352,347 @@ field class class_name
 field order order_name
 field family family_name
 field eventDate observation_date
+
+source gcoos_buoy_wmo_42043
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42043/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42043_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42043_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42043_current_speed_cms
+
+source gcoos_buoy_wmo_42084
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42084/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42084_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42084_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42084_current_speed_cms
+
+source gcoos_buoy_wmo_42091
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42091/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42091_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42091_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42091_current_speed_cms
+
+source gcoos_buoy_wmo_42095
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42095/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42095_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42095_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42095_current_speed_cms
+
+source gcoos_buoy_wmo_42098
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42098/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42098_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42098_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42098_current_speed_cms
+
+source gcoos_buoy_wmo_42099
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42099/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42099_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42099_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42099_current_speed_cms
+
+source gcoos_buoy_wmo_42360
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42360/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42360_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42360_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42360_current_speed_cms
+
+source gcoos_buoy_wmo_42361
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42361/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42361_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42361_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42361_current_speed_cms
+
+source gcoos_buoy_wmo_42362
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42362/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42362_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42362_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42362_current_speed_cms
+
+source gcoos_buoy_wmo_42363
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42363/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42363_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42363_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42363_current_speed_cms
+
+source gcoos_buoy_wmo_42364
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42364/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42364_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42364_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42364_current_speed_cms
+
+source gcoos_buoy_wmo_42365
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42365/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42365_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42365_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42365_current_speed_cms
+
+source gcoos_buoy_wmo_42369
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42369/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42369_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42369_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42369_current_speed_cms
+
+source gcoos_buoy_wmo_42370
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42370/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42370_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42370_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42370_current_speed_cms
+
+source gcoos_buoy_wmo_42373
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42373/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42373_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42373_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42373_current_speed_cms
+
+source gcoos_buoy_wmo_42374
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42374/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42374_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42374_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42374_current_speed_cms
+
+source gcoos_buoy_wmo_42377
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42377/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42377_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42377_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42377_current_speed_cms
+
+source gcoos_buoy_wmo_42379
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42379/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42379_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42379_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42379_current_speed_cms
+
+source gcoos_buoy_wmo_42382
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42382/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42382_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42382_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42382_current_speed_cms
+
+source gcoos_buoy_wmo_42384
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42384/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42384_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42384_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42384_current_speed_cms
+
+source gcoos_buoy_wmo_42386
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42386/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42386_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42386_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42386_current_speed_cms
+
+source gcoos_buoy_wmo_42388
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42388/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42388_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42388_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42388_current_speed_cms
+
+source gcoos_buoy_wmo_42395
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42395/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42395_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42395_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42395_current_speed_cms
+
+source gcoos_buoy_wmo_42400
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42400/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42400_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42400_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42400_current_speed_cms
+
+source gcoos_buoy_wmo_42873
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42873/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42873_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42873_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42873_current_speed_cms
+
+source gcoos_buoy_wmo_42876
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42876/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42876_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42876_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42876_current_speed_cms
+
+source gcoos_buoy_wmo_42881
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42881/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42881_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42881_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42881_current_speed_cms
+
+source gcoos_buoy_wmo_42884
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42884/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42884_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42884_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42884_current_speed_cms
+
+source gcoos_buoy_wmo_42887
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42887/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42887_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42887_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42887_current_speed_cms
+
+source gcoos_buoy_wmo_42934
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42934/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42934_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42934_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42934_current_speed_cms
+
+source gcoos_buoy_wmo_42936
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42936/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42936_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42936_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42936_current_speed_cms
 
 source gdacs_disaster_alerts
 ttl 300
@@ -1499,6 +1819,29 @@ map value.timeSeries
 lat_key sourceInfo.geoLocation.geogLocation.latitude
 lon_key sourceInfo.geoLocation.geogLocation.longitude
 field_in values.0.value.0.value hydrosphere_river_flow_cfs
+
+source gfz_f107_radio_flux
+ttl 300
+force em
+ssb
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=Fobs
+last Fobs solar_radio_flux_sfu
+
+# === CDAWeb HAPI DSCOVR IMF (2026-07-30) ===
+
+source gfz_kp_index
+ttl 300
+force gravity
+ssb
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=Kp
+last Kp magnetosphere_kp_index
+
+source gfz_sunspot_number
+ttl 300
+force em
+ssb
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
+last SN solar_sunspot_number
 
 source goes_eps_protons
 ttl 300
@@ -2804,6 +3147,22 @@ field 2 total_field_f_nT
 field 3 z_nT
 field 4 f_nT
 
+source ionosphere_giro_dxpredictor
+ttl 300
+force em
+url https://www.dxpredictor.com/api/v1/ionosonde/fof2
+header Origin https://www.dxpredictor.com
+header Referer https://www.dxpredictor.com/ionosonde
+header User-Agent Mozilla/5.0
+map stations
+lat_key latitude
+lon_key longitude
+field_in fof2 ionosonde_fof2_mhz
+field_in hmf2 ionosonde_hmf2_km
+field_in muf ionosonde_muf3000_mhz
+field_in foe ionosonde_foe_mhz
+field_in cs ionosonde_confidence
+
 source jpl_cad_neo_recent_approaches
 ttl 300
 force gravity
@@ -2885,18 +3244,22 @@ url https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hou
 last_row 1 magnetosphere_solar_wind_speed_noaa
 last_row 2 magnetosphere_solar_wind_density_noaa
 
-source nmdb_global_forbush_composite
+source nasa_omni_solar_wind
 ttl 300
-force em
-ecliptic 1
-url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&stations[]=JUNG&stations[]=THUL&stations[]=NEWK&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
-format text
-rows
-field 0 datetime_utc
-field 1 oulu_cph
-field 2 jung_cph
-field 3 thul_cph
-field 4 newk_cph
+force advective
+ssb
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&time.min=2026-07-01T00:00:00Z&time.max=2026-07-08T00:00:00Z&parameters=Time,BX_GSE,BY_GSE,BZ_GSE,flow_speed,proton_density,T,Pressure,SYM_H,AE_INDEX&format=json
+hapi BX_GSE imf_bx_gse_nt
+hapi BY_GSE imf_by_gse_nt
+hapi BZ_GSE imf_bz_gse_nt
+hapi flow_speed solar_wind_speed_kms
+hapi proton_density solar_wind_density_ncc
+hapi T solar_wind_temp_k
+hapi Pressure solar_wind_dynamic_pressure_npa
+hapi SYM_H geomag_sym_h_nt
+hapi AE_INDEX geomag_ae_index_nt
+
+# === ArcGIS Feature Services (2026-07-30) ===
 
 source noaa_asos_surface_wind_observations
 ttl 300
@@ -2986,9 +3349,9 @@ ttl 300
 force em
 url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
 map coordinates
-lat_key lat
-lon_key lon
-field aurora_probability aurora_probability
+lat_key 1
+lon_key 0
+field_in 2 aurora_probability
 
 source noaa_swpc_dst_real_time
 ttl 300
@@ -3127,26 +3490,6 @@ field_in significance physics_ligo_significance
 field_in p_astro physics_ligo_p_astro
 field_in group physics_ligo_event_group
 field_in pipeline physics_ligo_pipeline
-
-source radiation_cosmic_ray_neutrons_realtime
-ttl 300
-force diffusion
-ecliptic 1
-url https://www.nmdb.eu/nest/data/NEWK/realtime.txt
-format text
-field 0 radiation_newark_time
-field 1 radiation_newark_pressure_mbar
-field 2 radiation_newark_count_rate
-
-source radiation_cosmic_ray_oulu_realtime
-ttl 300
-force diffusion
-url https://www.nmdb.eu/nest/data/OULU/realtime.txt
-wgs84 65.0 25.5
-format text
-field 0 radiation_oulu_time
-field 1 radiation_oulu_pressure_mbar
-field 2 radiation_oulu_count_rate
 
 source solar_noaa_Integrated_irradiance
 ttl 300
@@ -3360,34 +3703,6 @@ map data.warnings
 field_in type atmosphere_bom_warning_type
 field_in level atmosphere_bom_warning_level
 field_in message atmosphere_bom_warning_message
-
-source atmosphere_cma_current_weather
-ttl 600
-force em
-url https://weather.cma.cn/api/now/54511
-wgs84 35.0 105.0
-field data.now.temperature atmosphere_cma_temp_c
-field data.now.humidity atmosphere_cma_humidity_pct
-field data.now.pressure atmosphere_cma_pressure_hpa
-field data.now.windSpeed atmosphere_cma_wind_speed_ms
-field data.now.windDirection atmosphere_cma_wind_dir
-field data.now.precipitation atmosphere_cma_precip_mm
-field data.now.feelst atmosphere_cma_feels_like_c
-path data.now
-
-source atmosphere_cma_weather_alerts
-ttl 600
-force em
-ecliptic 1
-url https://weather.cma.cn/api/map/alarm
-map data
-lat_key latitude
-lon_key longitude
-field_in id atmosphere_cma_alert_id
-field_in headline atmosphere_cma_alert_title
-field_in type atmosphere_cma_alert_type
-field_in description atmosphere_cma_alert_desc
-field_in effective atmosphere_cma_alert_time
 
 source atmosphere_jetstream_250hpa
 ttl 600
@@ -4175,15 +4490,21 @@ field_in 5 vx_au_d
 field_in 6 vy_au_d
 field_in 7 vz_au_d
 
+source lidar_openmeteo_elevation
+ttl 600
+force em
+url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+path elevation.0 lidar_terrain_elevation_m
+
 source magnetosphere_ovation_aurora
 ttl 600
 force em
 ecliptic 1
 url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
 map coordinates
-lat_key lat
-lon_key lon
-field_in value magnetosphere_aurora_power_gw
+lat_key 1
+lon_key 0
+field_in 2 magnetosphere_aurora_power_gw
 
 source mpc_neocp_observations_list
 ttl 600
@@ -4274,20 +4595,6 @@ field_in properties.areaDesc affected_area
 field_in properties.effective effective_time
 field_in properties.expires expiration_time
 field_in properties.messageType message_type
-
-source oceanography_incois_tsunami_buoys
-ttl 600
-force em
-ecliptic 1
-url https://tsunami.incois.gov.in/itews/DSSProducts/OPR/past90days.json
-verify false
-map .
-lat_key latitude
-lon_key longitude
-field_in station_id oceanography_incois_station_id
-field_in wave_height oceanography_incois_wave_height_m
-field_in arrival_time oceanography_incois_arrival_time
-field_in significance oceanography_incois_significance
 
 source open_meteo_airquality_full
 ttl 600
@@ -4411,15 +4718,6 @@ field_in properties.name station_name
 field_in properties.value ambient_dose_rate_nsv_h
 field_in properties.nuclide nuclide
 field_in properties.site_status site_status
-
-source geospace_sansa_ionosonde
-ttl 900
-force em
-url https://spaceweather.sansa.org.za/ionosonde/latest
-wgs84 -34.0 19.0
-field foF2 geospace_sansa_fof2_mhz
-field hmF2 geospace_sansa_hmf2_km
-field MUF geospace_sansa_muf_mhz
 
 source hydrosphere_usgs_arkansas_littlerock
 ttl 900
@@ -4871,17 +5169,6 @@ field_in barometricPressure pressure_pa
 field_in visibility visibility_m
 field_in relativeHumidity humidity_percent
 field_in textDescription weather_description
-
-source ogimet_synop_russia
-ttl 1800
-force acoustic
-url https://www.ogimet.com/cgi-bin/getsynop?block=20&begin={today}000000&end={today}235959&zoom=1&state=30
-format text
-rows
-lat_key Latitude
-lon_key Longitude
-field station_name station_name
-field temperature_2m temp_c
 
 source open_meteo_forecast
 ttl 1800
@@ -5425,16 +5712,6 @@ field data.items.0.max atmosphere_bom_forecast_max_temp
 field data.items.0.precipitation.mean atmosphere_bom_forecast_precip_mm
 field data.items.0.uv atmosphere_bom_forecast_uv_index
 path data.items.0
-
-source atmosphere_cma_weather_forecast
-ttl 3600
-force em
-url https://weather.cma.cn/api/weather/54511
-wgs84 35.0 105.0
-field data.location.name atmosphere_cma_location_name
-field data.location.longitude atmosphere_cma_station_lon
-field data.location.latitude atmosphere_cma_station_lat
-path data
 
 source atmosphere_co2_current
 ttl 3600
@@ -6776,54 +7053,6 @@ field taxon.name species_name
 field observed_on observation_date
 field place_guess locality
 
-source incois_erddap_argo_profiles_io
-ttl 3600
-force diffusion
-url https://erddap.incois.gov.in/erddap/tabledap/INCOIS_ARGO_PROFILES.csv?latitude,longitude,time,pres,temp,psal,platform_number&time>={today}T00:00:00Z&latitude>=-30&latitude<=30&longitude>=40&longitude<=120&orderBy(%22time%22)&distinct()
-format text
-rows
-lat_key latitude
-lon_key longitude
-field temp temperature_c
-field psal salinity_psu
-field pres pressure_dbar
-field platform_number argo_float_id
-field time profile_time
-
-source incois_erddap_sst_indian_ocean
-ttl 3600
-force thermal
-url https://erddap.incois.gov.in/erddap/griddap/INCOIS_GHRSST_MUR_SST.csv?analysed_sst%5Blast%5D%5B(-30.0):(30.0):5%5D%5B(40.0):(120.0):5%5D
-format text
-rows
-lat_key latitude
-lon_key longitude
-field analysed_sst sst_kelvin
-
-source incois_erddap_wave_arabian_sea
-ttl 3600
-force acoustic
-url https://erddap.incois.gov.in/erddap/griddap/INCOIS_NIO_WAVE_MODEL.csv?SWH%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D,MWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D,MWD%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D
-format text
-rows
-lat_key latitude
-lon_key longitude
-field SWH sig_wave_height_m
-field MWP mean_wave_period_s
-field MWD mean_wave_direction_deg
-
-source incois_erddap_wave_bay_of_bengal
-ttl 3600
-force acoustic
-url https://erddap.incois.gov.in/erddap/griddap/INCOIS_NIO_WAVE_MODEL.csv?SWH%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D,MWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D,PWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D
-format text
-rows
-lat_key latitude
-lon_key longitude
-field SWH sig_wave_height_m
-field MWP mean_wave_period_s
-field PWP peak_wave_period_s
-
 source io_vectors
 ttl 3600
 force em
@@ -7154,18 +7383,6 @@ field wdir wind_dir_deg
 field wspd wind_speed_kt
 field altim pressure_hpa
 
-source modvolc_volcanic_alerts
-ttl 3600
-force thermal
-url https://modvolc.ov.ingv.it/modvolc/feed.json
-map items
-lat_key lat
-lon_key lon
-field volcano volcano_name
-field max_temp_c hotspot_max_temp_c
-field frp_modis radiative_power_mw
-field satellite satellite
-
 source moon_vectors
 ttl 3600
 force em
@@ -7338,86 +7555,6 @@ ttl 3600
 force em
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ephemeris orbital_new_horizons_distance
-
-source nmdb_nest_apatity
-ttl 3600
-force em
-url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=APTY&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
-wgs84 67.55 33.33
-format text
-rows
-field_in 0 timestamp_utc
-field_in 2 count_rate_cps
-
-source nmdb_nest_hermanus
-ttl 3600
-force em
-url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=HRMS&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
-wgs84 -34.42 19.22
-format text
-rows
-field_in 0 timestamp_utc
-field_in 2 count_rate_cps
-
-source nmdb_nest_jungfraujoch
-ttl 3600
-force em
-url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=JUNG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
-wgs84 46.55 7.98
-format text
-rows
-field_in 0 timestamp_utc
-field_in 2 count_rate_cps
-
-source nmdb_nest_kerguelen
-ttl 3600
-force em
-url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=KERG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
-wgs84 -49.35 70.25
-format text
-rows
-field_in 0 timestamp_utc
-field_in 2 count_rate_cps
-
-source nmdb_nest_mcmurdo
-ttl 3600
-force em
-url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MCMD&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
-wgs84 -77.85 166.72
-format text
-rows
-field_in 0 timestamp_utc
-field_in 2 count_rate_cps
-
-source nmdb_nest_mexico
-ttl 3600
-force em
-url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MXCO&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
-wgs84 19.33 -99.18
-format text
-rows
-field_in 0 timestamp_utc
-field_in 2 count_rate_cps
-
-source nmdb_nest_oulu
-ttl 3600
-force em
-url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
-wgs84 65.05 25.47
-format text
-rows
-field_in 0 timestamp_utc
-field_in 2 count_rate_cps
-
-source nmdb_nest_thule
-ttl 3600
-force em
-url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=THUL&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
-wgs84 76.50 -68.70
-format text
-rows
-field_in 0 timestamp_utc
-field_in 2 count_rate_cps
 
 source noaa_coops_tidal_predictions_usa
 ttl 3600
@@ -7719,13 +7856,6 @@ field family taxon_family
 field date_year obs_year
 field country country_code
 
-source oceanography_emodnet_vessel_density_nrt
-ttl 3600
-force em
-ecliptic 1
-url https://maps.emodnet.eu/wms/vessel_density?service=WMS&request=GetCapabilities
-field . ocean_vessel_density_emodnet
-
 source open_meteo_access_g_australia
 ttl 3600
 force thermal
@@ -8009,20 +8139,6 @@ force em
 ecliptic 1
 url https://ssd-api.jpl.nasa.gov/fireball.api
 field count biosphere_fireball_event_count
-
-source orbital_retlector_active_tle
-ttl 3600
-force em
-url https://retlector.eu/tle/active
-wgs84 0 0
-regex (-\d{5}\s+\d{8}) orbital_active_satellites
-
-source orbital_retlector_satellite
-ttl 3600
-force em
-url https://retlector.eu/norad/{sat_id}
-wgs84 0 0
-regex (1 \d{5}U \d{5}) tle_decoded
 
 source orbital_tle_mirror_full
 ttl 3600
@@ -8380,6 +8496,14 @@ lon_key lon
 field aqi aqi_index
 field station.name station_name
 
+source wfigs_current_fire_perimeters
+ttl 3600
+force thermal
+url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_YearToDate/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&f=geojson&resultRecordCount=500
+flatten features
+field_in properties.poly_GISAcres fire_acres
+field_in properties.poly_PolygonDateTime fire_polygon_ms
+
 source satellite_satnogs_active
 ttl 14400
 force em
@@ -8390,6 +8514,14 @@ field_in tle1 satellite_tle_line1
 field_in tle2 satellite_tle_line2
 field_in norad_cat_id satellite_norad_id
 field_in tle_source satellite_tle_source
+
+source biosphere_cdc_covid_variants
+ttl 43200
+wgs84 33.797 0.0
+86400
+force em
+url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
+field share biosphere_covid_variant_share
 
 source iers_eop_bulletinb
 ttl 43200
@@ -8660,14 +8792,6 @@ force em
 ecliptic 1
 url https://clinicaltrials.gov/api/v2/studies?query.term=brain-computer+interface&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
 field totalCount biosphere_bci_trials_recruiting
-
-source biosphere_cdc_covid_variants
-ttl 43200
-wgs84 33.797 0.0
-86400
-force em
-url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
-field share biosphere_covid_variant_share
 
 source biosphere_crispr_clinical_trials_recruiting
 ttl 86400
@@ -9352,13 +9476,6 @@ url https://crates.io/api/v1/crates?per_page=1
 wgs84 37.774 -122.419
 field meta.total biosphere_cratesio_crates_total
 
-source cryosphere_glacier_count
-ttl 86400
-force em
-url https://www.glims.org/mapservice/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=glims_glaciers&maxFeatures=1&outputFormat=application/json
-wgs84 46.818 8.227
-path totalFeatures cryosphere_global_glaciers_count
-
 source cryosphere_nsidc_antarctic_sea_ice_v4
 ttl 86400
 force em
@@ -9471,25 +9588,6 @@ lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
 field_in properties.name boundary_name
 
-source earthscope_das_active_count
-ttl 86400
-force acoustic
-url https://service.das.earthscope.org/fdsnws/station/1/query?level=station&format=json
-wgs84 0 0
-count . das_active_stations_total
-
-source earthscope_das_stations
-ttl 86400
-force acoustic
-url https://service.das.earthscope.org/fdsnws/station/1/query?level=station&format=text
-format text
-rows
-lat_key Latitude
-lon_key Longitude
-field Network network_code
-field Station station_code
-field Elevation elevation_m
-
 source earthscope_fdsn_stations
 ttl 86400
 force acoustic
@@ -9586,16 +9684,6 @@ lon_key lon
 field sst_analysed sea_surface_temp_c
 field sst_uncertainty sst_uncertainty_k
 field time observation_time
-
-source esa_cryosat2_arctic_sea_ice_thickness
-ttl 86400
-force thermal
-url https://science-pds.cryosat.esa.int/oads/access/collection/CryoSat_Northern_Hemisphere_Sea_Ice_Thickness/latest/?format=json
-wgs84 0.0 0.0
-map .
-field 0 file_name
-field 1 file_size
-field 2 last_modified
 
 source esa_swarm_magnetic_field_hapi
 ttl 86400
@@ -9862,22 +9950,6 @@ field_in year observation_year
 field_in eventDate observation_date
 field_in basisOfRecord basis_of_record
 
-source gbif_occurrence_search
-ttl 86400
-force diffusion
-url https://api.gbif.org/v1/occurrence/search?limit=100&latitude={lat}&longitude={lon}&radius=100
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field species species_name
-field scientificName scientific_name
-field kingdom kingdom
-field phylum phylum
-field class class_name
-field order order_name
-field family family
-field genus genus
-
 source gbif_species_richness_africa
 ttl 86400
 force diffusion
@@ -10035,19 +10107,6 @@ url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}
 last soil_temperature_0_to_7cm geosphere_hist_soil_temp_surface_c
 last soil_moisture_0_to_7cm geosphere_hist_soil_moisture_surface_m3m3
 
-source geosphere_incois_seismic_stations
-ttl 86400
-force em
-ecliptic 1
-url https://tsunami.incois.gov.in/itews/stations
-map .
-lat_key latitude
-lon_key longitude
-field_in station_code geosphere_incois_station_code
-field_in network geosphere_incois_network
-field_in type geosphere_incois_sensor_type
-field_in status geosphere_incois_status
-
 source geosphere_intermagnet_observatories
 ttl 86400
 force em
@@ -10183,37 +10242,15 @@ field_in 1 soil_temp_0_10cm_k
 source global_mangrove_atlas_countries
 ttl 86400
 force diffusion
-url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=country&startYear=2020&endYear=2020
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/mangrove_countries.json
 map data
-lat_key centroid_lat
-lon_key centroid_lon
-field area_m2 mangrove_area_m2
-field loss_m2 mangrove_loss_m2
-field country_iso country_iso
-
-source global_mangrove_atlas_global
-ttl 86400
-force diffusion
-url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=worldwide&startYear=2020&endYear=2020
-wgs84 0 0
-field area_m2 mangrove_area_m2
-field gain_m2 mangrove_gain_m2
-field loss_m2 mangrove_loss_m2
-
-source grand_global_dams
-ttl 86400
-force diffusion
-url https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=DAM_NAME,RIVER,COUNTRY,YEAR_COMP,LAT_DD,LONG_DD,CAP_MAX,HEIGHT,MAIN_USE&f=json&resultRecordCount=500
-map features
-lat_key attributes.LAT_DD
-lon_key attributes.LONG_DD
-field attributes.DAM_NAME dam_name
-field attributes.RIVER river
-field attributes.COUNTRY country
-field attributes.YEAR_COMP completion_year
-field attributes.CAP_MAX max_capacity_mcm
-field attributes.HEIGHT dam_height_m
-field attributes.MAIN_USE primary_use
+lat_key latitude
+lon_key longitude
+field country country_name
+field iso3 country_iso3
+field country_area_km2 country_area_km2
+field mangrove_area_km2 mangrove_area_km2
+field percent_mangrove mangrove_percent_total
 
 source gtnp_active_layer_thickness
 ttl 86400
@@ -11114,17 +11151,6 @@ field vel_disp velocity_dispersion_km_s
 field spin spin_parameter
 field subhalo_count num_subhalos
 
-source incois_erddap_oscar_currents_io
-ttl 86400
-force diffusion
-url https://erddap.incois.gov.in/erddap/griddap/INCOIS_OSCAR_CURRENTS.csv?u%5Blast%5D%5B0%5D%5B(-30.0):(30.0):3%5D%5B(40.0):(120.0):3%5D,v%5Blast%5D%5B0%5D%5B(-30.0):(30.0):3%5D%5B(40.0):(120.0):3%5D
-format text
-rows
-lat_key latitude
-lon_key longitude
-field u current_u_m_s
-field v current_v_m_s
-
 source intermagnet_global_geomagnetic_observatories
 ttl 86400
 force gravity
@@ -11939,12 +11965,6 @@ force em
 url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&output=json
 field value lidar_3dep_elevation_m
 field resolution lidar_3dep_resolution_m
-
-source lidar_gmrt_elevation
-ttl 86400
-force em
-url https://www.gmrt.org/services/PointServer?longitude={lon}&latitude={lat}&format=json
-field elevation lidar_gmrt_elevation_m
 
 source lidar_lola_moon_elevation
 ttl 86400
@@ -13725,6 +13745,57 @@ url https://musicbrainz.org/ws/2/release?query=*&limit=1&fmt=json
 wgs84 51.507 -0.127
 field releases.0.id biosphere_music_releases_total
 
+source nasa_cmr_gedi_footprints
+ttl 86400
+force em
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=GEDI02_A&page_size=2000&sort_key=-start_date
+cmr_polygon feed.entry
+field_in time_start footprint_time_start
+field_in time_end footprint_time_end
+field_in dataset_id footprint_dataset_id
+field_in producer_granule_id footprint_granule_id
+
+source nasa_cmr_icesat2_atl06_footprints
+ttl 86400
+force em
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ATL06&page_size=2000&sort_key=-start_date
+cmr_polygon feed.entry
+field_in time_start footprint_time_start
+field_in time_end footprint_time_end
+field_in dataset_id footprint_dataset_id
+field_in producer_granule_id footprint_granule_id
+
+source nasa_cmr_icesat2_footprints
+ttl 86400
+force em
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ATL03&page_size=2000&sort_key=-start_date
+cmr_polygon feed.entry
+field_in time_start footprint_time_start
+field_in time_end footprint_time_end
+field_in dataset_id footprint_dataset_id
+field_in producer_granule_id footprint_granule_id
+
+source nasa_cmr_swot_ssg_ssh
+ttl 86400
+force em
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=SWOT_L2_LR_SSH_D&page_size=2000&sort_key=-start_date
+cmr_polygon feed.entry
+field_in time_start footprint_time_start
+field_in time_end footprint_time_end
+field_in dataset_id footprint_dataset_id
+field_in producer_granule_id footprint_granule_id
+
+source nasa_cmr_viirs_fire_vnp14_nrt
+ttl 86400
+force thermal
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP14IMG_NRT&page_size=2000&sort_key=-start_date
+cmr_polygon feed.entry
+field_in time_start footprint_time_start
+field_in time_end footprint_time_end
+field_in dataset_id footprint_dataset_id
+field_in producer_granule_id footprint_granule_id
+field_in day_night_flag fire_day_night
+
 source nasa_exoplanet_atmospheres
 ttl 86400
 force em
@@ -13860,8 +13931,6 @@ cmap data
 ra_key 1
 dec_key 2
 z_key 3
-field 0 prefname
-field 3 redshift
 
 source nasa_nexsci_direct_imaging_planets
 ttl 86400
@@ -14541,16 +14610,6 @@ field site.0.elevation elevation_m
 field earliestYearBP earliest_year_bp
 field mostRecentYearBP most_recent_year_bp
 field species.0.speciesCode tree_species
-
-source noaa_mangrove_global_extent
-ttl 86400
-force diffusion
-url https://api.fisheries.noaa.gov/api/mangrove-cover-index?format=json&limit=1000
-map results
-lat_key latitude
-lon_key longitude
-field country country
-field area_km2 mangrove_area_km2
 
 source noaa_ncei_climate_extremes_monthly
 ttl 86400
@@ -15332,18 +15391,6 @@ field Network network_code
 field Station station_code
 field Elevation elevation_m
 
-source osm_overpass_global_hospital_infrastructure
-ttl 86400
-force diffusion
-url https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%28node%5Bamenity%3Dhospital%5D%28-90%2C-180%2C90%2C180%29%3B%29%3Bout%3B
-map elements
-lat_key lat
-lon_key lon
-field id osm_node_id
-field tags.name hospital_name
-field tags.operator operator
-field tags.amenity amenity_type
-
 source ourairports_global
 ttl 86400
 force em
@@ -15445,19 +15492,6 @@ url https://pubchem.ncbi.nlm.nih.gov/rest/pug/substances/count/JSON
 wgs84 38.995 -77.101
 field PC_Substances.0.properties.0.count molecular_substances_total
 
-source radiation_nmdb_station_list
-ttl 86400
-force diffusion
-ecliptic 1
-url https://www.nmdb.eu/nest/station_list.json
-map .
-lat_key latitude
-lon_key longitude
-field_in station radiation_nmdb_station_code
-field_in name radiation_nmdb_station_name
-field_in altitude radiation_nmdb_altitude_m
-field_in cutoff_rigidity radiation_nmdb_cutoff_gv
-
 source rapid_amoc_26n_transport_monthly
 ttl 86400
 force diffusion
@@ -15555,17 +15589,6 @@ field u mag_u
 field i mag_i
 field z mag_z
 
-source sedac_gpw_population_grid
-ttl 86400
-force diffusion
-url https://sedac.ciesin.columbia.edu/arcgis/rest/services/sedac/GPWv4/MapServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500
-map features
-lat_key attributes.LATITUDE
-lon_key attributes.LONGITUDE
-field attributes.UN_2020_DS pop_2020_un_adjusted
-field attributes.AREA_KM2 area_km2
-field attributes.CNTRY_NAME country_name
-
 source servir_smap_soil_moisture_global
 ttl 86400
 force diffusion
@@ -15618,33 +15641,6 @@ field 4 sunspot_number
 field 5 std_dev
 field 6 num_observations
 field 7 definitive_flag
-
-source simbad_bright_stars
-ttl 86400
-force em
-url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+main_id,ra,dec,otype,sp_type,V+FROM+basic+WHERE+V<9+AND+ra+IS+NOT+NULL+ORDER+BY+V+ASC
-format text
-rows
-ra_key ra
-dec_key dec
-field main_id object_name
-field otype object_type
-field sp_type spectral_type
-field V v_magnitude
-
-source simbad_nearby_stars
-ttl 86400
-force em
-url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+main_id,ra,dec,plx_value,sp_type,otype,V+FROM+basic+WHERE+plx_value>50+AND+ra+IS+NOT+NULL+ORDER+BY+plx_value+DESC
-format text
-rows
-ra_key ra
-dec_key dec
-plx_key plx_value
-field main_id object_name
-field otype object_type
-field sp_type spectral_type
-field V v_magnitude
 
 source solar_historical_surface
 ttl 86400
@@ -16374,708 +16370,6 @@ ra_key 0
 dec_key 1
 plx_key 2
 field_in 3 universe_sdss_gmag
-
-source universe_simbad_agn
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27AGN%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_barium_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+sp_type+LIKE+%27Ba%25%27+AND+plx_value+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_blazars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Bla%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_blue_compact_dwarfs
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27BCD%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_blue_giants
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27sgB%27+OR+otype=%27B%2A%27+AND+sp_type+LIKE+%27%25I%25%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_blue_supergiants
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27sgB%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_brown_dwarfs
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,plx_value+FROM+basic+WHERE+otype=%27BD*%27
-cmap data
-ra_key 0
-dec_key 1
-plx_key 2
-
-source universe_simbad_carbon_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27C*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_carbon_stars_var
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27cr%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_cepheids
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Ce*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_ch_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+sp_type+LIKE+%27CH%25%27+AND+plx_value+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_dark_nebulae
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27DNe%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_dwarf_galaxies
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27G%27+AND+sp_type+LIKE+%27dwarf%27+OR+otype=%27dG%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_dwarf_novae
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27DN%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_eclipsing_binaries
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27EB*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_emission_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Em*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_flare_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Fl*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_fu_oris
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27FU%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_galaxies
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+>+0.01
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_galaxy_clusters
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27ClG%27+AND+rvz_redshift+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 3
-field_in 2 redshift
-
-source universe_simbad_gamma_bursts
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27gam%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_giant_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27HB*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_globular_clusters
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27GlC%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-z_key 3
-plx_key 4
-field_in 2 mag_v
-field_in 3 redshift
-
-source universe_simbad_gravitational_lenses
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27GravLens%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_herbig_haro
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27HH%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_hii_regions
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27HII%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_hvc
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20100%20ra%2Cdec%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27HVC%27
-cmap data
-ra_key 0
-dec_key 1
-plx_key 2
-
-source universe_simbad_interstellar_medium
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27ISM%27%20AND%20flux_V%20IS%20NOT%20NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_ir_sources
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27Ir%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_ism
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27ISM%27
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_long_period
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27LP%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_lpv_mira
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27Mi%2A%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_masers
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Mas%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_microquasars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27MQO%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_millisecond_pulsars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27ms*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_mira_variables
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Mi*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_molecule_clouds
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27MolC%27
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_nebulae
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype+IN+(%27Neb%27,%27PN%27,%27HII%27,%27SNR%27,%27MolC%27)+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_novae
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Nova%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_oh_maser
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27OH%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_oh_masers
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27OH*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_planetary_nebulae
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27PN%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_post_agb_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27pAGB%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_pre_ms_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27pr*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_proper_motion
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27PM*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_pulsars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27Pulsar%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_pulsating_white_dwarfs
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27WD%2A%27+AND+sp_type+LIKE+%27DAV%27+OR+sp_type+LIKE+%27DBV%27+OR+sp_type+LIKE+%27ZZ%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_quasars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27QSO%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_rcrb_variables
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27RC%2A%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_red_giants
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RG*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_red_supergiants
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27sg*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_reflection_nebulae
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RNeb%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_rr_lyrae
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RR*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_s_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27S%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_stellar_associations
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Asoc*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_supernova_remnants
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27SNR%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_supernovae
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27SN%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-z_key 3
-plx_key 4
-field_in 2 mag_v
-field_in 3 redshift
-
-source universe_simbad_symbiotic_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Sy*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_ttauri_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27TT*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_variable_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27V*%27+AND+rvz_redshift+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 3
-field_in 2 redshift
-
-source universe_simbad_white_dwarfs
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27WD*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_wolf_rayet_stars
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27WR*%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_xray_sources
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27X%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_yellow_supergiants
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27sgY%27
-cmap data
-ra_key 0
-dec_key 1
-z_key 2
-plx_key 4
-field_in 2 redshift
-field_in 3 mag_v
-
-source universe_simbad_young_stellar_objects
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27S*Y%27+AND+flux_V+IS+NOT+NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
-
-source universe_simbad_yso
-ttl 86400
-force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27YSO%27%20AND%20flux_V%20IS%20NOT%20NULL
-cmap data
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_v
 
 source universe_vizier_2mass
 ttl 86400
@@ -18221,12 +17515,14 @@ field_in id brewery_db_id
 source worldbank_co2_emissions
 ttl 86400
 force diffusion
-url https://api.worldbank.org/v2/country/all/indicator/EN.ATM.CO2E.KT?format=json&per_page=500
-map 1
-lat_key country.latitude
-lon_key country.longitude
-field value co2_kt
-field country.iso2Code country_code
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/co2_emissions_countries.json
+map data
+lat_key latitude
+lon_key longitude
+field country country_name
+field iso3 country_iso3
+field co2_kt co2_kt
+field year data_year
 
 source worldbank_countries
 ttl 86400
@@ -18254,12 +17550,14 @@ field country.iso2Code country_code
 source worldbank_pm25_exposure
 ttl 86400
 force diffusion
-url https://api.worldbank.org/v2/country/all/indicator/EN.ATM.PM25.MC.M3?format=json&per_page=500
-map 1
-lat_key country.latitude
-lon_key country.longitude
-field value pm25_ugm3
-field country.iso2Code country_code
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/pm25_exposure_countries.json
+map data
+lat_key latitude
+lon_key longitude
+field country country_name
+field iso3 country_iso3
+field pm25_ugm3 pm25_ugm3
+field year data_year
 
 source worldbank_water_access
 ttl 86400
@@ -18274,15 +17572,14 @@ field country.iso2Code country_code
 source worldpop_population_density_global
 ttl 86400
 force diffusion
-url https://www.worldpop.org/rest/data/pop/wpgp?iso3=BRA,CHN,IND,USA,NGA,IDN,PAK&year=2024&format=json
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/population_countries.json
 map data
-lat_key bbox_ymin
-lon_key bbox_xmin
-field alias country_name
+lat_key latitude
+lon_key longitude
+field country country_name
 field iso3 country_iso3
+field population population_estimate
 field year data_year
-field popyear population_estimate
-field files.0 download_url
 
 source worms_marine_species_registry
 ttl 86400
@@ -18370,6 +17667,1460 @@ field metadata.publication_date publication_date
 # Response: GeoJSON FeatureCollection → map features
 # Position from properties.proj:centroid (lat/lon)
 
+source arcgis_volcanoes_world
+ttl 604800
+force seismic-surface
+url https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcanoes_of_the_world/FeatureServer/0/query?where=1%3D1&outFields=LATX,LONGX,ELEV,NAME,STATUS&outSR=4326&f=geojson&resultRecordCount=1000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.ELEV volcano_elevation_m
+
+source astro_batse_grb
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_batse_grb.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in trigger_num batse_grb_trigger_num
+field_in flux_64 batse_grb_flux_64
+
+source astro_batse_pulsar
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_batse_pulsar.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in period batse_pulsar_period_s
+
+source astro_chandra_master
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/chandra_master.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in obsid astro_chandra_master_obsid
+field_in status astro_chandra_master_status
+field_in name astro_chandra_master_name
+field_in lii astro_chandra_master_lii
+field_in bii astro_chandra_master_bii
+field_in time astro_chandra_master_time
+field_in detector astro_chandra_master_detector
+field_in grating astro_chandra_master_grating
+field_in exposure astro_chandra_master_exposure
+field_in type astro_chandra_master_type
+field_in pi astro_chandra_master_pi
+field_in cycle astro_chandra_master_cycle
+field_in proposal astro_chandra_master_proposal
+field_in public_date astro_chandra_master_public_date
+field_in sequence_number astro_chandra_master_sequence_number
+field_in data_mode astro_chandra_master_data_mode
+field_in category astro_chandra_master_category
+field_in class astro_chandra_master_class
+source astro_fermi_4fgl
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/fermi_4fgl.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in name astro_fermi_4fgl_name
+field_in data_release astro_fermi_4fgl_data_release
+field_in lii astro_fermi_4fgl_lii
+field_in bii astro_fermi_4fgl_bii
+field_in semi_major_axis_68 astro_fermi_4fgl_semi_major_axis_68
+field_in semi_minor_axis_68 astro_fermi_4fgl_semi_minor_axis_68
+field_in position_angle_68 astro_fermi_4fgl_position_angle_68
+field_in semi_major_axis_95 astro_fermi_4fgl_semi_major_axis_95
+field_in semi_minor_axis_95 astro_fermi_4fgl_semi_minor_axis_95
+field_in position_angle_95 astro_fermi_4fgl_position_angle_95
+field_in detection_significance astro_fermi_4fgl_detection_significance
+field_in pivot_energy astro_fermi_4fgl_pivot_energy
+field_in flux_1_100_gev astro_fermi_4fgl_flux_1_100_gev
+field_in flux_1_100_gev_error astro_fermi_4fgl_flux_1_100_gev_error
+field_in energy_flux astro_fermi_4fgl_energy_flux
+field_in energy_flux_error astro_fermi_4fgl_energy_flux_error
+field_in spectrum_type astro_fermi_4fgl_spectrum_type
+field_in pl_flux_density astro_fermi_4fgl_pl_flux_density
+field_in pl_flux_density_error astro_fermi_4fgl_pl_flux_density_error
+field_in pl_index astro_fermi_4fgl_pl_index
+field_in pl_index_error astro_fermi_4fgl_pl_index_error
+field_in lp_flux_density astro_fermi_4fgl_lp_flux_density
+field_in lp_flux_density_error astro_fermi_4fgl_lp_flux_density_error
+field_in lp_index astro_fermi_4fgl_lp_index
+field_in lp_index_error astro_fermi_4fgl_lp_index_error
+field_in lp_beta astro_fermi_4fgl_lp_beta
+field_in lp_beta_error astro_fermi_4fgl_lp_beta_error
+field_in lp_curve_significance astro_fermi_4fgl_lp_curve_significance
+field_in lp_epeak astro_fermi_4fgl_lp_epeak
+field_in lp_epeak_error astro_fermi_4fgl_lp_epeak_error
+field_in plec_flux_density astro_fermi_4fgl_plec_flux_density
+field_in plec_flux_density_error astro_fermi_4fgl_plec_flux_density_error
+field_in plec_index_s astro_fermi_4fgl_plec_index_s
+field_in plec_index_s_error astro_fermi_4fgl_plec_index_s_error
+field_in plec_exp_factor_s astro_fermi_4fgl_plec_exp_factor_s
+field_in plec_exp_factor_s_error astro_fermi_4fgl_plec_exp_factor_s_error
+field_in plec_exp_index astro_fermi_4fgl_plec_exp_index
+field_in plec_exp_index_error astro_fermi_4fgl_plec_exp_index_error
+field_in plec_curve_significance astro_fermi_4fgl_plec_curve_significance
+field_in plec_epeak astro_fermi_4fgl_plec_epeak
+field_in plec_epeak_error astro_fermi_4fgl_plec_epeak_error
+field_in npred astro_fermi_4fgl_npred
+field_in variability_index astro_fermi_4fgl_variability_index
+field_in frac_variability astro_fermi_4fgl_frac_variability
+field_in frac_variability_error astro_fermi_4fgl_frac_variability_error
+field_in significance_peak astro_fermi_4fgl_significance_peak
+field_in flux_peak astro_fermi_4fgl_flux_peak
+field_in flux_peak_error astro_fermi_4fgl_flux_peak_error
+field_in time_peak astro_fermi_4fgl_time_peak
+field_in time_peak_interval astro_fermi_4fgl_time_peak_interval
+field_in alt_gammaray_name_1 astro_fermi_4fgl_alt_gammaray_name_1
+field_in alt_gammaray_name_2 astro_fermi_4fgl_alt_gammaray_name_2
+field_in alt_gammaray_name_3 astro_fermi_4fgl_alt_gammaray_name_3
+field_in alt_gammaray_name_4 astro_fermi_4fgl_alt_gammaray_name_4
+field_in alt_gammaray_name_5 astro_fermi_4fgl_alt_gammaray_name_5
+field_in alt_gammaray_name_6 astro_fermi_4fgl_alt_gammaray_name_6
+field_in extended_source_name astro_fermi_4fgl_extended_source_name
+field_in tevcat_flag astro_fermi_4fgl_tevcat_flag
+field_in tevcat_assoc astro_fermi_4fgl_tevcat_assoc
+field_in source_type astro_fermi_4fgl_source_type
+field_in source_type_alt astro_fermi_4fgl_source_type_alt
+field_in assoc_name astro_fermi_4fgl_assoc_name
+field_in assoc_name_alt astro_fermi_4fgl_assoc_name_alt
+field_in assoc_prob_bay astro_fermi_4fgl_assoc_prob_bay
+field_in assoc_prob_lr astro_fermi_4fgl_assoc_prob_lr
+field_in assoc_ra astro_fermi_4fgl_assoc_ra
+field_in assoc_dec astro_fermi_4fgl_assoc_dec
+field_in assoc_error_radius astro_fermi_4fgl_assoc_error_radius
+field_in analysis_flags astro_fermi_4fgl_analysis_flags
+source astro_fermi_4lac
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/fermi_4lac.json
+cmap data
+ra_key ra
+dec_key dec
+z_key redshift
+field_in name astro_fermi_4lac_name
+field_in data_release astro_fermi_4lac_data_release
+field_in lii astro_fermi_4lac_lii
+field_in bii astro_fermi_4lac_bii
+field_in detection_significance astro_fermi_4lac_detection_significance
+field_in flux_1_100_gev astro_fermi_4lac_flux_1_100_gev
+field_in flux_1_100_gev_error astro_fermi_4lac_flux_1_100_gev_error
+field_in energy_flux astro_fermi_4lac_energy_flux
+field_in energy_flux_error astro_fermi_4lac_energy_flux_error
+field_in spectrum_type astro_fermi_4lac_spectrum_type
+field_in pl_index astro_fermi_4lac_pl_index
+field_in pl_index_error astro_fermi_4lac_pl_index_error
+field_in pivot_energy astro_fermi_4lac_pivot_energy
+field_in lp_index astro_fermi_4lac_lp_index
+field_in lp_index_error astro_fermi_4lac_lp_index_error
+field_in lp_beta astro_fermi_4lac_lp_beta
+field_in lp_beta_error astro_fermi_4lac_lp_beta_error
+field_in analysis_flags astro_fermi_4lac_analysis_flags
+field_in source_type astro_fermi_4lac_source_type
+field_in assoc_name astro_fermi_4lac_assoc_name
+field_in assoc_prob_bay astro_fermi_4lac_assoc_prob_bay
+field_in assoc_prob_lr astro_fermi_4lac_assoc_prob_lr
+field_in assoc_catalog astro_fermi_4lac_assoc_catalog
+field_in assoc_ra astro_fermi_4lac_assoc_ra
+field_in assoc_dec astro_fermi_4lac_assoc_dec
+field_in assoc_error_radius astro_fermi_4lac_assoc_error_radius
+field_in vlbi_assoc_name astro_fermi_4lac_vlbi_assoc_name
+field_in sed_class astro_fermi_4lac_sed_class
+field_in he_peak astro_fermi_4lac_he_peak
+field_in he_peak_error astro_fermi_4lac_he_peak_error
+field_in he_nufnu_peak astro_fermi_4lac_he_nufnu_peak
+field_in he_nufnu_peak_error astro_fermi_4lac_he_nufnu_peak_error
+field_in nu_syn astro_fermi_4lac_nu_syn
+field_in nufnu_syn astro_fermi_4lac_nufnu_syn
+field_in variability_index astro_fermi_4lac_variability_index
+field_in frac_variability astro_fermi_4lac_frac_variability
+field_in frac_variability_error astro_fermi_4lac_frac_variability_error
+field_in highest_energy_photon astro_fermi_4lac_highest_energy_photon
+source astro_gaia_binaries
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_binaries.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
+source astro_gaia_blue_supergiants
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_blue_supergiants.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_blue_supergiants_phot_g_mean_mag
+field_in bp_rp astro_gaia_blue_supergiants_bp_rp
+source astro_gaia_bright_vmag7
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag7.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in pmra astro_gaia_bright_vmag7_pmra
+field_in pmdec astro_gaia_bright_vmag7_pmdec
+field_in phot_g_mean_mag astro_gaia_bright_vmag7_phot_g_mean_mag
+field_in phot_bp_mean_mag astro_gaia_bright_vmag7_phot_bp_mean_mag
+field_in phot_rp_mean_mag astro_gaia_bright_vmag7_phot_rp_mean_mag
+field_in radial_velocity astro_gaia_bright_vmag7_radial_velocity
+field_in teff_gspphot astro_gaia_bright_vmag7_teff_gspphot
+field_in mh_gspphot astro_gaia_bright_vmag7_mh_gspphot
+field_in bp_rp astro_gaia_bright_vmag7_bp_rp
+source astro_gaia_bright_vmag9
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_bright_vmag9_phot_g_mean_mag
+source astro_gaia_giants
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_giants.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_giants_phot_g_mean_mag
+field_in bp_rp astro_gaia_giants_bp_rp
+field_in teff_gspphot astro_gaia_giants_teff_gspphot
+source astro_gaia_high_pm
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_high_pm.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_high_pm_phot_g_mean_mag
+field_in pmra astro_gaia_high_pm_pmra
+field_in pmdec astro_gaia_high_pm_pmdec
+source astro_gaia_hypervelocity
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_hypervelocity.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_hypervelocity_phot_g_mean_mag
+field_in radial_velocity astro_gaia_hypervelocity_radial_velocity
+source astro_gaia_metal_poor
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_metal_poor.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_metal_poor_phot_g_mean_mag
+field_in mh_gspphot astro_gaia_metal_poor_mh_gspphot
+source astro_gaia_nearby_plx10
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in pmra astro_gaia_nearby_plx10_pmra
+field_in pmdec astro_gaia_nearby_plx10_pmdec
+field_in phot_g_mean_mag astro_gaia_nearby_plx10_phot_g_mean_mag
+field_in bp_rp astro_gaia_nearby_plx10_bp_rp
+field_in radial_velocity astro_gaia_nearby_plx10_radial_velocity
+source astro_gaia_nearby_plx50
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx50.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in pmra astro_gaia_nearby_plx50_pmra
+field_in pmdec astro_gaia_nearby_plx50_pmdec
+field_in phot_g_mean_mag astro_gaia_nearby_plx50_phot_g_mean_mag
+field_in bp_rp astro_gaia_nearby_plx50_bp_rp
+field_in radial_velocity astro_gaia_nearby_plx50_radial_velocity
+source astro_gaia_white_dwarfs
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_white_dwarfs.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_white_dwarfs_phot_g_mean_mag
+field_in bp_rp astro_gaia_white_dwarfs_bp_rp
+source astro_heasarc_icecube
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_icecube.json
+cmap data
+ra_key ra
+dec_key dec
+dist_key dist_mpc
+dist_scale 3.0857e22
+field_in energy_tev icecube_neutrino_energy_tev
+field_in error_radius_deg icecube_error_radius_deg
+
+source astro_integral_agn
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_integral_agn.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_20_40 integral_agn_flux
+
+source astro_integral_bsc
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_integral_bsc.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in isgri_soft_rate integral_soft_rate
+field_in isgri_hard_rate integral_hard_rate
+
+source astro_integral_isgri4yr
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_integral_isgri4yr.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_20_40 integral_isgri_flux
+
+source astro_integral_var
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_integral_var.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_20_40kev integral_flux_20_40kev
+field_in var_20_40kev integral_variability
+
+source astro_maxi_gsc7yr
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_maxi_gsc7yr.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_4_10 maxi_flux_4_10
+field_in flux_3_4 maxi_flux_3_4
+field_in excess_variance maxi_excess_variance
+
+source astro_maxi_master
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_maxi_master.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_4_10 maxi_master_flux
+
+source astro_maxi_ssc
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_maxi_ssc.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in sb_flux maxi_ssc_flux
+
+source astro_nicer_master
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_nicer_master.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in exposure nicer_exposure_s
+
+source astro_nmdb_stations
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/nmdb_stations.json
+map data
+lat_key latitude
+lon_key longitude
+alt_key altitude_m
+field_in rigidity_gv nmdb_rigidity_gv
+field_in hist_min nmdb_hist_min_rate
+field_in hist_max nmdb_hist_max_rate
+
+source astro_nsidc_arctic_seaice
+ttl 604800
+force thermal
+wgs84 80.0 0.0
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/nsidc_arctic_seaice.json
+path data.-1.extent_mkm2 arctic_seaice_extent_mkm2
+path data.-1.missing arctic_seaice_missing
+
+source astro_rxte_master
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_rxte_master.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in exposure rxte_exposure_s
+
+source astro_rxte_slew
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/heasarc_rxte_slew.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in exposure rxte_slew_exposure_s
+
+source astro_sdss_galaxies
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/sdss_galaxies.json
+cmap data
+ra_key ra
+dec_key dec
+z_key z
+field_in zerr astro_sdss_galaxies_zerr
+field_in specObjID astro_sdss_galaxies_specObjID
+field_in mjd astro_sdss_galaxies_mjd
+field_in plate astro_sdss_galaxies_plate
+field_in fiberID astro_sdss_galaxies_fiberID
+source astro_sdss_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/sdss_stars.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in g astro_sdss_stars_g
+field_in r astro_sdss_stars_r
+field_in i astro_sdss_stars_i
+field_in psfMag_r astro_sdss_stars_psfMag_r
+source astro_swift_bat
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/swift_bat.json
+cmap data
+ra_key ra
+dec_key dec
+z_key redshift
+field_in source_number astro_swift_bat_source_number
+field_in name astro_swift_bat_name
+field_in lii astro_swift_bat_lii
+field_in bii astro_swift_bat_bii
+field_in snr astro_swift_bat_snr
+field_in ctrpart_name astro_swift_bat_ctrpart_name
+field_in ctrpart_ra astro_swift_bat_ctrpart_ra
+field_in ctrpart_dec astro_swift_bat_ctrpart_dec
+field_in flux astro_swift_bat_flux
+field_in flux_lower astro_swift_bat_flux_lower
+field_in flux_upper astro_swift_bat_flux_upper
+field_in spectral_index astro_swift_bat_spectral_index
+field_in spectral_index_lower astro_swift_bat_spectral_index_lower
+field_in spectral_index_upper astro_swift_bat_spectral_index_upper
+field_in chi_squared astro_swift_bat_chi_squared
+field_in log_lx astro_swift_bat_log_lx
+field_in ctrpart_class astro_swift_bat_ctrpart_class
+field_in source_type astro_swift_bat_source_type
+source astro_swift_grb
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/swift_grb.json
+cmap data
+ra_key ra
+dec_key dec
+z_key redshift
+field_in name astro_swift_grb_name
+field_in target_id astro_swift_grb_target_id
+field_in other_id astro_swift_grb_other_id
+field_in det_flag astro_swift_grb_det_flag
+field_in slew_info astro_swift_grb_slew_info
+field_in pos_err astro_swift_grb_pos_err
+field_in lii astro_swift_grb_lii
+field_in bii astro_swift_grb_bii
+field_in pos_flag astro_swift_grb_pos_flag
+field_in pos_ref astro_swift_grb_pos_ref
+field_in start_time astro_swift_grb_start_time
+field_in stop_time astro_swift_grb_stop_time
+field_in duration astro_swift_grb_duration
+field_in trigger_time astro_swift_grb_trigger_time
+field_in trigger_ref astro_swift_grb_trigger_ref
+field_in bat_detection astro_swift_grb_bat_detection
+field_in bat_dettype astro_swift_grb_bat_dettype
+field_in bat_ra astro_swift_grb_bat_ra
+field_in bat_dec astro_swift_grb_bat_dec
+field_in bat_pos_err astro_swift_grb_bat_pos_err
+field_in bat_pos_ref astro_swift_grb_bat_pos_ref
+field_in bat_theta astro_swift_grb_bat_theta
+field_in bat_phi astro_swift_grb_bat_phi
+field_in bat_imagesig astro_swift_grb_bat_imagesig
+field_in bat_t90 astro_swift_grb_bat_t90
+field_in bat_t50 astro_swift_grb_bat_t50
+field_in bat_start astro_swift_grb_bat_start
+field_in bat_stop astro_swift_grb_bat_stop
+field_in bat_t100_start astro_swift_grb_bat_t100_start
+field_in bat_t100_stop astro_swift_grb_bat_t100_stop
+field_in bat_fluence_model astro_swift_grb_bat_fluence_model
+field_in bat_fluence astro_swift_grb_bat_fluence
+field_in bat_fluence_err astro_swift_grb_bat_fluence_err
+field_in bat_fluence1 astro_swift_grb_bat_fluence1
+field_in bat_fluence1_err astro_swift_grb_bat_fluence1_err
+field_in bat_fluence2 astro_swift_grb_bat_fluence2
+field_in bat_fluence2_err astro_swift_grb_bat_fluence2_err
+field_in bat_fluence3 astro_swift_grb_bat_fluence3
+field_in bat_fluence3_err astro_swift_grb_bat_fluence3_err
+field_in bat_fluence4 astro_swift_grb_bat_fluence4
+field_in bat_fluence4_err astro_swift_grb_bat_fluence4_err
+field_in bat_peak_time astro_swift_grb_bat_peak_time
+field_in bat_peak_model astro_swift_grb_bat_peak_model
+field_in bat_peak_flux astro_swift_grb_bat_peak_flux
+field_in bat_peak_flux_err astro_swift_grb_bat_peak_flux_err
+field_in bat_peak_flux1 astro_swift_grb_bat_peak_flux1
+field_in bat_peak_flux1_err astro_swift_grb_bat_peak_flux1_err
+field_in bat_peak_flux2 astro_swift_grb_bat_peak_flux2
+field_in bat_peak_flux2_err astro_swift_grb_bat_peak_flux2_err
+field_in bat_peak_flux3 astro_swift_grb_bat_peak_flux3
+field_in bat_peak_flux3_err astro_swift_grb_bat_peak_flux3_err
+field_in bat_peak_flux4 astro_swift_grb_bat_peak_flux4
+field_in bat_peak_flux4_err astro_swift_grb_bat_peak_flux4_err
+field_in bat_peakfluxp astro_swift_grb_bat_peakfluxp
+field_in bat_peakfluxp_err astro_swift_grb_bat_peakfluxp_err
+field_in bat_peakfluxp1 astro_swift_grb_bat_peakfluxp1
+field_in bat_peakfluxp1_err astro_swift_grb_bat_peakfluxp1_err
+field_in bat_peakfluxp2 astro_swift_grb_bat_peakfluxp2
+field_in bat_peakfluxp2_err astro_swift_grb_bat_peakfluxp2_err
+field_in bat_peakfluxp3 astro_swift_grb_bat_peakfluxp3
+field_in bat_peakfluxp3_err astro_swift_grb_bat_peakfluxp3_err
+field_in bat_peakfluxp4 astro_swift_grb_bat_peakfluxp4
+field_in bat_peakfluxp4_err astro_swift_grb_bat_peakfluxp4_err
+field_in bat_plsl astro_swift_grb_bat_plsl
+field_in bat_plsl_err astro_swift_grb_bat_plsl_err
+field_in bat_pl_chi2 astro_swift_grb_bat_pl_chi2
+field_in bat_pl_dof astro_swift_grb_bat_pl_dof
+field_in bat_ctslope astro_swift_grb_bat_ctslope
+field_in bat_ctslope_err astro_swift_grb_bat_ctslope_err
+field_in bat_ctslope_n_err astro_swift_grb_bat_ctslope_n_err
+field_in bat_ctezero astro_swift_grb_bat_ctezero
+field_in bat_ctezero_err astro_swift_grb_bat_ctezero_err
+field_in bat_ctezero_n_err astro_swift_grb_bat_ctezero_n_err
+field_in bat_ct_chi2 astro_swift_grb_bat_ct_chi2
+field_in bat_ct_dof astro_swift_grb_bat_ct_dof
+field_in bat_epeak astro_swift_grb_bat_epeak
+field_in bat_epeak_ref astro_swift_grb_bat_epeak_ref
+field_in bat_eiso astro_swift_grb_bat_eiso
+field_in bat_eiso1000 astro_swift_grb_bat_eiso1000
+field_in bat_eiso_alpha astro_swift_grb_bat_eiso_alpha
+field_in bat_eiso_beta astro_swift_grb_bat_eiso_beta
+field_in bat_eiso_norm astro_swift_grb_bat_eiso_norm
+field_in bat_eiso_dur astro_swift_grb_bat_eiso_dur
+field_in bat_eiso_ref astro_swift_grb_bat_eiso_ref
+field_in bat_redshift astro_swift_grb_bat_redshift
+field_in bat_hrd1 astro_swift_grb_bat_hrd1
+field_in bat_hrd1_err astro_swift_grb_bat_hrd1_err
+field_in bat_hrd2 astro_swift_grb_bat_hrd2
+field_in bat_hrd2_err astro_swift_grb_bat_hrd2_err
+field_in bat_comment astro_swift_grb_bat_comment
+field_in xrt_detection astro_swift_grb_xrt_detection
+field_in xrt_ra astro_swift_grb_xrt_ra
+field_in xrt_dec astro_swift_grb_xrt_dec
+field_in xrt_pos_err astro_swift_grb_xrt_pos_err
+field_in xrt_pos_ref astro_swift_grb_xrt_pos_ref
+field_in xrt_onsource astro_swift_grb_xrt_onsource
+field_in xrt_c100_rate astro_swift_grb_xrt_c100_rate
+field_in xrt_c100_start astro_swift_grb_xrt_c100_start
+field_in xrt_c100_stop astro_swift_grb_xrt_c100_stop
+field_in xrt_c100_expo astro_swift_grb_xrt_c100_expo
+field_in xrt_c100_mode astro_swift_grb_xrt_c100_mode
+field_in xrt_e1_rate astro_swift_grb_xrt_e1_rate
+field_in xrt_e1_rate_err astro_swift_grb_xrt_e1_rate_err
+field_in xrt_e1_rate1 astro_swift_grb_xrt_e1_rate1
+field_in xrt_e1_rate1_err astro_swift_grb_xrt_e1_rate1_err
+field_in xrt_e1_rate2 astro_swift_grb_xrt_e1_rate2
+field_in xrt_e1_rate2_err astro_swift_grb_xrt_e1_rate2_err
+field_in xrt_e1_rate3 astro_swift_grb_xrt_e1_rate3
+field_in xrt_e1_rate3_err astro_swift_grb_xrt_e1_rate3_err
+field_in xrt_e1_start astro_swift_grb_xrt_e1_start
+field_in xrt_e1_stop astro_swift_grb_xrt_e1_stop
+field_in xrt_e1_expo astro_swift_grb_xrt_e1_expo
+field_in xrt_hrd1 astro_swift_grb_xrt_hrd1
+field_in xrt_hrd1_err astro_swift_grb_xrt_hrd1_err
+field_in xrt_hrd2 astro_swift_grb_xrt_hrd2
+field_in xrt_hrd2_err astro_swift_grb_xrt_hrd2_err
+field_in xrt_e1_mode astro_swift_grb_xrt_e1_mode
+field_in xrt_lcchange astro_swift_grb_xrt_lcchange
+field_in xrt_flare astro_swift_grb_xrt_flare
+field_in uvot_detection astro_swift_grb_uvot_detection
+field_in uvot_ra astro_swift_grb_uvot_ra
+field_in uvot_dec astro_swift_grb_uvot_dec
+field_in uvot_pos_err astro_swift_grb_uvot_pos_err
+field_in uvot_pos_ref astro_swift_grb_uvot_pos_ref
+field_in uvot_onsource astro_swift_grb_uvot_onsource
+field_in uvot_vv_flux astro_swift_grb_uvot_vv_flux
+field_in uvot_vv_mag astro_swift_grb_uvot_vv_mag
+field_in uvot_vv_mag_err astro_swift_grb_uvot_vv_mag_err
+field_in uvot_vv_start astro_swift_grb_uvot_vv_start
+field_in uvot_vv_stop astro_swift_grb_uvot_vv_stop
+field_in uvot_vv_expo astro_swift_grb_uvot_vv_expo
+field_in uvot_w1_flux astro_swift_grb_uvot_w1_flux
+field_in uvot_w1_mag astro_swift_grb_uvot_w1_mag
+field_in uvot_w1_mag_err astro_swift_grb_uvot_w1_mag_err
+field_in uvot_w1_start astro_swift_grb_uvot_w1_start
+field_in uvot_w1_stop astro_swift_grb_uvot_w1_stop
+field_in uvot_w1_expo astro_swift_grb_uvot_w1_expo
+field_in redshift_err astro_swift_grb_redshift_err
+field_in redshift_type astro_swift_grb_redshift_type
+field_in redshift_line astro_swift_grb_redshift_line
+field_in redshift_from astro_swift_grb_redshift_from
+field_in redshift_ref astro_swift_grb_redshift_ref
+field_in galactic_nh astro_swift_grb_galactic_nh
+field_in followup astro_swift_grb_followup
+field_in radio_detection astro_swift_grb_radio_detection
+field_in radio_ref astro_swift_grb_radio_ref
+field_in infra_detection astro_swift_grb_infra_detection
+field_in infra_ref astro_swift_grb_infra_ref
+field_in opt_detection astro_swift_grb_opt_detection
+field_in opt_ref astro_swift_grb_opt_ref
+field_in ot_ra astro_swift_grb_ot_ra
+field_in ot_dec astro_swift_grb_ot_dec
+field_in ot_pos_err astro_swift_grb_ot_pos_err
+field_in ot_pos_ref astro_swift_grb_ot_pos_ref
+field_in other_obs astro_swift_grb_other_obs
+field_in other_obs_ref astro_swift_grb_other_obs_ref
+field_in other_obs2 astro_swift_grb_other_obs2
+field_in other_obs2_ref astro_swift_grb_other_obs2_ref
+field_in other_obs3 astro_swift_grb_other_obs3
+field_in other_obs3_ref astro_swift_grb_other_obs3_ref
+field_in other_obs4 astro_swift_grb_other_obs4
+field_in other_obs4_ref astro_swift_grb_other_obs4_ref
+field_in supernova_flag astro_swift_grb_supernova_flag
+field_in galaxy_flag astro_swift_grb_galaxy_flag
+field_in galaxy_name astro_swift_grb_galaxy_name
+field_in galaxy_type astro_swift_grb_galaxy_type
+field_in galaxy_ra astro_swift_grb_galaxy_ra
+field_in galaxy_dec astro_swift_grb_galaxy_dec
+field_in galaxy_pos_ref astro_swift_grb_galaxy_pos_ref
+field_in galaxy_redshift astro_swift_grb_galaxy_redshift
+field_in galaxy_ref astro_swift_grb_galaxy_ref
+field_in galaxy_offset astro_swift_grb_galaxy_offset
+field_in ground_counterpart astro_swift_grb_ground_counterpart
+field_in web_page astro_swift_grb_web_page
+field_in comments astro_swift_grb_comments
+source astro_tevcat
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/tevcat.json
+cmap data
+ra_key ra
+dec_key dec
+z_key redshift
+field_in source_number astro_tevcat_source_number
+field_in source_sample astro_tevcat_source_sample
+field_in name astro_tevcat_name
+field_in alt_name astro_tevcat_alt_name
+field_in lii astro_tevcat_lii
+field_in bii astro_tevcat_bii
+field_in source_type astro_tevcat_source_type
+field_in flux astro_tevcat_flux
+field_in spectral_index astro_tevcat_spectral_index
+field_in distance astro_tevcat_distance
+field_in discovery_date astro_tevcat_discovery_date
+field_in extended_flag astro_tevcat_extended_flag
+field_in x_size astro_tevcat_x_size
+field_in y_size astro_tevcat_y_size
+field_in tevcat_url astro_tevcat_tevcat_url
+source astro_twomass_psc
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/twomass_psc.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+field_in Jmag astro_twomass_psc_Jmag
+field_in Hmag astro_twomass_psc_Hmag
+field_in Kmag astro_twomass_psc_Kmag
+field_in Qflg astro_twomass_psc_Qflg
+field_in Rflg astro_twomass_psc_Rflg
+field_in Bflg astro_twomass_psc_Bflg
+field_in Cflg astro_twomass_psc_Cflg
+field_in Aflg astro_twomass_psc_Aflg
+source astro_vizier_2qz
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_2qz_recno
+field_in 2QZ vizier_2qz_2QZ
+field_in intNo vizier_2qz_intNo
+field_in intName vizier_2qz_intName
+source astro_vizier_6dfgs
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_6dfgs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in 6dFGS vizier_6dfgs_6dFGS
+field_in Nm vizier_6dfgs_Nm
+field_in Nz vizier_6dfgs_Nz
+field_in bJmag vizier_6dfgs_bJmag
+source astro_vizier_apass
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_apass.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in e_RAJ2000 astro_vizier_apass_e_RAJ2000
+field_in e_DEJ2000 astro_vizier_apass_e_DEJ2000
+field_in Field astro_vizier_apass_Field
+field_in nobs astro_vizier_apass_nobs
+field_in mobs astro_vizier_apass_mobs
+field_in B-V astro_vizier_apass_B-V
+field_in e_B-V astro_vizier_apass_e_B-V
+field_in Vmag astro_vizier_apass_Vmag
+field_in e_Vmag astro_vizier_apass_e_Vmag
+field_in u_e_Vmag astro_vizier_apass_u_e_Vmag
+field_in Bmag astro_vizier_apass_Bmag
+field_in e_Bmag astro_vizier_apass_e_Bmag
+field_in u_e_Bmag astro_vizier_apass_u_e_Bmag
+field_in g'mag astro_vizier_apass_g'mag
+field_in e_g'mag astro_vizier_apass_e_g'mag
+field_in u_e_g'mag astro_vizier_apass_u_e_g'mag
+field_in r'mag astro_vizier_apass_r'mag
+field_in e_r'mag astro_vizier_apass_e_r'mag
+field_in u_e_r'mag astro_vizier_apass_u_e_r'mag
+field_in i'mag astro_vizier_apass_i'mag
+field_in e_i'mag astro_vizier_apass_e_i'mag
+field_in u_e_i'mag astro_vizier_apass_u_e_i'mag
+source astro_vizier_carmenes
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_carmenes.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_carmenes_recno
+field_in MWSC vizier_carmenes_MWSC
+field_in Name vizier_carmenes_Name
+field_in Type vizier_carmenes_Type
+source astro_vizier_cosmic_voids
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_cosmic_voids.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field_in recno vizier_cosmic_voids_recno
+field_in ID vizier_cosmic_voids_ID
+field_in r vizier_cosmic_voids_r
+field_in p-value vizier_cosmic_voids_p-value
+source astro_vizier_first
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_first.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_first_recno
+field_in FIRST vizier_first_FIRST
+field_in p(S) vizier_first_p(S)
+field_in Fpeak vizier_first_Fpeak
+source astro_vizier_gcvs_variables
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_gcvs_variables_recno
+field_in VarNum vizier_gcvs_variables_VarNum
+field_in m_VarNum vizier_gcvs_variables_m_VarNum
+field_in GCVS vizier_gcvs_variables_GCVS
+source astro_vizier_glade
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_glade.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+dist_key Dist
+dist_scale 1.0
+field_in recno astro_vizier_glade_recno
+field_in PGC astro_vizier_glade_PGC
+field_in GWGC astro_vizier_glade_GWGC
+field_in HyperLEDA astro_vizier_glade_HyperLEDA
+field_in 2MASS astro_vizier_glade_2MASS
+field_in SDSS-DR12 astro_vizier_glade_SDSS-DR12
+field_in Flag1 astro_vizier_glade_Flag1
+field_in e_Dist astro_vizier_glade_e_Dist
+field_in Bmag astro_vizier_glade_Bmag
+field_in e_Bmag astro_vizier_glade_e_Bmag
+field_in BMAG astro_vizier_glade_BMAG
+field_in Jmag astro_vizier_glade_Jmag
+field_in e_Jmag astro_vizier_glade_e_Jmag
+field_in Hmag astro_vizier_glade_Hmag
+field_in e_Hmag astro_vizier_glade_e_Hmag
+field_in Kmag astro_vizier_glade_Kmag
+field_in e_Kmag astro_vizier_glade_e_Kmag
+field_in Flag2 astro_vizier_glade_Flag2
+field_in Flag3 astro_vizier_glade_Flag3
+source astro_vizier_glade2
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_glade2.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+dist_key Dist
+dist_scale 1.0
+field_in recno vizier_glade2_recno
+field_in PGC vizier_glade2_PGC
+field_in GWGC vizier_glade2_GWGC
+field_in HyperLEDA vizier_glade2_HyperLEDA
+source astro_vizier_hecate
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_hecate.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_hecate_recno
+field_in PGC vizier_hecate_PGC
+field_in HyperLEDA vizier_hecate_HyperLEDA
+field_in NED vizier_hecate_NED
+source astro_vizier_lotss_dr3
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_lotss_dr3.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_lotss_dr3_recno
+field_in Source vizier_lotss_dr3_Source
+field_in e_RAJ2000 vizier_lotss_dr3_e_RAJ2000
+field_in e_DEJ2000 vizier_lotss_dr3_e_DEJ2000
+source astro_vizier_nvss
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_nvss.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_nvss_recno
+field_in Field vizier_nvss_Field
+field_in Xpos vizier_nvss_Xpos
+field_in Ypos vizier_nvss_Ypos
+source astro_vizier_orion_region
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_orion_region.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_orion_region_recno
+field_in Seq vizier_orion_region_Seq
+field_in ePos vizier_orion_region_ePos
+field_in CTot vizier_orion_region_CTot
+source astro_vizier_prigozhin_pulsars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_prigozhin_pulsars_recno
+field_in Name vizier_prigozhin_pulsars_Name
+field_in imag vizier_prigozhin_pulsars_imag
+field_in zphot vizier_prigozhin_pulsars_zphot
+source astro_vizier_sdss_qso
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_sdss_qso.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field_in recno vizier_sdss_qso_recno
+field_in SDSS vizier_sdss_qso_SDSS
+field_in umag vizier_sdss_qso_umag
+field_in e_umag vizier_sdss_qso_e_umag
+source astro_vizier_snrs
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_snrs_recno
+field_in SNR vizier_snrs_SNR
+field_in MajDiam vizier_snrs_MajDiam
+field_in MinDiam vizier_snrs_MinDiam
+source astro_vizier_tycho2
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_tycho2.json
+cmap data
+field_in recno astro_vizier_tycho2_recno
+field_in TYC1 astro_vizier_tycho2_TYC1
+field_in TYC2 astro_vizier_tycho2_TYC2
+field_in TYC3 astro_vizier_tycho2_TYC3
+field_in pflag astro_vizier_tycho2_pflag
+field_in RAmdeg astro_vizier_tycho2_RAmdeg
+field_in DEmdeg astro_vizier_tycho2_DEmdeg
+field_in pmRA astro_vizier_tycho2_pmRA
+field_in pmDE astro_vizier_tycho2_pmDE
+field_in e_RAmdeg astro_vizier_tycho2_e_RAmdeg
+field_in e_DEmdeg astro_vizier_tycho2_e_DEmdeg
+field_in e_pmRA astro_vizier_tycho2_e_pmRA
+field_in e_pmDE astro_vizier_tycho2_e_pmDE
+field_in EpRAm astro_vizier_tycho2_EpRAm
+field_in EpDEm astro_vizier_tycho2_EpDEm
+field_in Num astro_vizier_tycho2_Num
+field_in q_RAmdeg astro_vizier_tycho2_q_RAmdeg
+field_in q_DEmdeg astro_vizier_tycho2_q_DEmdeg
+field_in q_pmRA astro_vizier_tycho2_q_pmRA
+field_in q_pmDE astro_vizier_tycho2_q_pmDE
+field_in BTmag astro_vizier_tycho2_BTmag
+field_in e_BTmag astro_vizier_tycho2_e_BTmag
+field_in VTmag astro_vizier_tycho2_VTmag
+field_in e_VTmag astro_vizier_tycho2_e_VTmag
+field_in prox astro_vizier_tycho2_prox
+field_in TYC astro_vizier_tycho2_TYC
+field_in HIP astro_vizier_tycho2_HIP
+field_in CCDM astro_vizier_tycho2_CCDM
+field_in RA(ICRS) astro_vizier_tycho2_RA(ICRS)
+field_in DE(ICRS) astro_vizier_tycho2_DE(ICRS)
+field_in EpRA-1990 astro_vizier_tycho2_EpRA-1990
+field_in EpDE-1990 astro_vizier_tycho2_EpDE-1990
+field_in e_RAdeg astro_vizier_tycho2_e_RAdeg
+field_in e_DEdeg astro_vizier_tycho2_e_DEdeg
+field_in posflg astro_vizier_tycho2_posflg
+field_in corr astro_vizier_tycho2_corr
+source astro_vizier_ucac5
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_ucac5.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in SrcIDgaia astro_vizier_ucac5_SrcIDgaia
+field_in RAgaia astro_vizier_ucac5_RAgaia
+field_in e_RAgaia astro_vizier_ucac5_e_RAgaia
+field_in DEgaia astro_vizier_ucac5_DEgaia
+field_in e_DEgaia astro_vizier_ucac5_e_DEgaia
+field_in Org astro_vizier_ucac5_Org
+field_in Nu astro_vizier_ucac5_Nu
+field_in EPucac astro_vizier_ucac5_EPucac
+field_in pmRA astro_vizier_ucac5_pmRA
+field_in e_pmRA astro_vizier_ucac5_e_pmRA
+field_in pmDE astro_vizier_ucac5_pmDE
+field_in e_pmDE astro_vizier_ucac5_e_pmDE
+field_in Gmag astro_vizier_ucac5_Gmag
+field_in f_mag astro_vizier_ucac5_f_mag
+field_in Rmag astro_vizier_ucac5_Rmag
+field_in Jmag astro_vizier_ucac5_Jmag
+field_in Hmag astro_vizier_ucac5_Hmag
+field_in Kmag astro_vizier_ucac5_Kmag
+source astro_vizier_vsx_variables
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_vsx_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_vsx_variables_recno
+field_in OID vizier_vsx_variables_OID
+field_in Name vizier_vsx_variables_Name
+field_in V vizier_vsx_variables_V
+source astro_vizier_young_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_young_stars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_young_stars_recno
+field_in Name vizier_young_stars_Name
+field_in FileName vizier_young_stars_FileName
+field_in SName vizier_young_stars_SName
+
+source astro_wise_allsky
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/wise_allsky.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in w1mpro astro_wise_allsky_w1mpro
+field_in w2mpro astro_wise_allsky_w2mpro
+field_in w3mpro astro_wise_allsky_w3mpro
+field_in w4mpro astro_wise_allsky_w4mpro
+source astro_xmm_sources
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/xmm_sources.json
+cmap data
+ra_key ra
+dec_key dec
+z_key redshift_zsp
+field_in srcid astro_xmm_sources_srcid
+field_in name astro_xmm_sources_name
+field_in obsid astro_xmm_sources_obsid
+field_in pps_srcnum astro_xmm_sources_pps_srcnum
+field_in n_obs astro_xmm_sources_n_obs
+field_in n_contrib astro_xmm_sources_n_contrib
+field_in n_exp astro_xmm_sources_n_exp
+field_in error_radius astro_xmm_sources_error_radius
+field_in error_ell_major astro_xmm_sources_error_ell_major
+field_in error_ell_minor astro_xmm_sources_error_ell_minor
+field_in error_ell_pa astro_xmm_sources_error_ell_pa
+field_in lii astro_xmm_sources_lii
+field_in bii astro_xmm_sources_bii
+field_in x_pixel astro_xmm_sources_x_pixel
+field_in x_pixel_error astro_xmm_sources_x_pixel_error
+field_in x_pixel_neg_err astro_xmm_sources_x_pixel_neg_err
+field_in x_pixel_pos_err astro_xmm_sources_x_pixel_pos_err
+field_in y_pixel astro_xmm_sources_y_pixel
+field_in y_pixel_error astro_xmm_sources_y_pixel_error
+field_in y_pixel_neg_err astro_xmm_sources_y_pixel_neg_err
+field_in y_pixel_pos_err astro_xmm_sources_y_pixel_pos_err
+field_in ccdpn astro_xmm_sources_ccdpn
+field_in pn_rawx astro_xmm_sources_pn_rawx
+field_in pn_rawy astro_xmm_sources_pn_rawy
+field_in ccdm1 astro_xmm_sources_ccdm1
+field_in m1_rawx astro_xmm_sources_m1_rawx
+field_in m1_rawy astro_xmm_sources_m1_rawy
+field_in ccdm2 astro_xmm_sources_ccdm2
+field_in m2_rawx astro_xmm_sources_m2_rawx
+field_in m2_rawy astro_xmm_sources_m2_rawy
+field_in dist_nn astro_xmm_sources_dist_nn
+field_in n_blend astro_xmm_sources_n_blend
+field_in ep_flux astro_xmm_sources_ep_flux
+field_in ep_flux_error astro_xmm_sources_ep_flux_error
+field_in ep_1_flux astro_xmm_sources_ep_1_flux
+field_in ep_1_flux_error astro_xmm_sources_ep_1_flux_error
+field_in ep_2_flux astro_xmm_sources_ep_2_flux
+field_in ep_2_flux_error astro_xmm_sources_ep_2_flux_error
+field_in ep_3_flux astro_xmm_sources_ep_3_flux
+field_in ep_3_flux_error astro_xmm_sources_ep_3_flux_error
+field_in ep_4_flux astro_xmm_sources_ep_4_flux
+field_in ep_4_flux_error astro_xmm_sources_ep_4_flux_error
+field_in ep_5_flux astro_xmm_sources_ep_5_flux
+field_in ep_5_flux_error astro_xmm_sources_ep_5_flux_error
+field_in pn_flux astro_xmm_sources_pn_flux
+field_in pn_flux_error astro_xmm_sources_pn_flux_error
+field_in pn_1_flux astro_xmm_sources_pn_1_flux
+field_in pn_1_flux_error astro_xmm_sources_pn_1_flux_error
+field_in pn_2_flux astro_xmm_sources_pn_2_flux
+field_in pn_2_flux_error astro_xmm_sources_pn_2_flux_error
+field_in pn_3_flux astro_xmm_sources_pn_3_flux
+field_in pn_3_flux_error astro_xmm_sources_pn_3_flux_error
+field_in pn_4_flux astro_xmm_sources_pn_4_flux
+field_in pn_4_flux_error astro_xmm_sources_pn_4_flux_error
+field_in pn_5_flux astro_xmm_sources_pn_5_flux
+field_in pn_5_flux_error astro_xmm_sources_pn_5_flux_error
+field_in m1_flux astro_xmm_sources_m1_flux
+field_in m1_flux_error astro_xmm_sources_m1_flux_error
+field_in m1_1_flux astro_xmm_sources_m1_1_flux
+field_in m1_1_flux_error astro_xmm_sources_m1_1_flux_error
+field_in m1_2_flux astro_xmm_sources_m1_2_flux
+field_in m1_2_flux_error astro_xmm_sources_m1_2_flux_error
+field_in m1_3_flux astro_xmm_sources_m1_3_flux
+field_in m1_3_flux_error astro_xmm_sources_m1_3_flux_error
+field_in m1_4_flux astro_xmm_sources_m1_4_flux
+field_in m1_4_flux_error astro_xmm_sources_m1_4_flux_error
+field_in m1_5_flux astro_xmm_sources_m1_5_flux
+field_in m1_5_flux_error astro_xmm_sources_m1_5_flux_error
+field_in m2_flux astro_xmm_sources_m2_flux
+field_in m2_flux_error astro_xmm_sources_m2_flux_error
+field_in m2_1_flux astro_xmm_sources_m2_1_flux
+field_in m2_1_flux_error astro_xmm_sources_m2_1_flux_error
+field_in m2_2_flux astro_xmm_sources_m2_2_flux
+field_in m2_2_flux_error astro_xmm_sources_m2_2_flux_error
+field_in m2_3_flux astro_xmm_sources_m2_3_flux
+field_in m2_3_flux_error astro_xmm_sources_m2_3_flux_error
+field_in m2_4_flux astro_xmm_sources_m2_4_flux
+field_in m2_4_flux_error astro_xmm_sources_m2_4_flux_error
+field_in m2_5_flux astro_xmm_sources_m2_5_flux
+field_in m2_5_flux_error astro_xmm_sources_m2_5_flux_error
+field_in ep_rate astro_xmm_sources_ep_rate
+field_in ep_rate_error astro_xmm_sources_ep_rate_error
+field_in pn_rate astro_xmm_sources_pn_rate
+field_in pn_rate_error astro_xmm_sources_pn_rate_error
+field_in pn_1_rate astro_xmm_sources_pn_1_rate
+field_in pn_1_rate_error astro_xmm_sources_pn_1_rate_error
+field_in pn_2_rate astro_xmm_sources_pn_2_rate
+field_in pn_2_rate_error astro_xmm_sources_pn_2_rate_error
+field_in pn_3_rate astro_xmm_sources_pn_3_rate
+field_in pn_3_rate_error astro_xmm_sources_pn_3_rate_error
+field_in pn_4_rate astro_xmm_sources_pn_4_rate
+field_in pn_4_rate_error astro_xmm_sources_pn_4_rate_error
+field_in pn_5_rate astro_xmm_sources_pn_5_rate
+field_in pn_5_rate_error astro_xmm_sources_pn_5_rate_error
+field_in m1_rate astro_xmm_sources_m1_rate
+field_in m1_rate_error astro_xmm_sources_m1_rate_error
+field_in m1_1_rate astro_xmm_sources_m1_1_rate
+field_in m1_1_rate_error astro_xmm_sources_m1_1_rate_error
+field_in m1_2_rate astro_xmm_sources_m1_2_rate
+field_in m1_2_rate_error astro_xmm_sources_m1_2_rate_error
+field_in m1_3_rate astro_xmm_sources_m1_3_rate
+field_in m1_3_rate_error astro_xmm_sources_m1_3_rate_error
+field_in m1_4_rate astro_xmm_sources_m1_4_rate
+field_in m1_4_rate_error astro_xmm_sources_m1_4_rate_error
+field_in m1_5_rate astro_xmm_sources_m1_5_rate
+field_in m1_5_rate_error astro_xmm_sources_m1_5_rate_error
+field_in m2_rate astro_xmm_sources_m2_rate
+field_in m2_rate_error astro_xmm_sources_m2_rate_error
+field_in m2_1_rate astro_xmm_sources_m2_1_rate
+field_in m2_1_rate_error astro_xmm_sources_m2_1_rate_error
+field_in m2_2_rate astro_xmm_sources_m2_2_rate
+field_in m2_2_rate_error astro_xmm_sources_m2_2_rate_error
+field_in m2_3_rate astro_xmm_sources_m2_3_rate
+field_in m2_3_rate_error astro_xmm_sources_m2_3_rate_error
+field_in m2_4_rate astro_xmm_sources_m2_4_rate
+field_in m2_4_rate_error astro_xmm_sources_m2_4_rate_error
+field_in m2_5_rate astro_xmm_sources_m2_5_rate
+field_in m2_5_rate_error astro_xmm_sources_m2_5_rate_error
+field_in ep_cts astro_xmm_sources_ep_cts
+field_in ep_cts_error astro_xmm_sources_ep_cts_error
+field_in pn_cts astro_xmm_sources_pn_cts
+field_in pn_cts_error astro_xmm_sources_pn_cts_error
+field_in m1_cts astro_xmm_sources_m1_cts
+field_in m1_cts_error astro_xmm_sources_m1_cts_error
+field_in m2_cts astro_xmm_sources_m2_cts
+field_in m2_cts_error astro_xmm_sources_m2_cts_error
+field_in ep_det_ml astro_xmm_sources_ep_det_ml
+field_in pn_det_ml astro_xmm_sources_pn_det_ml
+field_in pn_1_det_ml astro_xmm_sources_pn_1_det_ml
+field_in pn_2_det_ml astro_xmm_sources_pn_2_det_ml
+field_in pn_3_det_ml astro_xmm_sources_pn_3_det_ml
+field_in pn_4_det_ml astro_xmm_sources_pn_4_det_ml
+field_in pn_5_det_ml astro_xmm_sources_pn_5_det_ml
+field_in m1_det_ml astro_xmm_sources_m1_det_ml
+field_in m1_1_det_ml astro_xmm_sources_m1_1_det_ml
+field_in m1_2_det_ml astro_xmm_sources_m1_2_det_ml
+field_in m1_3_det_ml astro_xmm_sources_m1_3_det_ml
+field_in m1_4_det_ml astro_xmm_sources_m1_4_det_ml
+field_in m1_5_det_ml astro_xmm_sources_m1_5_det_ml
+field_in m2_det_ml astro_xmm_sources_m2_det_ml
+field_in m2_1_det_ml astro_xmm_sources_m2_1_det_ml
+field_in m2_2_det_ml astro_xmm_sources_m2_2_det_ml
+field_in m2_3_det_ml astro_xmm_sources_m2_3_det_ml
+field_in m2_4_det_ml astro_xmm_sources_m2_4_det_ml
+field_in m2_5_det_ml astro_xmm_sources_m2_5_det_ml
+field_in extent astro_xmm_sources_extent
+field_in extent_error astro_xmm_sources_extent_error
+field_in extent_neg_err astro_xmm_sources_extent_neg_err
+field_in extent_pos_err astro_xmm_sources_extent_pos_err
+field_in extent_ml astro_xmm_sources_extent_ml
+field_in stack_det_ml astro_xmm_sources_stack_det_ml
+field_in stack_flux astro_xmm_sources_stack_flux
+field_in stack_flux_error astro_xmm_sources_stack_flux_error
+field_in stack_flux_neg_err astro_xmm_sources_stack_flux_neg_err
+field_in stack_flux_pos_err astro_xmm_sources_stack_flux_pos_err
+field_in stack_nh astro_xmm_sources_stack_nh
+field_in stack_nh_error astro_xmm_sources_stack_nh_error
+field_in stack_nh_neg_err astro_xmm_sources_stack_nh_neg_err
+field_in stack_nh_pos_err astro_xmm_sources_stack_nh_pos_err
+field_in stack_gamma astro_xmm_sources_stack_gamma
+field_in stack_gamma_error astro_xmm_sources_stack_gamma_error
+field_in stack_gamma_neg_err astro_xmm_sources_stack_gamma_neg_err
+field_in stack_gamma_pos_err astro_xmm_sources_stack_gamma_pos_err
+field_in pn_1_ecf astro_xmm_sources_pn_1_ecf
+field_in pn_2_ecf astro_xmm_sources_pn_2_ecf
+field_in pn_3_ecf astro_xmm_sources_pn_3_ecf
+field_in pn_4_ecf astro_xmm_sources_pn_4_ecf
+field_in pn_5_ecf astro_xmm_sources_pn_5_ecf
+field_in m1_1_ecf astro_xmm_sources_m1_1_ecf
+field_in m1_2_ecf astro_xmm_sources_m1_2_ecf
+field_in m1_3_ecf astro_xmm_sources_m1_3_ecf
+field_in m1_4_ecf astro_xmm_sources_m1_4_ecf
+field_in m1_5_ecf astro_xmm_sources_m1_5_ecf
+field_in m2_1_ecf astro_xmm_sources_m2_1_ecf
+field_in m2_2_ecf astro_xmm_sources_m2_2_ecf
+field_in m2_3_ecf astro_xmm_sources_m2_3_ecf
+field_in m2_4_ecf astro_xmm_sources_m2_4_ecf
+field_in m2_5_ecf astro_xmm_sources_m2_5_ecf
+field_in ep_hr1 astro_xmm_sources_ep_hr1
+field_in ep_hr1_error astro_xmm_sources_ep_hr1_error
+field_in ep_hr2 astro_xmm_sources_ep_hr2
+field_in ep_hr2_error astro_xmm_sources_ep_hr2_error
+field_in ep_hr3 astro_xmm_sources_ep_hr3
+field_in ep_hr3_error astro_xmm_sources_ep_hr3_error
+field_in ep_hr4 astro_xmm_sources_ep_hr4
+field_in ep_hr4_error astro_xmm_sources_ep_hr4_error
+field_in pn_hr1 astro_xmm_sources_pn_hr1
+field_in pn_hr1_error astro_xmm_sources_pn_hr1_error
+field_in pn_hr2 astro_xmm_sources_pn_hr2
+field_in pn_hr2_error astro_xmm_sources_pn_hr2_error
+field_in pn_hr3 astro_xmm_sources_pn_hr3
+field_in pn_hr3_error astro_xmm_sources_pn_hr3_error
+field_in pn_hr4 astro_xmm_sources_pn_hr4
+field_in pn_hr4_error astro_xmm_sources_pn_hr4_error
+field_in m1_hr1 astro_xmm_sources_m1_hr1
+field_in m1_hr1_error astro_xmm_sources_m1_hr1_error
+field_in m1_hr2 astro_xmm_sources_m1_hr2
+field_in m1_hr2_error astro_xmm_sources_m1_hr2_error
+field_in m1_hr3 astro_xmm_sources_m1_hr3
+field_in m1_hr3_error astro_xmm_sources_m1_hr3_error
+field_in m1_hr4 astro_xmm_sources_m1_hr4
+field_in m1_hr4_error astro_xmm_sources_m1_hr4_error
+field_in m2_hr1 astro_xmm_sources_m2_hr1
+field_in m2_hr1_error astro_xmm_sources_m2_hr1_error
+field_in m2_hr2 astro_xmm_sources_m2_hr2
+field_in m2_hr2_error astro_xmm_sources_m2_hr2_error
+field_in m2_hr3 astro_xmm_sources_m2_hr3
+field_in m2_hr3_error astro_xmm_sources_m2_hr3_error
+field_in m2_hr4 astro_xmm_sources_m2_hr4
+field_in m2_hr4_error astro_xmm_sources_m2_hr4_error
+field_in pn_1_exposure astro_xmm_sources_pn_1_exposure
+field_in pn_2_exposure astro_xmm_sources_pn_2_exposure
+field_in pn_3_exposure astro_xmm_sources_pn_3_exposure
+field_in pn_4_exposure astro_xmm_sources_pn_4_exposure
+field_in pn_5_exposure astro_xmm_sources_pn_5_exposure
+field_in m1_1_exposure astro_xmm_sources_m1_1_exposure
+field_in m1_2_exposure astro_xmm_sources_m1_2_exposure
+field_in m1_3_exposure astro_xmm_sources_m1_3_exposure
+field_in m1_4_exposure astro_xmm_sources_m1_4_exposure
+field_in m1_5_exposure astro_xmm_sources_m1_5_exposure
+field_in m2_1_exposure astro_xmm_sources_m2_1_exposure
+field_in m2_2_exposure astro_xmm_sources_m2_2_exposure
+field_in m2_3_exposure astro_xmm_sources_m2_3_exposure
+field_in m2_4_exposure astro_xmm_sources_m2_4_exposure
+field_in m2_5_exposure astro_xmm_sources_m2_5_exposure
+field_in pn_bg astro_xmm_sources_pn_bg
+field_in pn_1_bg astro_xmm_sources_pn_1_bg
+field_in pn_2_bg astro_xmm_sources_pn_2_bg
+field_in pn_3_bg astro_xmm_sources_pn_3_bg
+field_in pn_4_bg astro_xmm_sources_pn_4_bg
+field_in pn_5_bg astro_xmm_sources_pn_5_bg
+field_in m1_bg astro_xmm_sources_m1_bg
+field_in m1_1_bg astro_xmm_sources_m1_1_bg
+field_in m1_2_bg astro_xmm_sources_m1_2_bg
+field_in m1_3_bg astro_xmm_sources_m1_3_bg
+field_in m1_4_bg astro_xmm_sources_m1_4_bg
+field_in m1_5_bg astro_xmm_sources_m1_5_bg
+field_in m2_bg astro_xmm_sources_m2_bg
+field_in m2_1_bg astro_xmm_sources_m2_1_bg
+field_in m2_2_bg astro_xmm_sources_m2_2_bg
+field_in m2_3_bg astro_xmm_sources_m2_3_bg
+field_in m2_4_bg astro_xmm_sources_m2_4_bg
+field_in m2_5_bg astro_xmm_sources_m2_5_bg
+field_in ep_ontime astro_xmm_sources_ep_ontime
+field_in pn_ontime astro_xmm_sources_pn_ontime
+field_in m1_ontime astro_xmm_sources_m1_ontime
+field_in m2_ontime astro_xmm_sources_m2_ontime
+field_in pn_pileup astro_xmm_sources_pn_pileup
+field_in m1_pileup astro_xmm_sources_m1_pileup
+field_in m2_pileup astro_xmm_sources_m2_pileup
+field_in pn_maskfrac astro_xmm_sources_pn_maskfrac
+field_in m1_maskfrac astro_xmm_sources_m1_maskfrac
+field_in m2_maskfrac astro_xmm_sources_m2_maskfrac
+field_in dist_ref astro_xmm_sources_dist_ref
+field_in ep_offax astro_xmm_sources_ep_offax
+field_in pn_offax astro_xmm_sources_pn_offax
+field_in m1_offax astro_xmm_sources_m1_offax
+field_in m2_offax astro_xmm_sources_m2_offax
+field_in tseries_flag astro_xmm_sources_tseries_flag
+field_in spectra_flag astro_xmm_sources_spectra_flag
+field_in chi2prob astro_xmm_sources_chi2prob
+field_in fvar astro_xmm_sources_fvar
+field_in fvar_error astro_xmm_sources_fvar_error
+field_in var_flag astro_xmm_sources_var_flag
+field_in pn_1_vig astro_xmm_sources_pn_1_vig
+field_in pn_2_vig astro_xmm_sources_pn_2_vig
+field_in pn_3_vig astro_xmm_sources_pn_3_vig
+field_in pn_4_vig astro_xmm_sources_pn_4_vig
+field_in pn_5_vig astro_xmm_sources_pn_5_vig
+field_in m1_1_vig astro_xmm_sources_m1_1_vig
+field_in m1_2_vig astro_xmm_sources_m1_2_vig
+field_in m1_3_vig astro_xmm_sources_m1_3_vig
+field_in m1_4_vig astro_xmm_sources_m1_4_vig
+field_in m1_5_vig astro_xmm_sources_m1_5_vig
+field_in m2_1_vig astro_xmm_sources_m2_1_vig
+field_in m2_2_vig astro_xmm_sources_m2_2_vig
+field_in m2_3_vig astro_xmm_sources_m2_3_vig
+field_in m2_4_vig astro_xmm_sources_m2_4_vig
+field_in m2_5_vig astro_xmm_sources_m2_5_vig
+field_in sum_flag astro_xmm_sources_sum_flag
+field_in ep_flag astro_xmm_sources_ep_flag
+field_in pn_flag astro_xmm_sources_pn_flag
+field_in m1_flag astro_xmm_sources_m1_flag
+field_in m2_flag astro_xmm_sources_m2_flag
+field_in var_chi2 astro_xmm_sources_var_chi2
+field_in var_chi2_1 astro_xmm_sources_var_chi2_1
+field_in var_chi2_2 astro_xmm_sources_var_chi2_2
+field_in var_chi2_3 astro_xmm_sources_var_chi2_3
+field_in var_chi2_4 astro_xmm_sources_var_chi2_4
+field_in var_chi2_5 astro_xmm_sources_var_chi2_5
+field_in var_prob astro_xmm_sources_var_prob
+field_in var_prob_1 astro_xmm_sources_var_prob_1
+field_in var_prob_2 astro_xmm_sources_var_prob_2
+field_in var_prob_3 astro_xmm_sources_var_prob_3
+field_in var_prob_4 astro_xmm_sources_var_prob_4
+field_in var_prob_5 astro_xmm_sources_var_prob_5
+field_in fratio astro_xmm_sources_fratio
+field_in fratio_error astro_xmm_sources_fratio_error
+field_in fratio_1 astro_xmm_sources_fratio_1
+field_in fratio_1_error astro_xmm_sources_fratio_1_error
+field_in fratio_2 astro_xmm_sources_fratio_2
+field_in fratio_2_error astro_xmm_sources_fratio_2_error
+field_in fratio_3 astro_xmm_sources_fratio_3
+field_in fratio_3_error astro_xmm_sources_fratio_3_error
+field_in fratio_4 astro_xmm_sources_fratio_4
+field_in fratio_4_error astro_xmm_sources_fratio_4_error
+field_in fratio_5 astro_xmm_sources_fratio_5
+field_in fratio_5_error astro_xmm_sources_fratio_5_error
+field_in fluxvar astro_xmm_sources_fluxvar
+field_in fluxvar_1 astro_xmm_sources_fluxvar_1
+field_in fluxvar_2 astro_xmm_sources_fluxvar_2
+field_in fluxvar_3 astro_xmm_sources_fluxvar_3
+field_in fluxvar_4 astro_xmm_sources_fluxvar_4
+field_in fluxvar_5 astro_xmm_sources_fluxvar_5
+field_in time astro_xmm_sources_time
+field_in end_time astro_xmm_sources_end_time
+field_in xmm_revolution astro_xmm_sources_xmm_revolution
+field_in pn_submode astro_xmm_sources_pn_submode
+field_in m1_submode astro_xmm_sources_m1_submode
+field_in m2_submode astro_xmm_sources_m2_submode
+field_in pn_filter astro_xmm_sources_pn_filter
+field_in m1_filter astro_xmm_sources_m1_filter
+field_in m2_filter astro_xmm_sources_m2_filter
+field_in classx_class astro_xmm_sources_classx_class
+field_in classx_outlier astro_xmm_sources_classx_outlier
+field_in classx_prob_agn astro_xmm_sources_classx_prob_agn
+field_in classx_prob_star astro_xmm_sources_classx_prob_star
+field_in classx_prob_gal_xrb astro_xmm_sources_classx_prob_gal_xrb
+field_in classx_prob_gal_cv astro_xmm_sources_classx_prob_gal_cv
+field_in classx_prob_bkg_agn astro_xmm_sources_classx_prob_bkg_agn
+field_in classx_prob_extragal_xrb astro_xmm_sources_classx_prob_extragal_xrb
+field_in classx_prob_extended astro_xmm_sources_classx_prob_extended
+field_in om_srcid astro_xmm_sources_om_srcid
+field_in om_uvw2_ab_mag astro_xmm_sources_om_uvw2_ab_mag
+field_in om_uvw2_ab_mag_error astro_xmm_sources_om_uvw2_ab_mag_error
+field_in om_uvm2_ab_mag astro_xmm_sources_om_uvm2_ab_mag
+field_in om_uvm2_ab_mag_error astro_xmm_sources_om_uvm2_ab_mag_error
+field_in om_uvw1_ab_mag astro_xmm_sources_om_uvw1_ab_mag
+field_in om_uvw1_ab_mag_error astro_xmm_sources_om_uvw1_ab_mag_error
+field_in om_u_ab_mag astro_xmm_sources_om_u_ab_mag
+field_in om_u_ab_mag_error astro_xmm_sources_om_u_ab_mag_error
+field_in om_b_ab_mag astro_xmm_sources_om_b_ab_mag
+field_in om_b_ab_mag_error astro_xmm_sources_om_b_ab_mag_error
+field_in om_v_ab_mag astro_xmm_sources_om_v_ab_mag
+field_in om_v_ab_mag_error astro_xmm_sources_om_v_ab_mag_error
+field_in om_match_prob astro_xmm_sources_om_match_prob
+field_in om_uvw2_quality_flag astro_xmm_sources_om_uvw2_quality_flag
+field_in om_uvm2_quality_flag astro_xmm_sources_om_uvm2_quality_flag
+field_in om_uvw1_quality_flag astro_xmm_sources_om_uvw1_quality_flag
+field_in om_u_quality_flag astro_xmm_sources_om_u_quality_flag
+field_in om_b_quality_flag astro_xmm_sources_om_b_quality_flag
+field_in om_v_quality_flag astro_xmm_sources_om_v_quality_flag
+field_in om_uvw2_extended_flag astro_xmm_sources_om_uvw2_extended_flag
+field_in om_uvm2_extended_flag astro_xmm_sources_om_uvm2_extended_flag
+field_in om_uvw1_extended_flag astro_xmm_sources_om_uvw1_extended_flag
+field_in om_u_extended_flag astro_xmm_sources_om_u_extended_flag
+field_in om_b_extended_flag astro_xmm_sources_om_b_extended_flag
+field_in om_v_extended_flag astro_xmm_sources_om_v_extended_flag
+field_in om_uvw2_chisq astro_xmm_sources_om_uvw2_chisq
+field_in om_uvw2_chisq_dof astro_xmm_sources_om_uvw2_chisq_dof
+field_in om_uvm2_chisq astro_xmm_sources_om_uvm2_chisq
+field_in om_uvm2_chisq_dof astro_xmm_sources_om_uvm2_chisq_dof
+field_in om_uvw1_chisq astro_xmm_sources_om_uvw1_chisq
+field_in om_uvw1_chisq_dof astro_xmm_sources_om_uvw1_chisq_dof
+field_in om_u_chisq astro_xmm_sources_om_u_chisq
+field_in om_u_chisq_dof astro_xmm_sources_om_u_chisq_dof
+field_in om_b_chisq astro_xmm_sources_om_b_chisq
+field_in om_b_chisq_dof astro_xmm_sources_om_b_chisq_dof
+field_in om_v_chisq astro_xmm_sources_om_v_chisq
+field_in om_v_chisq_dof astro_xmm_sources_om_v_chisq_dof
+field_in wise_name astro_xmm_sources_wise_name
+field_in wise_w1mag astro_xmm_sources_wise_w1mag
+field_in wise_w1mag_error astro_xmm_sources_wise_w1mag_error
+field_in wise_w2mag astro_xmm_sources_wise_w2mag
+field_in wise_w2mag_error astro_xmm_sources_wise_w2mag_error
+field_in wise_w3mag astro_xmm_sources_wise_w3mag
+field_in wise_w3mag_error astro_xmm_sources_wise_w3mag_error
+field_in wise_w4mag astro_xmm_sources_wise_w4mag
+field_in wise_w4mag_error astro_xmm_sources_wise_w4mag_error
+field_in wise_match_prob astro_xmm_sources_wise_match_prob
+field_in gaiadr3_source_id astro_xmm_sources_gaiadr3_source_id
+field_in gaiadr3_parallax astro_xmm_sources_gaiadr3_parallax
+field_in gaiadr3_parallax_error astro_xmm_sources_gaiadr3_parallax_error
+field_in gaiadr3_parallax_overerr astro_xmm_sources_gaiadr3_parallax_overerr
+field_in gaiadr3_pm_ra astro_xmm_sources_gaiadr3_pm_ra
+field_in gaiadr3_pm_dec astro_xmm_sources_gaiadr3_pm_dec
+field_in gaiadr3_gmag astro_xmm_sources_gaiadr3_gmag
+field_in gaiadr3_bpmag astro_xmm_sources_gaiadr3_bpmag
+field_in gaiadr3_rpmag astro_xmm_sources_gaiadr3_rpmag
+field_in gaia_match_prob astro_xmm_sources_gaia_match_prob
+field_in info_counterparts astro_xmm_sources_info_counterparts
+field_in gaiadr3_dist astro_xmm_sources_gaiadr3_dist
+field_in classopt_class astro_xmm_sources_classopt_class
+field_in classopt_prob_star astro_xmm_sources_classopt_prob_star
+field_in classopt_prob_agn astro_xmm_sources_classopt_prob_agn
+field_in classopt_prob_galaxy astro_xmm_sources_classopt_prob_galaxy
+field_in spec_flux_pl astro_xmm_sources_spec_flux_pl
+field_in spec_flux_pl_neg_err astro_xmm_sources_spec_flux_pl_neg_err
+field_in spec_flux_pl_pos_err astro_xmm_sources_spec_flux_pl_pos_err
+field_in spec_nh_pl astro_xmm_sources_spec_nh_pl
+field_in spec_nh_pl_neg_err astro_xmm_sources_spec_nh_pl_neg_err
+field_in spec_nh_pl_pos_err astro_xmm_sources_spec_nh_pl_pos_err
+field_in spec_gamma_pl astro_xmm_sources_spec_gamma_pl
+field_in spec_gamma_pl_neg_err astro_xmm_sources_spec_gamma_pl_neg_err
+field_in spec_gamma_pl_pos_err astro_xmm_sources_spec_gamma_pl_pos_err
+field_in spec_iin_pl astro_xmm_sources_spec_iin_pl
+field_in spec_iin_pl_neg_err astro_xmm_sources_spec_iin_pl_neg_err
+field_in spec_iin_pl_pos_err astro_xmm_sources_spec_iin_pl_pos_err
+field_in spec_dof_pl astro_xmm_sources_spec_dof_pl
+field_in spec_pvalue_pl astro_xmm_sources_spec_pvalue_pl
+field_in spec_flag_pl astro_xmm_sources_spec_flag_pl
+field_in spec_info astro_xmm_sources_spec_info
+field_in approx_source_var astro_xmm_sources_approx_source_var
+field_in redshift_tpz_flag_zconf astro_xmm_sources_redshift_tpz_flag_zconf
+field_in redshift_lph_z_best astro_xmm_sources_redshift_lph_z_best
+field_in redshift_lph_flag_zconf astro_xmm_sources_redshift_lph_flag_zconf
+field_in redshift_info_distance astro_xmm_sources_redshift_info_distance
 source atmosphere_biome_amazon_archive
 ttl 604800
 force em
@@ -18646,240 +19397,127 @@ field_in petroMag_g sdss_galaxy_mag_g
 source exosphere_simbad_brown_dwarfs
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27BD*%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_brown_dwarf_plx_mas
-field_in 6 simbad_brown_dwarf_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
 source exosphere_simbad_carbon_stars
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27C*%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_carbon_star_plx_mas
-field_in 6 simbad_carbon_star_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
 source exosphere_simbad_eclipsing_binaries
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27EB*%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_eclipsing_binary_plx_mas
-field_in 6 simbad_eclipsing_binary_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
 source exosphere_simbad_galaxies
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_glade2.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_galaxy_plx_mas
-field_in 6 simbad_galaxy_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
 source exosphere_simbad_galaxy_clusters
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27ClG%27+AND+rvz_redshift+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_glade2.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_galaxy_cluster_plx_mas
-field_in 6 simbad_galaxy_cluster_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
 source exosphere_simbad_high_z_galaxies
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+%3E+5+ORDER+BY+rvz_redshift+DESC
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 6 cosmic_galaxies_z_gt5_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
 source exosphere_simbad_highest_redshift_quasar
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+16+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 6 simbad_highest_redshift_quasar_z
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
 source exosphere_simbad_millisecond_pulsars
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27ms*%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_millisecond_pulsar_plx_mas
-field_in 6 simbad_millisecond_pulsar_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
 source exosphere_simbad_novae
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Nova%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_nova_plx_mas
-field_in 6 simbad_nova_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
 source exosphere_simbad_pulsars
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Pulsar%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_pulsar_plx_mas
-field_in 6 simbad_pulsar_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
 source exosphere_simbad_quasars
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 6 simbad_quasar_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
 source exosphere_simbad_supernovae
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27SN%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_supernova_plx_mas
-field_in 6 simbad_supernova_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
 source exosphere_simbad_symbiotic_stars
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Sy*%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_symbiotic_star_plx_mas
-field_in 6 simbad_symbiotic_star_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key RAJ2000
+dec_key DEJ2000
 source exosphere_simbad_white_dwarfs
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27WD*%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_white_dwarf_plx_mas
-field_in 6 simbad_white_dwarf_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
 source exosphere_simbad_wolf_rayet
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27WR*%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_wolf_rayet_plx_mas
-field_in 6 simbad_wolf_rayet_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
 source exosphere_simbad_young_stellar_objects
 ttl 604800
 force em
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27S*Y%27+AND+plx_value+IS+NOT+NULL
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
 cmap data
-ra_key 0
-dec_key 1
-z_key 6
-plx_key 2
-field_in 2 simbad_yso_plx_mas
-field_in 6 simbad_yso_redshift
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
 source geosphere_earth_impact_craters
 ttl 604800
 force em
@@ -18983,6 +19621,16 @@ map features
 lat_key geometry.coordinates.0.1
 lon_key geometry.coordinates.0.0
 field_in properties.name hydrosphere_river_name
+
+source iau_constellation_boundaries
+ttl 604800
+force em
+url https://raw.githubusercontent.com/ofrohn/d3-celestial/master/data/constellations.bounds.json
+celestial_polygon features
+radius 3.085677581e19
+field_in properties.rank cpoly_rank
+field 0 prefname
+field 3 redshift
 
 source irsa
 ttl 604800
@@ -19094,20 +19742,30 @@ field hits.hits.0.metadata.citation_count physics_time_crystal_research_citation
 source simbad
 ttl 604800
 force em
-url https://simbad.cds.unistra.fr/simbad/sim-tap?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+main_id,+ra,+dec,+coo_err_maj,+plx_value,+pmra,+pmdec,+rv_value,+sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-verify false
-format votable
-map data
-field_in main_id name
-field_in coo_err_maj pos_error_mas
-field_in plx_value parallax_mas
-field_in pmra pmra_mas_per_yr
-field_in pmdec pmdec_mas_per_yr
-field_in rv_value radial_velocity_km_s
-field_in sp_type spectral_type
-lat_key ra
-lon_key dec
-
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source simbad_bright_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source simbad_nearby_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx50.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
 source solar_helioseismology_papers
 ttl 604800
 force em
@@ -19398,6 +20056,520 @@ field_in properties.name technosphere_cable_name
 field_in properties.length technosphere_cable_length_km
 flatten features
 
+source universe_simbad_agn
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_barium_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_blazars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_blue_compact_dwarfs
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_glade2.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+source universe_simbad_blue_giants
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_blue_supergiants
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_brown_dwarfs
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_carbon_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_carbon_stars_var
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_cepheids
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_ch_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_dark_nebulae
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_dwarf_galaxies
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_glade2.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+source universe_simbad_dwarf_novae
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_eclipsing_binaries
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_emission_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_flare_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_fu_oris
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_galaxies
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_glade2.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+source universe_simbad_galaxy_clusters
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_glade2.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+source universe_simbad_gamma_bursts
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_giant_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_globular_clusters
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_hecate.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_gravitational_lenses
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_herbig_haro
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_hii_regions
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_glade2.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+source universe_simbad_hvc
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_glade2.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+source universe_simbad_interstellar_medium
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_ir_sources
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_ism
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_long_period
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_lpv_mira
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_masers
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_microquasars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_millisecond_pulsars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_mira_variables
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_molecule_clouds
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_nebulae
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_novae
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_oh_maser
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_oh_masers
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_planetary_nebulae
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_post_agb_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_pre_ms_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_proper_motion
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_high_pm.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_pulsars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_pulsating_white_dwarfs
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_quasars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_rcrb_variables
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_red_giants
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_red_supergiants
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_reflection_nebulae
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_rr_lyrae
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_s_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_stellar_associations
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_supernova_remnants
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_supernovae
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_snrs.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_symbiotic_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_prigozhin_pulsars.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_ttauri_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_variable_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_gcvs_variables.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_white_dwarfs
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_wolf_rayet_stars
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_xray_sources
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/vizier_2qz.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+source universe_simbad_yellow_supergiants
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_bright_vmag9.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_young_stellar_objects
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+source universe_simbad_yso
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/astro-catalogs/main/gaia_nearby_plx10.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
 source alfalfa_catalog
 ttl 2592000
 force em
@@ -19466,6 +20638,13 @@ force em
 url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1
 wgs84 38.899 -77.043
 field 1.0.value biosphere_death_rate_per_1000
+
+source biosphere_worldbank_gdp_growth_DEU
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+wgs84 52.520 13.405
+field 1.0.value biosphere_gdp_growth_pct_DEU
 
 source biosphere_worldbank_gdp_growth_afghanistan
 ttl 2592000
@@ -19844,13 +21023,6 @@ force em
 url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
 wgs84 55.68 12.57
 field 1.0.value biosphere_gdp_growth_denmark_pct
-
-source biosphere_worldbank_gdp_growth_DEU
-ttl 2592000
-force em
-url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
-wgs84 52.520 13.405
-field 1.0.value biosphere_gdp_growth_pct_DEU
 
 source biosphere_worldbank_gdp_growth_djibouti
 ttl 2592000

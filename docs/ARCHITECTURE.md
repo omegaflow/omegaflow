@@ -34,7 +34,7 @@ APIs defined in `phi/sources.φ` are fetched asynchronously. The server uses a h
 
 The cache uses the Enclosure Lemma: it radiates where oscillators were, and the sense flow queries where they could have been. Time is moved out of the cache key into the motion law and the search envelope.
 
-### Binary Protocol (`/pulse`)
+### Binary Protocol (`/resonance`)
 
 Communication is strictly binary, Little-Endian. No strings on the wire.
 
@@ -45,13 +45,13 @@ Communication is strictly binary, Little-Endian. No strings on the wire.
 - Per query: `f64` t, x, y, z (the presence window: first query is the presence center, further queries are the corners of the 2D surface at presence t, z; the server derives the window extent from them and runs a single enclosure dilated by that extent)
 
 **Rust → Browser:**
-- `[0xCF, 0x86]` Magic bytes (UTF-8 φ), `u8` version (1)
+- `[0xCF, 0x86]` Magic bytes (UTF-8 φ), `u8` version (2)
 - `u32` request ID, `u32` oscillator count
-- Per oscillator: `f64` x, y, z, val, aperture, t, ttl — one flat array for the whole presence window (every active sample × field, no name merging; the point cloud stays intact). t is the measurement epoch, ttl the freshness expectation; the Mathematikerin folds certainty `e^(−|tQuery − t|/ttl)` client-side in f64 into val_eff (council amendment: never absolute time in f32), so nothing is hard-deleted — oscillators decay exponentially instead of blinking out. Server retention keeps samples until ttl×2⁶, where certainty e^(−64) rests below the display floor exp2(−64).
+- Per oscillator: `f64` x, y, z, val, extent, t, ttl, tau, force_type (72 bytes) — one flat array for the whole presence window (every active sample × field, no name merging; the point cloud stays intact). t is the measurement epoch, ttl the freshness expectation, tau the medium's time constant (hue), force_type the medium (0=em, 1=gravity, 2=acoustic, 3=seismic-body, 4=seismic-surface, 5=thermal, 6=diffusion, 7=advective). The Mathematikerin folds certainty `e^(−max(0, |tQuery − t| − d/c)/ttl)` client-side in f64 into val_eff (council amendment: never absolute time in f32), so nothing is hard-deleted — oscillators decay exponentially instead of blinking out. Server retention keeps samples until ttl×2⁶, where certainty e^(−64) rests below the display floor exp2(−64).
 ## 3: GPU (Browser) — The Mathematikerin (`static/index.html`)
 
 
-The browser is a pure sensor window. The presence window is a 2D surface in the 4D block (constant t, z of the presence), and the native screen pixels are its point cloud: every pixel is one point of the presence-relative reference frame `(u − 0.5) · resolution · scale`, evaluated by a WebGPU fragment shader on the main thread (the Nebra path — a worker was tried and discarded). Oscillator coordinates are translated to the presence frame in f64 before upload (f32 ulp at 1.5e11 m ICRS is ~16 km; in the presence frame it is ~mm). No grid is sent to the server; the server only sees the surface definition. If the GPU is absent, the window stays black — there is no CPU field evaluation.
+The browser is a pure sensor window. The presence window is a 2D surface in the 4D block (constant t, z of the presence), and the oscillators within it stay an intact point cloud: each sample is drawn as a soft Gaussian splat projected in the vertex stage on the main thread (the Nebra path — a worker was tried and discarded), while a compute probe evaluates the combined field at the presence point for the non-optical media. Oscillator coordinates and certainty are folded into the presence frame in f64 before upload (f32 ulp at 1.5e11 m ICRS is ~16 km; in the presence frame it is ~mm). No grid is sent to the server; the server only sees the surface definition. If the GPU is absent, the window stays black — there is no CPU field evaluation.
 
 ### The Oscillator
 
@@ -72,7 +72,7 @@ The field feels its local environment by recursively scanning the `window` objec
 ### GPU Field Evaluation (The Mathematikerin)
 
 
-The GPU evaluates the physical laws locally for the requested presence window only. It receives the flat array of raw oscillators from the Archivar. A WebGPU fragment shader iterates over this array for every pixel of the window, calculating the field influence `val / (dist² + aperture²)` with the aperture as softening length, and maps the log-magnitude to the canvas. The pixel scale (m/px) relaxes exponentially toward the median aperture of the oscillators in the window (Nyquist: two pixels per aperture); an empty window zooms out by Φ. GPU submissions apply backpressure (`onSubmittedWorkDone`) — a slow GPU never accumulates queued frames.
+The GPU evaluates the physical laws locally for the requested presence window only. It receives the flat array of raw oscillators from the Archivar. The field influence is `val_eff · K(force_type, extent, d, softening)` with force-specific spatial kernels and softening = pixel scale (Nyquist); the optical surface maps the log-magnitude of each splat to the canvas, the compute probe sums the same law at the presence point per force. The pixel scale (m/px) is the operator's gaze — set by hand or deep-link, never by the field; an empty window is a fully realized state. The optical medium normalizes per force: each force's luminance reference relaxes exponentially toward that force's max |val_eff| in the window (live data, no constants), the operator offsets with `e`/`E` (2ⁿ). GPU submissions apply backpressure (`onSubmittedWorkDone`) — a slow GPU never accumulates queued frames.
 
 
 No global grids are brute-forced. No abstract temporal topology is calculated. The GPU manifests the pure, physical field in real-time.
@@ -82,7 +82,7 @@ The field does not "output." It breathes. The permeability (0.0 = closed, 1.0 = 
 ### Manifestation (`flow`)
 
 
-The field manifests in every oscillator that has the capability to radiate. It does not collect "output values" and distribute them to "writers." One law, five media: `omega(p) = Σ val_eff / (|p − x|² + aperture²)` with `val_eff = val · e^(−|tPresence − t|/ttl)`. The optical surface evaluates it per pixel on the GPU; the acoustic, haptic and hardware surfaces evaluate the same law at the presence point and translate it into their medium (normalization from live data: median window aperture, no constants).
+The field manifests in every oscillator that has the capability to radiate. It does not collect "output values" and distribute them to "writers." One law, five media: `omega(p) = Σ val_eff · K(force_type, extent, |p − x|, softening)` with `val_eff = val · e^(−max(0, |tPresence − t| − d/c)/ttl)`. The optical surface draws the point cloud on the GPU; the acoustic, haptic and hardware surfaces evaluate the same law at the presence point and translate it into their medium (normalization from live data: median window extent, no constants).
 
 ## 4. Network Transport (`static/constants.js`)
 

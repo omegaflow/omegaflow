@@ -1,0 +1,97 @@
+# Verstorbene Quellen (getestet 2026-07-31)
+# ===========================================
+# Diese Quellen sind tot. OBSOLET = durch verifizierte Ersatzquelle ersetzt,
+# kein Wiederherstellen nötig. RESTORE = kein funktionierender Ersatz gefunden,
+# Quelle aus git wiederherstellbar falls Domäne wieder erreichbar.
+# Alle Ersatzquellen wurden am 2026-07-31 per curl verifiziert (HTTP 200 + Daten).
+
+## timeout (42 Quellen)
+
+### OBSOLET — ersetzt durch ArcGIS/CDN-Alternativen (verifiziert)
+erddap.incois.gov.in (6)         — ersetzt durch GCOOS-Bojen + Argovis + NDBC DART
+  incois_erddap_tsunami_bpr_buoys        → ndbc_dart_* / noaa_ndbc_dart_*  (200 OK)
+  incois_erddap_argo_profiles_io         → argovis_core_profiles          (200 OK)
+  incois_erddap_sst_indian_ocean         → gcoos_buoy_wmo_*               (200 OK)
+  incois_erddap_wave_arabian_sea         → gcoos_buoy_wmo_*               (200 OK)
+  incois_erddap_wave_bay_of_bengal       → gcoos_buoy_wmo_*               (200 OK)
+  incois_erddap_oscar_currents_io        → gcoos_buoy_wmo_*               (200 OK)
+tsunami.incois.gov.in (2)        — ersetzt durch DART-Bojen + USGS
+  oceanography_incois_tsunami_buoys      → ndbc_dart_*                   (200 OK)
+  geosphere_incois_seismic_stations      → arcgis_usgs_seismic            (200 OK)
+
+### OBSOLET — NMDB durch Stations-Catalog ersetzt (verifiziert)
+www.nmdb.eu (36)                 — ersetzt durch astro_nmdb_stations (26 Stationen, GitHub-raw)
+  nmdb_oulu_neutron_monitor      → astro_nmdb_stations              (200 OK)
+  nmdb_nest_*                    → astro_nmdb_stations              (200 OK)
+  radiation_nmdb_*               → astro_nmdb_stations              (200 OK)
+
+### OBSOLET — ersetzt (verifiziert)
+spaceweather.sansa.org.za (1)    — ersetzt durch ionosphere_giro_dxpredictor (29 GIRO-Stationen)
+  geospace_sansa_ionosonde       → ionosphere_giro_dxpredictor      (200 OK mit Origin/Referer-Headern)
+modvolc.ov.ingv.it (1)           — ersetzt durch arcgis_volcanoes_world
+  modvolc_volcanic_alerts        → arcgis_volcanoes_world           (200 OK)
+maps.emodnet.eu (1)              — ersetzt durch EMODnet-WFS (anderer Host)
+  oceanography_emodnet_vessel_density_nrt → hydrosphere_emodnet_vessel_density (200 OK)
+overpass-api.de (1)              — ersetzt durch Overpass-Mirror overpass.osm.ch
+  osm_overpass_global_hospital_infrastructure → überpass.osm.ch/api/interpreter (200 OK, globale Query)
+service.das.earthscope.org (2)   — ersetzt durch arcgis_gsn_seismic
+  earthscope_das_active_count    → arcgis_gsn_seismic               (200 OK)
+  earthscope_das_stations        → arcgis_gsn_seismic               (200 OK)
+www.glims.org (1)                — ersetzt durch Natural Earth (GitHub-raw)
+  cryosphere_glacier_count       → geosphere_ne_glaciers            (200 OK)
+
+## HTTP 403 (3 Quellen)
+weather.cma.cn (3)               — ersetzt durch METAR (47 CN-Stationen)
+  atmosphere_cma_current_weather → arcgis_metar_weather             (200 OK)
+  atmosphere_cma_weather_alerts  → arcgis_metar_weather             (200 OK)
+  atmosphere_cma_weather_forecast→ arcgis_metar_weather             (200 OK)
+
+## HTTP 500 (3 Quellen)
+www.gmrt.org (1)                 — ersetzt durch Open-Meteo
+  lidar_gmrt_elevation           → lidar_openmeteo_elevation        (200 OK)
+www.ogimet.com (1)               — ersetzt durch METAR
+  ogimet_synop_russia            → arcgis_metar_weather             (200 OK)
+science-pds.cryosat.esa.int (1)  — ersetzt durch NSIDC + GitHub-raw
+  esa_cryosat2_arctic_sea_ice_thickness → astro_nsidc_arctic_seaice + cryosphere_nsidc_arctic_sea_ice_v4 (200 OK)
+
+## HTTP 502 (2 Quellen)
+retlector.eu (2)                 — ersetzt durch ArcGIS-Satelliten
+  orbital_retlector_active_tle   → arcgis_satellite_positions       (200 OK)
+  orbital_retlector_satellite    → arcgis_satellite_positions       (200 OK)
+
+## HTTP 404 (1 Quelle)
+images-api.nasa.gov (1)          — aktuell WIEDER ERREICHBAR (HTTP 200, getestet 2026-07-31),
+                                    der 404 im Scan war transient. War nie in git-HEAD.
+  Räumliche Alternativen — der CMR-Quantensprung:
+    - NASA CMR/Earthdata Search (cmr.earthdata.nasa.gov/search/granules.json) —
+      ICESat-2 ATL03 + GEDI L2A Granulat-Footprints (Polygon-Vertices) via neuem
+      CmrPolygon-Extract in src/main.rs → echte gemessene Satelliten-Tracks als
+      Oscillator-Punktwolken. 2 neue Sources in sources.φ:
+        nasa_cmr_icesat2_footprints (ATL03, ~2000 Granulen/Tag, ~50K Oscillatoren)
+        nasa_cmr_gedi_footprints (GEDI02_A, ~20 Verts/Granulat)
+    - arcgis_satellite_fire + arcgis_viirs_fire: aktive Feuerpunkte (keyless, 200 OK)
+    - GIBS: nur Raster-Tiles, keine Punktwolke
+
+### OBSOLET — Population via GitHub-raw-Katalog (verifiziert)
+sedac.ciesin.columbia.edu (2)    — Damen + Bevölkerung ersetzt
+  grand_global_dams              → arcgis_ntad_dams                 (200 OK)
+  sedac_gpw_population_grid      → worldpop_population_density_global: jetzt
+                                    raw.githubusercontent.com/omegaflow/astro-catalogs/main/population_countries.json
+                                    (211 Länder, World-Bank SP.POP.TOTL 2025 + Zentroide, HTTP 200)
+
+### OBSOLET — Mangrove via GitHub-raw-Katalog (verifiziert)
+mangrove-atlas.sei.org (2)       — ersetzt durch astro-catalogs-Katalog
+  global_mangrove_atlas_countries → raw.githubusercontent.com/omegaflow/astro-catalogs/main/mangrove_countries.json
+                                    (118 Länder, ArcGIS "Mangrove Extent Countries Giri" + Zentroide, HTTP 200)
+  global_mangrove_atlas_global    → abgedeckt durch denselben Katalog (per-Land, kein globaler Einzelwert)
+
+# ===========================================
+# Zusammenfassung (verifiziert 2026-07-31):
+#   16 von 16 Domänen OBSOLET — Ersatz per curl bestätigt (HTTP 200 + Daten)
+#   Zusätzlich repariert (separate Defekte, keine tote Domäne):
+#     worldbank_co2_emissions / worldbank_pm25_exposure: World-Bank-Indikatoren
+#     (EN.ATM.CO2E.KT / EN.ATM.PM25.MC.M3) wurden archiviert → jetzt GitHub-raw-Kataloge
+#     co2_emissions_countries.json (201 Länder, OWID 2024) und
+#     pm25_exposure_countries.json (210 Länder, OWID 2024) auf omegaflow/astro-catalogs.
+# Wiederherstellungsbefehl für RESTORE-Fälle:
+#   git show HEAD:phi/sources.φ | grep -A20 'source <name>'
