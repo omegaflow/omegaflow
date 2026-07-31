@@ -1705,6 +1705,7 @@ fn batch_fetch(
     cmd.arg("--parallel");
     cmd.arg("--parallel-max").arg("100");
     cmd.arg("-s");
+    cmd.arg("-L");
 
     for (n, task) in tasks.iter().enumerate() {
         let (_i, _origin, _region, url, body, headers, ttl) = task;
@@ -4440,7 +4441,7 @@ fn fetch_priority(
         // First run: materialize the point cloud immediately.
         // 0 = CDN static catalogs (millions of objects) → instant density.
         // 1..~255 = other static sources, log-scaled by TTL (bigger first).
-        if url.contains("raw.githubusercontent.com/omegaflow/catalogs") {
+        if url.contains("omegaflow/catalogs") {
             return 0;
         }
         let log_ttl = (ttl.max(1) as f64).log10().min(3.0) / 3.0;
