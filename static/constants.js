@@ -14,7 +14,8 @@ export function getRto() {
 export async function syncFrame(inputs, queries) {
     inputs = inputs || [];
     queries = queries || [];
-    if (inputs.length === 0 && queries.length === 0) return [];
+    const empty = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
+    if (inputs.length === 0 && queries.length === 0) return empty;
     let inputBytes = 0;
     for (const inp of inputs) inputBytes += 9 + new TextEncoder().encode(inp.name).length;
     const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32);
@@ -37,7 +38,7 @@ export async function syncFrame(inputs, queries) {
         dv.setFloat64(off, q.z, true); off += 8;
     }
     const startTime = performance.now();
-    if (!transport.socket || transport.socket.readyState !== WebSocket.OPEN) return [];
+    if (!transport.socket || transport.socket.readyState !== WebSocket.OPEN) return empty;
     const promise = new Promise((resolve, reject) => {
         const timeoutDuration = getRto();
         const timeout = setTimeout(() => {
@@ -49,11 +50,13 @@ export async function syncFrame(inputs, queries) {
     const buffer = await promise;
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 2) return [];
-    let o = 3;
-    o += 4;
-    const oscCount = dvRes.getUint32(o, true); o += 4;
-    const result = [];
+    if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 2) return empty;
+    const oscCount = dvRes.getUint32(7, true);
+    const field = new Float32Array(oscCount * 8);
+    const meta = new Float32Array(oscCount * 4);
+    const px = queries[0]?.x || 0, py = queries[0]?.y || 0, pz = queries[0]?.z || 0;
+    let o = 11;
+    let n = 0;
     for (let i = 0; i < oscCount; i++) {
         if (o + 72 > bytes.length) break;
         const x = dvRes.getFloat64(o, true); o += 8;
@@ -65,7 +68,18 @@ export async function syncFrame(inputs, queries) {
         const ttl = dvRes.getFloat64(o, true); o += 8;
         const tau = dvRes.getFloat64(o, true); o += 8;
         const force_type = dvRes.getFloat64(o, true); o += 8;
-        result.push({ x, y, z, val, extent, t, ttl, tau, force_type });
+        const b = i * 8;
+        field[b] = x - px;
+        field[b + 1] = y - py;
+        field[b + 2] = z - pz;
+        field[b + 3] = val;
+        field[b + 4] = t;
+        field[b + 5] = ttl;
+        const mb = i * 4;
+        meta[mb] = extent;
+        meta[mb + 1] = tau;
+        meta[mb + 2] = force_type;
+        n++;
     }
-    return result;
+    return { field, meta, count: n };
 }
