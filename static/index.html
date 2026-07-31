@@ -274,7 +274,9 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     var clip = vec2f(x / (w * scale * 0.5), y / (h * scale * 0.5));
 
     let d_mag = length(d);
-    let point_size_px = max(10.0 / (1.0 + max(d_mag, scale) / 1e15), 0.5) * 2.0;
+    let val_eff = fold_eff(d_mag, val, tm.x, tm.y);
+    let brightness = clamp(log2(abs(val_eff) + 1e-9) / 8.0 + 0.5, 0.25, 1.0);
+    let point_size_px = brightness * 5.0;
     clip.x += (quad[vid].x * point_size_px) / w * 2.0;
     clip.y += (quad[vid].y * point_size_px) / h * 2.0;
 
