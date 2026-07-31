@@ -42,7 +42,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let lastManifestTime = 0;
         let stableTick = 0;
         let tPresence = 0;
-        let exposureBoost = 0;
+        let exposureBoost = 4;
         const forceExposeF = new Float64Array([1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8]);
         let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = -1e9;
         let xPresence = 0, yPresence = 0, zPresence = 0;
@@ -117,7 +117,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 t: tPresence,
                 x: xPresence + sx * hx * r[0] + sy * hy * u[0],
                 y: yPresence + sx * hx * r[1] + sy * hy * u[1],
-                z: zPresence + sx * hx * r[2] + sy * hy * u[2]
+                z: xPresence + sx * hx * r[2] + sy * hy * u[2]
             });
             return [
                 { t: tPresence, x: xPresence, y: yPresence, z: zPresence },
@@ -209,6 +209,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 }).catch(() => {});
             }
         }
+        
         const fieldShader = `
 struct VP { surface: vec4f, right: vec4f, up: vec4f, expose_lo: vec4f, expose_hi: vec4f, presence: vec4f };
 const C_LIGHT: f32 = 299792458.0;
@@ -258,7 +259,8 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     );
 
     let m = field[id * 2u];
-    let d = m.xyz;
+    let abs_pos = m.xyz;
+    let d = abs_pos - vp.presence.xyz; 
     let val = m.w;
     let tm = field[id * 2u + 1u];
     let mt = props[id];
@@ -274,8 +276,15 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     var clip = vec2f(x / (w * scale * 0.5), y / (h * scale * 0.5));
 
     let d_mag = length(d);
-    let physical_size = max(extent - tau * C_LIGHT, 0.0);
-    let point_size_px = max(physical_size / max(scale, 1.0), 0.5);
+    let phys_extent = mt.x;
+    var point_size_px: f32 = 2.0;
+    
+    if (phys_extent < 1.0e11) {
+        point_size_px = clamp(phys_extent / max(scale, 1.0), 1.0, max(w, h));
+    } else {
+        point_size_px = clamp(exp2(4.0 - 0.2 * abs(val)), 0.5, 16.0);
+    }
+    
     clip.x += (quad[vid].x * point_size_px) / w * 2.0;
     clip.y += (quad[vid].y * point_size_px) / h * 2.0;
 
@@ -336,7 +345,8 @@ fn presence_probe() {
     for (var j = 0u; j < count; j = j + 1u) {
         let m = field[j * 2u];
         let tm = field[j * 2u + 1u];
-        let d = m.xyz;
+        let abs_pos = m.xyz;
+        let d = abs_pos - vp.presence.xyz; 
         let d2 = dot(d, d);
         let d_mag = sqrt(d2);
         let mt = props[j];
@@ -360,11 +370,13 @@ fn presence_probe() {
     let dist = length(in.uv);
     if (dist > 1.0) { discard; }
 
-    let intensity = exp(-dist * dist * 4.0);
+    let intensity = 0.02 / (dist * dist + 0.02);
     let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
-    let analog_intensity = intensity * (0.85 + noise * 0.15);
+    let analog_intensity = intensity * (0.9 + noise * 0.1);
 
-    return vec4f(in.color * analog_intensity, analog_intensity);
+    let hdr_color = in.color * analog_intensity;
+    let mapped_color = log2(hdr_color * 4.0 + vec3f(1.0)) / 8.0;
+    return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), clamp(analog_intensity, 0.0, 1.0));
 }
 `;
         let fieldCanvas = document.createElement('canvas');
@@ -436,7 +448,7 @@ fn presence_probe() {
             ] });
         }
         async function probePresence() {
-            if (!gpu || probePending) return;
+            if (!gpu || probePending || fieldCount === 0) return;
             probePending = true;
             try {
                 const encoder = gpu.createCommandEncoder();
@@ -472,6 +484,7 @@ fn presence_probe() {
             }
             const dt = rawTick / 1000;
             const n = rawWindowResponse.count;
+            fieldCount = n;
             ensureFieldCapacity(n);
             if (lastFoldResp !== rawWindowResponse) {
                 lastFoldResp = rawWindowResponse;
@@ -489,8 +502,7 @@ fn presence_probe() {
                 for (let ft = 0; ft < 8; ft++) {
                     if (ft_vals[ft].length > 0) {
                         ft_vals[ft].sort((a, b) => a - b);
-                        const p50 = ft_vals[ft][ft_vals[ft].length >> 1];
-                        cachedFref[ft] = p50;
+                        cachedFref[ft] = ft_vals[ft][ft_vals[ft].length >> 1];
                     }
                 }
                 try {
@@ -499,7 +511,7 @@ fn presence_probe() {
                     uploadCount++;
                 } catch { uploadErrors++; }
             }
-            const relax = 1 - Math.pow(2, -dt / Φ);
+            const relax = 1 - Math.exp(-dt / Φ);
             for (let i = 0; i < 8; i++) forceExposeF[i] += (cachedFref[i] - forceExposeF[i]) * relax;
             const dpr = window.devicePixelRatio || 1;
             const evalW = Math.floor(RX * dpr);
@@ -560,6 +572,7 @@ fn presence_probe() {
         let rawWindowResponse = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
         let uploadCount = 0, uploadErrors = 0;
         let lastFoldResp = null;
+        let fieldCount = 0;
         const cachedFref = new Float64Array(8);
         async function syncField(transmitList, queries) {
             const response = await syncFrame(transmitList, queries);
