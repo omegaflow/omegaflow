@@ -17858,6 +17858,21 @@ field_in variability_index astro_fermi_4lac_variability_index
 field_in frac_variability astro_fermi_4lac_frac_variability
 field_in frac_variability_error astro_fermi_4lac_frac_variability_error
 field_in highest_energy_photon astro_fermi_4lac_highest_energy_photon
+source astro_frb_chime
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_frb.json
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+field_in DM frb_dispersion_measure
+field_in SNR frb_signal_to_noise
+field_in Flux frb_flux_jy
+field_in Fluence frb_fluence_jy_ms
+field_in Widthfitb frb_width_ms
+field_in SpInd frb_spectral_index
+
 source astro_gaia_binaries
 ttl 604800
 force em
