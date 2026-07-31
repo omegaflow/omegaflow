@@ -6198,14 +6198,14 @@ field pull_count biosphere_software_ubuntu_pulls_dockerhub
 source earth_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_earth.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_earth.json
 ephemeris orbital_earth_distance
 extent 4.26e-5
 
 source enceladus_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_enceladus.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_enceladus.json
 ephemeris orbital_enceladus_distance
 extent 1.68e-6
 
@@ -6380,7 +6380,7 @@ field year year
 source europa_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_europa.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_europa.json
 ephemeris orbital_europa_distance
 extent 1.04e-5
 
@@ -6455,7 +6455,7 @@ field_in duration duration_s
 source ganymede_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_ganymede.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_ganymede.json
 ephemeris orbital_ganymede_distance
 extent 1.76e-5
 
@@ -7058,7 +7058,7 @@ field place_guess locality
 source io_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_io.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_io.json
 ephemeris orbital_io_distance
 extent 1.22e-5
 
@@ -7174,7 +7174,7 @@ ephemeris orbital_juno_distance
 source jupiter_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_jupiter.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_jupiter.json
 ephemeris orbital_jupiter_distance
 extent 4.67e-4
 
@@ -7268,7 +7268,7 @@ extent 4.78e-6
 source mars_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_mars.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_mars.json
 ephemeris orbital_mars_distance
 extent 2.27e-5
 
@@ -7368,7 +7368,7 @@ field em_max wavelength_max_m
 source mercury_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_mercury.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_mercury.json
 ephemeris orbital_mercury_distance
 extent 1.63e-5
 
@@ -7388,7 +7388,7 @@ field altim pressure_hpa
 source moon_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_luna.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_luna.json
 ephemeris orbital_moon_distance
 extent 1.16e-5
 
@@ -7548,7 +7548,7 @@ field imp impact_flag
 source neptune_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_neptune.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_neptune.json
 ephemeris orbital_neptune_distance
 extent 1.65e-4
 
@@ -8179,7 +8179,7 @@ ephemeris orbital_parker_solar_probe_distance
 source pluto_vectors
 ttl 3600
 force em
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_pluto.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_pluto.json
 ephemeris orbital_pluto_distance
 extent 7.94e-6
 
@@ -8221,7 +8221,7 @@ field fields.country.0.name primary_country
 source saturn_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_saturn.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_saturn.json
 ephemeris orbital_saturn_distance
 extent 3.89e-4
 
@@ -8243,7 +8243,7 @@ field properties.eo:cloud_cover cloud_cover_pct
 source solar_callisto_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_callisto.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_callisto.json
 ephemeris orbital_callisto_distance
 extent 1.61e-5
 
@@ -8286,7 +8286,7 @@ ephemeris orbital_solar_orbiter_distance
 source sun_vectors
 ttl 3600
 force em gravity thermal
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_sun.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_sun.json
 ephemeris orbital_sun_distance
 extent 0.004650
 
@@ -8339,14 +8339,14 @@ field properties.uf state
 source titan_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_titan.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_titan.json
 ephemeris orbital_titan_distance
 extent 1.72e-5
 
 source triton_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_triton.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_triton.json
 ephemeris orbital_triton_distance
 extent 9.04e-6
 
@@ -8390,7 +8390,7 @@ field_in 8 velocity_kms
 source uranus_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_uranus.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_uranus.json
 ephemeris orbital_uranus_distance
 extent 1.70e-4
 
@@ -8464,7 +8464,7 @@ field EndDate activity_end_date
 source venus_vectors
 ttl 3600
 force em gravity
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/data/horizons_venus.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_venus.json
 ephemeris orbital_venus_distance
 extent 4.05e-5
 
