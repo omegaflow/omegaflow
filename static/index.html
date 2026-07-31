@@ -486,7 +486,8 @@ fn presence_probe() {
                 try {
                     gpu.queue.writeBuffer(fieldBuf, 0, raw.subarray(0, n * 8));
                     gpu.queue.writeBuffer(metaBuf, 0, rawm.subarray(0, n * 4));
-                } catch {}
+                    uploadCount++;
+                } catch { uploadErrors++; }
             }
             const dpr = window.devicePixelRatio || 1;
             const evalW = Math.floor(RX * dpr);
@@ -545,6 +546,7 @@ fn presence_probe() {
             osc.median = osc.median * (1 - ma()) + value * ma();
         }
         let rawWindowResponse = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
+        let uploadCount = 0, uploadErrors = 0;
         let lastFoldResp = null;
         async function syncField(transmitList, queries) {
             const response = await syncFrame(transmitList, queries);
@@ -970,6 +972,7 @@ fn presence_probe() {
                     `  Pixels: ${RX}x${RY}\n` +
                     `  Scale: ${gridStep.toExponential(1)} m/px\n` +
                     `  Oscillators in window: ${rawWindowResponse.count}\n` +
+                    `  Uploads: ${uploadCount} ok / ${uploadErrors} err\n` +
                     `  Window omega: ${probedOmega.toExponential(2)} (exposure ${(exposureBoost > 0 ? '+' : '') + exposureBoost} oct)\n` +
                     "\nField (8 Forces)\n" +
                     `  EM (Electromagnetic): ${probedOmegas[0].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[0], Math.pow(2, -40))))}]\n` +
