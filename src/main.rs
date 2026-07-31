@@ -4427,6 +4427,43 @@ fn render_headers(
         .collect()
 }
 
+fn fetch_priority(
+    url: &str,
+    pos: (f64, f64, f64),
+    r: f64,
+    is_new: bool,
+    ttl: u64,
+    presences: &[(f64, f64, f64, f64, f64)],
+) -> u8 {
+    if is_new {
+        // First run: materialize the point cloud immediately.
+        // 0 = CDN static catalogs (millions of objects) → instant density.
+        // 1..~255 = other static sources, log-scaled by TTL (bigger first).
+        if url.contains("raw.githubusercontent.com/omegaflow/catalogs") {
+            return 0;
+        }
+        let log_ttl = (ttl.max(1) as f64).log10().min(3.0) / 3.0;
+        return 1 + (255.0 * (1.0 - log_ttl)) as u8;
+    }
+    // Steady state: hybrid of proximity (how relevant to the observer)
+    // and refresh urgency (short TTL = must refresh sooner).
+    let mut min_d = f64::INFINITY;
+    for &(_, px, py, pz, _) in presences {
+        let d = ((px - pos.0).powi(2) + (py - pos.1).powi(2) + (pz - pos.2).powi(2)).sqrt();
+        if d < min_d {
+            min_d = d;
+        }
+    }
+    let proximity = if r > 0.0 {
+        1.0 - (min_d / (r + min_d)).min(1.0)
+    } else {
+        0.0
+    };
+    let urgency = 1.0 - (ttl.max(1) as f64).log10().min(3.0) / 3.0;
+    // Offset 32 keeps stale refreshes below new-source priorities (0..256).
+    (32.0 + (proximity * 0.7 + urgency * 0.3) * 200.0) as u8
+}
+
 fn warm_cache(archive: Arc<Archive>) {
     loop {
         let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
@@ -4481,26 +4518,6 @@ fn warm_cache(archive: Arc<Archive>) {
             let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
             let (ex, ey, ez) = earth_position_icrs(now);
             let (mx, my, mz) = mars_position_icrs(now);
-            let fetch_prio = |pos: (f64, f64, f64), r: f64, is_new: bool| -> u8 {
-                if is_new {
-                    return 0;
-                }
-                let mut min_d = f64::INFINITY;
-                for &(_, px, py, pz, _) in &presences {
-                    let dx = px - pos.0;
-                    let dy = py - pos.1;
-                    let dz = pz - pos.2;
-                    let d = (dx * dx + dy * dy + dz * dz).sqrt();
-                    if d < min_d {
-                        min_d = d;
-                    }
-                }
-                if r > 0.0 {
-                    ((min_d / r).min(1.0) * 200.0) as u8
-                } else {
-                    0
-                }
-            };
             for (i, src) in archive.sources.iter().enumerate() {
                 let fc = force_constants(&src.force);
                 let r = match fc {
@@ -4531,7 +4548,9 @@ fn warm_cache(archive: Arc<Archive>) {
                             continue;
                         }
                         let is_new = origins.get(&origin).is_none();
-                        task_prios.push(fetch_prio(pos, r, is_new));
+                        task_prios.push(fetch_priority(
+                            &src.url, pos, r, is_new, src.ttl, &presences,
+                        ));
                         tasks.push((
                             i,
                             origin,
@@ -4561,7 +4580,9 @@ fn warm_cache(archive: Arc<Archive>) {
                             continue;
                         }
                         let is_new = origins.get(&origin).is_none();
-                        task_prios.push(fetch_prio(pos, r, is_new));
+                        task_prios.push(fetch_priority(
+                            &src.url, pos, r, is_new, src.ttl, &presences,
+                        ));
                         tasks.push((
                             i,
                             origin,
@@ -4591,7 +4612,9 @@ fn warm_cache(archive: Arc<Archive>) {
                             continue;
                         }
                         let is_new = origins.get(&origin).is_none();
-                        task_prios.push(fetch_prio(pos, r, is_new));
+                        task_prios.push(fetch_priority(
+                            &src.url, pos, r, is_new, src.ttl, &presences,
+                        ));
                         tasks.push((
                             i,
                             origin,
@@ -4630,7 +4653,14 @@ fn warm_cache(archive: Arc<Archive>) {
                                     continue;
                                 }
                                 let is_new = origins.get(&origin).is_none();
-                                task_prios.push(fetch_prio((px, py, pz), r, is_new));
+                                task_prios.push(fetch_priority(
+                                    &src.url,
+                                    (px, py, pz),
+                                    r,
+                                    is_new,
+                                    src.ttl,
+                                    &presences,
+                                ));
                                 tasks.push((
                                     i,
                                     origin,
@@ -4669,7 +4699,14 @@ fn warm_cache(archive: Arc<Archive>) {
                         let (rx, ry, rz) =
                             prev.map(|pa| (pa[0], pa[1], pa[2])).unwrap_or((px, py, pz));
                         let is_new = origins.get(&origin).is_none();
-                        task_prios.push(fetch_prio((rx, ry, rz), r, is_new));
+                        task_prios.push(fetch_priority(
+                            &src.url,
+                            (rx, ry, rz),
+                            r,
+                            is_new,
+                            src.ttl,
+                            &presences,
+                        ));
                         tasks.push((
                             i,
                             origin,
@@ -4701,7 +4738,14 @@ fn warm_cache(archive: Arc<Archive>) {
                                 continue;
                             }
                             let is_new = origins.get(&origin).is_none();
-                            task_prios.push(fetch_prio((px, py, pz), r, is_new));
+                            task_prios.push(fetch_priority(
+                                &src.url,
+                                (px, py, pz),
+                                r,
+                                is_new,
+                                src.ttl,
+                                &presences,
+                            ));
                             tasks.push((
                                 i,
                                 origin,
