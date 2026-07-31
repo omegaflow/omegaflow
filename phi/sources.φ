@@ -17695,6 +17695,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_batse_grb.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -17706,6 +17707,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_batse_pulsar.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -17716,6 +17718,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/chandra_master.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -17743,6 +17746,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/fermi_4fgl.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -17821,6 +17825,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/fermi_4lac.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 z_key redshift
@@ -17868,6 +17873,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_frb.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
@@ -17883,6 +17889,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_binaries.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -17893,6 +17900,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_blue_supergiants.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -17904,6 +17912,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag7.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -17922,6 +17931,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -17932,6 +17942,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_giants.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -17944,6 +17955,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_high_pm.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -17956,6 +17968,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_hypervelocity.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -17967,6 +17980,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_metal_poor.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -17978,6 +17992,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -17992,6 +18007,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx50.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -18006,6 +18022,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_white_dwarfs.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -18017,6 +18034,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_icecube.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 dist_key dist_mpc
@@ -18029,6 +18047,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_agn.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18039,6 +18058,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_bsc.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18050,6 +18070,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_isgri4yr.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18060,6 +18081,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_var.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18071,6 +18093,7 @@ ttl 604800
 force gravity
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/jpl_asteroids.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 dist_key dist_au
@@ -18084,6 +18107,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_gsc7yr.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18096,6 +18120,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_master.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18106,6 +18131,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_ssc.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18116,6 +18142,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_nicer_master.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18146,6 +18173,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_master.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18156,6 +18184,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_slew.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18166,6 +18195,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_galaxies.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 z_key z
@@ -18180,6 +18210,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_stars.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18193,6 +18224,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/swift_bat.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 z_key redshift
@@ -18220,6 +18252,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/swift_grb.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 z_key redshift
@@ -18404,6 +18437,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/tevcat.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 z_key redshift
@@ -18428,6 +18462,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/twomass_psc.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
@@ -18445,6 +18480,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_2qz_recno
@@ -18457,6 +18493,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_6dfgs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in 6dFGS vizier_6dfgs_6dFGS
@@ -18469,6 +18506,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_apass.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in e_RAJ2000 astro_vizier_apass_e_RAJ2000
@@ -18499,6 +18537,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_carmenes.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_carmenes_recno
@@ -18511,6 +18550,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_cosmic_voids.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -18524,6 +18564,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_distant_halo.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
@@ -18533,6 +18574,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_dla.json
 cmap data
+tau_key _dist_m
 ra_key _RA
 dec_key _DE
 plx_key default_plx
@@ -18544,6 +18586,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_first.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_first_recno
@@ -18556,6 +18599,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_gcvs_variables_recno
@@ -18568,6 +18612,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -18598,6 +18643,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -18613,6 +18659,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gleam.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
@@ -18624,6 +18671,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hecate.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_hecate_recno
@@ -18636,6 +18684,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hi4pi.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
@@ -18645,6 +18694,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_lotss_dr3.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_lotss_dr3_recno
@@ -18657,6 +18707,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_nvss.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_nvss_recno
@@ -18669,6 +18720,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_orion_region.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_orion_region_recno
@@ -18681,6 +18733,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_prigozhin_pulsars_recno
@@ -18693,6 +18746,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_qso_variable.json
 cmap data
+tau_key _dist_m
 ra_key _RA
 dec_key _DE
 plx_key default_plx
@@ -18704,6 +18758,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_sdss_qso.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -18717,6 +18772,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_snrs_recno
@@ -18729,6 +18785,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_tycho2.json
 cmap data
+tau_key _dist_m
 ra_key RAmdeg
 dec_key DEmdeg
 plx_key default_plx
@@ -18774,6 +18831,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_ucac5.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in SrcIDgaia astro_vizier_ucac5_SrcIDgaia
@@ -18800,6 +18858,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_variable_stars.json
 cmap data
+tau_key _dist_m
 ra_key _RA
 dec_key _DE
 plx_key default_plx
@@ -18812,6 +18871,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_vsx_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_vsx_variables_recno
@@ -18824,6 +18884,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_xmm4d13s.json
 cmap data
+tau_key _dist_m
 ra_key RA_ICRS
 dec_key DE_ICRS
 plx_key default_plx
@@ -18835,6 +18896,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_young_stars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_young_stars_recno
@@ -18847,6 +18909,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/wise_allsky.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18860,6 +18923,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_xmm_slew.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -18870,6 +18934,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/xmm_sources.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 z_key redshift_zsp
@@ -19569,6 +19634,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -19579,6 +19645,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -19589,6 +19656,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -19597,6 +19665,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -19606,6 +19675,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -19615,6 +19685,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -19623,6 +19694,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -19631,6 +19703,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -19639,6 +19712,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -19647,6 +19721,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -19655,6 +19730,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -19663,6 +19739,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -19671,6 +19748,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -19679,6 +19757,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -19689,6 +19768,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -19699,6 +19779,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -19930,6 +20011,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -19940,6 +20022,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -19950,6 +20033,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx50.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20250,6 +20334,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20258,6 +20343,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20268,6 +20354,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20276,6 +20363,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -20285,6 +20373,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20295,6 +20384,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20305,6 +20395,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20315,6 +20406,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20325,6 +20417,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20335,6 +20428,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20343,6 +20437,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20353,6 +20448,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20361,6 +20457,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -20370,6 +20467,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20378,6 +20476,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20386,6 +20485,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20396,6 +20496,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20404,6 +20505,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20412,6 +20514,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -20421,6 +20524,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -20430,6 +20534,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20438,6 +20543,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20448,6 +20554,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hecate.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20456,6 +20563,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20464,6 +20572,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20474,6 +20583,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -20483,6 +20593,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
@@ -20492,6 +20603,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20500,6 +20612,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20508,6 +20621,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20516,6 +20630,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20524,6 +20639,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20532,6 +20648,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20540,6 +20657,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20548,6 +20666,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20556,6 +20675,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20564,6 +20684,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20572,6 +20693,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20580,6 +20702,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20588,6 +20711,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20596,6 +20720,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20604,6 +20729,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20612,6 +20738,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20620,6 +20747,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20630,6 +20758,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_high_pm.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20640,6 +20769,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20648,6 +20778,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20658,6 +20789,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20666,6 +20798,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20674,6 +20807,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20684,6 +20818,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20694,6 +20829,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20702,6 +20838,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20710,6 +20847,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20720,6 +20858,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20730,6 +20869,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20738,6 +20878,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20746,6 +20887,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20754,6 +20896,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20764,6 +20907,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20772,6 +20916,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20782,6 +20927,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20792,6 +20938,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
+tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -20800,6 +20947,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20810,6 +20958,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -20820,6 +20969,7 @@ ttl 604800
 force em
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 cmap data
+tau_key _dist_m
 ra_key ra
 dec_key dec
 plx_key parallax

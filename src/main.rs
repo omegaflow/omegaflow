@@ -4121,6 +4121,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                 continue;
                             };
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            ev_fields.push(("_dist_m".to_string(), d));
                             for (fk, fn_) in fields {
                                 if let Some(val) = jpath(v, fk) {
                                     ev_fields.push((fn_.clone(), val));
