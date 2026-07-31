@@ -488,18 +488,18 @@ fn presence_probe() {
                 for (let ft = 0; ft < 8; ft++) {
                     if (ft_vals[ft].length > 0) {
                         ft_vals[ft].sort((a, b) => a - b);
-                        const p95 = ft_vals[ft][Math.floor(ft_vals[ft].length * 0.95)];
-                        fref[ft] = p95;
+                        const p50 = ft_vals[ft][ft_vals[ft].length >> 1];
+                        cachedFref[ft] = p50;
                     }
                 }
-                const relax = 1 - Math.pow(2, -dt / Φ);
-                for (let i = 0; i < 8; i++) forceExposeF[i] += (fref[i] - forceExposeF[i]) * relax;
                 try {
                     gpu.queue.writeBuffer(fieldBuf, 0, raw.subarray(0, n * 8));
                     gpu.queue.writeBuffer(metaBuf, 0, rawm.subarray(0, n * 4));
                     uploadCount++;
                 } catch { uploadErrors++; }
             }
+            const relax = 1 - Math.pow(2, -dt / Φ);
+            for (let i = 0; i < 8; i++) forceExposeF[i] += (cachedFref[i] - forceExposeF[i]) * relax;
             const dpr = window.devicePixelRatio || 1;
             const evalW = Math.floor(RX * dpr);
             const evalH = Math.floor(RY * dpr);
@@ -559,6 +559,7 @@ fn presence_probe() {
         let rawWindowResponse = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
         let uploadCount = 0, uploadErrors = 0;
         let lastFoldResp = null;
+        const cachedFref = new Float64Array(8);
         async function syncField(transmitList, queries) {
             const response = await syncFrame(transmitList, queries);
             rawWindowResponse = response || rawWindowResponse;
