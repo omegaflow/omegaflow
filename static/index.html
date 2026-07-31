@@ -44,7 +44,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let tPresence = 0;
         let exposureBoost = 0;
         const forceExposeF = new Float64Array([1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8]);
-        let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = 0;
+        let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = -1e9;
         let xPresence = 0, yPresence = 0, zPresence = 0;
         let audioCtx = null;
         let activeSerialPort = null, activeUsbDevice = null, activeBtChar = null, activeHidDevice = null;
