@@ -4421,19 +4421,11 @@ fn materialize(
             })
         })
         .unwrap_or(tau_default);
-    let extent = if src.tau_key.is_some() {
-        if is_diff {
-            (2.0 * v_or_d * (src.ttl as f64 + tau_default)).sqrt()
-        } else {
-            v_or_d * (src.ttl as f64 + tau_default)
-        }
+    let reach_time = src.ttl as f64 + tau;
+    let extent = if is_diff {
+        (2.0 * v_or_d * reach_time).sqrt()
     } else {
-        let reach_time = src.ttl as f64 + tau;
-        if is_diff {
-            (2.0 * v_or_d * reach_time).sqrt()
-        } else {
-            v_or_d * reach_time
-        }
+        v_or_d * reach_time
     };
     if extent.is_nan() || tau.is_nan() {
         return None;
