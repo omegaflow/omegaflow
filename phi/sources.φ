@@ -5113,6 +5113,13 @@ field_in 18 water_temp_c
 field_in 17 air_temp_c
 field_in 15 pressure_hpa
 
+source ngeso_carbon_intensity
+ttl 1800
+force thermal
+wgs84 54.0 -2.0
+url https://api.carbonintensity.org.uk/intensity/date/{today}
+path data.0.intensity.actual ngeso_carbon_intensity_gco2_kwh
+
 source nhc_active_atlantic_hurricanes
 ttl 1800
 force thermal
@@ -8527,6 +8534,27 @@ force em
 url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
 field share biosphere_covid_variant_share
 
+source coastwatch_ascat_wind
+ttl 43200
+force em
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdQMwind1day_LonPM180.json?x_wind%5B(2022-12-01T12%3A00%3A00Z)%5D%5B(10.0)%5D%5B(-75.0)%3A4%3A(75.0)%5D%5B(-180.0)%3A4%3A(180.0)%5D
+map table.rows
+lat_key 2
+lon_key 3
+alt_key 1
+epoch_key 0
+field_in 4 coastwatch_ascat_x_wind_ms
+
+source coastwatch_oisst_sea_ice
+ttl 43200
+force thermal
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?ice%5B(last)%5D%5B(0)%5D%5B(-79.875)%3A20%3A(79.875)%5D%5B(-179.875)%3A20%3A(179.875)%5D
+map table.rows
+lat_key 2
+lon_key 3
+epoch_key 0
+field_in 4 cryosphere_oisst_sea_ice_fraction
+
 source iers_eop_bulletinb
 ttl 43200
 force em
@@ -8567,6 +8595,27 @@ field_in wind_speed_10m_max daily_wind_max_kmh
 field_in wind_gusts_10m_max daily_wind_gust_max_kmh
 field_in shortwave_radiation_sum daily_solar_radiation_mjm2
 field_in et0_fao_evapotranspiration daily_evapotranspiration_mm
+
+source socat_surface_co2
+ttl 43200
+force diffusion
+url https://data.pmel.noaa.gov/socat/erddap/tabledap/socat_v2026_fulldata.json?time,latitude,longitude,xCO2_water_sst_dry_ppm&time%3E={yesterday}&distinct()
+map table.rows
+lat_key 1
+lon_key 2
+epoch_key 0
+field_in 3 socat_xco2_water_dry_ppm
+
+source wyoming_radiosonde_berlin
+ttl 43200
+force thermal
+url https://weather.uwyo.edu/wsgi/sounding?datetime={today}%2000:00:00&type=TEXT:CSV&id=10393&src=UNKNOWN
+format csv
+map .
+lat_key latitude
+lon_key longitude
+field temperature_C atmosphere_radiosonde_temp_c
+field pressure_hPa atmosphere_radiosonde_pressure_hpa
 
 source aavso_vsx_variable_stars
 ttl 86400
@@ -9640,6 +9689,18 @@ lon_key longitude
 field attributes.study-name study_name
 field attributes.biome biome_name
 field attributes.last-update last_update
+
+source emdat_disasters
+ttl 86400
+force gravity
+url https://services.arcgis.com/LG9Yn2oFqZi5PnO5/arcgis/rest/services/EDMAT_Disaster_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.totalDeath emdat_total_deaths
+field properties.totalAffected emdat_total_affected
+field properties.numberInjured emdat_injured
+field properties.numberHomeless emdat_homeless
 
 source ena_16s_amplicon_environmental_samples
 ttl 86400
@@ -11180,6 +11241,15 @@ map catalog
 field id dataset_id
 field title station_title
 
+source ioc_psmsl_stationlist
+ttl 86400
+force gravity
+url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist
+map .
+lat_key Lat
+lon_key Lon
+field observations ioc_station_observations
+
 source iris_fdsn_ic_au_regional_seismic_networks
 ttl 86400
 force seismic-body
@@ -11938,6 +12008,16 @@ field H absolute_magnitude
 field class orbit_class
 field diameter estimated_diameter_km
 
+source kodiaq_quasar_absorbers
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+%22_RA%22,%22_DE%22,zQSO,%22S%2FN%22+FROM+%22J/ApJ/852/22/sample%22
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+field_in 3 kodiaq_sn
+
 source landsat_c2_l2
 ttl 86400
 force em
@@ -12017,6 +12097,17 @@ force em
 url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=PEDR&output=XML
 wgs84 0 0
 regex <Count>([0-9]+)</Count> lidar_mola_mars_pedr_product_count
+
+source local_group_dwarf_spheroids
+ttl 86400
+force gravity
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,D,Mass,HRV+FROM+%22J/AJ/144/4/catalog%22
+cmap data
+ra_key 0
+dec_key 1
+dist_key 2 3.0857e19
+field_in 3 local_group_dsph_mass
+radvel_key 4 1000
 
 source magnetosphere_abg
 ttl 86400
@@ -15467,6 +15558,16 @@ ecliptic 1
 url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIR
 map .
 
+source pantheon_plus_sne
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+%22_RA%22,%22_DE%22,zCMB,mBcorr+FROM+%22J/ApJ/938/110/table7%22
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+field_in 3 pantheon_mBcorr
+
 source particle_physics_papers_total
 ttl 86400
 force em
@@ -15731,6 +15832,17 @@ field_in distance distance_kpc
 field_in flux flux_tev_crab
 field_in index spectral_index
 
+source tns_transient_supernovae
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,z,MaxMag,Type+FROM+%22B/sn/sncat%22
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+field_in 3 tns_max_mag
+field_in 4 tns_sn_type
+
 source twomass_psc_irsa_tap
 ttl 86400
 force em
@@ -15754,6 +15866,16 @@ rows
 field 0 file_name
 field 1 file_size
 field 2 last_modified
+
+source uhecr_auger_host_galaxies
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,DLum,Kmag+FROM+%22J/ApJ/935/170/table4%22
+cmap data
+ra_key 0
+dec_key 1
+dist_key 2 3.0857e22
+field_in 3 uhecr_host_kmag
 
 source uniprot_proteins_total
 ttl 86400
@@ -19639,6 +19761,15 @@ path properties.parameter.T2M.07 atmosphere_power_temp_jul_clim_c
 path properties.parameter.PRECTOTCORR.01 atmosphere_power_precip_jan_clim_mm
 path properties.parameter.PRECTOTCORR.07 atmosphere_power_precip_jul_clim_mm
 
+source esri_so2_volcano_emissions
+ttl 604800
+force diffusion
+url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key properties.Lat
+lon_key properties.Long
+field properties.SO2_Kilotons volcano_so2_kilotons
+
 source exosphere_gaia_nearby_stars
 ttl 604800
 force em
@@ -19863,6 +19994,16 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
+source geonuclear_power_plants
+ttl 604800
+force thermal
+url https://raw.githubusercontent.com/cristianst85/GeoNuclearData/master/data/csv/denormalized/nuclear_power_plants.csv
+format csv
+map .
+lat_key Latitude
+lon_key Longitude
+field Capacity geonuclear_capacity_mw
+
 source geosphere_earth_impact_craters
 ttl 604800
 force em
@@ -19951,6 +20092,16 @@ lat_key lat
 lon_key lon
 field_in elevation geosphere_volcano_elevation_m
 
+source glims_glacier_points
+ttl 604800
+force thermal
+url https://www.glims.org/geoserver/ows?service=wfs&version=2.0.0&request=GetFeature&typeName=GLIMS:GLIMS_Points&bbox={lon_min},{lat_min},{lon_max},{lat_max},EPSG:4326&count=500&outputFormat=application/json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+epoch_key properties.src_date
+field properties.db_area cryosphere_glims_glacier_area_km2
+
 source higgs_production_xsec_papers
 ttl 604800
 force em
@@ -20006,6 +20157,29 @@ force em
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=muon+g-2+anomalous+magnetic+moment&fields=titles,citation_count
 wgs84 41.833 -87.627
 field hits.total subatomic_muon_g2_papers
+
+source nasa_global_landslide_catalog
+ttl 604800
+force gravity
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/global_landslide_catalog.json
+map data
+lat_key latitude
+lon_key longitude
+epoch_key ev_date
+field fatalities nasa_glc_fatalities
+field ev_id nasa_glc_event_id
+field ls_size nasa_glc_landslide_size
+
+source ndbc_buoy_station_list
+ttl 604800
+force thermal
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/ndbc_station_list.json
+map data
+lat_key latitude
+lon_key longitude
+field elevation_m hydrosphere_ndbc_station_elevation_m
+field station_type hydrosphere_ndbc_station_type
+
 
 source neutrino_oscillation_papers
 ttl 604800
@@ -20083,6 +20257,15 @@ force em
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=time+crystal&fields=titles,citation_count
 wgs84 42.360 -71.093
 field hits.hits.0.metadata.citation_count physics_time_crystal_research_citations
+
+source raspberry_shake_stations
+ttl 604800
+force seismic-surface
+url https://stationview.raspberryshake.org/stations?online=true
+map .
+lat_key latitude
+lon_key longitude
+field elevation seismic_station_elevation_m
 
 source simbad
 ttl 604800
@@ -21052,6 +21235,17 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
+source wri_global_power_plants
+ttl 604800
+force thermal
+url https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv
+format csv
+map .
+lat_key latitude
+lon_key longitude
+field capacity_mw wri_plant_capacity_mw
+field primary_fuel wri_primary_fuel
 
 source alfalfa_catalog
 ttl 2592000
