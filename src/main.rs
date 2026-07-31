@@ -423,10 +423,7 @@ fn enclose_family(
             if dist2 > exact * exact {
                 continue;
             }
-            for (name, val) in &smp.fields {
-                if name.starts_with('_') {
-                    continue;
-                }
+            if let Some((_, val)) = smp.fields.iter().find(|(n, _)| !n.starts_with('_')) {
                 records.push((
                     p[0],
                     p[1],
