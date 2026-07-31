@@ -1,3 +1,4 @@
+# RESTORED 2026-07-31: www.ndbc.noaa.gov (40 Bojen+DART) - WAF entfernt, aus git wiederhergestellt.
 # Verstorbene Quellen (getestet 2026-07-31)
 # ===========================================
 # Diese Quellen sind tot. OBSOLET = durch verifizierte Ersatzquelle ersetzt,

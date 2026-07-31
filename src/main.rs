@@ -1705,12 +1705,13 @@ fn batch_fetch(
     cmd.arg("--parallel");
     cmd.arg("--parallel-max").arg("100");
     cmd.arg("-s");
-    cmd.arg("-L");
+    cmd.arg("--location");
 
     for (n, task) in tasks.iter().enumerate() {
         let (_i, _origin, _region, url, body, headers, ttl) = task;
         if n > 0 {
             cmd.arg("--next");
+            cmd.arg("--location");
         }
         cmd.arg("-o").arg(format!("{}/b_{}", batch_dir, n));
         cmd.arg("-D").arg(format!("{}/h_{}", batch_dir, n));
@@ -4122,12 +4123,12 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                 continue;
                             };
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            ev_fields.push(("_dist_m".to_string(), d));
                             for (fk, fn_) in fields {
                                 if let Some(val) = jpath(v, fk) {
                                     ev_fields.push((fn_.clone(), val));
                                 }
                             }
+                            ev_fields.push(("_dist_m".to_string(), d));
                             if ev_fields.is_empty() {
                                 continue;
                             }
