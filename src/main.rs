@@ -510,6 +510,44 @@ fn tdb_now() -> f64 {
         - UNIX_J2000_OFFSET
 }
 
+fn parse_iso_tdb(s: &str) -> Option<f64> {
+    let s = s.trim();
+    let (date, time) = s.split_once('T')?;
+    let mut dp = date.split('-');
+    let y: i64 = dp.next()?.parse().ok()?;
+    let m: u32 = dp.next()?.parse().ok()?;
+    let d: u32 = dp.next()?.parse().ok()?;
+    let t = time
+        .split(|c: char| c == '.' || c == 'Z' || c == 'z')
+        .next()
+        .unwrap_or(time);
+    let mut tp = t.split(':');
+    let hh: u32 = tp.next()?.parse().ok()?;
+    let mm: u32 = tp.next()?.parse().ok()?;
+    let ss: u32 = tp.next().unwrap_or("0").parse().ok()?;
+    let days = ymd_to_days(y, m, d)? as i64;
+    let unix = days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + ss as i64;
+    Some(unix as f64 - UNIX_J2000_OFFSET)
+}
+
+fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
+    let (y, m) = if month <= 2 {
+        (year - 1, month + 12)
+    } else {
+        (year, month)
+    };
+    let a = y / 100;
+    let b = 2 - a + a / 4;
+    let days =
+        (365.25 * (y + 4716) as f64) as i64 + (30.6001 * (m + 1) as f64) as i64 + day as i64 + b
+            - 1524;
+    if days < 0 {
+        None
+    } else {
+        Some(days as u64)
+    }
+}
+
 #[derive(Clone, Copy, Default)]
 struct OriginState {
     fetched: f64,
@@ -1404,6 +1442,9 @@ enum Extract {
         lat_key: String,
         lon_key: String,
         alt_key: String,
+        epoch_key: String,
+        val_key: String,
+        alt_sign: f64,
         vel_key: String,
         trk_key: String,
         vr_key: String,
@@ -1436,11 +1477,16 @@ enum Extract {
     CmrPolygon {
         arr_path: String,
         fields: Vec<(String, String)>,
+        epoch_key: String,
+        alt_key: String,
+        val_key: String,
     },
     CelestialPolygon {
         arr_path: String,
         radius: f64,
         fields: Vec<(String, String)>,
+        epoch_key: String,
+        val_key: String,
     },
     Rows {
         fields: Vec<(String, String)>,
@@ -2504,6 +2550,9 @@ fn load_sources() -> Vec<SourceConfig> {
                         lat_key: String::new(),
                         lon_key: String::new(),
                         alt_key: String::new(),
+                        epoch_key: String::new(),
+                        val_key: String::new(),
+                        alt_sign: 1.0,
                         vel_key: String::new(),
                         trk_key: String::new(),
                         vr_key: String::new(),
@@ -2523,8 +2572,18 @@ fn load_sources() -> Vec<SourceConfig> {
                 }
             }
             "alt_key" => {
-                if let Some(Extract::Map { alt_key, .. }) = cur_extracts.last_mut() {
-                    *alt_key = parts.get(1).unwrap_or(&"").to_string();
+                if let Some(e) = cur_extracts.last_mut() {
+                    match e {
+                        Extract::Map { alt_key, .. } | Extract::CmrPolygon { alt_key, .. } => {
+                            *alt_key = parts.get(1).unwrap_or(&"").to_string();
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            "alt_sign" => {
+                if let Some(Extract::Map { alt_sign, .. }) = cur_extracts.last_mut() {
+                    *alt_sign = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(1.0);
                 }
             }
             "vel_key" => {
@@ -2561,6 +2620,9 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::CmrPolygon {
                         arr_path: parts[1].to_string(),
                         fields: Vec::new(),
+                        epoch_key: String::new(),
+                        alt_key: String::new(),
+                        val_key: String::new(),
                     });
                 }
             }
@@ -2570,12 +2632,39 @@ fn load_sources() -> Vec<SourceConfig> {
                         arr_path: parts[1].to_string(),
                         radius: 0.0,
                         fields: Vec::new(),
+                        epoch_key: String::new(),
+                        val_key: String::new(),
                     });
                 }
             }
             "radius" => {
                 if let Some(Extract::CelestialPolygon { radius, .. }) = cur_extracts.last_mut() {
                     *radius = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+                }
+            }
+            "epoch_key" => {
+                if let Some(e) = cur_extracts.last_mut() {
+                    match e {
+                        Extract::CmrPolygon { epoch_key, .. }
+                        | Extract::CelestialPolygon { epoch_key, .. }
+                        | Extract::KeplerMap { epoch_key, .. }
+                        | Extract::Map { epoch_key, .. } => {
+                            *epoch_key = parts.get(1).unwrap_or(&"").to_string();
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            "val_key" => {
+                if let Some(e) = cur_extracts.last_mut() {
+                    match e {
+                        Extract::CmrPolygon { val_key, .. }
+                        | Extract::CelestialPolygon { val_key, .. }
+                        | Extract::Map { val_key, .. } => {
+                            *val_key = parts.get(1).unwrap_or(&"").to_string();
+                        }
+                        _ => {}
+                    }
                 }
             }
             "geom_path" => {
@@ -2713,11 +2802,6 @@ fn load_sources() -> Vec<SourceConfig> {
             "ma_key" => {
                 if let Some(Extract::KeplerMap { ma_key, .. }) = cur_extracts.last_mut() {
                     *ma_key = parts.get(1).unwrap_or(&"").to_string();
-                }
-            }
-            "epoch_key" => {
-                if let Some(Extract::KeplerMap { epoch_key, .. }) = cur_extracts.last_mut() {
-                    *epoch_key = parts.get(1).unwrap_or(&"").to_string();
                 }
             }
             _ => {}
@@ -3556,6 +3640,9 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 lat_key,
                 lon_key,
                 alt_key,
+                epoch_key,
+                val_key,
+                alt_sign,
                 vel_key,
                 trk_key,
                 vr_key,
@@ -3570,7 +3657,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                             let alt = if alt_key.is_empty() {
                                 Some(0.0)
                             } else {
-                                jpath(v, alt_key)
+                                jpath(v, alt_key).map(|a| a * alt_sign)
                             };
                             if let (Some(la), Some(lo), Some(al)) = (lat, lon, alt) {
                                 let mut ev_fields: Vec<(String, f64)> = Vec::new();
@@ -3579,8 +3666,15 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                         ev_fields.push((fn_.clone(), val));
                                     }
                                 }
-                                if ev_fields.is_empty() {
-                                    continue;
+                                if val_key.is_empty() {
+                                    if ev_fields.is_empty() {
+                                        continue;
+                                    }
+                                } else {
+                                    ev_fields.retain(|(fn_, _)| *fn_ == *val_key);
+                                    if ev_fields.is_empty() {
+                                        continue;
+                                    }
                                 }
                                 let mut lon_val = lo;
                                 if let Some(sign_key) = lon_sign {
@@ -3627,8 +3721,19 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                         alt: al,
                                     }
                                 };
+                                let epoch = if epoch_key.is_empty() {
+                                    now
+                                } else {
+                                    jpath_val(v, epoch_key)
+                                        .and_then(|ev| match ev {
+                                            JsonVal::Str(s) => parse_iso_tdb(s),
+                                            JsonVal::Num(n) => Some(*n - UNIX_J2000_OFFSET),
+                                            _ => None,
+                                        })
+                                        .unwrap_or(now)
+                                };
                                 pending.push(PendingSample {
-                                    epoch: now,
+                                    epoch,
                                     position,
                                     fields: ev_fields,
                                 });
@@ -3675,7 +3780,13 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     }
                 }
             }
-            Extract::CmrPolygon { arr_path, fields } => {
+            Extract::CmrPolygon {
+                arr_path,
+                fields,
+                epoch_key,
+                alt_key,
+                val_key,
+            } => {
                 if let Some(ref j) = parsed_json {
                     if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
                         for (idx, v) in arr.iter().enumerate() {
@@ -3704,17 +3815,37 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                             if vertices.is_empty() {
                                 continue;
                             }
+                            let epoch = if epoch_key.is_empty() {
+                                now
+                            } else {
+                                jpath_val(v, epoch_key)
+                                    .and_then(|ev| match ev {
+                                        JsonVal::Str(s) => parse_iso_tdb(s),
+                                        JsonVal::Num(n) => Some(*n - UNIX_J2000_OFFSET),
+                                        _ => None,
+                                    })
+                                    .unwrap_or(now)
+                            };
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
                             for (fk, fn_) in fields {
                                 if let Some(val) = jpath(v, fk) {
-                                    ev_fields.push((fn_.clone(), val));
+                                    if val_key.is_empty() || fk == val_key {
+                                        ev_fields.push((fn_.clone(), val));
+                                    }
                                 }
                             }
-                            ev_fields.push(("_cmr_id".to_string(), idx as f64));
+                            if ev_fields.is_empty() {
+                                ev_fields.push(("_cmr_id".to_string(), idx as f64));
+                            }
+                            let alt = if alt_key.is_empty() {
+                                0.0
+                            } else {
+                                jpath(v, alt_key).unwrap_or(0.0)
+                            };
                             for (lon, lat) in vertices {
                                 pending.push(PendingSample {
-                                    epoch: now,
-                                    position: PendingPosition::Geodetic { lat, lon, alt: 0.0 },
+                                    epoch,
+                                    position: PendingPosition::Geodetic { lat, lon, alt },
                                     fields: ev_fields.clone(),
                                 });
                             }
@@ -3726,6 +3857,8 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 arr_path,
                 radius,
                 fields,
+                epoch_key,
+                val_key,
             } => {
                 if let Some(ref j) = parsed_json {
                     if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
@@ -3742,13 +3875,28 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                             if vertices.is_empty() || *radius <= 0.0 {
                                 continue;
                             }
+                            let epoch = if epoch_key.is_empty() {
+                                now
+                            } else {
+                                jpath_val(v, epoch_key)
+                                    .and_then(|ev| match ev {
+                                        JsonVal::Str(s) => parse_iso_tdb(s),
+                                        JsonVal::Num(n) => Some(*n - UNIX_J2000_OFFSET),
+                                        _ => None,
+                                    })
+                                    .unwrap_or(now)
+                            };
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
                             for (fk, fn_) in fields {
                                 if let Some(val) = jpath(v, fk) {
-                                    ev_fields.push((fn_.clone(), val));
+                                    if val_key.is_empty() || fk == val_key {
+                                        ev_fields.push((fn_.clone(), val));
+                                    }
                                 }
                             }
-                            ev_fields.push(("_cpoly_id".to_string(), idx as f64));
+                            if ev_fields.is_empty() {
+                                ev_fields.push(("_cpoly_id".to_string(), idx as f64));
+                            }
                             for (ra_deg, dec_deg) in vertices {
                                 let ra = ra_deg.to_radians();
                                 let dec = dec_deg.to_radians();
@@ -3756,7 +3904,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                 let (sd, cd) = dec.sin_cos();
                                 let p = [cd * ca * radius, cd * sa * radius, sd * radius];
                                 pending.push(PendingSample {
-                                    epoch: now,
+                                    epoch,
                                     position: PendingPosition::StateVector {
                                         p,
                                         v: [0.0, 0.0, 0.0],
@@ -4873,5 +5021,69 @@ mod tests {
         assert!(b.contains("bbox"));
         assert!(!b.contains("{lon_min}"));
         assert!(!b.contains("{today}"));
+    }
+
+    #[test]
+    fn test_erddap_argo_map_extract() {
+        let src = SourceConfig {
+            name: "argo".into(),
+            ttl: 43200,
+            url: "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json".into(),
+            frame: super::Frame::Data,
+            force: "thermal".into(),
+            tau: None,
+            tau_key: None,
+            format: "json".into(),
+            extracts: vec![super::Extract::Map {
+                arr_path: "table.rows".into(),
+                lat_key: "2".into(),
+                lon_key: "1".into(),
+                alt_key: "3".into(),
+                epoch_key: "0".into(),
+                val_key: String::new(),
+                alt_sign: -1.0,
+                vel_key: String::new(),
+                trk_key: String::new(),
+                vr_key: String::new(),
+                fields: vec![("4".into(), "argo_temp_c".into())],
+                lon_sign: None,
+            }],
+            headers: vec![],
+            pos_fields: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+        };
+        let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
+        let now = super::tdb_now();
+        let pending = extract_pending(&src, body, now);
+        assert_eq!(pending.len(), 2);
+        let p0 = &pending[0];
+        assert!(p0.epoch < now);
+        let expected_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
+        assert!((p0.epoch - expected_epoch).abs() < 1e-6);
+        match p0.position {
+            super::PendingPosition::Geodetic { lat, lon, alt } => {
+                assert!((lat - 34.49025).abs() < 1e-6);
+                assert!((lon - -14.408395).abs() < 1e-6);
+                assert!((alt - -3.1).abs() < 1e-6);
+            }
+            _ => panic!("expected Geodetic position"),
+        }
+        assert_eq!(p0.fields, vec![("argo_temp_c".to_string(), 23.478)]);
+        let p1 = &pending[1];
+        match p1.position {
+            super::PendingPosition::Geodetic { alt, .. } => {
+                assert!((alt - -1000.0).abs() < 1e-6);
+            }
+            _ => panic!("expected Geodetic position"),
+        }
     }
 }

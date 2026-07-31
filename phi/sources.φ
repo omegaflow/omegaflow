@@ -1095,6 +1095,7 @@ field properties.nidHeight ntad_dam_nid_height_m
 field properties.damHeight ntad_dam_height_m
 
 # === ArcGIS GSN Seismic Stations (150 stations, 2026-07-30) ===
+
 source arcgis_satellite_fire
 ttl 300
 force thermal
@@ -1117,6 +1118,7 @@ field properties.inclination satellite_inclination_rad
 field properties.norad_cat_id satellite_norad_id
 
 # === ArcGIS NTAD Dams (92,766 records, 2026-07-30) ===
+
 source arcgis_space_weather_scales
 ttl 300
 force gravity
@@ -17735,6 +17737,7 @@ field_in sequence_number astro_chandra_master_sequence_number
 field_in data_mode astro_chandra_master_data_mode
 field_in category astro_chandra_master_category
 field_in class astro_chandra_master_class
+
 source astro_fermi_4fgl
 ttl 604800
 force em
@@ -17812,6 +17815,7 @@ field_in assoc_ra astro_fermi_4fgl_assoc_ra
 field_in assoc_dec astro_fermi_4fgl_assoc_dec
 field_in assoc_error_radius astro_fermi_4fgl_assoc_error_radius
 field_in analysis_flags astro_fermi_4fgl_analysis_flags
+
 source astro_fermi_4lac
 ttl 604800
 force em
@@ -17858,6 +17862,7 @@ field_in variability_index astro_fermi_4lac_variability_index
 field_in frac_variability astro_fermi_4lac_frac_variability
 field_in frac_variability_error astro_fermi_4lac_frac_variability_error
 field_in highest_energy_photon astro_fermi_4lac_highest_energy_photon
+
 source astro_frb_chime
 ttl 604800
 force em
@@ -17882,6 +17887,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
+
 source astro_gaia_blue_supergiants
 ttl 604800
 force em
@@ -17892,6 +17898,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag astro_gaia_blue_supergiants_phot_g_mean_mag
 field_in bp_rp astro_gaia_blue_supergiants_bp_rp
+
 source astro_gaia_bright_vmag7
 ttl 604800
 force em
@@ -17909,6 +17916,7 @@ field_in radial_velocity astro_gaia_bright_vmag7_radial_velocity
 field_in teff_gspphot astro_gaia_bright_vmag7_teff_gspphot
 field_in mh_gspphot astro_gaia_bright_vmag7_mh_gspphot
 field_in bp_rp astro_gaia_bright_vmag7_bp_rp
+
 source astro_gaia_bright_vmag9
 ttl 604800
 force em
@@ -17918,6 +17926,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag astro_gaia_bright_vmag9_phot_g_mean_mag
+
 source astro_gaia_giants
 ttl 604800
 force em
@@ -17929,6 +17938,7 @@ plx_key parallax
 field_in phot_g_mean_mag astro_gaia_giants_phot_g_mean_mag
 field_in bp_rp astro_gaia_giants_bp_rp
 field_in teff_gspphot astro_gaia_giants_teff_gspphot
+
 source astro_gaia_high_pm
 ttl 604800
 force em
@@ -17940,6 +17950,7 @@ plx_key parallax
 field_in phot_g_mean_mag astro_gaia_high_pm_phot_g_mean_mag
 field_in pmra astro_gaia_high_pm_pmra
 field_in pmdec astro_gaia_high_pm_pmdec
+
 source astro_gaia_hypervelocity
 ttl 604800
 force em
@@ -17950,6 +17961,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag astro_gaia_hypervelocity_phot_g_mean_mag
 field_in radial_velocity astro_gaia_hypervelocity_radial_velocity
+
 source astro_gaia_metal_poor
 ttl 604800
 force em
@@ -17960,6 +17972,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag astro_gaia_metal_poor_phot_g_mean_mag
 field_in mh_gspphot astro_gaia_metal_poor_mh_gspphot
+
 source astro_gaia_nearby_plx10
 ttl 604800
 force em
@@ -17973,6 +17986,7 @@ field_in pmdec astro_gaia_nearby_plx10_pmdec
 field_in phot_g_mean_mag astro_gaia_nearby_plx10_phot_g_mean_mag
 field_in bp_rp astro_gaia_nearby_plx10_bp_rp
 field_in radial_velocity astro_gaia_nearby_plx10_radial_velocity
+
 source astro_gaia_nearby_plx50
 ttl 604800
 force em
@@ -17986,6 +18000,7 @@ field_in pmdec astro_gaia_nearby_plx50_pmdec
 field_in phot_g_mean_mag astro_gaia_nearby_plx50_phot_g_mean_mag
 field_in bp_rp astro_gaia_nearby_plx50_bp_rp
 field_in radial_velocity astro_gaia_nearby_plx50_radial_velocity
+
 source astro_gaia_white_dwarfs
 ttl 604800
 force em
@@ -17996,6 +18011,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag astro_gaia_white_dwarfs_phot_g_mean_mag
 field_in bp_rp astro_gaia_white_dwarfs_bp_rp
+
 source astro_heasarc_icecube
 ttl 604800
 force em
@@ -18158,6 +18174,7 @@ field_in specObjID astro_sdss_galaxies_specObjID
 field_in mjd astro_sdss_galaxies_mjd
 field_in plate astro_sdss_galaxies_plate
 field_in fiberID astro_sdss_galaxies_fiberID
+
 source astro_sdss_stars
 ttl 604800
 force em
@@ -18170,6 +18187,7 @@ field_in g astro_sdss_stars_g
 field_in r astro_sdss_stars_r
 field_in i astro_sdss_stars_i
 field_in psfMag_r astro_sdss_stars_psfMag_r
+
 source astro_swift_bat
 ttl 604800
 force em
@@ -18196,6 +18214,7 @@ field_in chi_squared astro_swift_bat_chi_squared
 field_in log_lx astro_swift_bat_log_lx
 field_in ctrpart_class astro_swift_bat_ctrpart_class
 field_in source_type astro_swift_bat_source_type
+
 source astro_swift_grb
 ttl 604800
 force em
@@ -18379,6 +18398,7 @@ field_in galaxy_offset astro_swift_grb_galaxy_offset
 field_in ground_counterpart astro_swift_grb_ground_counterpart
 field_in web_page astro_swift_grb_web_page
 field_in comments astro_swift_grb_comments
+
 source astro_tevcat
 ttl 604800
 force em
@@ -18402,6 +18422,7 @@ field_in extended_flag astro_tevcat_extended_flag
 field_in x_size astro_tevcat_x_size
 field_in y_size astro_tevcat_y_size
 field_in tevcat_url astro_tevcat_tevcat_url
+
 source astro_twomass_psc
 ttl 604800
 force em
@@ -18418,6 +18439,7 @@ field_in Rflg astro_twomass_psc_Rflg
 field_in Bflg astro_twomass_psc_Bflg
 field_in Cflg astro_twomass_psc_Cflg
 field_in Aflg astro_twomass_psc_Aflg
+
 source astro_vizier_2qz
 ttl 604800
 force em
@@ -18429,6 +18451,7 @@ field_in recno vizier_2qz_recno
 field_in 2QZ vizier_2qz_2QZ
 field_in intNo vizier_2qz_intNo
 field_in intName vizier_2qz_intName
+
 source astro_vizier_6dfgs
 ttl 604800
 force em
@@ -18440,6 +18463,7 @@ field_in 6dFGS vizier_6dfgs_6dFGS
 field_in Nm vizier_6dfgs_Nm
 field_in Nz vizier_6dfgs_Nz
 field_in bJmag vizier_6dfgs_bJmag
+
 source astro_vizier_apass
 ttl 604800
 force em
@@ -18469,6 +18493,7 @@ field_in u_e_r'mag astro_vizier_apass_u_e_r'mag
 field_in i'mag astro_vizier_apass_i'mag
 field_in e_i'mag astro_vizier_apass_e_i'mag
 field_in u_e_i'mag astro_vizier_apass_u_e_i'mag
+
 source astro_vizier_carmenes
 ttl 604800
 force em
@@ -18480,6 +18505,7 @@ field_in recno vizier_carmenes_recno
 field_in MWSC vizier_carmenes_MWSC
 field_in Name vizier_carmenes_Name
 field_in Type vizier_carmenes_Type
+
 source astro_vizier_cosmic_voids
 ttl 604800
 force em
@@ -18492,6 +18518,7 @@ field_in recno vizier_cosmic_voids_recno
 field_in ID vizier_cosmic_voids_ID
 field_in r vizier_cosmic_voids_r
 field_in p-value vizier_cosmic_voids_p-value
+
 source astro_vizier_distant_halo
 ttl 604800
 force em
@@ -18512,6 +18539,7 @@ field_in recno vizier_first_recno
 field_in FIRST vizier_first_FIRST
 field_in p(S) vizier_first_p(S)
 field_in Fpeak vizier_first_Fpeak
+
 source astro_vizier_gcvs_variables
 ttl 604800
 force em
@@ -18523,6 +18551,7 @@ field_in recno vizier_gcvs_variables_recno
 field_in VarNum vizier_gcvs_variables_VarNum
 field_in m_VarNum vizier_gcvs_variables_m_VarNum
 field_in GCVS vizier_gcvs_variables_GCVS
+
 source astro_vizier_glade
 ttl 604800
 force em
@@ -18552,6 +18581,7 @@ field_in Kmag astro_vizier_glade_Kmag
 field_in e_Kmag astro_vizier_glade_e_Kmag
 field_in Flag2 astro_vizier_glade_Flag2
 field_in Flag3 astro_vizier_glade_Flag3
+
 source astro_vizier_glade2
 ttl 604800
 force em
@@ -18566,6 +18596,7 @@ field_in recno vizier_glade2_recno
 field_in PGC vizier_glade2_PGC
 field_in GWGC vizier_glade2_GWGC
 field_in HyperLEDA vizier_glade2_HyperLEDA
+
 source astro_vizier_gleam
 ttl 604800
 force em
@@ -18588,6 +18619,7 @@ field_in recno vizier_hecate_recno
 field_in PGC vizier_hecate_PGC
 field_in HyperLEDA vizier_hecate_HyperLEDA
 field_in NED vizier_hecate_NED
+
 source astro_vizier_hi4pi
 ttl 604800
 force em
@@ -18608,6 +18640,7 @@ field_in recno vizier_lotss_dr3_recno
 field_in Source vizier_lotss_dr3_Source
 field_in e_RAJ2000 vizier_lotss_dr3_e_RAJ2000
 field_in e_DEJ2000 vizier_lotss_dr3_e_DEJ2000
+
 source astro_vizier_nvss
 ttl 604800
 force em
@@ -18619,6 +18652,7 @@ field_in recno vizier_nvss_recno
 field_in Field vizier_nvss_Field
 field_in Xpos vizier_nvss_Xpos
 field_in Ypos vizier_nvss_Ypos
+
 source astro_vizier_orion_region
 ttl 604800
 force em
@@ -18630,6 +18664,7 @@ field_in recno vizier_orion_region_recno
 field_in Seq vizier_orion_region_Seq
 field_in ePos vizier_orion_region_ePos
 field_in CTot vizier_orion_region_CTot
+
 source astro_vizier_prigozhin_pulsars
 ttl 604800
 force em
@@ -18641,6 +18676,7 @@ field_in recno vizier_prigozhin_pulsars_recno
 field_in Name vizier_prigozhin_pulsars_Name
 field_in imag vizier_prigozhin_pulsars_imag
 field_in zphot vizier_prigozhin_pulsars_zphot
+
 source astro_vizier_sdss_qso
 ttl 604800
 force em
@@ -18653,6 +18689,7 @@ field_in recno vizier_sdss_qso_recno
 field_in SDSS vizier_sdss_qso_SDSS
 field_in umag vizier_sdss_qso_umag
 field_in e_umag vizier_sdss_qso_e_umag
+
 source astro_vizier_snrs
 ttl 604800
 force em
@@ -18664,6 +18701,7 @@ field_in recno vizier_snrs_recno
 field_in SNR vizier_snrs_SNR
 field_in MajDiam vizier_snrs_MajDiam
 field_in MinDiam vizier_snrs_MinDiam
+
 source astro_vizier_tycho2
 ttl 604800
 force em
@@ -18705,6 +18743,7 @@ field_in e_RAdeg astro_vizier_tycho2_e_RAdeg
 field_in e_DEdeg astro_vizier_tycho2_e_DEdeg
 field_in posflg astro_vizier_tycho2_posflg
 field_in corr astro_vizier_tycho2_corr
+
 source astro_vizier_ucac5
 ttl 604800
 force em
@@ -18730,6 +18769,7 @@ field_in Rmag astro_vizier_ucac5_Rmag
 field_in Jmag astro_vizier_ucac5_Jmag
 field_in Hmag astro_vizier_ucac5_Hmag
 field_in Kmag astro_vizier_ucac5_Kmag
+
 source astro_vizier_vsx_variables
 ttl 604800
 force em
@@ -18741,6 +18781,7 @@ field_in recno vizier_vsx_variables_recno
 field_in OID vizier_vsx_variables_OID
 field_in Name vizier_vsx_variables_Name
 field_in V vizier_vsx_variables_V
+
 source astro_vizier_young_stars
 ttl 604800
 force em
@@ -18765,6 +18806,7 @@ field_in w1mpro astro_wise_allsky_w1mpro
 field_in w2mpro astro_wise_allsky_w2mpro
 field_in w3mpro astro_wise_allsky_w3mpro
 field_in w4mpro astro_wise_allsky_w4mpro
+
 source astro_xmm_slew
 ttl 604800
 force em
@@ -19200,6 +19242,7 @@ field_in redshift_tpz_flag_zconf astro_xmm_sources_redshift_tpz_flag_zconf
 field_in redshift_lph_z_best astro_xmm_sources_redshift_lph_z_best
 field_in redshift_lph_flag_zconf astro_xmm_sources_redshift_lph_flag_zconf
 field_in redshift_info_distance astro_xmm_sources_redshift_info_distance
+
 source atmosphere_biome_amazon_archive
 ttl 604800
 force em
@@ -19482,6 +19525,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source exosphere_simbad_carbon_stars
 ttl 604800
 force em
@@ -19491,6 +19535,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source exosphere_simbad_eclipsing_binaries
 ttl 604800
 force em
@@ -19498,6 +19543,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source exosphere_simbad_galaxies
 ttl 604800
 force em
@@ -19506,6 +19552,7 @@ cmap data
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
+
 source exosphere_simbad_galaxy_clusters
 ttl 604800
 force em
@@ -19514,6 +19561,7 @@ cmap data
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
+
 source exosphere_simbad_high_z_galaxies
 ttl 604800
 force em
@@ -19521,6 +19569,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source exosphere_simbad_highest_redshift_quasar
 ttl 604800
 force em
@@ -19528,6 +19577,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source exosphere_simbad_millisecond_pulsars
 ttl 604800
 force em
@@ -19535,6 +19585,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source exosphere_simbad_novae
 ttl 604800
 force em
@@ -19542,6 +19593,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source exosphere_simbad_pulsars
 ttl 604800
 force em
@@ -19549,6 +19601,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source exosphere_simbad_quasars
 ttl 604800
 force em
@@ -19556,6 +19609,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source exosphere_simbad_supernovae
 ttl 604800
 force em
@@ -19563,6 +19617,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source exosphere_simbad_symbiotic_stars
 ttl 604800
 force em
@@ -19570,6 +19625,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source exosphere_simbad_white_dwarfs
 ttl 604800
 force em
@@ -19579,6 +19635,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source exosphere_simbad_wolf_rayet
 ttl 604800
 force em
@@ -19588,6 +19645,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source exosphere_simbad_young_stellar_objects
 ttl 604800
 force em
@@ -19597,6 +19655,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source geosphere_earth_impact_craters
 ttl 604800
 force em
@@ -19827,6 +19886,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source simbad_bright_stars
 ttl 604800
 force em
@@ -19836,6 +19896,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source simbad_nearby_stars
 ttl 604800
 force em
@@ -19845,6 +19906,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source solar_helioseismology_papers
 ttl 604800
 force em
@@ -20142,6 +20204,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_barium_stars
 ttl 604800
 force em
@@ -20151,6 +20214,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_blazars
 ttl 604800
 force em
@@ -20158,6 +20222,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_blue_compact_dwarfs
 ttl 604800
 force em
@@ -20166,6 +20231,7 @@ cmap data
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
+
 source universe_simbad_blue_giants
 ttl 604800
 force em
@@ -20175,6 +20241,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_blue_supergiants
 ttl 604800
 force em
@@ -20184,6 +20251,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_brown_dwarfs
 ttl 604800
 force em
@@ -20193,6 +20261,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_carbon_stars
 ttl 604800
 force em
@@ -20202,6 +20271,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_carbon_stars_var
 ttl 604800
 force em
@@ -20211,6 +20281,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_cepheids
 ttl 604800
 force em
@@ -20218,6 +20289,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_ch_stars
 ttl 604800
 force em
@@ -20227,6 +20299,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_dark_nebulae
 ttl 604800
 force em
@@ -20234,6 +20307,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_dwarf_galaxies
 ttl 604800
 force em
@@ -20242,6 +20316,7 @@ cmap data
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
+
 source universe_simbad_dwarf_novae
 ttl 604800
 force em
@@ -20249,6 +20324,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_eclipsing_binaries
 ttl 604800
 force em
@@ -20256,6 +20332,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_emission_stars
 ttl 604800
 force em
@@ -20265,6 +20342,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_flare_stars
 ttl 604800
 force em
@@ -20272,6 +20350,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_fu_oris
 ttl 604800
 force em
@@ -20279,6 +20358,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_galaxies
 ttl 604800
 force em
@@ -20287,6 +20367,7 @@ cmap data
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
+
 source universe_simbad_galaxy_clusters
 ttl 604800
 force em
@@ -20295,6 +20376,7 @@ cmap data
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
+
 source universe_simbad_gamma_bursts
 ttl 604800
 force em
@@ -20302,6 +20384,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_giant_stars
 ttl 604800
 force em
@@ -20311,6 +20394,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_globular_clusters
 ttl 604800
 force em
@@ -20318,6 +20402,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hecate.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_gravitational_lenses
 ttl 604800
 force em
@@ -20325,6 +20410,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_herbig_haro
 ttl 604800
 force em
@@ -20334,6 +20420,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_hii_regions
 ttl 604800
 force em
@@ -20342,6 +20429,7 @@ cmap data
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
+
 source universe_simbad_hvc
 ttl 604800
 force em
@@ -20350,6 +20438,7 @@ cmap data
 ra_key RAJ2000
 dec_key DEJ2000
 z_key z
+
 source universe_simbad_interstellar_medium
 ttl 604800
 force em
@@ -20357,6 +20446,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_ir_sources
 ttl 604800
 force em
@@ -20364,6 +20454,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_ism
 ttl 604800
 force em
@@ -20371,6 +20462,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_long_period
 ttl 604800
 force em
@@ -20378,6 +20470,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_lpv_mira
 ttl 604800
 force em
@@ -20385,6 +20478,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_masers
 ttl 604800
 force em
@@ -20392,6 +20486,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_microquasars
 ttl 604800
 force em
@@ -20399,6 +20494,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_millisecond_pulsars
 ttl 604800
 force em
@@ -20406,6 +20502,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_mira_variables
 ttl 604800
 force em
@@ -20413,6 +20510,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_molecule_clouds
 ttl 604800
 force em
@@ -20420,6 +20518,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_nebulae
 ttl 604800
 force em
@@ -20427,6 +20526,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_novae
 ttl 604800
 force em
@@ -20434,6 +20534,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_oh_maser
 ttl 604800
 force em
@@ -20441,6 +20542,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_oh_masers
 ttl 604800
 force em
@@ -20448,6 +20550,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_planetary_nebulae
 ttl 604800
 force em
@@ -20455,6 +20558,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_post_agb_stars
 ttl 604800
 force em
@@ -20462,6 +20566,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_pre_ms_stars
 ttl 604800
 force em
@@ -20471,6 +20576,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_proper_motion
 ttl 604800
 force em
@@ -20480,6 +20586,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_pulsars
 ttl 604800
 force em
@@ -20487,6 +20594,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_pulsating_white_dwarfs
 ttl 604800
 force em
@@ -20496,6 +20604,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_quasars
 ttl 604800
 force em
@@ -20503,6 +20612,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_rcrb_variables
 ttl 604800
 force em
@@ -20510,6 +20620,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_red_giants
 ttl 604800
 force em
@@ -20519,6 +20630,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_red_supergiants
 ttl 604800
 force em
@@ -20528,6 +20640,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_reflection_nebulae
 ttl 604800
 force em
@@ -20535,6 +20648,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_rr_lyrae
 ttl 604800
 force em
@@ -20542,6 +20656,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_s_stars
 ttl 604800
 force em
@@ -20551,6 +20666,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_stellar_associations
 ttl 604800
 force em
@@ -20560,6 +20676,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_supernova_remnants
 ttl 604800
 force em
@@ -20567,6 +20684,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_supernovae
 ttl 604800
 force em
@@ -20574,6 +20692,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_symbiotic_stars
 ttl 604800
 force em
@@ -20581,6 +20700,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_p
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_ttauri_stars
 ttl 604800
 force em
@@ -20590,6 +20710,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_variable_stars
 ttl 604800
 force em
@@ -20597,6 +20718,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variab
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_white_dwarfs
 ttl 604800
 force em
@@ -20606,6 +20728,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_wolf_rayet_stars
 ttl 604800
 force em
@@ -20615,6 +20738,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_xray_sources
 ttl 604800
 force em
@@ -20622,6 +20746,7 @@ url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 cmap data
 ra_key RAJ2000
 dec_key DEJ2000
+
 source universe_simbad_yellow_supergiants
 ttl 604800
 force em
@@ -20631,6 +20756,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_young_stellar_objects
 ttl 604800
 force em
@@ -20640,6 +20766,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source universe_simbad_yso
 ttl 604800
 force em
@@ -20649,6 +20776,7 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
+
 source alfalfa_catalog
 ttl 2592000
 force em
@@ -20717,13 +20845,6 @@ force em
 url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1
 wgs84 38.899 -77.043
 field 1.0.value biosphere_death_rate_per_1000
-
-source biosphere_worldbank_gdp_growth_DEU
-ttl 2592000
-force em
-url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
-wgs84 52.520 13.405
-field 1.0.value biosphere_gdp_growth_pct_DEU
 
 source biosphere_worldbank_gdp_growth_afghanistan
 ttl 2592000
@@ -21102,6 +21223,13 @@ force em
 url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
 wgs84 55.68 12.57
 field 1.0.value biosphere_gdp_growth_denmark_pct
+
+source biosphere_worldbank_gdp_growth_DEU
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+wgs84 52.520 13.405
+field 1.0.value biosphere_gdp_growth_pct_DEU
 
 source biosphere_worldbank_gdp_growth_djibouti
 ttl 2592000
