@@ -4836,14 +4836,12 @@ fn warm_cache(archive: Arc<Archive>) {
             for (src_idx, origin, region, body_opt) in chunk_results {
                 let src = &archive.sources[src_idx];
                 let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
-                {
-                    let entry = origins.entry(origin).or_default();
-                    entry.fetched = now;
-                    entry.ttl = src.ttl as f64;
-                }
+                let entry = origins.entry(origin).or_default();
                 let Some(body) = body_opt else {
                     continue;
                 };
+                entry.fetched = now;
+                entry.ttl = src.ttl as f64;
                 let pendings = extract_pending(src, &body, now);
                 let may_be_empty = src.extracts.iter().any(|e| {
                     matches!(
