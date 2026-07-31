@@ -219,10 +219,7 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32) -> f32 {
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
-@group(0) @binding(3) var<storage, read_write> probe_partials: array<f32>;
-@group(0) @binding(4) var<storage, read_write> probe_out: array<f32>;
-
-var<workgroup> wg_acc: array<f32, 8>;
+@group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f };
 
@@ -323,25 +320,19 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, force_type: u32, global_scale
     }
 }
 
-@compute @workgroup_size(256)
+@compute @workgroup_size(1)
 fn presence_probe() {
     let count = u32(vp.surface.z);
-    let gid = u32(global_invocation_id.x) / 256u;
-    if (local_invocation_id.x < 8u) {
-        wg_acc[local_invocation_id.x] = 0.0f;
-    }
-    workgroupBarrier();
     if (count == 0u) {
-        workgroupBarrier();
-        if (local_invocation_id.x < 8u) {
-            probe_partials[gid * 8u + local_invocation_id.x] = wg_acc[local_invocation_id.x];
-        }
+        for (var i: u32 = 0u; i < 8u; i = i + 1u) { probe_out[i] = 0.0f; }
         return;
     }
     let soft = vp.surface.w;
 
-    let stride = 256u;
-    for (var j = global_invocation_id.x; j < count; j = j + stride) {
+    var omegas: array<f32, 8>;
+    for (var i: u32 = 0u; i < 8u; i = i + 1u) { omegas[i] = 0.0f; }
+
+    for (var j = 0u; j < count; j = j + 1u) {
         let m = field[j * 2u];
         let tm = field[j * 2u + 1u];
         let d = m.xyz;
@@ -355,25 +346,12 @@ fn presence_probe() {
         let sk = field_spatial(d2, d_mag, extent, force_type, soft);
 
         if (force_type < 8u) {
-            wg_acc[force_type] += val_eff * sk;
+            omegas[force_type] += val_eff * sk;
         }
     }
-    workgroupBarrier();
-    if (local_invocation_id.x < 8u) {
-        probe_partials[gid * 8u + local_invocation_id.x] = wg_acc[local_invocation_id.x];
-    }
-}
 
-@compute @workgroup_size(256)
-fn probe_reduce() {
-    let lid = local_invocation_id.x;
-    if (lid < 8u) {
-        var s = 0.0f;
-        let n_groups = u32(probe_partials.length()) / 8u;
-        for (var g = 0u; g < n_groups; g = g + 1u) {
-            s += probe_partials[g * 8u + lid];
-        }
-        probe_out[lid] = s;
+    for (var i: u32 = 0u; i < 8u; i = i + 1u) {
+        probe_out[i] = omegas[i];
     }
 }
 
@@ -393,7 +371,7 @@ fn probe_reduce() {
         fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;background:#0a0908;';
         document.body.appendChild(fieldCanvas);
         let fieldVisible = true;
-        let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, reducePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, partialsBuf = null, probeBuf = null, probeRead = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
+        let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
         let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0,0];
         async function initFieldGPU() {
             if (!navigator.gpu || gpu) return;
@@ -412,8 +390,7 @@ fn probe_reduce() {
                     { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
                     { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
                     { binding: 2, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
-                    { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
-                    { binding: 4, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
+                    { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
                 ] });
                 fieldPipe = device.createRenderPipeline({
                     layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
@@ -434,11 +411,6 @@ fn probe_reduce() {
                     layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
                     compute: { module, entryPoint: 'presence_probe' }
                 });
-                reducePipe = device.createComputePipeline({
-                    layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
-                    compute: { module, entryPoint: 'probe_reduce' }
-                });
-                partialsBuf = device.createBuffer({ size: 65536, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
                 probeBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
                 probeRead = device.createBuffer({ size: 32, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
                 vpBuf = device.createBuffer({ size: 96, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
@@ -461,8 +433,7 @@ fn probe_reduce() {
                 { binding: 0, resource: { buffer: fieldBuf } },
                 { binding: 1, resource: { buffer: metaBuf } },
                 { binding: 2, resource: { buffer: vpBuf } },
-                { binding: 3, resource: { buffer: partialsBuf } },
-                { binding: 4, resource: { buffer: probeBuf } }
+                { binding: 3, resource: { buffer: probeBuf } }
             ] });
         }
         async function probePresence() {
@@ -473,8 +444,6 @@ fn probe_reduce() {
                 const pass = encoder.beginComputePass();
                 pass.setPipeline(probePipe);
                 pass.setBindGroup(0, fieldBind);
-                pass.dispatchWorkgroups(2048);
-                pass.setPipeline(reducePipe);
                 pass.dispatchWorkgroups(1);
                 pass.end();
                 encoder.copyBufferToBuffer(probeBuf, 0, probeRead, 0, 32);
