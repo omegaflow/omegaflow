@@ -1735,7 +1735,7 @@ fn batch_fetch(
 
     let mut cmd = Command::new("curl");
     cmd.arg("--parallel");
-    cmd.arg("--parallel-max").arg("100");
+    cmd.arg("--parallel-max").arg("128");
     cmd.arg("-s");
     cmd.arg("--location");
 
@@ -4831,7 +4831,7 @@ fn warm_cache(archive: Arc<Archive>) {
 
         let mut new_samples: Vec<Sample> = Vec::new();
         let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
-        for chunk in tasks.chunks(25) {
+        for chunk in tasks.chunks(128) {
             let chunk_tasks: Vec<_> = chunk.to_vec();
             let chunk_results = batch_fetch(chunk_tasks, &archive.sources, &archive.ttl_eff);
             for (src_idx, origin, region, body_opt) in chunk_results {
