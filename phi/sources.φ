@@ -8365,6 +8365,7 @@ ttl 3600
 force em
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD&date-min={today}&limit=100
 cmap data
+tau_key _dist_m
 field_in 0 designation
 field_in 1 orbit_id
 field_in 3 close_approach_date
@@ -8376,6 +8377,7 @@ ttl 3600
 force em
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
 cmap data
+tau_key _dist_m
 field_in 0 peak_date
 field_in 1 energy_j
 field_in 3 latitude_deg
@@ -8707,6 +8709,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,Vmag+FROM+%22II/366/catv2021%22
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 field_in 2 asas_sn_v_mag
@@ -9444,6 +9447,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+200+ra,dec,parallax,phot_rp_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>10
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -9844,6 +9848,7 @@ ttl 86400
 force em
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+512+ra,dec,sy_dist,pl_eqt,pl_rade,pl_orbper,pl_bmasse+FROM+pscomppars+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
 cmap .
+tau_key _dist_m
 ra_key ra
 dec_key dec
 field_in pl_eqt cosmic_exoplanet_eqt_k
@@ -9864,6 +9869,7 @@ ttl 86400
 force em
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+256+ra,dec,sy_dist,pl_eqt,pl_orbper+FROM+pscomppars+WHERE+pl_orbper%3C1+AND+sy_dist+IS+NOT+NULL+ORDER+BY+pl_orbper+ASC&format=json
 cmap .
+tau_key _dist_m
 ra_key ra
 dec_key dec
 field_in pl_eqt hot_jupiter_eqt_k
@@ -9875,6 +9881,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,F1000i,PLGam+FROM+%22IX/67/4fgldr3%22
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 field_in 2 agn_gamma_flux_1000
@@ -13920,6 +13927,7 @@ ttl 86400
 force em
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+500+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,194.9,27.9,3.0))%3D1
 cmap data
+tau_key _dist_m
 ra_key 1
 dec_key 2
 z_key 3
@@ -13931,6 +13939,7 @@ ttl 86400
 force gravity
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+500+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,243.7,-45.3,6.0))%3D1
 cmap data
+tau_key _dist_m
 ra_key 1
 dec_key 2
 z_key 3
@@ -13942,6 +13951,7 @@ ttl 86400
 force em
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+500+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,187.7,12.4,3.0))%3D1
 cmap data
+tau_key _dist_m
 ra_key 1
 dec_key 2
 z_key 3
@@ -15757,6 +15767,7 @@ ttl 86400
 force em
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,pl_name,sy_dist+FROM+ps+ORDER+BY+sy_dist&format=json
 cmap .
+tau_key _dist_m
 ra_key ra
 dec_key dec
 field_in sy_dist universe_exoplanet_distance_pc
@@ -15767,6 +15778,7 @@ ttl 86400
 force em
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,sy_dist,pl_orbper,pl_rade+FROM+ps+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+sy_dist&format=json
 cmap .
+tau_key _dist_m
 ra_key ra
 dec_key dec
 field_in sy_dist universe_exoplanet_distance_pc
@@ -15779,6 +15791,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,Fpeak,Fint+FROM+%22VIII/92/first14%22
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 field_in 2 peak_jy
@@ -15789,6 +15802,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+TNS,RAJ2000,DEJ2000,DM+FROM+%22J/A%2BA/693/A279/frbs%22
 cmap data
+tau_key _dist_m
 ra_key 1
 dec_key 2
 field_in 0 tns_name
@@ -15799,6 +15813,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+Name,RAJ2000,DEJ2000,DM+FROM+%22J/other/PASA/33.45/frbcat%22
 cmap data
+tau_key _dist_m
 ra_key 1
 dec_key 2
 field_in 0 frb_name
@@ -15809,6 +15824,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15821,6 +15837,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15832,6 +15849,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+-0.1+AND+phot_g_mean_mag+<+12
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15844,6 +15862,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.1%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%3E2
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15854,6 +15873,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+phot_g_mean_mag+<+8+AND+parallax+IS+NOT+NULL+AND+parallax+<+2+ORDER+BY+random_index
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15865,6 +15885,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+2000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+11
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15876,6 +15897,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20%3C%208%20AND%20parallax%20%3E%205
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15886,6 +15908,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+7
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15898,6 +15921,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20SQRT%28POWER%28ra-266.4%2C2%29%2BPOWER%28dec%2B29%2C2%29%29%3C5%20AND%20parallax%20IS%20NOT%20NULL
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15908,6 +15932,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27BYDra%27+ORDER+BY+random_index
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15919,6 +15944,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+3.5+AND+bp_rp+<+6+AND+phot_g_mean_mag+<+16+AND+parallax+>+1
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15930,6 +15956,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27CV%27+ORDER+BY+random_index
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15941,6 +15968,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27Cepheid%27+ORDER+BY+random_index
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15952,6 +15980,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E2%20AND%20bp_rp%3C4%20AND%20parallax%3E20
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15962,6 +15991,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+parallax_over_error+>+3
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15973,6 +16003,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20BETWEEN%2015%20AND%2018%20AND%20parallax%20IS%20NOT%20NULL
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15984,6 +16015,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27DSCT%27+ORDER+BY+random_index
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -15995,6 +16027,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+<+0.3+AND+parallax+>+0+AND+phot_g_mean_mag+<+14
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16006,6 +16039,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27EA%27+OR+v.best_class_name+%3D+%27EB%27+OR+v.best_class_name+%3D+%27EW%27+ORDER+BY+random_index
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16017,6 +16051,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%20-0.3%20AND%20phot_g_mean_mag%20%3C%2013
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16029,6 +16064,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3E%203.5%20AND%20phot_g_mean_mag%20%3C%2014
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16041,6 +16077,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ABS%28b%29%3C10%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%20IS%20NOT%20NULL
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16051,6 +16088,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E1.5%20AND%20bp_rp%3C3%20AND%20phot_g_mean_mag%3C12%20AND%20parallax%3E2
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16061,6 +16099,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0.2+AND+phot_g_mean_mag+<+14+AND+parallax+>+5+AND+phot_bp_mean_flux_over_error+>+50+ORDER+BY+random_index
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16072,6 +16111,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16084,6 +16124,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+50
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16095,6 +16136,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20radial_velocity%20IS%20NOT%20NULL%20AND%20ABS%28radial_velocity%29%20%3E%20200
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16106,6 +16148,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.3%20AND%20phot_g_mean_mag%3C15%20AND%20parallax%3E1
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16116,6 +16159,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16129,6 +16173,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -16139,6 +16184,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E-0.2%20AND%20bp_rp%3C1%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E5
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16149,6 +16195,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%200.5%20AND%20phot_g_mean_mag%20%3C%2014%20AND%20parallax%20%3E%202
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16159,6 +16206,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cmh_gspphot%20FROM%20gaiadr3.gaia_source%20WHERE%20mh_gspphot%20IS%20NOT%20NULL%20AND%20parallax%20%3E%202
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16171,6 +16219,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+BETWEEN+0.5+AND+5+AND+parallax_over_error+>+3+AND+phot_g_mean_mag+<+14
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16183,6 +16232,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27Mira%27+ORDER+BY+random_index
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16194,6 +16244,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16204,6 +16255,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra%2Cdec%2Cphot_g_mean_mag%2Cparallax+FROM+gaiadr3.gaia_source+WHERE+cluster_ka+IS+NOT+NULL+AND+phot_g_mean_mag+%3C+15.0
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16215,6 +16267,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+parallax+>+5
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16228,6 +16281,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E0.8%20AND%20bp_rp%3C1.2%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E3
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16238,6 +16292,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16250,6 +16305,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+bp_rp+<+4+AND+phot_g_mean_mag+<+10+AND+parallax+>+0.5+AND+parallax+<+3
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16261,6 +16317,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27RR+Lyrae%27
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16272,6 +16329,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+12+AND+parallax+>+1
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16283,6 +16341,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27SR%27+ORDER+BY+random_index
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16294,6 +16353,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -16304,6 +16364,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+bp_rp+<+0.5+AND+phot_g_mean_mag+<+15+AND+mh_gspphot+<+-1+ORDER+BY+random_index
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16315,6 +16376,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+ABS(radial_velocity)+>+50+AND+ABS(radial_velocity)+<+200+AND+parallax+>+2+AND+phot_g_mean_mag+<+14
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16326,6 +16388,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+4+AND+bp_rp+<+8+AND+phot_g_mean_mag+<+18+AND+parallax+>+10
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16337,6 +16400,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+g.phot_g_mean_mag+IS+NOT+NULL
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16348,6 +16412,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16360,6 +16425,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+10+AND+phot_g_mean_mag+<+15+AND+bp_rp+IS+NOT+NULL
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 3
@@ -16371,6 +16437,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,%22S1.4%22+FROM+%22VIII/65/nvss%22
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 field_in 2 flux_jy
@@ -16380,6 +16447,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,s.psfmag_g+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.sdssdr13_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.sdssdr13_photoprimary+AS+s+ON+x.original_ext_source_id=s.objid+WHERE+g.parallax+>+0+AND+s.psfmag_g+<+17
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -16390,6 +16458,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -16400,6 +16469,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,e.bmag,e.vmag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.apassdr9_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.apassdr9+AS+e+ON+x.clean_apassdr9_oid=e.recno+WHERE+g.parallax+>+0+AND+e.bmag+<+13
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -16411,6 +16481,7 @@ ttl 86400
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -16421,6 +16492,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+Source,RA_ICRS,DE_ICRS+FROM+%22IX/69/xmm4d13s%22
 cmap data
+tau_key _dist_m
 ra_key 1
 dec_key 2
 field_in 0 Source
@@ -16671,6 +16743,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+4000+Name,RAJ2000,DEJ2000,z,LogFlux,Type+FROM+%22VII/274/bzcat5%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+LogFlux+DESC
 cmap data
+tau_key _dist_m
 ra_key 1
 dec_key 2
 z_key 3
@@ -19571,6 +19644,7 @@ ttl 604800
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax+>+0+ORDER+BY+parallax+DESC
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -19584,6 +19658,7 @@ ttl 604800
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+6+AND+parallax+>+0+ORDER+BY+phot_g_mean_mag
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -19597,6 +19672,7 @@ ttl 604800
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+128+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,ap.age_flame,ap.teff_gspphot+FROM+gaiadr3.astrophysical_parameters+AS+ap+JOIN+gaiadr3.gaia_source+AS+g+ON+ap.source_id=g.source_id+WHERE+ap.age_flame+IS+NOT+NULL+AND+g.parallax+>+0+ORDER+BY+ap.age_flame+DESC
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -19611,6 +19687,7 @@ ttl 604800
 force em
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,v.pf+FROM+gaiadr3.vari_cepheid+AS+v+JOIN+gaiadr3.gaia_source+AS+g+ON+v.source_id=g.source_id+WHERE+g.parallax+>+0+ORDER+BY+v.pf+DESC
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 plx_key 2
@@ -19624,6 +19701,7 @@ ttl 604800
 force em
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?format=json&cmd=SELECT+TOP+1024+ra,dec,z,petroMag_g+FROM+SpecObj+WHERE+class=%27GALAXY%27+AND+z+BETWEEN+0.01+AND+2+AND+petroMag_g+<+19
 cmap 0.Rows
+tau_key _dist_m
 ra_key ra
 dec_key dec
 z_key z
