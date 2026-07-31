@@ -971,7 +971,7 @@ fn presence_probe() {
                     `Surface\n` +
                     `  Pixels: ${RX}x${RY}\n` +
                     `  Scale: ${gridStep.toExponential(1)} m/px\n` +
-                    `  Oscillators in window: ${rawWindowResponse.length}\n` +
+                    `  Oscillators in window: ${rawWindowResponse.count}\n` +
                     `  Window omega: ${probedOmega.toExponential(2)} (exposure ${(exposureBoost > 0 ? '+' : '') + exposureBoost} oct)\n` +
                     "\nField (8 Forces)\n" +
                     `  EM (Electromagnetic): ${probedOmegas[0].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[0], Math.pow(2, -40))))}]\n` +
