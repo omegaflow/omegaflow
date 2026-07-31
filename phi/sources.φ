@@ -18035,6 +18035,19 @@ plx_key default_plx
 field_in flux_20_40kev integral_flux_20_40kev
 field_in var_20_40kev integral_variability
 
+source astro_jpl_asteroids
+ttl 604800
+force gravity
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/jpl_asteroids.json
+cmap data
+ra_key ra
+dec_key dec
+dist_key dist_au
+dist_scale 1.495978707e11
+field_in e asteroid_eccentricity
+field_in a_au asteroid_semimajor_axis_au
+field_in i_deg asteroid_inclination_deg
+
 source astro_maxi_gsc7yr
 ttl 604800
 force em
@@ -18737,6 +18750,16 @@ field_in w1mpro astro_wise_allsky_w1mpro
 field_in w2mpro astro_wise_allsky_w2mpro
 field_in w3mpro astro_wise_allsky_w3mpro
 field_in w4mpro astro_wise_allsky_w4mpro
+source astro_xmm_slew
+ttl 604800
+force em
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_xmm_slew.json
+cmap data
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_b8 xmm_slew_flux_b8
+
 source astro_xmm_sources
 ttl 604800
 force em
