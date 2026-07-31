@@ -477,9 +477,20 @@ fn presence_probe() {
                 const raw = rawWindowResponse.field;
                 const rawm = rawWindowResponse.meta;
                 const fref = new Float64Array(8);
+                const ft_vals = [[], [], [], [], [], [], [], []];
                 for (let i = 0; i < n; i++) {
                     const ft = rawm[i * 4 + 2] | 0;
-                    if (ft >= 0 && ft < 8) { const av = Math.abs(raw[i * 8 + 3]); if (av > fref[ft]) fref[ft] = av; }
+                    if (ft >= 0 && ft < 8) {
+                        const av = Math.abs(raw[i * 8 + 3]);
+                        if (av > 0 && isFinite(av)) ft_vals[ft].push(av);
+                    }
+                }
+                for (let ft = 0; ft < 8; ft++) {
+                    if (ft_vals[ft].length > 0) {
+                        ft_vals[ft].sort((a, b) => a - b);
+                        const p95 = ft_vals[ft][Math.floor(ft_vals[ft].length * 0.95)];
+                        fref[ft] = p95;
+                    }
                 }
                 const relax = 1 - Math.pow(2, -dt / Φ);
                 for (let i = 0; i < 8; i++) forceExposeF[i] += (fref[i] - forceExposeF[i]) * relax;

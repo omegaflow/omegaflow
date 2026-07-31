@@ -423,7 +423,10 @@ fn enclose_family(
             if dist2 > exact * exact {
                 continue;
             }
-            for (_, val) in &smp.fields {
+            for (name, val) in &smp.fields {
+                if name.starts_with('_') {
+                    continue;
+                }
                 records.push((
                     p[0],
                     p[1],
@@ -4418,11 +4421,19 @@ fn materialize(
             })
         })
         .unwrap_or(tau_default);
-    let reach_time = src.ttl as f64 + tau;
-    let extent = if is_diff {
-        (2.0 * v_or_d * reach_time).sqrt()
+    let extent = if src.tau_key.is_some() {
+        if is_diff {
+            (2.0 * v_or_d * (src.ttl as f64 + tau_default)).sqrt()
+        } else {
+            v_or_d * (src.ttl as f64 + tau_default)
+        }
     } else {
-        v_or_d * reach_time
+        let reach_time = src.ttl as f64 + tau;
+        if is_diff {
+            (2.0 * v_or_d * reach_time).sqrt()
+        } else {
+            v_or_d * reach_time
+        }
     };
     if extent.is_nan() || tau.is_nan() {
         return None;
