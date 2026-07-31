@@ -4420,30 +4420,6 @@ fn materialize(
     if forces.is_empty() {
         return vec![];
     }
-    let (v_or_d, tau_default, is_diff, _) = forces[0];
-    let tau = src
-        .tau
-        .or_else(|| {
-            src.tau_key.as_ref().and_then(|k| {
-                pend.fields.iter().find(|(n, _)| n == k).map(|(_, v)| {
-                    if is_diff {
-                        *v / v_or_d
-                    } else {
-                        *v / v_or_d
-                    }
-                })
-            })
-        })
-        .unwrap_or(tau_default);
-    let reach_time = src.ttl as f64 + tau;
-    let extent = if is_diff {
-        (2.0 * v_or_d * reach_time).sqrt()
-    } else {
-        v_or_d * reach_time
-    };
-    if extent.is_nan() || tau.is_nan() {
-        return vec![];
-    }
     let clean_fields: Vec<(String, f64)> = pend
         .fields
         .iter()
@@ -4452,18 +4428,43 @@ fn materialize(
         .collect();
     forces
         .into_iter()
-        .map(|(_, _, _, force_type)| Sample {
-            origin,
-            epoch: pend.epoch,
-            ttl: src.ttl.max(1) as f64,
-            extent,
-            tau,
-            force_type: force_type as f64,
-            vmax,
-            amax,
-            p0f,
-            motion,
-            fields: clean_fields.clone(),
+        .filter_map(|(v_or_d, tau_default, is_diff, force_type)| {
+            let tau = src
+                .tau
+                .or_else(|| {
+                    src.tau_key.as_ref().and_then(|k| {
+                        clean_fields.iter().find(|(n, _)| n == k).map(|(_, v)| {
+                            if is_diff {
+                                *v / v_or_d
+                            } else {
+                                *v / v_or_d
+                            }
+                        })
+                    })
+                })
+                .unwrap_or(tau_default);
+            let reach_time = src.ttl as f64 + tau;
+            let extent = if is_diff {
+                (2.0 * v_or_d * reach_time).sqrt()
+            } else {
+                v_or_d * reach_time
+            };
+            if extent.is_nan() || tau.is_nan() {
+                return None;
+            }
+            Some(Sample {
+                origin,
+                epoch: pend.epoch,
+                ttl: src.ttl.max(1) as f64,
+                extent,
+                tau,
+                force_type: force_type as f64,
+                vmax,
+                amax,
+                p0f,
+                motion,
+                fields: clean_fields.clone(),
+            })
         })
         .collect()
 }
