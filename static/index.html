@@ -229,7 +229,7 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32) -> f32 {
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 
-struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) force_type: u32 };
+struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) force_type: u32 };
 
 const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
 
