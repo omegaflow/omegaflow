@@ -18322,7 +18322,7 @@ field releases.0.id biosphere_music_releases_total
 source nasa_cmr_gedi_footprints
 ttl 86400
 force em
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=GEDI02_A&page_size=2000&sort_key=-start_date
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_GEDI02_A.json
 cmr_polygon feed.entry
 field_in time_start footprint_time_start
 field_in time_end footprint_time_end
@@ -18332,7 +18332,7 @@ field_in producer_granule_id footprint_granule_id
 source nasa_cmr_icesat2_atl06_footprints
 ttl 86400
 force em
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ATL06&page_size=2000&sort_key=-start_date
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_ATL06.json
 cmr_polygon feed.entry
 field_in time_start footprint_time_start
 field_in time_end footprint_time_end
@@ -18342,7 +18342,7 @@ field_in producer_granule_id footprint_granule_id
 source nasa_cmr_icesat2_footprints
 ttl 86400
 force em
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ATL03&page_size=2000&sort_key=-start_date
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_ATL03.json
 cmr_polygon feed.entry
 field_in time_start footprint_time_start
 field_in time_end footprint_time_end
@@ -18352,7 +18352,7 @@ field_in producer_granule_id footprint_granule_id
 source nasa_cmr_swot_ssg_ssh
 ttl 86400
 force em
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=SWOT_L2_LR_SSH_D&page_size=2000&sort_key=-start_date
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_SWOT_L2_LR_SSH_D.json
 cmr_polygon feed.entry
 field_in time_start footprint_time_start
 field_in time_end footprint_time_end
@@ -18362,7 +18362,7 @@ field_in producer_granule_id footprint_granule_id
 source nasa_cmr_viirs_fire_vnp14_nrt
 ttl 86400
 force thermal
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP14IMG_NRT&page_size=2000&sort_key=-start_date
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_VNP14IMG_NRT.json
 cmr_polygon feed.entry
 field_in time_start footprint_time_start
 field_in time_end footprint_time_end
@@ -27298,13 +27298,13 @@ field v_component_of_current hydrosphere_cmems_current_v_ms
 source geosphere_raspberry_shake_stations
 ttl 43200
 force seismic-surface
-url https://stationview.raspberryshake.org/api/stations
+url https://stationview.raspberryshake.org/stations?online=true
 format json
-map features
+map .
 lat_key latitude
 lon_key longitude
-field_in stnm geosphere_raspberry_shake_name
-field_in ntwk geosphere_raspberry_shake_network
+field code geosphere_raspberry_shake_name
+field elevation geosphere_raspberry_shake_elevation_m
 
 source geosphere_iris_stations
 ttl 86400
@@ -27450,4 +27450,68 @@ field_in 6 gaia_cepheid_period_d
 pmra_key 3
 pmdec_key 4
 radvel_key 5 1000
+
+source biosphere_ebird_recent
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/live-data/ebird_recent.json
+map .
+lat_key lat
+lon_key lon
+field speciesCode ebird_species_code
+field howMany ebird_observation_count
+field obsDt ebird_obs_time
+
+source atmosphere_openaq_pm25
+ttl 3600
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/live-data/openaq_pm25.json
+map .
+lat_key lat
+lon_key lon
+field value openaq_pm25_ugm3
+field lastUpdated openaq_measurement_time
+
+source atmosphere_openaq_pm10
+ttl 3600
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/live-data/openaq_pm10.json
+map .
+lat_key lat
+lon_key lon
+field value openaq_pm10_ugm3
+field lastUpdated openaq_measurement_time
+
+source geosphere_firms_viirs_global_nrt
+ttl 3600
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_viirs_nrt_world.csv
+format csv
+map data
+lat_key latitude
+lon_key longitude
+field brightness fire_brightness_k
+field frp fire_radiative_power_mw
+field confidence fire_confidence
+
+source geosphere_firms_modis_global_nrt
+ttl 3600
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_modis_nrt_world.csv
+format csv
+map data
+lat_key latitude
+lon_key longitude
+field brightness fire_brightness_k
+field frp fire_radiative_power_mw
+field confidence fire_confidence
+
+source hydrosphere_cmems_oxygen_global
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmems_oxygen.json
+map .
+lat_key latitude
+lon_key longitude
+field o2 ocean_oxygen_mmol_m3
 
