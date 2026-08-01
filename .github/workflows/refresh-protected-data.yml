@@ -31,7 +31,7 @@ jobs:
           i=0
           for pt in "${points[@]}"; do
             read -r la lo <<< "$pt"
-            code=$(curl -sS --retry 2 --fail -o "data/ebird_${i}.json" -w "%{http_code}" \
+            code=$(curl -sS --retry 2 --fail -o "data/ebird_part_${i}.json" -w "%{http_code}" \
               -H "X-eBirdApiToken: $EBIRD_API_KEY" \
               "https://api.ebird.org/v2/data/obs/geo/recent?lat=${la}&lng=${lo}&dist=50&back=1&maxResults=500") || true
             echo "eBird point $i: HTTP ${code:-fail}"
@@ -39,7 +39,7 @@ jobs:
             i=$((i + 1))
           done
           files=()
-          for f in data/ebird_*.json; do
+          for f in data/ebird_part_*.json; do
             [ -s "$f" ] && files+=("$f")
           done
           echo "eBird ok files: ${#files[@]}"
@@ -49,7 +49,7 @@ jobs:
               > data/ebird_recent.json
           fi
           ls -l data/ebird_recent.json 2>/dev/null || echo "no ebird_recent.json"
-          rm -f data/ebird_*.json
+          rm -f data/ebird_part_*.json
 
       - name: OpenAQ
         env:
