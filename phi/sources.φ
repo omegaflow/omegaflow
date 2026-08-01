@@ -52,7 +52,7 @@ field_in peak atmosphere_lightning_peak_current_ka
 source biosphere_etf_africa_broad
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_africa_broad.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_africa_price
@@ -61,7 +61,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_africa_prev_close
 source biosphere_etf_brazil
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_brazil.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_brazil_price
@@ -70,7 +70,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_brazil_prev_close
 source biosphere_etf_china
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_china.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_china_price
@@ -79,7 +79,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_china_prev_close
 source biosphere_etf_dollar_index
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_dollar_index.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_dollar_index_price
@@ -88,7 +88,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_dollar_index_prev_close
 source biosphere_etf_dry_bulk_shipping
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_dry_bulk_shipping.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_leading_global_trade_proxy_price
@@ -97,7 +97,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_leading_global_trade_prox
 source biosphere_etf_emerging_markets
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_emerging_markets.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_emerging_markets_price
@@ -106,7 +106,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_emerging_markets_prev_clo
 source biosphere_etf_europe
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_europe.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_europe_price
@@ -115,7 +115,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_europe_prev_close
 source biosphere_etf_frontier_markets
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_frontier_markets.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_frontier_markets_price
@@ -124,7 +124,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_frontier_markets_prev_clo
 source biosphere_etf_germany
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_germany.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_germany_price
@@ -133,7 +133,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_germany_prev_close
 source biosphere_etf_gold
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_gold.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_commodity_gold_price
@@ -142,7 +142,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_commodity_gold_prev_close
 source biosphere_etf_india
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_india.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_india_price
@@ -151,7 +151,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_india_prev_close
 source biosphere_etf_japan
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_japan.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_japan_price
@@ -160,7 +160,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_japan_prev_close
 source biosphere_etf_latin_america_broad
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_latin_america_broad.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_latin_america_price
@@ -169,7 +169,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_latin_america_prev
 source biosphere_etf_mexico
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_mexico.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_mexico_price
@@ -178,7 +178,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_mexico_prev_close
 source biosphere_etf_middle_east
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_middle_east.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_gulf_price
@@ -187,7 +187,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_gulf_prev_close
 source biosphere_etf_oil
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_oil.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_commodity_oil_price
@@ -196,7 +196,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_commodity_oil_prev_close
 source biosphere_etf_sector_communication
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_communication.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_communication_price
@@ -205,7 +205,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_communication_prev
 source biosphere_etf_sector_consumer_discretionary
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_consumer_discretionary.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_consumer_discretionary_price
@@ -214,7 +214,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_consumer_discretio
 source biosphere_etf_sector_consumer_staples
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_consumer_staples.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_consumer_staples_price
@@ -223,7 +223,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_consumer_staples_p
 source biosphere_etf_sector_energy
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_energy.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_energy_price
@@ -232,7 +232,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_energy_prev_close
 source biosphere_etf_sector_financials
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_financials.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_financials_price
@@ -241,7 +241,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_financials_prev_cl
 source biosphere_etf_sector_healthcare
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_healthcare.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_healthcare_price
@@ -250,7 +250,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_healthcare_prev_cl
 source biosphere_etf_sector_industrials
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_industrials.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_industrials_price
@@ -259,7 +259,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_industrials_prev_c
 source biosphere_etf_sector_materials
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_materials.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_materials_price
@@ -268,7 +268,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_materials_prev_clo
 source biosphere_etf_sector_real_estate
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_real_estate.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_real_estate_price
@@ -277,7 +277,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_real_estate_prev_c
 source biosphere_etf_sector_technology
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_technology.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_technology_price
@@ -286,7 +286,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_technology_prev_cl
 source biosphere_etf_sector_utilities
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_utilities.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_utilities_price
@@ -295,7 +295,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_utilities_prev_clo
 source biosphere_etf_semiconductors
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_semiconductors.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_leading_semiconductors_price
@@ -304,7 +304,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_leading_semiconductors_pr
 source biosphere_etf_south_africa
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_south_africa.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_south_africa_price
@@ -313,7 +313,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_south_africa_prev_
 source biosphere_etf_southeast_asia
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_southeast_asia.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_southeast_asia_price
@@ -322,7 +322,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_southeast_asia_pre
 source biosphere_etf_transportation
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_transportation.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_leading_transportation_price
@@ -331,7 +331,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_leading_transportation_pr
 source biosphere_etf_treasury_yield_10y
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_treasury_yield_10y.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_interest_rate_10y_treasury
@@ -340,7 +340,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_interest_rate_10y_treasur
 source biosphere_etf_usa
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_usa.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_usa_price
@@ -349,7 +349,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_usa_prev_close
 source biosphere_etf_volatility
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_volatility.json
 wgs84 41.8781 -87.6298
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_fear_gauge_vix
@@ -358,7 +358,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_fear_gauge_vix_prev
 source biosphere_etf_world_all_country
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_world_all_country.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_world_acwi_price
@@ -367,7 +367,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_world_acwi_prev_close
 source biosphere_etf_world_developed
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/URTH?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_world_developed.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_world_developed_price
@@ -443,7 +443,7 @@ count data.monitors.0.lines biosphere_transport_lines_vienna
 source biosphere_yahoo_finance_markets
 ttl 60
 force em
-url https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_yahoo_finance_markets.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_stock_price
@@ -13187,56 +13187,56 @@ field attributes.COUNTRY country
 source arxiv_astro_total
 ttl 86400
 force em
-url http://export.arxiv.org/api/query?search_query=cat:astro-ph.*&max_results=0
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_astro_total.json
 wgs84 40.712 -74.006
 field feed.totalResults exosphere_arxiv_astro_papers_total
 
 source arxiv_cs_total
 ttl 86400
 force em
-url http://export.arxiv.org/api/query?search_query=cat:cs.*&max_results=0
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_cs_total.json
 wgs84 40.712 -74.006
 field feed.totalResults biosphere_arxiv_cs_papers_total
 
 source arxiv_hep_total
 ttl 86400
 force em
-url http://export.arxiv.org/api/query?search_query=cat:hep-*&max_results=0
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_hep_total.json
 wgs84 40.712 -74.006
 field feed.totalResults subatomic_arxiv_hep_papers_total
 
 source arxiv_math_total
 ttl 86400
 force em
-url http://export.arxiv.org/api/query?search_query=cat:math.*&max_results=0
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_math_total.json
 wgs84 40.712 -74.006
 field feed.totalResults physics_arxiv_math_papers_total
 
 source arxiv_physics_total
 ttl 86400
 force em
-url http://export.arxiv.org/api/query?search_query=cat:physics.*&max_results=0
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_physics_total.json
 wgs84 40.712 -74.006
 field feed.totalResults physics_arxiv_physics_papers_total
 
 source arxiv_qbio_total
 ttl 86400
 force em
-url http://export.arxiv.org/api/query?search_query=cat:q-bio.*&max_results=0
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qbio_total.json
 wgs84 40.712 -74.006
 field feed.totalResults biosphere_arxiv_qbio_papers_total
 
 source arxiv_qfin_total
 ttl 86400
 force em
-url http://export.arxiv.org/api/query?search_query=cat:q-fin.*&max_results=0
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qfin_total.json
 wgs84 40.712 -74.006
 field feed.totalResults biosphere_arxiv_qfin_papers_total
 
 source arxiv_stat_total
 ttl 86400
 force em
-url http://export.arxiv.org/api/query?search_query=cat:stat.*&max_results=0
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_stat_total.json
 wgs84 40.712 -74.006
 field feed.totalResults physics_arxiv_stat_papers_total
 
@@ -13335,7 +13335,7 @@ path numberMatched biosphere_ozone_measurement_total_count
 source biosphere_arxiv_total_papers
 ttl 86400
 force em
-url http://export.arxiv.org/api/query?search_query=*:*&max_results=1
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_arxiv_total_papers.json
 wgs84 42.3601 -71.0589
 xml_count totalResults biosphere_arxiv_papers_total
 
@@ -14197,6 +14197,7 @@ path outputs.hourly.0.WS10m energy_solar_wind_ms
 source eog_viirs_monthly_ntl_metadata
 ttl 86400
 force em
+wgs84 40.0 -105.0
 url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP46A2&page_size=200
 count feed.entry viirs_ntl_granule_count
 
@@ -16445,13 +16446,13 @@ field diameter estimated_diameter_km
 source kodiaq_quasar_absorbers
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zQSO,%22S%2FN%22+FROM+%22J/ApJ/852/22/sample%22
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_852_22_sample.json
 cmap data
 tau_key _dist_m
-ra_key 0
-dec_key 1
-z_key 2
-field_in 3 kodiaq_sn
+ra_key 8
+dec_key 9
+z_key 3
+field_in 5 kodiaq_sn
 
 source landsat_c2_l2
 ttl 86400
@@ -19612,105 +19613,105 @@ source orbit_celestrak_active
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_active.json
 count lines orbital_active_satellites_celestrak
 
 source orbit_celestrak_active_satellites
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_active_satellites.json
 count lines orbital_active_satellites_celestrak
 
 source orbit_celestrak_all_satellites
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_all_satellites.json
 count lines orbital_satellites_active_celestrak
 
 source orbit_celestrak_cubesats
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_cubesats.json
 count lines orbital_cubesats_celestrak
 
 source orbit_celestrak_debris
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_debris.json
 count lines orbital_debris_tracked_celestrak
 
 source orbit_celestrak_debris_analyst
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_debris_analyst.json
 count lines orbital_debris_tracked_celestrak
 
 source orbit_celestrak_engineering_sats
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=engineering&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_engineering_sats.json
 count lines orbital_engineering_sats_celestrak
 
 source orbit_celestrak_glonass
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=glonass-ops&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_glonass.json
 count lines orbital_glonass_satellites_celestrak
 
 source orbit_celestrak_gps
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_gps.json
 count lines orbital_gps_satellites_celestrak
 
 source orbit_celestrak_navigation_sats
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=gnss&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_navigation_sats.json
 count lines orbital_navigation_sats_celestrak
 
 source orbit_celestrak_oneweb
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=oneweb&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_oneweb.json
 count lines orbital_oneweb_satellites_celestrak
 
 source orbit_celestrak_science_sats
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_science_sats.json
 count lines orbital_science_sats_celestrak
 
 source orbit_celestrak_space_stations
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_space_stations.json
 count lines orbital_space_stations_celestrak
 
 source orbit_celestrak_starlink
 ttl 86400
 force em
 ssb
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_starlink.json
 count lines orbital_starlink_satellites_celestrak
 
 source orbit_celestrak_weather_sats
 ttl 86400
 force em
 ecliptic 1
-url https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=JSON
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_weather_sats.json
 count lines orbital_weather_sats_celestrak
 
 source orbit_trace_callisto
@@ -20020,13 +20021,13 @@ map .
 source pantheon_plus_sne
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zCMB,mBcorr+FROM+%22J/ApJ/938/110/table7%22
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_938_110_table7.json
 cmap data
 tau_key _dist_m
-ra_key 0
-dec_key 1
-z_key 2
-field_in 3 pantheon_mBcorr
+ra_key 23
+dec_key 24
+z_key 5
+field_in 7 pantheon_mBcorr
 
 source particle_physics_papers_total
 ttl 86400
@@ -20331,13 +20332,13 @@ field 2 last_modified
 source uhecr_auger_host_galaxies
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,DLum,Kmag+FROM+%22J/ApJ/935/170/table4%22
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_935_170_table4.json
 cmap data
 tau_key _dist_m
-ra_key 0
-dec_key 1
-dist_key 2 3.0857e22
-field_in 3 uhecr_host_kmag
+ra_key 5
+dec_key 6
+dist_key 9 3.0857e22
+field_in 11 uhecr_host_kmag
 
 source uniprot_proteins_total
 ttl 86400
@@ -20395,13 +20396,13 @@ field_in 3 dm
 source universe_frb_catalog_pasa
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,DM+FROM+%22J/other/PASA/33.45/frbcat%22
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_other_PASA_33.45_frbcat.json
 cmap data
 tau_key _dist_m
-ra_key 1
-dec_key 2
-field_in 0 frb_name
-field_in 3 dm
+ra_key 10
+dec_key 11
+field_in 1 frb_name
+field_in 23 dm
 
 source universe_gaia_astrometric_binaries
 ttl 86400
@@ -20762,7 +20763,7 @@ field Qflg quality_flag
 source vizier_2qz_qso
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RAJ2000,DEJ2000,z1,bJmag,2QZ+FROM+"VII/241/2qz"+WHERE+RAJ2000+IS+NOT+NULL+AND+z1>0+ORDER+BY+z1+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/VII_241_2qz.json
 format text
 rows
 ra_key RAJ2000
@@ -20987,7 +20988,7 @@ field Name lens_name
 source vizier_dla_sdss
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+_RA,_DE,zabs,NHI,QSO,SimbadName+FROM+"J/ApJ/800/7/dla"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+NHI+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_800_7_dla.json
 format text
 rows
 ra_key _RA
@@ -21162,7 +21163,7 @@ field Fpwide peak_flux_mJy_beam
 source vizier_green_snr_catalog
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+304+SNR,GLON,GLAT,Dmaj,Dmin,S1GHz,alpha,Type+FROM+"VII/278/snrs"+WHERE+GLON+IS+NOT+NULL+ORDER+BY+S1GHz+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/VII_278_snrs.json
 format text
 rows
 ra_key GLON
@@ -21262,7 +21263,7 @@ pmdec_key pmDE
 source vizier_iphas_halpha_emitters
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+IPHAS,RAJ2000,DEJ2000,r%27mag,e_r%27mag,r%27-i,r%27-Ha,Flag+FROM+%22J/MNRAS/384/1277/emitters%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+r%27-Ha+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_MNRAS_384_1277_emitters.json
 format text
 rows
 ra_key RAJ2000
@@ -21317,7 +21318,7 @@ dist_key d
 source vizier_mojave_15ghz
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,z,Vmag,S15GHz,STot,SPeak,PTot,EVPA+FROM+%22J/AJ/130/1389/mojave%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+z+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AJ_130_1389_mojave.json
 format text
 rows
 ra_key RAJ2000
@@ -21424,7 +21425,7 @@ field MajAxis major_axis_arcsec
 source vizier_orion_region_catalog
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Reg,RAJ2000,DEJ2000,Dist,SimbadName+FROM+%22J/ApJS/229/28/table1%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Dist+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJS_229_28_table1.json
 format text
 rows
 ra_key RAJ2000
@@ -21478,7 +21479,7 @@ field ymag y_mag
 source vizier_planck_psz2_clusters
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,SNR,z,Val,MSZ,Y5R500,MCXC+FROM+%22J/A%2BA/594/A27/psz2%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SNR+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AplusA_594_A27_psz2.json
 format text
 rows
 ra_key RAJ2000
@@ -21569,7 +21570,7 @@ field imag i_magnitude
 source vizier_sl2s_lenses
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,imag,zphot,zd,zs,qflag+FROM+"J/ApJ/785/144/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+zphot+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_785_144_table1.json
 format text
 rows
 ra_key RAJ2000
@@ -21581,7 +21582,7 @@ field zd deflector_redshift
 source vizier_slacs_lenses
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+_RA,_DE,zL,zS,Sigma,Imag,Class+FROM+"J/ApJ/851/48/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+zL+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_851_48_table1.json
 format text
 rows
 ra_key _RA
@@ -21593,7 +21594,7 @@ field Sigma velocity_dispersion_kms
 source vizier_sstar_orbits
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+_RA,_DE,Star,a,e,i,Omega,w,Tp,Per+FROM+"J/ApJ/837/30/table3"+WHERE+_RA+IS+NOT+NULL
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_837_30_table3.json
 format text
 rows
 ra_key _RA
