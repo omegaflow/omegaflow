@@ -2122,6 +2122,10 @@ fn fetch_one(
     let max_t = (((ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(120);
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
+        .arg("-L")
+        .arg("--retry")
+        .arg("3")
+        .arg("--remove-on-error")
         .arg("-m")
         .arg(max_t.to_string())
         .arg("--connect-timeout")
