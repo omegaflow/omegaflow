@@ -11272,6 +11272,69 @@ format erddap
 last_row wind_speed hydrosphere_buoy_wind_speed_ms
 last_row wind_gust hydrosphere_buoy_wind_gust_ms
 
+source hydrosphere_neracoos_a01_surface_current
+ttl 3600
+force advective
+url https://data.neracoos.org/erddap/tabledap/A01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+wgs84 42.523 -70.566
+format erddap
+last_row current_speed hydrosphere_buoy_current_speed_cms
+last_row current_direction hydrosphere_buoy_current_dir_deg
+
+source hydrosphere_neracoos_b01_surface_current
+ttl 3600
+force advective
+url https://data.neracoos.org/erddap/tabledap/B01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+wgs84 43.179 -70.427
+format erddap
+last_row current_speed hydrosphere_buoy_current_speed_cms
+last_row current_direction hydrosphere_buoy_current_dir_deg
+
+source hydrosphere_neracoos_e01_surface_current
+ttl 3600
+force advective
+url https://data.neracoos.org/erddap/tabledap/E01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+wgs84 43.715 -69.358
+format erddap
+last_row current_speed hydrosphere_buoy_current_speed_cms
+last_row current_direction hydrosphere_buoy_current_dir_deg
+
+source hydrosphere_neracoos_f01_surface_current
+ttl 3600
+force advective
+url https://data.neracoos.org/erddap/tabledap/F01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+wgs84 44.055 -68.998
+format erddap
+last_row current_speed hydrosphere_buoy_current_speed_cms
+last_row current_direction hydrosphere_buoy_current_dir_deg
+
+source hydrosphere_neracoos_i01_surface_current
+ttl 3600
+force advective
+url https://data.neracoos.org/erddap/tabledap/I01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+wgs84 44.102 -68.113
+format erddap
+last_row current_speed hydrosphere_buoy_current_speed_cms
+last_row current_direction hydrosphere_buoy_current_dir_deg
+
+source hydrosphere_neracoos_m01_surface_current
+ttl 3600
+force advective
+url https://data.neracoos.org/erddap/tabledap/M01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+wgs84 43.491 -67.880
+format erddap
+last_row current_speed hydrosphere_buoy_current_speed_cms
+last_row current_direction hydrosphere_buoy_current_dir_deg
+
+source hydrosphere_neracoos_n01_surface_current
+ttl 3600
+force advective
+url https://data.neracoos.org/erddap/tabledap/N01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+wgs84 42.330 -65.914
+format erddap
+last_row current_speed hydrosphere_buoy_current_speed_cms
+last_row current_direction hydrosphere_buoy_current_dir_deg
+
 source hydrosphere_neracoos_b01_met_temp
 ttl 3600
 force thermal
