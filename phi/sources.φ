@@ -6627,11 +6627,10 @@ last_row WTMP hydrosphere_buoy_64046_water_temp
 source hydrosphere_pegelonline_de
 ttl 300
 force gravity
-url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeCurrentMeasurement=true
-map .
-lat_key Latitude
-lon_key Longitude
-field_in timeseries.0.currentMeasurement.value hydrosphere_water_level_cm
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/b475386c-30cc-453a-b3b7-1d17ace13595/W/measurements.json?start=P1D
+wgs84 52.622706 10.062164
+format json
+last value hydrosphere_water_level_cm
 
 source hydrosphere_tide_1611400
 ttl 300
@@ -11441,8 +11440,13 @@ first river_discharge hydrosphere_river_discharge_m3s
 source hydrosphere_pegelonline_water_level
 ttl 3600
 force gravity
-url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
-field 0.water.currentMeasurement.value hydrosphere_water_level_cm
+url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50
+format json
+map .
+lat_key latitude
+lon_key longitude
+field shortname hydrosphere_pegelonline_station
+field number hydrosphere_pegelonline_number
 
 source icos_carbon_portal_co2_station_data
 ttl 3600
@@ -27271,13 +27275,14 @@ field_in 17 water_temp_c
 source hydrosphere_pegelonline_all_stations
 ttl 1800
 force advective
-url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeTimeseries=true&includeCurrentMeasurement=true
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json
 format json
-map features
+map .
 lat_key latitude
 lon_key longitude
-field_in shortname hydrosphere_pegelonline_station
-field_in water hydrosphere_pegelonline_water_level_cm
+field shortname hydrosphere_pegelonline_station
+field number hydrosphere_pegelonline_number
+field water.shortname hydrosphere_pegelonline_water
 
 source exosphere_cmems_currents
 ttl 21600
