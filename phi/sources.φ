@@ -22193,6 +22193,20 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag astro_gaia_bright_vmag9_phot_g_mean_mag
 
+source astro_gaia_wide_parallax4_mag11
+ttl 604800
+force em gravity
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_wide_parallax4_mag11.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_wide_phgm
+field_in bp_rp astro_gaia_wide_bprp
+field_in ruwe astro_gaia_wide_ruwe
+field_in mh_gspphot astro_gaia_wide_mh
+
 source astro_gaia_giants
 ttl 604800
 force em gravity
