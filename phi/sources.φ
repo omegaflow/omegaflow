@@ -1194,10 +1194,16 @@ field generated hydrosphere_rain_radar_generated_time
 source atmosphere_waqi_air_quality
 ttl 300
 force diffusion
-url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
-field data.aqi atmosphere_aqi
-field data.pm25 atmosphere_pm25_ugm3
-field data.pm10 atmosphere_pm10_ugm3
+url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_air_quality.json
+format json
+map .
+lat_key lat
+lon_key lon
+field aqi atmosphere_aqi
+field pm25 atmosphere_pm25_ugm3
+field pm10 atmosphere_pm10_ugm3
+field no2 atmosphere_no2_ugm3
+field city atmosphere_waqi_city
 
 source biosphere_energy_charts_renewable
 ttl 300
@@ -27570,13 +27576,4 @@ field bright_ti4 fire_brightness_k
 field bright_ti5 fire_brightness_ti5_k
 field frp fire_radiative_power_mw
 field confidence fire_confidence
-
-source hydrosphere_cmems_oxygen_global
-ttl 86400
-force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmems_oxygen.json
-map .
-lat_key latitude
-lon_key longitude
-field o2 ocean_oxygen_mmol_m3
 

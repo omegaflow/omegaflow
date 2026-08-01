@@ -27,12 +27,12 @@ jobs:
             echo "::notice::eBird skipped (no EBIRD_API_KEY)"
             exit 0
           fi
-          points=("-3.5 -62.0" "2.0 113.0" "0.0 25.0" "38.9 -77.0" "52.0 13.4" "-25.0 135.0" "0.0 0.0")
+          points=("52.5 13.4" "51.5 -0.1" "48.9 2.35" "40.7 -74.0" "37.7 -122.4" "49.3 -123.1" "-3.1 -60.0" "-0.2 -78.5" "-1.3 36.8" "-33.9 18.4" "6.5 3.4" "1.35 103.8" "28.6 77.2" "35.7 139.7" "22.3 114.2" "-33.9 151.2" "-36.85 174.76")
           i=0
           for pt in "${points[@]}"; do
             read -r la lo <<< "$pt"
             curl -s --fail -H "X-eBirdApiToken: $EBIRD_API_KEY" \
-              "https://api.ebird.org/v2/data/obs/geo/recent?lat=${la}&lng=${lo}&dist=500&back=1&maxResults=500" \
+              "https://api.ebird.org/v2/data/obs/geo/recent?lat=${la}&lng=${lo}&dist=50&back=1&maxResults=500" \
               -o "data/ebird_${i}.json" || true
             i=$((i + 1))
           done
@@ -55,13 +55,15 @@ jobs:
             echo "::notice::OpenAQ skipped (no OPENAQ_API_KEY)"
             exit 0
           fi
-          for p in pm25 pm10; do
+          for spec in "2:pm25" "1:pm10"; do
+            pid="${spec%%:*}"
+            pname="${spec##*:}"
             curl -s --fail -H "X-API-Key: $OPENAQ_API_KEY" \
-              "https://api.openaq.org/v3/parameters/${p}/latest?limit=1000" \
+              "https://api.openaq.org/v3/parameters/${pid}/latest?limit=1000" \
               -o "data/openaq_tmp.json" && \
               jq '[.results[] | select(.value != null and .coordinates != null)
-                | {lat: .coordinates.latitude, lon: .coordinates.longitude, value, lastUpdated}]' \
-                data/openaq_tmp.json > "data/openaq_${p}.json" || true
+                | {lat: .coordinates.latitude, lon: .coordinates.longitude, value, lastUpdated: .datetime.utc}]' \
+                data/openaq_tmp.json > "data/openaq_${pname}.json" || true
           done
           rm -f data/openaq_tmp.json
 
@@ -74,29 +76,11 @@ jobs:
             exit 0
           fi
           curl -s --fail \
-            "https://firms.modaps.eosdis.nasa.gov/api/country/csv/${FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1" \
+            "https://firms.modaps.eosdis.nasa.gov/api/area/csv/${FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1" \
             -o data/firms_viirs_nrt_world.csv || true
           curl -s --fail \
-            "https://firms.modaps.eosdis.nasa.gov/api/country/csv/${FIRMS_MAP_KEY}/MODIS_NRT/world/1" \
+            "https://firms.modaps.eosdis.nasa.gov/api/area/csv/${FIRMS_MAP_KEY}/MODIS_NRT/world/1" \
             -o data/firms_modis_nrt_world.csv || true
-
-      - name: CMEMS
-        env:
-          CMEMS_USER: ${{ secrets.CMEMS_USER }}
-          CMEMS_PASS: ${{ secrets.CMEMS_PASS }}
-        run: |
-          if [ -z "$CMEMS_USER" ] || [ -z "$CMEMS_PASS" ]; then
-            echo "::notice::CMEMS skipped (no CMEMS_USER/CMEMS_PASS)"
-            exit 0
-          fi
-          curl -s --fail -u "$CMEMS_USER:$CMEMS_PASS" \
-            "https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D" \
-            | tail -n +3 \
-            | jq -R 'split(",") | select(length >= 4)
-              | {latitude: (.[1] | gsub("\"";"") | tonumber),
-                 longitude: (.[2] | gsub("\"";"") | tonumber),
-                 o2: (.[3] | gsub("\"";"") | tonumber?)}' \
-            | jq -s 'map(select(.o2 != null))' > data/cmems_oxygen.json || true
 
       - name: Earthdata CMR granules
         env:
@@ -111,6 +95,29 @@ jobs:
               "https://cmr.earthdata.nasa.gov/search/granules.json?short_name=${sn}&page_size=2000&sort_key=-start_date" \
               -o "data/cmr_${sn}.json" || true
           done
+
+      - name: WAQI air quality
+        env:
+          WAQI_TOKEN: ${{ secrets.WAQI_TOKEN }}
+        run: |
+          if [ -z "$WAQI_TOKEN" ]; then
+            echo "::notice::WAQI skipped (no WAQI_TOKEN)"
+            exit 0
+          fi
+          cities=("Berlin,52.52,13.405" "Paris,48.8566,2.3522" "London,51.5074,-0.1278" "New York,40.7128,-74.006" "Tokyo,35.6762,139.6503" "Sydney,-33.8688,151.2093" "Delhi,28.6139,77.209" "São Paulo,-23.5505,-46.6333" "Beijing,39.9042,116.4074" "Lagos,6.5244,3.3792")
+          : > data/waqi_air_quality.json
+          for c in "${cities[@]}"; do
+            IFS=',' read -r name lat lon <<< "$c"
+            curl -s --fail "https://api.waqi.info/feed/geo:${lat};${lon}/?token=${WAQI_TOKEN}" \
+              -o "data/waqi_tmp.json" && \
+              jq -c --arg nm "$name" --arg la "$lat" --arg lo "$lon" \
+                '[.data | {lat: ($la|tonumber), lon: ($lo|tonumber), city: $nm,
+                  aqi: (.aqi // null), pm25: (.iaqi.pm25.v // null), pm10: (.iaqi.pm10.v // null),
+                  no2: (.iaqi.no2.v // null), o3: (.iaqi.o3.v // null)}] | .[0]' \
+                data/waqi_tmp.json >> data/waqi_air_quality.json || true
+          done
+          jq -s 'map(select(.aqi != null))' data/waqi_air_quality.json > data/waqi_final.json && mv data/waqi_final.json data/waqi_air_quality.json
+          rm -f data/waqi_tmp.json
 
       - name: Publish Release
         run: |
