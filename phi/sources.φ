@@ -6226,7 +6226,7 @@ extent 1.34e-8
 source eris_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_eris.json
 ephemeris orbital_eris_distance
 extent 7.77e-6
 
@@ -6430,7 +6430,7 @@ last dst exosphere_dst_nt
 source exosphere_interstellar_object_tracking
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_interstellar_3i.json
 ephemeris cosmic_interstellar_object_distance
 
 source exosphere_kp_index
@@ -6844,7 +6844,7 @@ field created created_utc
 source haumea_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_haumea.json
 ephemeris orbital_haumea_distance
 extent 5.45e-6
 
@@ -7268,7 +7268,7 @@ field_in mag_class magnetosphere_mag_class
 source makemake_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_makemake.json
 ephemeris orbital_makemake_distance
 extent 4.78e-6
 
@@ -11826,7 +11826,7 @@ field epoch approach_time_jd
 source jpl_horizons_apophis_elements
 ttl 86400
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/elements_apophis.json
 wgs84 0.0 0.0
 format text
 rows
@@ -11856,7 +11856,7 @@ field 6 vz_au_day
 source jpl_horizons_jupiter_observer
 ttl 86400
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/observer_jupiter.json
 wgs84 0.0 0.0
 format text
 rows
@@ -11869,7 +11869,7 @@ field 4 solar_distance_au
 source jpl_horizons_mars_observer
 ttl 86400
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/observer_mars.json
 wgs84 0.0 0.0
 format text
 rows
@@ -11882,7 +11882,7 @@ field 4 solar_distance_au
 source jpl_horizons_saturn_observer
 ttl 86400
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/observer_saturn.json
 wgs84 0.0 0.0
 format text
 rows
@@ -15257,139 +15257,139 @@ count lines orbital_weather_sats_celestrak
 source orbit_trace_callisto
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27504%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_callisto.json
 vectors orbital_callisto_rg
 
 source orbit_trace_ceres
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_ceres.json
 vectors orbital_ceres_rg
 
 source orbit_trace_earth
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_earth.json
 vectors orbital_earth_rg
 
 source orbit_trace_enceladus
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_enceladus.json
 vectors orbital_enceladus_rg
 
 source orbit_trace_eris
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_eris.json
 vectors orbital_eris_rg
 
 source orbit_trace_europa
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_europa.json
 vectors orbital_europa_rg
 
 source orbit_trace_ganymede
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_ganymede.json
 vectors orbital_ganymede_rg
 
 source orbit_trace_haumea
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_haumea.json
 vectors orbital_haumea_rg
 
 source orbit_trace_io
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27501%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_io.json
 vectors orbital_io_rg
 
 source orbit_trace_jupiter
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_jupiter.json
 vectors orbital_jupiter_rg
 
 source orbit_trace_makemake
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_makemake.json
 vectors orbital_makemake_rg
 
 source orbit_trace_mars
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_mars.json
 vectors orbital_mars_rg
 
 source orbit_trace_mercury
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_mercury.json
 vectors orbital_mercury_rg
 
 source orbit_trace_moon
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_moon.json
 vectors orbital_moon_rg
 
 source orbit_trace_neptune
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_neptune.json
 vectors orbital_neptune_rg
 
 source orbit_trace_pluto
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27999%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_pluto.json
 vectors orbital_pluto_rg
 
 source orbit_trace_saturn
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27699%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_saturn.json
 vectors orbital_saturn_rg
 
 source orbit_trace_sun
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_sun.json
 vectors orbital_sun_rg
 
 source orbit_trace_titan
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27606%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_titan.json
 vectors orbital_titan_rg
 
 source orbit_trace_triton
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_triton.json
 vectors orbital_triton_rg
 
 source orbit_trace_uranus
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27799%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_uranus.json
 vectors orbital_uranus_rg
 
 source orbit_trace_venus
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27299%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_venus.json
 vectors orbital_venus_rg
 
 source orbit_trace_vesta
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_vesta.json
 vectors orbital_vesta_rg
 
 source orbital_apophis_vectors
@@ -15428,7 +15428,7 @@ source orbital_earth_mass
 ttl 86400
 force em
 ecliptic 1
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=399&OBJ_DATA=YES
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_earth.json
 regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
 
 source orbital_jpl_atmospheric_fireballs
@@ -15442,35 +15442,35 @@ source orbital_jupiter_mass
 ttl 86400
 force em
 ecliptic 5.2
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=599&OBJ_DATA=YES
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_jupiter.json
 regex \(kg\).\W*([0-9.]+) orbital_jupiter_mass_x10_24_kg
 
 source orbital_mars_mass
 ttl 86400
 force em
 ecliptic 1.5
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=499&OBJ_DATA=YES
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_mars.json
 regex \(kg\).\W*([0-9.]+) orbital_mars_mass_x10_24_kg
 
 source orbital_mercury_mass
 ttl 86400
 force em
 ecliptic 0.4
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=199&OBJ_DATA=YES
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_mercury.json
 regex \(kg\).\W*([0-9.]+) orbital_mercury_mass_x10_24_kg
 
 source orbital_neptune_mass
 ttl 86400
 force em
 ecliptic 30.0
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=899&OBJ_DATA=YES
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_neptune.json
 regex \(kg\).\W*([0-9.]+) orbital_neptune_mass_x10_24_kg
 
 source orbital_saturn_mass
 ttl 86400
 force em
 ecliptic 9.6
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=699&OBJ_DATA=YES
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_saturn.json
 regex \(kg\).\W*([0-9.]+) orbital_saturn_mass_x10_24_kg
 
 source orbital_sentry_objects
@@ -15484,14 +15484,14 @@ source orbital_uranus_mass
 ttl 86400
 force em
 ecliptic 19.2
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=799&OBJ_DATA=YES
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_uranus.json
 regex \(kg\).\W*([0-9.]+) orbital_uranus_mass_x10_24_kg
 
 source orbital_venus_mass
 ttl 86400
 force em
 ecliptic 0.7
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=299&OBJ_DATA=YES
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_venus.json
 regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg
 
 source orfeus_eida_stations_europe
