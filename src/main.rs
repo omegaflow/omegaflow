@@ -5160,7 +5160,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         .force
                         .split_whitespace()
                         .filter_map(|f| force_constants(f).map(|c| (force_extent(f), c.3)))
-                        .max_by_key(|(e, _)| (*e as i64))
+                        .max_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal))
                         .unwrap_or((0.0, 0));
                     (i, -fx, fi)
                 })
@@ -5422,8 +5422,6 @@ fn warm_cache(archive: Arc<Archive>) {
         indexed.sort_by_key(|&(_, p)| p);
         let tasks: Vec<_> = indexed.into_iter().map(|(t, _)| t).collect();
 
-        let mut new_samples: Vec<Sample> = Vec::new();
-        let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
         let chunk_size = {
             let fd = std::process::Command::new("sh")
                 .arg("-c")
