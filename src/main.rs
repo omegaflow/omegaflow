@@ -2654,8 +2654,8 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 } else {
                     None
                 };
-                sense_buffer(&field, center, t0, extent, &mut records, frustum);
-                sense_buffer(&station_buf, center, t0, extent, &mut records, frustum);
+                sense_buffer(&field, center, t0, extent, &mut records, None);
+                sense_buffer(&station_buf, center, t0, extent, &mut records, None);
             }
 
             let mut out = Vec::with_capacity(11 + records.len() * 72);
