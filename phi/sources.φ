@@ -23313,3 +23313,59 @@ catalog I/355/gaiadr3
 map data
 lat_key RAJ2000
 lon_key DEJ2000
+source hydrosphere_cmems_sst_global
+ttl 21600
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/CMEMS_SST_GLO_SST_L4_REP_OBSERVATIONS_010_011_monthly.csv?analysed_sst%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format csv
+rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_cmems_sst_k
+
+source hydrosphere_cmems_heat_content_700m
+ttl 21600
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1M-m.csv?thetao%5Blast%5D%5B0%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format csv
+rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_cmems_ocean_temp_c
+
+source hydrosphere_cmems_mixed_layer_depth
+ttl 21600
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1M-m.csv?mlotst%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format csv
+rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_cmems_mlotst_m
+
+source atmosphere_aeronet_aod_full
+ttl 10800
+force thermal
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
+format csv
+rows
+lat_key 1
+lon_key 2
+field_in 7 atmosphere_aeronet_aod_500nm
+
+source ndbc_all_buoys
+ttl 600
+force acoustic
+url https://www.ndbc.noaa.gov/data/latest_obs/all_stations.txt
+format text
+rows
+lat_key 5
+lon_key 6
+field_in 0 station_id
+field_in 8 wind_dir_deg
+field_in 9 wind_speed_ms
+field_in 10 gust_ms
+field_in 11 wave_height_m
+field_in 12 dominant_period_s
+field_in 14 pressure_hpa
+field_in 17 water_temp_c
