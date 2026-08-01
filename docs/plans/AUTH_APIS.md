@@ -19,19 +19,28 @@ Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben 
 1. **Lokal**: `.secrets.local` (gitignored) — Platzhalter für alle unten gelisteten Secrets
 2. **GitHub Actions**: `Settings → Secrets and variables → Actions` (Workflow `refresh-protected-data.yml`)
 
-### ✅ Bereits besorgt (12 — lokal vorhanden)
-
+### ✅ Bereits besorgt (7 — im Workflow aktiv, legal redistributable)
+ 
 | GitHub-Secret | Lokal (`.secrets.local`) | API | Registrierung |
 |---|---|---|---|
-| `EBIRD_API_KEY` | ✅ | eBird | https://ebird.org/api/keygen |
-| `OPENAQ_API_KEY` | ✅ | OpenAQ | https://explore.openaq.org/register |
-| `FIRMS_MAP_KEY` | ✅ | FIRMS Feuer | https://firms.modaps.eosdis.nasa.gov/api/area/ |
-| `EARTHDATA_EDL_TOKEN` | ✅ | NASA Earthdata | https://urs.earthdata.nasa.gov → Profil → Generate Token |
-| `CMEMS_USER`/`CMEMS_PASS` | ✅ | Copernicus Marine | https://data.marine.copernicus.eu/register |
-| `WAQI_TOKEN` | ✅ | WAQI Luft | https://aqicn.org/data-platform/token/ |
-| `USGS_WATER_KEY` | ✅ | USGS Water | https://api.waterdata.usgs.gov/ogcapi/ |
-| `GBIF_USER`/`GBIF_PASS` | ✅ | GBIF | https://www.gbif.org/user/profile |
+| `EBIRD_API_KEY` | ✅ | eBird (CC-BY-NC) | https://ebird.org/api/keygen |
+| `OPENAQ_API_KEY` | ✅ | OpenAQ (Open Data) | https://explore.openaq.org/register |
+| `FIRMS_MAP_KEY` | ✅ | FIRMS Feuer (Public Domain) | https://firms.modaps.eosdis.nasa.gov/api/area/ |
+| `EARTHDATA_EDL_TOKEN` | ✅ | NASA Earthdata (PD) | https://urs.earthdata.nasa.gov → Profil → Generate Token |
+| `USGS_WATER_KEY` | ✅ | USGS Water (PD) | https://api.waterdata.usgs.gov/ogcapi/ |
+| `GBIF_USER`/`GBIF_PASS` | ✅ | GBIF (CC-BY-NC) | https://www.gbif.org/user/profile |
 | `CATALOGS_REPO`/`CATALOGS_TOKEN` | ✅ | Publish-Ziel | PAT mit Contents-write |
+
+### ❌ Entfernt (4 — ToS verbieten Redistribution via CDN)
+ 
+| GitHub-Secret | API | Ersatz |
+|---|---|---|
+| `WAQI_TOKEN` | WAQI (aqicn.org) | OpenAQ (PM2.5/PM10, Open Data) |
+| `OWM_API_KEY` | OpenWeatherMap | Open-Meteo (keyless) |
+| `ALPHAVANTAGE_KEY` | AlphaVantage | — (kein Äquivalent nötig) |
+| `FRED_API_KEY` | FRED St. Louis Fed | — (kein Äquivalent nötig) |
+
+CMEMS_USER/CMEMS_PASS entfernt: ERDDAP retired — Quellen auf NOAA/EMODnet umgestellt.
 
 ### ❌ Noch zu besorgen (25 — Platzhalter in `.secrets.local`)
 
@@ -84,7 +93,7 @@ Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben 
 | **Global Fishing Watch** | `globalfishingwatch.org/our-apis/` | Token | frei | Advective | fehlt | https://globalfishingwatch.org/our-apis/ |
 | **Copernicus CDS/ADS** | `cds.climate.copernicus.eu/api` | CDS-Key | frei | Thermal | fehlt (ERA5) | https://cds.climate.copernicus.eu/user/register |
 | **JSOC Sonne** | `jsoc.stanford.edu` | Registrierung | frei | EM/Thermal | fehlt (HMI) | https://jsoc.stanford.edu/ajax/register_account.html |
-| **OpenWeatherMap Lightning** | `api.openweathermap.org/data/2.5/` | Key | frei-begrenzt | Acoustic | erweitert | https://home.openweathermap.org/users/sign_up |
+| **Open-Meteo** | `api.open-meteo.com` | Keyless | frei | Acoustic/Thermal | schon da (ersetzt OWM) | — |
 | **SAWS Südafrika** | `api.weathersa.co.za` | Registrierung | frei | Thermal | fehlt | https://api.weathersa.co.za/ |
 | **NOAA NCDC/CDO** | `www.ncdc.noaa.gov/cdo-web/api/v2/` | Token | frei | Thermal | fehlt | https://www.ncdc.noaa.gov/cdo-web/token |
 | **NASA NEO Asteroids** | `api.nasa.gov/neo/rest/v1/` | Key | frei | Gravity | erweitert | https://api.nasa.gov/ (auch: https://api.nasa.gov/#signUp) |
