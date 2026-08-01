@@ -9225,8 +9225,12 @@ format text
 rows
 lat_key Site_Latitude(Degrees)
 lon_key Site_Longitude(Degrees)
+field AOD_340nm aod_340nm
 field AOD_440nm aod_440nm
 field AOD_500nm aod_500nm
+field AOD_675nm aod_675nm
+field AOD_870nm aod_870nm
+field AOD_1020nm aod_1020nm
 field Angstrom_Exponent_440-870nm angstrom_440_870
 
 source aeronet_aod_north_america
@@ -9605,9 +9609,14 @@ format text
 rows
 lat_key Site_Latitude(Degrees)
 lon_key Site_Longitude(Degrees)
+field AOD_340nm aod_340nm
+field AOD_380nm aod_380nm
 field AOD_440nm aod_440nm
 field AOD_500nm aod_500nm
+field AOD_675nm aod_675nm
 field AOD_870nm aod_870nm
+field AOD_1020nm aod_1020nm
+field 440-870_Angstrom_Exponent angstrom_440_870
 
 source aeronet_inv3_refractive_index
 ttl 3600
