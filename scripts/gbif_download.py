@@ -86,8 +86,18 @@ def main():
         print(f"download {status}", file=sys.stderr)
         return 1
 
-    # 3) fetch zip
-    zipdata = http_req(f"{BASE}/{dlkey}.zip", "GET", None, ua)
+    # 3) fetch zip via downloadLink (redirect to CDN, urllib follows 302)
+    zipdata = b""
+    for attempt in range(30):
+        try:
+            zipdata = http_req(f"{BASE}/request/{dlkey}.zip", "GET", None, ua)
+            break
+        except urllib.error.HTTPError as e:
+            if e.code == 404 and attempt < 29:
+                print(f"zip not ready yet ({attempt + 1}), retrying...", file=sys.stderr)
+                time.sleep(10)
+            else:
+                raise
     with open("/tmp/gbif_download.zip", "wb") as f:
         f.write(zipdata)
 
