@@ -455,6 +455,7 @@ fn presence_probe() {
                 probeBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
                 probeRead = device.createBuffer({ size: 32, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
                 vpBuf = device.createBuffer({ size: 112, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+                depthTex = gpu.createTexture({ size: [fieldCanvas.width, fieldCanvas.height], format: 'depth24plus', usage: GPUTextureUsage.RENDER_ATTACHMENT });
                 gpu = device;
             } catch { gpu = null; }
         }
@@ -546,17 +547,13 @@ fn presence_probe() {
             const evalH = Math.floor(RY * dpr);
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
             const [fr, fu, ff] = orientationFrame();
-            if (!depthTex || depthTex.width !== fieldCanvas.width || depthTex.height !== fieldCanvas.height) {
-                if (depthTex) depthTex.destroy();
-                depthTex = gpu.createTexture({ size: [fieldCanvas.width, fieldCanvas.height], format: 'depth24plus', usage: GPUTextureUsage.RENDER_ATTACHMENT });
-            }
             const boost = Math.pow(2, exposureBoost);
             const lvls = new Float32Array(8);
             for (let i = 0; i < 8; i++) lvls[i] = Math.max(forceExposeF[i], Math.pow(2, -10)) / boost;
             try {
                 gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], 0, fu[0], fu[1], fu[2], 0, ff[0], ff[1], ff[2], 0, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], lvls[7], xPresence, yPresence, zPresence, tPresence]));
                 const encoder = gpu.createCommandEncoder();
-                const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
+                const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }], depthStencilAttachment: { view: depthTex.createView(), depthClearValue: 1.0, depthLoadOp: 'clear', depthStoreOp: 'store' } });
                 pass.setPipeline(fieldPipe);
                 pass.setBindGroup(0, fieldBind);
                 pass.draw(n * 6);
