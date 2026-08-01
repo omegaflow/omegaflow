@@ -170,7 +170,7 @@ jobs:
             exit 0
           fi
           : > /tmp/stations.tsv
-          for c in US CA MX BR AR UK GM FR IT SP JA CH IN AS SF EG NI KE ID RS AY; do
+          for c in US CA MX BR AR UK GM FR IT SP JA CH IN AS SF EG NI KE ID RS AY NO SW FI DA IC NL PL GR TU KS TH VM RP NZ EI PO; do
             curl -sS --fail --max-time 30 -H "token: $NOAA_CDO_TOKEN" \
               "https://www.ncei.noaa.gov/cdo-web/api/v2/stations?datasetid=GHCND&locationid=FIPS:${c}&sortfield=maxdate&sortorder=desc&limit=6" \
               | jq -r '.results[]? | [.id, (.name | gsub("\t";" ")), .latitude, .longitude, .maxdate] | @tsv'
