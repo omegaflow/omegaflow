@@ -249,6 +249,49 @@ jobs:
           jq -s 'add' data/av_part_*.json > data/alphavantage_markets.json || true
           rm -f data/av_part_*.json
 
+      - name: Mirror static files -> v1.0
+        run: |
+          echo "Mirroring third-party static files to v1.0 release"
+          # Download each file and upload to v1.0
+          declare -A MIRRORS=(
+            ["ne_10m_parks_area.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson"
+            ["ne_10m_parks_point.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson"
+            ["ne_110m_coastline.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_coastline.geojson"
+            ["ne_110m_boundaries.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson"
+            ["gem_active_faults.geojson"]="https://raw.githubusercontent.com/GEMScienceTools/gem-global-active-faults/master/geojson/gem_active_faults.geojson"
+            ["meteorites_tidy.csv"]="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv"
+            ["meteorites_nasa_all.csv"]="https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2019/2019-06-11/meteorites.csv"
+            ["ourairports_global.csv"]="https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv"
+            ["particle2026.csv"]="https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv"
+            ["nuclear_power_plants.csv"]="https://raw.githubusercontent.com/cristianst85/GeoNuclearData/master/data/csv/denormalized/reactors.csv"
+            ["earth_impact_craters.geojson"]="https://raw.githubusercontent.com/arijguest/3D-meteorite-viewer/main/earth-impact-craters-v2.geojson"
+            ["meteorite_strike_data.json"]="https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json"
+            ["ne_10m_populated_places.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places_simple.geojson"
+            ["ne_50m_glaciers.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_glaciated_areas.geojson"
+            ["ne_50m_lakes.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_lakes.geojson"
+            ["ne_110m_populated_places.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_populated_places.geojson"
+            ["ne_10m_rivers.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_lake_centerlines.geojson"
+            ["constellations_bounds.json"]="https://raw.githubusercontent.com/ofrohn/d3-celestial/master/data/constellations.bounds.json"
+            ["periodic_table.json"]="https://raw.githubusercontent.com/Bowserinator/Periodic-Table-JSON/master/PeriodicTableJSON.json"
+            ["jbrooksuk_airports.json"]="https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/master/airports.json"
+            ["power_plants_wri.csv"]="https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv"
+            ["gem_faults_harmonized.geojson"]="https://raw.githubusercontent.com/cossatot/gem-global-active-faults/master/geojson/gem_active_faults.geojson"
+            ["pb2002_boundaries.json"]="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
+            ["pb2002_orogens.json"]="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_orogens.json"
+            ["pb2002_plates.json"]="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json"
+          )
+          gh release create v1.0 --repo "$CATALOGS_REPO" --title "omegaflow catalogs v1.0" --notes "" 2>/dev/null || true
+          for fn in "${!MIRRORS[@]}"; do
+            url="${MIRRORS[$fn]}"
+            echo "  mirror: $fn <- $url"
+            if curl -sS --retry 2 --fail -o "data/mirror_$fn" "$url"; then
+              gh release upload v1.0 "data/mirror_$fn" --repo "$CATALOGS_REPO" --clobber
+              echo "    uploaded"
+            else
+              echo "::warning::mirror $fn failed"
+            fi
+          done
+
       - name: Publish Release
         run: |
           if [ -z "$GH_TOKEN" ]; then

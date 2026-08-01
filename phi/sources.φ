@@ -13765,7 +13765,7 @@ source biosphere_protected_lands_area
 ttl 86400
 force em
 ecliptic 1
-url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_10m_parks_area.geojson
 field_in scalerank biosphere_park_area_rank
 flatten features
 
@@ -13773,7 +13773,7 @@ source biosphere_protected_lands_point
 ttl 86400
 force em
 ecliptic 1
-url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_10m_parks_point.geojson
 field_in scalerank biosphere_park_rank
 flatten features
 
@@ -14203,7 +14203,7 @@ source earth_coastlines_110m
 ttl 86400
 force em
 ssb
-url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_coastline.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_110m_coastline.geojson
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -14213,7 +14213,7 @@ source earth_country_boundaries_110m
 ttl 86400
 force em
 ssb
-url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_110m_boundaries.geojson
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -14584,7 +14584,7 @@ field eventDate observation_date
 source gem_global_active_faults
 ttl 86400
 force seismic-surface
-url https://raw.githubusercontent.com/GEMScienceTools/gem-global-active-faults/master/geojson/gem_active_faults.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_gem_active_faults.geojson
 map features
 lat_key geometry.coordinates.0.0.1
 lon_key geometry.coordinates.0.0.0
@@ -18327,7 +18327,7 @@ field LastBurst last_outburst_year
 source meteorite_landings_tidy
 ttl 86400
 force gravity
-url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_meteorites_tidy.csv
 format text
 rows
 lat_key lat
@@ -18541,7 +18541,7 @@ field_in 1 soil_moisture_0_10cm_kgm2
 source nasa_meteorite_landings_all
 ttl 86400
 force gravity
-url https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2019/2019-06-11/meteorites.csv
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_meteorites_nasa_all.csv
 format text
 rows
 lat_key 7
@@ -20069,7 +20069,7 @@ field Elevation elevation_m
 source ourairports_global
 ttl 86400
 force em
-url https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ourairports_global.csv
 format csv
 rows
 pos airport_latitude airport_longitude
@@ -20346,7 +20346,7 @@ source subatomare_particles
 ttl 86400
 force em
 ssb
-url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_particle2026.csv
 format csv
 last_row ID subatomare_last_pdg_id
 last_row Mass subatomare_last_mass_mev
@@ -24125,7 +24125,7 @@ field Capacity geonuclear_capacity_mw
 source geosphere_earth_impact_craters
 ttl 604800
 force em
-url https://raw.githubusercontent.com/arijguest/3D-meteorite-viewer/main/earth-impact-craters-v2.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_earth_impact_craters.geojson
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -24134,7 +24134,7 @@ field_in properties.Name geosphere_crater_name
 source geosphere_nasa_meteorite_landings
 ttl 604800
 force em
-url https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_meteorite_strike_data.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -24144,7 +24144,7 @@ field_in properties.name geosphere_meteorite_name
 source geosphere_ne_10m_places
 ttl 604800
 force em
-url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places_simple.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_10m_populated_places.geojson
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -24154,7 +24154,7 @@ field_in properties.scalerank geosphere_place_rank
 source geosphere_ne_glaciers
 ttl 604800
 force em
-url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_glaciated_areas.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_50m_glaciers.geojson
 map features
 lat_key geometry.coordinates.0.0.1
 lon_key geometry.coordinates.0.0.0
@@ -24164,7 +24164,7 @@ field_in properties.scalerank geosphere_ne_glacier_rank
 source geosphere_ne_lakes
 ttl 604800
 force em
-url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_lakes.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_50m_lakes.geojson
 map features
 lat_key geometry.coordinates.0.0.1
 lon_key geometry.coordinates.0.0.0
@@ -24174,7 +24174,7 @@ field_in properties.scalerank geosphere_ne_lake_rank
 source geosphere_ne_places
 ttl 604800
 force em
-url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_populated_places.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_110m_populated_places.geojson
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -24230,7 +24230,7 @@ field hits.total subatomic_higgs_xsec_papers
 source hydrosphere_global_rivers
 ttl 604800
 force em
-url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_lake_centerlines.geojson
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_10m_rivers.geojson
 map features
 lat_key geometry.coordinates.0.1
 lon_key geometry.coordinates.0.0
@@ -24239,7 +24239,7 @@ field_in properties.name hydrosphere_river_name
 source iau_constellation_boundaries
 ttl 604800
 force em
-url https://raw.githubusercontent.com/ofrohn/d3-celestial/master/data/constellations.bounds.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_constellations_bounds.json
 celestial_polygon features
 radius 3.085677581e19
 field_in properties.rank cpoly_rank
@@ -24263,7 +24263,7 @@ lon_key dec
 source molecular_periodic_elements
 ttl 604800
 force em
-url https://raw.githubusercontent.com/Bowserinator/Periodic-Table-JSON/master/PeriodicTableJSON.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_periodic_table.json
 map elements
 field_in atomic_mass molecular_element_mass_u
 field_in density molecular_element_density_g_l
@@ -24693,7 +24693,7 @@ field pdg_values.0.value subatomic_z_boson_mass_gev
 source technosphere_global_airports
 ttl 604800
 force em
-url https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/master/airports.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_jbrooksuk_airports.json
 map .
 lat_key lat
 lon_key lon
@@ -25356,7 +25356,7 @@ field_in phot_g_mean_mag star_g_mag
 source wri_global_power_plants
 ttl 604800
 force thermal
-url https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_power_plants_wri.csv
 format csv
 map .
 lat_key latitude
@@ -27137,19 +27137,19 @@ flatten features
 source lithosphere_pb2002_boundaries
 ttl 2592000
 force em
-url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_pb2002_boundaries.json
 flatten features
 
 source lithosphere_pb2002_orogens
 ttl 2592000
 force em
-url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_orogens.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_pb2002_orogens.json
 flatten features
 
 source lithosphere_pb2002_plates
 ttl 2592000
 force em
-url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_pb2002_plates.json
 flatten features
 
 source ned
