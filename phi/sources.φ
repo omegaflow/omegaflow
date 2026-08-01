@@ -20819,7 +20819,7 @@ field totalResults biosphere_uspto_patents_total
 source viirs_lst_global
 ttl 86400
 force thermal
-url https://firms.modaps.eosdis.nasa.gov/api/country/csv/{nasa_key}/VIIRS_SNPP_NRT/USA
+url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_viirs_nrt_world.csv
 format text
 rows
 lat_key latitude
