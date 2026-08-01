@@ -7255,6 +7255,34 @@ dec_key dec
 field medianmag median_mag
 field magrms mag_variability_rms
 
+source cosmos_gaia_dr3_nearby
+ttl 86400
+force gravity
+url https://gaia.ari.uni-heidelberg.de/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+source_id,ra,dec,parallax,pmra,pmdec,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>20
+ssb
+format csv
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+pmra_key pmra
+pmdec_key pmdec
+field_in phot_g_mean_mag celestial_gaia_g_magnitude
+
+source cosmos_gaia_dr3_cone
+ttl 86400
+force gravity
+url https://gaia.ari.uni-heidelberg.de/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+source_id,ra,dec,parallax,pmra,pmdec,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+ssb
+format csv
+cmap data
+ra_key ra
+dec_key dec
+plx_key parallax
+pmra_key pmra
+pmdec_key pmdec
+field_in phot_g_mean_mag celestial_gaia_g_magnitude
+
 source isro_bhuvan_flood_india
 ttl 3600
 force diffusion
@@ -10042,7 +10070,7 @@ count lines exosphere_donki_sep_count_2024
 source exosphere_exoplanet_count
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+512+ra,dec,sy_dist,pl_eqt,pl_rade,pl_orbper,pl_bmasse+FROM+pscomppars+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 cmap .
 tau_key _dist_m
 ra_key ra
@@ -10063,7 +10091,7 @@ field 0.flux exosphere_f107_sfu
 source exosphere_hot_jupiters
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+256+ra,dec,sy_dist,pl_eqt,pl_orbper+FROM+pscomppars+WHERE+pl_orbper%3C1+AND+sy_dist+IS+NOT+NULL+ORDER+BY+pl_orbper+ASC&format=json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 cmap .
 tau_key _dist_m
 ra_key ra
@@ -14016,7 +14044,7 @@ field_in day_night_flag fire_day_night
 source nasa_exoplanet_atmospheres
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+2000+ra,dec,pl_name,pl_rade,pl_bmasse,pl_orbsmax,pl_eqt,st_teff,st_spectype,sy_distan+from+pscomppars+where+ra+is+not+null+and+pl_eqt+is+not+null+order+by+sy_distan+asc&format=json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 map .
 ra_key ra
 dec_key dec
@@ -14026,10 +14054,11 @@ field_in pl_eqt equilibrium_temp_k
 field_in st_teff host_star_temp_k
 dist_key sy_distan
 
+cmap data
 source nasa_exoplanet_confirmed
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 map .
 ra_key ra
 dec_key dec
@@ -14041,10 +14070,11 @@ field pl_eqt eq_temperature_k
 field disc_year discovery_year
 dist_key sy_dist
 
+cmap data
 source nasa_exoplanet_toi
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+toi,ra,dec,sy_dist,pl_orbper,pl_rade,tfopwg_disp+FROM+toi+WHERE+ra+IS+NOT+NULL+AND+tfopwg_disp+IN+(%27PC%27,%27KP%27,%27CP%27)+ORDER+BY+sy_dist+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 map .
 ra_key ra
 dec_key dec
@@ -14054,10 +14084,11 @@ field pl_rade radius_earth
 field tfopwg_disp disposition
 dist_key sy_dist
 
+cmap data
 source nasa_exoplanet_toi_catalog
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 map .
 lat_key ra
 lon_key dec
@@ -14069,6 +14100,7 @@ field pl_trandur transit_duration_hours
 field st_teff stellar_teff_K
 dist_key sy_dist
 
+cmap data
 source nasa_fermi_gamma_ray_sources_total
 ttl 86400
 force em
@@ -14155,7 +14187,7 @@ z_key 3
 source nasa_nexsci_direct_imaging_planets
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+200+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,st_mass,st_rad,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Imaging'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 format text
 rows
 ra_key ra
@@ -14169,10 +14201,11 @@ field st_mass host_star_mass_Msun
 field sy_dist distance_pc
 field disc_year discovery_year
 
+cmap data
 source nasa_nexsci_radial_velocity_planets
 ttl 86400
 force gravity
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+5000+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_rvamp,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Radial+Velocity'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 format text
 rows
 ra_key ra
@@ -14187,10 +14220,11 @@ field st_teff stellar_teff_K
 field sy_dist system_distance_pc
 field disc_year discovery_year
 
+cmap data
 source nasa_nexsci_transmission_spectroscopy
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+5000+pl_name,ra,dec,pl_radj,pl_bmassj,pl_trandep,pl_tranmid,pl_orbper,st_teff,st_rad,st_mass,sy_dist+FROM+ps+WHERE+pl_trandep+IS+NOT+NULL+AND+ra+IS+NOT+NULL+ORDER+BY+pl_trandep+DESC&FORMAT=csv
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 format text
 rows
 ra_key ra
@@ -14204,6 +14238,7 @@ field pl_orbper orbital_period_d
 field st_teff stellar_teff_K
 field sy_dist system_distance_pc
 
+cmap data
 source nasa_power_ag_climate_daily
 ttl 86400
 force thermal
@@ -15992,7 +16027,7 @@ field statistics.0.value molecular_proteins_total
 source universe_exoplanet_hosts
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,pl_name,sy_dist+FROM+ps+ORDER+BY+sy_dist&format=json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 cmap .
 tau_key _dist_m
 ra_key ra
@@ -16003,7 +16038,7 @@ dist_key 3 3.085677581e16
 source universe_exoplanet_params
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,sy_dist,pl_orbper,pl_rade+FROM+ps+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+sy_dist&format=json
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 cmap .
 tau_key _dist_m
 ra_key ra
