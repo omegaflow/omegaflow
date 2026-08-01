@@ -13819,32 +13819,30 @@ last_line exosphere_chime_frb_count
 source cmems_atlantic_currents
 ttl 86400
 force diffusion
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?uo%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D,vo%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
-field uo current_u_ms
-field vo current_v_ms
+field u_component_of_current current_u_ms
+field v_component_of_current current_v_ms
 
 source cmems_aviso_mesoscale_eddy_tracking
 ttl 86400
 force diffusion
-url https://nrt.cmems-du.eu/erddap/tabledap/cmems_obs_mob_glo_phy-cur_nrt_0.1deg-SSH-eddy-track_PT1H.csv?latitude,longitude,time,radius_e,amplitude,speed_radius,eddy_type&time>=2026-01-01T00:00:00Z&orderBy(%22time%22)
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN_DESEASONALIZED.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
-field time detection_time
-field radius_e eddy_effective_radius_km
-field amplitude ssh_amplitude_m
+field sla sea_level_anomaly_m
 field speed_radius rotation_speed_m_s
 field eddy_type cyclonic_anticyclonic
 
 source cmems_duacs_dt2024_sla_global_grid
 ttl 86400
 force gravity
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_my_multi-oi_P1D.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_TREND.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
 format text
 rows
 lat_key latitude
@@ -13854,28 +13852,27 @@ field sla sea_level_anomaly_m
 source cmems_global_ocean_oxygen
 ttl 86400
 force diffusion
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Salinity%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
-field o2 oxygen_mmol_m3
+field Salinity ocean_salinity_psu
 
 source cmems_global_sla_altimetry
 ttl 86400
 force acoustic
-url https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D,adt%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
 field sla sea_level_anomaly_m
-field adt absolute_dynamic_topography_m
 
 source cmems_global_sst_analysis
 ttl 86400
 force thermal
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-sst_l4_multi-oi_P1D.csv?sst%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?sst%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 format text
 rows
 lat_key latitude
@@ -13885,63 +13882,63 @@ field sst sea_surface_temp_c
 source cmems_glorys12_ocean_3d
 ttl 86400
 force thermal
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5B-1%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
-field thetao ocean_temp_c
+field Potential_temperature ocean_temp_k
 field so salinity_psu
 
 source cmems_glorys12_ocean_temperature_3d
 ttl 86400
 force thermal
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
-field thetao temperature_c
+field Potential_temperature temperature_k
 
 source cmems_indian_ocean_waves
 ttl 86400
 force acoustic
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_wav_anfc_0.083deg_PT3H-m.csv?vhm0%5Blast%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+url https://erddap.marine.ie/erddap/griddap/IMI_IRISH_SHELF_SWAN_WAVE.csv?significant_wave_height%5B(last)%5D%5B(-60.0):4:(60.0)%5D%5B(-20.0):4:(-5.0)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
-field vhm0 wave_height_m
+field significant_wave_height wave_height_m
 
 source cmems_sentinel3_chlorophyll_global
 ttl 86400
 force diffusion
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs_oc_glo_bgc-plankton_nrt_l3_chl_P1D-m.csv?chl%5Blast%5D%5B(-80.0):(80.0):4%5D%5B(-180.0):(180.0):4%5D
+url https://oceanwatch.pifsc.noaa.gov/erddap/griddap/noaa_snpp_chla_daily.csv?chlor_a%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
-field chl chlorophyll_mgm3
+field chlor_a chlorophyll_mgm3
 
 source cmems_sla_global_adt
 ttl 86400
 force gravity
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_my_multi-oi_P1D.csv?adt%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
-field adt absolute_dyn_top_m
+field sla absolute_dyn_top_m
 
 source cmems_sst_anomaly_global_l4
 ttl 86400
 force thermal
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-sst_l4_multi-oi_P1D.csv?sst_anom%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?anom%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
-field sst_anom sst_anomaly_c
+field anom sst_anomaly_c
 
 source cneos_fireballs_infrasound
 ttl 86400
@@ -14204,12 +14201,12 @@ count feed.entry viirs_ntl_granule_count
 source esa_cci_soil_moisture_erddap
 ttl 86400
 force diffusion
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_mynrt_l4_P1D-m.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?err%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 format text
 rows
 lat_key latitude
 lon_key longitude
-field sla sea_level_anomaly_m
+field err sea_level_anomaly_m
 
 url https://data.ceda.ac.uk/neodc/esacci/sst/data
 ttl 86400
@@ -27193,32 +27190,32 @@ lon_key DEJ2000
 source hydrosphere_cmems_sst_global
 ttl 21600
 force thermal
-url https://nrt.cmems-du.eu/erddap/griddap/CMEMS_SST_GLO_SST_L4_REP_OBSERVATIONS_010_011_monthly.csv?analysed_sst%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
-format csv
+url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?sst%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+format text
 rows
-lat_key 0
-lon_key 1
-field_in 2 hydrosphere_cmems_sst_k
+lat_key latitude
+lon_key longitude
+field sst hydrosphere_cmems_sst_c
 
 source hydrosphere_cmems_heat_content_700m
 ttl 21600
 force thermal
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1M-m.csv?thetao%5Blast%5D%5B0%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
-format csv
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+format text
 rows
-lat_key 0
-lon_key 1
-field_in 2 hydrosphere_cmems_ocean_temp_c
+lat_key latitude
+lon_key longitude
+field Potential_temperature hydrosphere_cmems_ocean_temp_k
 
 source hydrosphere_cmems_mixed_layer_depth
 ttl 21600
 force thermal
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1M-m.csv?mlotst%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
-format csv
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_bottom_of_ocean_mixed_layer_lat_lon.csv?bottom_of_ocean_mixed_layer%5B(last)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+format text
 rows
-lat_key 0
-lon_key 1
-field_in 2 hydrosphere_cmems_mlotst_m
+lat_key latitude
+lon_key longitude
+field bottom_of_ocean_mixed_layer hydrosphere_cmems_mlotst_m
 
 source atmosphere_aeronet_aod_full
 ttl 10800
@@ -27261,13 +27258,13 @@ field_in water hydrosphere_pegelonline_water_level_cm
 source exosphere_cmems_currents
 ttl 21600
 force advective
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?uo%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D,vo%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
-format csv
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+format text
 rows
-lat_key 0
-lon_key 1
-field_in 2 hydrosphere_cmems_current_u_ms
-field_in 3 hydrosphere_cmems_current_v_ms
+lat_key latitude
+lon_key longitude
+field u_component_of_current hydrosphere_cmems_current_u_ms
+field v_component_of_current hydrosphere_cmems_current_v_ms
 
 source geosphere_raspberry_shake_stations
 ttl 43200
