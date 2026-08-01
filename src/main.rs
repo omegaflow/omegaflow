@@ -1985,6 +1985,18 @@ fn force_constants(force: &str) -> Option<(f64, f64, bool, u8)> {
     }
 }
 
+fn force_extent(force: &str) -> f64 {
+    match force {
+        "em" | "gravity" => f64::INFINITY,
+        "seismic-body" => 1e5,
+        "seismic-surface" => 1e4,
+        "acoustic" => 1e3,
+        "advective" => 1e1,
+        "thermal" | "diffusion" => 1e0,
+        _ => 0.0,
+    }
+}
+
 fn force_type_of(force: &str) -> f64 {
     force_constants(force)
         .map(|(_, _, _, id)| id as f64)
@@ -5073,10 +5085,20 @@ fn warm_cache(archive: Arc<Archive>) {
                 .lock()
                 .unwrap_or_else(|e| e.into_inner())
                 .clone();
-            let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+            let origins_snap: HashMap<Origin, OriginState> = archive.origins.lock().unwrap_or_else(|e| e.into_inner()).clone();
             let (ex, ey, ez) = earth_position_icrs(now);
             let (mx, my, mz) = mars_position_icrs(now);
-            for (i, src) in archive.sources.iter().enumerate() {
+            let mut src_order: Vec<(usize, f64, u8)> = archive.sources.iter().enumerate()
+                .map(|(i, s)| {
+                    let (fx, fi) = s.force.split_whitespace()
+                        .filter_map(|f| force_constants(f).map(|c| (force_extent(f), c.3)))
+                        .max_by_key(|(e, _)| (*e as i64))
+                        .unwrap_or((0.0, 0));
+                    (i, -fx, fi)
+                }).collect();
+            src_order.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().then(a.2.cmp(&b.2)));
+            for (i, _fx, _fi) in src_order {
+                let src = &archive.sources[i];
                 let r = {
                     let mut max_r = 0.0f64;
                     for f in src.force.split_whitespace() {
@@ -5106,14 +5128,14 @@ fn warm_cache(archive: Arc<Archive>) {
                             .copied()
                             .map(|t| t as u64)
                             .unwrap_or(src.ttl);
-                        if !origin_stale(&origins, origin, eff_ttl, now) {
+                        if !origin_stale(&origins_snap, origin, eff_ttl, now) {
                             continue;
                         }
                         let pos = geodetic_to_icrs(*lat, *lon, *alt, now);
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
-                        let is_new = origins.get(&origin).is_none();
+                        let is_new = origins_snap.get(&origin).is_none();
                         task_prios.push(fetch_priority(
                             &src.url, pos, r, is_new, src.ttl, &presences,
                         ));
@@ -5130,7 +5152,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     Frame::Ecliptic { scale } => {
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
-                            &origins,
+                            &origins_snap,
                             origin,
                             ttl_snapshot
                                 .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -5145,7 +5167,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
-                        let is_new = origins.get(&origin).is_none();
+                        let is_new = origins_snap.get(&origin).is_none();
                         task_prios.push(fetch_priority(
                             &src.url, pos, r, is_new, src.ttl, &presences,
                         ));
@@ -5162,7 +5184,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     Frame::Areocentric { scale } => {
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
-                            &origins,
+                            &origins_snap,
                             origin,
                             ttl_snapshot
                                 .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -5177,7 +5199,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
-                        let is_new = origins.get(&origin).is_none();
+                        let is_new = origins_snap.get(&origin).is_none();
                         task_prios.push(fetch_priority(
                             &src.url, pos, r, is_new, src.ttl, &presences,
                         ));
@@ -5207,7 +5229,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                 let origin =
                                     (i as u32, region_quantize(lat, r), region_quantize(lon, r));
                                 if !origin_stale(
-                                    &origins,
+                                    &origins_snap,
                                     origin,
                                     ttl_snapshot
                                         .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -5218,7 +5240,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                 ) {
                                     continue;
                                 }
-                                let is_new = origins.get(&origin).is_none();
+                                let is_new = origins_snap.get(&origin).is_none();
                                 task_prios.push(fetch_priority(
                                     &src.url,
                                     (px, py, pz),
@@ -5241,7 +5263,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         }
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
-                            &origins,
+                            &origins_snap,
                             origin,
                             ttl_snapshot
                                 .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -5252,7 +5274,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         ) {
                             continue;
                         }
-                        let prev = origins
+                        let prev = origins_snap
                             .get(&origin)
                             .filter(|o| o.has_prev)
                             .map(|o| o.prev_abs);
@@ -5264,7 +5286,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         let (_, px, py, pz, _) = presences[0];
                         let (rx, ry, rz) =
                             prev.map(|pa| (pa[0], pa[1], pa[2])).unwrap_or((px, py, pz));
-                        let is_new = origins.get(&origin).is_none();
+                        let is_new = origins_snap.get(&origin).is_none();
                         task_prios.push(fetch_priority(
                             &src.url,
                             (rx, ry, rz),
@@ -5292,7 +5314,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             let origin =
                                 (i as u32, region_quantize(lat, r), region_quantize(lon, r));
                             if !origin_stale(
-                                &origins,
+                                &origins_snap,
                                 origin,
                                 ttl_snapshot
                                     .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -5303,7 +5325,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             ) {
                                 continue;
                             }
-                            let is_new = origins.get(&origin).is_none();
+                            let is_new = origins_snap.get(&origin).is_none();
                             task_prios.push(fetch_priority(
                                 &src.url,
                                 (px, py, pz),
