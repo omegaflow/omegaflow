@@ -9011,7 +9011,7 @@ field_in 2 aurora_intensity
 source usgs_nwis_water_data
 ttl 600
 force advective
-url https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?limit=100&api_key=DEMO_KEY&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+url https://github.com/omegaflow/catalogs/releases/download/live-data/usgs_water_daily.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -9282,13 +9282,16 @@ field AOD_870nm aod_870nm
 source atmosphere_waqi
 ttl 1800
 force diffusion
-url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
-field data.aqi atmosphere_waqi_aqi
-field data.iaqi.pm25.v atmosphere_waqi_pm25
-field data.iaqi.pm10.v atmosphere_waqi_pm10
-field data.iaqi.o3.v atmosphere_waqi_o3
-field data.iaqi.no2.v atmosphere_waqi_no2
-field data.time.s time_str
+url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_air_quality.json
+format json
+map .
+lat_key lat
+lon_key lon
+field aqi atmosphere_waqi_aqi
+field pm25 atmosphere_waqi_pm25
+field pm10 atmosphere_waqi_pm10
+field no2 atmosphere_waqi_no2
+field city atmosphere_waqi_city
 
 source aviation_tafs
 ttl 1800
@@ -9564,10 +9567,11 @@ field line2 tle_line2
 source waqi_cams_airquality_demo
 ttl 1800
 force diffusion
-url https://api.waqi.info/feed/here/?token=demo
-map data
-lat_key city.geo.0
-lon_key city.geo.1
+url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_air_quality.json
+format json
+map .
+lat_key lat
+lon_key lon
 field aqi aqi
 field pm25 pm25_ugm3
 field pm10 pm10_ugm3
@@ -13074,22 +13078,24 @@ ephemeris orbital_voyager2_distance
 source waqi_china_airquality
 ttl 3600
 force diffusion
-url https://api.waqi.info/map/bounds/?latlng=17,72,54,136&token=demo
-map data
+url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_china_airquality.json
+format json
+map .
 lat_key lat
 lon_key lon
 field aqi aqi_index
-field station.name station_name
+field station_name station_name
 
 source waqi_east_asia_airquality
 ttl 3600
 force diffusion
-url https://api.waqi.info/map/bounds/?latlng=-10,100,55,145&token=demo
-map data
+url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_east_asia_airquality.json
+format json
+map .
 lat_key lat
 lon_key lon
 field aqi aqi_index
-field station.name station_name
+field station_name station_name
 
 source wfigs_current_fire_perimeters
 ttl 3600
@@ -19594,11 +19600,11 @@ source oceanography_cmems_global_analysis
 ttl 86400
 force em
 ecliptic 1
-url https://my.cmems-du.eu/motu-web/services
+url https://erddap.emodnet-physics.eu/erddap/tabledap/index.json?page=1&itemsPerPage=100
+format json
 map .
 field_in id oceanography_cmems_service_id
 field_in name oceanography_cmems_service_name
-field_in dataset oceanography_cmems_dataset_id
 
 source open_meteo_cmip6_climate
 ttl 86400

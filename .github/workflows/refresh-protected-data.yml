@@ -123,6 +123,30 @@ jobs:
           jq -s 'map(select(.aqi != null))' data/waqi_air_quality.json > data/waqi_final.json && mv data/waqi_final.json data/waqi_air_quality.json
           rm -f data/waqi_tmp.json
 
+          curl -s --fail "https://api.waqi.info/map/bounds/?latlng=17,72,54,136&token=${WAQI_TOKEN}" \
+            -o data/waqi_tmp.json && \
+            jq '[.data[] | select(.aqi != null and .lat != null and .lon != null)
+              | {lat: .lat, lon: .lon, aqi: .aqi, station_name: .station.name}]' \
+              data/waqi_tmp.json > data/waqi_china_airquality.json || true
+          curl -s --fail "https://api.waqi.info/map/bounds/?latlng=-10,100,55,145&token=${WAQI_TOKEN}" \
+            -o data/waqi_tmp.json && \
+            jq '[.data[] | select(.aqi != null and .lat != null and .lon != null)
+              | {lat: .lat, lon: .lon, aqi: .aqi, station_name: .station.name}]' \
+              data/waqi_tmp.json > data/waqi_east_asia_airquality.json || true
+          rm -f data/waqi_tmp.json
+
+      - name: USGS Water
+        env:
+          USGS_WATER_KEY: ${{ secrets.USGS_WATER_KEY }}
+        run: |
+          if [ -z "$USGS_WATER_KEY" ]; then
+            echo "::notice::USGS Water skipped (no USGS_WATER_KEY)"
+            exit 0
+          fi
+          curl -s --fail -H "api_key: $USGS_WATER_KEY" \
+            "https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?limit=100&bbox=-125,24,-66,50" \
+            -o data/usgs_water_daily.json || true
+
       - name: Publish Release
         run: |
           if [ -z "$GH_TOKEN" ]; then
