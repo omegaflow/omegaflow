@@ -334,7 +334,7 @@ fn enclose_family(
     t2: f64,
     pad: f64,
     records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
-    frustum: Option<([f64; 3], [f64; 3], [f64; 3], f64, f64)>,
+    _frustum: Option<([f64; 3], [f64; 3], [f64; 3], f64, f64)>,
 ) {
     if fam.cells.is_empty() {
         return;
@@ -429,27 +429,6 @@ fn enclose_family(
                 continue;
             }
             if let Some((_, val)) = smp.fields.iter().find(|(n, _)| !n.starts_with('_')) {
-                if let Some((right, up, forward, hw, hh)) = frustum {
-                    static CULL_STATS: std::sync::atomic::AtomicU64 =
-                        std::sync::atomic::AtomicU64::new(0);
-                    static CULL_PASS: std::sync::atomic::AtomicU64 =
-                        std::sync::atomic::AtomicU64::new(0);
-                    let total = CULL_STATS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                    let rx = ddx * right[0] + ddy * right[1] + ddz * right[2];
-                    let ry = ddx * up[0] + ddy * up[1] + ddz * up[2];
-                    if rx.abs() > hw || ry.abs() > hh {
-                        continue;
-                    }
-                    let rz = ddx * forward[0] + ddy * forward[1] + ddz * forward[2];
-                    if rz <= 0.0 {
-                        continue;
-                    }
-                    let passed = CULL_PASS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                    if total < 10 || total % 10000 == 0 {
-                        eprintln!("cull: hw={:.3e} hh={:.3e} rx={:.3e} ry={:.3e} rz={:.3e} total={} pass={}",
-                            hw, hh, rx, ry, rz, total+1, passed+1);
-                    }
-                }
                 records.push((
                     p[0],
                     p[1],
@@ -472,10 +451,18 @@ fn sense_buffer(
     t2: f64,
     pad: f64,
     records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
-    frustum: Option<([f64; 3], [f64; 3], [f64; 3], f64, f64)>,
+    _frustum: Option<([f64; 3], [f64; 3], [f64; 3], f64, f64)>,
 ) {
     let (ex, ey, ez) = earth_position_icrs(t2);
-    enclose_family(&buf.planet, [ex, ey, ez], center, t2, pad, records, frustum);
+    enclose_family(
+        &buf.planet,
+        [ex, ey, ez],
+        center,
+        t2,
+        pad,
+        records,
+        _frustum,
+    );
     enclose_family(
         &buf.inertial,
         [0.0, 0.0, 0.0],
@@ -483,19 +470,8 @@ fn sense_buffer(
         t2,
         pad,
         records,
-        frustum,
+        _frustum,
     );
-    if let Some((_, _, forward, _, _)) = frustum {
-        records.sort_by(|a, b| {
-            let za = (a.0 - center[0]) * forward[0]
-                + (a.1 - center[1]) * forward[1]
-                + (a.2 - center[2]) * forward[2];
-            let zb = (b.0 - center[0]) * forward[0]
-                + (b.1 - center[1]) * forward[1]
-                + (b.2 - center[2]) * forward[2];
-            za.partial_cmp(&zb).unwrap_or(std::cmp::Ordering::Equal)
-        });
-    }
 }
 
 fn ecliptic_to_field(v: [f64; 3]) -> [f64; 3] {
@@ -2641,32 +2617,8 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     );
                 archive.warm_cache_cv.notify_one();
                 let center = [x0, y0, z0];
-                let _frustum = if queries.len() >= 5 {
-                    let (_, x1, y1, z1) = queries[1];
-                    let (_, x2, y2, z2) = queries[2];
-                    let (_, x4, y4, z4) = queries[4];
-                    let r = [x2 - x1, y2 - y1, z2 - z1];
-                    let u = [x4 - x1, y4 - y1, z4 - z1];
-                    let rl = (r[0].powi(2) + r[1].powi(2) + r[2].powi(2)).sqrt();
-                    let ul = (u[0].powi(2) + u[1].powi(2) + u[2].powi(2)).sqrt();
-                    if rl > 0.0 && ul > 0.0 {
-                        let right = [r[0] / rl, r[1] / rl, r[2] / rl];
-                        let up = [u[0] / ul, u[1] / ul, u[2] / ul];
-                        let forward = [
-                            right[1] * up[2] - right[2] * up[1],
-                            right[2] * up[0] - right[0] * up[2],
-                            right[0] * up[1] - right[1] * up[0],
-                        ];
-                        Some((right, up, forward, rl * 0.5, ul * 0.5))
-                    } else {
-                        None
-                    }
-                } else {
-                    None
-                };
-                // TODO: re-enable frustum arg once culling math verified
-                sense_buffer(&field, center, t0, extent, &mut records, _frustum);
-                sense_buffer(&station_buf, center, t0, extent, &mut records, _frustum);
+                sense_buffer(&field, center, t0, extent, &mut records, None);
+                sense_buffer(&station_buf, center, t0, extent, &mut records, None);
             }
 
             let mut out = Vec::with_capacity(11 + records.len() * 72);
