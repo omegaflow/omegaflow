@@ -15966,7 +15966,7 @@ field_in index spectral_index
 source tns_transient_supernovae
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,z,MaxMag,Type+FROM+%22B/sn/sncat%22
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/B_sn_sncat.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16637,7 +16637,7 @@ field mT source_type
 source vizier_cosmic_voids
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RAJ2000,DEJ2000,z,r,ID+FROM+"J/A+A/570/A106/void"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+r+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AplusA_570_A106_void.json
 format text
 rows
 ra_key RAJ2000
@@ -16803,7 +16803,7 @@ field Peak peak_brightness_K
 source vizier_gcvs_variable_stars
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,VarType,magMax,Min1,Period,SpType,pmRA,pmDE,VarName+FROM+%22B/gcvs/gcvs_cat%22+WHERE+RAJ2000+IS+NOT+NULL+AND+magMax<16+ORDER+BY+magMax+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/B_gcvs_gcvs_cat.json
 format text
 rows
 ra_key RAJ2000
@@ -16917,7 +16917,7 @@ field Dist distance_Mpc
 source vizier_hipparcos_astrometry
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RArad,DErad,Plx,pmRA,pmDE,Hpmag,B-V,VA,Ntr+FROM+%22I/311/hip2%22+WHERE+RArad+IS+NOT+NULL+AND+Hpmag<12+ORDER+BY+Hpmag+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/I_311_hip2.json
 format text
 rows
 ra_key RArad
@@ -16973,7 +16973,7 @@ field Source source_name
 source vizier_milky_way_star_clusters
 ttl 86400
 force gravity
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3006+Name,RAJ2000,DEJ2000,d,logt,FeH,r2,Type+FROM+"J/A+A/558/A53/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+d+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AplusA_558_A53_catalog.json
 format text
 rows
 ra_key RAJ2000
