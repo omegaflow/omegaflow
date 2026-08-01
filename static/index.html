@@ -124,6 +124,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 corner(-1, -1), corner(1, -1), corner(1, 1), corner(-1, 1)
             ];
         }
+        let rawWindowResponse = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
         let reconnectAttempts = 0;
         function connectResonance() {
             const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/resonance`);
@@ -146,7 +147,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             });
             ws.addEventListener('open', () => {
                 reconnectAttempts = 0;
-                syncFrame([], [{ t: tPresence, x: xPresence, y: yPresence, z: zPresence }]).catch(() => {});
+                syncFrame([], [{ t: tPresence, x: xPresence, y: yPresence, z: zPresence }]).then(response => {
+                    if (response && response.count > 0) rawWindowResponse = response;
+                }).catch(() => {});
             });
         }
         connectResonance();
@@ -569,7 +572,7 @@ fn presence_probe() {
             if (osc.filled < CAPTURE_RING_SIZE) osc.filled++;
             osc.median = osc.median * (1 - ma()) + value * ma();
         }
-        let rawWindowResponse = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
+        rawWindowResponse = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
         let uploadCount = 0, uploadErrors = 0;
         let lastFoldResp = null;
         let fieldCount = 0;
