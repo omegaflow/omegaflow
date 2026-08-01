@@ -5331,6 +5331,11 @@ fn warm_cache(archive: Arc<Archive>) {
         indexed.sort_by_key(|&(_, p)| p);
         let tasks: Vec<_> = indexed.into_iter().map(|(t, _)| t).collect();
 
+        eprintln!(
+            "warm_cache: {} tasks, starting fetch in {} chunks",
+            tasks.len(),
+            (tasks.len() + chunk_size - 1) / chunk_size
+        );
         let mut new_samples: Vec<Sample> = Vec::new();
         let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
         let chunk_size = {
