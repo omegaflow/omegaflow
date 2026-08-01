@@ -214,8 +214,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         }
         
         const fieldShader = `
-struct VP { surface: vec4f, right: vec4f, up: vec4f, expose_lo: vec4f, expose_hi: vec4f, presence: vec4f };
+struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, presence: vec4f };
 const C_LIGHT: f32 = 299792458.0;
+const ALPHA_AIR: f32 = 2.18e-5;
+const V_P_GRANITE: f32 = 5950.0;
+const V_S_GRANITE: f32 = 3630.0;
+const D_AIR: f32 = 2.0e-5;
 fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32) -> f32 {
     let retarded = max(0.0, abs(vp.presence.w - t) - d_mag / C_LIGHT);
     return raw * exp(-retarded / max(ttl, 1e-9));
@@ -225,9 +229,22 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32) -> f32 {
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 
-struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f };
+struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) force_type: u32 };
 
 const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
+
+fn absorption_coeff(force_type: u32) -> f32 {
+    switch force_type {
+        case 0u, 1u: { return 0.0; }          // em, gravity: vacuum
+        case 2u: { return ALPHA_AIR; }          // acoustic
+        case 3u: { return 1.0 / V_P_GRANITE; } // seismic-body
+        case 4u: { return 1.0 / V_S_GRANITE; } // seismic-surface
+        case 5u: { return ALPHA_AIR; }          // thermal
+        case 6u: { return D_AIR; }              // diffusion
+        case 7u: { return 0.1; }                // advective
+        default: { return 0.0; }
+    }
+}
 
 fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let c = (1.0 - abs(2.0 * l - 1.0)) * s;
@@ -291,7 +308,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     clip.x += (quad[vid].x * point_size_px) / w * 2.0;
     clip.y += (quad[vid].y * point_size_px) / h * 2.0;
 
-    out.pos = vec4f(clip, 0.0, 1.0);
+    out.pos = vec4f(clip, dot(d, vp.forward.xyz) / max(scale * max(w, h), 1.0), 1.0);
     out.uv = quad[vid];
 
     let f_type = min(u32(mt.z), 7u);
@@ -306,6 +323,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y)) / max(lvl, exp2(-64.0))) / 8.0 + 0.5, 0.0, 1.0);
     let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
     out.color = rgb;
+    out.force_type = f_type;
     return out;
 }
 
@@ -379,7 +397,9 @@ fn presence_probe() {
 
     let hdr_color = in.color * analog_intensity;
     let mapped_color = log2(hdr_color * 4.0 + vec3f(1.0)) / 8.0;
-    return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), clamp(analog_intensity, 0.0, 1.0));
+    let absorption = absorption_coeff(in.force_type);
+    let alpha = clamp(1.0 - exp(-absorption * analog_intensity * 10.0), 0.0, 1.0);
+    return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), alpha);
 }
 `;
         let fieldCanvas = document.createElement('canvas');
@@ -387,7 +407,7 @@ fn presence_probe() {
         fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;background:#0a0908;';
         document.body.appendChild(fieldCanvas);
         let fieldVisible = true;
-        let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
+        let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, fieldCap = 0, fieldFrames = 0, depthTex = null;
         let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0,0];
         async function initFieldGPU() {
             if (!navigator.gpu || gpu) return;
@@ -416,12 +436,17 @@ fn presence_probe() {
                         targets: [{
                             format,
                             blend: {
-                                color: { srcFactor: 'one', dstFactor: 'one', operation: 'add' },
-                                alpha: { srcFactor: 'one', dstFactor: 'one', operation: 'add' }
+                                color: { srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha', operation: 'add' },
+                                alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' }
                             }
                         }]
                     },
-                    primitive: { topology: 'triangle-list' }
+                    primitive: { topology: 'triangle-list' },
+                    depthStencil: {
+                        format: 'depth24plus',
+                        depthWriteEnabled: true,
+                        depthCompare: 'less'
+                    }
                 });
                 probePipe = device.createComputePipeline({
                     layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
@@ -429,7 +454,7 @@ fn presence_probe() {
                 });
                 probeBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
                 probeRead = device.createBuffer({ size: 32, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
-                vpBuf = device.createBuffer({ size: 96, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+                vpBuf = device.createBuffer({ size: 112, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
                 gpu = device;
             } catch { gpu = null; }
         }
@@ -476,7 +501,7 @@ fn presence_probe() {
             if (!fieldVisible) {
                 try {
                     const encoder = gpu.createCommandEncoder();
-                    const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
+                const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }], depthStencilAttachment: { view: depthTex.createView(), depthClearValue: 1.0, depthLoadOp: 'clear', depthStoreOp: 'store' } });
                     pass.setPipeline(fieldPipe);
                     pass.setBindGroup(0, fieldBind);
                     pass.draw(0);
@@ -520,12 +545,16 @@ fn presence_probe() {
             const evalW = Math.floor(RX * dpr);
             const evalH = Math.floor(RY * dpr);
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
-            const [fr, fu] = orientationFrame();
+            const [fr, fu, ff] = orientationFrame();
+            if (!depthTex || depthTex.width !== fieldCanvas.width || depthTex.height !== fieldCanvas.height) {
+                if (depthTex) depthTex.destroy();
+                depthTex = gpu.createTexture({ size: [fieldCanvas.width, fieldCanvas.height], format: 'depth24plus', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+            }
             const boost = Math.pow(2, exposureBoost);
             const lvls = new Float32Array(8);
             for (let i = 0; i < 8; i++) lvls[i] = Math.max(forceExposeF[i], Math.pow(2, -10)) / boost;
             try {
-                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], 0, fu[0], fu[1], fu[2], 0, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], lvls[7], xPresence, yPresence, zPresence, tPresence]));
+                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], 0, fu[0], fu[1], fu[2], 0, ff[0], ff[1], ff[2], 0, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], lvls[7], xPresence, yPresence, zPresence, tPresence]));
                 const encoder = gpu.createCommandEncoder();
                 const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
                 pass.setPipeline(fieldPipe);
