@@ -430,6 +430,11 @@ fn enclose_family(
             }
             if let Some((_, val)) = smp.fields.iter().find(|(n, _)| !n.starts_with('_')) {
                 if let Some((right, up, forward, hw, hh)) = frustum {
+                    static CULL_STATS: std::sync::atomic::AtomicU64 =
+                        std::sync::atomic::AtomicU64::new(0);
+                    static CULL_PASS: std::sync::atomic::AtomicU64 =
+                        std::sync::atomic::AtomicU64::new(0);
+                    let total = CULL_STATS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
                     let rx = ddx * right[0] + ddy * right[1] + ddz * right[2];
                     let ry = ddx * up[0] + ddy * up[1] + ddz * up[2];
                     if rx.abs() > hw || ry.abs() > hh {
@@ -438,6 +443,11 @@ fn enclose_family(
                     let rz = ddx * forward[0] + ddy * forward[1] + ddz * forward[2];
                     if rz <= 0.0 {
                         continue;
+                    }
+                    let passed = CULL_PASS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    if total < 10 || total % 10000 == 0 {
+                        eprintln!("cull: hw={:.3e} hh={:.3e} rx={:.3e} ry={:.3e} rz={:.3e} total={} pass={}",
+                            hw, hh, rx, ry, rz, total+1, passed+1);
                     }
                 }
                 records.push((
@@ -2655,8 +2665,8 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     None
                 };
                 // TODO: re-enable frustum arg once culling math verified
-                sense_buffer(&field, center, t0, extent, &mut records, None);
-                sense_buffer(&station_buf, center, t0, extent, &mut records, None);
+                sense_buffer(&field, center, t0, extent, &mut records, _frustum);
+                sense_buffer(&station_buf, center, t0, extent, &mut records, _frustum);
             }
 
             let mut out = Vec::with_capacity(11 + records.len() * 72);
