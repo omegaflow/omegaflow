@@ -3182,7 +3182,7 @@ field epoch approach_time_jd
 source jpl_horizons_iss_vectors
 ttl 300
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_iss.json
 format text
 vectors iss_position
 
@@ -4482,7 +4482,7 @@ source jpl_horizons_parker_solar_probe
 ttl 600
 force gravity
 ssb
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_parker_solar_probe.json
 format text
 rows
 field_in 2 x_au
@@ -6219,7 +6219,7 @@ extent 1.68e-6
 source encke_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_encke.json
 ephemeris orbital_encke_distance
 extent 1.34e-8
 
@@ -7148,7 +7148,7 @@ source jpl_horizons_voyager1
 ttl 3600
 force gravity
 ecliptic 1
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
 format text
 rows
 field_in 2 x_au
@@ -7161,7 +7161,7 @@ field_in 7 vz_au_d
 source jpl_horizons_voyager2
 ttl 3600
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
 wgs84 0.0 0.0
 format text
 rows
@@ -7175,7 +7175,7 @@ field_in 7 vz_au_d
 source juno_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_juno.json
 ephemeris orbital_juno_distance
 
 source jupiter_vectors
@@ -7188,7 +7188,7 @@ extent 4.67e-4
 source jwst_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_jwst.json
 ephemeris orbital_jwst_distance
 
 source lasp_fism2_euv_hr_model
@@ -7562,7 +7562,7 @@ extent 1.65e-4
 source new_horizons_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_new_horizons.json
 ephemeris orbital_new_horizons_distance
 
 source noaa_coops_tidal_predictions_usa
@@ -8109,7 +8109,7 @@ field total_count item_count
 source orbital_atlas_3i_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_interstellar_3i.json
 ephemeris orbital_atlas_3i_distance
 extent 3.34e-9
 
@@ -8163,7 +8163,7 @@ field line2 tle_line2
 source orbital_vesta_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_vesta.json
 ephemeris orbital_vesta_distance
 extent 1.76e-6
 
@@ -8180,7 +8180,7 @@ path daily.shortwave_radiation_sum.0 paleoclimate_shortwave_yesterday_mjm2
 source parker_solar_probe_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_parker_solar_probe.json
 ephemeris orbital_parker_solar_probe_distance
 
 source pluto_vectors
@@ -8287,7 +8287,7 @@ count . solar_flare_count_noaa
 source solar_orbiter_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_solar_orbiter.json
 ephemeris orbital_solar_orbiter_distance
 
 source sun_vectors
@@ -8478,13 +8478,13 @@ extent 4.05e-5
 source voyager1_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
 ephemeris orbital_voyager1_distance
 
 source voyager2_vectors
 ttl 3600
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
 ephemeris orbital_voyager2_distance
 
 source waqi_china_airquality
@@ -10492,7 +10492,7 @@ field properties.Geologic_Epoch geologic_epoch
 source halley_vectors
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000001%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_halley.json
 wgs84 34.201 -118.171
 ephemeris orbital_halley_distance
 extent 3.34e-8
@@ -11841,7 +11841,7 @@ field_in 7 time_perihelion_jd
 source jpl_horizons_comet_tsuchinshan_vectors
 ttl 86400
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_comet_c2023_a3.json
 wgs84 0.0 0.0
 format text
 rows
@@ -11895,7 +11895,7 @@ field 4 solar_distance_au
 source jpl_horizons_voyager1_vectors
 ttl 86400
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
 wgs84 0.0 0.0
 format text
 rows
@@ -11910,7 +11910,7 @@ field 6 vz_au_day
 source jpl_horizons_voyager2_vectors
 ttl 86400
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
 wgs84 0.0 0.0
 format text
 rows
@@ -15395,14 +15395,14 @@ vectors orbital_vesta_rg
 source orbital_apophis_vectors
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_apophis.json
 ephemeris orbital_apophis_distance
 extent 1.24e-9
 
 source orbital_bennu_vectors
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_bennu.json
 ephemeris orbital_bennu_distance
 extent 1.75e-9
 
@@ -15419,7 +15419,7 @@ last line geosphere_earth_orientation_raw
 source orbital_ceres_vectors
 ttl 86400
 force em
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_ceres.json
 wgs84 34.201 -118.171
 ephemeris orbital_ceres_distance
 extent 3.16e-6
