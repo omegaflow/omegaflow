@@ -1,263 +1,264 @@
-  # HOST                                        SRC ANBIETER BIETET              WIR NUTZEN                   FORCES                
-=======================================================================================================================================
-  1 github.com                                  232 74 Release Assets            232 Quellen                  diffusion,em,gravity
-  2 api.worldbank.org                           228 29544 Indikatoren            3 Ind.                       diffusion,em
-  3 imag-data.bgs.ac.uk                         162 ~130 Observatorien           162 Quellen                  em,gravity
-  4 api.tidesandcurrents.noaa.gov               130 3499 Stationen               116 Stat.                    acoustic,advective,d
-  5 api.open-meteo.com                          120 8 Endpunkte                  163 Params                   acoustic,advective,d
-  6 services.swpc.noaa.gov                       84 ~100 Produkte                33 Produkte                  advective,diffusion,
-  7 tapvizier.cds.unistra.fr                     84 ~20000 Tabellen              84 Quellen                   em,gravity,seismic-b
-  8 gea.esac.esa.int                             63 1.812.709.771 Sterne         1 Tabelle, 63 TOP-Caps       em
-  9 heasarc.gsfc.nasa.gov                        51 ~600 Missionen               51 Quellen                   diffusion,em
- 10 earthquake.usgs.gov                          48 ~30000/Tag                   48 Quellen                   acoustic,em,seismic-
- 11 api.gbif.org                                 42 2.2 Mrd Occurrences          42 Quellen                   acoustic,diffusion,e
- 12 www.ndbc.noaa.gov                            39 1351 Stationen               36 Stat.                     acoustic,diffusion
- 13 www.ncei.noaa.gov                            38 ~10000 Datasets              38 Quellen                   acoustic,diffusion,e
- 14 pdgapi.lbl.gov                               38 38 Quellen                   38 Quellen                   em
- 15 query1.finance.yahoo.com                     37 ~50000 Ticker                37 Ticker                    em
- 16 irsa.ipac.caltech.edu                        34 ~100 Tabellen                34 Quellen                   diffusion,em,gravity
- 17 services6.arcgis.com                         32 32 Quellen                   32 Quellen                   acoustic,em
- 18 services9.arcgis.com                         28 28 Quellen                   28 Quellen                   advective,diffusion,
- 19 raw.githubusercontent.com                    27 27 Quellen                   27 Quellen                   em,gravity,seismic-s
- 20 ssd-api.jpl.nasa.gov                         26 26 Quellen                   26 Quellen                   acoustic,em,gravity
- 21 waterservices.usgs.gov                       21 21 Quellen                   21 Quellen                   acoustic,diffusion,s
- 22 gml.noaa.gov                                 21 ~30 Feeds                    21 Quellen                   diffusion,em
- 23 aeronet.gsfc.nasa.gov                        18 ~500 Stationen               18 Quellen                   diffusion,em
- 24 eutils.ncbi.nlm.nih.gov                      18 ~40 Datenbanken              20 Quellen                   em,gravity
- 25 api.inaturalist.org                          17 1.420.180 Taxa               1 Stat.                      diffusion,em
- 26 inspirehep.net                               17 17 Quellen                   17 Quellen                   em
- 27 celestrak.org                                15 16238 Satelliten             12 Gruppen                   em
- 28 aviationweather.gov                          13 ~9000 Airports               13 Quellen                   acoustic,em
- 29 nrt.cmems-du.eu                              13 13 Quellen                   13 Quellen                   acoustic,diffusion,g
- 30 exoplanetarchive.ipac.caltech.edu            13 ~5500 Planeten               13 Quellen                   em,gravity
- 31 api.obis.org                                 10 ~150000 Arten                3 Stat.                      diffusion,em
- 32 services.arcgis.com                           9 9 Quellen                    9 Quellen                    advective,diffusion,
- 33 mast.stsci.edu                                9 ~20 Tabellen                 9 Quellen                    em
- 34 export.arxiv.org                              9 ~2.4M Papers                 9 Quellen                    em
- 35 api.weather.gov                               8 8 Quellen                    8 Quellen                    acoustic,diffusion,e
- 36 tle.ivanstanojevic.me                         7 7 Quellen                    7 Quellen                    em
- 37 api.crossref.org                              7 7 Quellen                    7 Quellen                    em
- 38 noaadata.apps.nsidc.org                       7 7 Quellen                    7 Quellen                    em
- 39 service.earthscope.org                        7 7 Quellen                    7 Quellen                    acoustic,em,seismic-
- 40 cmr.earthdata.nasa.gov                        7 7 Quellen                    7 Quellen                    diffusion,em,thermal
- 41 volcanoes.usgs.gov                            6 6 Quellen                    6 Quellen                    em,seismic-surface
- 42 gtnp.arcticportal.org                         6 6 Quellen                    6 Quellen                    diffusion,thermal
- 43 services3.arcgis.com                          5 5 Quellen                    5 Quellen                    em,gravity,seismic-b
- 44 api.waqi.info                                 5 5 Quellen                    5 Quellen                    diffusion
- 45 gdacs.org                                     5 5 Quellen                    5 Quellen                    diffusion,em,seismic
- 46 gracedb.ligo.org                              5 ~100 Events                  5 Quellen                    em,gravity
- 47 eonet.gsfc.nasa.gov                           5 5 Quellen                    5 Quellen                    em,seismic-body
- 48 api.coral.tsr.lol                             5 5 Quellen                    5 Quellen                    em,thermal
- 49 lasp.colorado.edu                             5 5 Quellen                    5 Quellen                    em
- 50 power.larc.nasa.gov                           5 5 Quellen                    5 Params                     em,thermal
- 51 en.wikipedia.org                              5 6.8M Artikel                 5 Quellen                    em
- 52 www.cpc.ncep.noaa.gov                         5 5 Quellen                    5 Quellen                    em,thermal
- 53 ghoapi.azureedge.net                          5 5 Quellen                    5 Quellen                    diffusion,em
- 54 webservices.volcano.si.edu                    5 5 Quellen                    5 Quellen                    seismic-surface
- 55 rest.isric.org                                5 5 Quellen                    5 Quellen                    diffusion,em
- 56 api.neotomadb.org                             5 5 Quellen                    5 Quellen                    diffusion,em
- 57 skyserver.sdss.org                            5 ~500M Objekte                5 Quellen                    em
- 58 www.sidc.be                                   5 5 Quellen                    5 Quellen                    em
- 59 api.adsb.lol                                  4 4 Quellen                    4 Quellen                    em
- 60 www.seismicportal.eu                          4 4 Quellen                    4 Quellen                    em,seismic-body
- 61 api.geonet.org.nz                             4 4 Quellen                    4 Quellen                    em,seismic-body
- 62 services2.arcgis.com                          4 4 Quellen                    4 Quellen                    advective,diffusion,
- 63 cdaweb.gsfc.nasa.gov                          4 4 Quellen                    14 Params                    advective,em,gravity
- 64 seismic-api.science.unimelb.edu.au            4 4 Quellen                    4 Quellen                    em
- 65 hub.docker.com                                4 4 Quellen                    4 Quellen                    em
- 66 data.pmel.noaa.gov                            4 4 Quellen                    4 Quellen                    diffusion,em
- 67 ec.europa.eu                                  4 4 Quellen                    4 Quellen                    em
- 68 www.ebi.ac.uk                                 4 4 Quellen                    4 Quellen                    diffusion,em
- 69 ned.ipac.caltech.edu                          4 4 Quellen                    4 Quellen                    em,gravity
- 70 api.fda.gov                                   4 4 Quellen                    4 Quellen                    em
- 71 woudc.org                                     4 4 Quellen                    4 Quellen                    diffusion
- 72 opendata.cern.ch                              4 4 Quellen                    4 Quellen                    em
- 73 api.opentopodata.org                          4 4 Quellen                    4 Quellen                    em
- 74 api.github.com                                3 3 Quellen                    3 Quellen                    em
- 75 api.wolfx.jp                                  3 3 Quellen                    3 Quellen                    em
- 76 webservices.ingv.it                           3 3 Quellen                    3 Quellen                    seismic-body,seismic
- 77 gcn.nasa.gov                                  3 3 Quellen                    3 Quellen                    em
- 78 www.minorplanetcenter.net                     3 3 Quellen                    3 Quellen                    gravity
- 79 www.nhc.noaa.gov                              3 3 Quellen                    3 Quellen                    em,thermal
- 80 cddis.nasa.gov                                3 3 Quellen                    3 Quellen                    em,gravity
- 81 bhuvan-app1.nrsc.gov.in                       3 3 Quellen                    3 Quellen                    diffusion,seismic-su
- 82 coastwatch.pfeg.noaa.gov                      3 3 Quellen                    3 Quellen                    em,thermal
- 83 hpiers.obspm.fr                               3 3 Quellen                    3 Quellen                    em
- 84 v4.boldsystems.org                            3 3 Quellen                    3 Quellen                    diffusion
- 85 gist.githubusercontent.com                    3 3 Quellen                    3 Quellen                    em
- 86 ssd.jpl.nasa.gov                              3 78 Körper                    75 CDN, 3 direkt             gravity
- 87 zenodo.org                                    3 3 Quellen                    3 Quellen                    diffusion,gravity
- 88 musicbrainz.org                               3 3 Quellen                    3 Quellen                    em
- 89 www.ngdc.noaa.gov                             3 3 Quellen                    3 Quellen                    em,seismic-body
- 90 ws.pangaea.de                                 3 3 Quellen                    3 Quellen                    diffusion
- 91 api.wheretheiss.at                            2 2 Quellen                    2 Quellen                    em
- 92 stat.ripe.net                                 2 2 Quellen                    2 Quellen                    em
- 93 transport.opendata.ch                         2 2 Quellen                    2 Quellen                    em
- 94 services1.arcgis.com                          2 2 Quellen                    2 Quellen                    seismic-body,seismic
- 95 services5.arcgis.com                          2 2 Quellen                    2 Quellen                    acoustic,em
- 96 api.energy-charts.info                        2 2 Quellen                    2 Quellen                    em
- 97 api.carbonintensity.org.uk                    2 2 Quellen                    2 Quellen                    em,thermal
- 98 www.tsunami.gov                               2 2 Quellen                    2 Quellen                    gravity
- 99 kp.gfz.de                                     2 2 Quellen                    2 Quellen                    em
-100 geofon.gfz-potsdam.de                         2 2 Quellen                    2 Quellen                    seismic-body
-101 firms.modaps.eosdis.nasa.gov                  2 2 Quellen                    2 Quellen                    thermal
-102 epic.gsfc.nasa.gov                            2 2 Quellen                    2 Quellen                    em
-103 www.imis.bfs.de                               2 2 Quellen                    2 Quellen                    em
-104 simbad.cds.unistra.fr                         2 2 Quellen                    2 Quellen                    em
-105 geofon.gfz.de                                 2 2 Quellen                    2 Quellen                    em
-106 meta.icos-cp.eu                               2 2 Quellen                    2 Quellen                    diffusion
-107 erddap.ifremer.fr                             2 2 Quellen                    2 Quellen                    diffusion,thermal
-108 gong2.nso.edu                                 2 2 Quellen                    2 Quellen                    em
-109 openlittermap.com                             2 2 Quellen                    2 Quellen                    diffusion
-110 earth-search.aws.element84.com                2 2 Quellen                    2 Quellen                    em
-111 api.woudc.org                                 2 2 Quellen                    2 Quellen                    em
-112 clinicaltrials.gov                            2 2 Quellen                    2 Quellen                    em
-113 api.openalex.org                              2 2 Quellen                    2 Quellen                    em
-114 www.orfeus-eu.org                             2 2 Quellen                    2 Quellen                    seismic-body
-115 hydro1.gesdisc.eosdis.nasa.gov                2 2 Quellen                    2 Quellen                    diffusion,thermal
-116 data.humdata.org                              2 2 Quellen                    2 Quellen                    diffusion,em
-117 www.isc.ac.uk                                 2 2 Quellen                    2 Quellen                    seismic-body
-118 epqs.nationalmap.gov                          2 2 Quellen                    1 Stat.                      em,seismic-surface
-119 g6goyz4w56.execute-api.us-west-2.amazona      2 2 Quellen                    2 Quellen                    em
-120 oderest.rsl.wustl.edu                         2 2 Quellen                    2 Quellen                    em
-121 www.physics.mcgill.ca                         2 2 Quellen                    2 Quellen                    em
-122 data.rcsb.org                                 2 2 Quellen                    2 Quellen                    em
-123 climate-api.open-meteo.com                    2 2 Quellen                    4 Params                     em,thermal
-124 openlibrary.org                               2 2 Quellen                    2 Quellen                    em
-125 pubchem.ncbi.nlm.nih.gov                      2 2 Quellen                    2 Quellen                    em
-126 rapid.ac.uk                                   2 2 Quellen                    2 Quellen                    diffusion
-127 api.stackexchange.com                         2 2 Quellen                    2 Quellen                    em
-128 macrostrat.org                                2 2 Quellen                    1 Stat.                      em
-129 qrng.anu.edu.au                               1 1 Quellen                    1 Quellen                    em
-130 api.blitzortung.org                           1 1 Quellen                    1 Quellen                    em
-131 www.inex.ie                                   1 1 Quellen                    1 Stat.                      em
-132 api.irail.be                                  1 1 Quellen                    1 Quellen                    em
-133 api.irishrail.ie                              1 1 Quellen                    1 Quellen                    em
-134 www.wienerlinien.at                           1 1 Quellen                    1 Quellen                    em
-135 data.blitzortung.org                          1 1 Quellen                    1 Stat.                      acoustic
-136 api.drand.sh                                  1 1 Quellen                    1 Quellen                    em
-137 irsc.ut.ac.ir                                 1 1 Quellen                    1 Quellen                    seismic-body
-138 api.p2pquake.net                              1 1 Quellen                    1 Quellen                    seismic-body
-139 beacon.nist.gov                               1 1 Quellen                    1 Quellen                    em
-140 service.scedc.caltech.edu                     1 1 Quellen                    1 Quellen                    seismic-body
-141 earthquake.tmd.go.th                          1 1 Quellen                    1 Quellen                    seismic-body
-142 api.rainviewer.com                            1 1 Quellen                    1 Quellen                    acoustic
-143 reg.bom.gov.au                                1 1 Quellen                    1 Quellen                    diffusion
-144 www.emsc-csem.org                             1 1 Quellen                    1 Quellen                    seismic-body
-145 www.pegelonline.wsv.de                        1 1 Quellen                    1 Quellen                    gravity
-146 environment.data.gov.uk                       1 1 Quellen                    1 Quellen                    em
-147 www.ionosonde.iap-kborn.de                    1 1 Quellen                    1 Quellen                    em
-148 tadas.afad.gov.tr                             1 1 Quellen                    1 Quellen                    seismic-body
-149 api.weather.bom.gov.au                        1 1 Quellen                    1 Quellen                    em
-150 dataserver-coids.inpe.br                      1 1 Quellen                    1 Quellen                    em
-151 bmkg-restapi.vercel.app                       1 1 Quellen                    1 Quellen                    em
-152 www.ceic.ac.cn                                1 1 Quellen                    1 Quellen                    seismic-surface
-153 www.jma.go.jp                                 1 1 Quellen                    1 Quellen                    seismic-surface
-154 api.waterdata.usgs.gov                        1 1 Quellen                    1 Quellen                    advective
-155 impc.dlr.de                                   1 1 Quellen                    1 Quellen                    em
-156 almascience.org                               1 1 Quellen                    1 Quellen                    em
-157 www.amsmeteors.org                            1 1 Quellen                    1 Quellen                    gravity
-158 argovis-api.colorado.edu                      1 1 Quellen                    1 Quellen                    diffusion
-159 www.hamqsl.com                                1 1 Quellen                    1 Quellen                    em
-160 api.sunrise-sunset.org                        1 1 Quellen                    1 Quellen                    em
-161 disease.sh                                    1 1 Quellen                    1 Quellen                    em
-162 api.exchangerate-api.com                      1 1 Quellen                    1 Quellen                    em
-163 open.er-api.com                               1 1 Quellen                    1 Quellen                    em
-164 data.gdeltproject.org                         1 1 Quellen                    1 Quellen                    em
-165 www.govtrack.us                               1 1 Quellen                    1 Quellen                    em
-166 ll.thespacedevs.com                           1 1 Quellen                    1 Quellen                    em
-167 onionoo.torproject.org                        1 1 Quellen                    1 Quellen                    em
-168 wikimedia.org                                 1 1 Quellen                    1 Quellen                    em
-169 ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca           1 1 Quellen                    1 Quellen                    em
-170 geoserver.efas.eu                             1 1 Quellen                    1 Quellen                    diffusion
-171 sky.esa.int                                   1 1 Quellen                    1 Quellen                    em
-172 network.satnogs.org                           1 1 Quellen                    1 Quellen                    em
-173 fireball.fripon.org                           1 1 Quellen                    1 Quellen                    em
-174 www.globalcmt.org                             1 1 Quellen                    1 Quellen                    seismic-body
-175 archive.gemini.edu                            1 1 Quellen                    1 Quellen                    em
-176 catalogue.dataspace.copernicus.eu             1 1 Quellen                    1 Quellen                    em
-177 ies-ows.jrc.ec.europa.eu                      1 1 Quellen                    1 Quellen                    em
-178 www.globalfloods.eu                           1 1 Quellen                    1 Quellen                    em
-179 erddap.aoml.noaa.gov                          1 1 Quellen                    1 Quellen                    em
-180 erddap.emodnet-physics.eu                     1 1 Quellen                    1 Quellen                    em
-181 pegelonline.wsv.de                            1 1 Quellen                    1 Quellen                    gravity
-182 records-ws.nbnatlas.org                       1 1 Quellen                    1 Quellen                    acoustic
-183 archive.nrao.edu                              1 1 Quellen                    1 Quellen                    em
-184 services.nvd.nist.gov                         1 1 Quellen                    1 Quellen                    em
-185 eyes.nasa.gov                                 1 1 Quellen                    1 Quellen                    em
-186 api.safecast.org                              1 1 Quellen                    1 Quellen                    em
-187 www.temis.nl                                  1 1 Quellen                    1 Quellen                    em
-188 terrabrasilis.dpi.inpe.br                     1 1 Quellen                    1 Quellen                    diffusion
-189 db.satnogs.org                                1 1 Quellen                    1 Quellen                    em
-190 data.cdc.gov                                  1 1 Quellen                    1 Quellen                    em
-191 weather.uwyo.edu                              1 1 Quellen                    1 Stat.                      thermal
-192 vsx.aavso.org                                 1 1 Quellen                    1 Quellen                    em
-193 newton.spacedys.com                           1 1 Quellen                    1 Quellen                    gravity
-194 opendata.dwd.de                               1 1 Quellen                    1 Quellen                    em
-195 api.met.no                                    1 1 Quellen                    1 Quellen                    em
-196 opendata.ecdc.europa.eu                       1 1 Quellen                    1 Quellen                    em
-197 epoch.ai                                      1 1 Quellen                    1 Quellen                    em
-198 www.peeringdb.com                             1 1 Quellen                    1 Quellen                    em
-199 modis.ornl.gov                                1 1 Quellen                    1 Quellen                    em
-200 restcountries.com                             1 1 Quellen                    1 Quellen                    em
-201 www.submarinecablemap.com                     1 1 Quellen                    1 Quellen                    em
-202 api.unhcr.org                                 1 1 Quellen                    1 Quellen                    em
-203 www.star.nesdis.noaa.gov                      1 1 Quellen                    1 Quellen                    em
-204 xmart-api-public.who.int                      1 1 Quellen                    1 Quellen                    em
-205 www.bodc.ac.uk                                1 1 Quellen                    1 Quellen                    diffusion
-206 www.chime-frb.ca                              1 1 Quellen                    1 Quellen                    em
-207 mars.nasa.gov                                 1 1 Quellen                    1 Quellen                    em
-208 crates.io                                     1 1 Quellen                    1 Quellen                    em
-209 dasch.rc.fas.harvard.edu                      1 1 Quellen                    1 Quellen                    em
-210 re.jrc.ec.europa.eu                           1 1 Quellen                    1 Quellen                    em
-211 vires.services                                1 1 Quellen                    2 Params                     gravity
-212 services.terrascope.be                        1 1 Quellen                    1 Quellen                    diffusion
-213 catalogue.clms.copernicus.eu                  1 1 Quellen                    1 Quellen                    em
-214 usdmdataservices.unl.edu                      1 1 Quellen                    1 Quellen                    em
-215 ows.emodnet-humanactivities.eu                1 1 Quellen                    1 Quellen                    em
-216 erddap.dataexplorer.oceanobservatories.o      1 1 Quellen                    1 Quellen                    em
-217 datacenter.iers.org                           1 1 Quellen                    1 Quellen                    gravity
-218 maia.usno.navy.mil                            1 1 Quellen                    1 Quellen                    em
-219 network.igs.org                               1 1 Quellen                    1 Quellen                    seismic-surface
-220 www.tng-project.org                           1 1 Quellen                    1 Quellen                    gravity
-221 www.ioc-sealevelmonitoring.org                1 1 Quellen                    1 Quellen                    gravity
-222 ds.iris.edu                                   1 1 Quellen                    1 Quellen                    seismic-body
-223 landsatlook.usgs.gov                          1 1 Quellen                    1 Quellen                    em
-224 tess.mit.edu                                  1 1 Quellen                    1 Quellen                    em
-225 www.crystallography.net                       1 1 Quellen                    1 Quellen                    em
-226 aa.usno.navy.mil                              1 1 Quellen                    1 Quellen                    em
-227 data.giss.nasa.gov                            1 1 Quellen                    1 Quellen                    thermal
-228 modis.gsfc.nasa.gov                           1 1 Quellen                    1 Quellen                    em
-229 physics.nist.gov                              1 1 Quellen                    1 Quellen                    em
-230 psl.noaa.gov                                  1 1 Quellen                    1 Quellen                    thermal
-231 gis.ngdc.noaa.gov                             1 1 Quellen                    1 Quellen                    gravity
-232 registry.npmjs.org                            1 1 Quellen                    1 Quellen                    em
-233 api.astrocats.space                           1 1 Quellen                    1 Quellen                    em
-234 my.cmems-du.eu                                1 1 Quellen                    1 Quellen                    em
-235 world.openfoodfacts.org                       1 1 Quellen                    1 Quellen                    em
-236 stac.openlandmap.org                          1 1 Quellen                    1 Quellen                    diffusion
-237 paleobiodb.org                                1 1 Quellen                    1 Quellen                    em
-238 atlas.ripe.net                                1 1 Quellen                    1 Quellen                    em
-239 gis1.servirglobal.net                         1 1 Quellen                    1 Quellen                    diffusion
-240 tevcat2.tevcat.org                            1 1 Quellen                    1 Quellen                    em
-241 data.cosmic.ucar.edu                          1 1 Quellen                    1 Quellen                    diffusion
-242 rest.uniprot.org                              1 1 Quellen                    1 Quellen                    em
-243 nwis.waterdata.usgs.gov                       1 1 Quellen                    1 Quellen                    diffusion
-244 www.sciencebase.gov                           1 1 Quellen                    1 Quellen                    diffusion
-245 developer.uspto.gov                           1 1 Quellen                    1 Quellen                    em
-246 www.wikidata.org                              1 1 Quellen                    1 Quellen                    em
-247 api.openbrewerydb.org                         1 1 Quellen                    1 Quellen                    em
-248 services7.arcgis.com                          1 1 Quellen                    1 Quellen                    diffusion
-249 www.glims.org                                 1 1 Quellen                    1 Quellen                    thermal
-250 stationview.raspberryshake.org                1 1 Quellen                    1 Quellen                    seismic-surface
-251 egg.astro.cornell.edu                         1 1 Quellen                    1 Quellen                    em
-252 www.metoffice.gov.uk                          1 1 Quellen                    1 Quellen                    em
-253 data-api.globalforestwatch.org                1 1 Quellen                    1 Quellen                    em
-254 esgf.ceda.ac.uk                               1 1 Quellen                    1 Quellen                    em
-255 stac.eoapi.dev                                1 1 Quellen                    1 Quellen                    em
-256 icgem.gfz-potsdam.de                          1 1 Quellen                    1 Quellen                    em
-257 api.open-elevation.com                        1 1 Quellen                    1 Quellen                    em
-258 planetarycomputer.microsoft.com               1 1 Quellen                    1 Quellen                    em
+  # HOST                                        SRC ANBIETER BIETET                WIR NUTZEN                     FORCES                
+============================================================================================================================================
+  1 github.com                                  232 74 Release Assets              232 Quellen                    diffusion,em,gravity
+  2 api.worldbank.org                           228 29544 Indikatoren              3 Ind.                         diffusion,em
+  3 imag-data.bgs.ac.uk                         162 ~130 Observatorien             162 Quellen                    em,gravity
+  4 api.tidesandcurrents.noaa.gov               130 3499 Stationen                 116 IDs                        acoustic,advective,d
+  5 api.open-meteo.com                          120 8 Endpunkte, ~50 Params        163 Params                     acoustic,advective,d
+  6 services.swpc.noaa.gov                       84 ~100 Produkte                  84 Quellen                     advective,diffusion,
+  7 tapvizier.cds.unistra.fr                     84 ~20000 Tabellen                84 Quellen                     em,gravity,seismic-b
+  8 gea.esac.esa.int                             63 1.812.709.771 Sterne           63 Quellen                     em
+  9 heasarc.gsfc.nasa.gov                        51 ~600 Missionen                 51 Quellen                     diffusion,em
+ 10 earthquake.usgs.gov                          48 ~30000/Tag                     48 Quellen                     acoustic,em,seismic-
+ 11 api.gbif.org                                 42 2.2 Mrd Occurrences            42 Quellen                     acoustic,diffusion,e
+ 12 www.ndbc.noaa.gov                            39 1351 Stationen                 36 IDs                         acoustic,diffusion
+ 13 www.ncei.noaa.gov                            38 ~10000 Datasets                38 Quellen                     acoustic,diffusion,e
+ 14 pdgapi.lbl.gov                               38 38 Quellen                     38 Quellen                     em
+ 15 query1.finance.yahoo.com                     37 ~50000 Ticker                  37 Quellen                     em
+ 16 irsa.ipac.caltech.edu                        34 ~100 Tabellen                  34 Quellen                     diffusion,em,gravity
+ 17 services6.arcgis.com                         32 1000 features                  32 Quellen                     acoustic,em
+ 18 services9.arcgis.com                         28 1000 features                  28 Quellen                     advective,diffusion,
+ 19 raw.githubusercontent.com                    27 27 Quellen                     27 Quellen                     em,gravity,seismic-s
+ 20 ssd-api.jpl.nasa.gov                         26 26 Quellen                     26 Quellen                     acoustic,em,gravity
+ 21 waterservices.usgs.gov                       21 21 Quellen                     21 Quellen                     acoustic,diffusion,s
+ 22 gml.noaa.gov                                 21 ~30 Feeds                      21 Quellen                     diffusion,em
+ 23 aeronet.gsfc.nasa.gov                        18 ~500 Stationen                 18 Quellen                     diffusion,em
+ 24 eutils.ncbi.nlm.nih.gov                      18 ~40 Datenbanken                18 Quellen                     em,gravity
+ 25 api.inaturalist.org                          17 1.420.180 Taxa                 1 IDs                          diffusion,em
+ 26 inspirehep.net                               17 17 Quellen                     17 Quellen                     em
+ 27 celestrak.org                                15 16238 Satelliten               15 Quellen                     em
+ 28 aviationweather.gov                          13 ~9000 Airports                 13 Quellen                     acoustic,em
+ 29 nrt.cmems-du.eu                              13 13 Quellen                     13 Quellen                     acoustic,diffusion,g
+ 30 exoplanetarchive.ipac.caltech.edu            13 ~5500 Planeten                 13 Quellen                     em,gravity
+ 31 api.obis.org                                 10 ~150000 Arten                  3 IDs                          diffusion,em
+ 32 services.arcgis.com                           9 2000 features                  9 Quellen                      advective,diffusion,
+ 33 mast.stsci.edu                                9 ~20 Tabellen                   9 Quellen                      em
+ 34 export.arxiv.org                              9 ~2.4M Papers                   9 Quellen                      em
+ 35 api.weather.gov                               8 8 Quellen                      8 Quellen                      acoustic,diffusion,e
+ 36 tle.ivanstanojevic.me                         7 7 Quellen                      7 Quellen                      em
+ 37 api.crossref.org                              7 7 Quellen                      7 Quellen                      em
+ 38 noaadata.apps.nsidc.org                       7 7 Quellen                      7 Quellen                      em
+ 39 service.earthscope.org                        7 7 Quellen                      7 Quellen                      acoustic,em,seismic-
+ 40 cmr.earthdata.nasa.gov                        7 7 Quellen                      7 Quellen                      diffusion,em,thermal
+ 41 volcanoes.usgs.gov                            6 6 Quellen                      6 Quellen                      em,seismic-surface
+ 42 gtnp.arcticportal.org                         6 6 Quellen                      6 Quellen                      diffusion,thermal
+ 43 services3.arcgis.com                          5 1 features                     5 Quellen                      em,gravity,seismic-b
+ 44 api.waqi.info                                 5 5 Quellen                      5 Quellen                      diffusion
+ 45 gdacs.org                                     5 324 items                      5 Quellen                      diffusion,em,seismic
+ 46 gracedb.ligo.org                              5 ~100 Events                    5 Quellen                      em,gravity
+ 47 eonet.gsfc.nasa.gov                           5 200 events                     5 Quellen                      em,seismic-body
+ 48 api.coral.tsr.lol                             5 5 Quellen                      5 Quellen                      em,thermal
+ 49 lasp.colorado.edu                             5 5 Quellen                      5 Quellen                      em
+ 50 power.larc.nasa.gov                           5 5 Quellen                      5 Params                       em,thermal
+ 51 en.wikipedia.org                              5 6.8M Artikel                   5 Quellen                      em
+ 52 www.cpc.ncep.noaa.gov                         5 5 Quellen                      5 Quellen                      em,thermal
+ 53 ghoapi.azureedge.net                          5 2469 value                     5 Quellen                      diffusion,em
+ 54 webservices.volcano.si.edu                    5 5 Quellen                      5 Quellen                      seismic-surface
+ 55 rest.isric.org                                5 5 Quellen                      5 Quellen                      diffusion,em
+ 56 api.neotomadb.org                             5 5 Quellen                      5 Quellen                      diffusion,em
+ 57 skyserver.sdss.org                            5 ~500M Objekte                  5 Quellen                      em
+ 58 www.sidc.be                                   5 76183 lines                    5 Quellen                      em
+ 59 api.adsb.lol                                  4 4 Quellen                      4 Quellen                      em
+ 60 www.seismicportal.eu                          4 4 Quellen                      4 Quellen                      em,seismic-body
+ 61 api.geonet.org.nz                             4 100 features                   4 Quellen                      em,seismic-body
+ 62 services2.arcgis.com                          4 2000 features                  4 Quellen                      advective,diffusion,
+ 63 cdaweb.gsfc.nasa.gov                          4 4 Quellen                      14 Params                      advective,em,gravity
+ 64 seismic-api.science.unimelb.edu.au            4 4 Quellen                      4 Quellen                      em
+ 65 hub.docker.com                                4 4 Quellen                      4 Quellen                      em
+ 66 data.pmel.noaa.gov                            4 4 Quellen                      4 Quellen                      diffusion,em
+ 67 ec.europa.eu                                  4 4 Quellen                      4 Quellen                      em
+ 68 www.ebi.ac.uk                                 4 4 Quellen                      4 Quellen                      diffusion,em
+ 69 ned.ipac.caltech.edu                          4 500 data                       4 Quellen                      em,gravity
+ 70 api.fda.gov                                   4 4 Quellen                      4 Quellen                      em
+ 71 woudc.org                                     4 4 Quellen                      4 Quellen                      diffusion
+ 72 opendata.cern.ch                              4 4 Quellen                      4 Quellen                      em
+ 73 api.opentopodata.org                          4 4 Quellen                      4 Quellen                      em
+ 74 api.github.com                                3 3 Quellen                      3 Quellen                      em
+ 75 api.wolfx.jp                                  3 3 Quellen                      3 Quellen                      em
+ 76 webservices.ingv.it                           3 3 Quellen                      3 Quellen                      seismic-body,seismic
+ 77 gcn.nasa.gov                                  3 3 Quellen                      3 Quellen                      em
+ 78 www.minorplanetcenter.net                     3 3 Quellen                      3 Quellen                      gravity
+ 79 www.nhc.noaa.gov                              3 3 Quellen                      3 Quellen                      em,thermal
+ 80 cddis.nasa.gov                                3 3 Quellen                      3 Quellen                      em,gravity
+ 81 bhuvan-app1.nrsc.gov.in                       3 3 Quellen                      3 Quellen                      diffusion,seismic-su
+ 82 coastwatch.pfeg.noaa.gov                      3 3 Quellen                      3 Quellen                      em,thermal
+ 83 hpiers.obspm.fr                               3 3 Quellen                      3 Quellen                      em
+ 84 v4.boldsystems.org                            3 3 Quellen                      3 Quellen                      diffusion
+ 85 gist.githubusercontent.com                    3 3 Quellen                      3 Quellen                      em
+ 86 ssd.jpl.nasa.gov                              3 78 Korper                      3 Quellen                      gravity
+ 87 zenodo.org                                    3 3 Quellen                      3 Quellen                      diffusion,gravity
+ 88 musicbrainz.org                               3 2.947.987 Eintrage             3 Quellen                      em
+ 89 www.ngdc.noaa.gov                             3 3 Quellen                      3 Quellen                      em,seismic-body
+ 90 ws.pangaea.de                                 3 3 Quellen                      3 Quellen                      diffusion
+ 91 api.wheretheiss.at                            2 2 Quellen                      2 Quellen                      em
+ 92 stat.ripe.net                                 2 2 Quellen                      2 Quellen                      em
+ 93 transport.opendata.ch                         2 2 Quellen                      2 Quellen                      em
+ 94 services1.arcgis.com                          2 150 features                   2 Quellen                      seismic-body,seismic
+ 95 services5.arcgis.com                          2 2000 features                  2 Quellen                      acoustic,em
+ 96 api.energy-charts.info                        2 2 Quellen                      2 Quellen                      em
+ 97 api.carbonintensity.org.uk                    2 2 Quellen                      2 Quellen                      em,thermal
+ 98 www.tsunami.gov                               2 2 Quellen                      2 Quellen                      gravity
+ 99 kp.gfz.de                                     2 2 Quellen                      2 Quellen                      em
+100 geofon.gfz-potsdam.de                         2 2 Quellen                      2 Quellen                      seismic-body
+101 firms.modaps.eosdis.nasa.gov                  2 107541 lines                   2 Quellen                      thermal
+102 epic.gsfc.nasa.gov                            2 2 Quellen                      2 Quellen                      em
+103 www.imis.bfs.de                               2 1679 features                  2 Quellen                      em
+104 simbad.cds.unistra.fr                         2 2 Quellen                      2 Quellen                      em
+105 geofon.gfz.de                                 2 2 Quellen                      2 Quellen                      em
+106 meta.icos-cp.eu                               2 2 Quellen                      2 Quellen                      diffusion
+107 erddap.ifremer.fr                             2 2 Quellen                      2 Quellen                      diffusion,thermal
+108 gong2.nso.edu                                 2 2 Quellen                      2 Quellen                      em
+109 openlittermap.com                             2 2 Quellen                      2 Quellen                      diffusion
+110 earth-search.aws.element84.com                2 10 features                    2 Quellen                      em
+111 api.woudc.org                                 2 2 Quellen                      2 Quellen                      em
+112 clinicaltrials.gov                            2 2 Quellen                      2 Quellen                      em
+113 api.openalex.org                              2 2 Quellen                      2 Quellen                      em
+114 www.orfeus-eu.org                             2 2 Quellen                      2 Quellen                      seismic-body
+115 hydro1.gesdisc.eosdis.nasa.gov                2 2 Quellen                      2 Quellen                      diffusion,thermal
+116 data.humdata.org                              2 2 Quellen                      2 Quellen                      diffusion,em
+117 www.isc.ac.uk                                 2 2 Quellen                      2 Quellen                      seismic-body
+118 epqs.nationalmap.gov                          2 2 Quellen                      1 IDs                          em,seismic-surface
+119 g6goyz4w56.execute-api.us-west-2.amazona      2 2 Quellen                      2 Quellen                      em
+120 oderest.rsl.wustl.edu                         2 2 Quellen                      2 Quellen                      em
+121 www.physics.mcgill.ca                         2 2 Quellen                      2 Quellen                      em
+122 data.rcsb.org                                 2 2 Quellen                      2 Quellen                      em
+123 climate-api.open-meteo.com                    2 2 Quellen                      4 Params                       em,thermal
+124 openlibrary.org                               2 2 Quellen                      2 Quellen                      em
+125 pubchem.ncbi.nlm.nih.gov                      2 2 Quellen                      2 Quellen                      em
+126 rapid.ac.uk                                   2 2 Quellen                      2 Quellen                      diffusion
+127 api.stackexchange.com                         2 24.142.786 total               2 Quellen                      em
+128 macrostrat.org                                2 2 Quellen                      1 IDs                          em
+129 qrng.anu.edu.au                               1 1 Quellen                      1 Quellen                      em
+130 api.blitzortung.org                           1 1 Quellen                      1 Quellen                      em
+131 www.inex.ie                                   1 1 Quellen                      1 IDs                          em
+132 api.irail.be                                  1 1 Quellen                      1 Quellen                      em
+133 api.irishrail.ie                              1 1 Quellen                      1 Quellen                      em
+134 www.wienerlinien.at                           1 1 Quellen                      1 Quellen                      em
+135 data.blitzortung.org                          1 1 Quellen                      1 IDs                          acoustic
+136 api.drand.sh                                  1 1 Quellen                      1 Quellen                      em
+137 irsc.ut.ac.ir                                 1 1 Quellen                      1 Quellen                      seismic-body
+138 api.p2pquake.net                              1 1 Quellen                      1 Quellen                      seismic-body
+139 beacon.nist.gov                               1 1 Quellen                      1 Quellen                      em
+140 service.scedc.caltech.edu                     1 1 Quellen                      1 Quellen                      seismic-body
+141 earthquake.tmd.go.th                          1 1 Quellen                      1 Quellen                      seismic-body
+142 api.rainviewer.com                            1 1 Quellen                      1 Quellen                      acoustic
+143 reg.bom.gov.au                                1 1 Quellen                      1 Quellen                      diffusion
+144 www.emsc-csem.org                             1 1 Quellen                      1 Quellen                      seismic-body
+145 www.pegelonline.wsv.de                        1 10890 Stationen                1 Quellen                      gravity
+146 environment.data.gov.uk                       1 1 Quellen                      1 Quellen                      em
+147 www.ionosonde.iap-kborn.de                    1 1 Quellen                      1 Quellen                      em
+148 tadas.afad.gov.tr                             1 1 Quellen                      1 Quellen                      seismic-body
+149 api.weather.bom.gov.au                        1 1 Quellen                      1 Quellen                      em
+150 dataserver-coids.inpe.br                      1 1 Quellen                      1 Quellen                      em
+151 bmkg-restapi.vercel.app                       1 1 Quellen                      1 Quellen                      em
+152 www.ceic.ac.cn                                1 1 Quellen                      1 Quellen                      seismic-surface
+153 www.jma.go.jp                                 1 1 Quellen                      1 Quellen                      seismic-surface
+154 api.waterdata.usgs.gov                        1 1 Quellen                      1 Quellen                      advective
+155 impc.dlr.de                                   1 1 Quellen                      1 Quellen                      em
+156 almascience.org                               1 1 Quellen                      1 Quellen                      em
+157 www.amsmeteors.org                            1 1 Quellen                      1 Quellen                      gravity
+158 argovis-api.colorado.edu                      1 1 Quellen                      1 Quellen                      diffusion
+159 www.hamqsl.com                                1 1 Quellen                      1 Quellen                      em
+160 api.sunrise-sunset.org                        1 1 Quellen                      1 Quellen                      em
+161 disease.sh                                    1 1 Quellen                      1 Quellen                      em
+162 api.exchangerate-api.com                      1 1 Quellen                      1 Quellen                      em
+163 open.er-api.com                               1 1 Quellen                      1 Quellen                      em
+164 data.gdeltproject.org                         1 1 Quellen                      1 Quellen                      em
+165 www.govtrack.us                               1 1 Quellen                      1 Quellen                      em
+166 ll.thespacedevs.com                           1 366 count (launches)           1 Quellen                      em
+167 onionoo.torproject.org                        1 9742 relays                    1 Quellen                      em
+168 wikimedia.org                                 1 1 Quellen                      1 Quellen                      em
+169 ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca           1 1 Quellen                      1 Quellen                      em
+170 geoserver.efas.eu                             1 1 Quellen                      1 Quellen                      diffusion
+171 sky.esa.int                                   1 1 Quellen                      1 Quellen                      em
+172 network.satnogs.org                           1 1 Quellen                      1 Quellen                      em
+173 fireball.fripon.org                           1 20364 events                   1 Quellen                      em
+174 www.globalcmt.org                             1 1 Quellen                      1 Quellen                      seismic-body
+175 archive.gemini.edu                            1 1 Quellen                      1 Quellen                      em
+176 catalogue.dataspace.copernicus.eu             1 1 Quellen                      1 Quellen                      em
+177 ies-ows.jrc.ec.europa.eu                      1 1 Quellen                      1 Quellen                      em
+178 www.globalfloods.eu                           1 1 Quellen                      1 Quellen                      em
+179 erddap.aoml.noaa.gov                          1 1 Quellen                      1 Quellen                      em
+180 erddap.emodnet-physics.eu                     1 1 Quellen                      1 Quellen                      em
+181 pegelonline.wsv.de                            1 1 Quellen                      1 Quellen                      gravity
+182 records-ws.nbnatlas.org                       1 1 Quellen                      1 Quellen                      acoustic
+183 archive.nrao.edu                              1 1 Quellen                      1 Quellen                      em
+184 services.nvd.nist.gov                         1 1 Quellen                      1 Quellen                      em
+185 eyes.nasa.gov                                 1 1 Quellen                      1 Quellen                      em
+186 api.safecast.org                              1 1 Quellen                      1 Quellen                      em
+187 www.temis.nl                                  1 1 Quellen                      1 Quellen                      em
+188 terrabrasilis.dpi.inpe.br                     1 1 Quellen                      1 Quellen                      diffusion
+189 db.satnogs.org                                1 1 Quellen                      1 Quellen                      em
+190 data.cdc.gov                                  1 1 Quellen                      1 Quellen                      em
+191 weather.uwyo.edu                              1 1 Quellen                      1 IDs                          thermal
+192 vsx.aavso.org                                 1 1 Quellen                      1 Quellen                      em
+193 newton.spacedys.com                           1 1 Quellen                      1 Quellen                      gravity
+194 opendata.dwd.de                               1 1 Quellen                      1 Quellen                      em
+195 api.met.no                                    1 1 Quellen                      1 Quellen                      em
+196 opendata.ecdc.europa.eu                       1 51158 lines                    1 Quellen                      em
+197 epoch.ai                                      1 1 Quellen                      1 Quellen                      em
+198 www.peeringdb.com                             1 1 Quellen                      1 Quellen                      em
+199 modis.ornl.gov                                1 1 Quellen                      1 Quellen                      em
+200 restcountries.com                             1 1 Quellen                      1 Quellen                      em
+201 www.submarinecablemap.com                     1 1 Quellen                      1 Quellen                      em
+202 api.unhcr.org                                 1 1 Quellen                      1 Quellen                      em
+203 www.star.nesdis.noaa.gov                      1 1 Quellen                      1 Quellen                      em
+204 xmart-api-public.who.int                      1 120000 value                   1 Quellen                      em
+205 www.bodc.ac.uk                                1 1 Quellen                      1 Quellen                      diffusion
+206 www.chime-frb.ca                              1 1 Quellen                      1 Quellen                      em
+207 mars.nasa.gov                                 1 1 Quellen                      1 Quellen                      em
+208 crates.io                                     1 1 Quellen                      1 Quellen                      em
+209 dasch.rc.fas.harvard.edu                      1 1 Quellen                      1 Quellen                      em
+210 re.jrc.ec.europa.eu                           1 1 Quellen                      1 Quellen                      em
+211 vires.services                                1 1 Quellen                      2 Params                       gravity
+212 services.terrascope.be                        1 100 features                   1 Quellen                      diffusion
+213 catalogue.clms.copernicus.eu                  1 1 Quellen                      1 Quellen                      em
+214 usdmdataservices.unl.edu                      1 1 Quellen                      1 Quellen                      em
+215 ows.emodnet-humanactivities.eu                1 1 Quellen                      1 Quellen                      em
+216 erddap.dataexplorer.oceanobservatories.o      1 28187 lines                    1 Quellen                      em
+217 datacenter.iers.org                           1 1 Quellen                      1 Quellen                      gravity
+218 maia.usno.navy.mil                            1 1 Quellen                      1 Quellen                      em
+219 network.igs.org                               1 1 Quellen                      1 Quellen                      seismic-surface
+220 www.tng-project.org                           1 1 Quellen                      1 Quellen                      gravity
+221 www.ioc-sealevelmonitoring.org                1 1 Quellen                      1 Quellen                      gravity
+222 ds.iris.edu                                   1 1 Quellen                      1 Quellen                      seismic-body
+223 landsatlook.usgs.gov                          1 1 Quellen                      1 Quellen                      em
+224 tess.mit.edu                                  1 1 Quellen                      1 Quellen                      em
+225 www.crystallography.net                       1 1 Quellen                      1 Quellen                      em
+226 aa.usno.navy.mil                              1 1 Quellen                      1 Quellen                      em
+227 data.giss.nasa.gov                            1 1 Quellen                      1 Quellen                      thermal
+228 modis.gsfc.nasa.gov                           1 1 Quellen                      1 Quellen                      em
+229 physics.nist.gov                              1 1 Quellen                      1 Quellen                      em
+230 psl.noaa.gov                                  1 1 Quellen                      1 Quellen                      thermal
+231 gis.ngdc.noaa.gov                             1 1 Quellen                      1 Quellen                      gravity
+232 registry.npmjs.org                            1 1 Quellen                      1 Quellen                      em
+233 api.astrocats.space                           1 1 Quellen                      1 Quellen                      em
+234 my.cmems-du.eu                                1 1 Quellen                      1 Quellen                      em
+235 world.openfoodfacts.org                       1 4.654.414 count                1 Quellen                      em
+236 stac.openlandmap.org                          1 1 Quellen                      1 Quellen                      diffusion
+237 paleobiodb.org                                1 1 Quellen                      1 Quellen                      em
+238 atlas.ripe.net                                1 1 Quellen                      1 Quellen                      em
+239 gis1.servirglobal.net                         1 1 Quellen                      1 Quellen                      diffusion
+240 tevcat2.tevcat.org                            1 1 Quellen                      1 Quellen                      em
+241 data.cosmic.ucar.edu                          1 1 Quellen                      1 Quellen                      diffusion
+242 rest.uniprot.org                              1 1 Quellen                      1 Quellen                      em
+243 nwis.waterdata.usgs.gov                       1 1 Quellen                      1 Quellen                      diffusion
+244 www.sciencebase.gov                           1 1 Quellen                      1 Quellen                      diffusion
+245 developer.uspto.gov                           1 1 Quellen                      1 Quellen                      em
+246 www.wikidata.org                              1 1 Quellen                      1 Quellen                      em
+247 api.openbrewerydb.org                         1 1 Quellen                      1 Quellen                      em
+248 services7.arcgis.com                          1 360 features                   1 Quellen                      diffusion
+249 www.glims.org                                 1 1 Quellen                      1 Quellen                      thermal
+250 stationview.raspberryshake.org                1 1 Quellen                      1 Quellen                      seismic-surface
+251 egg.astro.cornell.edu                         1 15856 lines                    1 Quellen                      em
+252 www.metoffice.gov.uk                          1 1 Quellen                      1 Quellen                      em
+253 data-api.globalforestwatch.org                1 1 Quellen                      1 Quellen                      em
+254 esgf.ceda.ac.uk                               1 1 Quellen                      1 Quellen                      em
+255 stac.eoapi.dev                                1 1 Quellen                      1 Quellen                      em
+256 icgem.gfz-potsdam.de                          1 1 Quellen                      1 Quellen                      em
+257 api.open-elevation.com                        1 1 Quellen                      1 Quellen                      em
+258 planetarycomputer.microsoft.com               1 1 Quellen                      1 Quellen                      em
 
   TOTAL: 258 Hosts, 2198 Quellen
-  Verifizierte Anbieter-Gesamtzahlen: 29 Hosts
+  Verifizierte Anbieter-Gesamtzahlen: 58 Hosts
+  Rest: eigene Quellenanzahl als Default
