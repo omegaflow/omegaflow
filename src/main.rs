@@ -330,15 +330,20 @@ fn force_constants_by_id(id: f64) -> Option<(f64, bool)> {
 fn enclose_family(
     fam: &Family,
     anchor: [f64; 3],
-    q: [f64; 3],
+    center: [f64; 3],
     t2: f64,
     pad: f64,
     records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    frustum: Option<([f64; 3], [f64; 3], [f64; 3], f64, f64)>,
 ) {
     if fam.cells.is_empty() {
         return;
     }
-    let qf = [q[0] - anchor[0], q[1] - anchor[1], q[2] - anchor[2]];
+    let qf = [
+        center[0] - anchor[0],
+        center[1] - anchor[1],
+        center[2] - anchor[2],
+    ];
     let dt = (t2 - fam.epoch_min).abs();
     let rho = fam.rmax + fam.vmax * dt + 0.5 * fam.amax * dt * dt + pad;
     let s = fam.cell_size;
@@ -415,15 +420,26 @@ fn enclose_family(
                 }
             }
             let p = smp.motion.at(t2, smp.epoch);
-            let ddx = p[0] - q[0];
-            let ddy = p[1] - q[1];
-            let ddz = p[2] - q[2];
+            let ddx = p[0] - center[0];
+            let ddy = p[1] - center[1];
+            let ddz = p[2] - center[2];
             let exact = smp.extent + pad;
             let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
             if dist2 > exact * exact {
                 continue;
             }
             if let Some((_, val)) = smp.fields.iter().find(|(n, _)| !n.starts_with('_')) {
+                if let Some((right, up, forward, hw, hh)) = frustum {
+                    let rx = ddx * right[0] + ddy * right[1] + ddz * right[2];
+                    let ry = ddx * up[0] + ddy * up[1] + ddz * up[2];
+                    if rx.abs() > hw || ry.abs() > hh {
+                        continue;
+                    }
+                    let rz = ddx * forward[0] + ddy * forward[1] + ddz * forward[2];
+                    if rz <= 0.0 {
+                        continue;
+                    }
+                }
                 records.push((
                     p[0],
                     p[1],
@@ -442,14 +458,34 @@ fn enclose_family(
 
 fn sense_buffer(
     buf: &Buffer,
-    q: [f64; 3],
+    center: [f64; 3],
     t2: f64,
     pad: f64,
     records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    frustum: Option<([f64; 3], [f64; 3], [f64; 3], f64, f64)>,
 ) {
     let (ex, ey, ez) = earth_position_icrs(t2);
-    enclose_family(&buf.planet, [ex, ey, ez], q, t2, pad, records);
-    enclose_family(&buf.inertial, [0.0, 0.0, 0.0], q, t2, pad, records);
+    enclose_family(&buf.planet, [ex, ey, ez], center, t2, pad, records, frustum);
+    enclose_family(
+        &buf.inertial,
+        [0.0, 0.0, 0.0],
+        center,
+        t2,
+        pad,
+        records,
+        frustum,
+    );
+    if let Some((_, _, forward, _, _)) = frustum {
+        records.sort_by(|a, b| {
+            let za = (a.0 - center[0]) * forward[0]
+                + (a.1 - center[1]) * forward[1]
+                + (a.2 - center[2]) * forward[2];
+            let zb = (b.0 - center[0]) * forward[0]
+                + (b.1 - center[1]) * forward[1]
+                + (b.2 - center[2]) * forward[2];
+            za.partial_cmp(&zb).unwrap_or(std::cmp::Ordering::Equal)
+        });
+    }
 }
 
 fn ecliptic_to_field(v: [f64; 3]) -> [f64; 3] {
@@ -2594,9 +2630,32 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                         (t0, x0, y0, z0, extent),
                     );
                 archive.warm_cache_cv.notify_one();
-                let q = [x0, y0, z0];
-                sense_buffer(&field, q, t0, extent, &mut records);
-                sense_buffer(&station_buf, q, t0, extent, &mut records);
+                let center = [x0, y0, z0];
+                let frustum = if queries.len() >= 5 {
+                    let (_, x1, y1, z1) = queries[1];
+                    let (_, x2, y2, z2) = queries[2];
+                    let (_, x4, y4, z4) = queries[4];
+                    let r = [x2 - x1, y2 - y1, z2 - z1];
+                    let u = [x4 - x1, y4 - y1, z4 - z1];
+                    let rl = (r[0].powi(2) + r[1].powi(2) + r[2].powi(2)).sqrt();
+                    let ul = (u[0].powi(2) + u[1].powi(2) + u[2].powi(2)).sqrt();
+                    if rl > 0.0 && ul > 0.0 {
+                        let right = [r[0] / rl, r[1] / rl, r[2] / rl];
+                        let up = [u[0] / ul, u[1] / ul, u[2] / ul];
+                        let forward = [
+                            right[1] * up[2] - right[2] * up[1],
+                            right[2] * up[0] - right[0] * up[2],
+                            right[0] * up[1] - right[1] * up[0],
+                        ];
+                        Some((right, up, forward, rl * 0.5, ul * 0.5))
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                };
+                sense_buffer(&field, center, t0, extent, &mut records, frustum);
+                sense_buffer(&station_buf, center, t0, extent, &mut records, frustum);
             }
 
             let mut out = Vec::with_capacity(11 + records.len() * 72);
