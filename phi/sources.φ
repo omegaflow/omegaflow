@@ -21702,20 +21702,6 @@ field GLAT galactic_lat
 field Rad angular_radius_arcsec
 field HIIName hii_region_name
 
-source vizier_atlasgal_csc
-ttl 604800
-force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_atlasgal_csc.json
-format text
-rows
-ra_key _RA_icrs
-dec_key _DE_icrs
-field AGAL agal_id
-field GLON galactic_lon
-field GLAT galactic_lat
-field Fp peak_flux_jy
-field Fint integrated_flux_jy
-
 source vizier_catwise_agn
 ttl 604800
 force em
@@ -27290,17 +27276,6 @@ lat_key latitude
 lon_key longitude
 field_in properties.network geosphere_iris_network
 field_in properties.station geosphere_iris_station
-
-source geosphere_orfeus_stations
-ttl 86400
-force seismic-body
-url https://www.orfeus-eu.org/fdsnws/station/1/query?network=*&station=*&location=*&channel=BH?&format=geojson&level=station
-format json
-map features
-lat_key latitude
-lon_key longitude
-field_in properties.network geosphere_orfeus_network
-field_in properties.station geosphere_orfeus_station
 
 source biosphere_gbif_invasive_species
 ttl 86400
