@@ -27642,3 +27642,14 @@ field SPY.price economy_alphavantage_spy_price
 field SPY.change_pct economy_alphavantage_spy_change_pct
 field GLD.price economy_alphavantage_gld_price
 field GLD.change_pct economy_alphavantage_gld_change_pct
+
+source geosphere_noaa_cdo_daily
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/live-data/noaa_cdo_daily.json
+map .
+lat_key lat
+lon_key lon
+field tmax_c geosphere_daily_tmax_c
+field tmin_c geosphere_daily_tmin_c
+field prcp_mm geosphere_daily_prcp_mm

@@ -161,6 +161,35 @@ jobs:
               | {lat: .latitude, lon: .longitude, name, elevation, datacoverage, station_id: .id}]' \
             > data/noaa_ghcnd_stations.json || true
 
+      - name: NOAA CDO daily
+        env:
+          NOAA_CDO_TOKEN: ${{ secrets.NOAA_CDO_TOKEN }}
+        run: |
+          if [ -z "$NOAA_CDO_TOKEN" ]; then
+            echo "::notice::NOAA CDO daily skipped (no NOAA_CDO_TOKEN)"
+            exit 0
+          fi
+          : > /tmp/stations.tsv
+          for c in US CA MX BR AR UK GM FR IT SP JA CH IN AS SF EG NI KE ID RS AY; do
+            curl -sS --fail --max-time 30 -H "token: $NOAA_CDO_TOKEN" \
+              "https://www.ncei.noaa.gov/cdo-web/api/v2/stations?datasetid=GHCND&locationid=FIPS:${c}&sortfield=maxdate&sortorder=desc&limit=6" \
+              | jq -r '.results[]? | [.id, (.name | gsub("\t";" ")), .latitude, .longitude, .maxdate] | @tsv'
+          done >> /tmp/stations.tsv
+          awk -F'\t' '$5 >= "2026-06-01"' /tmp/stations.tsv > /tmp/stations_active.tsv
+          START=$(date -u -d '8 days ago' +%F)
+          END=$(date -u +%F)
+          : > /tmp/cdo_data.tsv
+          cut -f1 /tmp/stations_active.tsv | xargs -n 40 | while read -r ids; do
+            IDS=$(printf '%s\n' "$ids" | tr ' ' '\n' | sed 's/^/stationid=/' | paste -sd'&' -)
+            curl -g -sS --fail --max-time 90 -H "token: $NOAA_CDO_TOKEN" \
+              "https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&${IDS}&datatypeid=TMAX,TMIN,PRCP&startdate=${START}&enddate=${END}&limit=1000" \
+              | jq -r '.results[]? | [.station, .date[0:10], .datatype, .value] | @tsv'
+          done >> /tmp/cdo_data.tsv
+          jq -R -s 'split("\n") | map(select(length > 0) | split("\t")) | map({station: .[0], name: .[1], lat: (.[2] | tonumber), lon: (.[3] | tonumber)})' /tmp/stations_active.tsv > /tmp/stations.json
+          jq -R -s 'split("\n") | map(select(length > 0) | split("\t")) | map({station: .[0], date: .[1], datatype: .[2], value: (.[3] | tonumber)}) | group_by(.station) | map(. as $r | {station: $r[0].station, date: ($r | map(.date) | max), dtypes: ($r | map({(.datatype): .value}) | add)}) | map({station, date, tmax: .dtypes.TMAX, tmin: .dtypes.TMIN, prcp: .dtypes.PRCP})' /tmp/cdo_data.tsv > /tmp/cdo_data.json
+          jq -s '(.[0] | map({(.station): {lat: .lat, lon: .lon, name: .name}}) | add) as $smap | (.[1] | map(select(.station | in($smap)) | . + $smap[.station]) | map(select(.tmax != null or .tmin != null) | {lat, lon, name, date, tmax_c: (if .tmax != null then .tmax / 10 else null end), tmin_c: (if .tmin != null then .tmin / 10 else null end), prcp_mm: (if .prcp != null then .prcp / 10 else null end)}))' /tmp/stations.json /tmp/cdo_data.json > data/noaa_cdo_daily.json || true
+          rm -f /tmp/stations.tsv /tmp/stations_active.tsv /tmp/cdo_data.tsv /tmp/stations.json /tmp/cdo_data.json
+
       - name: Ocean Networks Canada
         env:
           OCEANNETWORKS_TOKEN: ${{ secrets.OCEANNETWORKS_TOKEN }}
