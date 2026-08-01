@@ -100,40 +100,6 @@ jobs:
               -o "data/cmr_${sn}.json" || true
           done
 
-      - name: WAQI air quality
-        env:
-          WAQI_TOKEN: ${{ secrets.WAQI_TOKEN }}
-        run: |
-          if [ -z "$WAQI_TOKEN" ]; then
-            echo "::notice::WAQI skipped (no WAQI_TOKEN)"
-            exit 0
-          fi
-          cities=("Berlin,52.52,13.405" "Paris,48.8566,2.3522" "London,51.5074,-0.1278" "New York,40.7128,-74.006" "Tokyo,35.6762,139.6503" "Sydney,-33.8688,151.2093" "Delhi,28.6139,77.209" "São Paulo,-23.5505,-46.6333" "Beijing,39.9042,116.4074" "Lagos,6.5244,3.3792")
-          : > data/waqi_air_quality.json
-          for c in "${cities[@]}"; do
-            IFS=',' read -r name lat lon <<< "$c"
-            curl -s --fail "https://api.waqi.info/feed/geo:${lat};${lon}/?token=${WAQI_TOKEN}" \
-              -o "data/waqi_tmp.json" && \
-              jq -c --arg nm "$name" --arg la "$lat" --arg lo "$lon" \
-                '[.data | {lat: ($la|tonumber), lon: ($lo|tonumber), city: $nm,
-                  aqi: (.aqi // null), pm25: (.iaqi.pm25.v // null), pm10: (.iaqi.pm10.v // null),
-                  no2: (.iaqi.no2.v // null), o3: (.iaqi.o3.v // null)}] | .[0]' \
-                data/waqi_tmp.json >> data/waqi_air_quality.json || true
-          done
-          jq -s 'map(select(.aqi != null))' data/waqi_air_quality.json > data/waqi_final.json && mv data/waqi_final.json data/waqi_air_quality.json
-          rm -f data/waqi_tmp.json
-
-          curl -s --fail "https://api.waqi.info/map/bounds/?latlng=17,72,54,136&token=${WAQI_TOKEN}" \
-            -o data/waqi_tmp.json && \
-            jq '[.data[] | select(.aqi != null and .lat != null and .lon != null)
-              | {lat: .lat, lon: .lon, aqi: .aqi, station_name: .station.name}]' \
-              data/waqi_tmp.json > data/waqi_china_airquality.json || true
-          curl -s --fail "https://api.waqi.info/map/bounds/?latlng=-10,100,55,145&token=${WAQI_TOKEN}" \
-            -o data/waqi_tmp.json && \
-            jq '[.data[] | select(.aqi != null and .lat != null and .lon != null)
-              | {lat: .lat, lon: .lon, aqi: .aqi, station_name: .station.name}]' \
-              data/waqi_tmp.json > data/waqi_east_asia_airquality.json || true
-          rm -f data/waqi_tmp.json
 
       - name: USGS Water
         env:
@@ -218,66 +184,8 @@ jobs:
                 | {period: $p, total_demand_mw: add, rto_count: length}' \
             > data/eia_grid_demand.json || true
 
-      - name: OpenWeatherMap
-        env:
-          OWM_API_KEY: ${{ secrets.OWM_API_KEY }}
-        run: |
-          if [ -z "$OWM_API_KEY" ]; then
-            echo "::notice::OWM skipped (no OWM_API_KEY)"
-            exit 0
-          fi
-          : > data/owm_current.json
-          for lat in -60 -45 -30 -15 0 15 30 45 60 75; do
-            for lon in -180 -144 -108 -72 -36 0 36 72 108 144; do
-              curl -sS --fail --max-time 15 \
-                "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OWM_API_KEY}" \
-                -o data/owm_tmp.json && \
-                jq -c '{lat: .coord.lat, lon: .coord.lon, temp_c: .main.temp, wind_ms: .wind.speed, pressure_hpa: .main.pressure, humidity_pct: .main.humidity}' \
-                  data/owm_tmp.json >> data/owm_current.json || true
-            done
-          done
-          rm -f data/owm_tmp.json
-          jq -s '.' data/owm_current.json > data/owm_array.json && mv data/owm_array.json data/owm_current.json
 
-      - name: FRED economy
-        env:
-          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-        run: |
-          if [ -z "$FRED_API_KEY" ]; then
-            echo "::notice::FRED skipped (no FRED_API_KEY)"
-            exit 0
-          fi
-          for s in UNRATE CPIAUCSL FEDFUNDS; do
-            code=$(curl -sS -o /tmp/fred_body.json -w "%{http_code}" --fail --max-time 30 \
-              "https://api.stlouisfed.org/fred/series/observations?series_id=${s}&api_key=${FRED_API_KEY}&file_type=json&sort_order=desc&limit=1") || true
-            echo "FRED ${s}: HTTP ${code:-fail}"
-            if [ "$code" = "200" ]; then
-              jq -c --arg s "$s" '{($s): (.observations[0].value | tonumber)}' /tmp/fred_body.json > "data/fred_part_${s}.json"
-            fi
-          done
-          jq -s 'add' data/fred_part_*.json > data/fred_economy.json || true
-          rm -f data/fred_part_*.json
 
-      - name: AlphaVantage
-        env:
-          ALPHAVANTAGE_KEY: ${{ secrets.ALPHAVANTAGE_KEY }}
-        run: |
-          if [ -z "$ALPHAVANTAGE_KEY" ]; then
-            echo "::notice::AlphaVantage skipped (no ALPHAVANTAGE_KEY)"
-            exit 0
-          fi
-          for sym in SPY GLD; do
-            curl -sS --fail --max-time 30 \
-              "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${sym}&apikey=${ALPHAVANTAGE_KEY}" \
-              -o /tmp/av_body.json || true
-            jq -c --arg s "$sym" 'if (."Global Quote"."05. price" != null)
-              then {($s): {price: (."Global Quote"."05. price" | tonumber),
-                           change_pct: ((."Global Quote"."10. change percent" | gsub("%";"") | tonumber)),
-                           volume: (."Global Quote"."06. volume" | tonumber)}} else empty end' \
-              /tmp/av_body.json > "data/av_part_${sym}.json" || true
-          done
-          jq -s 'add' data/av_part_*.json > data/alphavantage_markets.json || true
-          rm -f data/av_part_*.json
 
       - name: Mirror static files -> v1.0
         run: |

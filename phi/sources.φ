@@ -1191,20 +1191,6 @@ ecliptic 1
 url https://api.rainviewer.com/public/weather-maps.json
 field generated hydrosphere_rain_radar_generated_time
 
-source atmosphere_waqi_air_quality
-ttl 300
-force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_air_quality.json
-format json
-map .
-lat_key lat
-lon_key lon
-field aqi atmosphere_aqi
-field pm25 atmosphere_pm25_ugm3
-field pm10 atmosphere_pm10_ugm3
-field no2 atmosphere_no2_ugm3
-field city atmosphere_waqi_city
-
 source biosphere_energy_charts_renewable
 ttl 300
 force em
@@ -9279,20 +9265,6 @@ field AOD_440nm aod_440nm
 field AOD_500nm aod_500nm
 field AOD_870nm aod_870nm
 
-source atmosphere_waqi
-ttl 1800
-force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_air_quality.json
-format json
-map .
-lat_key lat
-lon_key lon
-field aqi atmosphere_waqi_aqi
-field pm25 atmosphere_waqi_pm25
-field pm10 atmosphere_waqi_pm10
-field no2 atmosphere_waqi_no2
-field city atmosphere_waqi_city
-
 source aviation_tafs
 ttl 1800
 force em
@@ -9563,20 +9535,6 @@ field name satellite_name
 field date tle_epoch
 field line1 tle_line1
 field line2 tle_line2
-
-source waqi_cams_airquality_demo
-ttl 1800
-force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_air_quality.json
-format json
-map .
-lat_key lat
-lon_key lon
-field aqi aqi
-field pm25 pm25_ugm3
-field pm10 pm10_ugm3
-field o3 o3_ugm3
-field no2 no2_ugm3
 
 source aeronet_aod440_global
 ttl 3600
@@ -13074,28 +13032,6 @@ ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
 ephemeris orbital_voyager2_distance
-
-source waqi_china_airquality
-ttl 3600
-force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_china_airquality.json
-format json
-map .
-lat_key lat
-lon_key lon
-field aqi aqi_index
-field station_name station_name
-
-source waqi_east_asia_airquality
-ttl 3600
-force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_east_asia_airquality.json
-format json
-map .
-lat_key lat
-lon_key lon
-field aqi aqi_index
-field station_name station_name
 
 source wfigs_current_fire_perimeters
 ttl 3600
@@ -27611,37 +27547,6 @@ url https://github.com/omegaflow/catalogs/releases/download/live-data/eia_grid_d
 wgs84 38.907 -77.037
 field total_demand_mw economy_us_grid_demand_mw
 field rto_count economy_us_rto_count
-
-source atmosphere_owm_current
-ttl 1800
-force thermal
-url https://github.com/omegaflow/catalogs/releases/download/live-data/owm_current.json
-map .
-lat_key lat
-lon_key lon
-field temp_c atmosphere_temp_c
-field wind_ms atmosphere_wind_ms
-field pressure_hpa atmosphere_pressure_hpa
-field humidity_pct atmosphere_humidity_pct
-
-source economy_fred_indicators
-ttl 86400
-force advective
-url https://github.com/omegaflow/catalogs/releases/download/live-data/fred_economy.json
-wgs84 38.627 -90.199
-field UNRATE economy_fred_unemployment_pct
-field CPIAUCSL economy_fred_cpi
-field FEDFUNDS economy_fred_fedfunds_pct
-
-source economy_alphavantage_markets
-ttl 1800
-force advective
-url https://github.com/omegaflow/catalogs/releases/download/live-data/alphavantage_markets.json
-wgs84 40.707 -74.011
-field SPY.price economy_alphavantage_spy_price
-field SPY.change_pct economy_alphavantage_spy_change_pct
-field GLD.price economy_alphavantage_gld_price
-field GLD.change_pct economy_alphavantage_gld_change_pct
 
 source geosphere_noaa_cdo_daily
 ttl 86400
