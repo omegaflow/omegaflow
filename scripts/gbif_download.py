@@ -10,6 +10,7 @@ import sys
 import time
 import urllib.request
 import urllib.parse
+import urllib.error
 
 USER = os.environ.get("GBIF_USER", "")
 PASS = os.environ.get("GBIF_PASS", "")
@@ -64,11 +65,17 @@ def main():
     # 2) poll
     status = ""
     for i in range(360):
-        st = http_req(f"{BASE}/{dlkey}", "GET", None, ua)
         try:
-            status = json.loads(st).get("status", "UNKNOWN")
-        except Exception:
-            status = "UNKNOWN"
+            st = http_req(f"{BASE}/{dlkey}", "GET", None, ua)
+            try:
+                status = json.loads(st).get("status", "UNKNOWN")
+            except Exception:
+                status = "UNKNOWN"
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                status = "PREPARING"
+            else:
+                raise
         if i % 5 == 0:
             print(f"status: {status} ({i + 1})", file=sys.stderr)
         if status in ("SUCCEEDED", "FAILED", "KILLED"):
