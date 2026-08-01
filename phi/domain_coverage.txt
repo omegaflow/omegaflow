@@ -1,264 +1,266 @@
-  # HOST                                        SRC ANBIETER BIETET                WIR NUTZEN                     FORCES                
-============================================================================================================================================
-  1 github.com                                  232 74 Release Assets              232 Quellen                    diffusion,em,gravity
-  2 api.worldbank.org                           228 29.544 Indikatoren             3 Ind.                         diffusion,em
-  3 imag-data.bgs.ac.uk                         162 ~130 Observatorien             162 Quellen                    em,gravity
-  4 api.tidesandcurrents.noaa.gov               130 3.499 Stationen                116 IDs                        acoustic,advective,d
-  5 api.open-meteo.com                          120 8 Endpunkte                    163 Params                     acoustic,advective,d
-  6 services.swpc.noaa.gov                       84 ~100 Produkte                  84 Quellen                     advective,diffusion,
-  7 tapvizier.cds.unistra.fr                     84 ~20.000 Tabellen               84 Quellen                     em,gravity,seismic-b
-  8 gea.esac.esa.int                             63 1.812.709.771 Sterne           63 Quellen                     em
-  9 heasarc.gsfc.nasa.gov                        51 ~600 Missionen                 51 Quellen                     diffusion,em
- 10 earthquake.usgs.gov                          48 ~30.000/Tag                    48 Quellen                     acoustic,em,seismic-
- 11 api.gbif.org                                 42 2.2 Mrd Occurrences            42 Quellen                     acoustic,diffusion,e
- 12 www.ndbc.noaa.gov                            39 1.351 Stationen                36 IDs                         acoustic,diffusion
- 13 www.ncei.noaa.gov                            38 ~10.000 Datasets               38 Quellen                     acoustic,diffusion,e
- 14 pdgapi.lbl.gov                               38 ~300 Teilchen                  38 Quellen                     em
- 15 query1.finance.yahoo.com                     37 ~50.000 Ticker                 37 Quellen                     em
- 16 irsa.ipac.caltech.edu                        34 ~100 Tabellen                  34 Quellen                     diffusion,em,gravity
- 17 services6.arcgis.com                         32 1,000 features                 32 Quellen                     acoustic,em
- 18 services9.arcgis.com                         28 1,000 features                 28 Quellen                     advective,diffusion,
- 19 raw.githubusercontent.com                    27 27 Quellen                     27 Quellen                     em,gravity,seismic-s
- 20 ssd-api.jpl.nasa.gov                         26 26 Quellen                     26 Quellen                     acoustic,em,gravity
- 21 waterservices.usgs.gov                       21 21 Quellen                     21 Quellen                     acoustic,diffusion,s
- 22 gml.noaa.gov                                 21 ~30 Feeds                      21 Quellen                     diffusion,em
- 23 aeronet.gsfc.nasa.gov                        18 ~500 Stationen                 18 Quellen                     diffusion,em
- 24 eutils.ncbi.nlm.nih.gov                      18 ~40 Datenbanken                18 Quellen                     em,gravity
- 25 api.inaturalist.org                          17 1.420.180 Taxa                 1 IDs                          diffusion,em
- 26 inspirehep.net                               17 17 Quellen                     17 Quellen                     em
- 27 celestrak.org                                15 16.238 Satelliten              15 Quellen                     em
- 28 aviationweather.gov                          13 ~9.000 Airports                13 Quellen                     acoustic,em
- 29 nrt.cmems-du.eu                              13 ~200 Produkte                  13 Quellen                     acoustic,diffusion,g
- 30 exoplanetarchive.ipac.caltech.edu            13 ~5.500 Planeten                13 Quellen                     em,gravity
- 31 api.obis.org                                 10 ~150.000 Arten                 3 IDs                          diffusion,em
- 32 services.arcgis.com                           9 2,000 features                 9 Quellen                      advective,diffusion,
- 33 mast.stsci.edu                                9 ~20 Tabellen                   9 Quellen                      em
- 34 export.arxiv.org                              9 ~2.4M Papers                   9 Quellen                      em
- 35 api.weather.gov                               8 254 Standorte                  8 Quellen                      acoustic,diffusion,e
- 36 tle.ivanstanojevic.me                         7 212 Satelliten                 7 Quellen                      em
- 37 api.crossref.org                              7 7 Quellen                      7 Quellen                      em
- 38 noaadata.apps.nsidc.org                       7 ~100 Datasets                  7 Quellen                      em
- 39 service.earthscope.org                        7 67,962 lines                   7 Quellen                      acoustic,em,seismic-
- 40 cmr.earthdata.nasa.gov                        7 7 Quellen                      7 Quellen                      diffusion,em,thermal
- 41 volcanoes.usgs.gov                            6 6 Quellen                      6 Quellen                      em,seismic-surface
- 42 gtnp.arcticportal.org                         6 ❌ nicht erreichbar             6 Quellen                      diffusion,thermal
- 43 services3.arcgis.com                          5 5 Quellen                      5 Quellen                      em,gravity,seismic-b
- 44 api.waqi.info                                 5 5 Quellen                      5 Quellen                      diffusion
- 45 gdacs.org                                     5 324 items                      5 Quellen                      diffusion,em,seismic
- 46 gracedb.ligo.org                              5 ~100 Events                    5 Quellen                      em,gravity
- 47 eonet.gsfc.nasa.gov                           5 200 events                     5 Quellen                      em,seismic-body
- 48 api.coral.tsr.lol                             5 5 Quellen                      5 Quellen                      em,thermal
- 49 lasp.colorado.edu                             5 ❌ nicht erreichbar             5 Quellen                      em
- 50 power.larc.nasa.gov                           5 ❌ nicht erreichbar             5 Params                       em,thermal
- 51 en.wikipedia.org                              5 6.8M Artikel                   5 Quellen                      em
- 52 www.cpc.ncep.noaa.gov                         5 5 Quellen                      5 Quellen                      em,thermal
- 53 ghoapi.azureedge.net                          5 2,469 value                    5 Quellen                      diffusion,em
- 54 webservices.volcano.si.edu                    5 ❌ nicht erreichbar             5 Quellen                      seismic-surface
- 55 rest.isric.org                                5 ❌ nicht erreichbar             5 Quellen                      diffusion,em
- 56 api.neotomadb.org                             5 5 Quellen                      5 Quellen                      diffusion,em
- 57 skyserver.sdss.org                            5 ~500M Objekte                  5 Quellen                      em
- 58 www.sidc.be                                   5 76,183 lines                   5 Quellen                      em
- 59 api.adsb.lol                                  4 ❌ nicht erreichbar             4 Quellen                      em
- 60 www.seismicportal.eu                          4 ❌ nicht erreichbar             4 Quellen                      em,seismic-body
- 61 api.geonet.org.nz                             4 100 features                   4 Quellen                      em,seismic-body
- 62 services2.arcgis.com                          4 2,000 features                 4 Quellen                      advective,diffusion,
- 63 cdaweb.gsfc.nasa.gov                          4 ❌ nicht erreichbar             14 Params                      advective,em,gravity
- 64 seismic-api.science.unimelb.edu.au            4 ❌ nicht erreichbar             4 Quellen                      em
- 65 hub.docker.com                                4 4 Quellen                      4 Quellen                      em
- 66 data.pmel.noaa.gov                            4 ❌ nicht erreichbar             4 Quellen                      diffusion,em
- 67 ec.europa.eu                                  4 4 Quellen                      4 Quellen                      em
- 68 www.ebi.ac.uk                                 4 4 Quellen                      4 Quellen                      diffusion,em
- 69 ned.ipac.caltech.edu                          4 500 data                       4 Quellen                      em,gravity
- 70 api.fda.gov                                   4 4 Quellen                      4 Quellen                      em
- 71 woudc.org                                     4 4 Quellen                      4 Quellen                      diffusion
- 72 opendata.cern.ch                              4 4 Quellen                      4 Quellen                      em
- 73 api.opentopodata.org                          4 ❌ nicht erreichbar             4 Quellen                      em
- 74 api.github.com                                3 3 Quellen                      3 Quellen                      em
- 75 api.wolfx.jp                                  3 3 Quellen                      3 Quellen                      em
- 76 webservices.ingv.it                           3 ❌ nicht erreichbar             3 Quellen                      seismic-body,seismic
- 77 gcn.nasa.gov                                  3 3 Quellen                      3 Quellen                      em
- 78 www.minorplanetcenter.net                     3 3 Quellen                      3 Quellen                      gravity
- 79 www.nhc.noaa.gov                              3 3 Quellen                      3 Quellen                      em,thermal
- 80 cddis.nasa.gov                                3 3 Quellen                      3 Quellen                      em,gravity
- 81 bhuvan-app1.nrsc.gov.in                       3 3 Quellen                      3 Quellen                      diffusion,seismic-su
- 82 coastwatch.pfeg.noaa.gov                      3 ❌ nicht erreichbar             3 Quellen                      em,thermal
- 83 hpiers.obspm.fr                               3 3 Quellen                      3 Quellen                      em
- 84 v4.boldsystems.org                            3 3 Quellen                      3 Quellen                      diffusion
- 85 gist.githubusercontent.com                    3 15 features                    3 Quellen                      em
- 86 ssd.jpl.nasa.gov                              3 78 Korper                      3 Quellen                      gravity
- 87 zenodo.org                                    3 7,835 lines                    3 Quellen                      diffusion,gravity
- 88 musicbrainz.org                               3 2.9M count                     3 Quellen                      em
- 89 www.ngdc.noaa.gov                             3 900 totalItems                 3 Quellen                      em,seismic-body
- 90 ws.pangaea.de                                 3 3 Quellen                      3 Quellen                      diffusion
- 91 api.wheretheiss.at                            2 2 Quellen                      2 Quellen                      em
- 92 stat.ripe.net                                 2 2 Quellen                      2 Quellen                      em
- 93 transport.opendata.ch                         2 2 Quellen                      2 Quellen                      em
- 94 services1.arcgis.com                          2 150 features                   2 Quellen                      seismic-body,seismic
- 95 services5.arcgis.com                          2 2,000 features                 2 Quellen                      acoustic,em
- 96 api.energy-charts.info                        2 2 Quellen                      2 Quellen                      em
- 97 api.carbonintensity.org.uk                    2 2 Quellen                      2 Quellen                      em,thermal
- 98 www.tsunami.gov                               2 2 Quellen                      2 Quellen                      gravity
- 99 kp.gfz.de                                     2 ❌ nicht erreichbar             2 Quellen                      em
-100 geofon.gfz-potsdam.de                         2 2 Quellen                      2 Quellen                      seismic-body
-101 firms.modaps.eosdis.nasa.gov                  2 107,541 lines                  2 Quellen                      thermal
-102 epic.gsfc.nasa.gov                            2 2 Quellen                      2 Quellen                      em
-103 www.imis.bfs.de                               2 1,679 features                 2 Quellen                      em
-104 simbad.cds.unistra.fr                         2 ❌ nicht erreichbar             2 Quellen                      em
-105 geofon.gfz.de                                 2 ❌ nicht erreichbar             2 Quellen                      em
-106 meta.icos-cp.eu                               2 2 Quellen                      2 Quellen                      diffusion
-107 erddap.ifremer.fr                             2 ❌ nicht erreichbar             2 Quellen                      diffusion,thermal
-108 gong2.nso.edu                                 2 ❌ nicht erreichbar             2 Quellen                      em
-109 openlittermap.com                             2 2 Quellen                      2 Quellen                      diffusion
-110 earth-search.aws.element84.com                2 10 features                    2 Quellen                      em
-111 api.woudc.org                                 2 477 features                   2 Quellen                      em
-112 clinicaltrials.gov                            2 2 Quellen                      2 Quellen                      em
-113 api.openalex.org                              2 2 Quellen                      2 Quellen                      em
-114 www.orfeus-eu.org                             2 1,742 lines                    2 Quellen                      seismic-body
-115 hydro1.gesdisc.eosdis.nasa.gov                2 2 Quellen                      2 Quellen                      diffusion,thermal
-116 data.humdata.org                              2 2 Quellen                      2 Quellen                      diffusion,em
-117 www.isc.ac.uk                                 2 2 Quellen                      2 Quellen                      seismic-body
-118 epqs.nationalmap.gov                          2 ❌ nicht erreichbar             1 IDs                          em,seismic-surface
-119 g6goyz4w56.execute-api.us-west-2.amazona      2 2 Quellen                      2 Quellen                      em
-120 oderest.rsl.wustl.edu                         2 2 Quellen                      2 Quellen                      em
-121 www.physics.mcgill.ca                         2 2 Quellen                      2 Quellen                      em
-122 data.rcsb.org                                 2 2 Quellen                      2 Quellen                      em
-123 climate-api.open-meteo.com                    2 2 Quellen                      4 Params                       em,thermal
-124 openlibrary.org                               2 2 Quellen                      2 Quellen                      em
-125 pubchem.ncbi.nlm.nih.gov                      2 ❌ nicht erreichbar             2 Quellen                      em
-126 rapid.ac.uk                                   2 2 Quellen                      2 Quellen                      diffusion
-127 api.stackexchange.com                         2 24.1M total                    2 Quellen                      em
-128 macrostrat.org                                2 2 Quellen                      1 IDs                          em
-129 qrng.anu.edu.au                               1 1 Quellen                      1 Quellen                      em
-130 api.blitzortung.org                           1 1 Quellen                      1 Quellen                      em
-131 www.inex.ie                                   1 1 Quellen                      1 IDs                          em
-132 api.irail.be                                  1 ❌ nicht erreichbar             1 Quellen                      em
-133 api.irishrail.ie                              1 1 Quellen                      1 Quellen                      em
-134 www.wienerlinien.at                           1 1 Quellen                      1 Quellen                      em
-135 data.blitzortung.org                          1 1 Quellen                      1 IDs                          acoustic
-136 api.drand.sh                                  1 1 Quellen                      1 Quellen                      em
-137 irsc.ut.ac.ir                                 1 ❌ nicht erreichbar             1 Quellen                      seismic-body
-138 api.p2pquake.net                              1 1 Quellen                      1 Quellen                      seismic-body
-139 beacon.nist.gov                               1 1 Quellen                      1 Quellen                      em
-140 service.scedc.caltech.edu                     1 ❌ nicht erreichbar             1 Quellen                      seismic-body
-141 earthquake.tmd.go.th                          1 1 Quellen                      1 Quellen                      seismic-body
-142 api.rainviewer.com                            1 1 Quellen                      1 Quellen                      acoustic
-143 reg.bom.gov.au                                1 1 Quellen                      1 Quellen                      diffusion
-144 www.emsc-csem.org                             1 ❌ nicht erreichbar             1 Quellen                      seismic-body
-145 www.pegelonline.wsv.de                        1 10,890 lines                   1 Quellen                      gravity
-146 environment.data.gov.uk                       1 355 items                      1 Quellen                      em
-147 www.ionosonde.iap-kborn.de                    1 1 Quellen                      1 Quellen                      em
-148 tadas.afad.gov.tr                             1 1 Quellen                      1 Quellen                      seismic-body
-149 api.weather.bom.gov.au                        1 ❌ nicht erreichbar             1 Quellen                      em
-150 dataserver-coids.inpe.br                      1 1 Quellen                      1 Quellen                      em
-151 bmkg-restapi.vercel.app                       1 15 data                        1 Quellen                      em
-152 www.ceic.ac.cn                                1 1 Quellen                      1 Quellen                      seismic-surface
-153 www.jma.go.jp                                 1 1 Quellen                      1 Quellen                      seismic-surface
-154 api.waterdata.usgs.gov                        1 ❌ nicht erreichbar             1 Quellen                      advective
-155 impc.dlr.de                                   1 1 Quellen                      1 Quellen                      em
-156 almascience.org                               1 ❌ nicht erreichbar             1 Quellen                      em
-157 www.amsmeteors.org                            1 1 Quellen                      1 Quellen                      gravity
-158 argovis-api.colorado.edu                      1 1 Quellen                      1 Quellen                      diffusion
-159 www.hamqsl.com                                1 1 Quellen                      1 Quellen                      em
-160 api.sunrise-sunset.org                        1 1 Quellen                      1 Quellen                      em
-161 disease.sh                                    1 1 Quellen                      1 Quellen                      em
-162 api.exchangerate-api.com                      1 1 Quellen                      1 Quellen                      em
-163 open.er-api.com                               1 1 Quellen                      1 Quellen                      em
-164 data.gdeltproject.org                         1 17,385 lines                   1 Quellen                      em
-165 www.govtrack.us                               1 ❌ nicht erreichbar             1 Quellen                      em
-166 ll.thespacedevs.com                           1 366 count                      1 Quellen                      em
-167 onionoo.torproject.org                        1 9,742 relays                   1 Quellen                      em
-168 wikimedia.org                                 1 ❌ nicht erreichbar             1 Quellen                      em
-169 ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca           1 ❌ nicht erreichbar             1 Quellen                      em
-170 geoserver.efas.eu                             1 ❌ nicht erreichbar             1 Quellen                      diffusion
-171 sky.esa.int                                   1 ❌ nicht erreichbar             1 Quellen                      em
-172 network.satnogs.org                           1 1 Quellen                      1 Quellen                      em
-173 fireball.fripon.org                           1 20,364 data                    1 Quellen                      em
-174 www.globalcmt.org                             1 1 Quellen                      1 Quellen                      seismic-body
-175 archive.gemini.edu                            1 ❌ nicht erreichbar             1 Quellen                      em
-176 catalogue.dataspace.copernicus.eu             1 ❌ nicht erreichbar             1 Quellen                      em
-177 ies-ows.jrc.ec.europa.eu                      1 1 Quellen                      1 Quellen                      em
-178 www.globalfloods.eu                           1 1 Quellen                      1 Quellen                      em
-179 erddap.aoml.noaa.gov                          1 1 Quellen                      1 Quellen                      em
-180 erddap.emodnet-physics.eu                     1 2.1M lines                     1 Quellen                      em
-181 pegelonline.wsv.de                            1 ❌ nicht erreichbar             1 Quellen                      gravity
-182 records-ws.nbnatlas.org                       1 ❌ nicht erreichbar             1 Quellen                      acoustic
-183 archive.nrao.edu                              1 1 Quellen                      1 Quellen                      em
-184 services.nvd.nist.gov                         1 1 Quellen                      1 Quellen                      em
-185 eyes.nasa.gov                                 1 1 Quellen                      1 Quellen                      em
-186 api.safecast.org                              1 1 Quellen                      1 Quellen                      em
-187 www.temis.nl                                  1 1 Quellen                      1 Quellen                      em
-188 terrabrasilis.dpi.inpe.br                     1 1 Quellen                      1 Quellen                      diffusion
-189 db.satnogs.org                                1 1 Quellen                      1 Quellen                      em
-190 data.cdc.gov                                  1 1 Quellen                      1 Quellen                      em
-191 weather.uwyo.edu                              1 ❌ nicht erreichbar             1 IDs                          thermal
-192 vsx.aavso.org                                 1 1 Quellen                      1 Quellen                      em
-193 newton.spacedys.com                           1 1 Quellen                      1 Quellen                      gravity
-194 opendata.dwd.de                               1 27 content                     1 Quellen                      em
-195 api.met.no                                    1 ❌ nicht erreichbar             1 Quellen                      em
-196 opendata.ecdc.europa.eu                       1 51,158 lines                   1 Quellen                      em
-197 epoch.ai                                      1 6,291 lines                    1 Quellen                      em
-198 www.peeringdb.com                             1 1 Quellen                      1 Quellen                      em
-199 modis.ornl.gov                                1 ❌ nicht erreichbar             1 Quellen                      em
-200 restcountries.com                             1 1 Quellen                      1 Quellen                      em
-201 www.submarinecablemap.com                     1 718 features                   1 Quellen                      em
-202 api.unhcr.org                                 1 1 Quellen                      1 Quellen                      em
-203 www.star.nesdis.noaa.gov                      1 1 Quellen                      1 Quellen                      em
-204 xmart-api-public.who.int                      1 120,000 value                  1 Quellen                      em
-205 www.bodc.ac.uk                                1 ❌ nicht erreichbar             1 Quellen                      diffusion
-206 www.chime-frb.ca                              1 1 Quellen                      1 Quellen                      em
-207 mars.nasa.gov                                 1 4,719 soles                    1 Quellen                      em
-208 crates.io                                     1 1 Quellen                      1 Quellen                      em
-209 dasch.rc.fas.harvard.edu                      1 1 Quellen                      1 Quellen                      em
-210 re.jrc.ec.europa.eu                           1 ❌ nicht erreichbar             1 Quellen                      em
-211 vires.services                                1 ❌ nicht erreichbar             2 Params                       gravity
-212 services.terrascope.be                        1 100 features                   1 Quellen                      diffusion
-213 catalogue.clms.copernicus.eu                  1 ❌ nicht erreichbar             1 Quellen                      em
-214 usdmdataservices.unl.edu                      1 ❌ nicht erreichbar             1 Quellen                      em
-215 ows.emodnet-humanactivities.eu                1 ❌ nicht erreichbar             1 Quellen                      em
-216 erddap.dataexplorer.oceanobservatories.o      1 28,187 lines                   1 Quellen                      em
-217 datacenter.iers.org                           1 ❌ nicht erreichbar             1 Quellen                      gravity
-218 maia.usno.navy.mil                            1 1 Quellen                      1 Quellen                      em
-219 network.igs.org                               1 20 data                        1 Quellen                      seismic-surface
-220 www.tng-project.org                           1 1 Quellen                      1 Quellen                      gravity
-221 www.ioc-sealevelmonitoring.org                1 1 Quellen                      1 Quellen                      gravity
-222 ds.iris.edu                                   1 ❌ nicht erreichbar             1 Quellen                      seismic-body
-223 landsatlook.usgs.gov                          1 10 features                    1 Quellen                      em
-224 tess.mit.edu                                  1 ❌ nicht erreichbar             1 Quellen                      em
-225 www.crystallography.net                       1 1 Quellen                      1 Quellen                      em
-226 aa.usno.navy.mil                              1 ❌ nicht erreichbar             1 Quellen                      em
-227 data.giss.nasa.gov                            1 1 Quellen                      1 Quellen                      thermal
-228 modis.gsfc.nasa.gov                           1 ❌ nicht erreichbar             1 Quellen                      em
-229 physics.nist.gov                              1 1 Quellen                      1 Quellen                      em
-230 psl.noaa.gov                                  1 1 Quellen                      1 Quellen                      thermal
-231 gis.ngdc.noaa.gov                             1 1 Quellen                      1 Quellen                      gravity
-232 registry.npmjs.org                            1 ❌ nicht erreichbar             1 Quellen                      em
-233 api.astrocats.space                           1 1 Quellen                      1 Quellen                      em
-234 my.cmems-du.eu                                1 1 Quellen                      1 Quellen                      em
-235 world.openfoodfacts.org                       1 4.7M count                     1 Quellen                      em
-236 stac.openlandmap.org                          1 1 Quellen                      1 Quellen                      diffusion
-237 paleobiodb.org                                1 1 Quellen                      1 Quellen                      em
-238 atlas.ripe.net                                1 14,430 count                   1 Quellen                      em
-239 gis1.servirglobal.net                         1 1 Quellen                      1 Quellen                      diffusion
-240 tevcat2.tevcat.org                            1 1 Quellen                      1 Quellen                      em
-241 data.cosmic.ucar.edu                          1 1 Quellen                      1 Quellen                      diffusion
-242 rest.uniprot.org                              1 ❌ nicht erreichbar             1 Quellen                      em
-243 nwis.waterdata.usgs.gov                       1 ❌ nicht erreichbar             1 Quellen                      diffusion
-244 www.sciencebase.gov                           1 ❌ nicht erreichbar             1 Quellen                      diffusion
-245 developer.uspto.gov                           1 1 Quellen                      1 Quellen                      em
-246 www.wikidata.org                              1 1 Quellen                      1 Quellen                      em
-247 api.openbrewerydb.org                         1 1 Quellen                      1 Quellen                      em
-248 services7.arcgis.com                          1 360 features                   1 Quellen                      diffusion
-249 www.glims.org                                 1 ❌ nicht erreichbar             1 Quellen                      thermal
-250 stationview.raspberryshake.org                1 1 Quellen                      1 Quellen                      seismic-surface
-251 egg.astro.cornell.edu                         1 15,856 lines                   1 Quellen                      em
-252 www.metoffice.gov.uk                          1 1 Quellen                      1 Quellen                      em
-253 data-api.globalforestwatch.org                1 1 Quellen                      1 Quellen                      em
-254 esgf.ceda.ac.uk                               1 1 Quellen                      1 Quellen                      em
-255 stac.eoapi.dev                                1 41 features                    1 Quellen                      em
-256 icgem.gfz-potsdam.de                          1 1 Quellen                      1 Quellen                      em
-257 api.open-elevation.com                        1 ❌ nicht erreichbar             1 Quellen                      em
-258 planetarycomputer.microsoft.com               1 136 features                   1 Quellen                      em
+  # HOST                                   SRC      OBJEKTE                     FELDER API                FELDER WIR NUTZ % FORCES              
+====================================================================================================================================================
+  1 github.com                             232    74 Assets 3 Felder                       arg_perihelion_deg, asteroid_eccentricity, asteroid_inclination_deg, asteroid_semimajor_axis_au +1022    0/3 diffusion,em,gravi
+  2 api.worldbank.org                      228  29.544 Ind. 4 Felder                       lat_key country.latitude, lat_key latitude, lon_key country.longitude, lon_key longitude    0/4 diffusion,em
+  3 imag-data.bgs.ac.uk                    162    ~130 Obs. HTTP0                          geosphere_magnetometer_id, geosphere_magnetometer_title      — em,gravity
+  4 api.tidesandcurrents.noaa.gov          130  3.499 Stat. 9 Felder                       air_pressure_hpa, current_direction, current_speed_cms, current_time +19    0/9 acoustic,advective
+  5 api.open-meteo.com                     120         8 EP 15 Felder                      aerosol_optical_depth, ammonia, apparent_temperature, apparent_temperature_max +247   0/15 acoustic,advective
+  6 services.swpc.noaa.gov                  84   ~100 Prod. 22 Felder                      1, 2, alert_message, alert_type +54   0/22 advective,diffusio
+  7 tapvizier.cds.unistra.fr                84    ~20k Tab. 6 Felder                       Source, agn_gamma_flux_1000, agn_pl_index, asas_sn_v_mag +17    0/6 em,gravity,seismic
+  8 gea.esac.esa.int                        63 1.8 Mrd. Sterne HTTP0                          bp_minus_rp, bp_rp, cosmic_oldest_star_age_gyr, cosmic_oldest_star_temp_k +24      — em
+  9 heasarc.gsfc.nasa.gov                   51   ~600 Miss. 2 Felder                       chandra_exposure_sec, detection_likelihood, hard_band_flux, hard_xray_flux +15    0/2 diffusion,em
+ 10 earthquake.usgs.gov                     48     ~30k/Tag HTTP0                          alert_level, azimuthal_gap, earthquake_magnitude, earthquake_place +37      — acoustic,em,seismi
+ 11 api.gbif.org                            42    2.2B Occ. HTTP0                          basis_of_record, biosphere_gbif_amphibian_key, biosphere_gbif_arachnid_key, biosphere_gbif_arthropod_key +43      — acoustic,diffusion
+ 12 www.ndbc.noaa.gov                       39  1.351 Stat. 13 Felder                      DPD, PRES, WDIR, WSPD +20   0/13 acoustic,diffusion
+ 13 www.ncei.noaa.gov                       38      ~10k DS 20 Felder                      average_wind_speed_ms, dewpoint_celsius, lat_key 1, lat_key 40.74 +42   0/20 acoustic,diffusion
+ 14 pdgapi.lbl.gov                          38   ~300 Teil. 14 Felder                      —                              — em
+ 15 query1.finance.yahoo.com                37   ~50k Tick. 2 Felder                       —                              — em
+ 16 irsa.ipac.caltech.edu                   34    ~100 Tab. HTTP0                          lat_key ra, lon_key dec, mag_h, mag_j +2      — diffusion,em,gravi
+ 17 services6.arcgis.com                    32            — 9 Felder                       intensity_ka, lat_key geometry.coordinates.1, lat_key geometry.y, lon_key geometry.coordinates.0 +3    1/9 acoustic,em
+ 18 services9.arcgis.com                    28            — 6 Felder                       acq_date, address, advdate, advisnum +104    0/6 advective,diffusio
+ 19 raw.githubusercontent.com               27            — 7 Felder                       Charge, ID, Mass, airport_latitude +44    0/7 em,gravity,seismic
+ 20 ssd-api.jpl.nasa.gov                    26            — HTTP0                          altitude_km, close_approach_date, cosmic_asteroid_h_mag, date +25      — acoustic,em,gravit
+ 21 waterservices.usgs.gov                  21            — 8 Felder                       hydrosphere_river_flow_cfs, lat_key sourceInfo.geoLocation.geogLocation.latitude, lon_key sourceInfo.geoLocation.geogLocation.longitude, measurement_datetime +5    0/8 acoustic,diffusion
+ 22 gml.noaa.gov                            21    ~30 Feeds 7 Felder                       (ppm), 8, average, ch4_ppb_mean +13    0/7 diffusion,em
+ 23 aeronet.gsfc.nasa.gov                   18   ~500 Stat. 9 Felder                       AOD_1640nm, lat_key Latitude(decimal_degrees), lat_key Site_Latitude(Degrees), lon_key Longitude(decimal_degrees) +1    0/9 diffusion,em
+ 24 eutils.ncbi.nlm.nih.gov                 18      ~40 DBs 4 Felder                       —                              — em,gravity
+ 25 api.inaturalist.org                     17   1.42M Taxa 50 Felder                      biosphere_inaturalist_nearby, lat_key geojson.coordinates.1, lon_key geojson.coordinates.0   0/50 diffusion,em
+ 26 inspirehep.net                          17            — 10 Felder                      —                              — em
+ 27 celestrak.org                           15  16.238 Sat. HTTP0                          —                              — em
+ 28 aviationweather.gov                     13       ~9k AP 20 Felder                      aircraft_type, altitude_high_1, altitude_low_1, atmosphere_metar_dewpoint_c +34   0/20 acoustic,em
+ 29 nrt.cmems-du.eu                         13   ~200 Prod. 2 Felder                       lat_key lat, lat_key latitude, lon_key lon, lon_key longitude    0/2 acoustic,diffusion
+ 30 exoplanetarchive.ipac.caltech.edu       13  ~5.5k Plan. 1 Felder                       cosmic_exoplanet_eqt_k, cosmic_exoplanet_mass_earth, cosmic_exoplanet_period_d, cosmic_exoplanet_radius_re +11    0/1 em,gravity
+ 31 api.obis.org                            10  ~150k Arten HTTP0                          biosphere_obis_aphia_id, biosphere_obis_date, biosphere_obis_depth_m, biosphere_obis_marine_date +5      — diffusion,em
+ 32 services.arcgis.com                      9            — 6 Felder                       city, conditions, elevation_ft, lat_key geometry.coordinates.1 +21    0/6 advective,diffusio
+ 33 mast.stsci.edu                           9     ~20 Tab. HTTP0                          calibration_level, collection, dec_deg, filters +6      — em
+ 34 export.arxiv.org                         9   ~2.4M Pap. HTTP0                          —                              — em
+ 35 api.weather.gov                          8    254 Stat. 7 Felder                       affected_area, alert_certainty, alert_event_type, alert_headline +38    0/7 acoustic,diffusion
+ 36 tle.ivanstanojevic.me                    7     212 Sat. 19 Felder                      —                              — em
+ 37 api.crossref.org                         7            — 8 Felder                       —                              — em
+ 38 noaadata.apps.nsidc.org                  7      ~100 DS 6 Felder                       area, extent                 0/6 em
+ 39 service.earthscope.org                   7            — 1 Felder                       geosphere_seismic_elevation_m, geosphere_seismic_network, geosphere_seismic_network_code, geosphere_seismic_network_name +12    0/1 acoustic,em,seismi
+ 40 cmr.earthdata.nasa.gov                   7            — 4 Felder                       fire_day_night, footprint_dataset_id, footprint_granule_id, footprint_time_end +1    0/4 diffusion,em,therm
+ 41 volcanoes.usgs.gov                       6            — 5 Felder                       geosphere_volcano_elevation_m, geosphere_volcano_vnum, lat_key Latitude, lat_key geometry.coordinates.1 +6    0/5 em,seismic-surface
+ 42 gtnp.arcticportal.org                    6            — HTTP0                          lat_key location.lat, lat_key station.latitude, lon_key location.lng, lon_key location.lon +1      — diffusion,thermal
+ 43 services3.arcgis.com                     5            — 4 Felder                       fire_acres, fire_polygon_ms, lat_key attributes.LATITUDE, lat_key geometry.coordinates.1 +5    0/4 em,gravity,seismic
+ 44 api.waqi.info                            5            — 2 Felder                       lat_key city.geo.0, lat_key lat, lon_key city.geo.1, lon_key lon    0/2 diffusion
+ 45 gdacs.org                                5          324 3 Felder                       —                              — diffusion,em,seism
+ 46 gracedb.ligo.org                         5     ~100 Ev. 22 Felder                      physics_ligo_event_gpstime, physics_ligo_event_group, physics_ligo_far_hz, physics_ligo_p_astro +2   0/22 em,gravity
+ 47 eonet.gsfc.nasa.gov                      5          200 8 Felder                       biosphere_fire_acres, biosphere_volcano_eonet_id, eonet_event_id, eonet_event_title +7    0/8 em,seismic-body
+ 48 api.coral.tsr.lol                        5            — 17 Felder                      lat_key latitude, lon_key longitude   0/17 em,thermal
+ 49 lasp.colorado.edu                        5            — HTTP0                          —                              — em
+ 50 power.larc.nasa.gov                      5            — HTTP0                          ALLSKY_SFC_SW_DWN, PRECTOTCORR, RH2M, T2M +3      — em,thermal
+ 51 en.wikipedia.org                         5    6.8M Art. 4 Felder                       —                              — em
+ 52 www.cpc.ncep.noaa.gov                    5            — 4 Felder                       ANOM, month, nino12_sst_anom_c, nino12_sst_c +3    1/4 em,thermal
+ 53 ghoapi.azureedge.net                     5         2.5k 26 Felder                      —                              — diffusion,em
+ 54 webservices.volcano.si.edu               5            — 11 Felder                      lat_key Latitude, lat_key geometry.coordinates.1, lon_key Longitude, lon_key geometry.coordinates.0   0/11 seismic-surface
+ 55 rest.isric.org                           5            — HTTP0                          depth_layer, ph_h2o_mean       — diffusion,em
+ 56 api.neotomadb.org                        5            — 8 Felder                       lat_key site.geography.lat, lat_key site.geography.latitude, lon_key site.geography.lng, lon_key site.geography.longitude    0/8 diffusion,em
+ 57 skyserver.sdss.org                       5   ~500M Obj. HTTP0                          sdss_galaxy_mag_g              — em
+ 58 www.sidc.be                              5          76k 7 Felder                       day, month, sunspot_number, year    0/7 em
+ 59 api.adsb.lol                             4            — HTTP0                          lat_key lat, lon_key lon       — em
+ 60 www.seismicportal.eu                     4            — HTTP0                          geosphere_emsc_depth_km, geosphere_emsc_global_depth, geosphere_emsc_global_magnitude, geosphere_emsc_global_place +10      — em,seismic-body
+ 61 api.geonet.org.nz                        4          100 3 Felder                       geosphere_geonet_alert_level, geosphere_geonet_aviation_code, geosphere_geonet_depth_km, geosphere_geonet_locality +9    0/3 em,seismic-body
+ 62 services2.arcgis.com                     4            — 6 Felder                       description_url, flood_likelihood, lat_key decimalLatitude, lat_key geometry.coordinates.1 +10    0/6 advective,diffusio
+ 63 cdaweb.gsfc.nasa.gov                     4            — HTTP0                          AE_INDEX, B1F1, BGSEc, BX_GSE +10      — advective,em,gravi
+ 64 seismic-api.science.unimelb.edu.au       4            — 10 Felder                      geosphere_ga_depth_3d, geosphere_ga_depth_km, geosphere_ga_depth_month, geosphere_ga_location +13   0/10 em
+ 65 hub.docker.com                           4            — 29 Felder                      —                              — em
+ 66 data.pmel.noaa.gov                       4            — HTTP0                          lat_key 1, lat_key latitude, lon_key 2, lon_key longitude +3      — diffusion,em
+ 67 ec.europa.eu                             4            — 50 Felder                      —                              — em
+ 68 www.ebi.ac.uk                            4            — 10 Felder                      lat_key latitude, lon_key longitude   0/10 diffusion,em
+ 69 ned.ipac.caltech.edu                     4          500 6 Felder                       lat_key ra, lon_key dec, name, redshift +1    1/6 em,gravity
+ 70 api.fda.gov                              4            — 20 Felder                      —                              — em
+ 71 woudc.org                                4            — 2 Felder                       lat_key station.geometry.coordinates.1, lat_key station.latitude, lon_key station.geometry.coordinates.0, lon_key station.longitude    0/2 diffusion
+ 72 opendata.cern.ch                         4            — 18 Felder                      —                              — em
+ 73 api.opentopodata.org                     4            — HTTP0                          geosphere_elevation_eudem25_m, geosphere_elevation_srtm30_m, geosphere_terrain_mapzen_m, hydrosphere_bathymetry_gebco_m +2      — em
+ 74 api.github.com                           3            — 7 Felder                       —                              — em
+ 75 api.wolfx.jp                             3            — 28 Felder                      —                              — em
+ 76 webservices.ingv.it                      3            — HTTP0                          geosphere_ingv_depth_km, geosphere_ingv_location, geosphere_ingv_magnitude, geosphere_ingv_time +2      — seismic-body,seism
+ 77 gcn.nasa.gov                             3            — 19 Felder                      —                              — em
+ 78 www.minorplanetcenter.net                3            — 16 Felder                      —                              — gravity
+ 79 www.nhc.noaa.gov                         3            — 30 Felder                      central_pressure_mb, lat_key latitude, lon_key longitude, movement_direction_deg +3   0/30 em,thermal
+ 80 cddis.nasa.gov                           3            — HTTP0                          lat_key latitude, lon_key longitude      — em,gravity
+ 81 bhuvan-app1.nrsc.gov.in                  3            — 1 Felder                       lat_key geometry.coordinates.1, lon_key geometry.coordinates.0    0/1 diffusion,seismic-
+ 82 coastwatch.pfeg.noaa.gov                 3            — HTTP0                          coastwatch_ascat_x_wind_ms, cryosphere_oisst_sea_ice_fraction, hydrosphere_sst_c, lat_key 2 +1      — em,thermal
+ 83 hpiers.obspm.fr                          3            — 3 Felder                       dx_celestial_pole_mas, dy_celestial_pole_mas, mjd, ut1_utc_ms +2    0/3 em
+ 84 v4.boldsystems.org                       3            — 2 Felder                       lat_key lat, lon_key lon     0/2 diffusion
+ 85 gist.githubusercontent.com               3            — 5 Felder                       geosphere_heritage_year, geosphere_volcano_elevation_m, lat_key lat, lon_key lng +1    0/5 em
+ 86 ssd.jpl.nasa.gov                         3    78 Korper 3 Felder                       —                              — gravity
+ 87 zenodo.org                               3            — 7 Felder                       —                              — diffusion,gravity
+ 88 musicbrainz.org                          3         2.9M 13 Felder                      —                              — em
+ 89 www.ngdc.noaa.gov                        3            — 29 Felder                      lat_key latitude, lon_key longitude   0/29 em,seismic-body
+ 90 ws.pangaea.de                            3            — 13 Felder                      —                              — diffusion
+ 91 api.wheretheiss.at                       2            — 13 Felder                      —                              — em
+ 92 stat.ripe.net                            2            — 18 Felder                      —                              — em
+ 93 transport.opendata.ch                    2            — 16 Felder                      —                              — em
+ 94 services1.arcgis.com                     2            — 6 Felder                       lat_key geometry.coordinates.1, lon_key geometry.coordinates.0    0/6 seismic-body,seism
+ 95 services5.arcgis.com                     2            — 6 Felder                       lat_key geometry.coordinates.1, lat_key geometry.y, latitude, lon_key geometry.coordinates.0 +5    0/6 acoustic,em
+ 96 api.energy-charts.info                   2            — 5 Felder                       —                              — em
+ 97 api.carbonintensity.org.uk               2            — 3 Felder                       —                              — em,thermal
+ 98 www.tsunami.gov                          2            — 3 Felder                       —                              — gravity
+ 99 kp.gfz.de                                2            — HTTP0                          —                              — em
+100 geofon.gfz-potsdam.de                    2            — 2 Felder                       geosphere_gfz_depth_km, geosphere_gfz_event_id, geosphere_gfz_location, geosphere_gfz_mag_author +7    0/2 seismic-body
+101 firms.modaps.eosdis.nasa.gov             2         108k 13 Felder                      acq_date, acq_time, confidence, fire_brightness_k +5   5/13 thermal
+102 epic.gsfc.nasa.gov                       2            — 11 Felder                      lat_key centroid_coordinates.lat, lon_key centroid_coordinates.lon, solar_epic_centroid_lat, solar_epic_centroid_lon +5   0/11 em
+103 www.imis.bfs.de                          2         1.7k 11 Felder                      ambient_dose_rate_nsv_h, lat_key geometry.coordinates.1, lon_key geometry.coordinates.0, nuclide +3   0/11 em
+104 simbad.cds.unistra.fr                    2            — HTTP0                          instrument, lat_key ra, lon_key dec, observation_id +2      — em
+105 geofon.gfz.de                            2            — HTTP0                          geosphere_africaarray_depth_km, geosphere_africaarray_location, geosphere_africaarray_magnitude, geosphere_africaarray_network +5      — em
+106 meta.icos-cp.eu                          2            — 2 Felder                       lat_key lat.value, lon_key lon.value    0/2 diffusion
+107 erddap.ifremer.fr                        2            — HTTP0                          argo_temp_c, lat_key 2, lat_key latitude, lon_key 1 +1      — diffusion,thermal
+108 gong2.nso.edu                            2            — 6 Felder                       —                              — em
+109 openlittermap.com                        2            — 2 Felder                       lat_key lat, lon_key lng, lon_key lon    0/2 diffusion
+110 earth-search.aws.element84.com           2           10 19 Felder                      lat_key properties.proj:centroid.lat, lon_key properties.proj:centroid.lon   0/19 em
+111 api.woudc.org                            2            — 10 Felder                      atmosphere_woudc_active, atmosphere_woudc_country, atmosphere_woudc_gaw_id, atmosphere_woudc_station_id +4   0/10 em
+112 clinicaltrials.gov                       2            — 5 Felder                       —                              — em
+113 api.openalex.org                         2            — 50 Felder                      —                              — em
+114 www.orfeus-eu.org                        2            — 1 Felder                       geosphere_orfeus_elevation_m, geosphere_orfeus_network, geosphere_orfeus_station, lat_key 2 +3    0/1 seismic-body
+115 hydro1.gesdisc.eosdis.nasa.gov           2            — 2 Felder                       soil_moisture_0_10cm_kgm2, soil_temp_0_10cm_k, timestamp_utc    0/2 diffusion,thermal
+116 data.humdata.org                         2            — 10 Felder                      geosphere_volcano_country, geosphere_volcano_name, geosphere_volcano_pei, lat_key geometry.coordinates.1 +1   0/10 diffusion,em
+117 www.isc.ac.uk                            2            — 4 Felder                       lat_key Latitude, lat_key geometry.coordinates.1, lon_key Longitude, lon_key geometry.coordinates.0    0/4 seismic-body
+118 epqs.nationalmap.gov                     2            — HTTP0                          —                              — em,seismic-surface
+119 g6goyz4w56.execute-api.us-west-2.ama     2            — 16 Felder                      —                              — em
+120 oderest.rsl.wustl.edu                    2            — 3 Felder                       —                              — em
+121 www.physics.mcgill.ca                    2            — 20 Felder                      —                              — em
+122 data.rcsb.org                            2            — 50 Felder                      —                              — em
+123 climate-api.open-meteo.com               2            — 21 Felder                      precipitation_sum, temperature_2m_max, temperature_2m_mean, temperature_2m_min   0/21 em,thermal
+124 openlibrary.org                          2            — 2 Felder                       —                              — em
+125 pubchem.ncbi.nlm.nih.gov                 2            — HTTP0                          —                              — em
+126 rapid.ac.uk                              2            — 2 Felder                       —                              — diffusion
+127 api.stackexchange.com                    2        24.1M 1 Felder                       —                              — em
+128 macrostrat.org                           2            — 3 Felder                       —                              — em
+129 qrng.anu.edu.au                          1            — 4 Felder                       —                              — em
+130 api.blitzortung.org                      1            — 2 Felder                       atmosphere_lightning_peak_current_ka, atmosphere_lightning_strike_utc, lat_key lat, lon_key lon    0/2 em
+131 www.inex.ie                              1            — 26 Felder                      —                              — em
+132 api.irail.be                             1            — HTTP0                          —                              — em
+133 api.irishrail.ie                         1            — 3 Felder                       —                              — em
+134 www.wienerlinien.at                      1            — 4 Felder                       —                              — em
+135 data.blitzortung.org                     1            — 2 Felder                       lat_key lat, lon_key lon     0/2 acoustic
+136 api.drand.sh                             1            — 4 Felder                       —                              — em
+137 irsc.ut.ac.ir                            1            — HTTP0                          lat_key geometry.coordinates.1, lon_key geometry.coordinates.0      — seismic-body
+138 api.p2pquake.net                         1            — 11 Felder                      lat_key earthquake.hypocenter.latitude, lon_key earthquake.hypocenter.longitude   0/11 seismic-body
+139 beacon.nist.gov                          1            — 15 Felder                      —                              — em
+140 service.scedc.caltech.edu                1            — HTTP0                          lat_key geometry.coordinates.1, lon_key geometry.coordinates.0      — seismic-body
+141 earthquake.tmd.go.th                     1            — 2 Felder                       lat_key lat, lon_key lon     0/2 seismic-body
+142 api.rainviewer.com                       1            — 6 Felder                       —                              — acoustic
+143 reg.bom.gov.au                           1            — 3 Felder                       lat_key lat, lon_key lon     0/3 diffusion
+144 www.emsc-csem.org                        1            — HTTP0                          lat_key lat, lon_key lon       — seismic-body
+145 www.pegelonline.wsv.de                   1        10.9k 9 Felder                       hydrosphere_water_level_cm, lat_key Latitude, lon_key Longitude    0/9 gravity
+146 environment.data.gov.uk                  1            — HTTP0                          hydrosphere_water_level_m, lat_key Lat, lon_key Long      — em
+147 www.ionosonde.iap-kborn.de               1            — 4 Felder                       —                              — em
+148 tadas.afad.gov.tr                        1            — 2 Felder                       lat_key latitude, lon_key longitude    0/2 seismic-body
+149 api.weather.bom.gov.au                   1            — HTTP0                          atmosphere_bom_warning_level, atmosphere_bom_warning_message, atmosphere_bom_warning_type      — em
+150 dataserver-coids.inpe.br                 1            — 6 Felder                       biosphere_inpe_fire_date, biosphere_inpe_fire_frp_mw, biosphere_inpe_fire_hour, biosphere_inpe_fire_lat +2    0/6 em
+151 bmkg-restapi.vercel.app                  1            — 15 Felder                      geosphere_bmkg_depth_km, geosphere_bmkg_felt, geosphere_bmkg_magnitude, geosphere_bmkg_region +3   0/15 em
+152 www.ceic.ac.cn                           1            — 2 Felder                       —                              — seismic-surface
+153 www.jma.go.jp                            1            — 16 Felder                      —                              — seismic-surface
+154 api.waterdata.usgs.gov                   1            — HTTP0                          lat_key geometry.coordinates.1, lon_key geometry.coordinates.0      — advective
+155 impc.dlr.de                              1            — 6 Felder                       —                              — em
+156 almascience.org                          1            — HTTP0                          lat_key ra, lon_key dec, project, target      — em
+157 www.amsmeteors.org                       1            — 2 Felder                       lat_key lat, lon_key lng     0/2 gravity
+158 argovis-api.colorado.edu                 1            — 13 Felder                      lat_key lat, lon_key lon, observation_date, pressure_db +3   0/13 diffusion
+159 www.hamqsl.com                           1            — 4 Felder                       —                              — em
+160 api.sunrise-sunset.org                   1            — 12 Felder                      atmosphere_superdarn_frequency_khz, atmosphere_superdarn_radar_name, atmosphere_superdarn_radar_status, lat_key latitude +1   0/12 em
+161 disease.sh                               1            — 21 Felder                      —                              — em
+162 api.exchangerate-api.com                 1            — 50 Felder                      —                              — em
+163 open.er-api.com                          1            — 50 Felder                      —                              — em
+164 data.gdeltproject.org                    1        17.4k 2 Felder                       —                              — em
+165 www.govtrack.us                          1            — HTTP0                          —                              — em
+166 ll.thespacedevs.com                      1          366 27 Felder                      —                              — em
+167 onionoo.torproject.org                   1         9.7k 9 Felder                       —                              — em
+168 wikimedia.org                            1            — HTTP0                          —                              — em
+169 ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca      1            — HTTP0                          collection, lat_key ra, lon_key dec, observation_id +1      — em
+170 geoserver.efas.eu                        1            — HTTP0                          lat_key geometry.coordinates.1, lon_key geometry.coordinates.0      — diffusion
+171 sky.esa.int                              1            — HTTP0                          lat_key ra, lon_key dec        — em
+172 network.satnogs.org                      1            — 50 Felder                      —                              — em
+173 fireball.fripon.org                      1          20k 7 Felder                       camera_count, duration_s, event_date, event_time +2    0/7 em
+174 www.globalcmt.org                        1            — 5 Felder                       —                              — seismic-body
+175 archive.gemini.edu                       1            — 50 Felder                      lat_key ra, lon_key dec     0/50 em
+176 catalogue.dataspace.copernicus.eu        1            — HTTP0                          —                              — em
+177 ies-ows.jrc.ec.europa.eu                 1            — 3 Felder                       —                              — em
+178 www.globalfloods.eu                      1            — 2 Felder                       hydrosphere_glofas_discharge_m3s, hydrosphere_glofas_flood_probability, hydrosphere_glofas_return_period_years, lat_key lat +1    0/2 em
+179 erddap.aoml.noaa.gov                     1            — 4 Felder                       hydrosphere_drifter_sst_k, lat_key 0, lon_key 1    0/4 em
+180 erddap.emodnet-physics.eu                1         2.1M 6 Felder                       TotalSPL                     1/6 em
+181 pegelonline.wsv.de                       1            — HTTP0                          —                              — gravity
+182 records-ws.nbnatlas.org                  1            — HTTP0                          lat_key decimalLatitude, lon_key decimalLongitude      — acoustic
+183 archive.nrao.edu                         1            — 5 Felder                       lat_key ra, lon_key dec, observation_id, project_code    0/5 em
+184 services.nvd.nist.gov                    1            — 7 Felder                       —                              — em
+185 eyes.nasa.gov                            1            — 2 Felder                       —                              — em
+186 api.safecast.org                         1            — 16 Felder                      lat_key latitude, lon_key longitude, radiation_safecast_cpm   0/16 em
+187 www.temis.nl                             1            — 1 Felder                       lat_key latitude, lon_key longitude    0/1 em
+188 terrabrasilis.dpi.inpe.br                1            — 2 Felder                       lat_key geometry.coordinates.1, lon_key geometry.coordinates.0    0/2 diffusion
+189 db.satnogs.org                           1            — 7 Felder                       satellite_name, satellite_norad_id, satellite_tle_line1, satellite_tle_line2 +1    0/7 em
+190 data.cdc.gov                             1            — 10 Felder                      —                              — em
+191 weather.uwyo.edu                         1            — HTTP0                          lat_key latitude, lon_key longitude      — thermal
+192 vsx.aavso.org                            1            — 13 Felder                      lat_key ra_hms, lon_key dec_dms   0/13 em
+193 newton.spacedys.com                      1            — 2 Felder                       —                              — gravity
+194 opendata.dwd.de                          1            — 23 Felder                      —                              — em
+195 api.met.no                               1            — HTTP0                          —                              — em
+196 opendata.ecdc.europa.eu                  1          51k 5 Felder                       —                              — em
+197 epoch.ai                                 1            — 20 Felder                      Training_compute_FLOP       0/20 em
+198 www.peeringdb.com                        1            — 35 Felder                      —                              — em
+199 modis.ornl.gov                           1            — HTTP0                          —                              — em
+200 restcountries.com                        1            — 3 Felder                       —                              — em
+201 www.submarinecablemap.com                1            — 6 Felder                       —                              — em
+202 api.unhcr.org                            1            — 22 Felder                      —                              — em
+203 www.star.nesdis.noaa.gov                 1            — 3 Felder                       VHI                          0/3 em
+204 xmart-api-public.who.int                 1         120k 50 Felder                      —                              — em
+205 www.bodc.ac.uk                           1            — 20 Felder                      lat_key geo_location.lat, lon_key geo_location.lon   0/20 diffusion
+206 www.chime-frb.ca                         1            — 2 Felder                       —                              — em
+207 mars.nasa.gov                            1            — 44 Felder                      —                              — em
+208 crates.io                                1            — 26 Felder                      —                              — em
+209 dasch.rc.fas.harvard.edu                 1            — 2 Felder                       —                              — em
+210 re.jrc.ec.europa.eu                      1            — HTTP0                          —                              — em
+211 vires.services                           1            — HTTP0                          Latitude, Longitude, lat_key Latitude, lon_key Longitude      — gravity
+212 services.terrascope.be                   1          100 17 Felder                      lat_key geometry.coordinates.0.0.1, lon_key geometry.coordinates.0.0.0   0/17 diffusion
+213 catalogue.clms.copernicus.eu             1            — HTTP0                          geosphere_clms_bbox_maxx, geosphere_clms_bbox_maxy, geosphere_clms_bbox_minx, geosphere_clms_bbox_miny +3      — em
+214 usdmdataservices.unl.edu                 1            — HTTP0                          —                              — em
+215 ows.emodnet-humanactivities.eu           1            — HTTP0                          —                              — em
+216 erddap.dataexplorer.oceanobservatori     1          28k 3 Felder                       sea_surface_temperature, surface_partial_pressure_of_carbon_dioxide_in_sea_water    2/3 em
+217 datacenter.iers.org                      1            — 19 Felder                      —                              — gravity
+218 maia.usno.navy.mil                       1            — 18 Felder                      —                              — em
+219 network.igs.org                          1            — 34 Felder                      lat_key lat, lon_key lon    0/34 seismic-surface
+220 www.tng-project.org                      1            — 2 Felder                       —                              — gravity
+221 www.ioc-sealevelmonitoring.org           1            — 48 Felder                      lat_key Lat, lon_key Lon    0/48 gravity
+222 ds.iris.edu                              1            — HTTP0                          lat_key evla, lon_key evlo      — seismic-body
+223 landsatlook.usgs.gov                     1            — 17 Felder                      lat_key properties.proj:centroid.lat, lon_key properties.proj:centroid.lon   0/17 em
+224 tess.mit.edu                             1            — 6 Felder                       —                              — em
+225 www.crystallography.net                  1            — 1 Felder                       —                              — em
+226 aa.usno.navy.mil                         1            — HTTP0                          —                              — em
+227 data.giss.nasa.gov                       1            — 3 Felder                       —                              — thermal
+228 modis.gsfc.nasa.gov                      1            — 2 Felder                       —                              — em
+229 physics.nist.gov                         1            — 6 Felder                       —                              — em
+230 psl.noaa.gov                             1            — 2 Felder                       month, pdo_index, year       0/2 thermal
+231 gis.ngdc.noaa.gov                        1            — 3 Felder                       —                              — gravity
+232 registry.npmjs.org                       1            — HTTP0                          —                              — em
+233 api.astrocats.space                      1            — 1 Felder                       —                              — em
+234 my.cmems-du.eu                           1            — 2 Felder                       oceanography_cmems_dataset_id, oceanography_cmems_service_id, oceanography_cmems_service_name    0/2 em
+235 world.openfoodfacts.org                  1         4.6M 50 Felder                      lat_key centroid.lat, lon_key centroid.lon   0/50 em
+236 stac.openlandmap.org                     1            — 2 Felder                       lat_key geometry.coordinates.0.0.1, lon_key geometry.coordinates.0.0.0    0/2 diffusion
+237 paleobiodb.org                           1            — 10 Felder                      —                              — em
+238 atlas.ripe.net                           1        14.4k 23 Felder                      asn, country, description, fw_version +4   1/23 em
+239 gis1.servirglobal.net                    1            — 3 Felder                       lat_key geometry.y, lon_key geometry.x    0/3 diffusion
+240 tevcat2.tevcat.org                       1            — 16 Felder                      distance_kpc, flux_tev_crab, source_name, source_type +1   0/16 em
+241 data.cosmic.ucar.edu                     1            — 1 Felder                       —                              — diffusion
+242 rest.uniprot.org                         1            — HTTP0                          —                              — em
+243 nwis.waterdata.usgs.gov                  1            — HTTP0                          lat_key dec_lat_va, lon_key dec_long_va      — diffusion
+244 www.sciencebase.gov                      1            — HTTP0                          lat_key spatial.boundingBox.minY, lon_key spatial.boundingBox.minX      — diffusion
+245 developer.uspto.gov                      1            — 2 Felder                       —                              — em
+246 www.wikidata.org                         1            — 2 Felder                       —                              — em
+247 api.openbrewerydb.org                    1            — 16 Felder                      brewery_db_id, lat_key latitude, lon_key longitude   0/16 em
+248 services7.arcgis.com                     1            — 6 Felder                       lat_key properties.Lat, lon_key properties.Long    0/6 diffusion
+249 www.glims.org                            1            — HTTP0                          lat_key geometry.coordinates.1, lon_key geometry.coordinates.0      — thermal
+250 stationview.raspberryshake.org           1            — 11 Felder                      lat_key latitude, lon_key longitude   0/11 seismic-surface
+251 egg.astro.cornell.edu                    1        15.9k 18 Felder                      agc_nr, dec_deg_hi, dec_deg_oc, dist_mpc +13   0/18 em
+252 www.metoffice.gov.uk                     1            — 4 Felder                       —                              — em
+253 data-api.globalforestwatch.org           1            — 10 Felder                      —                              — em
+254 esgf.ceda.ac.uk                          1            — 3 Felder                       —                              — em
+255 stac.eoapi.dev                           1            — 15 Felder                      —                              — em
+256 icgem.gfz-potsdam.de                     1            — 2 Felder                       undulate                     0/2 em
+257 api.open-elevation.com                   1            — HTTP0                          geosphere_elevation_openelev_m, lat_key latitude, lon_key longitude      — em
+258 planetarycomputer.microsoft.com          1            — 26 Felder                      —                              — em
 
   TOTAL: 258 Hosts, 2198 Quellen
-  Aussagekraftige Anbieter-Daten: 137 Hosts
-  Default (eigene Quellen-Anzahl): 121 Hosts
+  OBJEKTE = Gesamt-Datenumfang des Anbieters
+  FELDER API = Anzahl der von der API angebotenen Felder
+  FELDER WIR = Welche Felder unsere Quellen extrahieren
+  NUTZ % = X/Y unserer Felder von API-Feldern
