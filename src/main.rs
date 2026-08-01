@@ -5349,96 +5349,156 @@ fn warm_cache(archive: Arc<Archive>) {
                 .unwrap_or(1024);
             std::cmp::max(64, fd / 4)
         };
-        for chunk in tasks.chunks(chunk_size) {
-            let chunk_tasks: Vec<_> = chunk.to_vec();
-            let chunk_results = batch_fetch(chunk_tasks, &archive.sources, &archive.ttl_eff);
-            for (src_idx, origin, region, body_opt) in chunk_results {
-                let src = &archive.sources[src_idx];
-                let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
-                let entry = origins.entry(origin).or_default();
-                let Some(body) = body_opt else {
-                    continue;
-                };
-                entry.fetched = now;
-                entry.ttl = src.ttl as f64;
-                let pendings = extract_pending(src, &body, now);
-                let may_be_empty = src.extracts.iter().any(|e| {
-                    matches!(
-                        e,
-                        Extract::Map { .. }
-                            | Extract::GeojsonEvents { .. }
-                            | Extract::LastObj { .. }
-                            | Extract::Vectors(_)
-                            | Extract::CelestialMap { .. }
-                            | Extract::Flatten { .. }
-                            | Extract::CmrPolygon { .. }
-                            | Extract::CelestialPolygon { .. }
-                            | Extract::Rows { .. }
-                            | Extract::KeplerMap { .. }
-                    )
-                });
-                if pendings.is_empty() {
-                    if !may_be_empty {
-                        let entry = origins.entry(origin).or_default();
-                        entry.zero_yield += 1;
-                        if entry.zero_yield >= 4 && entry.zero_yield & (entry.zero_yield - 1) == 0 {
-                            eprintln!(
-                                "zero_yield x{} {}",
-                                entry.zero_yield,
-                                src.url.split('/').nth(2).unwrap_or("?")
-                            );
+        let (tx, rx) = std::sync::mpsc::sync_channel::<
+            Vec<(
+                usize,
+                Origin,
+                Option<(f64, f64)>,
+                String,
+                Option<String>,
+                Vec<(String, String)>,
+                u64,
+            )>,
+        >(2);
+        eprintln!(
+            "warm_cache: {} tasks in {} chunks via pipeline",
+            tasks.len(),
+            (tasks.len() + chunk_size - 1) / chunk_size
+        );
+        let ar = Arc::clone(&archive);
+        let consumer = std::thread::spawn(move || {
+            let mut new_samples: Vec<Sample> = Vec::new();
+            let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
+            while let Ok(chunk_tasks) = rx.recv() {
+                let chunk_results = batch_fetch(chunk_tasks, &ar.sources, &ar.ttl_eff);
+                for (src_idx, origin, region, body_opt) in chunk_results {
+                    let src = &ar.sources[src_idx];
+                    let mut origins = ar.origins.lock().unwrap_or_else(|e| e.into_inner());
+                    let entry = origins.entry(origin).or_default();
+                    let Some(body) = body_opt else {
+                        continue;
+                    };
+                    entry.fetched = now;
+                    entry.ttl = src.ttl as f64;
+                    let pendings = extract_pending(src, &body, now);
+                    let may_be_empty = src.extracts.iter().any(|e| {
+                        matches!(
+                            e,
+                            Extract::Map { .. }
+                                | Extract::GeojsonEvents { .. }
+                                | Extract::LastObj { .. }
+                                | Extract::Vectors(_)
+                                | Extract::CelestialMap { .. }
+                                | Extract::Flatten { .. }
+                                | Extract::CmrPolygon { .. }
+                                | Extract::CelestialPolygon { .. }
+                                | Extract::Rows { .. }
+                                | Extract::KeplerMap { .. }
+                        )
+                    });
+                    if pendings.is_empty() {
+                        if !may_be_empty {
+                            let entry = origins.entry(origin).or_default();
+                            entry.zero_yield += 1;
+                            if entry.zero_yield >= 4
+                                && entry.zero_yield & (entry.zero_yield - 1) == 0
+                            {
+                                eprintln!(
+                                    "zero_yield x{} {}",
+                                    entry.zero_yield,
+                                    src.url.split('/').nth(2).unwrap_or("?")
+                                );
+                            }
+                        }
+                    } else {
+                        origins.entry(origin).or_default().zero_yield = 0;
+                        refreshed.insert(origin);
+                        let field_names: Vec<&str> = src
+                            .extracts
+                            .iter()
+                            .filter_map(|e| match e {
+                                Extract::Field(_, n)
+                                | Extract::First(_, n)
+                                | Extract::Last(_, n)
+                                | Extract::Count(_, n)
+                                | Extract::LastRow(_, n)
+                                | Extract::LastObj(_, _, _, n)
+                                | Extract::ObjLast(_, n)
+                                | Extract::Path(_, n)
+                                | Extract::Deep(_, n)
+                                | Extract::Regex(_, n)
+                                | Extract::XmlCount(_, n)
+                                | Extract::Ephemeris(n)
+                                | Extract::Vectors(n)
+                                | Extract::LastLine(n) => Some(n.as_str()),
+                                Extract::Map { fields, .. }
+                                | Extract::CelestialMap { fields, .. }
+                                | Extract::KeplerMap { fields, .. }
+                                | Extract::Rows { fields, .. }
+                                | Extract::Flatten { fields, .. }
+                                | Extract::CmrPolygon { fields, .. }
+                                | Extract::CelestialPolygon { fields, .. } => {
+                                    Some(fields.first().map(|(_, n)| n.as_str()).unwrap_or(""))
+                                }
+                                Extract::GeojsonEvents { outputs, .. } => {
+                                    Some(outputs.first().map(|s| s.as_str()).unwrap_or(""))
+                                }
+                                _ => None,
+                            })
+                            .collect();
+                        eprintln!(
+                            "PARSED {}: {} samples [{}]",
+                            src.name,
+                            pendings.len(),
+                            field_names.join(", ")
+                        );
+                    }
+                    for pend in pendings {
+                        for smp in materialize(src, origin, region, pend, &mut origins) {
+                            new_samples.push(smp);
                         }
                     }
-                } else {
-                    origins.entry(origin).or_default().zero_yield = 0;
-                    refreshed.insert(origin);
-                    let field_names: Vec<&str> = src
-                        .extracts
-                        .iter()
-                        .filter_map(|e| match e {
-                            Extract::Field(_, n)
-                            | Extract::First(_, n)
-                            | Extract::Last(_, n)
-                            | Extract::Count(_, n)
-                            | Extract::LastRow(_, n)
-                            | Extract::LastObj(_, _, _, n)
-                            | Extract::ObjLast(_, n)
-                            | Extract::Path(_, n)
-                            | Extract::Deep(_, n)
-                            | Extract::Regex(_, n)
-                            | Extract::XmlCount(_, n)
-                            | Extract::Ephemeris(n)
-                            | Extract::Vectors(n)
-                            | Extract::LastLine(n) => Some(n.as_str()),
-                            Extract::Map { fields, .. }
-                            | Extract::CelestialMap { fields, .. }
-                            | Extract::KeplerMap { fields, .. }
-                            | Extract::Rows { fields, .. }
-                            | Extract::Flatten { fields, .. }
-                            | Extract::CmrPolygon { fields, .. }
-                            | Extract::CelestialPolygon { fields, .. } => {
-                                Some(fields.first().map(|(_, n)| n.as_str()).unwrap_or(""))
-                            }
-                            Extract::GeojsonEvents { outputs, .. } => {
-                                Some(outputs.first().map(|s| s.as_str()).unwrap_or(""))
-                            }
-                            _ => None,
-                        })
-                        .collect();
-                    eprintln!(
-                        "PARSED {}: {} samples [{}]",
-                        src.name,
-                        pendings.len(),
-                        field_names.join(", ")
-                    );
                 }
-                for pend in pendings {
-                    for smp in materialize(src, origin, region, pend, &mut origins) {
-                        new_samples.push(smp);
+                {
+                    let station_sample = ar
+                        .station
+                        .lock()
+                        .unwrap_or_else(|e| e.into_inner())
+                        .sample
+                        .clone()
+                        .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
+                    let mut all: Vec<Sample> = Vec::new();
+                    {
+                        let old = ar.field.read().unwrap_or_else(|e| e.into_inner()).clone();
+                        for fam in [&old.planet, &old.inertial] {
+                            for v in fam.cells.values() {
+                                for s in v {
+                                    if (now - s.epoch).abs() <= s.ttl * 64.0
+                                        && !refreshed.contains(&s.origin)
+                                    {
+                                        all.push(s.clone());
+                                    }
+                                }
+                            }
+                        }
                     }
+                    all.extend(new_samples.iter().cloned());
+                    if let Some(ref s) = station_sample {
+                        all.push(s.clone());
+                    }
+                    *ar.field.write().unwrap_or_else(|e| e.into_inner()) =
+                        Arc::new(build_buffer(all, cadence));
                 }
             }
+            (new_samples, refreshed)
+        });
+        for chunk in tasks.chunks(chunk_size) {
+            let _ = tx.send(chunk.to_vec());
         }
+        drop(tx);
+        let (new_samples, refreshed) = consumer
+            .join()
+            .unwrap_or_else(|e| std::panic::resume_unwind(e));
 
         let station_sample = archive
             .station
