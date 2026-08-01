@@ -208,6 +208,7 @@ jobs:
             done
           done
           rm -f data/owm_tmp.json
+          jq -s '.' data/owm_current.json > data/owm_array.json && mv data/owm_array.json data/owm_current.json
 
       - name: FRED economy
         env:

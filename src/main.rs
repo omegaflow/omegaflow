@@ -1985,6 +1985,18 @@ fn force_constants(force: &str) -> Option<(f64, f64, bool, u8)> {
     }
 }
 
+fn force_extent(force: &str) -> f64 {
+    match force {
+        "em" | "gravity" => f64::INFINITY,
+        "seismic-body" => 1e5,
+        "seismic-surface" => 1e4,
+        "acoustic" => 1e3,
+        "advective" => 1e1,
+        "thermal" | "diffusion" => 1e0,
+        _ => 0.0,
+    }
+}
+
 fn force_type_of(force: &str) -> f64 {
     force_constants(force)
         .map(|(_, _, _, id)| id as f64)
@@ -5073,10 +5085,30 @@ fn warm_cache(archive: Arc<Archive>) {
                 .lock()
                 .unwrap_or_else(|e| e.into_inner())
                 .clone();
-            let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+            let origins_snap: HashMap<Origin, OriginState> = archive
+                .origins
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .clone();
             let (ex, ey, ez) = earth_position_icrs(now);
             let (mx, my, mz) = mars_position_icrs(now);
-            for (i, src) in archive.sources.iter().enumerate() {
+            let mut src_order: Vec<(usize, f64, u8)> = archive
+                .sources
+                .iter()
+                .enumerate()
+                .map(|(i, s)| {
+                    let (fx, fi) = s
+                        .force
+                        .split_whitespace()
+                        .filter_map(|f| force_constants(f).map(|c| (force_extent(f), c.3)))
+                        .max_by_key(|(e, _)| (*e as i64))
+                        .unwrap_or((0.0, 0));
+                    (i, -fx, fi)
+                })
+                .collect();
+            src_order.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().then(a.2.cmp(&b.2)));
+            for (i, _fx, _fi) in src_order {
+                let src = &archive.sources[i];
                 let r = {
                     let mut max_r = 0.0f64;
                     for f in src.force.split_whitespace() {
@@ -5106,14 +5138,14 @@ fn warm_cache(archive: Arc<Archive>) {
                             .copied()
                             .map(|t| t as u64)
                             .unwrap_or(src.ttl);
-                        if !origin_stale(&origins, origin, eff_ttl, now) {
+                        if !origin_stale(&origins_snap, origin, eff_ttl, now) {
                             continue;
                         }
                         let pos = geodetic_to_icrs(*lat, *lon, *alt, now);
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
-                        let is_new = origins.get(&origin).is_none();
+                        let is_new = origins_snap.get(&origin).is_none();
                         task_prios.push(fetch_priority(
                             &src.url, pos, r, is_new, src.ttl, &presences,
                         ));
@@ -5130,7 +5162,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     Frame::Ecliptic { scale } => {
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
-                            &origins,
+                            &origins_snap,
                             origin,
                             ttl_snapshot
                                 .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -5145,7 +5177,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
-                        let is_new = origins.get(&origin).is_none();
+                        let is_new = origins_snap.get(&origin).is_none();
                         task_prios.push(fetch_priority(
                             &src.url, pos, r, is_new, src.ttl, &presences,
                         ));
@@ -5162,7 +5194,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     Frame::Areocentric { scale } => {
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
-                            &origins,
+                            &origins_snap,
                             origin,
                             ttl_snapshot
                                 .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -5177,7 +5209,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
-                        let is_new = origins.get(&origin).is_none();
+                        let is_new = origins_snap.get(&origin).is_none();
                         task_prios.push(fetch_priority(
                             &src.url, pos, r, is_new, src.ttl, &presences,
                         ));
@@ -5207,7 +5239,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                 let origin =
                                     (i as u32, region_quantize(lat, r), region_quantize(lon, r));
                                 if !origin_stale(
-                                    &origins,
+                                    &origins_snap,
                                     origin,
                                     ttl_snapshot
                                         .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -5218,7 +5250,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                 ) {
                                     continue;
                                 }
-                                let is_new = origins.get(&origin).is_none();
+                                let is_new = origins_snap.get(&origin).is_none();
                                 task_prios.push(fetch_priority(
                                     &src.url,
                                     (px, py, pz),
@@ -5241,7 +5273,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         }
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
-                            &origins,
+                            &origins_snap,
                             origin,
                             ttl_snapshot
                                 .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -5252,7 +5284,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         ) {
                             continue;
                         }
-                        let prev = origins
+                        let prev = origins_snap
                             .get(&origin)
                             .filter(|o| o.has_prev)
                             .map(|o| o.prev_abs);
@@ -5264,7 +5296,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         let (_, px, py, pz, _) = presences[0];
                         let (rx, ry, rz) =
                             prev.map(|pa| (pa[0], pa[1], pa[2])).unwrap_or((px, py, pz));
-                        let is_new = origins.get(&origin).is_none();
+                        let is_new = origins_snap.get(&origin).is_none();
                         task_prios.push(fetch_priority(
                             &src.url,
                             (rx, ry, rz),
@@ -5292,7 +5324,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             let origin =
                                 (i as u32, region_quantize(lat, r), region_quantize(lon, r));
                             if !origin_stale(
-                                &origins,
+                                &origins_snap,
                                 origin,
                                 ttl_snapshot
                                     .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -5303,7 +5335,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             ) {
                                 continue;
                             }
-                            let is_new = origins.get(&origin).is_none();
+                            let is_new = origins_snap.get(&origin).is_none();
                             task_prios.push(fetch_priority(
                                 &src.url,
                                 (px, py, pz),
@@ -5331,11 +5363,6 @@ fn warm_cache(archive: Arc<Archive>) {
         indexed.sort_by_key(|&(_, p)| p);
         let tasks: Vec<_> = indexed.into_iter().map(|(t, _)| t).collect();
 
-        eprintln!(
-            "warm_cache: {} tasks, starting fetch in {} chunks",
-            tasks.len(),
-            (tasks.len() + chunk_size - 1) / chunk_size
-        );
         let mut new_samples: Vec<Sample> = Vec::new();
         let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
         let chunk_size = {
@@ -5349,156 +5376,130 @@ fn warm_cache(archive: Arc<Archive>) {
                 .unwrap_or(1024);
             std::cmp::max(64, fd / 4)
         };
-        let (tx, rx) = std::sync::mpsc::sync_channel::<
-            Vec<(
-                usize,
-                Origin,
-                Option<(f64, f64)>,
-                String,
-                Option<String>,
-                Vec<(String, String)>,
-                u64,
-            )>,
-        >(2);
-        eprintln!(
-            "warm_cache: {} tasks in {} chunks via pipeline",
-            tasks.len(),
-            (tasks.len() + chunk_size - 1) / chunk_size
-        );
-        let ar = Arc::clone(&archive);
-        let consumer = std::thread::spawn(move || {
-            let mut new_samples: Vec<Sample> = Vec::new();
-            let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
-            while let Ok(chunk_tasks) = rx.recv() {
-                let chunk_results = batch_fetch(chunk_tasks, &ar.sources, &ar.ttl_eff);
-                for (src_idx, origin, region, body_opt) in chunk_results {
-                    let src = &ar.sources[src_idx];
-                    let mut origins = ar.origins.lock().unwrap_or_else(|e| e.into_inner());
-                    let entry = origins.entry(origin).or_default();
-                    let Some(body) = body_opt else {
-                        continue;
-                    };
-                    entry.fetched = now;
-                    entry.ttl = src.ttl as f64;
-                    let pendings = extract_pending(src, &body, now);
-                    let may_be_empty = src.extracts.iter().any(|e| {
-                        matches!(
-                            e,
-                            Extract::Map { .. }
-                                | Extract::GeojsonEvents { .. }
-                                | Extract::LastObj { .. }
-                                | Extract::Vectors(_)
-                                | Extract::CelestialMap { .. }
-                                | Extract::Flatten { .. }
-                                | Extract::CmrPolygon { .. }
-                                | Extract::CelestialPolygon { .. }
-                                | Extract::Rows { .. }
-                                | Extract::KeplerMap { .. }
-                        )
-                    });
-                    if pendings.is_empty() {
-                        if !may_be_empty {
-                            let entry = origins.entry(origin).or_default();
-                            entry.zero_yield += 1;
-                            if entry.zero_yield >= 4
-                                && entry.zero_yield & (entry.zero_yield - 1) == 0
-                            {
-                                eprintln!(
-                                    "zero_yield x{} {}",
-                                    entry.zero_yield,
-                                    src.url.split('/').nth(2).unwrap_or("?")
-                                );
+        for chunk in tasks.chunks(chunk_size) {
+            let chunk_tasks: Vec<_> = chunk.to_vec();
+            let chunk_results = batch_fetch(chunk_tasks, &archive.sources, &archive.ttl_eff);
+            for (src_idx, origin, region, body_opt) in chunk_results {
+                let src = &archive.sources[src_idx];
+                let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+                let entry = origins.entry(origin).or_default();
+                let Some(body) = body_opt else {
+                    continue;
+                };
+                entry.fetched = now;
+                entry.ttl = src.ttl as f64;
+                let pendings = extract_pending(src, &body, now);
+                let may_be_empty = src.extracts.iter().any(|e| {
+                    matches!(
+                        e,
+                        Extract::Map { .. }
+                            | Extract::GeojsonEvents { .. }
+                            | Extract::LastObj { .. }
+                            | Extract::Vectors(_)
+                            | Extract::CelestialMap { .. }
+                            | Extract::Flatten { .. }
+                            | Extract::CmrPolygon { .. }
+                            | Extract::CelestialPolygon { .. }
+                            | Extract::Rows { .. }
+                            | Extract::KeplerMap { .. }
+                    )
+                });
+                if pendings.is_empty() {
+                    if !may_be_empty {
+                        let entry = origins.entry(origin).or_default();
+                        entry.zero_yield += 1;
+                        if entry.zero_yield >= 4 && entry.zero_yield & (entry.zero_yield - 1) == 0 {
+                            eprintln!(
+                                "zero_yield x{} {}",
+                                entry.zero_yield,
+                                src.url.split('/').nth(2).unwrap_or("?")
+                            );
+                        }
+                    }
+                } else {
+                    origins.entry(origin).or_default().zero_yield = 0;
+                    refreshed.insert(origin);
+                    let field_names: Vec<&str> = src
+                        .extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(_, n)
+                            | Extract::First(_, n)
+                            | Extract::Last(_, n)
+                            | Extract::Count(_, n)
+                            | Extract::LastRow(_, n)
+                            | Extract::LastObj(_, _, _, n)
+                            | Extract::ObjLast(_, n)
+                            | Extract::Path(_, n)
+                            | Extract::Deep(_, n)
+                            | Extract::Regex(_, n)
+                            | Extract::XmlCount(_, n)
+                            | Extract::Ephemeris(n)
+                            | Extract::Vectors(n)
+                            | Extract::LastLine(n) => Some(n.as_str()),
+                            Extract::Map { fields, .. }
+                            | Extract::CelestialMap { fields, .. }
+                            | Extract::KeplerMap { fields, .. }
+                            | Extract::Rows { fields, .. }
+                            | Extract::Flatten { fields, .. }
+                            | Extract::CmrPolygon { fields, .. }
+                            | Extract::CelestialPolygon { fields, .. } => {
+                                Some(fields.first().map(|(_, n)| n.as_str()).unwrap_or(""))
                             }
-                        }
-                    } else {
-                        origins.entry(origin).or_default().zero_yield = 0;
-                        refreshed.insert(origin);
-                        let field_names: Vec<&str> = src
-                            .extracts
-                            .iter()
-                            .filter_map(|e| match e {
-                                Extract::Field(_, n)
-                                | Extract::First(_, n)
-                                | Extract::Last(_, n)
-                                | Extract::Count(_, n)
-                                | Extract::LastRow(_, n)
-                                | Extract::LastObj(_, _, _, n)
-                                | Extract::ObjLast(_, n)
-                                | Extract::Path(_, n)
-                                | Extract::Deep(_, n)
-                                | Extract::Regex(_, n)
-                                | Extract::XmlCount(_, n)
-                                | Extract::Ephemeris(n)
-                                | Extract::Vectors(n)
-                                | Extract::LastLine(n) => Some(n.as_str()),
-                                Extract::Map { fields, .. }
-                                | Extract::CelestialMap { fields, .. }
-                                | Extract::KeplerMap { fields, .. }
-                                | Extract::Rows { fields, .. }
-                                | Extract::Flatten { fields, .. }
-                                | Extract::CmrPolygon { fields, .. }
-                                | Extract::CelestialPolygon { fields, .. } => {
-                                    Some(fields.first().map(|(_, n)| n.as_str()).unwrap_or(""))
-                                }
-                                Extract::GeojsonEvents { outputs, .. } => {
-                                    Some(outputs.first().map(|s| s.as_str()).unwrap_or(""))
-                                }
-                                _ => None,
-                            })
-                            .collect();
-                        eprintln!(
-                            "PARSED {}: {} samples [{}]",
-                            src.name,
-                            pendings.len(),
-                            field_names.join(", ")
-                        );
-                    }
-                    for pend in pendings {
-                        for smp in materialize(src, origin, region, pend, &mut origins) {
-                            new_samples.push(smp);
-                        }
-                    }
+                            Extract::GeojsonEvents { outputs, .. } => {
+                                Some(outputs.first().map(|s| s.as_str()).unwrap_or(""))
+                            }
+                            _ => None,
+                        })
+                        .collect();
+                    eprintln!(
+                        "PARSED {}: {} samples [{}]",
+                        src.name,
+                        pendings.len(),
+                        field_names.join(", ")
+                    );
                 }
-                {
-                    let station_sample = ar
-                        .station
-                        .lock()
-                        .unwrap_or_else(|e| e.into_inner())
-                        .sample
-                        .clone()
-                        .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
-                    let mut all: Vec<Sample> = Vec::new();
-                    {
-                        let old = ar.field.read().unwrap_or_else(|e| e.into_inner()).clone();
-                        for fam in [&old.planet, &old.inertial] {
-                            for v in fam.cells.values() {
-                                for s in v {
-                                    if (now - s.epoch).abs() <= s.ttl * 64.0
-                                        && !refreshed.contains(&s.origin)
-                                    {
-                                        all.push(s.clone());
-                                    }
-                                }
-                            }
-                        }
+                for pend in pendings {
+                    for smp in materialize(src, origin, region, pend, &mut origins) {
+                        new_samples.push(smp);
                     }
-                    all.extend(new_samples.iter().cloned());
-                    if let Some(ref s) = station_sample {
-                        all.push(s.clone());
-                    }
-                    *ar.field.write().unwrap_or_else(|e| e.into_inner()) =
-                        Arc::new(build_buffer(all, cadence));
                 }
             }
-            (new_samples, refreshed)
-        });
-        for chunk in tasks.chunks(chunk_size) {
-            let _ = tx.send(chunk.to_vec());
+            {
+                let station_sample = archive
+                    .station
+                    .lock()
+                    .unwrap_or_else(|e| e.into_inner())
+                    .sample
+                    .clone()
+                    .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
+                let mut all: Vec<Sample> = Vec::new();
+                {
+                    let old = archive
+                        .field
+                        .read()
+                        .unwrap_or_else(|e| e.into_inner())
+                        .clone();
+                    for fam in [&old.planet, &old.inertial] {
+                        for v in fam.cells.values() {
+                            for s in v {
+                                if (now - s.epoch).abs() <= s.ttl * 64.0
+                                    && !refreshed.contains(&s.origin)
+                                {
+                                    all.push(s.clone());
+                                }
+                            }
+                        }
+                    }
+                }
+                all.extend(new_samples.iter().cloned());
+                if let Some(ref s) = station_sample {
+                    all.push(s.clone());
+                }
+                *archive.field.write().unwrap_or_else(|e| e.into_inner()) =
+                    Arc::new(build_buffer(all, cadence));
+            }
         }
-        drop(tx);
-        let (new_samples, refreshed) = consumer
-            .join()
-            .unwrap_or_else(|e| std::panic::resume_unwind(e));
 
         let station_sample = archive
             .station
