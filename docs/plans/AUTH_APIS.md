@@ -12,6 +12,57 @@ Gruppiert nach Daten-Mehrwert für die 8-Kräfte-Punktwolke. Basis: Archiv (Schr
 
 ---
 
+## Secrets-Matrix
+
+Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben nur in:
+
+1. **Lokal**: `.secrets.local` (gitignored) — Platzhalter für alle unten gelisteten Secrets
+2. **GitHub Actions**: `Settings → Secrets and variables → Actions` (Workflow `refresh-protected-data.yml`)
+
+### ✅ Bereits besorgt (12 — lokal vorhanden)
+
+| GitHub-Secret | Lokal (`.secrets.local`) | API | Registrierung |
+|---|---|---|---|
+| `EBIRD_API_KEY` | ✅ | eBird | https://ebird.org/api/keygen |
+| `OPENAQ_API_KEY` | ✅ | OpenAQ | https://explore.openaq.org/register |
+| `FIRMS_MAP_KEY` | ✅ | FIRMS Feuer | https://firms.modaps.eosdis.nasa.gov/api/area/ |
+| `EARTHDATA_EDL_TOKEN` | ✅ | NASA Earthdata | https://urs.earthdata.nasa.gov → Profil → Generate Token |
+| `CMEMS_USER`/`CMEMS_PASS` | ✅ | Copernicus Marine | https://data.marine.copernicus.eu/register |
+| `WAQI_TOKEN` | ✅ | WAQI Luft | https://aqicn.org/data-platform/token/ |
+| `USGS_WATER_KEY` | ✅ | USGS Water | https://api.waterdata.usgs.gov/ogcapi/ |
+| `GBIF_USER`/`GBIF_PASS` | ✅ | GBIF | https://www.gbif.org/user/profile |
+| `CATALOGS_REPO`/`CATALOGS_TOKEN` | ✅ | Publish-Ziel | PAT mit Contents-write |
+
+### ❌ Noch zu besorgen (25 — Platzhalter in `.secrets.local`)
+
+| GitHub-Secret | .secrets.local | API | Registrierung |
+|---|---|---|---|
+| `NASA_API_KEY` | `NASA_API_KEY=` | NASA open (DONKI/NEO/Insight/Mars) | https://api.nasa.gov/#signUp |
+| `NASA_ADS_TOKEN` | `NASA_ADS_TOKEN=` | NASA ADS Literatur | https://ui.adsabs.harvard.edu/user/settings/token |
+| `SPACETRACK_USER`/`SPACETRACK_PASS` | `SPACETRACK_*=` | Space-Track Sat-Katalog | https://www.space-track.org/auth/login |
+| `SUPERMAG_USER`/`SUPERMAG_PASS` | `SUPERMAG_*=` | SuperMAG Magnetfeld | https://supermag.jhuapl.edu/info/signup.php |
+| `CDS_API_KEY` | `CDS_API_KEY=` | Copernicus CDS (ERA5) | https://cds.climate.copernicus.eu/user/register |
+| `JSOC_EMAIL` | `JSOC_EMAIL=` | JSOC Sonne (HMI) | https://jsoc.stanford.edu/ajax/register_account.html |
+| `OWM_API_KEY` | `OWM_API_KEY=` | OpenWeatherMap | https://home.openweathermap.org/users/sign_up |
+| `NOAA_CDO_TOKEN` | `NOAA_CDO_TOKEN=` | NOAA NCDC/CDO | https://www.ncdc.noaa.gov/cdo-web/token |
+| `TNS_API_KEY` | `TNS_API_KEY=` | TNS Transient | https://www.wis-tns.org/user/register |
+| `ZENODO_TOKEN` | `ZENODO_TOKEN=` | Zenodo | https://zenodo.org/oauth/login |
+| `MATERIALS_KEY` | `MATERIALS_KEY=` | Materials Project | https://materialsproject.org/register |
+| `EIA_API_KEY` | `EIA_API_KEY=` | EIA Energie | https://www.eia.gov/opendata/register.php |
+| `ALPHAVANTAGE_KEY` | `ALPHAVANTAGE_KEY=` | AlphaVantage | https://www.alphavantage.co/support/#api-key |
+| `FRED_API_KEY` | `FRED_API_KEY=` | FRED St. Louis | https://fred.stlouisfed.org/docs/api/api_key.html |
+| `PLANTNET_KEY` | `PLANTNET_KEY=` | PlantNet | https://my.plantnet.org/ |
+| `AIRNOW_KEY` | `AIRNOW_KEY=` | AirNow EPA | https://docs.airnowapi.org/account/request/ |
+| `GFW_TOKEN` | `GFW_TOKEN=` | Global Forest Watch | https://data.globalforestwatch.org/ |
+| `OCEANNETWORKS_TOKEN` | `OCEANNETWORKS_TOKEN=` | Ocean Networks Canada | https://data.oceannetworks.ca/DataSearch |
+| `TRANSPORTDATA_KEY` | `TRANSPORTDATA_KEY=` | Swiss OpenTransport | https://opentransportdata.swiss/en/dataset/ |
+| `TRANSIT511_KEY` | `TRANSIT511_KEY=` | 511.org Transit | https://511.org/open-data/api |
+| `TNG_KEY` | `TNG_KEY=` | IllustrisTNG | https://www.tng-project.org/register/ |
+| `SI_API_KEY` | `SI_API_KEY=` | Smithsonian | https://api.data.gov/signup/ |
+| `IUCN_TOKEN` | `IUCN_TOKEN=` | IUCN Red List | https://apiv3.iucnredlist.org/api/v3/token |
+
+---
+
 ## A. Höchster Mehrwert — Daten fehlen komplett
 
 | API | Endpoint | Auth | Kosten | Force | Status | Registrierung |
@@ -87,6 +138,8 @@ Gruppiert nach Daten-Mehrwert für die 8-Kräfte-Punktwolke. Basis: Archiv (Schr
 
 ## Nächste Schritte
 
-- Keys/Tokens in GitHub-Actions-Secrets ablegen (workflow erweitern)
-- Für jede Priorität-A-API Sources in `sources.φ` anlegen
-- Auth-Header/Query-Param im Fetch-System unterstützen
+1. Alle 25 fehlenden Keys besorgen (Registrierungs-URLs in Secrets-Matrix oben)
+2. Werte in `.secrets.local` eintragen (gitignored, keine Keys committen)
+3. Workflow `refresh-protected-data.yml` erweitern — jede API als optionalen Step (überspringt wenn Secret leer)
+4. Für jede Priorität-A-API Sources in `sources.φ` anlegen
+5. Auth-Header/Query-Param im Fetch-System unterstützen
