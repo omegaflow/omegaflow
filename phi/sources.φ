@@ -3971,14 +3971,14 @@ url https://api.wheretheiss.at/v1/satellites/25544/astronauts
 ttl 600
 force em
 ecliptic 1
-url https://api.open-notify.org/astros.json
+url https://api.wheretheiss.at/v1/satellites/25544/astronauts
 count people biosphere_humans_in_space
 
 url https://api.wheretheiss.at/v1/satellites/25544/astronauts
 ttl 600
 force em
 ecliptic 1
-url https://api.open-notify.org/astros.json
+url https://api.wheretheiss.at/v1/satellites/25544/astronauts
 field number orbital_humans_in_space_count
 
 source cryosphere_snow_depth
@@ -6377,7 +6377,7 @@ lon_key geometry.x
 url https://api.obis.org/v3/occurrence/grid/100?taxon=*&year=2026&geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))
 ttl 3600
 force diffusion
-url https://api.eurobis.org/v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year}
+url https://api.obis.org/v3/occurrence/grid/100?taxon=*https://api.eurobis.org/year=2026https://api.eurobis.org/geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year}
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
