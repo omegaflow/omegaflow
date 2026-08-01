@@ -11623,7 +11623,7 @@ extent 1.22e-5
 source irsa_tap_neowiser
 ttl 3600
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_neowiser_p1bs_psd.csv
 format text
 rows
 ra_key ra
@@ -13198,7 +13198,7 @@ field Elevation(meters) elevation_m
 source allwise_catalog_irsa_tap
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL&format=csv&limit=5000
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
 format text
 rows
 ra_key ra
@@ -15819,7 +15819,7 @@ field k_m mag_k
 source irsa_allwise_point_source_database
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,ph_qual
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
 format text
 rows
 ra_key ra
@@ -15834,7 +15834,7 @@ field ph_qual photo_quality
 source irsa_allwise_psd
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
 format text
 rows
 ra_key ra
@@ -15929,7 +15929,7 @@ field flags quality_flags
 source irsa_neowise_r10
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000+AND+w1mpro+IS+NOT+NULL
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_neowiser_p1bs_psd.csv
 format text
 rows
 ra_key ra
@@ -16106,7 +16106,7 @@ field k_m mag_k
 source irsa_tap_allwise
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
 format text
 rows
 ra_key ra
@@ -16119,7 +16119,7 @@ field w4mpro mag_w4
 source irsa_wise_zodiacal_emission_proxy
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,w3mpro,w4mpro,w3snr,w4snr,cc_flags+FROM+wise_allwise_p3as_psd+WHERE+ABS(dec-23.44*SIN(ra*3.14159265/180))<10+AND+w4snr>5+AND+w3mpro<8+ORDER+BY+w4mpro+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
 format text
 rows
 ra_key ra
@@ -18784,7 +18784,7 @@ field site.geography.state state
 source neowise_asteroid_diameters
 ttl 86400
 force gravity
-url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_neowiser_p1bs_psd.csv
 format text
 rows
 ra_key ra
