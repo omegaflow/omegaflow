@@ -8861,6 +8861,21 @@ field_in 6 acq_time
 field_in 8 confidence
 field_in 11 fire_radiative_power
 
+source nasa_firms_global_active_fires_suomi_npp
+ttl 600
+force thermal
+url https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Global_24h.csv
+format csv
+rows
+pos latitude longitude
+field_in 0 latitude
+field_in 1 longitude
+field_in 2 fire_brightness_k
+field_in 5 acq_date
+field_in 6 acq_time
+field_in 8 confidence
+field_in 11 fire_radiative_power
+
 source noaa_coops_water_level_now
 ttl 600
 force advective
