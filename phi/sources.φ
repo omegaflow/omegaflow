@@ -6841,7 +6841,7 @@ lon_key dec
 source heasarc_nicer_master_source_catalog
 ttl 3600
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
 format text
 rows
 ra_key ra
@@ -7055,6 +7055,30 @@ alt_key depth
 field_in TEMP hydrosphere_ctd_temp_c
 field_in PSAL hydrosphere_ctd_salinity_psu
 
+source lithosphere_stac_landsat_pc
+ttl 86400
+force em
+url https://planetarycomputer.microsoft.com/api/stac/v1/search?collections=landsat-c2-l2&limit=200&bbox=-125,30,-115,40&datetime={today}T00:00:00Z/{today}T23:59:59Z
+wgs84 37.0 -120.0
+format stac
+map data
+lat_key lat
+lon_key lon
+epoch_key datetime
+field_in stac_eo_cloud_cover lithosphere_cloud_cover_pct
+
+source lithosphere_stac_sentinel2_aws
+ttl 86400
+force em
+url https://earth-search.aws.element84.com/v1/search?collections=sentinel-2-l2a&limit=200&bbox=-125,30,-115,40&datetime={today}T00:00:00Z/{today}T23:59:59Z
+wgs84 37.0 -120.0
+format stac
+map data
+lat_key lat
+lon_key lon
+epoch_key datetime
+field_in stac_eo_cloud_cover lithosphere_cloud_cover_pct
+
 source hydrosphere_flood
 ttl 3600
 force em
@@ -7211,7 +7235,7 @@ extent 1.22e-5
 source irsa_tap_neowiser
 ttl 3600
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
 format text
 rows
 ra_key ra
@@ -7223,7 +7247,7 @@ field mjd mjd_obs
 source irsa_tap_ztf_objects
 ttl 3600
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
 format text
 rows
 ra_key ra
@@ -10089,7 +10113,7 @@ field z_phot photometric_redshift
 source gaia_dr3_bright_stars
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+source_id,ra,dec,parallax,pmra,pmdec,phot_g_mean_mag,phot_bp_mean_mag,phot_rp_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag<6
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+source_id,ra,dec,parallax,pmra,pmdec,phot_g_mean_mag,phot_bp_mean_mag,phot_rp_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag<6
 format text
 rows
 ra_key ra
@@ -10105,7 +10129,7 @@ field phot_rp_mean_mag rp_magnitude
 source gaia_dr3_high_parallax_stars
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+source_id,ra,dec,pmra,pmdec,parallax,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>100+AND+parallax<200
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+source_id,ra,dec,pmra,pmdec,parallax,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>100+AND+parallax<200
 format text
 rows
 ra_key ra
@@ -10659,7 +10683,7 @@ field assoc_name associated_name
 source heasarc_4fgl_dr4_gamma_ray_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,extended,assoc_name,redshift+FROM+fermilpsc+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,extended,assoc_name,redshift+FROM+fermilpsc+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
 format text
 rows
 ra_key ra
@@ -10704,7 +10728,7 @@ dist_key dist
 source heasarc_chandra_csc2
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,extent_flag,var_flag,conf_flag+FROM+csc+WHERE+conf_flag%3D0+ORDER+BY+name+ASC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,extent_flag,var_flag,conf_flag+FROM+csc+WHERE+conf_flag%3D0+ORDER+BY+name+ASC
 format text
 rows
 ra_key ra
@@ -10804,7 +10828,7 @@ field type snr_type
 source heasarc_fermi_4fgl_all
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
 format text
 rows
 ra_key ra
@@ -10831,7 +10855,7 @@ field source_type blazar_class
 source heasarc_fermi_4fgl_dr4
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,detection_significance,pl_flux_density,pl_index,source_type+FROM+fermilpsc+WHERE+detection_significance%3E10+ORDER+BY+detection_significance+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,detection_significance,pl_flux_density,pl_index,source_type+FROM+fermilpsc+WHERE+detection_significance%3E10+ORDER+BY+detection_significance+DESC
 format text
 rows
 ra_key ra
@@ -10931,7 +10955,7 @@ dist_key dist
 source heasarc_icecube_10yr_ps_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,ts,flux,p_value,sigma+FROM+icecube_ps_10y+WHERE+ra+IS+NOT+NULL+ORDER+BY+ts+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,ts,flux,p_value,sigma+FROM+icecube_ps_10y+WHERE+ra+IS+NOT+NULL+ORDER+BY+ts+DESC
 format text
 rows
 ra_key ra
@@ -10957,7 +10981,7 @@ field_in 5 source_type
 source heasarc_integral_ibis_grb_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,t90,fluence,peak_flux,time_trigger,error_radius+FROM+intgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,t90,fluence,peak_flux,time_trigger,error_radius+FROM+intgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
 format text
 rows
 ra_key ra
@@ -11003,7 +11027,7 @@ field hardness_ratio_1 hardness_ratio
 source heasarc_maxi_gsc_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,flux_4_10,flux_10_20,flux_20_40,n_sigma,type+FROM+maxigsc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_4_10,flux_10_20,flux_20_40,n_sigma,type+FROM+maxigsc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC
 format text
 rows
 ra_key ra
@@ -11045,7 +11069,7 @@ field size_arcmin angular_size_arcmin
 source heasarc_rosat_2rxs
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,count_rate,source_extent,hardness_ratio_1,hardness_ratio_2,detection_likelihood+FROM+rass2rxs+WHERE+detection_likelihood%3E6+ORDER+BY+count_rate+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,source_extent,hardness_ratio_1,hardness_ratio_2,detection_likelihood+FROM+rass2rxs+WHERE+detection_likelihood%3E6+ORDER+BY+count_rate+DESC
 format text
 rows
 ra_key 1
@@ -11060,7 +11084,7 @@ field_in 7 detection_likelihood
 source heasarc_rosat_bright_source_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
 format text
 rows
 ra_key ra
@@ -11073,7 +11097,7 @@ field ext source_extent
 source heasarc_rosat_bsc
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
 format text
 rows
 ra_key 1
@@ -11125,7 +11149,7 @@ field count_rate count_rate
 source heasarc_sage2_aerosol_extinction
 ttl 86400
 force diffusion
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
 format text
 rows
 lat_key latitude
@@ -11192,7 +11216,7 @@ field Energy_Flux_Band3 energy_flux_10gev_2tev_erg_cm2s
 source heasarc_xmm_4xmm_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
 format text
 rows
 ra_key ra
@@ -11203,7 +11227,7 @@ field ep_flux xmm_flux_erg_cm2s
 source heasarc_xmm_4xmm_dr13
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
 format text
 rows
 ra_key sc_ra
@@ -11228,7 +11252,7 @@ field revolution revolution
 source heasarc_xrb_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
 format text
 rows
 ra_key ra
@@ -11458,7 +11482,7 @@ field gal_contam galactic_contamination
 source irsa_2mass_psc
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
 format text
 rows
 ra_key ra
@@ -11485,7 +11509,7 @@ field ph_qual photo_quality
 source irsa_allwise_psd
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
 format text
 rows
 ra_key ra
@@ -11631,7 +11655,7 @@ field DETPROB detection_probability
 source irsa_planck_pr2_sz_cluster_mmf3_catalog
 ttl 86400
 force diffusion
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
 format text
 rows
 ra_key RA
@@ -11677,7 +11701,7 @@ field fluxk k_band_flux_mJy
 source irsa_sage_smc_infrared_catalog
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
 format text
 rows
 ra_key ra
@@ -11717,7 +11741,7 @@ field mips_160_flux flux_160um_mJy
 source irsa_sings_nearby_galaxies_photometry
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
 format text
 rows
 ra_key ra
@@ -11745,7 +11769,7 @@ field k_m mag_k
 source irsa_tap_2mass_psc
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
 format text
 rows
 ra_key ra
@@ -11757,7 +11781,7 @@ field k_m mag_k
 source irsa_tap_allwise
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
 format text
 rows
 ra_key ra
@@ -11799,7 +11823,7 @@ field sharp sharpness
 source irsa_ztf_objects
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
 format text
 rows
 ra_key ra
@@ -12133,7 +12157,7 @@ field diameter estimated_diameter_km
 source kodiaq_quasar_absorbers
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+%22_RA%22,%22_DE%22,zQSO,%22S%2FN%22+FROM+%22J/ApJ/852/22/sample%22
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zQSO,%22S%2FN%22+FROM+%22J/ApJ/852/22/sample%22
 cmap data
 ra_key 0
 dec_key 1
@@ -12223,7 +12247,7 @@ regex <Count>([0-9]+)</Count> lidar_mola_mars_pedr_product_count
 source local_group_dwarf_spheroids
 ttl 86400
 force gravity
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,D,Mass,HRV+FROM+%22J/AJ/144/4/catalog%22
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,D,Mass,HRV+FROM+%22J/AJ/144/4/catalog%22
 cmap data
 ra_key 0
 dec_key 1
@@ -14074,7 +14098,7 @@ dist_key sy_dist
 source nasa_exoplanet_toi_catalog
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
 map .
 lat_key ra
 lon_key dec
@@ -14138,7 +14162,7 @@ last_line biosphere_global_ndvi
 source nasa_ned_coma_cluster
 ttl 86400
 force em
-url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+500+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,194.9,27.9,3.0))%3D1
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+5000+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,194.9,27.9,3.0))%3D1
 cmap data
 tau_key _dist_m
 ra_key 1
@@ -14150,7 +14174,7 @@ field 3 redshift
 source nasa_ned_great_attractor
 ttl 86400
 force gravity
-url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+500+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,243.7,-45.3,6.0))%3D1
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+5000+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,243.7,-45.3,6.0))%3D1
 cmap data
 tau_key _dist_m
 ra_key 1
@@ -14162,7 +14186,7 @@ field 3 redshift
 source nasa_ned_virgo_cluster
 ttl 86400
 force em
-url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+500+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,187.7,12.4,3.0))%3D1
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+5000+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,187.7,12.4,3.0))%3D1
 cmap data
 tau_key _dist_m
 ra_key 1
@@ -14189,7 +14213,7 @@ field disc_year discovery_year
 source nasa_nexsci_radial_velocity_planets
 ttl 86400
 force gravity
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+500+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_rvamp,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Radial+Velocity'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+5000+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_rvamp,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Radial+Velocity'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
 format text
 rows
 ra_key ra
@@ -14207,7 +14231,7 @@ field disc_year discovery_year
 source nasa_nexsci_transmission_spectroscopy
 ttl 86400
 force em
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+500+pl_name,ra,dec,pl_radj,pl_bmassj,pl_trandep,pl_tranmid,pl_orbper,st_teff,st_rad,st_mass,sy_dist+FROM+ps+WHERE+pl_trandep+IS+NOT+NULL+AND+ra+IS+NOT+NULL+ORDER+BY+pl_trandep+DESC&FORMAT=csv
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+5000+pl_name,ra,dec,pl_radj,pl_bmassj,pl_trandep,pl_tranmid,pl_orbper,st_teff,st_rad,st_mass,sy_dist+FROM+ps+WHERE+pl_trandep+IS+NOT+NULL+AND+ra+IS+NOT+NULL+ORDER+BY+pl_trandep+DESC&FORMAT=csv
 format text
 rows
 ra_key ra
@@ -14410,7 +14434,7 @@ field site.geography.state state
 source neowise_asteroid_diameters
 ttl 86400
 force gravity
-url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
 format text
 rows
 ra_key ra
@@ -15683,7 +15707,7 @@ map .
 source pantheon_plus_sne
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+%22_RA%22,%22_DE%22,zCMB,mBcorr+FROM+%22J/ApJ/938/110/table7%22
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zCMB,mBcorr+FROM+%22J/ApJ/938/110/table7%22
 cmap data
 ra_key 0
 dec_key 1
@@ -15803,7 +15827,7 @@ field z mag_z
 source sdss_dr18_galaxies
 ttl 86400
 force em
-url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
 map .
 ra_key ra
 dec_key dec
@@ -15826,7 +15850,7 @@ field psfMag_g mag_g
 source sdss_dr18_stars
 ttl 86400
 force em
-url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
 map .
 ra_key ra
 dec_key dec
@@ -15957,7 +15981,7 @@ field_in index spectral_index
 source tns_transient_supernovae
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,z,MaxMag,Type+FROM+%22B/sn/sncat%22
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,z,MaxMag,Type+FROM+%22B/sn/sncat%22
 cmap data
 ra_key 0
 dec_key 1
@@ -15992,7 +16016,7 @@ field 2 last_modified
 source uhecr_auger_host_galaxies
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,DLum,Kmag+FROM+%22J/ApJ/935/170/table4%22
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,DLum,Kmag+FROM+%22J/ApJ/935/170/table4%22
 cmap data
 ra_key 0
 dec_key 1
@@ -16033,7 +16057,7 @@ dist_key 2 3.085677581e16
 source universe_first_radio
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,Fpeak,Fint+FROM+%22VIII/92/first14%22
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+%22VIII/92/first14%22
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16044,7 +16068,7 @@ field_in 3 int_jy
 source universe_frb_catalog_aa
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+TNS,RAJ2000,DEJ2000,DM+FROM+%22J/A%2BA/693/A279/frbs%22
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+TNS,RAJ2000,DEJ2000,DM+FROM+%22J/A%2BA/693/A279/frbs%22
 cmap data
 tau_key _dist_m
 ra_key 1
@@ -16055,7 +16079,7 @@ field_in 3 dm
 source universe_frb_catalog_pasa
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+Name,RAJ2000,DEJ2000,DM+FROM+%22J/other/PASA/33.45/frbcat%22
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,DM+FROM+%22J/other/PASA/33.45/frbcat%22
 cmap data
 tau_key _dist_m
 ra_key 1
@@ -16079,7 +16103,7 @@ field_in 4 ruwe
 source universe_gaia_binaries
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16091,7 +16115,7 @@ field_in 3 parallax_mas
 source universe_gaia_blue_stars
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+-0.1+AND+phot_g_mean_mag+<+12
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+-0.1+AND+phot_g_mean_mag+<+12
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16115,7 +16139,7 @@ field_in 2 bp_rp
 source universe_gaia_blue_supergiants
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+phot_g_mean_mag+<+8+AND+parallax+IS+NOT+NULL+AND+parallax+<+2+ORDER+BY+random_index
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+phot_g_mean_mag+<+8+AND+parallax+IS+NOT+NULL+AND+parallax+<+2+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16174,7 +16198,7 @@ field_in 2 mag_g
 source universe_gaia_by_dra_variables
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27BYDra%27+ORDER+BY+random_index
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27BYDra%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16186,7 +16210,7 @@ field_in 4 bp_minus_rp
 source universe_gaia_carbon_stars
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+3.5+AND+bp_rp+<+6+AND+phot_g_mean_mag+<+16+AND+parallax+>+1
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+3.5+AND+bp_rp+<+6+AND+phot_g_mean_mag+<+16+AND+parallax+>+1
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16198,7 +16222,7 @@ field_in 4 bp_minus_rp
 source universe_gaia_cataclysmic_variables
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27CV%27+ORDER+BY+random_index
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27CV%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16210,7 +16234,7 @@ field_in 4 bp_minus_rp
 source universe_gaia_cepheids
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27Cepheid%27+ORDER+BY+random_index
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27Cepheid%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16257,7 +16281,7 @@ field_in 3 par
 source universe_gaia_delta_scuti
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27DSCT%27+ORDER+BY+random_index
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27DSCT%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16269,7 +16293,7 @@ field_in 4 bp_minus_rp
 source universe_gaia_distant_halo
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+<+0.3+AND+parallax+>+0+AND+phot_g_mean_mag+<+14
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+<+0.3+AND+parallax+>+0+AND+phot_g_mean_mag+<+14
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16281,7 +16305,7 @@ field_in 3 parallax_mas
 source universe_gaia_eclipsing_binaries_vari
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27EA%27+OR+v.best_class_name+%3D+%27EB%27+OR+v.best_class_name+%3D+%27EW%27+ORDER+BY+random_index
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27EA%27+OR+v.best_class_name+%3D+%27EB%27+OR+v.best_class_name+%3D+%27EW%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16341,7 +16365,7 @@ field_in 2 mag_g
 source universe_gaia_herbig_aebe
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0.2+AND+phot_g_mean_mag+<+14+AND+parallax+>+5+AND+phot_bp_mean_flux_over_error+>+50+ORDER+BY+random_index
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0.2+AND+phot_g_mean_mag+<+14+AND+parallax+>+5+AND+phot_bp_mean_flux_over_error+>+50+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16366,7 +16390,7 @@ field_in 4 bp_rp
 source universe_gaia_high_proper_motion
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+50
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+50
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16474,7 +16498,7 @@ field_in 4 bp_rp
 source universe_gaia_mira_variables
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27Mira%27+ORDER+BY+random_index
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27Mira%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16497,7 +16521,7 @@ field_in 2 mag_g
 source universe_gaia_open_clusters
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra%2Cdec%2Cphot_g_mean_mag%2Cparallax+FROM+gaiadr3.gaia_source+WHERE+cluster_ka+IS+NOT+NULL+AND+phot_g_mean_mag+%3C+15.0
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra%2Cdec%2Cphot_g_mean_mag%2Cparallax+FROM+gaiadr3.gaia_source+WHERE+cluster_ka+IS+NOT+NULL+AND+phot_g_mean_mag+%3C+15.0
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16509,7 +16533,7 @@ field_in 3 par
 source universe_gaia_radial_velocity
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+parallax+>+5
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+parallax+>+5
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16534,7 +16558,7 @@ field_in 2 bp_rp
 source universe_gaia_red_giants
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16547,7 +16571,7 @@ field_in 4 bp_rp
 source universe_gaia_red_supergiants
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+bp_rp+<+4+AND+phot_g_mean_mag+<+10+AND+parallax+>+0.5+AND+parallax+<+3
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+bp_rp+<+4+AND+phot_g_mean_mag+<+10+AND+parallax+>+0.5+AND+parallax+<+3
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16559,7 +16583,7 @@ field_in 4 bp_minus_rp
 source universe_gaia_rr_lyrae
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27RR+Lyrae%27
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27RR+Lyrae%27
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16583,7 +16607,7 @@ field_in 3 parallax_mas
 source universe_gaia_semiregular_variables
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27SR%27+ORDER+BY+random_index
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27SR%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16606,7 +16630,7 @@ field_in 2 par
 source universe_gaia_subdwarfs
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+bp_rp+<+0.5+AND+phot_g_mean_mag+<+15+AND+mh_gspphot+<+-1+ORDER+BY+random_index
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+bp_rp+<+0.5+AND+phot_g_mean_mag+<+15+AND+mh_gspphot+<+-1+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16618,7 +16642,7 @@ field_in 4 bp_minus_rp
 source universe_gaia_thick_disk
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+ABS(radial_velocity)+>+50+AND+ABS(radial_velocity)+<+200+AND+parallax+>+2+AND+phot_g_mean_mag+<+14
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+ABS(radial_velocity)+>+50+AND+ABS(radial_velocity)+<+200+AND+parallax+>+2+AND+phot_g_mean_mag+<+14
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16630,7 +16654,7 @@ field_in 4 bp_minus_rp
 source universe_gaia_ultracool_dwarfs
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+4+AND+bp_rp+<+8+AND+phot_g_mean_mag+<+18+AND+parallax+>+10
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+4+AND+bp_rp+<+8+AND+phot_g_mean_mag+<+18+AND+parallax+>+10
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16642,7 +16666,7 @@ field_in 4 bp_minus_rp
 source universe_gaia_variable_classified
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+g.phot_g_mean_mag+IS+NOT+NULL
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+g.phot_g_mean_mag+IS+NOT+NULL
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16654,7 +16678,7 @@ field_in 3 parallax_mas
 source universe_gaia_white_dwarfs
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16667,7 +16691,7 @@ field_in 4 bp_rp
 source universe_gaia_young_stars
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+10+AND+phot_g_mean_mag+<+15+AND+bp_rp+IS+NOT+NULL
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+5000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+10+AND+phot_g_mean_mag+<+15+AND+bp_rp+IS+NOT+NULL
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16679,7 +16703,7 @@ field_in 3 parallax_mas
 source universe_nvss_radio
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,%22S1.4%22+FROM+%22VIII/65/nvss%22
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,%22S1.4%22+FROM+%22VIII/65/nvss%22
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16689,7 +16713,7 @@ field_in 2 flux_jy
 source universe_sdss_stars
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,s.psfmag_g+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.sdssdr13_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.sdssdr13_photoprimary+AS+s+ON+x.original_ext_source_id=s.objid+WHERE+g.parallax+>+0+AND+s.psfmag_g+<+17
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,s.psfmag_g+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.sdssdr13_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.sdssdr13_photoprimary+AS+s+ON+x.original_ext_source_id=s.objid+WHERE+g.parallax+>+0+AND+s.psfmag_g+<+17
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16700,7 +16724,7 @@ field_in 3 universe_sdss_gmag
 source universe_vizier_2mass
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16711,7 +16735,7 @@ field_in 3 universe_2mass_gaia_g_mag
 source universe_vizier_apass
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,e.bmag,e.vmag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.apassdr9_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.apassdr9+AS+e+ON+x.clean_apassdr9_oid=e.recno+WHERE+g.parallax+>+0+AND+e.bmag+<+13
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,e.bmag,e.vmag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.apassdr9_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.apassdr9+AS+e+ON+x.clean_apassdr9_oid=e.recno+WHERE+g.parallax+>+0+AND+e.bmag+<+13
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16723,7 +16747,7 @@ field_in 4 universe_vizier_vmag
 source universe_vizier_panstarrs
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -16734,7 +16758,7 @@ field_in 3 universe_panstarrs_gaia_g_mag
 source universe_xmm_4xmm_dr13
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+Source,RA_ICRS,DE_ICRS+FROM+%22IX/69/xmm4d13s%22
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Source,RA_ICRS,DE_ICRS+FROM+%22IX/69/xmm4d13s%22
 cmap data
 tau_key _dist_m
 ra_key 1
@@ -16954,7 +16978,7 @@ dist_key DIST
 source vizier_atnf_millisecond_pulsars
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Binary,Type+FROM+"VII/304/catalog"+WHERE+P0<0.03+AND+RAJ+IS+NOT+NULL+ORDER+BY+P0+ASC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Binary,Type+FROM+"VII/304/catalog"+WHERE+P0<0.03+AND+RAJ+IS+NOT+NULL+ORDER+BY+P0+ASC
 format text
 rows
 ra_key RAJ
@@ -16998,7 +17022,7 @@ field_in 5 blazar_type
 source vizier_carmenes_survey
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
 format text
 rows
 ra_key _RA
@@ -17096,7 +17120,7 @@ dist_key Dist
 source vizier_first_radio
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Fpeak,Fint,Maj,Min+FROM+"VIII/92/first14"+WHERE+Fpeak%3E10+ORDER+BY+Fpeak+DESC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,Fpeak,Fint,Maj,Min+FROM+"VIII/92/first14"+WHERE+Fpeak%3E10+ORDER+BY+Fpeak+DESC
 format text
 rows
 ra_key RAJ2000
@@ -17109,7 +17133,7 @@ field Min minaxis_arcsec
 source vizier_first_radio_catalog
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Fpeak,Fint,Maj+FROM+%22VIII/92/first14%22+WHERE+Fpeak%3E5+ORDER+BY+Fpeak+DESC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,Fpeak,Fint,Maj+FROM+%22VIII/92/first14%22+WHERE+Fpeak%3E5+ORDER+BY+Fpeak+DESC
 format text
 rows
 ra_key RAJ2000
@@ -17216,7 +17240,7 @@ field Peak peak_brightness_K
 source vizier_gcvs_variable_stars
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,VarType,magMax,Min1,Period,SpType,pmRA,pmDE,VarName+FROM+%22B/gcvs/gcvs_cat%22+WHERE+RAJ2000+IS+NOT+NULL+AND+magMax<16+ORDER+BY+magMax+ASC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,VarType,magMax,Min1,Period,SpType,pmRA,pmDE,VarName+FROM+%22B/gcvs/gcvs_cat%22+WHERE+RAJ2000+IS+NOT+NULL+AND+magMax<16+ORDER+BY+magMax+ASC
 format text
 rows
 ra_key RAJ2000
@@ -17330,7 +17354,7 @@ field Dist distance_Mpc
 source vizier_hipparcos_astrometry
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+RArad,DErad,Plx,pmRA,pmDE,Hpmag,B-V,VA,Ntr+FROM+%22I/311/hip2%22+WHERE+RArad+IS+NOT+NULL+AND+Hpmag<12+ORDER+BY+Hpmag+ASC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RArad,DErad,Plx,pmRA,pmDE,Hpmag,B-V,VA,Ntr+FROM+%22I/311/hip2%22+WHERE+RArad+IS+NOT+NULL+AND+Hpmag<12+ORDER+BY+Hpmag+ASC
 format text
 rows
 ra_key RArad
@@ -17401,7 +17425,7 @@ dist_key d
 source vizier_mojave_15ghz
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,z,Vmag,S15GHz,STot,SPeak,PTot,EVPA+FROM+%22J/AJ/130/1389/mojave%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+z+ASC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,z,Vmag,S15GHz,STot,SPeak,PTot,EVPA+FROM+%22J/AJ/130/1389/mojave%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+z+ASC
 format text
 rows
 ra_key RAJ2000
@@ -17429,7 +17453,7 @@ field Name source_name
 source vizier_mojave_18yr
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+ID,OName,z,Opt,mu-max,beta-max,Nep,PA,logVarPA,_RA,_DE+FROM+%22J/ApJ/923/30/mojave18%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ID,OName,z,Opt,mu-max,beta-max,Nep,PA,logVarPA,_RA,_DE+FROM+%22J/ApJ/923/30/mojave18%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
 format text
 rows
 ra_key _RA
@@ -17446,7 +17470,7 @@ field logVarPA log_variability_pa
 source vizier_mojave_jet_kinematics
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+Name,RAJ2000,DEJ2000,z,S15,mu_app,Class+FROM+\"J/ApJS/260/12/table3\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S15+DESC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,z,S15,mu_app,Class+FROM+\"J/ApJS/260/12/table3\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S15+DESC
 format text
 rows
 ra_key RAJ2000
@@ -17474,7 +17498,7 @@ dist_key Dist
 source vizier_nvss_galcenter
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,"S1.4",MajAxis+FROM+"VIII/65/nvss"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))=1
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,"S1.4",MajAxis+FROM+"VIII/65/nvss"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))=1
 format text
 rows
 ra_key RAJ2000
@@ -17485,7 +17509,7 @@ field MajAxis majaxis_arcsec
 source vizier_nvss_radio
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,RAJ2000,DEJ2000,"S1.4",MajAxis,MinAxis+FROM+"VIII/65/nvss"+WHERE+"S1.4"%3E50+ORDER+BY+"S1.4"+DESC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,RAJ2000,DEJ2000,"S1.4",MajAxis,MinAxis+FROM+"VIII/65/nvss"+WHERE+"S1.4"%3E50+ORDER+BY+"S1.4"+DESC
 format text
 rows
 ra_key RAJ2000
@@ -17497,7 +17521,7 @@ field MinAxis minaxis_arcsec
 source vizier_nvss_radio_catalog
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,%22S1.4%22,MajAxis+FROM+%22VIII/65/nvss%22+WHERE+%22S1.4%22%3E20+ORDER+BY+%22S1.4%22+DESC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,%22S1.4%22,MajAxis+FROM+%22VIII/65/nvss%22+WHERE+%22S1.4%22%3E20+ORDER+BY+%22S1.4%22+DESC
 format text
 rows
 ra_key RAJ2000
@@ -17508,7 +17532,7 @@ field MajAxis major_axis_arcsec
 source vizier_orion_region_catalog
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+Reg,RAJ2000,DEJ2000,Dist,SimbadName+FROM+%22J/ApJS/229/28/table1%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Dist+ASC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Reg,RAJ2000,DEJ2000,Dist,SimbadName+FROM+%22J/ApJS/229/28/table1%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Dist+ASC
 format text
 rows
 ra_key RAJ2000
@@ -17520,7 +17544,7 @@ field SimbadName simbad_id
 source vizier_ou_blazars
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+No,Name,GLON,GLAT,_RA_icrs,_DE_icrs+FROM+%22J/A%2BA/607/A48/tablea1%22+WHERE+_RA_icrs+IS+NOT+NULL
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+No,Name,GLON,GLAT,_RA_icrs,_DE_icrs+FROM+%22J/A%2BA/607/A48/tablea1%22+WHERE+_RA_icrs+IS+NOT+NULL
 format text
 rows
 ra_key _RA_icrs
@@ -17532,7 +17556,7 @@ field GLAT galactic_latitude
 source vizier_ovro_blazar_monitoring
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+IRAS,z,logLIR,F12um,F25um,F60um,F100um,_RA,_DE+FROM+%22J/ApJS/274/5/table1%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+IRAS,z,logLIR,F12um,F25um,F60um,F100um,_RA,_DE+FROM+%22J/ApJS/274/5/table1%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
 format text
 rows
 ra_key _RA
@@ -17547,7 +17571,7 @@ field F100um flux_100um_jy
 source vizier_panstarrs_dr2_catalog
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+objID,RAJ2000,DEJ2000,gmag,rmag,imag,zmag,ymag+FROM+%22II/349/ps1%22+WHERE+RAJ2000+IS+NOT+NULL+AND+gmag<15
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+objID,RAJ2000,DEJ2000,gmag,rmag,imag,zmag,ymag+FROM+%22II/349/ps1%22+WHERE+RAJ2000+IS+NOT+NULL+AND+gmag<15
 format text
 rows
 ra_key RAJ2000
@@ -17562,7 +17586,7 @@ field ymag y_mag
 source vizier_planck_psz2_clusters
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+Name,RAJ2000,DEJ2000,SNR,z,Val,MSZ,Y5R500,MCXC+FROM+%22J/A%2BA/594/A27/psz2%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SNR+DESC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,SNR,z,Val,MSZ,Y5R500,MCXC+FROM+%22J/A%2BA/594/A27/psz2%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SNR+DESC
 format text
 rows
 ra_key RAJ2000
@@ -17592,7 +17616,7 @@ field Local_rms local_rms_mJy
 source vizier_scardec_source_time_functions
 ttl 86400
 force seismic-body
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,Seq,Nx,blambda,Title+FROM+%22J/A%2BA/614/A116/list%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Nx+DESC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Seq,Nx,blambda,Title+FROM+%22J/A%2BA/614/A116/list%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Nx+DESC
 format text
 rows
 ra_key RAJ2000
@@ -17605,7 +17629,7 @@ field Title source_title
 source vizier_sdss12_galaxies
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_ICRS,DE_ICRS,zsp,rmag,gmag,imag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D3+AND+zsp+IS+NOT+NULL+AND+zsp%3E0.01
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RA_ICRS,DE_ICRS,zsp,rmag,gmag,imag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D3+AND+zsp+IS+NOT+NULL+AND+zsp%3E0.01
 format text
 rows
 ra_key RA_ICRS
@@ -17630,7 +17654,7 @@ field gmag mag_g
 source vizier_sdss12_stars
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_ICRS,DE_ICRS,rmag,gmag,imag,zmag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D1+AND+rmag%3C18
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RA_ICRS,DE_ICRS,rmag,gmag,imag,zmag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D1+AND+rmag%3C18
 format text
 rows
 ra_key RA_ICRS
@@ -17653,7 +17677,7 @@ field imag i_magnitude
 source vizier_sl2s_lenses
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,imag,zphot,zd,zs,qflag+FROM+"J/ApJ/785/144/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+zphot+DESC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,imag,zphot,zd,zs,qflag+FROM+"J/ApJ/785/144/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+zphot+DESC
 format text
 rows
 ra_key RAJ2000
@@ -17665,7 +17689,7 @@ field zd deflector_redshift
 source vizier_slacs_lenses
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+_RA,_DE,zL,zS,Sigma,Imag,Class+FROM+"J/ApJ/851/48/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+zL+ASC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+_RA,_DE,zL,zS,Sigma,Imag,Class+FROM+"J/ApJ/851/48/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+zL+ASC
 format text
 rows
 ra_key _RA
@@ -23402,3 +23426,58 @@ lat_key latitude
 lon_key longitude
 field_in stnm geosphere_raspberry_shake_name
 field_in ntwk geosphere_raspberry_shake_network
+
+source geosphere_iris_stations
+ttl 86400
+force seismic-body
+url https://service.iris.edu/fdsnws/station/1/query?network=*&station=*&location=*&channel=BH?&format=geojson&level=station
+format json
+map features
+lat_key latitude
+lon_key longitude
+field_in properties.network geosphere_iris_network
+field_in properties.station geosphere_iris_station
+
+source geosphere_orfeus_stations
+ttl 86400
+force seismic-body
+url https://www.orfeus-eu.org/fdsnws/station/1/query?network=*&station=*&location=*&channel=BH?&format=geojson&level=station
+format json
+map features
+lat_key latitude
+lon_key longitude
+field_in properties.network geosphere_orfeus_network
+field_in properties.station geosphere_orfeus_station
+
+source biosphere_gbif_invasive_species
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?country=DE&hasCoordinate=true&isInvasive=true&limit=300&offset=0
+format json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_species
+field_in occurrenceStatus biosphere_gbif_occurrence_status
+
+source biosphere_gbif_range_shifts
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&year=2026,2026&limit=300&offset=0
+format json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_species
+field_in year biosphere_gbif_year
+
+source biosphere_gbif_marine_invasives
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&datasetKey=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&limit=300
+format json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_marine_species
+field_in depth biosphere_gbif_depth_m
