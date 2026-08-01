@@ -27632,3 +27632,13 @@ wgs84 38.627 -90.199
 field UNRATE economy_fred_unemployment_pct
 field CPIAUCSL economy_fred_cpi
 field FEDFUNDS economy_fred_fedfunds_pct
+
+source economy_alphavantage_markets
+ttl 1800
+force advective
+url https://github.com/omegaflow/catalogs/releases/download/live-data/alphavantage_markets.json
+wgs84 40.707 -74.011
+field SPY.price economy_alphavantage_spy_price
+field SPY.change_pct economy_alphavantage_spy_change_pct
+field GLD.price economy_alphavantage_gld_price
+field GLD.change_pct economy_alphavantage_gld_change_pct

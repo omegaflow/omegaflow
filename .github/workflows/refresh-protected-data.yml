@@ -228,6 +228,27 @@ jobs:
           jq -s 'add' data/fred_part_*.json > data/fred_economy.json || true
           rm -f data/fred_part_*.json
 
+      - name: AlphaVantage
+        env:
+          ALPHAVANTAGE_KEY: ${{ secrets.ALPHAVANTAGE_KEY }}
+        run: |
+          if [ -z "$ALPHAVANTAGE_KEY" ]; then
+            echo "::notice::AlphaVantage skipped (no ALPHAVANTAGE_KEY)"
+            exit 0
+          fi
+          for sym in SPY GLD; do
+            curl -sS --fail --max-time 30 \
+              "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${sym}&apikey=${ALPHAVANTAGE_KEY}" \
+              -o /tmp/av_body.json || true
+            jq -c --arg s "$sym" 'if (."Global Quote"."05. price" != null)
+              then {($s): {price: (."Global Quote"."05. price" | tonumber),
+                           change_pct: ((."Global Quote"."10. change percent" | gsub("%";"") | tonumber)),
+                           volume: (."Global Quote"."06. volume" | tonumber)}} else empty end' \
+              /tmp/av_body.json > "data/av_part_${sym}.json" || true
+          done
+          jq -s 'add' data/av_part_*.json > data/alphavantage_markets.json || true
+          rm -f data/av_part_*.json
+
       - name: Publish Release
         run: |
           if [ -z "$GH_TOKEN" ]; then
