@@ -11856,7 +11856,7 @@ field 6 vz_au_day
 source jpl_horizons_jupiter_observer
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/observer_jupiter.json
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
 wgs84 0.0 0.0
 format text
 rows
@@ -11869,7 +11869,7 @@ field 4 solar_distance_au
 source jpl_horizons_mars_observer
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/observer_mars.json
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
 wgs84 0.0 0.0
 format text
 rows
@@ -11882,7 +11882,7 @@ field 4 solar_distance_au
 source jpl_horizons_saturn_observer
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/observer_saturn.json
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
 wgs84 0.0 0.0
 format text
 rows
