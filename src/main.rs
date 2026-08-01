@@ -5394,7 +5394,7 @@ fn warm_cache(archive: Arc<Archive>) {
                 .and_then(|o| String::from_utf8(o.stdout).ok())
                 .and_then(|s| s.trim().parse::<usize>().ok())
                 .unwrap_or(1024);
-            std::cmp::max(64, fd / 4)
+            std::cmp::max(64, fd / 4).min(256)
         };
         let (tx, rx) = std::sync::mpsc::sync_channel::<
             Vec<(
