@@ -23369,3 +23369,36 @@ field_in 11 wave_height_m
 field_in 12 dominant_period_s
 field_in 14 pressure_hpa
 field_in 17 water_temp_c
+
+source hydrosphere_pegelonline_all_stations
+ttl 1800
+force advective
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeTimeseries=true&includeCurrentMeasurement=true
+format json
+map features
+lat_key latitude
+lon_key longitude
+field_in shortname hydrosphere_pegelonline_station
+field_in water hydrosphere_pegelonline_water_level_cm
+
+source exosphere_cmems_currents
+ttl 21600
+force advective
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?uo%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D,vo%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format csv
+rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_cmems_current_u_ms
+field_in 3 hydrosphere_cmems_current_v_ms
+
+source geosphere_raspberry_shake_stations
+ttl 43200
+force seismic-surface
+url https://stationview.raspberryshake.org/api/stations
+format json
+map features
+lat_key latitude
+lon_key longitude
+field_in stnm geosphere_raspberry_shake_name
+field_in ntwk geosphere_raspberry_shake_network
