@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 WORKDIR /app
 COPY --from=builder /app/target/release/omegaflow /app/server
 COPY static/ static/
-COPY φ/ φ/
+COPY phi/ phi/
 EXPOSE 1111
 CMD ["./server"]
 

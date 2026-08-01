@@ -1,0 +1,131 @@
+name: Refresh Protected Data
+
+on:
+  schedule:
+    - cron: '17 */3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      CATALOGS_REPO: ${{ secrets.CATALOGS_REPO || 'omegaflow/catalogs' }}
+      RELEASE_TAG: live-data
+      GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: eBird
+        env:
+          EBIRD_API_KEY: ${{ secrets.EBIRD_API_KEY }}
+        run: |
+          mkdir -p data
+          if [ -z "$EBIRD_API_KEY" ]; then
+            echo "::notice::eBird skipped (no EBIRD_API_KEY)"
+            exit 0
+          fi
+          points=("-3.5 -62.0" "2.0 113.0" "0.0 25.0" "38.9 -77.0" "52.0 13.4" "-25.0 135.0" "0.0 0.0")
+          i=0
+          for pt in "${points[@]}"; do
+            read -r la lo <<< "$pt"
+            curl -s --fail -H "X-eBirdApiToken: $EBIRD_API_KEY" \
+              "https://api.ebird.org/v2/data/obs/geo/recent?lat=${la}&lng=${lo}&dist=500&back=1&maxResults=500" \
+              -o "data/ebird_${i}.json" || true
+            i=$((i + 1))
+          done
+          files=()
+          for f in data/ebird_*.json; do
+            [ -s "$f" ] && files+=("$f")
+          done
+          if [ "${#files[@]}" -gt 0 ]; then
+            jq -s 'add' "${files[@]}" \
+              | jq '[.[] | select(.lat != null and .lng != null) | {lat, lon, speciesCode, howMany: (.howMany // 1), obsDt}]' \
+              > data/ebird_recent.json
+          fi
+          rm -f data/ebird_*.json
+
+      - name: OpenAQ
+        env:
+          OPENAQ_API_KEY: ${{ secrets.OPENAQ_API_KEY }}
+        run: |
+          if [ -z "$OPENAQ_API_KEY" ]; then
+            echo "::notice::OpenAQ skipped (no OPENAQ_API_KEY)"
+            exit 0
+          fi
+          for p in pm25 pm10; do
+            curl -s --fail -H "X-API-Key: $OPENAQ_API_KEY" \
+              "https://api.openaq.org/v3/parameters/${p}/latest?limit=1000" \
+              -o "data/openaq_tmp.json" && \
+              jq '[.results[] | select(.value != null and .coordinates != null)
+                | {lat: .coordinates.latitude, lon: .coordinates.longitude, value, lastUpdated}]' \
+                data/openaq_tmp.json > "data/openaq_${p}.json" || true
+          done
+          rm -f data/openaq_tmp.json
+
+      - name: FIRMS
+        env:
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+        run: |
+          if [ -z "$FIRMS_MAP_KEY" ]; then
+            echo "::notice::FIRMS skipped (no FIRMS_MAP_KEY)"
+            exit 0
+          fi
+          curl -s --fail \
+            "https://firms.modaps.eosdis.nasa.gov/api/country/csv/${FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1" \
+            -o data/firms_viirs_nrt_world.csv || true
+          curl -s --fail \
+            "https://firms.modaps.eosdis.nasa.gov/api/country/csv/${FIRMS_MAP_KEY}/MODIS_NRT/world/1" \
+            -o data/firms_modis_nrt_world.csv || true
+
+      - name: CMEMS
+        env:
+          CMEMS_USER: ${{ secrets.CMEMS_USER }}
+          CMEMS_PASS: ${{ secrets.CMEMS_PASS }}
+        run: |
+          if [ -z "$CMEMS_USER" ] || [ -z "$CMEMS_PASS" ]; then
+            echo "::notice::CMEMS skipped (no CMEMS_USER/CMEMS_PASS)"
+            exit 0
+          fi
+          curl -s --fail -u "$CMEMS_USER:$CMEMS_PASS" \
+            "https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D" \
+            | tail -n +3 \
+            | jq -R 'split(",") | select(length >= 4)
+              | {latitude: (.[1] | gsub("\"";"") | tonumber),
+                 longitude: (.[2] | gsub("\"";"") | tonumber),
+                 o2: (.[3] | gsub("\"";"") | tonumber?)}' \
+            | jq -s 'map(select(.o2 != null))' > data/cmems_oxygen.json || true
+
+      - name: Earthdata CMR granules
+        env:
+          EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+        run: |
+          if [ -z "$EARTHDATA_EDL_TOKEN" ]; then
+            echo "::notice::CMR skipped (no EARTHDATA_EDL_TOKEN)"
+            exit 0
+          fi
+          for sn in GEDI02_A ATL06 ATL03 SWOT_L2_LR_SSH_D VNP14IMG_NRT; do
+            curl -s --fail -H "Authorization: Bearer $EARTHDATA_EDL_TOKEN" \
+              "https://cmr.earthdata.nasa.gov/search/granules.json?short_name=${sn}&page_size=2000&sort_key=-start_date" \
+              -o "data/cmr_${sn}.json" || true
+          done
+
+      - name: Publish Release
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::no token to publish release"
+            exit 1
+          fi
+          files=()
+          for f in data/*; do
+            [ -s "$f" ] && files+=("$f")
+          done
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "::notice::no data to publish"
+            exit 0
+          fi
+          gh release create "$RELEASE_TAG" --repo "$CATALOGS_REPO" \
+            --title "$RELEASE_TAG" --notes "Protected live-data refresh" 2>/dev/null || true
+          gh release upload "$RELEASE_TAG" --repo "$CATALOGS_REPO" --clobber "${files[@]}"

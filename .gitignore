@@ -2,6 +2,7 @@
 debug/
 *.pdb
 .env
+.secrets.local
 server.log
 *.log
 /tmp/
