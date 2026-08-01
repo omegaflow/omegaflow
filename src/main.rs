@@ -5329,90 +5329,104 @@ fn warm_cache(archive: Arc<Archive>) {
 
         let mut new_samples: Vec<Sample> = Vec::new();
         let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
-        let chunk_results = batch_fetch(tasks, &archive.sources, &archive.ttl_eff);
-        for (src_idx, origin, region, body_opt) in chunk_results {
-            let src = &archive.sources[src_idx];
-            let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
-            let entry = origins.entry(origin).or_default();
-            let Some(body) = body_opt else {
-                continue;
-            };
-            entry.fetched = now;
-            entry.ttl = src.ttl as f64;
-            let pendings = extract_pending(src, &body, now);
-            let may_be_empty = src.extracts.iter().any(|e| {
-                matches!(
-                    e,
-                    Extract::Map { .. }
-                        | Extract::GeojsonEvents { .. }
-                        | Extract::LastObj { .. }
-                        | Extract::Vectors(_)
-                        | Extract::CelestialMap { .. }
-                        | Extract::Flatten { .. }
-                        | Extract::CmrPolygon { .. }
-                        | Extract::CelestialPolygon { .. }
-                        | Extract::Rows { .. }
-                        | Extract::KeplerMap { .. }
-                )
-            });
-            if pendings.is_empty() {
-                if !may_be_empty {
-                    let entry = origins.entry(origin).or_default();
-                    entry.zero_yield += 1;
-                    if entry.zero_yield >= 4 && entry.zero_yield & (entry.zero_yield - 1) == 0 {
-                        eprintln!(
-                            "zero_yield x{} {}",
-                            entry.zero_yield,
-                            src.url.split('/').nth(2).unwrap_or("?")
-                        );
+        let chunk_size = {
+            let fd = std::process::Command::new("sh")
+                .arg("-c")
+                .arg("ulimit -n")
+                .output()
+                .ok()
+                .and_then(|o| String::from_utf8(o.stdout).ok())
+                .and_then(|s| s.trim().parse::<usize>().ok())
+                .unwrap_or(1024);
+            std::cmp::max(64, fd / 4)
+        };
+        for chunk in tasks.chunks(chunk_size) {
+            let chunk_tasks: Vec<_> = chunk.to_vec();
+            let chunk_results = batch_fetch(chunk_tasks, &archive.sources, &archive.ttl_eff);
+            for (src_idx, origin, region, body_opt) in chunk_results {
+                let src = &archive.sources[src_idx];
+                let mut origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+                let entry = origins.entry(origin).or_default();
+                let Some(body) = body_opt else {
+                    continue;
+                };
+                entry.fetched = now;
+                entry.ttl = src.ttl as f64;
+                let pendings = extract_pending(src, &body, now);
+                let may_be_empty = src.extracts.iter().any(|e| {
+                    matches!(
+                        e,
+                        Extract::Map { .. }
+                            | Extract::GeojsonEvents { .. }
+                            | Extract::LastObj { .. }
+                            | Extract::Vectors(_)
+                            | Extract::CelestialMap { .. }
+                            | Extract::Flatten { .. }
+                            | Extract::CmrPolygon { .. }
+                            | Extract::CelestialPolygon { .. }
+                            | Extract::Rows { .. }
+                            | Extract::KeplerMap { .. }
+                    )
+                });
+                if pendings.is_empty() {
+                    if !may_be_empty {
+                        let entry = origins.entry(origin).or_default();
+                        entry.zero_yield += 1;
+                        if entry.zero_yield >= 4 && entry.zero_yield & (entry.zero_yield - 1) == 0 {
+                            eprintln!(
+                                "zero_yield x{} {}",
+                                entry.zero_yield,
+                                src.url.split('/').nth(2).unwrap_or("?")
+                            );
+                        }
                     }
+                } else {
+                    origins.entry(origin).or_default().zero_yield = 0;
+                    refreshed.insert(origin);
+                    let field_names: Vec<&str> = src
+                        .extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(_, n)
+                            | Extract::First(_, n)
+                            | Extract::Last(_, n)
+                            | Extract::Count(_, n)
+                            | Extract::LastRow(_, n)
+                            | Extract::LastObj(_, _, _, n)
+                            | Extract::ObjLast(_, n)
+                            | Extract::Path(_, n)
+                            | Extract::Deep(_, n)
+                            | Extract::Regex(_, n)
+                            | Extract::XmlCount(_, n)
+                            | Extract::Ephemeris(n)
+                            | Extract::Vectors(n)
+                            | Extract::LastLine(n) => Some(n.as_str()),
+                            Extract::Map { fields, .. }
+                            | Extract::CelestialMap { fields, .. }
+                            | Extract::KeplerMap { fields, .. }
+                            | Extract::Rows { fields, .. }
+                            | Extract::Flatten { fields, .. }
+                            | Extract::CmrPolygon { fields, .. }
+                            | Extract::CelestialPolygon { fields, .. } => {
+                                Some(fields.first().map(|(_, n)| n.as_str()).unwrap_or(""))
+                            }
+                            Extract::GeojsonEvents { outputs, .. } => {
+                                Some(outputs.first().map(|s| s.as_str()).unwrap_or(""))
+                            }
+                            _ => None,
+                        })
+                        .collect();
+                    eprintln!(
+                        "PARSED {}: {} samples [{}]",
+                        src.name,
+                        pendings.len(),
+                        field_names.join(", ")
+                    );
                 }
-            } else {
-                origins.entry(origin).or_default().zero_yield = 0;
-                refreshed.insert(origin);
-                let field_names: Vec<&str> = src
-                    .extracts
-                    .iter()
-                    .filter_map(|e| match e {
-                        Extract::Field(_, n)
-                        | Extract::First(_, n)
-                        | Extract::Last(_, n)
-                        | Extract::Count(_, n)
-                        | Extract::LastRow(_, n)
-                        | Extract::LastObj(_, _, _, n)
-                        | Extract::ObjLast(_, n)
-                        | Extract::Path(_, n)
-                        | Extract::Deep(_, n)
-                        | Extract::Regex(_, n)
-                        | Extract::XmlCount(_, n)
-                        | Extract::Ephemeris(n)
-                        | Extract::Vectors(n)
-                        | Extract::LastLine(n) => Some(n.as_str()),
-                        Extract::Map { fields, .. }
-                        | Extract::CelestialMap { fields, .. }
-                        | Extract::KeplerMap { fields, .. }
-                        | Extract::Rows { fields, .. }
-                        | Extract::Flatten { fields, .. }
-                        | Extract::CmrPolygon { fields, .. }
-                        | Extract::CelestialPolygon { fields, .. } => {
-                            Some(fields.first().map(|(_, n)| n.as_str()).unwrap_or(""))
-                        }
-                        Extract::GeojsonEvents { outputs, .. } => {
-                            Some(outputs.first().map(|s| s.as_str()).unwrap_or(""))
-                        }
-                        _ => None,
-                    })
-                    .collect();
-                eprintln!(
-                    "PARSED {}: {} samples [{}]",
-                    src.name,
-                    pendings.len(),
-                    field_names.join(", ")
-                );
-            }
-            for pend in pendings {
-                for smp in materialize(src, origin, region, pend, &mut origins) {
-                    new_samples.push(smp);
+                for pend in pendings {
+                    for smp in materialize(src, origin, region, pend, &mut origins) {
+                        new_samples.push(smp);
+                    }
                 }
             }
         }
