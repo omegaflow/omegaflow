@@ -31,20 +31,24 @@ jobs:
           i=0
           for pt in "${points[@]}"; do
             read -r la lo <<< "$pt"
-            curl -s --fail -H "X-eBirdApiToken: $EBIRD_API_KEY" \
-              "https://api.ebird.org/v2/data/obs/geo/recent?lat=${la}&lng=${lo}&dist=50&back=1&maxResults=500" \
-              -o "data/ebird_${i}.json" || true
+            code=$(curl -sS --retry 2 --fail -o "data/ebird_${i}.json" -w "%{http_code}" \
+              -H "X-eBirdApiToken: $EBIRD_API_KEY" \
+              "https://api.ebird.org/v2/data/obs/geo/recent?lat=${la}&lng=${lo}&dist=50&back=1&maxResults=500") || true
+            echo "eBird point $i: HTTP ${code:-fail}"
+            sleep 1
             i=$((i + 1))
           done
           files=()
           for f in data/ebird_*.json; do
             [ -s "$f" ] && files+=("$f")
           done
+          echo "eBird ok files: ${#files[@]}"
           if [ "${#files[@]}" -gt 0 ]; then
             jq -s 'add' "${files[@]}" \
               | jq '[.[] | select(.lat != null and .lng != null) | {lat, lon, speciesCode, howMany: (.howMany // 1), obsDt}]' \
               > data/ebird_recent.json
           fi
+          ls -l data/ebird_recent.json 2>/dev/null || echo "no ebird_recent.json"
           rm -f data/ebird_*.json
 
       - name: OpenAQ
