@@ -27309,13 +27309,13 @@ field elevation geosphere_raspberry_shake_elevation_m
 source geosphere_iris_stations
 ttl 86400
 force seismic-body
-url https://service.iris.edu/fdsnws/station/1/query?network=*&station=*&location=*&channel=BH?&format=geojson&level=station
-format json
-map features
-lat_key latitude
-lon_key longitude
-field_in properties.network geosphere_iris_network
-field_in properties.station geosphere_iris_station
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv
+format csv
+rows
+lat_key Latitude
+lon_key Longitude
+field Network geosphere_iris_network
+field Station geosphere_iris_station
 
 source biosphere_gbif_invasive_species
 ttl 86400
@@ -27490,7 +27490,8 @@ format csv
 map data
 lat_key latitude
 lon_key longitude
-field brightness fire_brightness_k
+field bright_ti4 fire_brightness_k
+field bright_ti5 fire_brightness_ti5_k
 field frp fire_radiative_power_mw
 field confidence fire_confidence
 
@@ -27502,7 +27503,8 @@ format csv
 map data
 lat_key latitude
 lon_key longitude
-field brightness fire_brightness_k
+field bright_ti4 fire_brightness_k
+field bright_ti5 fire_brightness_ti5_k
 field frp fire_radiative_power_mw
 field confidence fire_confidence
 
