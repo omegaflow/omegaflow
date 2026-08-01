@@ -5085,17 +5085,27 @@ fn warm_cache(archive: Arc<Archive>) {
                 .lock()
                 .unwrap_or_else(|e| e.into_inner())
                 .clone();
-            let origins_snap: HashMap<Origin, OriginState> = archive.origins.lock().unwrap_or_else(|e| e.into_inner()).clone();
+            let origins_snap: HashMap<Origin, OriginState> = archive
+                .origins
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .clone();
             let (ex, ey, ez) = earth_position_icrs(now);
             let (mx, my, mz) = mars_position_icrs(now);
-            let mut src_order: Vec<(usize, f64, u8)> = archive.sources.iter().enumerate()
+            let mut src_order: Vec<(usize, f64, u8)> = archive
+                .sources
+                .iter()
+                .enumerate()
                 .map(|(i, s)| {
-                    let (fx, fi) = s.force.split_whitespace()
+                    let (fx, fi) = s
+                        .force
+                        .split_whitespace()
                         .filter_map(|f| force_constants(f).map(|c| (force_extent(f), c.3)))
                         .max_by_key(|(e, _)| (*e as i64))
                         .unwrap_or((0.0, 0));
                     (i, -fx, fi)
-                }).collect();
+                })
+                .collect();
             src_order.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().then(a.2.cmp(&b.2)));
             for (i, _fx, _fi) in src_order {
                 let src = &archive.sources[i];
@@ -5454,6 +5464,40 @@ fn warm_cache(archive: Arc<Archive>) {
                         new_samples.push(smp);
                     }
                 }
+            }
+            {
+                let station_sample = archive
+                    .station
+                    .lock()
+                    .unwrap_or_else(|e| e.into_inner())
+                    .sample
+                    .clone()
+                    .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
+                let mut all: Vec<Sample> = Vec::new();
+                {
+                    let old = archive
+                        .field
+                        .read()
+                        .unwrap_or_else(|e| e.into_inner())
+                        .clone();
+                    for fam in [&old.planet, &old.inertial] {
+                        for v in fam.cells.values() {
+                            for s in v {
+                                if (now - s.epoch).abs() <= s.ttl * 64.0
+                                    && !refreshed.contains(&s.origin)
+                                {
+                                    all.push(s.clone());
+                                }
+                            }
+                        }
+                    }
+                }
+                all.extend(new_samples.iter().cloned());
+                if let Some(ref s) = station_sample {
+                    all.push(s.clone());
+                }
+                *archive.field.write().unwrap_or_else(|e| e.into_inner()) =
+                    Arc::new(build_buffer(all, cadence));
             }
         }
 
