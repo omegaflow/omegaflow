@@ -222,11 +222,11 @@ jobs:
               "https://api.stlouisfed.org/fred/series/observations?series_id=${s}&api_key=${FRED_API_KEY}&file_type=json&sort_order=desc&limit=1") || true
             echo "FRED ${s}: HTTP ${code:-fail}"
             if [ "$code" = "200" ]; then
-              jq -c --arg s "$s" '{($s): (.observations[0].value | tonumber)}' /tmp/fred_body.json > "data/fred_${s}.json"
+              jq -c --arg s "$s" '{($s): (.observations[0].value | tonumber)}' /tmp/fred_body.json > "data/fred_part_${s}.json"
             fi
           done
-          jq -s 'add' data/fred_*.json > data/fred_economy.json || true
-          rm -f data/fred_*.json
+          jq -s 'add' data/fred_part_*.json > data/fred_economy.json || true
+          rm -f data/fred_part_*.json
 
       - name: Publish Release
         run: |
