@@ -13,6 +13,7 @@ import urllib.parse
 
 USER = os.environ.get("GBIF_USER", "")
 PASS = os.environ.get("GBIF_PASS", "")
+MAX_ROWS = int(os.environ.get("GBIF_MAX_ROWS", "0"))
 BASE = "https://api.gbif.org/v1/occurrence/download"
 
 
@@ -55,16 +56,18 @@ def main():
 
     # 2) poll
     status = ""
-    for i in range(60):
+    for i in range(360):
         st = http_req(f"{BASE}/{dlkey}", "GET", None, ua)
         try:
             status = json.loads(st).get("status", "UNKNOWN")
         except Exception:
             status = "UNKNOWN"
-        print(f"status: {status} ({i + 1})", file=sys.stderr)
+        if i % 5 == 0:
+            print(f"status: {status} ({i + 1})", file=sys.stderr)
         if status in ("SUCCEEDED", "FAILED", "KILLED"):
             break
         time.sleep(10)
+    print(f"final status: {status}", file=sys.stderr)
     if status != "SUCCEEDED":
         print(f"download {status}", file=sys.stderr)
         return 1
@@ -88,9 +91,13 @@ def main():
             reader = csv.DictReader(io.StringIO(text), delimiter="\t")
             out = []
             for row in reader:
+                lat_s = row.get("decimalLatitude")
+                lon_s = row.get("decimalLongitude")
+                if not lat_s or not lon_s:
+                    continue
                 try:
-                    lat = float(row.get("decimalLatitude"))
-                    lon = float(row.get("decimalLongitude"))
+                    lat = float(lat_s)
+                    lon = float(lon_s)
                 except (TypeError, ValueError):
                     continue
                 out.append({
@@ -103,6 +110,10 @@ def main():
                     "eventDate": row.get("eventDate"),
                     "year": row.get("year"),
                 })
+    if MAX_ROWS > 0 and len(out) > MAX_ROWS:
+        step = len(out) // MAX_ROWS
+        out = out[::step][:MAX_ROWS]
+        print(f"subsampled to {len(out)} rows", file=sys.stderr)
     with open(outfile, "w") as f:
         json.dump(out, f)
     print(f"rows: {len(out)} -> {outfile}", file=sys.stderr)
