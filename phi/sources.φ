@@ -27583,3 +27583,31 @@ field bright_ti5 fire_brightness_ti5_k
 field frp fire_radiative_power_mw
 field confidence fire_confidence
 
+
+source geosphere_noaa_ghcnd_stations
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/live-data/noaa_ghcnd_stations.json
+map .
+lat_key lat
+lon_key lon
+field elevation geosphere_station_elevation_m
+field datacoverage geosphere_station_coverage
+
+source hydrosphere_oceannetworks_sites
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/live-data/oceannetworks_sites.json
+map .
+lat_key lat
+lon_key lon
+field deployments ocean_site_deployments
+field depth ocean_site_depth_m
+
+source economy_eia_grid_demand
+ttl 3600
+force advective
+url https://github.com/omegaflow/catalogs/releases/download/live-data/eia_grid_demand.json
+wgs84 38.907 -77.037
+field total_demand_mw economy_us_grid_demand_mw
+field rto_count economy_us_rto_count

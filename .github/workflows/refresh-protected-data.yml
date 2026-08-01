@@ -164,6 +164,48 @@ jobs:
             echo "::endgroup::"
           done
 
+      - name: NOAA CDO
+        env:
+          NOAA_CDO_TOKEN: ${{ secrets.NOAA_CDO_TOKEN }}
+        run: |
+          if [ -z "$NOAA_CDO_TOKEN" ]; then
+            echo "::notice::NOAA CDO skipped (no NOAA_CDO_TOKEN)"
+            exit 0
+          fi
+          curl -sS --fail -H "token: $NOAA_CDO_TOKEN" \
+            "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?datasetid=GHCND&limit=1000" \
+            | jq '[.results[] | select(.latitude != null and .longitude != null)
+              | {lat: .latitude, lon: .longitude, name, elevation, datacoverage, station_id: .id}]' \
+            > data/noaa_ghcnd_stations.json || true
+
+      - name: Ocean Networks Canada
+        env:
+          OCEANNETWORKS_TOKEN: ${{ secrets.OCEANNETWORKS_TOKEN }}
+        run: |
+          if [ -z "$OCEANNETWORKS_TOKEN" ]; then
+            echo "::notice::Ocean Networks skipped (no OCEANNETWORKS_TOKEN)"
+            exit 0
+          fi
+          curl -sS --fail -H "Authorization: Bearer $OCEANNETWORKS_TOKEN" \
+            "https://data.oceannetworks.ca/api/locations?method=getLocations" \
+            | jq '[.[] | select(.lat != null and .lon != null) | {lat, lon, deployments, depth}]' \
+            > data/oceannetworks_sites.json || true
+
+      - name: EIA grid
+        env:
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+        run: |
+          if [ -z "$EIA_API_KEY" ]; then
+            echo "::notice::EIA skipped (no EIA_API_KEY)"
+            exit 0
+          fi
+          curl -sS --fail \
+            "https://api.eia.gov/v2/electricity/rto/region-data/data/?frequency=hourly&data%5B0%5D=value&api_key=${EIA_API_KEY}&length=5000" \
+            | jq '{period: .response.data[0].period,
+                   total_demand_mw: ([.response.data[].value // 0] | add),
+                   rto_count: (.response.data | length)}' \
+            > data/eia_grid_demand.json || true
+
       - name: Publish Release
         run: |
           if [ -z "$GH_TOKEN" ]; then
