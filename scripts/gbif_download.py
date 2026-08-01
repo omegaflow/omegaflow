@@ -44,7 +44,14 @@ def main():
 
     # 1) request download
     payload = {
-        "predicate": {"type": "equals", "key": "TAXON_KEY", "value": int(taxon_key)},
+        "predicate": {
+            "type": "and",
+            "predicates": [
+                {"type": "equals", "key": "TAXON_KEY", "value": int(taxon_key)},
+                {"type": "equals", "key": "HAS_COORDINATE", "value": True},
+                {"type": "equals", "key": "HAS_GEOSPATIAL_ISSUE", "value": False},
+            ],
+        },
         "format": "DWCA",
     }
     resp = http_req(BASE + "/request", "POST", payload, ua)
