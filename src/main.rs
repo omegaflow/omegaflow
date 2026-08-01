@@ -2631,7 +2631,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     );
                 archive.warm_cache_cv.notify_one();
                 let center = [x0, y0, z0];
-                let frustum = if queries.len() >= 5 {
+                let _frustum = if queries.len() >= 5 {
                     let (_, x1, y1, z1) = queries[1];
                     let (_, x2, y2, z2) = queries[2];
                     let (_, x4, y4, z4) = queries[4];
@@ -2654,6 +2654,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 } else {
                     None
                 };
+                // TODO: re-enable frustum arg once culling math verified
                 sense_buffer(&field, center, t0, extent, &mut records, None);
                 sense_buffer(&station_buf, center, t0, extent, &mut records, None);
             }
