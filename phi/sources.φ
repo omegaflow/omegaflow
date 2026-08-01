@@ -13504,7 +13504,7 @@ obj_last value biosphere_unemployment_eu_eurostat
 source biosphere_gbif_amphibians
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13543,7 +13543,7 @@ field_in locality biosphere_gbif_biodiversity_locality
 source biosphere_gbif_birds
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13590,7 +13590,7 @@ field_in key biosphere_gbif_echinoderm_key
 source biosphere_gbif_fungi
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13608,7 +13608,7 @@ field_in key biosphere_gbif_insect_key
 source biosphere_gbif_mammals
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13655,7 +13655,7 @@ field_in coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
 source biosphere_gbif_plants
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13676,7 +13676,7 @@ field_in eventDate biosphere_gbif_plant_date
 source biosphere_gbif_reptiles
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
