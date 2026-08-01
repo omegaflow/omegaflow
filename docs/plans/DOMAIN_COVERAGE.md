@@ -1,71 +1,75 @@
   # HOST                                   SRC ANBIETER-GESAMTDATEN                                 UNSERE NUTZUNG                           FORCES          
 ================================================================================================================================================================
-  1 github.com                             232 74 Release Assets                                    1025 Felder                              diffusion,em,g
+  1 github.com                             232 515 Release-Assets (v1.0 + live-data)               1025 Felder                              diffusion,em,g
   2 api.worldbank.org                      228 29.544 Indikatoren                                   3 Indikatoren, 1 Felder                  diffusion,em
   3 imag-data.bgs.ac.uk                    162 ~130 INTERMAGNET Observatorien                       4 Felder                                 em,gravity
-  4 api.tidesandcurrents.noaa.gov          130 3.499 CO-OPS Stationen                               116 Stationen, 21 Felder                 acoustic,advec
-  5 api.open-meteo.com                     120 8 API-Endpunkte, ~50 Messparameter                   163 Parameter, 95 Felder                 acoustic,advec
+  4 api.open-meteo.com                     120 8 API-Endpunkte, ~50 Messparameter                   163 Parameter, 95 Felder                 acoustic,advec
+  5 gea.esac.esa.int                       108 GAIA DR3 (1.8 Mrd Sterne, cmap CDN + TAP)            26 Felder                                em,gravity
   6 services.swpc.noaa.gov                  84 ~100 SWPC Produkte                                   60 Felder                                advective,diff
-  7 tapvizier.cds.unistra.fr                84 ~20.000 CDS-VizieR Tabellen                          39 Tabellen, 19 Felder                   em,gravity,sei
-  8 gea.esac.esa.int                        63 1.812.709.771 Gaia DR3 Sterne                        26 Felder                                em
+  7 api.tidesandcurrents.noaa.gov           80 3.499 CO-OPS Stationen                               116 Stationen, 21 Felder                 acoustic,advec
+  8 tapvizier.cds.unistra.fr                83 ~20.000 CDS-VizieR Tabellen (teilw. CDN)             39 Tabellen, 19 Felder                   em,gravity,sei
   9 heasarc.gsfc.nasa.gov                   51 ~600 NASA-HEASARC Tabellen                           13 Felder                                diffusion,em
- 10 earthquake.usgs.gov                     48 USGS FDSN Event Service (global)                     43 Felder                                acoustic,em,se
- 11 api.gbif.org                            42 2,2 Mrd. GBIF Occurrences                            54 Felder                                acoustic,diffu
- 12 www.ndbc.noaa.gov                       39 1.351 NDBC Stationen                                 36 Stationen, 200 Felder                 acoustic,diffu
- 13 www.ncei.noaa.gov                       38 ~10.000 Paleoklima-Datasets                          34 Felder                                acoustic,diffu
- 14 pdgapi.lbl.gov                          38 ~300 Elementarteilchen                               38 Quellen                               em
- 15 query1.finance.yahoo.com                37 ~50.000 Ticker weltweit                              37 Quellen                               em
- 16 irsa.ipac.caltech.edu                   34 ~100 IRSA/IPAC Tabellen                              4 Felder                                 diffusion,em,g
- 17 services6.arcgis.com                    32 1k features                                          3 Felder                                 acoustic,em
- 18 services9.arcgis.com                    28 1k features                                          104 Felder                               advective,diff
- 19 raw.githubusercontent.com               27 27 Quell-URLs (kein Gesamtwert ermittelbar)          35 Felder                                em,gravity,sei
- 20 ssd-api.jpl.nasa.gov                    26 26 Quell-URLs (kein Gesamtwert ermittelbar)          31 Felder                                acoustic,em,gr
- 21 waterservices.usgs.gov                  21 7 keys                                               8 Felder                                 acoustic,diffu
- 22 gml.noaa.gov                            21 ~30 NOAA-GML Feeds                                   23 Felder                                diffusion,em
- 23 aeronet.gsfc.nasa.gov                   18 ~500 AERONET Stationen                               1 Felder                                 diffusion,em
- 24 eutils.ncbi.nlm.nih.gov                 18 ~40 NCBI-Datenbanken                                 18 Quellen                               em,gravity
- 25 api.inaturalist.org                     17 1.420.180 Taxa, 200M+ Obs.                           1 Stationen, 4 Felder                    diffusion,em
- 26 inspirehep.net                          17 2 keys                                               13 Felder                                em
- 27 celestrak.org                           15 16.238 aktive Satelliten                             1 Felder                                 em
- 28 aviationweather.gov                     13 ~9.000 ICAO Airports                                 36 Felder                                acoustic,em
- 29 nrt.cmems-du.eu                         13 ~200 CMEMS Marine Produkte                           1 Felder                                 acoustic,diffu
- 30 exoplanetarchive.ipac.caltech.edu       13 ~5.500 Exoplaneten                                   15 Felder                                em,gravity
- 31 api.obis.org                            10 ~150.000 marine Arten                                3 Stationen, 8 Felder                    diffusion,em
- 32 services.arcgis.com                      9 2k features                                          21 Felder                                advective,diff
- 33 mast.stsci.edu                           9 ~20 MAST-Tabellen (JWST/HST/TESS/Kepler)             8 Felder                                 em
- 34 export.arxiv.org                         9 ~2,4 Mio. Papers                                     1 Felder                                 em
- 35 api.weather.gov                          8 254 NWS Gridpoints                                   35 Felder                                acoustic,diffu
- 36 tle.ivanstanojevic.me                    7 212 TLE-Satelliten                                   2 Felder                                 em
- 37 api.crossref.org                         7 4 keys                                               7 Quellen                                em
- 38 noaadata.apps.nsidc.org                  7 ~100 NSDIC Kryosphären-Datasets                      4 Felder                                 em
- 39 service.earthscope.org                   7 67,962 lines                                         12 Felder                                acoustic,em,se
- 40 cmr.earthdata.nasa.gov                   7 7 Quell-URLs (kein Gesamtwert ermittelbar)           7 Felder                                 diffusion,em,t
- 41 volcanoes.usgs.gov                       6 5 keys                                               5 Felder                                 em,seismic-sur
- 42 gtnp.arcticportal.org                    6 nicht erreichbar                                     6 Quellen                                diffusion,ther
- 43 services3.arcgis.com                     5 5 Quell-URLs (kein Gesamtwert ermittelbar)           3 Felder                                 em,gravity,sei
- 44 api.waqi.info                            5 2 keys                                               5 Quellen                                diffusion
- 45 gdacs.org                                5 GDACS Katastrophen (324)                             1 Felder                                 diffusion,em,s
- 46 gracedb.ligo.org                         5 ~100 Gravitationswellen-Events                       9 Felder                                 em,gravity
- 47 eonet.gsfc.nasa.gov                      5 EONET Events (200)                                   8 Felder                                 em,seismic-bod
- 48 api.coral.tsr.lol                        5 9 keys                                               1 Felder                                 em,thermal
- 49 lasp.colorado.edu                        5 nicht erreichbar                                     5 Quellen                                em
- 50 power.larc.nasa.gov                      5 nicht erreichbar                                     5 Parameter, 1 Felder                    em,thermal
- 51 en.wikipedia.org                         5 6,8 Mio. Artikel                                     1 Felder                                 em
- 52 www.cpc.ncep.noaa.gov                    5 918 lines                                            7 Felder                                 em,thermal
- 53 ghoapi.azureedge.net                     5 GHO Gesundheits-Indikatoren (2,5k)                   2 Felder                                 diffusion,em
- 54 webservices.volcano.si.edu               5 nicht erreichbar                                     5 Quellen                                seismic-surfac
- 55 rest.isric.org                           5 nicht erreichbar                                     3 Felder                                 diffusion,em
- 56 api.neotomadb.org                        5 78 lines                                             5 Quellen                                diffusion,em
- 57 skyserver.sdss.org                       5 ~500 Mio SDSS DR18 Objekte                           3 Felder                                 em
- 58 www.sidc.be                              5 SIDC Sonnenflecken (76k)                             4 Felder                                 em
- 59 api.adsb.lol                             4 nicht erreichbar                                     1 Felder                                 em
- 60 www.seismicportal.eu                     4 nicht erreichbar                                     12 Felder                                em,seismic-bod
- 61 api.geonet.org.nz                        4 GeoNet NZ Erdbeben (100/Query)                       11 Felder                                em,seismic-bod
- 62 services2.arcgis.com                     4 2k features                                          9 Felder                                 advective,diff
- 63 cdaweb.gsfc.nasa.gov                     4 nicht erreichbar                                     14 Parameter                             advective,em,g
- 64 seismic-api.science.unimelb.edu.au       4 nicht erreichbar                                     15 Felder                                em
- 65 hub.docker.com                           4 26 keys                                              4 Felder                                 em
- 66 data.pmel.noaa.gov                       4 nicht erreichbar                                     4 Felder                                 diffusion,em
+ 10 api.adsb.lol                             4 16.284+ Flugzeuge (Echtzeit, keyless)                20 Felder                                em
+ 11 earthquake.usgs.gov                     48 USGS FDSN Event Service (global)                     43 Felder                                acoustic,em,se
+ 12 api.gbif.org                            42 2,2 Mrd. GBIF Occurrences (GBIF Workflow CDN WIP)    54 Felder                                acoustic,diffu
+ 13 www.ndbc.noaa.gov                       39 1.351 NDBC Stationen → 364 live (+333 neue)          200 Felder                               acoustic,diffu
+ 14 www.ncei.noaa.gov                       38 ~10.000 Paleoklima-Datasets + OISST/CFSR             34 Felder                                acoustic,diffu
+ 15 nrt.cmems-du.eu                          0 DOMAIN RETIRED (alle 13 → NOAA/EMODnet)              —                                       —
+ 16 pdgapi.lbl.gov                          38 ~300 Elementarteilchen                               38 Quellen                               em
+ 17 irsa.ipac.caltech.edu                   34 ~100 IRSA/IPAC Tabellen                              4 Felder                                 diffusion,em,g
+ 18 services6.arcgis.com                    32 1k features                                          3 Felder                                 acoustic,em
+ 19 services9.arcgis.com                    28 1k features                                          104 Felder                               advective,diff
+ 20 raw.githubusercontent.com               27 27 Quell-URLs (kein Gesamtwert ermittelbar)          35 Felder                                em,gravity,sei
+ 21 ssd-api.jpl.nasa.gov                    26 26 Quell-URLs (kein Gesamtwert ermittelbar)          31 Felder                                acoustic,em,gr
+ 22 waterservices.usgs.gov                  21 7 keys                                               8 Felder                                 acoustic,diffu
+ 23 gml.noaa.gov                            21 ~30 NOAA-GML Feeds                                   23 Felder                                diffusion,em
+ 24 aeronet.gsfc.nasa.gov                   17 ~500 AERONET Stationen (7-Wellenlängen-Spektrum)     1 Felder                                 diffusion,em
+ 25 eutils.ncbi.nlm.nih.gov                 18 ~40 NCBI-Datenbanken                                 18 Quellen                               em,gravity
+ 26 api.inaturalist.org                     17 1.420.180 Taxa, 200M+ Obs.                           1 Stationen, 4 Felder                    diffusion,em
+ 27 inspirehep.net                          17 2 keys                                               13 Felder                                em
+ 28 pegelonline.wsv.de                       8 786 Pegel (V2-API-Fix: Einzel-Messung + Liste)       5 Felder                                 advective,gravity
+ 29 aviationweather.gov                     13 ~9.000 ICAO Airports                                 36 Felder                                acoustic,em
+ 30 erddap.emodnet-physics.eu                7 CMEMS-Ersatz (SLA, eddy, oxygen) + 676 tabledap      13 Felder                                diffusion,gravity
+ 31 exoplanetarchive.ipac.caltech.edu       13 ~5.500 Exoplaneten                                   15 Felder                                em,gravity
+ 32 api.obis.org                            10 ~150.000 marine Arten                                3 Stationen, 8 Felder                    diffusion,em
+ 33 services.arcgis.com                      9 2k features                                          21 Felder                                advective,diff
+ 34 mast.stsci.edu                           9 ~20 MAST-Tabellen (JWST/HST/TESS/Kepler)             8 Felder                                 em
+ 35 service.earthscope.org                   8 67.962 seismische Stationen (global, GeoCSV)          12 Felder                                acoustic,em,se
+ 36 stationview.raspberryshake.org           2 2.775 Stationen (API-Pfad-Fix)                       2 Felder                                 seismic-surface
+ 37 api.waqi.info                            0 WORKFLOW→CDN (live-data, kein Key im Server)         —                                       —
+ 38 celestrak.org                            0 CDN (v1.0, GeoBlock umgangen)                        —                                       —
+ 39 query1.finance.yahoo.com                 0 CDN (v1.0, 429 umgangen)                             —                                       —
+ 40 export.arxiv.org                         0 CDN (v1.0, 500 umgangen)                             —                                       —
+ 41 api.weather.gov                          8 254 NWS Gridpoints                                   35 Felder                                acoustic,diffu
+ 42 tle.ivanstanojevic.me                    7 212 TLE-Satelliten                                   2 Felder                                 em
+ 43 api.crossref.org                         7 4 keys                                               7 Quellen                                em
+ 44 noaadata.apps.nsidc.org                  7 ~100 NSDIC Kryosphären-Datasets                      4 Felder                                 em
+ 45 cmr.earthdata.nasa.gov                   7 7 Quell-URLs (kein Gesamtwert ermittelbar)           7 Felder                                 diffusion,em,t
+ 46 volcanoes.usgs.gov                       6 5 keys                                               5 Felder                                 em,seismic-sur
+ 47 gtnp.arcticportal.org                    6 nicht erreichbar                                     6 Quellen                                diffusion,ther
+ 48 services3.arcgis.com                     5 5 Quell-URLs (kein Gesamtwert ermittelbar)           3 Felder                                 em,gravity,sei
+ 49 gdacs.org                                5 GDACS Katastrophen (324)                             1 Felder                                 diffusion,em,s
+ 50 gracedb.ligo.org                         5 ~100 Gravitationswellen-Events                       9 Felder                                 em,gravity
+ 51 eonet.gsfc.nasa.gov                      5 EONET Events (200)                                   8 Felder                                 em,seismic-bod
+ 52 api.coral.tsr.lol                        5 9 keys                                               1 Felder                                 em,thermal
+ 53 lasp.colorado.edu                        5 nicht erreichbar                                     5 Quellen                                em
+ 54 power.larc.nasa.gov                      5 nicht erreichbar                                     5 Parameter, 1 Felder                    em,thermal
+ 55 en.wikipedia.org                         5 6,8 Mio. Artikel                                     1 Felder                                 em
+ 56 www.cpc.ncep.noaa.gov                    5 918 lines                                            7 Felder                                 em,thermal
+ 57 ghoapi.azureedge.net                     5 GHO Gesundheits-Indikatoren (2,5k)                   2 Felder                                 diffusion,em
+ 58 webservices.volcano.si.edu               5 nicht erreichbar                                     5 Quellen                                seismic-surfac
+ 59 rest.isric.org                           5 nicht erreichbar                                     3 Felder                                 diffusion,em
+ 60 api.neotomadb.org                        5 78 lines                                             5 Quellen                                diffusion,em
+ 61 skyserver.sdss.org                       5 ~500 Mio SDSS DR18 Objekte                           3 Felder                                 em
+ 62 www.sidc.be                              5 SIDC Sonnenflecken (76k)                             4 Felder                                 em
+ 63 api.adsb.lol                             4 OpenSky-Ersatz (keyless, 16k+ Flugzeuge Echtzeit)    1 Felder                                 em
+ 64 www.seismicportal.eu                     4 nicht erreichbar                                     12 Felder                                em,seismic-bod
+ 65 api.geonet.org.nz                        4 GeoNet NZ Erdbeben (100/Query)                       11 Felder                                em,seismic-bod
+ 66 services2.arcgis.com                     4 2k features                                          9 Felder                                 advective,diff
+ 67 cdaweb.gsfc.nasa.gov                     4 nicht erreichbar                                     14 Parameter                             advective,em,g
+ 68 seismic-api.science.unimelb.edu.au       4 nicht erreichbar                                     15 Felder                                em
+ 69 hub.docker.com                           4 26 keys                                              4 Felder                                 em
+ 70 data.pmel.noaa.gov                       4 nicht erreichbar                                     4 Felder                                 diffusion,em
  67 ec.europa.eu                             4 10 keys                                              4 Quellen                                em
  68 www.ebi.ac.uk                            4 3 keys                                               1 Felder                                 diffusion,em
  69 ned.ipac.caltech.edu                     4 NED/IPAC Galaxien (500/Query)                        3 Felder                                 em,gravity

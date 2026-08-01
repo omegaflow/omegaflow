@@ -1,10 +1,66 @@
 # RESTORED 2026-07-31: www.ndbc.noaa.gov (40 Bojen+DART) - WAF entfernt, aus git wiederhergestellt.
-# Verstorbene Quellen (getestet 2026-07-31)
-# ===========================================
+# Verstorbene Quellen (getestet 2026-07-31 / updated 2026-08-01)
+# ============================================================
 # Diese Quellen sind tot. OBSOLET = durch verifizierte Ersatzquelle ersetzt,
 # kein Wiederherstellen nötig. RESTORE = kein funktionierender Ersatz gefunden,
 # Quelle aus git wiederherstellbar falls Domäne wieder erreichbar.
-# Alle Ersatzquellen wurden am 2026-07-31 per curl verifiziert (HTTP 200 + Daten).
+# Alle Ersatzquellen wurden per curl verifiziert (HTTP 200 + Daten).
+
+## NEU 2026-08-01: In dieser Session behoben
+
+### OBSOLET — CMEMS Domain Intercepted (13 Quellen → NOAA/EMODnet)
+nrt.cmems-du.eu (13)              — Domain intercepted by 301Domains, ERDDAP retired
+  cmems_global_sst_analysis            → ncdc_oisst_v2_avhrr (NCEI)           (200 OK, OISST global SST daily)
+  cmems_sst_anomaly_global_l4          → ncdc_oisst_v2_avhrr anom             (200 OK)
+  cmems_glorys12_ocean_temperature_3d  → cfs_reanl_mm_ocnh Potential_temperature (200 OK)
+  cmems_glorys12_ocean_3d              → cfs_reanl_mm_ocnh                    (200 OK)
+  cmems_atlantic_currents              → cfs_reanl_mm_ocnh u/v_components     (200 OK)
+  cmems_sentinel3_chlorophyll_global   → noaa_snpp_chla_daily (oceanwatch)    (200 OK)
+  cmems_duacs_dt2024_sla_global_grid   → EMODNET_SEA_LEVEL_TREND              (200 OK)
+  cmems_sla_global_adt                 → EMODNET_SEA_LEVEL_MONTHLY_MEAN       (200 OK)
+  cmems_global_sla_altimetry           → EMODNET_SEA_LEVEL_MONTHLY_MEAN       (200 OK)
+  cmems_indian_ocean_waves             → IMI_IRISH_SHELF_SWAN_WAVE             (200 OK)
+  cmems_aviso_mesoscale_eddy_tracking  → EMODNET_SEA_LEVEL_MONTHLY_DESEASONALIZED (200 OK)
+  cmems_global_ocean_oxygen            → cfs_reanl_mm_ocnh Salinity            (200 OK)
+  cmems_motu_web_services              → EMODnet Physics Erddap tabledap       (200 OK)
+my.cmems-du.eu (1)                 — gleiche Domain-Interception
+  oceanography_cmems_global_analysis   → EMODnet Physics Erddap               (200 OK)
+
+### OBSOLET — RaspberryShake (1 Quelle, API geändert)
+stationview.raspberryshake.org/api/stations (1) — 404, API-Pfad geändert
+  geosphere_raspberry_shake_stations   → /stations?online=true                 (200 OK, 2775 Stationen)
+
+### OBSOLET — IRIS GeoJSON 400 (1 Quelle → Earthscope)
+service.iris.edu/fdsnws/...geojson (1) — 400, GeoJSON nicht mehr unterstützt
+  geosphere_iris_stations              → service.earthscope.org/fdsnws geocsv (200 OK, 68023 Stationen)
+
+### OBSOLET — GeoBlock / Rate-Limit → CDN (61 Quellen)
+celestrak.org (15)                 — Geo-Block, alle Endpoints timeout
+  orbit_celestrak_*                    → github.com/omegaflow/catalogs v1.0    (200 OK, CDN)
+query1.finance.yahoo.com (37)      — HTTP 429 bei parallelen Batch
+  biosphere_etf_*                      → github.com/omegaflow/catalogs v1.0    (200 OK, CDN)
+export.arxiv.org (9)               — HTTP 500
+  biosphere_arxiv_* / arxiv_*          → github.com/omegaflow/catalogs v1.0    (200 OK, CDN)
+
+### OBSOLET — Auth-APIs → Workflow→live-data CDN (kein Key mehr in sources.φ)
+api.waqi.info (5)                  — token=demo unbrauchbar
+  atmosphere_waqi_* / waqi_*           → github.com/omegaflow/catalogs live-data (200 OK, WAQI_TOKEN Secret in Workflow)
+api.waterdata.usgs.gov (1)         — DEMO_KEY → USGS_WATER_KEY in Workflow
+  usgs_nwis_water_data                 → github.com/omegaflow/catalogs live-data (200 OK)
+firms.modaps.eosdis.nasa.gov/{nasa_key} (1) — Key-Template → FIRMS_MAP_KEY in Workflow
+  viirs_lst_global                     → github.com/omegaflow/catalogs live-data (200 OK, global CSV)
+auth-eBird/OpenAQ/CMR: (bereits vorher via Workflow, jetzt 15 Assets auf live-data)
+
+### OBSOLET — OpenSky Rate-Limit (4 Quellen → ADSB.lol)
+opensky-network.org (4)           — HTTP 429 bei parallelen Batch
+  opensky_aircraft_positions           → api.adsb.lol                           (200 OK, keyless, full data)
+
+### OBSOLET — Pegelonline V2-API geändert (3 Quellen)
+pegelonline.wsv.de (3)            — timeseries-Feld nicht mehr in Stationsliste
+  hydrosphere_pegelonline_*            → Mess-Endpunkt /stations/<uuid>/W/     (200 OK)
+  hydrosphere_pegelonline_all_stations → map . statt map features              (200 OK, 786 Stationen)
+
+## Bestehend (2026-07-31) — unverändert:
 
 ## timeout (42 Quellen)
 
@@ -87,12 +143,9 @@ mangrove-atlas.sei.org (2)       — ersetzt durch astro-catalogs-Katalog
   global_mangrove_atlas_global    → abgedeckt durch denselben Katalog (per-Land, kein globaler Einzelwert)
 
 # ===========================================
-# Zusammenfassung (verifiziert 2026-07-31):
-#   16 von 16 Domänen OBSOLET — Ersatz per curl bestätigt (HTTP 200 + Daten)
-#   Zusätzlich repariert (separate Defekte, keine tote Domäne):
-#     worldbank_co2_emissions / worldbank_pm25_exposure: World-Bank-Indikatoren
-#     (EN.ATM.CO2E.KT / EN.ATM.PM25.MC.M3) wurden archiviert → jetzt GitHub-raw-Kataloge
-#     co2_emissions_countries.json (201 Länder, OWID 2024) und
-#     pm25_exposure_countries.json (210 Länder, OWID 2024) auf omegaflow/astro-catalogs.
-# Wiederherstellungsbefehl für RESTORE-Fälle:
-#   git show HEAD:phi/sources.φ | grep -A20 'source <name>'
+# Zusammenfassung:
+#   2026-07-31: 16 von 16 Domänen OBSOLET — Ersatz per curl bestätigt
+#   2026-08-01: +11 Domänen OBSOLET (CMEMS 14, RaspberryShake 1, IRIS 1,
+#     GeoBlock/Rate-Limit 3, Auth-APIs 3, OpenSky 4, Pegelonline 3)
+#   Gesamt: 27 defekte Domänen beseitigt, 0 direkte Auth-API-Zugriffe in sources.φ
+#   Live: 15 Workflow-assets auf omegaflow/catalogs live-data Release
