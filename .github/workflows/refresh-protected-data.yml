@@ -194,12 +194,15 @@ jobs:
             echo "::notice::EIA skipped (no EIA_API_KEY)"
             exit 0
           fi
-          curl -sS --fail --max-time 60 \
-            "https://api.eia.gov/v2/electricity/rto/region-data/data/?frequency=hourly&data%5B0%5D=value&api_key=${EIA_API_KEY}&length=5000" \
-            | jq '.response.data as $d | $d[0].period as $p
+          code=$(curl -sS -o /tmp/eia_body.json -w "%{http_code}" --fail --max-time 60 \
+            "https://api.eia.gov/v2/electricity/rto/region-data/data/?frequency=hourly&data%5B0%5D=value&api_key=${EIA_API_KEY}&length=5000") || true
+          echo "EIA: HTTP ${code:-fail}"
+          if [ "$code" = "200" ]; then
+            jq '.response.data as $d | $d[0].period as $p
                 | [$d[] | select(.period == $p) | (.value // 0 | tonumber)]
                 | {period: $p, total_demand_mw: add, rto_count: length}' \
-            > data/eia_grid_demand.json || true
+              /tmp/eia_body.json > data/eia_grid_demand.json
+          fi
 
 
 
