@@ -7255,34 +7255,6 @@ dec_key dec
 field medianmag median_mag
 field magrms mag_variability_rms
 
-source cosmos_gaia_dr3_nearby
-ttl 86400
-force gravity
-url https://gaia.ari.uni-heidelberg.de/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+source_id,ra,dec,parallax,pmra,pmdec,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>20
-ssb
-format csv
-cmap data
-ra_key ra
-dec_key dec
-plx_key parallax
-pmra_key pmra
-pmdec_key pmdec
-field_in phot_g_mean_mag celestial_gaia_g_magnitude
-
-source cosmos_gaia_dr3_cone
-ttl 86400
-force gravity
-url https://gaia.ari.uni-heidelberg.de/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+source_id,ra,dec,parallax,pmra,pmdec,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-ssb
-format csv
-cmap data
-ra_key ra
-dec_key dec
-plx_key parallax
-pmra_key pmra
-pmdec_key pmdec
-field_in phot_g_mean_mag celestial_gaia_g_magnitude
-
 source isro_bhuvan_flood_india
 ttl 3600
 force diffusion
@@ -12146,6 +12118,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zQSO,%22S%2FN%22+FROM+%22J/ApJ/852/22/sample%22
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 z_key 2
@@ -12236,6 +12209,7 @@ ttl 86400
 force gravity
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,D,Mass,HRV+FROM+%22J/AJ/144/4/catalog%22
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 dist_key 2 3.0857e19
@@ -14055,6 +14029,7 @@ field_in st_teff host_star_temp_k
 dist_key sy_distan
 
 cmap data
+tau_key _dist_m
 source nasa_exoplanet_confirmed
 ttl 86400
 force em
@@ -14069,8 +14044,10 @@ field pl_bmasse mass_earth
 field pl_eqt eq_temperature_k
 field disc_year discovery_year
 dist_key sy_dist
+tau_key _dist_m
 
 cmap data
+tau_key _dist_m
 source nasa_exoplanet_toi
 ttl 86400
 force em
@@ -14083,8 +14060,10 @@ field pl_orbper orbital_period_days
 field pl_rade radius_earth
 field tfopwg_disp disposition
 dist_key sy_dist
+tau_key _dist_m
 
 cmap data
+tau_key _dist_m
 source nasa_exoplanet_toi_catalog
 ttl 86400
 force em
@@ -14099,8 +14078,10 @@ field pl_masse earth_mass
 field pl_trandur transit_duration_hours
 field st_teff stellar_teff_K
 dist_key sy_dist
+tau_key _dist_m
 
 cmap data
+tau_key _dist_m
 source nasa_fermi_gamma_ray_sources_total
 ttl 86400
 force em
@@ -14199,9 +14180,12 @@ field pl_orbsmax semimajor_axis_au
 field pl_orbeccen eccentricity
 field st_mass host_star_mass_Msun
 field sy_dist distance_pc
+tau_key _dist_m
+dist_key sy_dist
 field disc_year discovery_year
 
 cmap data
+tau_key _dist_m
 source nasa_nexsci_radial_velocity_planets
 ttl 86400
 force gravity
@@ -14218,9 +14202,12 @@ field pl_orbeccen eccentricity
 field pl_rvamp rv_semi_amplitude_m_s
 field st_teff stellar_teff_K
 field sy_dist system_distance_pc
+tau_key _dist_m
+dist_key sy_dist
 field disc_year discovery_year
 
 cmap data
+tau_key _dist_m
 source nasa_nexsci_transmission_spectroscopy
 ttl 86400
 force em
@@ -14237,8 +14224,11 @@ field pl_tranmid transit_midpoint_bjd
 field pl_orbper orbital_period_d
 field st_teff stellar_teff_K
 field sy_dist system_distance_pc
+tau_key _dist_m
+dist_key sy_dist
 
 cmap data
+tau_key _dist_m
 source nasa_power_ag_climate_daily
 ttl 86400
 force thermal
@@ -15703,6 +15693,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zCMB,mBcorr+FROM+%22J/ApJ/938/110/table7%22
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 z_key 2
@@ -15977,6 +15968,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,z,MaxMag,Type+FROM+%22B/sn/sncat%22
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 z_key 2
@@ -16012,6 +16004,7 @@ ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,DLum,Kmag+FROM+%22J/ApJ/935/170/table4%22
 cmap data
+tau_key _dist_m
 ra_key 0
 dec_key 1
 dist_key 2 3.0857e22
@@ -16115,6 +16108,21 @@ ra_key 0
 dec_key 1
 plx_key 3
 field_in 2 par
+
+source universe_gaia_nearby_cmap
+ttl 86400
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10_cmap.json
+ssb
+format json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+pmra_key pmra
+pmdec_key pmdec
+field_in phot_g_mean_mag celestial_gaia_nearby_g_magnitude
 
 source universe_gaia_bulge
 ttl 86400
