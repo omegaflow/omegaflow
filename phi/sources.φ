@@ -27611,3 +27611,24 @@ url https://github.com/omegaflow/catalogs/releases/download/live-data/eia_grid_d
 wgs84 38.907 -77.037
 field total_demand_mw economy_us_grid_demand_mw
 field rto_count economy_us_rto_count
+
+source atmosphere_owm_current
+ttl 1800
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/live-data/owm_current.json
+map .
+lat_key lat
+lon_key lon
+field temp_c atmosphere_temp_c
+field wind_ms atmosphere_wind_ms
+field pressure_hpa atmosphere_pressure_hpa
+field humidity_pct atmosphere_humidity_pct
+
+source economy_fred_indicators
+ttl 86400
+force advective
+url https://github.com/omegaflow/catalogs/releases/download/live-data/fred_economy.json
+wgs84 38.627 -90.199
+field UNRATE economy_fred_unemployment_pct
+field CPIAUCSL economy_fred_cpi
+field FEDFUNDS economy_fred_fedfunds_pct

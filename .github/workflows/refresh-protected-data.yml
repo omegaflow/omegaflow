@@ -189,6 +189,42 @@ jobs:
                 | {period: $p, total_demand_mw: add, rto_count: length}' \
             > data/eia_grid_demand.json || true
 
+      - name: OpenWeatherMap
+        env:
+          OWM_API_KEY: ${{ secrets.OWM_API_KEY }}
+        run: |
+          if [ -z "$OWM_API_KEY" ]; then
+            echo "::notice::OWM skipped (no OWM_API_KEY)"
+            exit 0
+          fi
+          cities=("Berlin,52.52,13.405" "Paris,48.8566,2.3522" "London,51.5074,-0.1278" "Madrid,40.4168,-3.7038" "Rome,41.9028,12.4964" "Moscow,55.7558,37.6173" "New York,40.7128,-74.006" "Los Angeles,34.0522,-118.2437" "Chicago,41.8781,-87.6298" "Mexico City,19.4326,-99.1332" "Toronto,43.6532,-79.3832" "Sao Paulo,-23.5505,-46.6333" "Buenos Aires,-34.6037,-58.3816" "Lima,-12.0464,-77.0428" "Cairo,30.0444,31.2357" "Lagos,6.5244,3.3792" "Nairobi,-1.2921,36.8219" "Johannesburg,-26.2041,28.0473" "Delhi,28.6139,77.209" "Mumbai,19.076,72.8777" "Beijing,39.9042,116.4074" "Shanghai,31.2304,121.4737" "Tokyo,35.6762,139.6503" "Seoul,37.5665,126.978" "Singapore,1.3521,103.8198" "Jakarta,-6.2088,106.8456" "Sydney,-33.8688,151.2093" "Auckland,-36.8509,174.7645")
+          : > data/owm_current.json
+          for c in "${cities[@]}"; do
+            IFS=',' read -r name lat lon <<< "$c"
+            curl -sS --fail --max-time 20 \
+              "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OWM_API_KEY}" \
+              -o data/owm_tmp.json && \
+              jq -c '{lat: .coord.lat, lon: .coord.lon, city: .name, temp_c: .main.temp, wind_ms: .wind.speed, pressure_hpa: .main.pressure, humidity_pct: .main.humidity}' \
+                data/owm_tmp.json >> data/owm_current.json || true
+          done
+          rm -f data/owm_tmp.json
+
+      - name: FRED economy
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          if [ -z "$FRED_API_KEY" ]; then
+            echo "::notice::FRED skipped (no FRED_API_KEY)"
+            exit 0
+          fi
+          for s in UNRATE CPIAUCSL FEDFUNDS; do
+            curl -sS --fail --max-time 30 \
+              "https://api.stlouisfed.org/fred/series/observations?series_id=${s}&api_key=${FRED_API_KEY}&file_type=json&sort_order=desc&limit=1" \
+              | jq -c --arg s "$s" '{($s): (.observations[0].value | tonumber)}' > "data/fred_${s}.json" || true
+          done
+          jq -s 'add' data/fred_*.json > data/fred_economy.json || true
+          rm -f data/fred_*.json
+
       - name: Publish Release
         run: |
           if [ -z "$GH_TOKEN" ]; then
