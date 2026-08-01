@@ -10,18 +10,17 @@ field altitude orbital_iss_alt_km
 source opensky_aircraft_positions
 ttl 10
 force em
-url https://opensky-network.org/api/states/all
-map states
-lat_key 6
-lon_key 5
-field_in 0 icao24
-field_in 1 callsign
-field_in 2 origin_country
-field_in 7 baro_altitude_m
-field_in 9 velocity_ms
-field_in 10 heading_deg
-field_in 11 vertical_rate_ms
-field_in 13 on_ground
+url https://api.adsb.lol/v2/point/{lat}/{lon}/250
+wgs84 52.5 13.4
+map ac
+lat_key lat
+lon_key lon
+field hex icao24
+field flight callsign
+field alt_baro baro_altitude_ft
+field gs velocity_kn
+field track heading_deg
+field baro_rate vertical_rate_ftmin
 
 source universe_iss_history
 ttl 10
@@ -791,15 +790,15 @@ field satellite goes_satellite
 source opensky_europe_flights
 ttl 60
 force em
-url https://opensky-network.org/api/states/all?lamin=35&lomin=-10&lamax=70&lomax=40
-map states
-lat_key 6
-lon_key 5
-field_in 0 icao24
-field_in 1 callsign
-field_in 7 altitude_m
-field_in 9 velocity_ms
-field_in 10 track_deg
+url https://api.adsb.lol/v2/point/50/10/1500
+map ac
+lat_key lat
+lon_key lon
+field hex icao24
+field flight callsign
+field alt_baro altitude_ft
+field gs velocity_kn
+field track track_deg
 
 source quantum_nist_randomness_beacon
 ttl 60
@@ -961,15 +960,16 @@ field properties.depth depth_km
 source world_open_sky_aircraft
 ttl 60
 force em
-url https://opensky-network.org/api/states/all?lamin=-90&lomin=-180&lamax=90&lomax=180
-map states
-lat_key 6
-lon_key 5
-field_in 7 baro_altitude
-alt_key 7
-vel_key 9
-trk_key 10
-vr_key 11
+url https://api.adsb.lol/v2/point/{lat}/{lon}/500
+wgs84 0.0 0.0
+map ac
+lat_key lat
+lon_key lon
+field alt_baro baro_altitude
+alt_key alt_baro
+vel_key gs
+trk_key track
+vr_key baro_rate
 
 source tmd_thailand_earthquakes
 ttl 120
@@ -1216,18 +1216,18 @@ field total_results biosphere_inaturalist_obs_count
 source biosphere_opensky_states
 ttl 300
 force em
-url https://opensky-network.org/api/states/all
-header User-Agent "omegaflow"
-map states
-lat_key 6
-lon_key 5
-field_in 9 biosphere_aircraft_velocity
-field_in 11 biosphere_aircraft_vertical_rate
-field_in 13 biosphere_aircraft_geo_altitude
-alt_key 7
-vel_key 9
-trk_key 10
-vr_key 11
+url https://api.adsb.lol/v2/point/{lat}/{lon}/500
+wgs84 0.0 0.0
+map ac
+lat_key lat
+lon_key lon
+field gs biosphere_aircraft_velocity
+field baro_rate biosphere_aircraft_vertical_rate
+field alt_baro biosphere_aircraft_geo_altitude
+alt_key alt_baro
+vel_key gs
+trk_key track
+vr_key baro_rate
 
 source biosphere_uk_carbon_intensity
 ttl 300
@@ -1699,18 +1699,9 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42936_current_speed_cms
 source gdacs_disaster_alerts
 ttl 300
 force seismic-body
-url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH
-map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-field eventtype hazard_type
-field eventname event_name
-field eventid event_id
-field alertlevel alert_level
-field alertscore alert_score
-field country country
-field fromdate start_date
-field todate end_date
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item hazard_event_count
 
 source geosphere_cenc_earthquakes
 ttl 300
@@ -1835,8 +1826,8 @@ source gfz_kp_index
 ttl 300
 force gravity
 ssb
-url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=Kp
-last Kp magnetosphere_kp_index
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+last kp_index magnetosphere_kp_index
 
 source gfz_sunspot_number
 ttl 300
@@ -3152,18 +3143,11 @@ field 4 f_nT
 source ionosphere_giro_dxpredictor
 ttl 300
 force em
-url https://www.dxpredictor.com/api/v1/ionosonde/fof2
-header Origin https://www.dxpredictor.com
-header Referer https://www.dxpredictor.com/ionosonde
-header User-Agent Mozilla/5.0
-map stations
-lat_key latitude
-lon_key longitude
-field_in fof2 ionosonde_fof2_mhz
-field_in hmf2 ionosonde_hmf2_km
-field_in muf ionosonde_muf3000_mhz
-field_in foe ionosonde_foe_mhz
-field_in cs ionosonde_confidence
+url https://www.ionosonde.iap-kborn.de/actuellz.htm
+wgs84 54.6 13.4
+format html_table:1
+field data.0.MUF_D__MHz ionosonde_fof2_mhz
+field data.8.MUF_D__MHz ionosonde_muf3000_mhz
 
 source jpl_cad_neo_recent_approaches
 ttl 300
@@ -3687,14 +3671,14 @@ field current.us_aqi atmosphere_aqi_us
 source atmosphere_bom_observations
 ttl 600
 force em
-url https://api.weather.bom.gov.au/v1/observations/{lat},{lon}
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m
 wgs84 -25.0 135.0
-field data.temperature atmosphere_bom_temp_c
-field data.feels_like atmosphere_bom_feels_like_c
-field data.humidity atmosphere_bom_humidity_pct
-field data.wind_speed atmosphere_bom_wind_speed_kmh
-field data.wind_direction atmosphere_bom_wind_dir
-path data atmosphere_bom_obs_data
+field current.temperature_2m atmosphere_bom_temp_c
+field current.apparent_temperature atmosphere_bom_feels_like_c
+field current.relative_humidity_2m atmosphere_bom_humidity_pct
+field current.wind_speed_10m atmosphere_bom_wind_speed_kmh
+field current.wind_direction_10m atmosphere_bom_wind_dir
+path current atmosphere_bom_obs_data
 
 source atmosphere_bom_warnings
 ttl 600
@@ -5712,15 +5696,13 @@ path daily.sunshine_duration.0 atmosphere_biome_tibet_sunshine_yesterday_s
 source atmosphere_bom_forecast_daily
 ttl 3600
 force em
-url https://api.weather.bom.gov.au/v1/forecast/{lat},{lon}
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,uv_index_max&forecast_days=1
 wgs84 -25.0 135.0
-field data.items.0.now.label atmosphere_bom_forecast_now_label
-field data.items.0.now.temperature atmosphere_bom_forecast_now_temp
-field data.items.0.min atmosphere_bom_forecast_min_temp
-field data.items.0.max atmosphere_bom_forecast_max_temp
-field data.items.0.precipitation.mean atmosphere_bom_forecast_precip_mm
-field data.items.0.uv atmosphere_bom_forecast_uv_index
-path data.items.0
+path daily.0 atmosphere_bom_forecast_data
+field daily.temperature_2m_max.0 atmosphere_bom_forecast_max_temp
+field daily.temperature_2m_min.0 atmosphere_bom_forecast_min_temp
+field daily.precipitation_sum.0 atmosphere_bom_forecast_precip_mm
+field daily.uv_index_max.0 atmosphere_bom_forecast_uv_index
 
 source atmosphere_co2_current
 ttl 3600
@@ -6037,8 +6019,8 @@ source biosphere_gdelt_news_volume
 ttl 3600
 force em
 ecliptic 1
-url https://api.gdeltproject.org/api/v2/doc/doc?query=climate&mode=timelinevol&format=json
-last value biosphere_news_climate_volume_intensity
+url http://data.gdeltproject.org/normfiles/daily.csv
+count lines biosphere_news_climate_volume_intensity
 
 source biosphere_govtrack_votes
 ttl 3600
@@ -6151,7 +6133,7 @@ field_in energy impact_energy_kt
 field_in alt altitude_km
 field_in vel velocity_kms
 
-url https://cds.climate.copernicus.eu/api/v2/resources/efas
+source copernicus_efas_flood_events
 ttl 3600
 force diffusion
 url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
@@ -6243,13 +6225,13 @@ lon_key dec
 source eso_archive
 ttl 3600
 force em
-url http://archive.eso.org/tap_obs/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+target,+instrument,+obstime+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt,sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
 map data
-field_in target target_name
-field_in instrument instrument
-field_in obstime observation_time
+field_in main_id target_name
+field_in otype_txt instrument
+field_in sp_type observation_time
 lat_key ra
 lon_key dec
 
@@ -6715,13 +6697,9 @@ alt_key geometry.coordinates.2
 source geosphere_gdacs_disasters
 ttl 3600
 force em
-url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?alertlevel=red;orange;green
-map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-field_in properties.eventtype geosphere_disaster_type
-field_in properties.alertlevel geosphere_disaster_alert_level
-field_in properties.severitydata.severity geosphere_disaster_severity
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item geosphere_disaster_active_total
 
 source geosphere_gdacs_disasters_total
 ttl 3600
@@ -6911,10 +6889,171 @@ field_in 2 hydrosphere_drifter_sst_k
 source hydrosphere_erddap_smartbay_spl
 ttl 3600
 force em
-url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
-wgs84 53.13 -9.27
+url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_ERD_INT_UWN_NAT.csv?time,TotalSPL,SPL63Hz,SPL125Hz,SPL2kHz,SPL5kHz
+wgs84 42.62682 -8.78233
 format csv
-last_row spl_full hydrosphere_sound_pressure_db
+last_row TotalSPL hydrosphere_sound_pressure_db
+
+source hydrosphere_onc_salinity_burrard
+ttl 86400
+force diffusion
+url https://dap.oceannetworks.ca/erddap/tabledap/scalar_1202591.csv?time,latitude,longitude,salinity&time>=max(time)-7day
+wgs84 49.301 -123.109
+format erddap
+last_row salinity hydrosphere_salinity_psu
+
+source hydrosphere_neracoos_a01_met_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/A01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+wgs84 42.523 -70.566
+format erddap
+last_row air_temperature hydrosphere_buoy_air_temp_c
+last_row barometric_pressure hydrosphere_buoy_pressure_hpa
+
+source hydrosphere_neracoos_a01_met_wind
+ttl 3600
+force advective
+url https://data.neracoos.org/erddap/tabledap/A01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+wgs84 42.523 -70.566
+format erddap
+last_row wind_speed hydrosphere_buoy_wind_speed_ms
+last_row wind_gust hydrosphere_buoy_wind_gust_ms
+
+source hydrosphere_neracoos_b01_met_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/B01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+wgs84 43.181 -70.428
+format erddap
+last_row air_temperature hydrosphere_buoy_air_temp_c
+last_row barometric_pressure hydrosphere_buoy_pressure_hpa
+
+source hydrosphere_neracoos_e01_met_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/E01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+wgs84 43.714 -69.356
+format erddap
+last_row air_temperature hydrosphere_buoy_air_temp_c
+
+source hydrosphere_neracoos_i01_met_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/I01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+wgs84 44.103 -68.109
+format erddap
+last_row air_temperature hydrosphere_buoy_air_temp_c
+
+source hydrosphere_neracoos_a01_waves
+ttl 3600
+force acoustic
+url https://data.neracoos.org/erddap/tabledap/A01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+wgs84 42.523 -70.566
+format erddap
+last_row significant_wave_height hydrosphere_wave_height_m
+
+source hydrosphere_neracoos_b01_waves
+ttl 3600
+force acoustic
+url https://data.neracoos.org/erddap/tabledap/B01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+wgs84 43.181 -70.428
+format erddap
+last_row significant_wave_height hydrosphere_wave_height_m
+
+source hydrosphere_neracoos_e01_waves
+ttl 3600
+force acoustic
+url https://data.neracoos.org/erddap/tabledap/E01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+wgs84 43.714 -69.356
+format erddap
+last_row significant_wave_height hydrosphere_wave_height_m
+
+source hydrosphere_neracoos_i01_waves
+ttl 3600
+force acoustic
+url https://data.neracoos.org/erddap/tabledap/I01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+wgs84 44.103 -68.109
+format erddap
+last_row significant_wave_height hydrosphere_wave_height_m
+
+source hydrosphere_neracoos_a01_ocean_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/A01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+wgs84 42.523 -70.566
+format erddap
+last_row temperature hydrosphere_ocean_temp_c
+last_row salinity hydrosphere_ocean_salinity_psu
+
+source hydrosphere_neracoos_b01_ocean_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/B01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+wgs84 43.181 -70.428
+format erddap
+last_row temperature hydrosphere_ocean_temp_c
+
+source hydrosphere_neracoos_e01_ocean_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/E01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+wgs84 43.714 -69.356
+format erddap
+last_row temperature hydrosphere_ocean_temp_c
+
+source hydrosphere_neracoos_tide_adams
+ttl 3600
+force gravity
+url https://data.neracoos.org/erddap/tabledap/Hohonu_tide_Adams_Point_NH.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+wgs84 43.09 -70.74
+format erddap
+last_row navd88_meters hydrosphere_tide_level_m
+
+source hydrosphere_neracoos_tide_rockland
+ttl 3600
+force gravity
+url https://data.neracoos.org/erddap/tabledap/Greenstream_tide_ME_RKL.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+wgs84 44.104 -69.109
+format erddap
+last_row navd88_meters hydrosphere_tide_level_m
+
+source hydrosphere_neracoos_tide_bowdoinham
+ttl 3600
+force gravity
+url https://data.neracoos.org/erddap/tabledap/Greenstream_tide_ME_BWD.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+wgs84 44.01 -69.90
+format erddap
+last_row navd88_meters hydrosphere_tide_level_m
+
+source hydrosphere_emodnet_slev_europe
+ttl 86400
+force gravity
+url https://erddap.emodnet-physics.eu/erddap/tabledap/ERD_EP_SLEV_NRT_5m.csv?time,latitude,longitude,SLEV&time>=max(time)-1day
+wgs84 48.0 -5.0
+format erddap
+map data
+field_in SLEV hydrosphere_sea_level_m
+
+source hydrosphere_tmednet_med_temp
+ttl 86400
+force thermal
+url https://erddap.emodnet-physics.eu/erddap/tabledap/T-MEDNet.csv?time,latitude,longitude,temperature,site_name&time>=max(time)-2day
+wgs84 40.0 5.0
+format erddap
+map data
+field_in temperature hydrosphere_med_temp_c
+
+source hydrosphere_ctd_arcticnet_profiles
+ttl 86400
+force thermal
+url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PR_CTD_ArcticNet_collection.csv?time,latitude,longitude,depth,PSAL,TEMP&time>=max(time)-30day
+wgs84 70.0 -130.0
+format erddap
+map data
+alt_key depth
+field_in TEMP hydrosphere_ctd_temp_c
+field_in PSAL hydrosphere_ctd_salinity_psu
 
 source hydrosphere_flood
 ttl 3600
@@ -7798,12 +7937,12 @@ field_in generatedAt generation_time
 source noirlab_archive
 ttl 3600
 force em
-url https://astroarchive.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,instrument,obs_id+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format votable
 map data
-field_in instrument instrument
-field_in obs_id observation_id
+field_in main_id observation_id
+field_in otype_txt instrument
 lat_key ra
 lon_key dec
 
@@ -8216,14 +8355,9 @@ field current.uv_index radiation_uv_index_openmeteo
 source reliefweb_active_humanitarian_disasters
 ttl 3600
 force diffusion
-url https://api.reliefweb.int/v1/disasters?appname=opencode&limit=200&filter[field]=status&filter[value]=ongoing&sort[]=date:desc
-map data
-lat_key fields.lat
-lon_key fields.lon
-field fields.name disaster_name
-field fields.type disaster_type
-field fields.date.created created_date
-field fields.country.0.name primary_country
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item disaster_count
 
 source saturn_vectors
 ttl 3600
@@ -9197,9 +9331,9 @@ field 0.population biosphere_country_population_sample
 source biosphere_semantic_scholar_papers
 ttl 86400
 force em
-url https://api.semanticscholar.org/graph/v1/paper/search?query=*&limit=1
+url https://api.openalex.org/works?per-page=1
 wgs84 47.6062 -122.3321
-field total biosphere_semantic_scholar_papers_total
+field meta.count biosphere_semantic_scholar_papers_total
 
 source biosphere_submarine_cables
 ttl 86400
@@ -9493,7 +9627,7 @@ epoch_key epoch
 
 source cosmos_gaia_dr3_sample
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+200+ra,dec,parallax,phot_rp_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>10
 cmap data
 tau_key _dist_m
@@ -9609,21 +9743,9 @@ last_row extent cryosphere_sea_ice_south_mkm2
 source dartmouth_flood_observatory_global
 ttl 86400
 force diffusion
-url https://floodobservatory.colorado.edu/Archives/MasterListrev.csv
-format text
-rows
-lat_key Lat
-lon_key Long
-field ID event_id
-field Began flood_begin_date
-field Ended flood_end_date
-field Dead fatalities
-field Displaced people_displaced
-field MainCause main_cause
-field Area flooded_area_km2
-field Magnitude flood_magnitude
-field Severity severity_class
-field Country country
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item flood_event_count
 
 source dasch_harvard_agn_lightcurves
 ttl 86400
@@ -9733,15 +9855,8 @@ path outputs.hourly.0.WS10m energy_solar_wind_ms
 source eog_viirs_monthly_ntl_metadata
 ttl 86400
 force em
-url https://eogdata.mines.edu/nighttime_light/monthly/v10/catalog.json
-map datasets
-lat_key bbox.south
-lon_key bbox.west
-field product_name product_name
-field year year
-field month month
-field resolution_m resolution_m
-field url data_url
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP46A2&page_size=200
+count feed.entry viirs_ntl_granule_count
 
 source esa_cci_soil_moisture_erddap
 ttl 86400
@@ -9855,53 +9970,60 @@ url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FRO
 wgs84 42.365 -71.105
 last_line exosphere_exoplanets_confirmed_total
 
-source exosphere_donki_cme
+source exosphere_swpc_space_weather_alerts
 ttl 86400
 force advective
 ssb
-url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME/?startDate=2024-01-01&endDate=2024-12-31
+url https://services.swpc.noaa.gov/products/alerts.json
+count lines exosphere_swpc_alert_count
+
+source exosphere_donki_legacy_cme
+ttl 86400
+force advective
+ssb
+url https://services.swpc.noaa.gov/products/alerts.json
 count lines exosphere_donki_cme_count_2024
 
-source exosphere_donki_flares
+source exosphere_donki_legacy_flares
 ttl 86400
 force em
 ssb
-url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR/?startDate=2024-01-01&endDate=2024-12-31
+url https://services.swpc.noaa.gov/products/alerts.json
 count lines exosphere_donki_flare_count_2024
 
-source exosphere_donki_gst
+source exosphere_donki_legacy_gst
 ttl 86400
 force advective
 ssb
-url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/GST/?startDate=2024-01-01&endDate=2024-12-31
+url https://services.swpc.noaa.gov/products/alerts.json
 count lines exosphere_donki_gst_count_2024
 
-source exosphere_donki_hss
+source exosphere_donki_legacy_hss
 ttl 86400
 force advective
 ssb
-url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS/?startDate=2024-01-01&endDate=2024-12-31
+url https://services.swpc.noaa.gov/products/alerts.json
 count lines exosphere_donki_hss_count_2024
 
-source exosphere_donki_ips
+source exosphere_donki_legacy_ips
 ttl 86400
 force advective
 ssb
-url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS/?startDate=2024-01-01&endDate=2024-12-31
+url https://services.swpc.noaa.gov/products/alerts.json
 count lines exosphere_donki_ips_count_2024
 
-source exosphere_donki_mpc
+source exosphere_donki_legacy_mpc
 ttl 86400
 force advective
 ssb
-url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/MPC/?startDate=2024-01-01&endDate=2024-12-31
+url https://services.swpc.noaa.gov/products/alerts.json
 count lines exosphere_donki_mpc_count_2024
 
-source exosphere_donki_sep
+source exosphere_donki_legacy_sep
 ttl 86400
 force advective
 ssb
-url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP/?startDate=2024-01-01&endDate=2024-12-31
+url https://services.swpc.noaa.gov/products/alerts.json
 count lines exosphere_donki_sep_count_2024
 
 source exosphere_exoplanet_count
@@ -9966,7 +10088,7 @@ field z_phot photometric_redshift
 
 source gaia_dr3_bright_stars
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+source_id,ra,dec,parallax,pmra,pmdec,phot_g_mean_mag,phot_bp_mean_mag,phot_rp_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag<6
 format text
 rows
@@ -9982,7 +10104,7 @@ field phot_rp_mean_mag rp_magnitude
 
 source gaia_dr3_high_parallax_stars
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+source_id,ra,dec,pmra,pmdec,parallax,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>100+AND+parallax<200
 format text
 rows
@@ -10072,7 +10194,7 @@ field_in properties.network geosphere_africaarray_network
 field_in properties.site.name geosphere_africaarray_station_name
 alt_key geometry.coordinates.2
 
-url https://land.copernicus.eu/api/@@search?portal_type=Dataset
+source geosphere_clms_collections
 ttl 86400
 force em
 ecliptic 1
@@ -15943,7 +16065,7 @@ field_in 3 dm
 
 source universe_gaia_astrometric_binaries
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
 cmap data
 tau_key _dist_m
@@ -15956,7 +16078,7 @@ field_in 4 ruwe
 
 source universe_gaia_binaries
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
 cmap data
 tau_key _dist_m
@@ -15968,7 +16090,7 @@ field_in 3 parallax_mas
 
 source universe_gaia_blue_stars
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+-0.1+AND+phot_g_mean_mag+<+12
 cmap data
 tau_key _dist_m
@@ -15981,7 +16103,7 @@ field_in 4 bp_rp
 
 source universe_gaia_blue_stragglers
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.1%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%3E2
 cmap data
 tau_key _dist_m
@@ -15992,7 +16114,7 @@ field_in 2 bp_rp
 
 source universe_gaia_blue_supergiants
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+phot_g_mean_mag+<+8+AND+parallax+IS+NOT+NULL+AND+parallax+<+2+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
@@ -16004,7 +16126,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_bright_2000
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+2000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+11
 cmap data
 tau_key _dist_m
@@ -16016,7 +16138,7 @@ field_in 3 parallax_mas
 
 source universe_gaia_bright_giants
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20%3C%208%20AND%20parallax%20%3E%205
 cmap data
 tau_key _dist_m
@@ -16027,7 +16149,7 @@ field_in 2 par
 
 source universe_gaia_bright_stars
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+7
 cmap data
 tau_key _dist_m
@@ -16040,7 +16162,7 @@ field_in 4 bp_rp
 
 source universe_gaia_bulge
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20SQRT%28POWER%28ra-266.4%2C2%29%2BPOWER%28dec%2B29%2C2%29%29%3C5%20AND%20parallax%20IS%20NOT%20NULL
 cmap data
 tau_key _dist_m
@@ -16051,7 +16173,7 @@ field_in 2 mag_g
 
 source universe_gaia_by_dra_variables
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27BYDra%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
@@ -16063,7 +16185,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_carbon_stars
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+3.5+AND+bp_rp+<+6+AND+phot_g_mean_mag+<+16+AND+parallax+>+1
 cmap data
 tau_key _dist_m
@@ -16075,7 +16197,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_cataclysmic_variables
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27CV%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
@@ -16087,7 +16209,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_cepheids
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27Cepheid%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
@@ -16099,7 +16221,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_cool_dwarfs
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E2%20AND%20bp_rp%3C4%20AND%20parallax%3E20
 cmap data
 tau_key _dist_m
@@ -16110,7 +16232,7 @@ field_in 2 mag_g
 
 source universe_gaia_deep_1000
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+parallax_over_error+>+3
 cmap data
 tau_key _dist_m
@@ -16122,7 +16244,7 @@ field_in 3 parallax_mas
 
 source universe_gaia_deep_mag
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20BETWEEN%2015%20AND%2018%20AND%20parallax%20IS%20NOT%20NULL
 cmap data
 tau_key _dist_m
@@ -16134,7 +16256,7 @@ field_in 3 par
 
 source universe_gaia_delta_scuti
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27DSCT%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
@@ -16146,7 +16268,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_distant_halo
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+<+0.3+AND+parallax+>+0+AND+phot_g_mean_mag+<+14
 cmap data
 tau_key _dist_m
@@ -16158,7 +16280,7 @@ field_in 3 parallax_mas
 
 source universe_gaia_eclipsing_binaries_vari
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27EA%27+OR+v.best_class_name+%3D+%27EB%27+OR+v.best_class_name+%3D+%27EW%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
@@ -16170,7 +16292,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_extreme_blue
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%20-0.3%20AND%20phot_g_mean_mag%20%3C%2013
 cmap data
 tau_key _dist_m
@@ -16183,7 +16305,7 @@ field_in 4 bp_rp
 
 source universe_gaia_extreme_red
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3E%203.5%20AND%20phot_g_mean_mag%20%3C%2014
 cmap data
 tau_key _dist_m
@@ -16196,7 +16318,7 @@ field_in 4 bp_rp
 
 source universe_gaia_galactic_plane
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ABS%28b%29%3C10%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%20IS%20NOT%20NULL
 cmap data
 tau_key _dist_m
@@ -16207,7 +16329,7 @@ field_in 2 mag_g
 
 source universe_gaia_giant_branch
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E1.5%20AND%20bp_rp%3C3%20AND%20phot_g_mean_mag%3C12%20AND%20parallax%3E2
 cmap data
 tau_key _dist_m
@@ -16218,7 +16340,7 @@ field_in 2 mag_g
 
 source universe_gaia_herbig_aebe
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0.2+AND+phot_g_mean_mag+<+14+AND+parallax+>+5+AND+phot_bp_mean_flux_over_error+>+50+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
@@ -16230,7 +16352,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_high_parallax_stars
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
 cmap data
 tau_key _dist_m
@@ -16243,7 +16365,7 @@ field_in 4 bp_rp
 
 source universe_gaia_high_proper_motion
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+50
 cmap data
 tau_key _dist_m
@@ -16255,7 +16377,7 @@ field_in 3 parallax_mas
 
 source universe_gaia_high_velocity
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20radial_velocity%20IS%20NOT%20NULL%20AND%20ABS%28radial_velocity%29%20%3E%20200
 cmap data
 tau_key _dist_m
@@ -16267,7 +16389,7 @@ field_in 3 par
 
 source universe_gaia_hot_subdwarfs
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.3%20AND%20phot_g_mean_mag%3C15%20AND%20parallax%3E1
 cmap data
 tau_key _dist_m
@@ -16278,7 +16400,7 @@ field_in 2 mag_g
 
 source universe_gaia_hypervelocity
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
 cmap data
 tau_key _dist_m
@@ -16292,7 +16414,7 @@ radvel_key 4 1000
 
 source universe_gaia_lmc
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
 cmap data
 tau_key _dist_m
@@ -16303,7 +16425,7 @@ field_in 2 par
 
 source universe_gaia_main_sequence
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E-0.2%20AND%20bp_rp%3C1%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E5
 cmap data
 tau_key _dist_m
@@ -16314,7 +16436,7 @@ field_in 2 mag_g
 
 source universe_gaia_metal_poor
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%200.5%20AND%20phot_g_mean_mag%20%3C%2014%20AND%20parallax%20%3E%202
 cmap data
 tau_key _dist_m
@@ -16325,7 +16447,7 @@ field_in 2 bp_rp
 
 source universe_gaia_metallicity
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cmh_gspphot%20FROM%20gaiadr3.gaia_source%20WHERE%20mh_gspphot%20IS%20NOT%20NULL%20AND%20parallax%20%3E%202
 cmap data
 tau_key _dist_m
@@ -16338,7 +16460,7 @@ field_in 4 metallicity_dex
 
 source universe_gaia_milky_way_disk
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+BETWEEN+0.5+AND+5+AND+parallax_over_error+>+3+AND+phot_g_mean_mag+<+14
 cmap data
 tau_key _dist_m
@@ -16351,7 +16473,7 @@ field_in 4 bp_rp
 
 source universe_gaia_mira_variables
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27Mira%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
@@ -16363,7 +16485,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_nearby_1000
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
 cmap data
 tau_key _dist_m
@@ -16374,7 +16496,7 @@ field_in 2 mag_g
 
 source universe_gaia_open_clusters
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra%2Cdec%2Cphot_g_mean_mag%2Cparallax+FROM+gaiadr3.gaia_source+WHERE+cluster_ka+IS+NOT+NULL+AND+phot_g_mean_mag+%3C+15.0
 cmap data
 tau_key _dist_m
@@ -16386,7 +16508,7 @@ field_in 3 par
 
 source universe_gaia_radial_velocity
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+parallax+>+5
 cmap data
 tau_key _dist_m
@@ -16400,7 +16522,7 @@ radvel_key 4 1000
 
 source universe_gaia_red_clump
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E0.8%20AND%20bp_rp%3C1.2%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E3
 cmap data
 tau_key _dist_m
@@ -16411,7 +16533,7 @@ field_in 2 bp_rp
 
 source universe_gaia_red_giants
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
 cmap data
 tau_key _dist_m
@@ -16424,7 +16546,7 @@ field_in 4 bp_rp
 
 source universe_gaia_red_supergiants
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+bp_rp+<+4+AND+phot_g_mean_mag+<+10+AND+parallax+>+0.5+AND+parallax+<+3
 cmap data
 tau_key _dist_m
@@ -16436,7 +16558,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_rr_lyrae
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27RR+Lyrae%27
 cmap data
 tau_key _dist_m
@@ -16448,7 +16570,7 @@ field_in 3 par
 
 source universe_gaia_rv_1000
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+12+AND+parallax+>+1
 cmap data
 tau_key _dist_m
@@ -16460,7 +16582,7 @@ field_in 3 parallax_mas
 
 source universe_gaia_semiregular_variables
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27SR%27+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
@@ -16472,7 +16594,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_smc
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
 cmap data
 tau_key _dist_m
@@ -16483,7 +16605,7 @@ field_in 2 par
 
 source universe_gaia_subdwarfs
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+bp_rp+<+0.5+AND+phot_g_mean_mag+<+15+AND+mh_gspphot+<+-1+ORDER+BY+random_index
 cmap data
 tau_key _dist_m
@@ -16495,7 +16617,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_thick_disk
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+ABS(radial_velocity)+>+50+AND+ABS(radial_velocity)+<+200+AND+parallax+>+2+AND+phot_g_mean_mag+<+14
 cmap data
 tau_key _dist_m
@@ -16507,7 +16629,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_ultracool_dwarfs
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+4+AND+bp_rp+<+8+AND+phot_g_mean_mag+<+18+AND+parallax+>+10
 cmap data
 tau_key _dist_m
@@ -16519,7 +16641,7 @@ field_in 4 bp_minus_rp
 
 source universe_gaia_variable_classified
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.vari_classifier_result+AS+v+ON+g.source_id+%3D+v.source_id+WHERE+g.phot_g_mean_mag+IS+NOT+NULL
 cmap data
 tau_key _dist_m
@@ -16531,7 +16653,7 @@ field_in 3 parallax_mas
 
 source universe_gaia_white_dwarfs
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
 cmap data
 tau_key _dist_m
@@ -16544,7 +16666,7 @@ field_in 4 bp_rp
 
 source universe_gaia_young_stars
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+10+AND+phot_g_mean_mag+<+15+AND+bp_rp+IS+NOT+NULL
 cmap data
 tau_key _dist_m
@@ -16566,7 +16688,7 @@ field_in 2 flux_jy
 
 source universe_sdss_stars
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,s.psfmag_g+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.sdssdr13_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.sdssdr13_photoprimary+AS+s+ON+x.original_ext_source_id=s.objid+WHERE+g.parallax+>+0+AND+s.psfmag_g+<+17
 cmap data
 tau_key _dist_m
@@ -16577,7 +16699,7 @@ field_in 3 universe_sdss_gmag
 
 source universe_vizier_2mass
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14
 cmap data
 tau_key _dist_m
@@ -16588,7 +16710,7 @@ field_in 3 universe_2mass_gaia_g_mag
 
 source universe_vizier_apass
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,e.bmag,e.vmag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.apassdr9_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.apassdr9+AS+e+ON+x.clean_apassdr9_oid=e.recno+WHERE+g.parallax+>+0+AND+e.bmag+<+13
 cmap data
 tau_key _dist_m
@@ -16600,7 +16722,7 @@ field_in 4 universe_vizier_vmag
 
 source universe_vizier_panstarrs
 ttl 86400
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17
 cmap data
 tau_key _dist_m
@@ -18081,7 +18203,7 @@ field_in SpInd frb_spectral_index
 
 source astro_gaia_binaries
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_binaries.json
 cmap data
 tau_key _dist_m
@@ -18092,7 +18214,7 @@ field_in phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
 
 source astro_gaia_blue_supergiants
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_blue_supergiants.json
 cmap data
 tau_key _dist_m
@@ -18104,7 +18226,7 @@ field_in bp_rp astro_gaia_blue_supergiants_bp_rp
 
 source astro_gaia_bright_vmag7
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag7.json
 cmap data
 tau_key _dist_m
@@ -18123,7 +18245,7 @@ field_in bp_rp astro_gaia_bright_vmag7_bp_rp
 
 source astro_gaia_bright_vmag9
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -18134,7 +18256,7 @@ field_in phot_g_mean_mag astro_gaia_bright_vmag9_phot_g_mean_mag
 
 source astro_gaia_giants
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_giants.json
 cmap data
 tau_key _dist_m
@@ -18147,7 +18269,7 @@ field_in teff_gspphot astro_gaia_giants_teff_gspphot
 
 source astro_gaia_high_pm
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_high_pm.json
 cmap data
 tau_key _dist_m
@@ -18160,7 +18282,7 @@ field_in pmdec astro_gaia_high_pm_pmdec
 
 source astro_gaia_hypervelocity
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_hypervelocity.json
 cmap data
 tau_key _dist_m
@@ -18172,7 +18294,7 @@ field_in radial_velocity astro_gaia_hypervelocity_radial_velocity
 
 source astro_gaia_metal_poor
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_metal_poor.json
 cmap data
 tau_key _dist_m
@@ -18184,7 +18306,7 @@ field_in mh_gspphot astro_gaia_metal_poor_mh_gspphot
 
 source astro_gaia_nearby_plx10
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -18199,7 +18321,7 @@ field_in radial_velocity astro_gaia_nearby_plx10_radial_velocity
 
 source astro_gaia_nearby_plx50
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx50.json
 cmap data
 tau_key _dist_m
@@ -18214,7 +18336,7 @@ field_in radial_velocity astro_gaia_nearby_plx50_radial_velocity
 
 source astro_gaia_white_dwarfs
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_white_dwarfs.json
 cmap data
 tau_key _dist_m
@@ -19023,7 +19145,7 @@ field_in corr astro_vizier_tycho2_corr
 
 source astro_vizier_ucac5
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_ucac5.json
 cmap data
 tau_key _dist_m
@@ -19126,7 +19248,7 @@ field_in flux_b8 xmm_slew_flux_b8
 
 source astro_xmm_sources
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/xmm_sources.json
 cmap data
 tau_key _dist_m
@@ -19772,7 +19894,7 @@ field properties.SO2_Kilotons volcano_so2_kilotons
 
 source exosphere_gaia_nearby_stars
 ttl 604800
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax+>+0+ORDER+BY+parallax+DESC
 cmap data
 tau_key _dist_m
@@ -19786,7 +19908,7 @@ radvel_key 5 1000
 
 source exosphere_gaia_stars
 ttl 604800
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+6+AND+parallax+>+0+ORDER+BY+phot_g_mean_mag
 cmap data
 tau_key _dist_m
@@ -19800,7 +19922,7 @@ radvel_key 5 1000
 
 source exosphere_gaia_stellar_ages
 ttl 604800
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+128+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,ap.age_flame,ap.teff_gspphot+FROM+gaiadr3.astrophysical_parameters+AS+ap+JOIN+gaiadr3.gaia_source+AS+g+ON+ap.source_id=g.source_id+WHERE+ap.age_flame+IS+NOT+NULL+AND+g.parallax+>+0+ORDER+BY+ap.age_flame+DESC
 cmap data
 tau_key _dist_m
@@ -19815,7 +19937,7 @@ radvel_key 5 1000
 
 source exosphere_gaia_variable_stars
 ttl 604800
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,v.pf+FROM+gaiadr3.vari_cepheid+AS+v+JOIN+gaiadr3.gaia_source+AS+g+ON+v.source_id=g.source_id+WHERE+g.parallax+>+0+ORDER+BY+v.pf+DESC
 cmap data
 tau_key _dist_m
@@ -19840,7 +19962,7 @@ field_in petroMag_g sdss_galaxy_mag_g
 
 source exosphere_simbad_brown_dwarfs
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -19851,7 +19973,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source exosphere_simbad_carbon_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -19963,7 +20085,7 @@ dec_key DEJ2000
 
 source exosphere_simbad_white_dwarfs
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -19974,7 +20096,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source exosphere_simbad_wolf_rayet
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -19985,7 +20107,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source exosphere_simbad_young_stellar_objects
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -20268,7 +20390,7 @@ field elevation seismic_station_elevation_m
 
 source simbad
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -20279,7 +20401,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source simbad_bright_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -20290,7 +20412,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source simbad_nearby_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx50.json
 cmap data
 tau_key _dist_m
@@ -20600,7 +20722,7 @@ dec_key DEJ2000
 
 source universe_simbad_barium_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -20630,7 +20752,7 @@ z_key z
 
 source universe_simbad_blue_giants
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -20641,7 +20763,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source universe_simbad_blue_supergiants
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -20652,7 +20774,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source universe_simbad_brown_dwarfs
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -20663,7 +20785,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source universe_simbad_carbon_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -20674,7 +20796,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source universe_simbad_carbon_stars_var
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -20694,7 +20816,7 @@ dec_key DEJ2000
 
 source universe_simbad_ch_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -20742,7 +20864,7 @@ dec_key DEJ2000
 
 source universe_simbad_emission_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -20800,7 +20922,7 @@ dec_key DEJ2000
 
 source universe_simbad_giant_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -20829,7 +20951,7 @@ dec_key DEJ2000
 
 source universe_simbad_herbig_haro
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -21004,7 +21126,7 @@ dec_key DEJ2000
 
 source universe_simbad_pre_ms_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -21015,7 +21137,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source universe_simbad_proper_motion
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_high_pm.json
 cmap data
 tau_key _dist_m
@@ -21035,7 +21157,7 @@ dec_key DEJ2000
 
 source universe_simbad_pulsating_white_dwarfs
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -21064,7 +21186,7 @@ dec_key DEJ2000
 
 source universe_simbad_red_giants
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -21075,7 +21197,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source universe_simbad_red_supergiants
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -21104,7 +21226,7 @@ dec_key DEJ2000
 
 source universe_simbad_s_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -21115,7 +21237,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source universe_simbad_stellar_associations
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -21153,7 +21275,7 @@ dec_key DEJ2000
 
 source universe_simbad_ttauri_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -21173,7 +21295,7 @@ dec_key DEJ2000
 
 source universe_simbad_white_dwarfs
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -21184,7 +21306,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source universe_simbad_wolf_rayet_stars
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -21204,7 +21326,7 @@ dec_key DEJ2000
 
 source universe_simbad_yellow_supergiants
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
@@ -21215,7 +21337,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source universe_simbad_young_stellar_objects
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -21226,7 +21348,7 @@ field_in phot_g_mean_mag star_g_mag
 
 source universe_simbad_yso
 ttl 604800
-force em
+force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
@@ -22878,7 +23000,7 @@ field hits.hits.0.metadata.citation_count quantum_dark_matter_limit_citations
 
 source gaia_dr3
 ttl 2592000
-force em
+force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+200+ra,dec,parallax,pmra,pmdec,phot_g_mean_mag,phot_bp_mean_mag,phot_rp_mean_mag,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 verify false
 format json
