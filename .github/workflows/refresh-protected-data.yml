@@ -147,23 +147,6 @@ jobs:
             "https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?limit=100&bbox=-125,24,-66,50" \
             -o data/usgs_water_daily.json || true
 
-      - name: GBIF taxa downloads
-        env:
-          GBIF_USER: ${{ secrets.GBIF_USER }}
-          GBIF_PASS: ${{ secrets.GBIF_PASS }}
-        run: |
-          if [ -z "$GBIF_USER" ] || [ -z "$GBIF_PASS" ]; then
-            echo "::notice::GBIF skipped (no GBIF_USER/GBIF_PASS)"
-            exit 0
-          fi
-          for entry in "fungi 5" "gastropoda 52" "amphibians 131" "reptiles 358" "cnidaria 722" "arachnida 47115"; do
-            read -r name key <<< "$entry"
-            echo "::group::GBIF ${name} (taxonKey ${key})"
-            GBIF_MAX_ROWS=30000 python3 scripts/gbif_download.py "$key" "data/gbif_${name}.json" || \
-              echo "::warning::GBIF ${name} failed"
-            echo "::endgroup::"
-          done
-
       - name: NOAA CDO
         env:
           NOAA_CDO_TOKEN: ${{ secrets.NOAA_CDO_TOKEN }}
