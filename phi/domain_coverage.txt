@@ -1,0 +1,282 @@
+  # HOST                                          SRC TYP                    GESAMT (was die API bietet)                        WIR (unsere Abdeckung)                   FORCES                   
+===================================================================================================================================================================================================
+  1 github.com                                    232  CDN Release           74 Release Assets                                  232 Quellen                              diffusion,em,gravity,thermal
+  2 api.worldbank.org                             228  World Bank            29.544 Indikatoren × 266 Länder                    11 Ind. × 218 Länder                     diffusion,em
+  3 imag-data.bgs.ac.uk                           162  BGS/INTERMAGNET       ~130 Observatorien                                 162 HAPI-Quellen                         em,gravity
+  4 api.tidesandcurrents.noaa.gov                 130  NOAA Tides            3499 Stationen                                     116 IDs                                  acoustic,advective,diffusion
+  5 tapvizier.cds.unistra.fr                       84  VizieR/CDS            ~20000 Tabellen                                    39 Tab., 83 TOP-Caps                     em,gravity,seismic-body
+  6 api.open-meteo.com                             75  Open-Meteo            8 Endpunkte, ~50 Felder                            8 Endpunkte                              acoustic,advective,diffusion
+  7 services.swpc.noaa.gov                         75  SWPC SpaceWeather     ~100 Produkte                                      33 Produkte                              advective,diffusion,em,gravi
+  8 gea.esac.esa.int                               63  Gaia DR3              1.812.709.771 Sterne                               1 Tabelle, 63 TOP-Caps                   em
+  9 heasarc.gsfc.nasa.gov                          51  HEASARC               ~600 Missionen                                     41 Tab., 48 TOP-Caps                     diffusion,em
+ 10 earthquake.usgs.gov                            48  USGS Erdbeben         ~30000/Tag                                         48 Quellen                               acoustic,em,seismic-body,sei
+ 11 api.gbif.org                                   42  GBIF                  2.2 Mrd Occurrences                                42 Quellen                               acoustic,diffusion,em
+ 12 www.ndbc.noaa.gov                              39  NDBC Bojen            1351 Stationen                                     36 IDs                                   acoustic,diffusion
+ 13 www.ncei.noaa.gov                              38  NOAA Paleo            ~10000 Datasets                                    38 Quellen                               acoustic,diffusion,em,therma
+ 14 pdgapi.lbl.gov                                 38  PDG Particles         ~300 Teilchen                                      38 Quellen                               em
+ 15 query1.finance.yahoo.com                       37  Yahoo Finance         ~50000 Ticker                                      37 Ticker                                em
+ 16 irsa.ipac.caltech.edu                          34  IRSA/IPAC             ~100 Tabellen                                      23 Tab., 28 TOP-Caps                     diffusion,em,gravity
+ 17 services6.arcgis.com                           32  ArcGIS Features       100k+ Services                                     32 Quellen                               acoustic,em
+ 18 services9.arcgis.com                           28  map                   1000 features                                      28 Quellen                               advective,diffusion,em,seism
+ 19 raw.githubusercontent.com                      27  CDN Raw               74 Assets                                          27 Quellen                               em,gravity,seismic-surface,t
+ 20 ssd-api.jpl.nasa.gov                           26  JPL SSD               ~1.2M Asteroiden                                   26 Quellen                               acoustic,em,gravity
+ 21 archive-api.open-meteo.com                     25  map                   unreachable                                        25 Quellen                               em,thermal
+ 22 waterservices.usgs.gov                         21  field,map             keys:name,declaredType,scope                       21 Quellen                               acoustic,diffusion,seismic-s
+ 23 gml.noaa.gov                                   21  NOAA GML              ~30 Feeds                                          21 Quellen                               diffusion,em
+ 24 aeronet.gsfc.nasa.gov                          18  AERONET               ~500 Stationen                                     18 Quellen                               diffusion,em
+ 25 eutils.ncbi.nlm.nih.gov                        18  NCBI                  ~40 DBs                                            20 Quellen                               em,gravity
+ 26 api.inaturalist.org                            17  iNaturalist           1.42M Taxa                                         17 Quellen                               diffusion,em
+ 27 inspirehep.net                                 17  field                 keys:hits,links                                    17 Quellen                               em
+ 28 celestrak.org                                  15  Celestrak             16238 aktive Sats                                  12 Gruppen                               em
+ 29 aviationweather.gov                            13  Aviation              ~9000 Airports                                     13 Quellen                               acoustic,em
+ 30 nrt.cmems-du.eu                                13  Copernicus Marine     ~200 Produkte                                      14 Quellen                               acoustic,diffusion,gravity,t
+ 31 exoplanetarchive.ipac.caltech.edu              13  Exoplaneten           ~5500 Planeten                                     13 Quellen, 8 TOP                        em,gravity
+ 32 api.obis.org                                   10  OBIS Marine           ~150k Arten                                        10 Quellen                               diffusion,em
+ 33 services.arcgis.com                             9  map                   2000 features                                      9 Quellen                                advective,diffusion,em,gravi
+ 34 air-quality-api.open-meteo.com                  9  field,map             unreachable                                        9 Quellen                                diffusion,em
+ 35 mast.stsci.edu                                  9  MAST Telescopes       ~20 Tab.                                           9 Quellen, 9 TOP                         em
+ 36 export.arxiv.org                                9  arXiv                 ~2.4M Papers                                       9 Quellen                                em
+ 37 api.weather.gov                                 8  map                   246 features                                       8 Quellen                                acoustic,diffusion,em,gravit
+ 38 tle.ivanstanojevic.me                           7  field,map             unreachable                                        7 Quellen                                em
+ 39 api.crossref.org                                7  field                 keys:status,message-type,message-version           7 Quellen                                em
+ 40 noaadata.apps.nsidc.org                         7  NSIDC Cryo            ~100 Datasets                                      7 Quellen                                em
+ 41 service.earthscope.org                          7  map,rows              67962 lines                                        7 Quellen                                acoustic,em,seismic-body
+ 42 kauai.ccmc.gsfc.nasa.gov                        7  count                 unreachable                                        7 Quellen                                advective,em
+ 43 volcanoes.usgs.gov                              6  map                   keys:error,apiUrl,route                            6 Quellen                                em,seismic-surface
+ 44 marine-api.open-meteo.com                       6  field,map             unreachable                                        6 Quellen                                acoustic,em
+ 45 gtnp.arcticportal.org                           6  map                   unreachable                                        6 Quellen                                diffusion,thermal
+ 46 cmr.earthdata.nasa.gov                          6  field_in,map          keys:feed                                          6 Quellen                                diffusion,em,thermal
+ 47 services3.arcgis.com                            5  field_in,map          1 features                                         5 Quellen                                em,gravity,seismic-body,ther
+ 48 api.waqi.info                                   5  field,map             keys:status,data                                   5 Quellen                                diffusion
+ 49 gracedb.ligo.org                                5  LIGO GW               ~100 Events                                        5 Quellen                                em,gravity
+ 50 eonet.gsfc.nasa.gov                             5  map                   events[200]                                        5 Quellen                                em,seismic-body
+ 51 api.coral.tsr.lol                               5  field,map             keys:slug,name,latitude                            5 Quellen                                em,thermal
+ 52 lasp.colorado.edu                               5  rows                  unreachable                                        5 Quellen                                em
+ 53 power.larc.nasa.gov                             5  map                   unreachable                                        5 Quellen                                em,thermal
+ 54 en.wikipedia.org                                5  Wikipedia             6.8M Artikel                                       5 Quellen                                em
+ 55 www.cpc.ncep.noaa.gov                           5  last_row,rows         918 lines                                          5 Quellen                                em,thermal
+ 56 ghoapi.azureedge.net                            5  count,map             value[2469]                                        5 Quellen                                diffusion,em
+ 57 webservices.volcano.si.edu                      5  map,rows              unreachable                                        5 Quellen                                seismic-surface
+ 58 rest.isric.org                                  5  field,map             unreachable                                        5 Quellen                                diffusion,em
+ 59 api.neotomadb.org                               5  field,map             78 lines                                           5 Quellen                                diffusion,em
+ 60 skyserver.sdss.org                              5  SDSS DR18             ~500M Objekte                                      5 Quellen, 4 TOP                         em
+ 61 www.sidc.be                                     5  rows                  76152 lines                                        5 Quellen                                em
+ 62 opensky-network.org                             4  map                   unreachable                                        4 Quellen                                em
+ 63 www.seismicportal.eu                            4  map                   unreachable                                        4 Quellen                                em,seismic-body
+ 64 api.geonet.org.nz                               4  map                   100 features                                       4 Quellen                                em,seismic-body
+ 65 services2.arcgis.com                            4  map                   2000 features                                      4 Quellen                                advective,diffusion,thermal
+ 66 cdaweb.gsfc.nasa.gov                            4  rows                  unreachable                                        4 Quellen                                advective,em,gravity
+ 67 seismic-api.science.unimelb.edu.au              4  map                   0 features                                         4 Quellen                                em
+ 68 hub.docker.com                                  4  field                 media_types[3]                                     4 Quellen                                em
+ 69 data.pmel.noaa.gov                              4  last_row,map,rows     unreachable                                        4 Quellen                                diffusion,em
+ 70 ec.europa.eu                                    4                        id[5]                                              4 Quellen                                em
+ 71 www.ebi.ac.uk                                   4  field,map,rows        data[1]                                            4 Quellen                                diffusion,em
+ 72 ned.ipac.caltech.edu                            4  cmap,map              metadata[4]                                        4 Quellen                                em,gravity
+ 73 api.fda.gov                                     4  field                 results[1]                                         4 Quellen                                em
+ 74 woudc.org                                       4  map                   9 lines                                            4 Quellen                                diffusion
+ 75 opendata.cern.ch                                4  count,field           keys:aggregations,hits,links                       4 Quellen                                em
+ 76 api.opentopodata.org                            4  map                   unreachable                                        4 Quellen                                em
+ 77 api.github.com                                  3  count,field           1 lines                                            3 Quellen                                em
+ 78 api.wolfx.jp                                    3  field                 WarnArea[4]                                        3 Quellen                                em
+ 79 webservices.ingv.it                             3  map                   unreachable                                        3 Quellen                                seismic-body,seismic-surface
+ 80 kp.gfz.de                                       3                        unreachable                                        3 Quellen                                em,gravity
+ 81 gcn.nasa.gov                                    3  map                   119 lines                                          3 Quellen                                em
+ 82 api.weather.bom.gov.au                          3  field,map             unreachable                                        3 Quellen                                em
+ 83 www.minorplanetcenter.net                       3  rows                  32 lines                                           3 Quellen                                gravity
+ 84 www.nhc.noaa.gov                                3  map                   activeStorms[1]                                    3 Quellen                                em,thermal
+ 85 cddis.nasa.gov                                  3  rows                  196 lines                                          3 Quellen                                em,gravity
+ 86 bhuvan-app1.nrsc.gov.in                         3  map                   557 lines                                          3 Quellen                                diffusion,seismic-surface
+ 87 coastwatch.pfeg.noaa.gov                        3  map                   unreachable                                        3 Quellen                                em,thermal
+ 88 hpiers.obspm.fr                                 3  field,field_in        267 lines                                          3 Quellen                                em
+ 89 v4.boldsystems.org                              3  map                   494 lines                                          3 Quellen                                diffusion
+ 90 gist.githubusercontent.com                      3  map                   15 features                                        3 Quellen                                em
+ 91 ssd.jpl.nasa.gov                                3  JPL Horizons          78 Körper                                          75 CDN, 3 direkt                         gravity
+ 92 zenodo.org                                      3  map                   7835 lines                                         3 Quellen                                diffusion,gravity
+ 93 musicbrainz.org                                 3  field                 unreachable                                        3 Quellen                                em
+ 94 www.ngdc.noaa.gov                               3  map                   totalItems=900                                     3 Quellen                                em,seismic-body
+ 95 ws.pangaea.de                                   3  map                   1 lines                                            3 Quellen                                diffusion
+ 96 api.wheretheiss.at                              2  field                 keys:name,id,latitude                              2 Quellen                                em
+ 97 stat.ripe.net                                   2  count,field           keys:messages,see_also,version                     2 Quellen                                em
+ 98 transport.opendata.ch                           2  count                 stationboard[10]                                   2 Quellen                                em
+ 99 services1.arcgis.com                            2  map                   150 features                                       2 Quellen                                seismic-body,seismic-surface
+100 services5.arcgis.com                            2  map                   2000 features                                      2 Quellen                                acoustic,em
+101 api.energy-charts.info                          2                        1 lines                                            2 Quellen                                em
+102 api.carbonintensity.org.uk                      2                        data[1]                                            2 Quellen                                em,thermal
+103 www.gdacs.org                                   2  map                   unreachable                                        2 Quellen                                em,seismic-body
+104 www.tsunami.gov                                 2                        1 entries                                          2 Quellen                                gravity
+105 api.open-notify.org                             2  count,field           unreachable                                        2 Quellen                                em
+106 geofon.gfz-potsdam.de                           2  rows                  101 lines                                          2 Quellen                                seismic-body
+107 firms.modaps.eosdis.nasa.gov                    2  rows                  105152 lines                                       2 Quellen                                thermal
+108 epic.gsfc.nasa.gov                              2  map                   1 lines                                            2 Quellen                                em
+109 www.imis.bfs.de                                 2  count,map             1679 features                                      2 Quellen                                em
+110 api.superdarn.ca                                2  field,map             unreachable                                        2 Quellen                                em
+111 geofon.gfz.de                                   2  map                   unreachable                                        2 Quellen                                em
+112 flood-api.open-meteo.com                        2  map                   unreachable                                        2 Quellen                                diffusion,em
+113 meta.icos-cp.eu                                 2  map                   keys:head,results                                  2 Quellen                                diffusion
+114 erddap.ifremer.fr                               2  map,rows              unreachable                                        2 Quellen                                diffusion,thermal
+115 gong2.nso.edu                                   2  map                   255 lines                                          2 Quellen                                em
+116 openlittermap.com                               2  map                   32 lines                                           2 Quellen                                diffusion
+117 earth-search.aws.element84.com                  2  map                   10 features                                        2 Quellen                                em
+118 api.woudc.org                                   2  map                   477 features                                       2 Quellen                                em
+119 clinicaltrials.gov                              2  field                 studies[1]                                         2 Quellen                                em
+120 www.orfeus-eu.org                               2  rows                  1742 lines                                         2 Quellen                                seismic-body
+121 hydro1.gesdisc.eosdis.nasa.gov                  2  rows                  45 lines                                           2 Quellen                                diffusion,thermal
+122 data.humdata.org                                2  map                   keys:help,success,result                           2 Quellen                                diffusion,em
+123 www.isc.ac.uk                                   2  map,rows              20 lines                                           2 Quellen                                seismic-body
+124 its-live-data.jpl.nasa.gov                      2  map                   unreachable                                        2 Quellen                                gravity
+125 epqs.nationalmap.gov                            2  field                 unreachable                                        2 Quellen                                em,seismic-surface
+126 g6goyz4w56.execute-api.us-west-2.amazonaws      2  field                 1 features                                         2 Quellen                                em
+127 oderest.rsl.wustl.edu                           2                        1 lines                                            2 Quellen                                em
+128 www.physics.mcgill.ca                           2  rows                  32 lines                                           2 Quellen                                em
+129 data.rcsb.org                                   2  field                 audit_author[3]                                    2 Quellen                                em
+130 climate-api.open-meteo.com                      2  map                   keys:latitude,longitude,generationtime_ms          2 Quellen                                em,thermal
+131 openlibrary.org                                 2  field                 unreachable                                        2 Quellen                                em
+132 pubchem.ncbi.nlm.nih.gov                        2  field                 unreachable                                        2 Quellen                                em
+133 rapid.ac.uk                                     2  rows                  196 lines                                          2 Quellen                                diffusion
+134 api.stackexchange.com                           2  field                 total=24142786                                     2 Quellen                                em
+135 macrostrat.org                                  2  count                 keys:success                                       2 Quellen                                em
+136 qrng.anu.edu.au                                 1                        data[1]                                            1 Quellen                                em
+137 api.blitzortung.org                             1  map                   447 lines                                          1 Quellen                                em
+138 www.inex.ie                                     1  field                 keys:class,urls,base_url                           1 Quellen                                em
+139 api.irail.be                                    1  count                 unreachable                                        1 Quellen                                em
+140 api.irishrail.ie                                1                        2 lines                                            1 Quellen                                em
+141 www.wienerlinien.at                             1  count                 keys:data,message                                  1 Quellen                                em
+142 data.blitzortung.org                            1  map                   11 lines                                           1 Quellen                                acoustic
+143 api.drand.sh                                    1  field                 keys:round,randomness,signature                    1 Quellen                                em
+144 irsc.ut.ac.ir                                   1  map                   unreachable                                        1 Quellen                                seismic-body
+145 api.p2pquake.net                                1  map                   1 lines                                            1 Quellen                                seismic-body
+146 beacon.nist.gov                                 1                        keys:pulse                                         1 Quellen                                em
+147 service.scedc.caltech.edu                       1  map                   unreachable                                        1 Quellen                                seismic-body
+148 earthquake.tmd.go.th                            1  map                   59 lines                                           1 Quellen                                seismic-body
+149 api.rainviewer.com                              1  field                 keys:version,generated,host                        1 Quellen                                acoustic
+150 reg.bom.gov.au                                  1  map                   keys:observations                                  1 Quellen                                diffusion
+151 www.emsc-csem.org                               1  rows                  unreachable                                        1 Quellen                                seismic-body
+152 www.pegelonline.wsv.de                          1  map                   10890 lines                                        1 Quellen                                gravity
+153 environment.data.gov.uk                         1  map                   items[355]                                         1 Quellen                                em
+154 www.dxpredictor.com                             1  map                   unreachable                                        1 Quellen                                em
+155 tadas.afad.gov.tr                               1  map                   29 lines                                           1 Quellen                                seismic-body
+156 afis.meraka.org.za                              1  map                   unreachable                                        1 Quellen                                thermal
+157 dataserver-coids.inpe.br                        1  rows                  489 lines                                          1 Quellen                                em
+158 bmkg-restapi.vercel.app                         1  map                   data[15]                                           1 Quellen                                em
+159 www.ceic.ac.cn                                  1  count                 304 lines                                          1 Quellen                                seismic-surface
+160 www.jma.go.jp                                   1                        1 lines                                            1 Quellen                                seismic-surface
+161 api.waterdata.usgs.gov                          1  map                   unreachable                                        1 Quellen                                advective
+162 impc.dlr.de                                     1  field                 keys:metadata,data                                 1 Quellen                                em
+163 almascience.org                                 1  map                   unreachable                                        1 Quellen                                em
+164 www.amsmeteors.org                              1  map                   284 lines                                          1 Quellen                                gravity
+165 argovis-api.colorado.edu                        1  map                   991 lines                                          1 Quellen                                diffusion
+166 ensemble-api.open-meteo.com                     1                        unreachable                                        1 Quellen                                em
+167 www.hamqsl.com                                  1  field                 43 lines                                           1 Quellen                                em
+168 api.sunrise-sunset.org                          1                        keys:results,status,tzid                           1 Quellen                                em
+169 disease.sh                                      1  field                 keys:updated,cases,todayCases                      1 Quellen                                em
+170 api.exchangerate-api.com                        1  field                 keys:provider,WARNING_UPGRADE_TO_V6,terms          1 Quellen                                em
+171 open.er-api.com                                 1  field                 keys:result,provider,documentation                 1 Quellen                                em
+172 api.gdeltproject.org                            1                        unreachable                                        1 Quellen                                em
+173 www.govtrack.us                                 1  field                 unreachable                                        1 Quellen                                em
+174 ll.thespacedevs.com                             1  field                 count=366                                          1 Quellen                                em
+175 onionoo.torproject.org                          1  field                 relays[9826]                                       1 Quellen                                em
+176 wikimedia.org                                   1                        unreachable                                        1 Quellen                                em
+177 ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca             1  map                   unreachable                                        1 Quellen                                em
+178 geoserver.efas.eu                               1  map                   unreachable                                        1 Quellen                                diffusion
+179 sky.esa.int                                     1  map                   unreachable                                        1 Quellen                                em
+180 archive.eso.org                                 1  map                   unreachable                                        1 Quellen                                em
+181 api.eurobis.org                                 1  map                   unreachable                                        1 Quellen                                diffusion
+182 network.satnogs.org                             1  count                 1 lines                                            1 Quellen                                em
+183 fireball.fripon.org                             1  map                   data[20364]                                        1 Quellen                                em
+184 www.globalcmt.org                               1  rows                  8 lines                                            1 Quellen                                seismic-body
+185 archive.gemini.edu                              1  map                   35003 lines                                        1 Quellen                                em
+186 catalogue.dataspace.copernicus.eu               1                        unreachable                                        1 Quellen                                em
+187 ies-ows.jrc.ec.europa.eu                        1  field                 6 lines                                            1 Quellen                                em
+188 gdacs.org                                       1                        324 items                                          1 Quellen                                em
+189 www.globalfloods.eu                             1  map                   84 lines                                           1 Quellen                                em
+190 erddap.aoml.noaa.gov                            1  map                   keys:table                                         1 Quellen                                em
+191 erddap.marine.ie                                1  last_row              unreachable                                        1 Quellen                                em
+192 pegelonline.wsv.de                              1  field                 unreachable                                        1 Quellen                                gravity
+193 records-ws.nbnatlas.org                         1  map                   unreachable                                        1 Quellen                                acoustic
+194 astroarchive.noirlab.edu                        1  map                   unreachable                                        1 Quellen                                em
+195 archive.nrao.edu                                1  map                   97 lines                                           1 Quellen                                em
+196 services.nvd.nist.gov                           1  field                 vulnerabilities[1]                                 1 Quellen                                em
+197 eyes.nasa.gov                                   1  count                 112 lines                                          1 Quellen                                em
+198 api.safecast.org                                1  map                   1 lines                                            1 Quellen                                em
+199 api.reliefweb.int                               1  map                   unreachable                                        1 Quellen                                diffusion
+200 www.temis.nl                                    1  rows                  202 lines                                          1 Quellen                                em
+201 terrabrasilis.dpi.inpe.br                       1  map                   65 lines                                           1 Quellen                                diffusion
+202 db.satnogs.org                                  1  map                   1 lines                                            1 Quellen                                em
+203 data.cdc.gov                                    1  field                 1 lines                                            1 Quellen                                em
+204 weather.uwyo.edu                                1  map                   unreachable                                        1 Quellen                                thermal
+205 vsx.aavso.org                                   1  map                   1 lines                                            1 Quellen                                em
+206 newton.spacedys.com                             1  map                   169 lines                                          1 Quellen                                gravity
+207 opendata.dwd.de                                 1  field                 content[27]                                        1 Quellen                                em
+208 api.met.no                                      1  field                 unreachable                                        1 Quellen                                em
+209 opendata.ecdc.europa.eu                         1  count                 51158 lines                                        1 Quellen                                em
+210 epoch.ai                                        1  last_row              6291 lines                                         1 Quellen                                em
+211 www.peeringdb.com                               1  count                 data[1]                                            1 Quellen                                em
+212 modis.ornl.gov                                  1  field                 unreachable                                        1 Quellen                                em
+213 restcountries.com                               1  field                 errors[1]                                          1 Quellen                                em
+214 api.semanticscholar.org                         1  field                 unreachable                                        1 Quellen                                em
+215 www.submarinecablemap.com                       1  count                 718 features                                       1 Quellen                                em
+216 api.unhcr.org                                   1  count                 items[1]                                           1 Quellen                                em
+217 www.star.nesdis.noaa.gov                        1  last_row              unreachable                                        1 Quellen                                em
+218 xmart-api-public.who.int                        1  count                 value[120000]                                      1 Quellen                                em
+219 www.bodc.ac.uk                                  1  map                   1 lines                                            1 Quellen                                diffusion
+220 www.chime-frb.ca                                1                        199 lines                                          1 Quellen                                em
+221 mars.nasa.gov                                   1                        soles[4719]                                        1 Quellen                                em
+222 crates.io                                       1  field                 crates[1]                                          1 Quellen                                em
+223 floodobservatory.colorado.edu                   1  rows                  unreachable                                        1 Quellen                                diffusion
+224 dasch.rc.fas.harvard.edu                        1  map                   55 lines                                           1 Quellen                                em
+225 re.jrc.ec.europa.eu                             1                        unreachable                                        1 Quellen                                em
+226 eogdata.mines.edu                               1  map                   unreachable                                        1 Quellen                                em
+227 esa-sst-cci-browser.ceda.ac.uk                  1  map                   unreachable                                        1 Quellen                                thermal
+228 vires.services                                  1  rows                  unreachable                                        1 Quellen                                gravity
+229 services.terrascope.be                          1  map                   100 features                                       1 Quellen                                diffusion
+230 catalogue.clms.copernicus.eu                    1  map                   unreachable                                        1 Quellen                                em
+231 usdmdataservices.unl.edu                        1  field                 unreachable                                        1 Quellen                                em
+232 ows.emodnet-humanactivities.eu                  1  count                 unreachable                                        1 Quellen                                em
+233 erddap.dataexplorer.oceanobservatories.org      1  last_row              28187 lines                                        1 Quellen                                em
+234 datacenter.iers.org                             1  rows                  unreachable                                        1 Quellen                                gravity
+235 maia.usno.navy.mil                              1                        181 lines                                          1 Quellen                                em
+236 network.igs.org                                 1  map                   data[20]                                           1 Quellen                                seismic-surface
+237 www.tng-project.org                             1  map                   79 lines                                           1 Quellen                                gravity
+238 www.ioc-sealevelmonitoring.org                  1  map                   1 lines                                            1 Quellen                                gravity
+239 ds.iris.edu                                     1  rows                  unreachable                                        1 Quellen                                seismic-body
+240 landsatlook.usgs.gov                            1  map                   10 features                                        1 Quellen                                em
+241 tess.mit.edu                                    1  rows                  15905 lines                                        1 Quellen                                em
+242 www.crystallography.net                         1  field                 1 lines                                            1 Quellen                                em
+243 aa.usno.navy.mil                                1                        unreachable                                        1 Quellen                                em
+244 data.giss.nasa.gov                              1  rows                  149 lines                                          1 Quellen                                thermal
+245 modis.gsfc.nasa.gov                             1                        335 lines                                          1 Quellen                                em
+246 physics.nist.gov                                1  rows                  360 lines                                          1 Quellen                                em
+247 psl.noaa.gov                                    1  rows                  89 lines                                           1 Quellen                                thermal
+248 gis.ngdc.noaa.gov                               1  field                 keys:error                                         1 Quellen                                gravity
+249 registry.npmjs.org                              1  field                 unreachable                                        1 Quellen                                em
+250 api.astrocats.space                             1  field                 keys:message                                       1 Quellen                                em
+251 my.cmems-du.eu                                  1  map                   257 lines                                          1 Quellen                                em
+252 world.openfoodfacts.org                         1  field                 count=4654273                                      1 Quellen                                em
+253 api.openinframap.org                            1  map                   unreachable                                        1 Quellen                                em
+254 stac.openlandmap.org                            1  map                   1 lines                                            1 Quellen                                diffusion
+255 paleobiodb.org                                  1  field                 records[1]                                         1 Quellen                                em
+256 api.openalex.org                                1  field                 results[1]                                         1 Quellen                                em
+257 atlas.ripe.net                                  1  map                   count=14427                                        1 Quellen                                em
+258 gis1.servirglobal.net                           1  map                   keys:error                                         1 Quellen                                diffusion
+259 tevcat2.tevcat.org                              1  map                   1 lines                                            1 Quellen                                em
+260 data.cosmic.ucar.edu                            1  rows                  9 lines                                            1 Quellen                                diffusion
+261 rest.uniprot.org                                1  field                 unreachable                                        1 Quellen                                em
+262 nwis.waterdata.usgs.gov                         1  rows                  unreachable                                        1 Quellen                                diffusion
+263 www.sciencebase.gov                             1  map                   unreachable                                        1 Quellen                                diffusion
+264 developer.uspto.gov                             1  field                 99 lines                                           1 Quellen                                em
+265 www.wikidata.org                                1  field                 keys:batchcomplete,query                           1 Quellen                                em
+266 api.openbrewerydb.org                           1  map                   1 lines                                            1 Quellen                                em
+267 api.marinespecies.org                           1  map                   unreachable                                        1 Quellen                                diffusion
+268 services7.arcgis.com                            1  map                   360 features                                       1 Quellen                                diffusion
+269 www.glims.org                                   1  map                   unreachable                                        1 Quellen                                thermal
+270 stationview.raspberryshake.org                  1  map                   1 lines                                            1 Quellen                                seismic-surface
+271 egg.astro.cornell.edu                           1  map                   15856 lines                                        1 Quellen                                em
+272 www.metoffice.gov.uk                            1                        178 lines                                          1 Quellen                                em
+273 data-api.globalforestwatch.org                  1  field                 keys:data,status                                   1 Quellen                                em
+274 esgf.ceda.ac.uk                                 1                        145 lines                                          1 Quellen                                em
+275 stac.eoapi.dev                                  1  count                 numberMatched=41                                   1 Quellen                                em
+276 icgem.gfz-potsdam.de                            1  last_row              713 lines                                          1 Quellen                                em
+277 api.open-elevation.com                          1  map                   unreachable                                        1 Quellen                                em
+278 planetarycomputer.microsoft.com                 1  count                 numberMatched=136                                  1 Quellen                                em
+
+  GESAMT: 278 Hosts, 2208 Quellen
