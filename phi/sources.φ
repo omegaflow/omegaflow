@@ -21459,6 +21459,19 @@ field S1.4 flux_14ghz_mjy
 field MajAxis majaxis_arcsec
 field MinAxis minaxis_arcsec
 
+source vizier_nvss_radio_shards
+ttl 86400
+force em
+repeat ra 0 360 24
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_nvss_radio_{repeat_bin}.json
+format json
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field S1_4 flux_14ghz_mjy
+field MajAxis majaxis_arcsec
+field MinAxis minaxis_arcsec
+
 source vizier_nvss_radio_catalog
 ttl 86400
 force em
