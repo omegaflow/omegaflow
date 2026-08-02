@@ -34,6 +34,15 @@ TIMEOUT = int(os.environ.get("TAP_TIMEOUT", "120"))
 SLEEP = float(os.environ.get("TAP_SLEEP", "2"))
 MAX_SOURCES = int(os.environ.get("TAP_MAX_SOURCES", "0"))
 
+# Catalogs too large for a single flat JSON (would exceed release/server limits).
+# These need spatial sharding; skip them so they don't fail verification.
+HUGE_CATALOGS = {
+    "vizier_nvss_radio", "vizier_nvss_radio_catalog", "vizier_nvss_galcenter",
+    "vizier_first_radio", "vizier_first_radio_catalog", "vizier_gleam_extragalactic_catalog",
+    "vizier_panstarrs_dr2_catalog", "vizier_2dfgrs", "vizier_catwise_agn_candidates",
+    "astro_vizier_panstarrs", "astro_vizier_2mass",
+}
+
 TAP_MARKERS = [
     "/tap/sync", "tapvizier", "heasarc.gsfc.nasa.gov/xamin",
     "irsa.ipac.caltech.edu/TAP", "mast.stsci.edu/vo-tap",
@@ -318,6 +327,10 @@ def main():
         print(f"--- {name}", file=sys.stderr)
         if args.dry_run:
             print(f"    {s['url'][:120]}", file=sys.stderr)
+            continue
+        if name in HUGE_CATALOGS:
+            print("    HUGE catalog (needs sharding) - skip", file=sys.stderr)
+            skipped += 1
             continue
         try:
             url = strip_top(s["url"])

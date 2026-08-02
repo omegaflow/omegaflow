@@ -192,7 +192,7 @@ jobs:
         env:
           CATALOGS_TOKEN: ${{ secrets.CATALOGS_TOKEN }}
           GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
-          TAP_MAX_ROWS: "300000"
+          TAP_MAX_ROWS: "0"
           TAP_MAX_SOURCES: "25"
         run: |
           # astropy handles VOTable BINARY/BINARY2/TABLEDATA (cloud-side only)
