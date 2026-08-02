@@ -20425,24 +20425,25 @@ dist_key 2 3.085677581e16
 source universe_first_radio
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+%22VIII/92/first14%22
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_first.json
 cmap data
 tau_key _dist_m
-ra_key 0
-dec_key 1
-field_in 2 peak_jy
-field_in 3 int_jy
+ra_key RAJ2000
+dec_key DEJ2000
+field Fpeak peak_jy
+field Fint int_jy
 
 source universe_frb_catalog_aa
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+TNS,RAJ2000,DEJ2000,DM+FROM+%22J/A%2BA/693/A279/frbs%22
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_frb.json
+format json
 cmap data
 tau_key _dist_m
-ra_key 1
-dec_key 2
-field_in 0 tns_name
-field_in 3 dm
+ra_key RAJ2000
+dec_key DEJ2000
+field Name tns_name
+field DM dm
 
 source universe_frb_catalog_pasa
 ttl 86400
@@ -20692,12 +20693,13 @@ field_in 2 par
 source universe_nvss_radio
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,%22S1.4%22+FROM+%22VIII/65/nvss%22
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_nvss.json
+format json
 cmap data
 tau_key _dist_m
-ra_key 0
-dec_key 1
-field_in 2 flux_jy
+ra_key RAJ2000
+dec_key DEJ2000
+field S1_4 flux_14ghz_mjy
 
 source universe_xmm_4xmm_dr13
 ttl 86400
@@ -20837,7 +20839,7 @@ field HR2 hardness_ratio_2
 source vizier_6dfgs
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,cz,e_cz,bJmag,%22S%2FG%22+FROM+"VII/259/6dfgs"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+bJmag+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_6dfgs.json
 format text
 rows
 ra_key RAJ2000
@@ -20977,7 +20979,7 @@ field Dist distance_pc
 source vizier_catwise_agn_candidates
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RA_ICRS,DE_ICRS,W1mproPM,W2mproPM,pmRA,pmDE+FROM+"II/365/catwise"+WHERE+RA_ICRS+IS+NOT+NULL+AND+W1mproPM<8+ORDER+BY+W1mproPM+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_catwise_agn.json
 format text
 rows
 ra_key RA_ICRS
@@ -21064,7 +21066,7 @@ dist_key Dist
 source vizier_first_radio
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,Fpeak,Fint,Maj,Min+FROM+"VIII/92/first14"+WHERE+Fpeak%3E10+ORDER+BY+Fpeak+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_first.json
 format text
 rows
 ra_key RAJ2000
@@ -21077,7 +21079,7 @@ field Min minaxis_arcsec
 source vizier_first_radio_catalog
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,Fpeak,Fint,Maj+FROM+%22VIII/92/first14%22+WHERE+Fpeak%3E5+ORDER+BY+Fpeak+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_first.json
 format text
 rows
 ra_key RAJ2000
@@ -21245,7 +21247,7 @@ dist_key Rsun
 source vizier_hecate_galaxies
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,HRV,D,W1mag,W2mag+FROM+"J/MNRAS/506/1896/hecate"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+D+ASC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hecate.json
 format text
 rows
 ra_key RAJ2000
@@ -21328,7 +21330,7 @@ field Flag quality_flag
 source vizier_lotss_dr3
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Speak,SpeakTot,Maj,DCMaj,Source+FROM+"J/A+A/707/A198/lotssdr3"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SpeakTot+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_lotss_dr3.json
 format text
 rows
 ra_key RAJ2000
@@ -21341,7 +21343,7 @@ field Source source_name
 source vizier_lotss_dr3_radio
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Speak,SpeakTot,Maj,DCMaj,Source+FROM+"J/A+A/707/A198/lotssdr3"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SpeakTot+DESC
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_lotss_dr3.json
 format text
 rows
 ra_key RAJ2000
@@ -22179,6 +22181,7 @@ source astro_frb_chime
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_frb.json
+format json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
