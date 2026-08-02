@@ -409,66 +409,81 @@ fn presence_probe() {
         let fieldVisible = true;
         let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
         let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0,0];
+        let gpuInitPromise = null;
         async function initFieldGPU() {
             if (!navigator.gpu || gpu) return;
-            try {
-                const adapter = await navigator.gpu.requestAdapter();
-                if (!adapter) return;
-                const device = await adapter.requestDevice();
-                device.lost.then(() => { gpu = null; });
-                fieldCtx = fieldCanvas.getContext('webgpu');
-                fieldCap = 0;
-                fieldBind = null;
-                const format = navigator.gpu.getPreferredCanvasFormat();
-                fieldCtx.configure({ device, format, alphaMode: 'opaque' });
-                const module = device.createShaderModule({ code: fieldShader });
-                fieldLayout = device.createBindGroupLayout({ entries: [
-                    { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
-                    { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
-                    { binding: 2, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
-                    { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
-                ] });
-                fieldPipe = device.createRenderPipeline({
-                    layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
-                    vertex: { module, entryPoint: 'vs' },
-                    fragment: {
-                        module, entryPoint: 'fs',
-                        targets: [{
-                            format,
-                            blend: {
-                                color: { srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha', operation: 'add' },
-                                alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' }
-                            }
-                        }]
-                    },
-                    primitive: { topology: 'triangle-list' }
-                });
-                probePipe = device.createComputePipeline({
-                    layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
-                    compute: { module, entryPoint: 'presence_probe' }
-                });
-                probeBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
-                probeRead = device.createBuffer({ size: 32, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
-                vpBuf = device.createBuffer({ size: 112, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
-                gpu = device;
-            } catch { gpu = null; }
+            if (gpuInitPromise) return gpuInitPromise;
+            gpuInitPromise = (async () => {
+                try {
+                    const adapter = await navigator.gpu.requestAdapter();
+                    if (!adapter) return;
+                    const device = await adapter.requestDevice();
+                    device.lost.then(() => { gpu = null; });
+                    fieldCtx = fieldCanvas.getContext('webgpu');
+                    fieldCap = 0;
+                    fieldBind = null;
+                    const format = navigator.gpu.getPreferredCanvasFormat();
+                    fieldCtx.configure({ device, format, alphaMode: 'opaque' });
+                    const module = device.createShaderModule({ code: fieldShader });
+                    fieldLayout = device.createBindGroupLayout({ entries: [
+                        { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
+                        { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
+                        { binding: 2, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
+                        { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
+                    ] });
+                    fieldPipe = device.createRenderPipeline({
+                        layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
+                        vertex: { module, entryPoint: 'vs' },
+                        fragment: {
+                            module, entryPoint: 'fs',
+                            targets: [{
+                                format,
+                                blend: {
+                                    color: { srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha', operation: 'add' },
+                                    alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' }
+                                }
+                            }]
+                        },
+                        primitive: { topology: 'triangle-list' }
+                    });
+                    probePipe = device.createComputePipeline({
+                        layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
+                        compute: { module, entryPoint: 'presence_probe' }
+                    });
+                    probeBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+                    probeRead = device.createBuffer({ size: 32, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+                    vpBuf = device.createBuffer({ size: 112, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+                    gpu = device;
+                } catch (e) { gpu = null; reportState('gpu', String(e)); }
+            })();
+            gpuInitPromise.catch(() => {}).finally(() => { gpuInitPromise = null; });
+            return gpuInitPromise;
         }
         initFieldGPU();
         function ensureFieldCapacity(n) {
             if (fieldCap > 0 && n <= fieldCap) return;
+            if (!gpu) return;
+            if (!vpBuf || !probeBuf) { initFieldGPU(); return; }
             let c = 256;
             while (c < n) c <<= 1;
             fieldCap = c;
             if (fieldBuf) fieldBuf.destroy();
             if (metaBuf) metaBuf.destroy();
-            fieldBuf = gpu.createBuffer({ size: fieldCap * 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
-            metaBuf = gpu.createBuffer({ size: fieldCap * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
-            fieldBind = gpu.createBindGroup({ layout: fieldLayout, entries: [
-                { binding: 0, resource: { buffer: fieldBuf } },
-                { binding: 1, resource: { buffer: metaBuf } },
-                { binding: 2, resource: { buffer: vpBuf } },
-                { binding: 3, resource: { buffer: probeBuf } }
-            ] });
+            try {
+                fieldBuf = gpu.createBuffer({ size: fieldCap * 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+                metaBuf = gpu.createBuffer({ size: fieldCap * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+                if (!fieldBuf || !metaBuf) { reportState('gpu', 'ensureFieldCapacity: fieldBuf/metaBuf null'); return; }
+                fieldBind = gpu.createBindGroup({ layout: fieldLayout, entries: [
+                    { binding: 0, resource: { buffer: fieldBuf } },
+                    { binding: 1, resource: { buffer: metaBuf } },
+                    { binding: 2, resource: { buffer: vpBuf } },
+                    { binding: 3, resource: { buffer: probeBuf } }
+                ] });
+            } catch (e) {
+                fieldCap = 0;
+                fieldBind = null;
+                reportState('gpu', 'bindgroup: ' + String(e));
+            }
         }
         async function probePresence() {
             if (!gpu || probePending || fieldCount === 0) return;
