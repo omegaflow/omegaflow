@@ -95,6 +95,57 @@ def extract_table(url):
     return m.group(1) if m else None
 
 
+def tap_schema_columns(url, table):
+    """Query TAP_SCHEMA.columns for the actual column names.
+    Returns list of column names, or None if the query fails."""
+    if not table or "heasarc" not in url:
+        return None
+    base = url.split("QUERY=")[0]
+    q = f"SELECT column_name FROM TAP_SCHEMA.columns WHERE table_name='{table}'"
+    try:
+        text = fetch(base + "QUERY=" + urllib.parse.quote_plus(q))
+    except Exception:
+        return None
+    rows = votable_to_json(text)
+    if rows is None:
+        rows = csv_to_json(text)
+    if not rows:
+        return None
+    return [list(r.values())[0] for r in rows]
+
+
+def repair_query_for_schema(url):
+    """Check SELECT columns against TAP_SCHEMA. If they don't match,
+    return a repaired URL that uses SELECT * (or available columns).
+    Returns (url, repaired, missing_cols)."""
+    decoded = urllib.parse.unquote_plus(url)
+    sel = re.search(r"SELECT\s+(.*?)\s+FROM", decoded, re.I | re.DOTALL)
+    if not sel:
+        return url, False, []
+    sel_cols = [c.strip().strip('"') for c in
+                re.sub(r"TOP\s+\d+\s*", "", sel.group(1), flags=re.I).split(",")]
+    
+    table = extract_table(decoded)
+    actual = tap_schema_columns(decoded, table)
+    if actual is None:
+        return url, False, []
+    missing = [c for c in sel_cols if c not in actual]
+    if not missing:
+        return url, False, []
+    # Repair: replace SELECT columns with SELECT *
+    repaired = re.sub(r"SELECT\s+.*?\s+FROM", "SELECT * FROM", decoded, count=1, flags=re.I | re.DOTALL)
+    repaired = re.sub(r"TOP\s+\d+\s*", "", repaired, count=1, flags=re.I)
+    # Remove ORDER BY referencing missing columns
+    for mc in missing:
+        repaired = re.sub(r"\s*ORDER\s+BY\s+" + re.escape(mc) + r"\s*(ASC|DESC)?\s*", " ", repaired, flags=re.I)
+    # Re-encode query part
+    if "QUERY=" in url:
+        base, _, _ = url.partition("QUERY=")
+        q = repaired.split("QUERY=", 1)[1] if "QUERY=" in repaired else repaired
+        return base + "QUERY=" + urllib.parse.quote_plus(q), True, missing
+    return repaired, True, missing
+
+
 def detect_ra_col(url):
     """Detect the RA column name from the SELECT list."""
     decoded = urllib.parse.unquote_plus(url)
@@ -398,6 +449,13 @@ def main():
             continue
         try:
             url = strip_top(s["url"])
+            url, repaired, missing_cols = repair_query_for_schema(url)
+            if missing_cols:
+                print(f"    SCHEMA MISMATCH: {missing_cols} (repaired={'yes' if repaired else 'no'})",
+                      file=sys.stderr)
+                if not repaired:
+                    skipped += 1
+                    continue
             ra_col = detect_ra_col(url)
             rows, truncated, n_shards = fetch_full_spatial(url, ra_col)
             if not rows:
