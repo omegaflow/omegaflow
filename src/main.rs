@@ -2062,6 +2062,9 @@ struct SourceConfig {
     stations_lat: String,
     stations_lon: String,
     stations_id: String,
+    flux_from_mag: Option<String>,
+    reach_ttl: Option<u64>,
+    catalog_epoch: Option<f64>,
 }
 
 struct Archive {
@@ -2692,6 +2695,9 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_stations_lon = String::from("lng");
     let mut cur_stations_id = String::from("id");
     let mut cur_name = String::new();
+    let mut cur_flux_from_mag: Option<String> = None;
+    let mut cur_reach_ttl: Option<u64> = None;
+    let mut cur_catalog_epoch: Option<f64> = None;
     let mut active = false;
 
     macro_rules! flush {
@@ -2784,6 +2790,9 @@ fn load_sources() -> Vec<SourceConfig> {
                             stations_lat: cur_stations_lat.clone(),
                             stations_lon: cur_stations_lon.clone(),
                             stations_id: cur_stations_id.clone(),
+                            flux_from_mag: cur_flux_from_mag.clone(),
+                            reach_ttl: cur_reach_ttl,
+                            catalog_epoch: cur_catalog_epoch,
                         });
                     }
                 }
@@ -2829,6 +2838,9 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_stations_id = String::from("id");
                 cur_extracts.clear();
                 cur_headers.clear();
+                cur_flux_from_mag = None;
+                cur_reach_ttl = None;
+                cur_catalog_epoch = None;
                 cur_name = parts.get(1).unwrap_or(&"").to_string();
                 active = true;
             }
@@ -2843,6 +2855,9 @@ fn load_sources() -> Vec<SourceConfig> {
             "stations_lat" => cur_stations_lat = parts.get(1).unwrap_or(&"lat").to_string(),
             "stations_lon" => cur_stations_lon = parts.get(1).unwrap_or(&"lng").to_string(),
             "stations_id" => cur_stations_id = parts.get(1).unwrap_or(&"id").to_string(),
+            "flux_from_mag" => cur_flux_from_mag = parts.get(1).map(|s| s.to_string()),
+            "reach_ttl" => cur_reach_ttl = parts.get(1).and_then(|s| s.parse().ok()),
+            "catalog_epoch" => cur_catalog_epoch = parts.get(1).and_then(|s| s.parse().ok()),
             "target" => cur_target = parts.get(1).map(|s| s.to_string()),
             "catalog" => cur_catalog = parts.get(1).map(|s| s.to_string()),
             "max_freq" => cur_max_freq = parts.get(1).and_then(|s| s.parse().ok()),
@@ -4775,6 +4790,18 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
     }
     for p in &mut pending {
         p.fields.retain(|(_, v)| v.is_finite());
+        if let Some(ref mag_key) = src.flux_from_mag {
+            if let Some((_, v)) = p
+                .fields
+                .iter_mut()
+                .find(|(n, _)| n.as_str() == mag_key.as_str())
+            {
+                *v = 10.0f64.powf(-0.4 * *v);
+            }
+        }
+        if let Some(ce) = src.catalog_epoch {
+            p.epoch = ce;
+        }
     }
     pending.retain(|p| !p.fields.is_empty());
     pending
@@ -4911,7 +4938,8 @@ fn materialize(
                     })
                 })
                 .unwrap_or(tau_default);
-            let reach_time = src.ttl as f64 + tau;
+            let effective_ttl = src.reach_ttl.unwrap_or(src.ttl) as f64;
+            let reach_time = effective_ttl + tau;
             let extent = if is_diff {
                 (2.0 * v_or_d * reach_time).sqrt()
             } else {
@@ -4960,17 +4988,25 @@ fn fetch_priority(
     presences: &[(f64, f64, f64, f64, f64)],
 ) -> u8 {
     if is_new {
-        // First run: materialize the point cloud immediately.
-        // 0 = CDN static catalogs (millions of objects) → instant density.
-        // 1..~255 = other static sources, log-scaled by TTL (bigger first).
-        if url.contains("omegaflow/catalogs") {
-            if url.contains("/v1.0/") {
-                return 0;
+        // First run: materialize near the presence first (First Light in seconds).
+        // Proximity-weighted, short-TTL live sources first; big CDN catalogs last.
+        let mut min_d = f64::INFINITY;
+        for &(_, px, py, pz, _) in presences {
+            let d = ((px - pos.0).powi(2) + (py - pos.1).powi(2) + (pz - pos.2).powi(2)).sqrt();
+            if d < min_d {
+                min_d = d;
             }
-            return 1;
         }
-        let log_ttl = (ttl.max(1) as f64).log10().min(5.0) / 5.0;
-        return 1 + (255.0 * (1.0 - log_ttl)) as u8;
+        let proximity = if r > 0.0 {
+            1.0 - (min_d / (r + min_d)).min(1.0)
+        } else {
+            0.0
+        };
+        let urgency = 1.0 - (ttl.max(1) as f64).log10().min(5.0) / 5.0;
+        if url.contains("omegaflow/catalogs") {
+            return 250;
+        }
+        return ((proximity * 0.7 + urgency * 0.3) * 240.0) as u8;
     }
     // Steady state: hybrid of proximity (how relevant to the observer)
     // and refresh urgency (short TTL = must refresh sooner).
@@ -5071,7 +5107,8 @@ fn warm_cache(archive: Arc<Archive>) {
                     for f in src.force.split_whitespace() {
                         if let Some((v_or_d, tau_default, is_diff, _)) = force_constants(f) {
                             let tau = src.tau.unwrap_or(tau_default);
-                            let reach_time = src.ttl as f64 + tau;
+                            let effective_ttl = src.reach_ttl.unwrap_or(src.ttl) as f64;
+                            let reach_time = effective_ttl + tau;
                             let this_r = if is_diff {
                                 (2.0 * v_or_d * reach_time).sqrt()
                             } else {

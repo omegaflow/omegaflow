@@ -344,7 +344,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let tau_freq = 1.0 / max(tau, exp2(-32.0));
     let color_shift = clamp(log2(tau_freq) / 8.0, -0.25, 0.25);
     let hue = fract(hue_center + color_shift);
-    let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y)) + 1.0) / 8.0 + 0.25, 0.0, 1.0);
+    let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y)) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
     let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
     out.color = rgb;
     out.force_type = f_type;
