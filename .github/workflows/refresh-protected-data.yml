@@ -188,7 +188,15 @@ jobs:
           fi
 
 
-
+      - name: TAP catalogs -> CDN
+        env:
+          CATALOGS_TOKEN: ${{ secrets.CATALOGS_TOKEN }}
+          TAP_MAX_ROWS: "300000"
+        run: |
+          # astropy handles VOTable BINARY/BINARY2/TABLEDATA (cloud-side only)
+          pip install -q astropy numpy 2>/dev/null || true
+          # Convert remaining TAP-STATIC catalog sources to CDN JSON on v1.0
+          python3 scripts/tap_to_cdn.py || echo "::warning::TAP conversion had failures (see logs)"
 
       - name: Mirror static files -> v1.0
         run: |
