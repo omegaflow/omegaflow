@@ -19861,7 +19861,10 @@ cmap data
 tau_key _dist_m
 ra_key ra
 dec_key dec
-dist_key dist_au 1.495978707e11
+dist_key _dist_m 1.0
+pmra_key pmra
+pmdec_key pmdec
+field optical_depth ring_optical_depth
 field zone ring_zone
 
 source orbit_trace_sun
