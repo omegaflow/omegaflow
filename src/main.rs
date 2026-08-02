@@ -5716,6 +5716,9 @@ mod tests {
             stations_lat: String::new(),
             stations_lon: String::new(),
             stations_id: String::new(),
+            flux_from_mag: None,
+            reach_ttl: None,
+            catalog_epoch: None,
         };
         let url = render_source_url(&src, 0.0, 0.0, 0.0, 0.0, 1000.0, None);
         assert!(url.contains("Ceres"));
@@ -5748,6 +5751,9 @@ mod tests {
             stations_lat: String::new(),
             stations_lon: String::new(),
             stations_id: String::new(),
+            flux_from_mag: None,
+            reach_ttl: None,
+            catalog_epoch: None,
         };
         let body = render_source_body(&src, 0.0, 0.0, 0.0, 0.0, 100000.0);
         assert!(body.is_some());
@@ -5794,6 +5800,9 @@ mod tests {
             stations_lat: String::new(),
             stations_lon: String::new(),
             stations_id: String::new(),
+            flux_from_mag: None,
+            reach_ttl: None,
+            catalog_epoch: None,
         };
         let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
         let now = super::tdb_now();

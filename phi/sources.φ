@@ -20492,7 +20492,10 @@ plx_key 3
 field_in 2 par
 
 source astro_gaia_nearby_cmap
-ttl 86400
+ttl 315576000000
+reach_ttl 86400
+catalog_epoch 504921600.0
+flux_from_mag celestial_gaia_nearby_g_magnitude
 force gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10_cmap.json
 ssb
@@ -20647,7 +20650,10 @@ field_in 3 parallax_mas
 field_in 4 metallicity_dex
 
 source astro_gaia_nearby_1000
-ttl 86400
+ttl 315576000000
+reach_ttl 86400
+catalog_epoch 504921600.0
+flux_from_mag mag_g
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
 cmap data
