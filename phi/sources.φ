@@ -22,7 +22,7 @@ field gs velocity_kn
 field track heading_deg
 field baro_rate vertical_rate_ftmin
 
-source universe_iss_history
+source astro_iss_history
 ttl 10
 force em
 pos universe_iss_history_lat universe_iss_history_lon universe_iss_history_alt 1000
@@ -10466,7 +10466,7 @@ field properties.StartDate start_date
 field properties.EndDate end_date
 field properties.Area area_km2
 
-source cosmos_neo_close_approaches
+source astro_neo_close_approaches
 ttl 3600
 force em
 ssb
@@ -12903,7 +12903,7 @@ url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_triton
 ephemeris orbital_triton_distance
 extent 9.04e-6
 
-source universe_dscovr_epic
+source astro_dscovr_epic
 ttl 3600
 force em
 url https://epic.gsfc.nasa.gov/api/natural/images
@@ -12913,7 +12913,7 @@ lon_key centroid_coordinates.lon
 field_in version universe_dscovr_version
 field_in identifier universe_dscovr_identifier
 
-source universe_jpl_close_approaches
+source astro_jpl_close_approaches
 ttl 3600
 force em
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD&date-min={today}&limit=100
@@ -12925,7 +12925,7 @@ field_in 3 close_approach_date
 field_in 4 distance_au
 field_in 7 v_rel_kms
 
-source universe_jpl_fireballs
+source astro_jpl_fireballs
 ttl 3600
 force em
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
@@ -13993,14 +13993,14 @@ field_in 2 impact_energy_kt
 field_in 7 altitude_km
 field_in 8 velocity_kms
 
-source cosmos_asteroids_numbered
+source astro_asteroids_numbered
 ttl 86400
 force em
 ssb
 url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
 count data cosmos_asteroids_numbered_total
 
-source cosmos_asteroids_positions
+source astro_asteroids_positions
 ttl 86400
 force em
 url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
@@ -14014,14 +14014,14 @@ w_key w
 ma_key ma
 epoch_key epoch
 
-source cosmos_mars_landers
+source astro_mars_landers
 ttl 86400
 force em
 url https://gist.githubusercontent.com/burritojustice/2d967b31c3bd11165b4439ebe98ecb01/raw/8594b09096f93f723c929c397de49ed7ac8ecc64/mars_landers.geojson
 areocentric 1
 flatten features
 
-source cosmos_mars_weather
+source astro_mars_weather
 ttl 86400
 force em
 url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
@@ -14030,7 +14030,7 @@ path soles.0.max_temp cosmos_mars_max_temp_c
 path soles.0.pressure cosmos_mars_pressure_pa
 areocentric 1
 
-source cosmos_tle_catalog
+source astro_tle_catalog
 ttl 86400
 force em
 ssb
@@ -14039,7 +14039,7 @@ field totalItems cosmos_tle_total_satellites
 field totalItems cosmos_tle_total_satellites
 count member cosmos_tle_page_count
 
-source cosmos_tle_search_iss
+source astro_tle_search_iss
 ttl 86400
 force em
 ssb
@@ -19852,7 +19852,7 @@ force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_saturn.json
 vectors orbital_saturn_rg
 
-source cosmos_saturn_rings
+source astro_saturn_rings
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/saturn_rings_10k.json
@@ -20398,7 +20398,7 @@ url https://rest.uniprot.org/uniprotkb/statistics
 wgs84 46.233 6.056
 field statistics.0.value molecular_proteins_total
 
-source universe_exoplanet_hosts
+source astro_exoplanet_hosts
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
@@ -20409,7 +20409,7 @@ dec_key dec
 field_in sy_dist universe_exoplanet_distance_pc
 dist_key 3 3.085677581e16
 
-source universe_exoplanet_params
+source astro_exoplanet_params
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
@@ -20422,7 +20422,7 @@ field_in pl_orbper universe_exoplanet_period_d
 field_in pl_rade universe_exoplanet_radius_re
 dist_key 2 3.085677581e16
 
-source universe_first_radio
+source astro_first_radio
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_first.json
@@ -20433,7 +20433,7 @@ dec_key DEJ2000
 field Fpeak peak_jy
 field Fint int_jy
 
-source universe_frb_catalog_aa
+source astro_frb_catalog_aa
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_frb.json
@@ -20445,7 +20445,7 @@ dec_key DEJ2000
 field Name tns_name
 field DM dm
 
-source universe_frb_catalog_pasa
+source astro_frb_catalog_pasa
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_other_PASA_33.45_frbcat.json
@@ -20456,7 +20456,7 @@ dec_key 11
 field_in 1 frb_name
 field_in 23 dm
 
-source universe_gaia_astrometric_binaries
+source astro_gaia_astrometric_binaries
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
@@ -20469,7 +20469,7 @@ field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 ruwe
 
-source universe_gaia_blue_stragglers
+source astro_gaia_blue_stragglers
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.1%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%3E2
@@ -20480,7 +20480,7 @@ dec_key 1
 plx_key 3
 field_in 2 bp_rp
 
-source universe_gaia_bright_giants
+source astro_gaia_bright_giants
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20%3C%208%20AND%20parallax%20%3E%205
@@ -20491,7 +20491,7 @@ dec_key 1
 plx_key 3
 field_in 2 par
 
-source universe_gaia_nearby_cmap
+source astro_gaia_nearby_cmap
 ttl 86400
 force gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10_cmap.json
@@ -20506,7 +20506,7 @@ pmra_key pmra
 pmdec_key pmdec
 field_in phot_g_mean_mag celestial_gaia_nearby_g_magnitude
 
-source universe_gaia_bulge
+source astro_gaia_bulge
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20SQRT%28POWER%28ra-266.4%2C2%29%2BPOWER%28dec%2B29%2C2%29%29%3C5%20AND%20parallax%20IS%20NOT%20NULL
@@ -20517,7 +20517,7 @@ dec_key 1
 plx_key 3
 field_in 2 mag_g
 
-source universe_gaia_cool_dwarfs
+source astro_gaia_cool_dwarfs
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E2%20AND%20bp_rp%3C4%20AND%20parallax%3E20
@@ -20528,7 +20528,7 @@ dec_key 1
 plx_key 3
 field_in 2 mag_g
 
-source universe_gaia_deep_mag
+source astro_gaia_deep_mag
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20BETWEEN%2015%20AND%2018%20AND%20parallax%20IS%20NOT%20NULL
@@ -20540,7 +20540,7 @@ plx_key 3
 field_in 2 mag_g
 field_in 3 par
 
-source universe_gaia_extreme_blue
+source astro_gaia_extreme_blue
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%20-0.3%20AND%20phot_g_mean_mag%20%3C%2013
@@ -20553,7 +20553,7 @@ field_in 2 mag_g
 field_in 3 par
 field_in 4 bp_rp
 
-source universe_gaia_extreme_red
+source astro_gaia_extreme_red
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3E%203.5%20AND%20phot_g_mean_mag%20%3C%2014
@@ -20566,7 +20566,7 @@ field_in 2 mag_g
 field_in 3 par
 field_in 4 bp_rp
 
-source universe_gaia_galactic_plane
+source astro_gaia_galactic_plane
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ABS%28b%29%3C10%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%20IS%20NOT%20NULL
@@ -20577,7 +20577,7 @@ dec_key 1
 plx_key 3
 field_in 2 mag_g
 
-source universe_gaia_giant_branch
+source astro_gaia_giant_branch
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E1.5%20AND%20bp_rp%3C3%20AND%20phot_g_mean_mag%3C12%20AND%20parallax%3E2
@@ -20588,7 +20588,7 @@ dec_key 1
 plx_key 3
 field_in 2 mag_g
 
-source universe_gaia_high_velocity
+source astro_gaia_high_velocity
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20radial_velocity%20IS%20NOT%20NULL%20AND%20ABS%28radial_velocity%29%20%3E%20200
@@ -20600,7 +20600,7 @@ plx_key 3
 field_in 2 mag_g
 field_in 3 par
 
-source universe_gaia_hot_subdwarfs
+source astro_gaia_hot_subdwarfs
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.3%20AND%20phot_g_mean_mag%3C15%20AND%20parallax%3E1
@@ -20611,7 +20611,7 @@ dec_key 1
 plx_key 3
 field_in 2 mag_g
 
-source universe_gaia_lmc
+source astro_gaia_lmc
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
@@ -20622,7 +20622,7 @@ dec_key 1
 plx_key 2
 field_in 2 par
 
-source universe_gaia_main_sequence
+source astro_gaia_main_sequence
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E-0.2%20AND%20bp_rp%3C1%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E5
@@ -20633,18 +20633,7 @@ dec_key 1
 plx_key 3
 field_in 2 mag_g
 
-source universe_gaia_metal_poor
-ttl 86400
-force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%200.5%20AND%20phot_g_mean_mag%20%3C%2014%20AND%20parallax%20%3E%202
-cmap data
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 bp_rp
-
-source universe_gaia_metallicity
+source astro_gaia_metallicity
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cmh_gspphot%20FROM%20gaiadr3.gaia_source%20WHERE%20mh_gspphot%20IS%20NOT%20NULL%20AND%20parallax%20%3E%202
@@ -20657,7 +20646,7 @@ field_in 2 phot_g_mean_mag
 field_in 3 parallax_mas
 field_in 4 metallicity_dex
 
-source universe_gaia_nearby_1000
+source astro_gaia_nearby_1000
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
@@ -20668,7 +20657,7 @@ dec_key 1
 plx_key 3
 field_in 2 mag_g
 
-source universe_gaia_red_clump
+source astro_gaia_red_clump
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E0.8%20AND%20bp_rp%3C1.2%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E3
@@ -20679,7 +20668,7 @@ dec_key 1
 plx_key 3
 field_in 2 bp_rp
 
-source universe_gaia_smc
+source astro_gaia_smc
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
@@ -20690,7 +20679,7 @@ dec_key 1
 plx_key 2
 field_in 2 par
 
-source universe_nvss_radio
+source astro_nvss_radio
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_nvss.json
@@ -20701,7 +20690,7 @@ ra_key RAJ2000
 dec_key DEJ2000
 field S1_4 flux_14ghz_mjy
 
-source universe_xmm_4xmm_dr13
+source astro_xmm_4xmm_dr13
 ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Source,RA_ICRS,DE_ICRS+FROM+%22IX/69/xmm4d13s%22
@@ -24661,7 +24650,7 @@ field_in properties.name technosphere_cable_name
 field_in properties.length technosphere_cable_length_km
 flatten features
 
-source universe_simbad_agn
+source astro_simbad_agn
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
@@ -24670,7 +24659,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_barium_stars
+source astro_simbad_barium_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -24681,7 +24670,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_blazars
+source astro_simbad_blazars
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
@@ -24690,7 +24679,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_blue_compact_dwarfs
+source astro_simbad_blue_compact_dwarfs
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
@@ -24700,7 +24689,7 @@ ra_key RAJ2000
 dec_key DEJ2000
 z_key z
 
-source universe_simbad_blue_giants
+source astro_simbad_blue_giants
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -24711,7 +24700,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_blue_supergiants
+source astro_simbad_blue_supergiants
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -24722,7 +24711,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_brown_dwarfs
+source astro_simbad_brown_dwarfs
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
@@ -24733,7 +24722,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_carbon_stars
+source astro_simbad_carbon_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -24744,7 +24733,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_carbon_stars_var
+source astro_simbad_carbon_stars_var
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -24755,7 +24744,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_cepheids
+source astro_simbad_cepheids
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
@@ -24764,7 +24753,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_ch_stars
+source astro_simbad_ch_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -24775,7 +24764,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_dark_nebulae
+source astro_simbad_dark_nebulae
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
@@ -24784,7 +24773,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_dwarf_galaxies
+source astro_simbad_dwarf_galaxies
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
@@ -24794,7 +24783,7 @@ ra_key RAJ2000
 dec_key DEJ2000
 z_key z
 
-source universe_simbad_dwarf_novae
+source astro_simbad_dwarf_novae
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
@@ -24803,7 +24792,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_eclipsing_binaries
+source astro_simbad_eclipsing_binaries
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
@@ -24812,7 +24801,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_emission_stars
+source astro_simbad_emission_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -24823,7 +24812,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_flare_stars
+source astro_simbad_flare_stars
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
@@ -24832,7 +24821,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_fu_oris
+source astro_simbad_fu_oris
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
@@ -24841,7 +24830,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_galaxies
+source astro_simbad_galaxies
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
@@ -24851,7 +24840,7 @@ ra_key RAJ2000
 dec_key DEJ2000
 z_key z
 
-source universe_simbad_galaxy_clusters
+source astro_simbad_galaxy_clusters
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
@@ -24861,7 +24850,7 @@ ra_key RAJ2000
 dec_key DEJ2000
 z_key z
 
-source universe_simbad_gamma_bursts
+source astro_simbad_gamma_bursts
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
@@ -24870,7 +24859,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_giant_stars
+source astro_simbad_giant_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -24881,7 +24870,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_globular_clusters
+source astro_simbad_globular_clusters
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hecate.json
@@ -24890,7 +24879,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_gravitational_lenses
+source astro_simbad_gravitational_lenses
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
@@ -24899,7 +24888,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_herbig_haro
+source astro_simbad_herbig_haro
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
@@ -24910,7 +24899,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_hii_regions
+source astro_simbad_hii_regions
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
@@ -24920,7 +24909,7 @@ ra_key RAJ2000
 dec_key DEJ2000
 z_key z
 
-source universe_simbad_hvc
+source astro_simbad_hvc
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
@@ -24930,7 +24919,7 @@ ra_key RAJ2000
 dec_key DEJ2000
 z_key z
 
-source universe_simbad_interstellar_medium
+source astro_simbad_interstellar_medium
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
@@ -24939,7 +24928,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_ir_sources
+source astro_simbad_ir_sources
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
@@ -24948,7 +24937,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_ism
+source astro_simbad_ism
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
@@ -24957,7 +24946,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_long_period
+source astro_simbad_long_period
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
@@ -24966,7 +24955,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_lpv_mira
+source astro_simbad_lpv_mira
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
@@ -24975,7 +24964,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_masers
+source astro_simbad_masers
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
@@ -24984,7 +24973,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_microquasars
+source astro_simbad_microquasars
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
@@ -24993,7 +24982,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_millisecond_pulsars
+source astro_simbad_millisecond_pulsars
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
@@ -25002,7 +24991,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_mira_variables
+source astro_simbad_mira_variables
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
@@ -25011,7 +25000,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_molecule_clouds
+source astro_simbad_molecule_clouds
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
@@ -25020,7 +25009,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_nebulae
+source astro_simbad_nebulae
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
@@ -25029,7 +25018,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_novae
+source astro_simbad_novae
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
@@ -25038,7 +25027,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_oh_maser
+source astro_simbad_oh_maser
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
@@ -25047,7 +25036,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_oh_masers
+source astro_simbad_oh_masers
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
@@ -25056,7 +25045,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_planetary_nebulae
+source astro_simbad_planetary_nebulae
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
@@ -25065,7 +25054,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_post_agb_stars
+source astro_simbad_post_agb_stars
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
@@ -25074,7 +25063,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_pre_ms_stars
+source astro_simbad_pre_ms_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
@@ -25085,7 +25074,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_proper_motion
+source astro_simbad_proper_motion
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_high_pm.json
@@ -25096,7 +25085,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_pulsars
+source astro_simbad_pulsars
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
@@ -25105,7 +25094,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_pulsating_white_dwarfs
+source astro_simbad_pulsating_white_dwarfs
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
@@ -25116,7 +25105,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_quasars
+source astro_simbad_quasars
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
@@ -25125,7 +25114,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_rcrb_variables
+source astro_simbad_rcrb_variables
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
@@ -25134,7 +25123,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_red_giants
+source astro_simbad_red_giants
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -25145,7 +25134,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_red_supergiants
+source astro_simbad_red_supergiants
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -25156,7 +25145,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_reflection_nebulae
+source astro_simbad_reflection_nebulae
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
@@ -25165,7 +25154,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_rr_lyrae
+source astro_simbad_rr_lyrae
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
@@ -25174,7 +25163,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_s_stars
+source astro_simbad_s_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -25185,7 +25174,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_stellar_associations
+source astro_simbad_stellar_associations
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
@@ -25196,7 +25185,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_supernova_remnants
+source astro_simbad_supernova_remnants
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
@@ -25205,7 +25194,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_supernovae
+source astro_simbad_supernovae
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
@@ -25214,7 +25203,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_symbiotic_stars
+source astro_simbad_symbiotic_stars
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
@@ -25223,7 +25212,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_ttauri_stars
+source astro_simbad_ttauri_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
@@ -25234,7 +25223,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_variable_stars
+source astro_simbad_variable_stars
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
@@ -25243,7 +25232,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_white_dwarfs
+source astro_simbad_white_dwarfs
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
@@ -25254,7 +25243,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_wolf_rayet_stars
+source astro_simbad_wolf_rayet_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -25265,7 +25254,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_xray_sources
+source astro_simbad_xray_sources
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
@@ -25274,7 +25263,7 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 
-source universe_simbad_yellow_supergiants
+source astro_simbad_yellow_supergiants
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -25285,7 +25274,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_young_stellar_objects
+source astro_simbad_young_stellar_objects
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
@@ -25296,7 +25285,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source universe_simbad_yso
+source astro_simbad_yso
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
@@ -27378,18 +27367,7 @@ lat_key decimalLatitude
 lon_key decimalLongitude
 field_in species biosphere_gbif_marine_species
 field_in depth biosphere_gbif_depth_m
-source universe_sdss_stars
-ttl 86400
-force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,s.psfmag_g+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.sdssdr13_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.sdssdr13_photoprimary+AS+s+ON+x.original_ext_source_id=s.objid+WHERE+g.parallax+>+0+AND+s.psfmag_g+<+17
-cmap data
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 2
-field_in 3 universe_sdss_gmag
-
-source universe_vizier_2mass
+source astro_vizier_2mass
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14
@@ -27400,19 +27378,7 @@ dec_key 1
 plx_key 2
 field_in 3 universe_2mass_gaia_g_mag
 
-source universe_vizier_apass
-ttl 86400
-force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,e.bmag,e.vmag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.apassdr9_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.apassdr9+AS+e+ON+x.clean_apassdr9_oid=e.recno+WHERE+g.parallax+>+0+AND+e.bmag+<+13
-cmap data
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 2
-field_in 3 universe_vizier_bmag
-field_in 4 universe_vizier_vmag
-
-source universe_vizier_panstarrs
+source astro_vizier_panstarrs
 ttl 86400
 force em gravity
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17
