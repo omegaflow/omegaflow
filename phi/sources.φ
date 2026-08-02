@@ -1,4 +1,4 @@
-source iss_position
+source exosphere_iss_position
 ttl 10
 force em
 pos orbital_iss_lat orbital_iss_lon orbital_iss_alt_km 1000.0
@@ -7,7 +7,7 @@ field latitude orbital_iss_lat
 field longitude orbital_iss_lon
 field altitude orbital_iss_alt_km
 
-source opensky_aircraft_positions
+source exosphere_opensky_aircraft_positions
 ttl 10
 force em
 url https://api.adsb.lol/v2/point/{lat}/{lon}/250
@@ -31,7 +31,7 @@ field 0.latitude universe_iss_history_lat
 field 0.longitude universe_iss_history_lon
 field 0.altitude universe_iss_history_alt
 
-source anu_quantum_entropy
+source subatomic_anu_quantum_entropy
 ttl 60
 force em
 url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
@@ -449,7 +449,7 @@ header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 
 field chart.result.0.meta.regularMarketPrice biosphere_stock_price
 field chart.result.0.meta.chartPreviousClose biosphere_stock_prev_close
 
-source blitzortung_lightning_signals
+source atmosphere_blitzortung_lightning_signals
 ttl 60
 force acoustic
 url https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json
@@ -461,7 +461,7 @@ field time signal_time
 field frequency signal_freq_hz
 field quality signal_quality
 
-source cosmic_radiation_jung
+source magnetosphere_cosmic_radiation_jung
 ttl 60
 force em
 url https://api.open-meteo.com/v1/forecast?latitude=46.95&longitude=7.86&current=shortwave_radiation,uv_index&timezone=auto
@@ -469,14 +469,14 @@ wgs84 46.95 7.86
 field current.shortwave_radiation cosmic_radiation_shortwave_wm2
 field current.uv_index cosmic_radiation_uv_index
 
-source drand_quantum_entropy
+source subatomic_drand_quantum_entropy
 ttl 60
 force em
 ecliptic 1
 url https://api.drand.sh/public/latest
 field round quantum_entropy_generation_round
 
-source emsc_european_seismic_realtime
+source geosphere_emsc_european_seismic_realtime
 ttl 60
 force seismic-body
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
@@ -514,7 +514,7 @@ field 0.proton_speed exosphere_proton_speed_kms
 field 0.proton_density exosphere_proton_density_ncc
 field 0.proton_temperature exosphere_proton_temp_k
 
-source geonet_nz_earthquake_events
+source geosphere_geonet_nz_earthquake_events
 ttl 60
 force seismic-body
 url https://api.geonet.org.nz/quake?MMI=3
@@ -527,7 +527,7 @@ field properties.time event_time
 field properties.depth depth_km
 field properties.mmi mmi_value
 
-source geonet_quakes_strong
+source geosphere_geonet_quakes_strong
 ttl 60
 force seismic-body
 url https://api.geonet.org.nz/quake?MMI=3
@@ -588,7 +588,7 @@ url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.ge
 wgs84 39.749 -105.221
 path features.0.properties.rms geosphere_earth_hum_rms
 
-source ingv_italy_earthquakes
+source geosphere_ingv_italy_earthquakes
 ttl 60
 force seismic-body
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
@@ -600,7 +600,7 @@ field properties.place locality
 field properties.time event_time
 field properties.depth depth_km
 
-source irsc_iran_earthquakes
+source geosphere_irsc_iran_earthquakes
 ttl 60
 force seismic-body
 url http://irsc.ut.ac.ir/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time&starttime={today}T00:00:00
@@ -612,7 +612,7 @@ field properties.place locality
 field properties.time event_time
 field properties.depth depth_km
 
-source jma_japan_eew_public_api
+source magnetosphere_jma_japan_eew_public_api
 ttl 60
 force seismic-body
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
@@ -787,7 +787,7 @@ field time_tag flare_time_utc
 field class flare_classification
 field satellite goes_satellite
 
-source opensky_europe_flights
+source exosphere_opensky_europe_flights
 ttl 60
 force em
 url https://api.adsb.lol/v2/point/50/10/1500
@@ -800,7 +800,7 @@ field alt_baro altitude_ft
 field gs velocity_kn
 field track track_deg
 
-source quantum_nist_randomness_beacon
+source subatomic_quantum_nist_randomness_beacon
 ttl 60
 force em
 url https://beacon.nist.gov/beacon/2.0/pulse/last
@@ -829,7 +829,7 @@ ssb
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 last_obj energy ">=100 MeV" flux radiation_proton_flux_100mev
 
-source scedc_california_earthquakes
+source geosphere_scedc_california_earthquakes
 ttl 60
 force seismic-body
 url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=text&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
@@ -957,7 +957,7 @@ field properties.time event_time_epoch_ms
 field properties.magType magnitude_type
 field properties.depth depth_km
 
-source world_open_sky_aircraft
+source exosphere_world_open_sky_aircraft
 ttl 60
 force em
 url https://api.adsb.lol/v2/point/{lat}/{lon}/500
@@ -971,7 +971,7 @@ vel_key gs
 trk_key track
 vr_key baro_rate
 
-source tmd_thailand_earthquakes
+source geosphere_tmd_thailand_earthquakes
 ttl 120
 force seismic-body
 url https://earthquake.tmd.go.th/earthquake_json.php?limit=200
@@ -1228,7 +1228,7 @@ url https://api.carbonintensity.org.uk/intensity
 wgs84 54.0 -2.0
 path data.0.intensity.actual technosphere_grid_carbon_intensity_gco2_kwh
 
-source bom_nsw_weather_observations
+source atmosphere_bom_nsw_weather_observations
 ttl 300
 force diffusion
 url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
@@ -1242,7 +1242,7 @@ field wind_spd_kmh wind_speed_kmh
 field gust_kmh gust_speed_kmh
 field rain_trace rain_mm
 
-source cdaweb_ace_solar_wind_l1
+source magnetosphere_cdaweb_ace_solar_wind_l1
 ttl 300
 force em
 ecliptic 0.99
@@ -1255,7 +1255,7 @@ field 2 by_gse_nT
 field 3 bz_gse_nT
 field 4 b_magnitude_nT
 
-source cdaweb_dscovr_imf
+source magnetosphere_cdaweb_dscovr_imf
 ttl 300
 force gravity
 ssb
@@ -1264,7 +1264,7 @@ hapi B1F1 exosphere_mag_bt_nt
 
 # === NASA OMNI Combined Solar Wind + IMF (2026-07-30) ===
 
-source emsc_felt_earthquake_reports
+source geosphere_emsc_felt_earthquake_reports
 ttl 300
 force seismic-body
 url https://www.emsc-csem.org/service/rss/rss.php?typ=felt&limit=100
@@ -1688,7 +1688,7 @@ field properties.depth__m_ gcoos_42936_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42936_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42936_current_speed_cms
 
-source gdacs_disaster_alerts
+source geosphere_gdacs_disaster_alerts
 ttl 300
 force seismic-body
 url https://gdacs.org/xml/rss.xml
@@ -1805,7 +1805,7 @@ lat_key sourceInfo.geoLocation.geogLocation.latitude
 lon_key sourceInfo.geoLocation.geogLocation.longitude
 field_in values.0.value.0.value hydrosphere_river_flow_cfs
 
-source gfz_f107_radio_flux
+source astro_gfz_f107_radio_flux
 ttl 300
 force em
 ssb
@@ -1814,21 +1814,21 @@ last Fobs solar_radio_flux_sfu
 
 # === CDAWeb HAPI DSCOVR IMF (2026-07-30) ===
 
-source gfz_kp_index
+source magnetosphere_gfz_kp_index
 ttl 300
 force gravity
 ssb
 url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
 last kp_index magnetosphere_kp_index
 
-source gfz_sunspot_number
+source astro_gfz_sunspot_number
 ttl 300
 force em
 ssb
 url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
 last SN solar_sunspot_number
 
-source goes_eps_protons
+source magnetosphere_goes_eps_protons
 ttl 300
 force em
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json
@@ -1840,7 +1840,7 @@ field_in satellite satellite_id
 field_in energy_channel energy_channel_mev
 field_in flux proton_flux_pfu
 
-source goes_xray_flares
+source magnetosphere_goes_xray_flares
 ttl 300
 force em
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
@@ -1852,7 +1852,7 @@ field_in peak_time flare_peak
 field_in class flare_class
 field_in energy flare_energy_w_m2
 
-source gracedb_lvk_o4_public_superevents
+source astro_gracedb_lvk_o4_public_superevents
 ttl 300
 force gravity
 ssb
@@ -7438,7 +7438,7 @@ lat_key Lat
 lon_key Long
 field_in measures.0.latestReading.value hydrosphere_water_level_m
 
-source intermagnet_niemegk_realtime
+source magnetosphere_intermagnet_niemegk_realtime
 ttl 300
 force em
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json
@@ -7448,7 +7448,7 @@ field 0 timestamp_utc
 field 1 xyz_vector_nT
 field 2 total_field_f_nT
 
-source intermagnet_niemegk_realtime_magnetic_data
+source magnetosphere_intermagnet_niemegk_realtime_magnetic_data
 ttl 300
 force gravity
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json
@@ -7460,7 +7460,7 @@ field 2 total_field_f_nT
 field 3 z_nT
 field 4 f_nT
 
-source ionosphere_giro_dxpredictor
+source magnetosphere_ionosphere_giro_dxpredictor
 ttl 300
 force em
 url https://www.ionosonde.iap-kborn.de/actuellz.htm
@@ -7490,7 +7490,7 @@ url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_iss.js
 format text
 vectors iss_position
 
-source koeri_turkey_earthquakes
+source geosphere_koeri_turkey_earthquakes
 ttl 300
 force seismic-body
 url https://tadas.afad.gov.tr/api/event/list?limit=200
@@ -7753,7 +7753,7 @@ field event_c c_flare_prob_pct
 field event_m m_flare_prob_pct
 field event_x x_flare_prob_pct
 
-source obis_marine_occurrences_recent
+source biosphere_obis_marine_occurrences_recent
 ttl 300
 force diffusion
 url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate
@@ -8186,7 +8186,7 @@ path current.uv_index_clear_sky atmosphere_uv_clearsky
 path current.dew_point_2m atmosphere_dewpoint_c
 path current.pressure_msl atmosphere_pressure_msl_hpa
 
-source aviation_pireps
+source atmosphere_aviation_pireps
 ttl 600
 force acoustic
 url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
@@ -8205,7 +8205,7 @@ field_in receipTime report_time
 field_in obsTime observation_epoch
 field_in rawOb raw_report
 
-source aviation_sigmets
+source atmosphere_aviation_sigmets
 ttl 600
 force acoustic
 url https://aviationweather.gov/api/data/airsigmet?format=json&hours=3
@@ -8522,7 +8522,7 @@ field_in attributes.sum_estimated0_14pop sum_estimated0_14pop
 lat_key geometry.y
 lon_key geometry.x
 
-source gcn_circular_latest
+source astro_gcn_circular_latest
 ttl 600
 force em
 url https://gcn.nasa.gov/circulars/44806.json
@@ -8796,7 +8796,7 @@ field_in 5 vx_au_d
 field_in 6 vy_au_d
 field_in 7 vz_au_d
 
-source lidar_openmeteo_elevation
+source geosphere_lidar_openmeteo_elevation
 ttl 600
 force em
 url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
@@ -8812,7 +8812,7 @@ lat_key 1
 lon_key 0
 field_in 2 magnetosphere_aurora_power_gw
 
-source mpc_neocp_observations_list
+source astro_mpc_neocp_observations_list
 ttl 600
 force gravity
 url https://www.minorplanetcenter.net/iau/NEO/neocp.txt
@@ -8985,7 +8985,7 @@ path current.snow_depth atmosphere_snow_depth_m
 path current.precipitation_probability atmosphere_precip_probability_pct
 path current.weather_code atmosphere_wmo_code
 
-source swpc_aurora_oval
+source magnetosphere_swpc_aurora_oval
 ttl 600
 force em
 url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
@@ -9020,14 +9020,14 @@ field VolcanoName volcano_name
 field Level alert_level
 field AviationColorCode aviation_color
 
-source bfs_odl_count
+source technosphere_bfs_odl_count
 ttl 900
 force em
 url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
 wgs84 51.5 10.5
 count . radiation_germany_active_stations
 
-source bfs_odl_germany
+source technosphere_bfs_odl_germany
 ttl 900
 force em
 url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
@@ -9144,7 +9144,7 @@ wgs84 35.04 -85.31
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_tennessee_chattanooga
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_tennessee_chattanooga
 
-source ionosphere_tec_global
+source magnetosphere_ionosphere_tec_global
 ttl 900
 force em
 ecliptic 1
@@ -9154,7 +9154,7 @@ lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
 field_in properties.tec ionosphere_tec_value
 
-source ionosphere_total_electron_content
+source magnetosphere_ionosphere_total_electron_content
 ttl 900
 force em
 ecliptic 1
@@ -9162,7 +9162,7 @@ url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_G
 field data.grid.features.0.properties.vtec_assimilated_tecu ionosphere_tec_assimilated_tecu
 field data.grid.features.0.properties.vtec_rms_tecu ionosphere_tec_rms_tecu
 
-source nhc_current_storms
+source atmosphere_nhc_current_storms
 ttl 900
 force em
 url https://www.nhc.noaa.gov/CurrentStorms.json
@@ -9265,7 +9265,7 @@ field AOD_440nm aod_440nm
 field AOD_500nm aod_500nm
 field AOD_870nm aod_870nm
 
-source aviation_tafs
+source atmosphere_aviation_tafs
 ttl 1800
 force em
 url https://aviationweather.gov/api/data/taf?ids=KJFK&format=json
@@ -9346,7 +9346,7 @@ field_in 3 close_approach_date
 field_in 4 distance_au
 field_in 7 velocity_km_s
 
-source metar_africa_mideast_bbox
+source atmosphere_metar_africa_mideast_bbox
 ttl 1800
 force acoustic
 url https://aviationweather.gov/api/data/metar?bbox=-35,-20,38,65&format=json&hours=2
@@ -9360,7 +9360,7 @@ field wspd wind_speed_kt
 field altim pressure_hpa
 field wxString weather_string
 
-source metar_asia_pacific_bbox
+source atmosphere_metar_asia_pacific_bbox
 ttl 1800
 force acoustic
 url https://aviationweather.gov/api/data/metar?bbox=-10,60,55,150&format=json&hours=2
@@ -9375,7 +9375,7 @@ field wspd wind_speed_kt
 field altim pressure_hpa
 field wxString weather_string
 
-source metar_europe_bbox
+source atmosphere_metar_europe_bbox
 ttl 1800
 force acoustic
 url https://aviationweather.gov/api/data/metar?bbox=35,-10,70,40&format=json&hours=2
@@ -9392,7 +9392,7 @@ field visib visibility_sm
 field wxString weather_string
 field rawOb raw_metar
 
-source metar_north_america_bbox
+source atmosphere_metar_north_america_bbox
 ttl 1800
 force acoustic
 url https://aviationweather.gov/api/data/metar?bbox=25,-170,72,-50&format=json&hours=2
@@ -9425,14 +9425,14 @@ field_in 18 water_temp_c
 field_in 17 air_temp_c
 field_in 15 pressure_hpa
 
-source ngeso_carbon_intensity
+source technosphere_ngeso_carbon_intensity
 ttl 1800
 force thermal
 wgs84 54.0 -2.0
 url https://api.carbonintensity.org.uk/intensity/date/{today}
 path data.0.intensity.actual ngeso_carbon_intensity_gco2_kwh
 
-source nhc_active_atlantic_hurricanes
+source atmosphere_nhc_active_atlantic_hurricanes
 ttl 1800
 force thermal
 url https://www.nhc.noaa.gov/CurrentStorms.json
@@ -9445,7 +9445,7 @@ field pressure pressure_mb
 field movementDir movement_dir
 field movementSpeed movement_speed_kt
 
-source nhc_active_epac_storms
+source atmosphere_nhc_active_epac_storms
 ttl 1800
 force thermal
 url https://www.nhc.noaa.gov/CurrentStorms.json?basin=epac
@@ -9650,7 +9650,7 @@ lon_key Site_Longitude(Degrees)
 field Total_Optical_Depth_440nm tot_od_440nm
 field Total_Optical_Depth_500nm tot_od_500nm
 
-source alma_archive
+source astro_alma_archive
 ttl 3600
 force em
 url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -9662,7 +9662,7 @@ field_in project_code project
 lat_key ra
 lon_key dec
 
-source ams_fireball_events_recent
+source astro_ams_fireball_events_recent
 ttl 3600
 force gravity
 url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
@@ -9687,7 +9687,7 @@ field attributes.place locality
 field attributes.alert alert_level
 field attributes.fatalities fatalities
 
-source argovis_core_profiles
+source hydrosphere_argovis_core_profiles
 ttl 3600
 force diffusion
 url https://argovis-api.colorado.edu/argo?startDate=2026-07-26T00:00:00Z&endDate=2026-07-27T00:00:00Z&box=%5B%5B-180,-90%5D,%5B180,90%5D%5D
@@ -10401,7 +10401,7 @@ field_in title wildfire_title
 field_in categories.0.title event_category
 field_in id wildfire_eonet_id
 
-source cadc
+source astro_cadc
 ttl 3600
 force em
 url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+target,+obsid,+collection+FROM+caom2.Observation+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -10414,7 +10414,7 @@ field_in collection collection
 lat_key ra
 lon_key dec
 
-source cdaweb_mms1_fgm_magnetic_field
+source magnetosphere_cdaweb_mms1_fgm_magnetic_field
 ttl 3600
 force em
 ecliptic 1
@@ -10427,7 +10427,7 @@ field 2 by_gsm_nT
 field 3 bz_gsm_nT
 field 4 b_total_nT
 
-source cddis_code_ionex_daily
+source magnetosphere_cddis_code_ionex_daily
 ttl 3600
 force em
 url https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX
@@ -10441,7 +10441,7 @@ field 2 longitude_deg
 field 3 tec_tecu
 field 4 rms_tecu
 
-source cneos_fireballs
+source astro_cneos_fireballs
 ttl 3600
 force em
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
@@ -10453,7 +10453,7 @@ field_in energy impact_energy_kt
 field_in alt altitude_km
 field_in vel velocity_kms
 
-source copernicus_efas_flood_events
+source hydrosphere_copernicus_efas_flood_events
 ttl 3600
 force diffusion
 url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
@@ -10476,63 +10476,63 @@ field data.0.7 cosmos_neo_first_v_kms
 field data.0.10 cosmos_neo_first_h_mag
 count data cosmos_neo_count
 
-source dockerhub_alpine_pulls
+source technosphere_dockerhub_alpine_pulls
 ttl 3600
 force em
 url https://hub.docker.com/v2/repositories/library/alpine
 wgs84 37.7749 -122.4194
 field pull_count biosphere_software_alpine_pulls_dockerhub
 
-source dockerhub_node_pulls
+source technosphere_dockerhub_node_pulls
 ttl 3600
 force em
 url https://hub.docker.com/v2/repositories/library/node
 wgs84 37.7749 -122.4194
 field pull_count biosphere_software_node_pulls_dockerhub
 
-source dockerhub_python_pulls
+source technosphere_dockerhub_python_pulls
 ttl 3600
 force em
 url https://hub.docker.com/v2/repositories/library/python
 wgs84 37.7749 -122.4194
 field pull_count biosphere_software_python_pulls_dockerhub
 
-source dockerhub_ubuntu_pulls
+source technosphere_dockerhub_ubuntu_pulls
 ttl 3600
 force em
 url https://hub.docker.com/v2/repositories/library/ubuntu
 wgs84 37.7749 -122.4194
 field pull_count biosphere_software_ubuntu_pulls_dockerhub
 
-source earth_vectors
+source geosphere_earth_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_earth.json
 ephemeris orbital_earth_distance
 extent 4.26e-5
 
-source enceladus_vectors
+source astro_enceladus_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_enceladus.json
 ephemeris orbital_enceladus_distance
 extent 1.68e-6
 
-source encke_vectors
+source astro_encke_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_encke.json
 ephemeris orbital_encke_distance
 extent 1.34e-8
 
-source eris_vectors
+source astro_eris_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_eris.json
 ephemeris orbital_eris_distance
 extent 7.77e-6
 
-source esasky
+source astro_esasky
 ttl 3600
 force em
 url https://sky.esa.int/esasky-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -10542,7 +10542,7 @@ map data
 lat_key ra
 lon_key dec
 
-source eso_archive
+source astro_eso_archive
 ttl 3600
 force em
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt,sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -10686,7 +10686,7 @@ lon_key decimalLongitude
 field species species_name
 field year year
 
-source europa_vectors
+source astro_europa_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_europa.json
@@ -10749,7 +10749,7 @@ ecliptic 1
 url https://network.satnogs.org/api/observations/?format=json&limit=1
 count items biosphere_satnogs_observations
 
-source fripon_fireballs
+source astro_fripon_fireballs
 ttl 3600
 force em
 url https://fireball.fripon.org/ajax/liste_multiple.ajax.php
@@ -10761,14 +10761,14 @@ field_in time event_time
 field_in nb_camera camera_count
 field_in duration duration_s
 
-source ganymede_vectors
+source astro_ganymede_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_ganymede.json
 ephemeris orbital_ganymede_distance
 extent 1.76e-5
 
-source gbif
+source biosphere_gbif
 ttl 3600
 force em
 url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
@@ -10906,7 +10906,7 @@ lon_key decimalLongitude
 field species species_name
 field iucnRedListCategory iucn_category
 
-source gcmt_global_moment_tensors_weekly
+source geosphere_gcmt_global_moment_tensors_weekly
 ttl 3600
 force seismic-body
 url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form?itype=ymd&yr={year}&mo={month}&dy=01&otype=ymd&oyr={year}&omo={month}&ody={day}&jyr=1976&jday=1&ojyr=2025&ojday=366&nday=28&lmw=5&umw=10&llat=-90&ulat=90&llon=-180&ulon=180&lhd=0&uhd=1000&list=6
@@ -10923,7 +10923,7 @@ field 6 strike_deg
 field 7 dip_deg
 field 8 rake_deg
 
-source gemini_archive
+source astro_gemini_archive
 ttl 3600
 force em
 url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
@@ -11112,7 +11112,7 @@ lon_key geometry.coordinates.0
 field_in properties.alertLevel volcano_alert_level
 field_in properties.volcanoName volcano_name
 
-source gracedb_latest_confirmed_gw_event
+source astro_gracedb_latest_confirmed_gw_event
 ttl 3600
 force gravity
 ssb
@@ -11126,7 +11126,7 @@ field distance.mean luminosity_distance_Mpc
 field classification.BNS p_bns
 field classification.BBH p_bbh
 
-source gracedb_o4_mass_gap_candidates
+source astro_gracedb_o4_mass_gap_candidates
 ttl 3600
 force gravity
 ssb
@@ -11139,14 +11139,14 @@ field classification.MassGap p_massgap
 field distance.mean distance_Mpc
 field created created_utc
 
-source haumea_vectors
+source astro_haumea_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_haumea.json
 ephemeris orbital_haumea_distance
 extent 5.45e-6
 
-source heasarc
+source astro_heasarc
 ttl 3600
 force em
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+name,+t_scid+FROM+hst+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -11185,7 +11185,7 @@ field peak_flux peak_flux
 field duration duration_min
 field type flare_classification
 
-source hydroshere_global_flood_awareness
+source hydrosphere_global_flood_awareness
 ttl 3600
 force em
 ecliptic 1
@@ -11479,7 +11479,7 @@ lon_key longitude
 field shortname hydrosphere_pegelonline_station
 field number hydrosphere_pegelonline_number
 
-source icos_carbon_portal_co2_station_data
+source biosphere_icos_carbon_portal_co2_station_data
 ttl 3600
 force diffusion
 url https://meta.icos-cp.eu/sparql?format=json&query=SELECT%20?s%20?name%20?lat%20?lon%20?alt%20?country%20?stType%20WHERE%7B?s%20a%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/ES%3E%20%3B%20%3Chttp://www.w3.org/2000/01/rdf-schema%23label%3E%20?name%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude%3E%20?lat%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude%3E%20?lon%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasCountry%3E%20?country%7D%20LIMIT%20200
@@ -11491,7 +11491,7 @@ field country.value country_code
 field s.value station_uri
 field stType.value station_type
 
-source ifremer_argo_oxygen_profiles
+source hydrosphere_ifremer_argo_oxygen_profiles
 ttl 3600
 force diffusion
 url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy(%22time%22)&limit=3000
@@ -11505,7 +11505,7 @@ field PSAL salinity_psu
 field PRES pressure_dbar
 field time obs_time
 
-source inaturalist
+source biosphere_inaturalist
 ttl 3600
 force em
 url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
@@ -11613,7 +11613,7 @@ field taxon.name species_name
 field observed_on observation_date
 field place_guess locality
 
-source io_vectors
+source astro_io_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_io.json
@@ -11643,7 +11643,7 @@ dec_key dec
 field medianmag median_mag
 field magrms mag_variability_rms
 
-source isro_bhuvan_flood_india
+source hydrosphere_isro_bhuvan_flood_india
 ttl 3600
 force diffusion
 url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json
@@ -11723,26 +11723,26 @@ field_in 5 vx_au_d
 field_in 6 vy_au_d
 field_in 7 vz_au_d
 
-source juno_vectors
+source astro_juno_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_juno.json
 ephemeris orbital_juno_distance
 
-source jupiter_vectors
+source astro_jupiter_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_jupiter.json
 ephemeris orbital_jupiter_distance
 extent 4.67e-4
 
-source jwst_vectors
+source astro_jwst_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_jwst.json
 ephemeris orbital_jwst_distance
 
-source lasp_fism2_euv_hr_model
+source astro_lasp_fism2_euv_hr_model
 ttl 3600
 force em
 ssb
@@ -11753,7 +11753,7 @@ field time model_time
 field wavelength wavelength_nm
 field irradiance modeled_irradiance_W_m2
 
-source lasp_lisird_f107_solar_flux
+source astro_lasp_lisird_f107_solar_flux
 ttl 3600
 force em
 url https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today}
@@ -11764,7 +11764,7 @@ field time observation_date
 field f107 f107_sfu
 field f107_adj f107_adjusted_sfu
 
-source lasp_lisird_tsis1_tsi_daily
+source astro_lasp_lisird_tsis1_tsi_daily
 ttl 3600
 force em
 ssb
@@ -11775,7 +11775,7 @@ field time observation_date
 field tsi total_solar_irradiance_W_m2
 field uncertainty tsi_uncertainty_W_m2
 
-source lasp_sdo_eve_l3_ssi_1nm
+source astro_lasp_sdo_eve_l3_ssi_1nm
 ttl 3600
 force em
 ssb
@@ -11816,14 +11816,14 @@ field_in extent magnetosphere_spot_extent
 field_in spot_class magnetosphere_spot_class
 field_in mag_class magnetosphere_mag_class
 
-source makemake_vectors
+source astro_makemake_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_makemake.json
 ephemeris orbital_makemake_distance
 extent 4.78e-6
 
-source mars_vectors
+source astro_mars_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_mars.json
@@ -11923,14 +11923,14 @@ field energy_bandpassName grating_filter
 field em_min wavelength_min_m
 field em_max wavelength_max_m
 
-source mercury_vectors
+source astro_mercury_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_mercury.json
 ephemeris orbital_mercury_distance
 extent 1.63e-5
 
-source metar_polar_regions
+source atmosphere_metar_polar_regions
 ttl 3600
 force acoustic
 url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
@@ -11943,14 +11943,14 @@ field wdir wind_dir_deg
 field wspd wind_speed_kt
 field altim pressure_hpa
 
-source moon_vectors
+source astro_moon_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_luna.json
 ephemeris orbital_moon_distance
 extent 1.16e-5
 
-source mpc_comet_ephemeris_bright
+source astro_mpc_comet_ephemeris_bright
 ttl 3600
 force gravity
 url https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv
@@ -11972,7 +11972,7 @@ ssb
 url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
 obj_last value biosphere_solar_radiation_power
 
-source nbn_atlas_uk_bat_acoustic_records
+source biosphere_nbn_atlas_uk_bat_acoustic_records
 ttl 3600
 force acoustic
 url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
@@ -11984,7 +11984,7 @@ field vernacularName common_name
 field year obs_year
 field month obs_month
 
-source ncei_global_hourly_multi_station
+source atmosphere_ncei_global_hourly_multi_station
 ttl 3600
 wgs84 0.0 0.0
 force diffusion
@@ -12002,7 +12002,7 @@ field_in windSpeed wind_speed_ms
 field_in windDirection wind_direction_degrees
 field_in seaLevelPressure pressure_hpa
 
-source ncei_global_hourly_weather
+source atmosphere_ncei_global_hourly_weather
 ttl 3600
 wgs84 0.0 0.0
 force diffusion
@@ -12086,7 +12086,7 @@ field_in 2 day
 field_in 3 hour
 field_in 7 sea_level_height_m
 
-source neo_jpl_fireball_events
+source astro_neo_jpl_fireball_events
 ttl 3600
 force gravity
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&date-min=2020-01-01
@@ -12103,14 +12103,14 @@ field vz velocity_z_km_s
 field energy impact_energy_kt
 field imp impact_flag
 
-source neptune_vectors
+source astro_neptune_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_neptune.json
 ephemeris orbital_neptune_distance
 extent 1.65e-4
 
-source new_horizons_vectors
+source astro_new_horizons_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_new_horizons.json
@@ -12346,7 +12346,7 @@ field_in updated forecast_update_time
 field_in units forecast_units
 field_in generatedAt generation_time
 
-source noirlab_archive
+source astro_noirlab_archive
 ttl 3600
 force em
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -12358,7 +12358,7 @@ field_in otype_txt instrument
 lat_key ra
 lon_key dec
 
-source nrao_archive
+source astro_nrao_archive
 ttl 3600
 force em
 url https://archive.nrao.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+obs_id,+project+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -12370,7 +12370,7 @@ field_in project project_code
 lat_key ra
 lon_key dec
 
-source nso_gong_synoptic_magnetogram_metadata
+source astro_nso_gong_synoptic_magnetogram_metadata
 ttl 3600
 force em
 ssb
@@ -12383,14 +12383,14 @@ field carrington_rotation cr_number
 field coverage disk_coverage_pct
 field site recording_site
 
-source nvd_cve_count
+source technosphere_nvd_cve_count
 ttl 3600
 force em
 url https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=1
 wgs84 38.9072 -77.0369
 field totalResults biosphere_cyber_vulnerability_count_nvd
 
-source obis_marine_mammals_turtles
+source biosphere_obis_marine_mammals_turtles
 ttl 3600
 force diffusion
 url https://api.obis.org/v3/occurrence?taxonid=180130,137206&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year
@@ -12402,7 +12402,7 @@ field class taxon_class
 field family taxon_family
 field date_year obs_year
 
-source obis_marine_occurrences_global
+source biosphere_obis_marine_occurrences_global
 ttl 3600
 force diffusion
 url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=1000&fields=decimalLatitude,decimalLongitude,scientificName,class,order,family,genus,species,date_year,country
@@ -12633,7 +12633,7 @@ field_in hourly.uv_index uv_index
 field_in hourly.uv_index_clear_sky uv_index_clear_sky
 field_in hourly.direct_radiation direct_radiation_wm2
 
-source openlittermap_litter_observations_global
+source biosphere_openlittermap_litter_observations_global
 ttl 3600
 force diffusion
 url https://openlittermap.com/api/getdata?lat=0.0&lon=0.0&radius=50&format=json&limit=500
@@ -12643,7 +12643,7 @@ lon_key lng
 field litter_type litter_type
 field quantity litter_quantity
 
-source openlittermap_litter_points
+source biosphere_openlittermap_litter_points
 ttl 3600
 force diffusion
 url https://openlittermap.com/api/getdata?lat={lat}&lon={lon}&radius=50&format=json&limit=500
@@ -12718,7 +12718,7 @@ url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_vesta.
 ephemeris orbital_vesta_distance
 extent 1.76e-6
 
-source paleoclimate_recent
+source biosphere_paleoclimate_recent
 ttl 3600
 force em
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,shortwave_radiation_sum&past_days=1&forecast_days=0&timezone=auto
@@ -12728,13 +12728,13 @@ path daily.precipitation_sum.0 paleoclimate_precip_yesterday_mm
 path daily.sunshine_duration.0 paleoclimate_sunshine_yesterday_s
 path daily.shortwave_radiation_sum.0 paleoclimate_shortwave_yesterday_mjm2
 
-source parker_solar_probe_vectors
+source astro_parker_solar_probe_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_parker_solar_probe.json
 ephemeris orbital_parker_solar_probe_distance
 
-source pluto_vectors
+source astro_pluto_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_pluto.json
@@ -12764,21 +12764,21 @@ ssb
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=uv_index
 field current.uv_index radiation_uv_index_openmeteo
 
-source reliefweb_active_humanitarian_disasters
+source geosphere_reliefweb_active_humanitarian_disasters
 ttl 3600
 force diffusion
 url https://gdacs.org/xml/rss.xml
 wgs84 38.9072 -77.0369
 xml_count item disaster_count
 
-source saturn_vectors
+source astro_saturn_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_saturn.json
 ephemeris orbital_saturn_distance
 extent 3.89e-4
 
-source sentinel2_l2a
+source astro_sentinel2_l2a
 ttl 3600
 force em
 url https://earth-search.aws.element84.com/v1/search
@@ -12836,14 +12836,14 @@ force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_solar_orbiter.json
 ephemeris orbital_solar_orbiter_distance
 
-source sun_vectors
+source astro_sun_vectors
 ttl 3600
 force em gravity thermal
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_sun.json
 ephemeris orbital_sun_distance
 extent 0.004650
 
-source taf_global_forecasts
+source atmosphere_taf_global_forecasts
 ttl 3600
 force acoustic
 url https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid
@@ -12857,14 +12857,14 @@ field fcsts.0.visib forecast_visibility_sm
 field validTimeFrom valid_from
 field validTimeTo valid_to
 
-source technosphere_wikipedia_views
+source technosphere_technosphere_wikipedia_views
 ttl 3600
 force em
 url https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json
 wgs84 40.712 -74.006
 field query.random.0.id technosphere_wikipedia_random_id
 
-source temis_uv_index_daily_global
+source atmosphere_temis_uv_index_daily_global
 ttl 3600
 force em
 url https://www.temis.nl/uvradiation/nrt/uvindex.php?date={year}{month}{day}&type=overpass&format=text
@@ -12876,7 +12876,7 @@ field uvindex uv_index
 field cloud_modification cloud_factor
 field date measurement_date
 
-source terrabrasilis_deter_deforestation_alerts
+source geosphere_terrabrasilis_deter_deforestation_alerts
 ttl 3600
 force diffusion
 url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
@@ -12889,14 +12889,14 @@ field properties.area_km alert_area_km2
 field properties.view_date detection_date
 field properties.uf state
 
-source titan_vectors
+source astro_titan_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_titan.json
 ephemeris orbital_titan_distance
 extent 1.72e-5
 
-source triton_vectors
+source astro_triton_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_triton.json
@@ -12940,7 +12940,7 @@ field_in 6 lon_dir
 field_in 7 altitude_km
 field_in 8 velocity_kms
 
-source uranus_vectors
+source astro_uranus_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_uranus.json
@@ -13014,26 +13014,26 @@ field ActivityCategory activity_category
 field StartDate activity_start_date
 field EndDate activity_end_date
 
-source venus_vectors
+source astro_venus_vectors
 ttl 3600
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_venus.json
 ephemeris orbital_venus_distance
 extent 4.05e-5
 
-source voyager1_vectors
+source astro_voyager1_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
 ephemeris orbital_voyager1_distance
 
-source voyager2_vectors
+source astro_voyager2_vectors
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
 ephemeris orbital_voyager2_distance
 
-source wfigs_current_fire_perimeters
+source geosphere_wfigs_current_fire_perimeters
 ttl 3600
 force thermal
 url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_YearToDate/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&f=geojson&resultRecordCount=500
@@ -13041,7 +13041,7 @@ flatten features
 field_in properties.poly_GISAcres fire_acres
 field_in properties.poly_PolygonDateTime fire_polygon_ms
 
-source satellite_satnogs_active
+source technosphere_satellite_satnogs_active
 ttl 14400
 force em
 url https://db.satnogs.org/api/tle/?format=json
@@ -13060,7 +13060,7 @@ force em
 url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
 field share biosphere_covid_variant_share
 
-source coastwatch_ascat_wind
+source atmosphere_coastwatch_ascat_wind
 ttl 43200
 force em
 url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdQMwind1day_LonPM180.json?x_wind%5B(2022-12-01T12%3A00%3A00Z)%5D%5B(10.0)%5D%5B(-75.0)%3A4%3A(75.0)%5D%5B(-180.0)%3A4%3A(180.0)%5D
@@ -13071,7 +13071,7 @@ alt_key 1
 epoch_key 0
 field_in 4 coastwatch_ascat_x_wind_ms
 
-source coastwatch_oisst_sea_ice
+source cryosphere_coastwatch_oisst_sea_ice
 ttl 43200
 force thermal
 url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?ice%5B(last)%5D%5B(0)%5D%5B(-79.875)%3A20%3A(79.875)%5D%5B(-179.875)%3A20%3A(179.875)%5D
@@ -13081,7 +13081,7 @@ lon_key 3
 epoch_key 0
 field_in 4 cryosphere_oisst_sea_ice_fraction
 
-source iers_eop_bulletinb
+source astro_iers_eop_bulletinb
 ttl 43200
 force em
 url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
@@ -13094,7 +13094,7 @@ field_in col5 ut1_utc_ms
 field_in col6 dx_celestial_pole_mas
 field_in col7 dy_celestial_pole_mas
 
-source ocean_argo_floats_profiles
+source hydrosphere_ocean_argo_floats_profiles
 ttl 43200
 force thermal
 url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json?time%2Clongitude%2Clatitude%2Cpres%2Ctemp%26time%3E%3D{yesterday}%26time%3C%3D{now}%26longitude%3E%3D{lon_min}%26longitude%3C%3D{lon_max}%26latitude%3E%3D{lat_min}%26latitude%3C%3D{lat_max}
@@ -13122,7 +13122,7 @@ field_in wind_gusts_10m_max daily_wind_gust_max_kmh
 field_in shortwave_radiation_sum daily_solar_radiation_mjm2
 field_in et0_fao_evapotranspiration daily_evapotranspiration_mm
 
-source socat_surface_co2
+source hydrosphere_socat_surface_co2
 ttl 43200
 force diffusion
 url https://data.pmel.noaa.gov/socat/erddap/tabledap/socat_v2026_fulldata.json?time,latitude,longitude,xCO2_water_sst_dry_ppm&time%3E={yesterday}&distinct()
@@ -13132,7 +13132,7 @@ lon_key 2
 epoch_key 0
 field_in 3 socat_xco2_water_dry_ppm
 
-source wyoming_radiosonde_berlin
+source atmosphere_wyoming_radiosonde_berlin
 ttl 43200
 force thermal
 url https://weather.uwyo.edu/wsgi/sounding?datetime={today}%2000:00:00&type=TEXT:CSV&id=10393&src=UNKNOWN
@@ -13143,7 +13143,7 @@ lon_key longitude
 field temperature_C atmosphere_radiosonde_temp_c
 field pressure_hPa atmosphere_radiosonde_pressure_hpa
 
-source aavso_vsx_variable_stars
+source astro_aavso_vsx_variable_stars
 ttl 86400
 force em
 url https://vsx.aavso.org/index.php?view=api.votable&format=json&ra=0&dec=0&radius=5
@@ -13195,7 +13195,7 @@ lon_key Longitude(decimal_degrees)
 field Site_Name site_name
 field Elevation(meters) elevation_m
 
-source allwise_catalog_irsa_tap
+source astro_allwise_catalog_irsa_tap
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
@@ -13223,63 +13223,63 @@ field attributes.DEATHS fatalities
 field attributes.INJURIES injuries
 field attributes.COUNTRY country
 
-source arxiv_astro_total
+source technosphere_arxiv_astro_total
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_astro_total.json
 wgs84 40.712 -74.006
 field feed.totalResults exosphere_arxiv_astro_papers_total
 
-source arxiv_cs_total
+source technosphere_arxiv_cs_total
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_cs_total.json
 wgs84 40.712 -74.006
 field feed.totalResults biosphere_arxiv_cs_papers_total
 
-source arxiv_hep_total
+source technosphere_arxiv_hep_total
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_hep_total.json
 wgs84 40.712 -74.006
 field feed.totalResults subatomic_arxiv_hep_papers_total
 
-source arxiv_math_total
+source technosphere_arxiv_math_total
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_math_total.json
 wgs84 40.712 -74.006
 field feed.totalResults physics_arxiv_math_papers_total
 
-source arxiv_physics_total
+source technosphere_arxiv_physics_total
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_physics_total.json
 wgs84 40.712 -74.006
 field feed.totalResults physics_arxiv_physics_papers_total
 
-source arxiv_qbio_total
+source technosphere_arxiv_qbio_total
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qbio_total.json
 wgs84 40.712 -74.006
 field feed.totalResults biosphere_arxiv_qbio_papers_total
 
-source arxiv_qfin_total
+source technosphere_arxiv_qfin_total
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qfin_total.json
 wgs84 40.712 -74.006
 field feed.totalResults biosphere_arxiv_qfin_papers_total
 
-source arxiv_stat_total
+source technosphere_arxiv_stat_total
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_stat_total.json
 wgs84 40.712 -74.006
 field feed.totalResults physics_arxiv_stat_papers_total
 
-source asas_sn_variables_vizier
+source astro_asas_sn_variables_vizier
 ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,Vmag+FROM+%22II/366/catv2021%22
@@ -13289,7 +13289,7 @@ ra_key 0
 dec_key 1
 field_in 2 asas_sn_v_mag
 
-source astdys_tno_dynamical_classification
+source astro_astdys_tno_dynamical_classification
 ttl 86400
 force gravity
 url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
@@ -13777,7 +13777,7 @@ url https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN
 wgs84 46.2276 6.1432
 last_line biosphere_who_life_expectancy_global
 
-source bodc_ocean_chemistry_catalog
+source hydrosphere_bodc_ocean_chemistry_catalog
 ttl 86400
 force diffusion
 url https://www.bodc.ac.uk/data/published_data_library/catalogue/?jsonrequest=1&keywords=oxygen+salinity&limit=200
@@ -13795,7 +13795,7 @@ field cellcount_units count_units
 field hab_category hab_level
 field sample_date sample_date
 
-source bold_animal_specimens_barcodes
+source biosphere_bold_animal_specimens_barcodes
 ttl 86400
 force diffusion
 url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Animalia&geo=&format=json&limit=500
@@ -13809,7 +13809,7 @@ field country country
 field region province
 field collection_date collection_date
 
-source bold_marine_invertebrate_barcodes
+source biosphere_bold_marine_invertebrate_barcodes
 ttl 86400
 force diffusion
 url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Echinodermata&geo=&format=json&limit=300
@@ -13822,7 +13822,7 @@ field species_name species
 field country country
 field region province
 
-source bold_plant_specimens_barcodes
+source biosphere_bold_plant_specimens_barcodes
 ttl 86400
 force diffusion
 url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Plantae&geo=&format=json&limit=500
@@ -13835,7 +13835,7 @@ field species_name species
 field country country
 field region province
 
-source cddis_ivs_eop_vlbi_results
+source astro_cddis_ivs_eop_vlbi_results
 ttl 86400
 force gravity
 url https://cddis.nasa.gov/archive/vlbi/ivsproducts/eops/ivseops.snx
@@ -13848,7 +13848,7 @@ field 2 y_pole y_pole_mas
 field 3 ut1_utc ut1_offset_ms
 field 4 length_of_day lod_ms
 
-source chime_frb_catalog_total
+source astro_chime_frb_catalog_total
 ttl 86400
 force em
 url https://www.chime-frb.ca/catalog
@@ -13979,7 +13979,7 @@ lat_key latitude
 lon_key longitude
 field anom sst_anomaly_c
 
-source cneos_fireballs_infrasound
+source astro_cneos_fireballs_infrasound
 ttl 86400
 force acoustic
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
@@ -14048,7 +14048,7 @@ field totalItems cosmos_tle_iss_related_total
 field member.0.satelliteId cosmos_tle_iss_satellite_id
 count member cosmos_tle_iss_related_count
 
-source cratesio_crates_total
+source technosphere_cratesio_crates_total
 ttl 86400
 force em
 url https://crates.io/api/v1/crates?per_page=1
@@ -14118,14 +14118,14 @@ wgs84 -75.250 -0.071
 format csv
 last_row extent cryosphere_sea_ice_south_mkm2
 
-source dartmouth_flood_observatory_global
+source hydrosphere_dartmouth_flood_observatory_global
 ttl 86400
 force diffusion
 url https://gdacs.org/xml/rss.xml
 wgs84 38.9072 -77.0369
 xml_count item flood_event_count
 
-source dasch_harvard_agn_lightcurves
+source astro_dasch_harvard_agn_lightcurves
 ttl 86400
 force em
 ssb
@@ -14135,7 +14135,7 @@ field 0 jd
 field 1 magnitude
 field 2 magnitude_error
 
-source earth_coastlines_110m
+source geosphere_earth_coastlines_110m
 ttl 86400
 force em
 ssb
@@ -14145,7 +14145,7 @@ lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
 field_in properties.name coastline_name
 
-source earth_country_boundaries_110m
+source geosphere_earth_country_boundaries_110m
 ttl 86400
 force em
 ssb
@@ -14155,7 +14155,7 @@ lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
 field_in properties.name boundary_name
 
-source earthscope_fdsn_stations
+source geosphere_earthscope_fdsn_stations
 ttl 86400
 force acoustic
 url https://service.earthscope.org/fdsnws/station/1/query?format=text&limit=50000
@@ -14169,7 +14169,7 @@ field_in 3 station_longitude
 field_in 4 station_elevation_m
 field_in 5 site_name
 
-source ebi_mgnify_marine_metagenomes
+source biosphere_ebi_mgnify_marine_metagenomes
 ttl 86400
 force diffusion
 url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update&biome_name=root:Environmental:Aquatic:Marine
@@ -14179,7 +14179,7 @@ lon_key longitude
 field attributes.study-name study_name
 field attributes.biome biome_name
 
-source ebi_mgnify_public_metagenome_studies
+source biosphere_ebi_mgnify_public_metagenome_studies
 ttl 86400
 force diffusion
 url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update
@@ -14190,7 +14190,7 @@ field attributes.study-name study_name
 field attributes.biome biome_name
 field attributes.last-update last_update
 
-source emdat_disasters
+source geosphere_emdat_disasters
 ttl 86400
 force gravity
 url https://services.arcgis.com/LG9Yn2oFqZi5PnO5/arcgis/rest/services/EDMAT_Disaster_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
@@ -14202,7 +14202,7 @@ field properties.totalAffected emdat_total_affected
 field properties.numberInjured emdat_injured
 field properties.numberHomeless emdat_homeless
 
-source ena_16s_amplicon_environmental_samples
+source biosphere_ena_16s_amplicon_environmental_samples
 ttl 86400
 force diffusion
 url https://www.ebi.ac.uk/ena/portal/api/search?result=sample&query=tax_tree(2)&format=tsv&limit=500
@@ -14213,7 +14213,7 @@ field 0 sample_accession
 field 1 description
 field 2 tax_id
 
-source energy_nasa_power_daily
+source technosphere_energy_nasa_power_daily
 ttl 86400
 force em
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,RH2M,WS10M,PRECTOTCORR&community=AG&longitude={lon}&latitude={lat}&start={date}&end={date}&format=JSON
@@ -14222,7 +14222,7 @@ path properties.parameter.RH2M.0 energy_nasa_humidity_pct
 path properties.parameter.WS10M.0 energy_nasa_wind_ms
 path properties.parameter.PRECTOTCORR.0 energy_nasa_precip_mm
 
-source energy_pvgis_solar
+source technosphere_energy_pvgis_solar
 ttl 86400
 force em
 url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-ERA5&startyear={year}&endyear={year}&outputformat=json
@@ -14230,14 +14230,14 @@ path outputs.hourly.0.G(i) energy_solar_ghi_wm2
 path outputs.hourly.0.T2m energy_solar_temp_c
 path outputs.hourly.0.WS10m energy_solar_wind_ms
 
-source eog_viirs_monthly_ntl_metadata
+source astro_eog_viirs_monthly_ntl_metadata
 ttl 86400
 force em
 wgs84 40.0 -105.0
 url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP46A2&page_size=200
 count feed.entry viirs_ntl_granule_count
 
-source esa_cci_soil_moisture_erddap
+source geosphere_esa_cci_soil_moisture_erddap
 ttl 86400
 force diffusion
 url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?err%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
@@ -14258,7 +14258,7 @@ field sst_analysed sea_surface_temp_c
 field sst_uncertainty sst_uncertainty_k
 field time observation_time
 
-source esa_swarm_magnetic_field_hapi
+source magnetosphere_esa_swarm_magnetic_field_hapi
 ttl 86400
 force gravity
 url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude&start={today}T00:00:00Z&stop={tomorrow}T00:00:00Z
@@ -14267,7 +14267,7 @@ rows
 lat_key Latitude
 lon_key Longitude
 
-source esa_worldcover_stac
+source astro_esa_worldcover_stac
 ttl 86400
 force diffusion
 url https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60
@@ -14342,7 +14342,7 @@ field_in attributes.STAT_LONG longitude
 lat_key geometry.y
 lon_key geometry.x
 
-source exoplanet_confirmed_total
+source astro_exoplanet_confirmed_total
 ttl 86400
 force em
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json
@@ -14438,7 +14438,7 @@ field_in pl_eqt hot_jupiter_eqt_k
 field_in pl_orbper hot_jupiter_period_d
 dist_key sy_dist 3.085677581e16
 
-source fermi_4fgl_dr3_vizier
+source astro_fermi_4fgl_dr3_vizier
 ttl 86400
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,F1000i,PLGam+FROM+%22IX/67/4fgldr3%22
@@ -14449,7 +14449,7 @@ dec_key 1
 field_in 2 agn_gamma_flux_1000
 field_in 3 agn_pl_index
 
-source fermi_lat_4fgl_dr4
+source astro_fermi_lat_4fgl_dr4
 ttl 86400
 force em
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,redshift,flux_100_300000,spectral_index,object_type,nu_flux,z_phot+FROM+fermilpsc+WHERE+flux_100_300000+IS+NOT+NULL+ORDER+BY+flux_100_300000+DESC&FORMAT=text&limit=2000
@@ -14517,7 +14517,7 @@ field kingdom kingdom
 field country country_code
 field eventDate observation_date
 
-source gem_global_active_faults
+source geosphere_gem_global_active_faults
 ttl 86400
 force seismic-surface
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_gem_active_faults.geojson
@@ -14756,7 +14756,7 @@ lon_key longitude
 field_in elevation_meters geosphere_volcano_elevation_m
 field_in vnum geosphere_volcano_vnum
 
-source gfz_geofon_stations
+source geosphere_gfz_geofon_stations
 ttl 86400
 force seismic-body
 url https://geofon.gfz-potsdam.de/fdsnws/station/1/query?level=station&network=GE
@@ -14769,21 +14769,21 @@ field Station station_code
 field Elevation elevation_m
 field SiteDescription station_name
 
-source github_repos_total
+source technosphere_github_repos_total
 ttl 86400
 force em
 url https://api.github.com/search/repositories?q=stars:>0&per_page=1
 wgs84 37.774 -122.419
 field total_count biosphere_github_repos_total
 
-source github_users_total
+source technosphere_github_users_total
 ttl 86400
 force em
 url https://api.github.com/search/users?q=type:user&per_page=1
 wgs84 37.774 -122.419
 field total_count biosphere_github_users_total
 
-source gldas_soil_temperature
+source geosphere_gldas_soil_temperature
 ttl 86400
 force thermal
 url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilTMP0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
@@ -14792,7 +14792,7 @@ rows
 field_in 0 timestamp_utc
 field_in 1 soil_temp_0_10cm_k
 
-source global_mangrove_atlas_countries
+source geosphere_global_mangrove_atlas_countries
 ttl 86400
 force diffusion
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mangrove_countries.json
@@ -14805,7 +14805,7 @@ field country_area_km2 country_area_km2
 field mangrove_area_km2 mangrove_area_km2
 field percent_mangrove mangrove_percent_total
 
-source gtnp_active_layer_thickness
+source cryosphere_gtnp_active_layer_thickness
 ttl 86400
 force thermal
 url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
@@ -14818,7 +14818,7 @@ field location.country country
 field active_layer_thickness alt_m
 field measurement_date measurement_year
 
-source gtnp_borehole_extended
+source cryosphere_gtnp_borehole_extended
 ttl 86400
 force thermal
 url https://gtnp.arcticportal.org/api/v1/gtnp-boreholes?format=json&limit=500
@@ -14831,7 +14831,7 @@ field temperature_mean_c mean_annual_temp_c
 field depth_m borehole_depth_m
 field elevation_m elevation_m
 
-source gtnp_calm_active_layer_thickness
+source cryosphere_gtnp_calm_active_layer_thickness
 ttl 86400
 force diffusion
 url https://gtnp.arcticportal.org/api/v1/calm-data?format=json&limit=500
@@ -14842,7 +14842,7 @@ field value alt_cm
 field station.name station_name
 field year obs_year
 
-source gtnp_permafrost_boreholes
+source cryosphere_gtnp_permafrost_boreholes
 ttl 86400
 force thermal
 url https://gtnp.arcticportal.org/api/boreholes/?format=json&limit=2000
@@ -14857,7 +14857,7 @@ field elevation elevation_m
 field depth borehole_depth_m
 field temperature.0.mean_annual temp_c
 
-source gtnp_tsp_annual_ground_temperatures
+source cryosphere_gtnp_tsp_annual_ground_temperatures
 ttl 86400
 force thermal
 url https://gtnp.arcticportal.org/api/v1/tsp-annual?format=json&limit=500
@@ -14868,7 +14868,7 @@ field value ground_temp_c
 field station.name station_name
 field year obs_year
 
-source gtnp_tsp_borehole_station_list
+source cryosphere_gtnp_tsp_borehole_station_list
 ttl 86400
 force diffusion
 url https://gtnp.arcticportal.org/api/v1/stations?format=json&limit=500
@@ -14878,7 +14878,7 @@ lon_key station.longitude
 field station.name station_name
 field station.country country
 
-source gvp_wfs_holocene_eruptions
+source geosphere_gvp_wfs_holocene_eruptions
 ttl 86400
 force seismic-surface
 url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=application/json&count=1000
@@ -14895,7 +14895,7 @@ field properties.VEI vei_index
 field properties.Evidence_Method evidence_method
 field properties.Explosivity_Index explosivity_class
 
-source gvp_wfs_holocene_eruptions_csv
+source geosphere_gvp_wfs_holocene_eruptions_csv
 ttl 86400
 force seismic-surface
 url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=csv&count=1000
@@ -14911,7 +14911,7 @@ field Eruption_Month eruption_month
 field Eruption_Day eruption_day
 field VEI vei_index
 
-source gvp_wfs_holocene_volcanoes
+source geosphere_gvp_wfs_holocene_volcanoes
 ttl 86400
 force seismic-surface
 url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=application/json&count=1000
@@ -14929,7 +14929,7 @@ field properties.Tectonic_Setting tectonic_setting
 field properties.Evidence_Category evidence_category
 field properties.Major_Rock_Type major_rock_type
 
-source gvp_wfs_holocene_volcanoes_csv
+source geosphere_gvp_wfs_holocene_volcanoes_csv
 ttl 86400
 force seismic-surface
 url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=csv&count=1000
@@ -14946,7 +14946,7 @@ field Region region
 field Elevation elevation_m
 field Tectonic_Setting tectonic_setting
 
-source gvp_wfs_pleistocene_volcanoes
+source geosphere_gvp_wfs_pleistocene_volcanoes
 ttl 86400
 force seismic-surface
 url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Pleistocene_Volcanoes&outputFormat=application/json&count=1000
@@ -14960,7 +14960,7 @@ field properties.Region region
 field properties.Elevation elevation_m
 field properties.Geologic_Epoch geologic_epoch
 
-source halley_vectors
+source astro_halley_vectors
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_halley.json
@@ -14968,7 +14968,7 @@ wgs84 34.201 -118.171
 ephemeris orbital_halley_distance
 extent 3.34e-8
 
-source hdx_cod_ps_humanitarian_administrative_boundaries
+source geosphere_hdx_cod_ps_humanitarian_administrative_boundaries
 ttl 86400
 force diffusion
 ecliptic 1
@@ -15632,7 +15632,7 @@ format csv
 last_row pCO2_sw hydrosphere_pco2_pmel_uatm
 last_row pH_sw hydrosphere_ph_pmel
 
-source icos_fluxnet_tower_stations
+source biosphere_icos_fluxnet_tower_stations
 ttl 86400
 force diffusion
 url https://meta.icos-cp.eu/sparql?format=json&query=SELECT%20?uri%20?name%20?lat%20?lon%20?alt%20?country%20?ecosys%20WHERE%20%7B?uri%20a%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/ES%3E%20%3B%20%3Chttp://www.w3.org/2000/01/rdf-schema%23label%3E%20?name%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude%3E%20?lat%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude%3E%20?lon%7D
@@ -15644,7 +15644,7 @@ field country.value country_code
 field alt.value altitude_m
 field ecosys.value ecosystem_type
 
-source iers_eop_bulletinb_daily
+source astro_iers_eop_bulletinb_daily
 ttl 86400
 force em
 url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
@@ -15657,7 +15657,7 @@ field col5 ut1_minus_utc_ms
 field col6 dX_celestial_pole_mas
 field col7 dY_celestial_pole_mas
 
-source iers_rapid_eop_c04
+source astro_iers_rapid_eop_c04
 ttl 86400
 force gravity
 ecliptic 1
@@ -15672,14 +15672,14 @@ field 4 lod length_of_day_ms
 field 5 dpsi dpsi_arcsec
 field 6 deps deps_arcsec
 
-source iers_ut1_utc
+source astro_iers_ut1_utc
 ttl 86400
 force em
 ecliptic 1
 url https://maia.usno.navy.mil/ser7/finals2000A.daily
 last_line geosphere_ut1_utc_iers
 
-source igs_gnss_stations_global
+source astro_igs_gnss_stations_global
 ttl 86400
 force seismic-surface
 url https://network.igs.org/api/public/stations?format=json
@@ -15692,7 +15692,7 @@ field country country
 field is_active active_status
 field elevation elevation_m
 
-source illustristng_tng100_halo_catalog
+source astro_illustristng_tng100_halo_catalog
 ttl 86400
 force gravity
 url https://www.tng-project.org/api/TNG100-1/snapshots/99/halos/?format=json&limit=500&order_by=-mass_log_msun
@@ -15704,7 +15704,7 @@ field vel_disp velocity_dispersion_km_s
 field spin spin_parameter
 field subhalo_count num_subhalos
 
-source intermagnet_global_geomagnetic_observatories
+source magnetosphere_intermagnet_global_geomagnetic_observatories
 ttl 86400
 force gravity
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
@@ -15712,7 +15712,7 @@ map catalog
 field id dataset_id
 field title station_title
 
-source ioc_psmsl_stationlist
+source hydrosphere_ioc_psmsl_stationlist
 ttl 86400
 force gravity
 url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist
@@ -15721,7 +15721,7 @@ lat_key Lat
 lon_key Lon
 field observations ioc_station_observations
 
-source iris_fdsn_ic_au_regional_seismic_networks
+source geosphere_iris_fdsn_ic_au_regional_seismic_networks
 ttl 86400
 force seismic-body
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=IC,AU
@@ -15735,7 +15735,7 @@ field Elevation elevation_m
 field SiteDescription location_name
 field StartTime deployment_start
 
-source iris_fdsn_ida_network_stations
+source geosphere_iris_fdsn_ida_network_stations
 ttl 86400
 force seismic-body
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=II
@@ -15750,7 +15750,7 @@ field Elevation elevation_m
 field SiteDescription site_name
 field StartTime start_date
 
-source iris_fdsn_iu_global_seismographic_network
+source geosphere_iris_fdsn_iu_global_seismographic_network
 ttl 86400
 force seismic-body
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=IU
@@ -15764,7 +15764,7 @@ field Elevation elevation_m
 field SiteDescription site_description
 field StartTime deployment_start
 
-source iris_ph5_stations
+source geosphere_iris_ph5_stations
 ttl 86400
 force seismic-body
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&starttime=2020-01-01
@@ -15777,7 +15777,7 @@ field Station station_code
 field Elevation elevation_m
 field SiteDescription station_name
 
-source iris_spud_moment_tensor_solutions
+source geosphere_iris_spud_moment_tensor_solutions
 ttl 86400
 force seismic-body
 url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={today}T23:59:59&catalog=GCMT&format=text&nodata=404
@@ -16171,7 +16171,7 @@ field filterid filter_id
 field medianmag median_mag
 field magrms mag_rms
 
-source isc_catalog_historic
+source geosphere_isc_catalog_historic
 ttl 86400
 force seismic-body
 url https://www.isc.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&limit=500&orderby=time&starttime=1900-01-01&endtime={today}
@@ -16184,7 +16184,7 @@ field properties.time event_time
 field properties.depth depth_km
 field properties.auth reporting_authority
 
-source isc_seismological_events
+source geosphere_isc_seismological_events
 ttl 86400
 force seismic-body
 url http://www.isc.ac.uk/cgi-bin/web-db-run?request=BULLETIN&out_format=CSV&searchshape=RECT&bot_lat=-90&top_lat=90&left_lon=-180&right_lon=180&start_year={year}&start_mon={month}&start_day={day}&start_time=00%3A00%3A00&end_year={year}&end_mon={month}&end_day={day}&end_time=23%3A59%3A59&min_mag=4.5&req_mag_type=mb&req_mag_agcy=ISC
@@ -16199,7 +16199,7 @@ field Magnitude magnitude
 field MagType mag_type
 field Author agency
 
-source isric_soilgrids_properties
+source geosphere_isric_soilgrids_properties
 ttl 86400
 force diffusion
 ecliptic 1
@@ -16208,7 +16208,7 @@ map properties.phh2o.layers
 field_in name depth_layer
 field_in values.mean ph_h2o_mean
 
-source isro_bhuvan_drought_ndvi
+source geosphere_isro_bhuvan_drought_ndvi
 ttl 86400
 force diffusion
 url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=drought&format=json
@@ -16220,7 +16220,7 @@ field properties.state state_name
 field properties.ndvi_anomaly ndvi_anomaly
 field properties.drought_class drought_severity_class
 
-source isro_bhuvan_landslide_india
+source geosphere_isro_bhuvan_landslide_india
 ttl 86400
 force seismic-surface
 url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=landslide&format=json
@@ -16257,7 +16257,7 @@ field properties.date_start start_year
 field properties.date_end end_year
 field properties.mission satellite_mission
 
-source ivs_vlbi_station_catalog
+source astro_ivs_vlbi_station_catalog
 ttl 86400
 force gravity
 url https://cddis.nasa.gov/archive/vlbi/ivsdata/db/sched/ns-codes.txt
@@ -16479,7 +16479,7 @@ field H absolute_magnitude
 field class orbit_class
 field diameter estimated_diameter_km
 
-source kodiaq_quasar_absorbers
+source astro_kodiaq_quasar_absorbers
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_852_22_sample.json
@@ -16490,7 +16490,7 @@ dec_key 9
 z_key 3
 field_in 5 kodiaq_sn
 
-source landsat_c2_l2
+source astro_landsat_c2_l2
 ttl 86400
 force em
 url https://earth-search.aws.element84.com/v1/search
@@ -16507,7 +16507,7 @@ field properties.landsat:collection_number collection_number
 field properties.landsat:wrs_path wrs_path
 field properties.landsat:wrs_row wrs_row
 
-source landsatlook_c2l2
+source astro_landsatlook_c2l2
 ttl 86400
 force em
 url https://landsatlook.usgs.gov/stac-server/search
@@ -16521,7 +16521,7 @@ field properties.datetime observation_time
 field properties.eo:cloud_cover cloud_cover_pct
 field properties.landsat:collection_number collection_number
 
-source lasp_lisird_tsis1_hybrid_reference_spectrum
+source astro_lasp_lisird_tsis1_hybrid_reference_spectrum
 ttl 86400
 force em
 ssb
@@ -16532,14 +16532,14 @@ field wavelength wavelength_nm
 field ssi spectral_irradiance_W_m2_nm
 field uncertainty ssi_uncertainty_W_m2_nm
 
-source lidar_3dep_elevation
+source geosphere_lidar_3dep_elevation
 ttl 86400
 force em
 url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&output=json
 field value lidar_3dep_elevation_m
 field resolution lidar_3dep_resolution_m
 
-source lidar_lola_moon_elevation
+source astro_lidar_lola_moon_elevation
 ttl 86400
 force em
 url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1
@@ -16548,7 +16548,7 @@ field features.0.properties.pc:statistics.2.average lidar_lola_moon_z_mean_m
 field features.0.properties.pc:statistics.2.minimum lidar_lola_moon_z_min_m
 field features.0.properties.pc:statistics.2.maximum lidar_lola_moon_z_max_m
 
-source lidar_lola_moon_point_cloud
+source astro_lidar_lola_moon_point_cloud
 ttl 86400
 force em
 url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1
@@ -16556,21 +16556,21 @@ wgs84 0 0
 field features.0.properties.pc:count lidar_lola_moon_point_count
 field features.0.properties.pc:density lidar_lola_moon_point_density_per_km2
 
-source lidar_mola_mars_megdr_count
+source astro_lidar_mola_mars_megdr_count
 ttl 86400
 force em
 url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=MEGDR&output=XML
 wgs84 0 0
 regex <Count>([0-9]+)</Count> lidar_mola_mars_megdr_product_count
 
-source lidar_mola_mars_pedr_count
+source astro_lidar_mola_mars_pedr_count
 ttl 86400
 force em
 url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=PEDR&output=XML
 wgs84 0 0
 regex <Count>([0-9]+)</Count> lidar_mola_mars_pedr_product_count
 
-source local_group_dwarf_spheroids
+source astro_local_group_dwarf_spheroids
 ttl 86400
 force gravity
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,D,Mass,HRV+FROM+%22J/AJ/144/4/catalog%22
@@ -18227,7 +18227,7 @@ field Sectors observed_sectors
 field T_mag tess_magnitude
 field Tmag_unc magnitude_uncertainty
 
-source mcgill_magnetar_catalog
+source astro_mcgill_magnetar_catalog
 ttl 86400
 force em
 url https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
@@ -18243,7 +18243,7 @@ field Dist distance_kpc
 field Type magnetar_type
 field LX x_ray_luminosity
 
-source mcgill_magnetar_outburst_history
+source astro_mcgill_magnetar_outburst_history
 ttl 86400
 force em
 url https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
@@ -18260,7 +18260,7 @@ field Type sgr_or_axp
 field LX xray_luminosity_erg_s
 field LastBurst last_outburst_year
 
-source meteorite_landings_tidy
+source astro_meteorite_landings_tidy
 ttl 86400
 force gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_meteorites_tidy.csv
@@ -18275,21 +18275,21 @@ field year fall_year
 field recclass meteorite_class
 field mass mass_grams
 
-source molecular_crystallography_xrd
+source subatomic_molecular_crystallography_xrd
 ttl 86400
 force em
 url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
 wgs84 54.683 25.287
 field a molecular_lattice_constant_a
 
-source molecular_protein_structures
+source subatomic_molecular_protein_structures
 ttl 86400
 force em
 url https://data.rcsb.org/rest/v1/core/entry/1UBQ
 wgs84 40.500 -74.450
 field rcsb_id biosphere_protein_structure_id
 
-source moon_phase
+source astro_moon_phase
 ttl 86400
 force em
 url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
@@ -18297,7 +18297,7 @@ wgs84 34.201 -118.171
 path properties.data.curphase cosmic_moon_phase
 path properties.data.fracillum cosmic_moon_illumination_pct
 
-source mpc_tno_orbital_elements_database
+source astro_mpc_tno_orbital_elements_database
 ttl 86400
 force gravity
 url https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
@@ -18309,21 +18309,21 @@ field designation designation
 field H absolute_mag
 field G slope_param
 
-source musicbrainz_artists_total
+source technosphere_musicbrainz_artists_total
 ttl 86400
 force em
 url https://musicbrainz.org/ws/2/artist?query=*&limit=1&fmt=json
 wgs84 51.507 -0.127
 field artists.0.id biosphere_music_artists_total
 
-source musicbrainz_recordings_total
+source technosphere_musicbrainz_recordings_total
 ttl 86400
 force em
 url https://musicbrainz.org/ws/2/recording?query=*&limit=1&fmt=json
 wgs84 51.507 -0.127
 field recordings.0.id biosphere_music_recordings_total
 
-source musicbrainz_releases_total
+source technosphere_musicbrainz_releases_total
 ttl 86400
 force em
 url https://musicbrainz.org/ws/2/release?query=*&limit=1&fmt=json
@@ -18631,7 +18631,7 @@ field title granule_title
 field updated last_modified
 field boxes bounding_box
 
-source ncei_enso_oni_index
+source astro_ncei_enso_oni_index
 ttl 86400
 force thermal
 ecliptic 1
@@ -18642,7 +18642,7 @@ field 0 season_year
 field 1 month
 field 2 anom_3month oni_anomaly_c
 
-source ncei_global_summary_weather
+source atmosphere_ncei_global_summary_weather
 ttl 86400
 wgs84 0.0 0.0
 force diffusion
@@ -18660,7 +18660,7 @@ field_in PRCP precipitation_mm
 field_in SNOW snowfall_mm
 field_in AWND average_wind_speed_ms
 
-source ncei_nao_monthly_index
+source astro_ncei_nao_monthly_index
 ttl 86400
 force thermal
 url https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii
@@ -18671,7 +18671,7 @@ field 0 year
 field 1 month
 field 2 nao_index nao_value
 
-source ncei_paleo_treering_parameters
+source geosphere_ncei_paleo_treering_parameters
 ttl 86400
 force diffusion
 url https://www.ncei.noaa.gov/access/paleo-search/study/params.json?dataTypeId=18
@@ -18681,7 +18681,7 @@ field name parameter_name
 field id parameter_id
 field units parameter_units
 
-source ncei_paleo_treering_studies
+source geosphere_ncei_paleo_treering_studies
 ttl 86400
 force diffusion
 url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataTypeId=18&limit=500
@@ -18697,7 +18697,7 @@ field abstract study_abstract
 field publication.0.title publication_title
 field publication.0.year publication_year
 
-source ncei_pdo_monthly_index
+source astro_ncei_pdo_monthly_index
 ttl 86400
 force thermal
 url https://www.ncei.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.pdo.dat
@@ -18708,7 +18708,7 @@ field 0 year
 field 1 month
 field 2 pdo_index pdo_value
 
-source ncei_soi_monthly_index
+source astro_ncei_soi_monthly_index
 ttl 86400
 force thermal
 url https://www.cpc.ncep.noaa.gov/data/indices/soi
@@ -18719,7 +18719,7 @@ field 0 year
 field 1 month
 field 2 soi_index soi_value
 
-source neo_sentry_risk_list
+source astro_neo_sentry_risk_list
 ttl 86400
 force gravity
 url https://ssd-api.jpl.nasa.gov/sentry.api?all=1
@@ -18734,7 +18734,7 @@ field v_inf v_infinity_km_s
 field h absolute_magnitude
 field diameter estimated_diameter_km
 
-source neotoma_datasets
+source biosphere_neotoma_datasets
 ttl 86400
 force diffusion
 url https://api.neotomadb.org/v2/data/datasets?limit=500
@@ -18748,7 +18748,7 @@ field site.sitename site_name
 field dataset.units dataset_units
 field dataset.pi.name principal_investigator
 
-source neotoma_ostracod_sites
+source biosphere_neotoma_ostracod_sites
 ttl 86400
 force diffusion
 url https://api.neotomadb.org/v2/data/datasets?datasettype=ostracode&limit=500&offset=0
@@ -18758,7 +18758,7 @@ lon_key site.geography.longitude
 field site.sitename site_name
 field datasettype dataset_type
 
-source neotoma_plant_macrofossil_sites
+source biosphere_neotoma_plant_macrofossil_sites
 ttl 86400
 force diffusion
 url https://api.neotomadb.org/v2/data/datasets?datasettype=plant+macrofossil&limit=500&offset=0
@@ -18767,7 +18767,7 @@ lat_key site.geography.latitude
 lon_key site.geography.longitude
 field site.sitename site_name
 
-source neotoma_sites
+source biosphere_neotoma_sites
 ttl 86400
 force diffusion
 url https://api.neotomadb.org/v2/data/sites?limit=500
@@ -18781,7 +18781,7 @@ field site.altitude altitude_m
 field site.geography.country country
 field site.geography.state state
 
-source neowise_asteroid_diameters
+source astro_neowise_asteroid_diameters
 ttl 86400
 force gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_neowiser_p1bs_psd.csv
@@ -18795,7 +18795,7 @@ field diameter estimated_diameter_km
 field extended extended_object_flag
 field neo_flag near_earth_flag
 
-source ngdc_volcanoes_significant
+source geosphere_ngdc_volcanoes_significant
 ttl 86400
 force seismic-body
 url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
@@ -18807,7 +18807,7 @@ field elevation elevation_m
 field deathsTotal deaths_total
 field year last_eruption_year
 
-source nist_codata_fundamental_constants
+source subatomic_nist_codata_fundamental_constants
 ttl 86400
 force em
 url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
@@ -18819,126 +18819,126 @@ field 2 value
 field 3 uncertainty
 field 4 unit
 
-source nlm_assembly_total
+source technosphere_nlm_assembly_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=assembly&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_genome_assemblies_total
 
-source nlm_bioproject_total
+source technosphere_nlm_bioproject_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=bioproject&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_bioprojects_total
 
-source nlm_biosample_total
+source technosphere_nlm_biosample_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=biosample&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_biosamples_total
 
-source nlm_books_total
+source technosphere_nlm_books_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=books&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_nlm_books_total
 
-source nlm_clinical_trials_total
+source technosphere_nlm_clinical_trials_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinicaltrials&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_clinical_trials_total
 
-source nlm_clinvar_total
+source technosphere_nlm_clinvar_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinvar&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_clinic_variants_total
 
-source nlm_gap_total
+source technosphere_nlm_gap_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gap&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_dbgap_studies_total
 
-source nlm_gene_total
+source technosphere_nlm_gene_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_genbank_genes_total
 
-source nlm_genome_total
+source technosphere_nlm_genome_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=genome&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_genome_total
 
-source nlm_mesh_total
+source technosphere_nlm_mesh_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=mesh&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_mesh_terms_total
 
-source nlm_nucleotide_total
+source technosphere_nlm_nucleotide_total
 ttl 86400
 force gravity
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nucleotide&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_nucleotide_sequences_total
 
-source nlm_omim_total
+source technosphere_nlm_omim_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=omim&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_mendelian_disorders_total
 
-source nlm_pmc_total
+source technosphere_nlm_pmc_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_pmc_articles_total
 
-source nlm_protein_total
+source technosphere_nlm_protein_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=protein&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_protein_sequences_total
 
-source nlm_pubmed_total
+source technosphere_nlm_pubmed_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_pubmed_articles_total
 
-source nlm_snp_total
+source technosphere_nlm_snp_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=snp&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_snp_total
 
-source nlm_sra_total
+source technosphere_nlm_sra_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&retmax=0
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_sequencing_runs_total
 
-source nlm_taxonomy_total
+source technosphere_nlm_taxonomy_total
 ttl 86400
 force em
 url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&retmax=0
@@ -19474,14 +19474,14 @@ field Temperature temperature_c
 field Salinity salinity_psu
 field Oxygen oxygen_ml_l
 
-source npm_packages_total
+source technosphere_npm_packages_total
 ttl 86400
 force em
 url https://registry.npmjs.org/-/v1/search?text=*&size=1
 wgs84 37.774 -122.419
 field total biosphere_npm_packages_total
 
-source nso_gong_ring_diagram_flow_maps
+source astro_nso_gong_ring_diagram_flow_maps
 ttl 86400
 force em
 ssb
@@ -19495,7 +19495,7 @@ field longitude heliographic_longitude
 field vx eastward_flow_m_s
 field vy northward_flow_m_s
 
-source oac_astrocats
+source astro_oac_astrocats
 ttl 86400
 force em
 url https://api.astrocats.space/{target}/
@@ -19508,7 +19508,7 @@ field name name
 field claimedtype type
 field redshift redshift
 
-source obis_coral_species_global
+source biosphere_obis_coral_species_global
 ttl 86400
 force diffusion
 url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
@@ -19519,7 +19519,7 @@ field scientificName species_name
 field family taxon_family
 field date_year obs_year
 
-source obis_threatened_marine_species
+source biosphere_obis_threatened_marine_species
 ttl 86400
 force diffusion
 url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
@@ -19532,7 +19532,7 @@ field family taxon_family
 field iucnRedListCategory iucn_category
 field date_year obs_year
 
-source oceanography_cmems_global_analysis
+source hydrosphere_oceanography_cmems_global_analysis
 ttl 86400
 force em
 ecliptic 1
@@ -19572,35 +19572,35 @@ field_in daily.et0_fao_evapotranspiration et0_mm_proxy_gpp
 field_in daily.vapor_pressure_deficit vpd_kpa
 field_in daily.growing_degree_days_base_0_limit_50 gdd_0_50
 
-source openfda_adverse_total
+source technosphere_openfda_adverse_total
 ttl 86400
 force em
 url https://api.fda.gov/drug/event.json?limit=1
 wgs84 38.995 -77.101
 field meta.results.total biosphere_fda_adverse_events_total
 
-source openfda_device_total
+source technosphere_openfda_device_total
 ttl 86400
 force em
 url https://api.fda.gov/device/510k.json?limit=1
 wgs84 38.995 -77.101
 field meta.results.total biosphere_fda_devices_total
 
-source openfda_drug_total
+source technosphere_openfda_drug_total
 ttl 86400
 force em
 url https://api.fda.gov/drug/drugsfda.json?limit=1
 wgs84 38.995 -77.101
 field meta.results.total biosphere_fda_drugs_total
 
-source openfda_recalls_total
+source technosphere_openfda_recalls_total
 ttl 86400
 force em
 url https://api.fda.gov/drug/enforcement.json?limit=1
 wgs84 38.995 -77.101
 field meta.results.total biosphere_fda_recalls_total
 
-source openfoodfacts_products_count
+source technosphere_openfoodfacts_products_count
 ttl 86400
 force em
 url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
@@ -19620,7 +19620,7 @@ field wind_capacity_mw wind_capacity_mw
 field solar_capacity_mw solar_capacity_mw
 field nuclear_capacity_mw nuclear_capacity_mw
 
-source openlandmap_soil_carbon_stac
+source geosphere_openlandmap_soil_carbon_stac
 ttl 86400
 force diffusion
 url https://stac.openlandmap.org/collections/sol_organic.carbon_usda.6a1c_m/items?limit=500&bbox=-180,-60,180,75
@@ -19631,14 +19631,14 @@ field properties.title layer_title
 field properties.datetime data_datetime
 field properties.description layer_description
 
-source openlibrary_authors_total
+source technosphere_openlibrary_authors_total
 ttl 86400
 force em
 url https://openlibrary.org/authors.json?limit=1
 wgs84 40.712 -74.006
 field size biosphere_openlibrary_authors_total
 
-source openlibrary_books_total
+source technosphere_openlibrary_books_total
 ttl 86400
 force em
 url https://openlibrary.org/books.json?limit=1
@@ -20005,7 +20005,7 @@ ecliptic 0.7
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_venus.json
 regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg
 
-source orfeus_eida_stations_europe
+source geosphere_orfeus_eida_stations_europe
 ttl 86400
 force seismic-body
 url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01&endtime=9999-01-01
@@ -20017,7 +20017,7 @@ field Network network_code
 field Station station_code
 field Elevation elevation_m
 
-source ourairports_global
+source technosphere_ourairports_global
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ourairports_global.csv
@@ -20034,42 +20034,42 @@ field_in 11 scheduled_service
 field_in 12 icao_code
 field_in 13 iata_code
 
-source paleobiology_pbdb_paleobiology
+source biosphere_paleobiology_pbdb_paleobiology
 ttl 86400
 force em
 url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
 wgs84 43.073 -89.401
 field records_returned paleobiology_pbdb_occurrence_count
 
-source paleoclimate_neotoma_paleoecology
+source biosphere_paleoclimate_neotoma_paleoecology
 ttl 86400
 force em
 url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
 wgs84 43.073 -89.401
 field total paleoclimate_neotoma_occurrences
 
-source pangaea_oai_geotraces_trace_metals
+source hydrosphere_pangaea_oai_geotraces_trace_metals
 ttl 86400
 force diffusion
 url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GEOTRACES
 wgs84 0.0 0.0
 map .
 
-source pangaea_oai_gnip_oxygen_isotopes
+source hydrosphere_pangaea_oai_gnip_oxygen_isotopes
 ttl 86400
 force diffusion
 url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIP
 wgs84 0.0 0.0
 map .
 
-source pangaea_oai_gnir_river_isotopes
+source hydrosphere_pangaea_oai_gnir_river_isotopes
 ttl 86400
 force diffusion
 ecliptic 1
 url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIR
 map .
 
-source pantheon_plus_sne
+source astro_pantheon_plus_sne
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_938_110_table7.json
@@ -20080,7 +20080,7 @@ dec_key 24
 z_key 5
 field_in 7 pantheon_mBcorr
 
-source particle_physics_papers_total
+source subatomic_particle_physics_papers_total
 ttl 86400
 force em
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=find+tc&fields=titles,citation_count
@@ -20115,21 +20115,21 @@ url https://api.openalex.org/works?per-page=1
 wgs84 42.373 -71.110
 field meta.count biosphere_openalex_work_count
 
-source pubchem_compounds_total
+source technosphere_pubchem_compounds_total
 ttl 86400
 force em
 url https://pubchem.ncbi.nlm.nih.gov/rest/pug/compounds/count/JSON
 wgs84 38.995 -77.101
 field PC_Compounds.0.properties.0.count molecular_compounds_total
 
-source pubchem_substances_total
+source technosphere_pubchem_substances_total
 ttl 86400
 force em
 url https://pubchem.ncbi.nlm.nih.gov/rest/pug/substances/count/JSON
 wgs84 38.995 -77.101
 field PC_Substances.0.properties.0.count molecular_substances_total
 
-source rapid_amoc_26n_transport_monthly
+source hydrosphere_rapid_amoc_26n_transport_monthly
 ttl 86400
 force diffusion
 url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=moc_vertical
@@ -20143,7 +20143,7 @@ field 3 florida_current_sv
 field 4 ekman_sv
 field 5 umo_sv
 
-source rapid_florida_current_daily
+source hydrosphere_rapid_florida_current_daily
 ttl 86400
 force diffusion
 url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=fc
@@ -20154,14 +20154,14 @@ field 0 decimal_year
 field 1 florida_current_sv
 field 2 uncertainty_sv
 
-source rcsb_pdb_structures_total
+source biosphere_rcsb_pdb_structures_total
 ttl 86400
 force em
 url https://data.rcsb.org/graphql?query={graphStatistics{totalEntries}}
 wgs84 40.444 -74.494
 field data.graphStatistics.totalEntries molecular_pdb_structures_total
 
-source ripe_atlas_probes
+source technosphere_ripe_atlas_probes
 ttl 86400
 force em
 url https://atlas.ripe.net/api/v2/probes/?status=1&page_size=500&format=json
@@ -20175,7 +20175,7 @@ field_in type probe_type
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
 
-source sdss_dr18_cone_search
+source astro_sdss_dr18_cone_search
 ttl 86400
 force em
 url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra={ra}&dec={dec}&sr=6&format=json
@@ -20190,7 +20190,7 @@ field r mag_r
 field i mag_i
 field z mag_z
 
-source sdss_dr18_galaxies
+source astro_sdss_dr18_galaxies
 ttl 86400
 force em
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
@@ -20202,7 +20202,7 @@ field r mag_r
 field g mag_g
 field i mag_i
 
-source sdss_dr18_qso
+source astro_sdss_dr18_qso
 ttl 86400
 force em
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
@@ -20213,7 +20213,7 @@ z_key z
 field psfMag_r mag_r
 field psfMag_g mag_g
 
-source sdss_dr18_stars
+source astro_sdss_dr18_stars
 ttl 86400
 force em
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
@@ -20226,7 +20226,7 @@ field u mag_u
 field i mag_i
 field z mag_z
 
-source servir_smap_soil_moisture_global
+source geosphere_servir_smap_soil_moisture_global
 ttl 86400
 force diffusion
 url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
@@ -20235,7 +20235,7 @@ lat_key geometry.y
 lon_key geometry.x
 field attributes.sm soil_moisture_pct
 
-source sidc_international_sunspot_number
+source astro_sidc_international_sunspot_number
 ttl 86400
 force em
 ssb
@@ -20247,7 +20247,7 @@ field_in 1 month
 field_in 2 day
 field_in 3 sunspot_number
 
-source sidc_smoothed_monthly_sunspot_number
+source astro_sidc_smoothed_monthly_sunspot_number
 ttl 86400
 force em
 url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
@@ -20263,7 +20263,7 @@ field 5 num_observations
 field 6 smoothed_ssn
 field 7 smoothed_std
 
-source sidc_sunspot_number_daily
+source astro_sidc_sunspot_number_daily
 ttl 86400
 force em
 url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
@@ -20286,14 +20286,14 @@ url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={
 last shortwave_radiation atmosphere_hist_solar_radiation_wm2
 last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
 
-source stackoverflow_questions_total
+source technosphere_stackoverflow_questions_total
 ttl 86400
 force em
 url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
 wgs84 37.774 -122.419
 field total biosphere_stackoverflow_questions_total
 
-source subatomare_particles
+source subatomic_particles
 ttl 86400
 force em
 ssb
@@ -20303,35 +20303,35 @@ last_row ID subatomare_last_pdg_id
 last_row Mass subatomare_last_mass_mev
 last_row Charge subatomare_last_charge
 
-source sunspot_number_global
+source astro_sunspot_number_global
 ttl 86400
 force em
 ssb
 url https://www.sidc.be/silso/DATA/SN_d_tot_V2.0.txt
 last_line solar_sunspot_number_silso
 
-source sunspot_number_monthly
+source astro_sunspot_number_monthly
 ttl 86400
 force em
 ssb
 url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
 last_line solar_sunspot_number_silso
 
-source technosphere_stackoverflow_questions
+source technosphere_technosphere_stackoverflow_questions
 ttl 86400
 force em
 url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
 wgs84 40.712 -74.006
 path items.0.count technosphere_stackoverflow_questions_total
 
-source tess_exoplanet_candidates_total
+source astro_tess_exoplanet_candidates_total
 ttl 86400
 force em
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
 wgs84 42.365 -71.105
 last_line exosphere_tess_candidates_total
 
-source tevcat2_sources
+source astro_tevcat2_sources
 ttl 86400
 force em
 url https://tevcat2.tevcat.org/api/sources
@@ -20344,7 +20344,7 @@ field_in distance distance_kpc
 field_in flux flux_tev_crab
 field_in index spectral_index
 
-source tns_transient_supernovae
+source astro_tns_transient_supernovae
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/B_sn_sncat.json
@@ -20356,7 +20356,7 @@ z_key 2
 field_in 3 tns_max_mag
 field_in 4 tns_sn_type
 
-source twomass_psc_irsa_tap
+source astro_twomass_psc_irsa_tap
 ttl 86400
 force em
 url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv&limit=5000
@@ -20369,7 +20369,7 @@ field j_m mag_j
 field h_m mag_h
 field k_m mag_k
 
-source ucar_cosmic2_ro_level3_monthly
+source atmosphere_ucar_cosmic2_ro_level3_monthly
 ttl 86400
 force diffusion
 url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
@@ -20380,7 +20380,7 @@ field 0 file_name
 field 1 file_size
 field 2 last_modified
 
-source uhecr_auger_host_galaxies
+source astro_uhecr_auger_host_galaxies
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_935_170_table4.json
@@ -20391,7 +20391,7 @@ dec_key 6
 dist_key 9 3.0857e22
 field_in 11 uhecr_host_kmag
 
-source uniprot_proteins_total
+source biosphere_uniprot_proteins_total
 ttl 86400
 force em
 url https://rest.uniprot.org/uniprotkb/statistics
@@ -20757,14 +20757,14 @@ field elevation_meters elevation_m
 field nvews_threat threat_level
 field icao_coordinates icao_grid
 
-source uspto_patents_total
+source technosphere_uspto_patents_total
 ttl 86400
 force em
 url https://developer.uspto.gov/ptab-api/v2/patents?limit=1
 wgs84 38.995 -77.101
 field totalResults biosphere_uspto_patents_total
 
-source viirs_lst_global
+source astro_viirs_lst_global
 ttl 86400
 force thermal
 url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_viirs_nrt_world.csv
@@ -21766,7 +21766,7 @@ ra_key _RA
 dec_key _DE
 field Target target_name
 
-source who_gho_air_quality_urban
+source atmosphere_who_gho_air_quality_urban
 ttl 86400
 force diffusion
 url https://ghoapi.azureedge.net/api/AIR_12?\$filter=SpatialDimType+eq+'COUNTRY'&\$top=500
@@ -21777,7 +21777,7 @@ field TimeDim year
 field Low confidence_low
 field High confidence_high
 
-source who_gho_urban_air_quality
+source atmosphere_who_gho_urban_air_quality
 ttl 86400
 force diffusion
 ecliptic 1
@@ -21787,35 +21787,35 @@ field SpatialDim country_code
 field TimeDim year
 field NumericValue pm10_annual_mean
 
-source wikidata_entities_total
+source technosphere_wikidata_entities_total
 ttl 86400
 force em
 url https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
 wgs84 37.774 -122.419
 field query.statistics.articles biosphere_wikidata_entities_total
 
-source wikipedia_articles_total
+source technosphere_wikipedia_articles_total
 ttl 86400
 force em
 url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
 wgs84 37.774 -122.419
 field query.statistics.articles biosphere_wikipedia_articles_total
 
-source wikipedia_edits_total
+source technosphere_wikipedia_edits_total
 ttl 86400
 force em
 url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
 wgs84 37.774 -122.419
 field query.statistics.edits biosphere_wikipedia_edits_total
 
-source wikipedia_pages_total
+source technosphere_wikipedia_pages_total
 ttl 86400
 force em
 url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
 wgs84 37.774 -122.419
 field query.statistics.pages biosphere_wikipedia_pages_total
 
-source world_open_brewery_db
+source biosphere_world_open_brewery_db
 ttl 86400
 force em
 url https://api.openbrewerydb.org/v1/breweries?per_page=200
@@ -21824,19 +21824,7 @@ lat_key latitude
 lon_key longitude
 field_in id brewery_db_id
 
-source worldbank_co2_emissions
-ttl 86400
-force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/co2_emissions_countries.json
-map data
-lat_key latitude
-lon_key longitude
-field country country_name
-field iso3 country_iso3
-field co2_kt co2_kt
-field year data_year
-
-source worldbank_countries
+source biosphere_worldbank_countries
 ttl 86400
 force diffusion
 url https://api.worldbank.org/v2/country/all?format=json&per_page=300
@@ -21849,7 +21837,7 @@ field region.value region_name
 field incomeLevel.value income_level
 field capitalCity capital_city
 
-source worldbank_forest_area
+source biosphere_worldbank_forest_area
 ttl 86400
 force diffusion
 url https://api.worldbank.org/v2/country/all/indicator/AG.LND.FRST.ZS?format=json&per_page=500
@@ -21859,7 +21847,7 @@ lon_key country.longitude
 field value forest_pct
 field country.iso2Code country_code
 
-source worldbank_pm25_exposure
+source biosphere_worldbank_pm25_exposure
 ttl 86400
 force diffusion
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/pm25_exposure_countries.json
@@ -21871,7 +21859,7 @@ field iso3 country_iso3
 field pm25_ugm3 pm25_ugm3
 field year data_year
 
-source worldbank_water_access
+source biosphere_worldbank_water_access
 ttl 86400
 force diffusion
 url https://api.worldbank.org/v2/country/all/indicator/SH.H2O.BASIC.ZS?format=json&per_page=500
@@ -21881,7 +21869,7 @@ lon_key country.longitude
 field value water_access_pct
 field country.iso2Code country_code
 
-source worldpop_population_density_global
+source biosphere_worldpop_population_density_global
 ttl 86400
 force diffusion
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/population_countries.json
@@ -21906,17 +21894,7 @@ field phylum phylum
 field class class_name
 field order order_name
 
-source woudc_total_ozone
-ttl 86400
-force diffusion
-url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=ozone_total_column
-map observations
-lat_key station.geometry.coordinates.1
-lon_key station.geometry.coordinates.0
-field value total_ozone_du
-field datetime obs_time
-
-source woudc_total_ozone_observations
+source atmosphere_woudc_total_ozone_observations
 ttl 86400
 force diffusion
 url https://woudc.org/api/records/observations/?dataset=TotalOzone&limit=2000&sortby=-datetime
@@ -21928,7 +21906,7 @@ field value total_ozone_du
 field station.name station_name
 field station.country country
 
-source woudc_uv_index
+source atmosphere_woudc_uv_index
 ttl 86400
 force diffusion
 url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=uv_index
@@ -21937,7 +21915,7 @@ lat_key station.geometry.coordinates.1
 lon_key station.geometry.coordinates.0
 field value uv_index
 
-source woudc_uv_index_observations
+source atmosphere_woudc_uv_index_observations
 ttl 86400
 force diffusion
 url https://woudc.org/api/records/observations/?dataset=UmkehrN14&limit=1000&sortby=-datetime
@@ -21949,7 +21927,7 @@ field value uv_index_value
 field station.name station_name
 field station.country country
 
-source zenodo_iodp_community
+source technosphere_zenodo_iodp_community
 ttl 86400
 force diffusion
 ecliptic 1
@@ -21962,7 +21940,7 @@ field metadata.publication_date publication_date
 field metadata.description dataset_description
 field files.0.links.self file_download_url
 
-source zenodo_iodp_search
+source technosphere_zenodo_iodp_search
 ttl 86400
 force diffusion
 ecliptic 1
@@ -24055,7 +24033,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source geonuclear_power_plants
+source technosphere_geonuclear_power_plants
 ttl 604800
 force thermal
 url https://raw.githubusercontent.com/cristianst85/GeoNuclearData/master/data/csv/denormalized/nuclear_power_plants.csv
@@ -24153,7 +24131,7 @@ lat_key lat
 lon_key lon
 field_in elevation geosphere_volcano_elevation_m
 
-source glims_glacier_points
+source cryosphere_glims_glacier_points
 ttl 604800
 force thermal
 url https://www.glims.org/geoserver/ows?service=wfs&version=2.0.0&request=GetFeature&typeName=GLIMS:GLIMS_Points&bbox={lon_min},{lat_min},{lon_max},{lat_max},EPSG:4326&count=500&outputFormat=application/json
@@ -24163,7 +24141,7 @@ lon_key geometry.coordinates.0
 epoch_key properties.src_date
 field properties.db_area cryosphere_glims_glacier_area_km2
 
-source higgs_production_xsec_papers
+source subatomic_higgs_production_xsec_papers
 ttl 604800
 force em
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Higgs+production+cross+section&fields=titles,citation_count
@@ -24179,7 +24157,7 @@ lat_key geometry.coordinates.0.1
 lon_key geometry.coordinates.0.0
 field_in properties.name hydrosphere_river_name
 
-source iau_constellation_boundaries
+source astro_iau_constellation_boundaries
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_constellations_bounds.json
@@ -24189,7 +24167,7 @@ field_in properties.rank cpoly_rank
 field 0 prefname
 field 3 redshift
 
-source irsa
+source astro_irsa
 ttl 604800
 force em
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+designation,+j_m,+h_m,+k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -24203,7 +24181,7 @@ field_in k_m mag_k
 lat_key ra
 lon_key dec
 
-source molecular_periodic_elements
+source subatomic_molecular_periodic_elements
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_periodic_table.json
@@ -24212,7 +24190,7 @@ field_in atomic_mass molecular_element_mass_u
 field_in density molecular_element_density_g_l
 field_in melt molecular_element_melt_k
 
-source muon_gminus2_papers
+source subatomic_muon_gminus2_papers
 ttl 604800
 force em
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=muon+g-2+anomalous+magnetic+moment&fields=titles,citation_count
@@ -24241,7 +24219,7 @@ lon_key longitude
 field elevation_m hydrosphere_ndbc_station_elevation_m
 field station_type hydrosphere_ndbc_station_type
 
-source neutrino_oscillation_papers
+source subatomic_neutrino_oscillation_papers
 ttl 604800
 force em
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrino+oscillation&fields=titles,citation_count
@@ -24318,16 +24296,7 @@ url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=time+crystal&
 wgs84 42.360 -71.093
 field hits.hits.0.metadata.citation_count physics_time_crystal_research_citations
 
-source raspberry_shake_stations
-ttl 604800
-force seismic-surface
-url https://stationview.raspberryshake.org/stations?online=true
-map .
-lat_key latitude
-lon_key longitude
-field elevation seismic_station_elevation_m
-
-source simbad
+source astro_simbad
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -24338,7 +24307,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source simbad_bright_stars
+source astro_simbad_bright_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
@@ -24349,7 +24318,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source simbad_nearby_stars
+source astro_simbad_nearby_stars
 ttl 604800
 force em gravity
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx50.json
@@ -24633,7 +24602,7 @@ url https://pdgapi.lbl.gov/summaries/S044M
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_z_boson_mass_gev
 
-source technosphere_global_airports
+source astro_technosphere_global_airports
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_jbrooksuk_airports.json
@@ -24642,7 +24611,7 @@ lat_key lat
 lon_key lon
 field_in elevation technosphere_airport_elevation_ft
 
-source technosphere_submarine_cables
+source technosphere_technosphere_submarine_cables
 ttl 604800
 force em
 url https://github.com/lifewinning/submarine-cable-taps/raw/master/data/submarine_cables.geojson
@@ -25296,7 +25265,7 @@ dec_key dec
 plx_key parallax
 field_in phot_g_mean_mag star_g_mag
 
-source wri_global_power_plants
+source technosphere_wri_global_power_plants
 ttl 604800
 force thermal
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_power_plants_wri.csv
@@ -25307,7 +25276,7 @@ lon_key longitude
 field capacity_mw wri_plant_capacity_mw
 field primary_fuel wri_primary_fuel
 
-source alfalfa_catalog
+source astro_alfalfa_catalog
 ttl 2592000
 force em
 url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
@@ -26930,14 +26899,14 @@ url https://api.worldbank.org/v2/country/WLD/indicator/SP.URB.TOTL.IN.ZS?format=
 wgs84 38.899 -77.043
 field 1.0.value biosphere_urban_population_pct
 
-source dark_matter_direct_limits
+source subatomic_dark_matter_direct_limits
 ttl 2592000
 force em
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=dark+matter+direct+detection+limit+XENONnT+LZ&fields=titles,citation_count
 wgs84 42.454 13.576
 field hits.hits.0.metadata.citation_count quantum_dark_matter_limit_citations
 
-source geopages
+source geosphere_geopages
 ttl 2592000
 force em
 url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
@@ -27095,7 +27064,7 @@ force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_pb2002_plates.json
 flatten features
 
-source ned
+source astro_ned
 ttl 2592000
 force em
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -27108,7 +27077,7 @@ field_in vel velocity_km_s
 lat_key ra
 lon_key dec
 
-source neutrinoless_double_beta_limits
+source subatomic_neutrinoless_double_beta_limits
 ttl 2592000
 force em
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrinoless+double+beta+decay+limit&fields=titles,citation_count
@@ -27149,7 +27118,7 @@ field 1 age_yr_bp
 field 2 co2_ppmv
 field 3 co2_sigma_ppmv
 
-source paleoclimate_dome_fuji_co2
+source cryosphere_paleoclimate_dome_fuji_co2
 ttl 2592000
 force em
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
@@ -27159,7 +27128,7 @@ rows
 field_in 0 paleoclimate_domefuji_age_bp
 field_in 1 paleoclimate_domefuji_co2_ppm
 
-source paleoclimate_epica_co2
+source cryosphere_paleoclimate_epica_co2
 ttl 2592000
 force em
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
@@ -27169,7 +27138,7 @@ rows
 field_in 3 paleoclimate_epica_age_bp
 field_in 4 paleoclimate_epica_co2_ppm
 
-source paleoclimate_vostok_icecore
+source cryosphere_paleoclimate_vostok_icecore
 ttl 2592000
 force em
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
@@ -27215,14 +27184,14 @@ url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+
 wgs84 42.454 13.576
 field hits.hits.0.metadata.citation_count physics_dark_matter_limit_citations
 
-source quantum_gravity_lorentz_bounds
+source subatomic_quantum_gravity_lorentz_bounds
 ttl 2592000
 force em
 url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Lorentz+invariance+violation+quantum+gravity&fields=titles,citation_count
 wgs84 42.454 13.576
 field hits.hits.0.metadata.citation_count quantum_lorentz_bounds_citations
 
-source vizier
+source astro_vizier
 ttl 2592000
 force em
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+"{catalog}"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -27524,7 +27493,7 @@ lon_key lon
 field deployments ocean_site_deployments
 field depth ocean_site_depth_m
 
-source economy_eia_grid_demand
+source technosphere_economy_eia_grid_demand
 ttl 3600
 force advective
 url https://github.com/omegaflow/catalogs/releases/download/live-data/eia_grid_demand.json
