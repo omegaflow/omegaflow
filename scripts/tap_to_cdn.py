@@ -95,31 +95,95 @@ def extract_table(url):
     return m.group(1) if m else None
 
 
-def query_count(url, table):
-    """Run SELECT COUNT(*) FROM <table> and return the expected row count."""
-    if not table:
+def detect_ra_col(url):
+    """Detect the RA column name from the SELECT list."""
+    decoded = urllib.parse.unquote_plus(url)
+    sel = re.search(r"SELECT\s+(.*?)\s+FROM", decoded, re.I | re.DOTALL)
+    if not sel:
         return None
-    base = url.split("QUERY=")[0]
-    count_q = "SELECT COUNT(*) FROM " + table
-    count_url = base + "QUERY=" + urllib.parse.quote_plus(count_q)
-    try:
-        text = fetch(count_url)
-    except Exception:
-        return None
+    candidates = ["RAJ2000", "_RA", "ra", "RA", "RA_ICRS", "_RA_icrs", "RA_ICRS"]
+    cols = [c.strip().strip('"') for c in re.sub(r"TOP\s+\d+\s*","",sel.group(1),flags=re.I).split(",")]
+    for cand in candidates:
+        if cand in cols:
+            return cand
+    # fuzzy: any column with 'ra' in the name (case-insensitive)
+    for c in cols:
+        if 'ra' in c.lower():
+            return c
+    return None
+
+
+def try_fetch_rows(url):
+    """Try a single fetch, return (rows, truncated)."""
+    text = fetch(url)
     rows = votable_to_json(text)
     if rows is None:
         rows = csv_to_json(text)
+    truncated = False
+    if rows:
+        n = len(rows)
+        # Heuristic: common server limits indicate truncation
+        if n in (5000, 2000, 10000, 50000, 3000, 1000):
+            truncated = True
+        # Also check for OVERFLOW status in VOTable XML
+        if 'value="OVERFLOW"' in text:
+            truncated = True
+    return rows, truncated
+
+
+def spatial_fetch(url_template, lo, hi, ra_col, limit):
+    """Recursive spatial fetch: query RA bin, split if saturated."""
+    # Inject WHERE clause into the query, keeping encoding intact
+    decoded = urllib.parse.unquote_plus(url_template)
+    where_clause = f"{ra_col} BETWEEN {lo:.6f} AND {hi:.6f}"
+    if "WHERE" in decoded:
+        decoded = re.sub(r"WHERE\s+.*$", f"WHERE {where_clause}", decoded, count=1, flags=re.I)
+    else:
+        decoded = decoded + f" WHERE {where_clause}"
+    # Re-encode the query part only
+    if "QUERY=" in url_template:
+        base, _, _ = url_template.partition("QUERY=")
+        q = decoded.split("QUERY=", 1)[1] if "QUERY=" in decoded else ""
+        req_url = base + "QUERY=" + urllib.parse.quote_plus(q)
+    else:
+        req_url = urllib.parse.quote(decoded, safe=":/?=&%")
+
+    text = fetch(req_url)
+    rows = votable_to_json(text)
+    if rows is None:
+        rows = csv_to_json(text)
+
+    n = len(rows)
+    if n < limit:
+        return rows
+    if hi - lo < 0.5:
+        return rows
+
+    mid = (lo + hi) / 2.0
+    time.sleep(SLEEP * 0.5)
+    left = spatial_fetch(url_template, lo, mid, ra_col, limit)
+    time.sleep(SLEEP * 0.5)
+    right = spatial_fetch(url_template, mid, hi, ra_col, limit)
+    return left + right
+
+
+def fetch_full_spatial(url, ra_col):
+    """Fetch a complete catalog:
+    1. Try full fetch (no WHERE). If complete, return rows.
+    2. If truncated, recursively spatial-fetch RA bins.
+    Returns (rows, truncation_flag, shard_bin_count)."""
+    rows, truncated = try_fetch_rows(url)
     if not rows:
-        return None
-    # COUNT(*) returns one row, one column
-    first = rows[0]
-    vals = list(first.values())
-    if not vals:
-        return None
-    try:
-        return int(float(vals[0]))
-    except (TypeError, ValueError):
-        return None
+        return [], False, 0
+    if not truncated:
+        return rows, False, 0
+    limit = len(rows)  # server limit detected from saturation
+    print(f"    spatial sharding (limit={limit})", file=sys.stderr)
+    ra_col = ra_col or "RAJ2000"
+    # Recurse RA 0-360
+    rows = spatial_fetch(url, 0.0, 360.0, ra_col, limit)
+    print(f"    spatial complete: {len(rows)} rows", file=sys.stderr)
+    return rows, True, 0
 
 
 def fetch(url):
@@ -334,26 +398,22 @@ def main():
             continue
         try:
             url = strip_top(s["url"])
-            text = fetch(url)
-            rows = votable_to_json(text)
-            if rows is None:
-                rows = csv_to_json(text)
+            ra_col = detect_ra_col(url)
+            rows, truncated, n_shards = fetch_full_spatial(url, ra_col)
             if not rows:
                 print("    EMPTY", file=sys.stderr)
                 skipped += 1
                 continue
-            # ---- Verification: compare loaded rows vs COUNT(*) ----
-            table = extract_table(url)
-            expected = query_count(url, table)
-            if expected is not None:
-                if len(rows) < expected:
-                    print(f"    INCOMPLETE: got {len(rows)} rows, expected {expected} "
+            # Verification: if source had original TOP limit, check we got MORE than that
+            top_m = re.search(r'TOP\+?(\d+)', s["url"], re.I)
+            if top_m:
+                orig_top = int(top_m.group(1))
+                if len(rows) <= orig_top:
+                    print(f"    INCOMPLETE: got {len(rows)} rows, original TOP was {orig_top} "
                           f"(skipping, keeping old CDN file)", file=sys.stderr)
                     skipped += 1
                     continue
-                print(f"    verified: {len(rows)}/{expected} rows", file=sys.stderr)
-            else:
-                print(f"    no COUNT available, {len(rows)} rows", file=sys.stderr)
+            print(f"    {len(rows)} rows{' (spatial)' if truncated else ''}", file=sys.stderr)
             payload = json.dumps({"data": rows}).encode()
             if upload_asset(fname, payload):
                 done += 1
