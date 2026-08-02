@@ -267,6 +267,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
     out.uv = vec2f(0.0);
     out.color = vec3f(0.0);
+    out.force_type = 0u;
     if (count == 0u) { return out; }
 
     let id = i / 6u;
@@ -312,6 +313,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.uv = quad[vid];
 
     let f_type = min(u32(mt.z), 7u);
+    out.force_type = f_type;
     var lvl = vp.expose_lo[min(f_type, 3u)];
     if (f_type >= 4u) { lvl = vp.expose_hi[f_type - 4u]; }
     if (lvl <= 0.0) { return out; }
@@ -410,15 +412,26 @@ fn presence_probe() {
         let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
         let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0,0];
         let gpuInitPromise = null;
+        let gpuStatus = 'WebGPU: warte auf Konfiguration';
         async function initFieldGPU() {
-            if (!navigator.gpu || gpu) return;
+            if (!navigator.gpu || gpu) {
+                if (!navigator.gpu && !gpuStatus.startsWith('WebGPU: kein')) gpuStatus = 'WebGPU: nicht verfügbar (Browser unterstützt kein WebGPU)';
+                return;
+            }
             if (gpuInitPromise) return gpuInitPromise;
             gpuInitPromise = (async () => {
                 try {
                     const adapter = await navigator.gpu.requestAdapter();
-                    if (!adapter) return;
+                    if (!adapter) { gpuStatus = 'WebGPU: kein Adapter verfügbar'; return; }
                     const device = await adapter.requestDevice();
-                    device.lost.then(() => { gpu = null; });
+                    gpuStatus = 'WebGPU: aktiv (' + (adapter.info ? (adapter.info.vendor || '') + ' ' + (adapter.info.architecture || '') : 'Renderer') + ')';
+                    device.lost.then((info) => {
+                        gpu = null;
+                        fieldCtx = null; fieldPipe = null; fieldLayout = null; probePipe = null;
+                        vpBuf = null; fieldBuf = null; metaBuf = null; probeBuf = null; probeRead = null;
+                        fieldBind = null; fieldCap = 0; gpuInitPromise = null;
+                        reportState('gpu', 'device.lost: ' + (info && info.reason ? info.reason : 'unknown'));
+                    });
                     fieldCtx = fieldCanvas.getContext('webgpu');
                     fieldCap = 0;
                     fieldBind = null;
@@ -454,7 +467,7 @@ fn presence_probe() {
                     probeRead = device.createBuffer({ size: 32, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
                     vpBuf = device.createBuffer({ size: 112, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
                     gpu = device;
-                } catch (e) { gpu = null; reportState('gpu', String(e)); }
+                } catch (e) { gpu = null; gpuStatus = 'WebGPU: Fehler (' + String(e) + ')'; reportState('gpu', String(e)); }
             })();
             gpuInitPromise.catch(() => {}).finally(() => { gpuInitPromise = null; });
             return gpuInitPromise;
@@ -466,6 +479,9 @@ fn presence_probe() {
             if (!vpBuf || !probeBuf) { initFieldGPU(); return; }
             let c = 256;
             while (c < n) c <<= 1;
+            const maxBuf = gpu.limits.maxBufferSize || 268435456;
+            while (c * 32 > maxBuf) c >>= 1;
+            if (c < 256) c = 256;
             fieldCap = c;
             if (fieldBuf) fieldBuf.destroy();
             if (metaBuf) metaBuf.destroy();
@@ -1033,6 +1049,7 @@ fn presence_probe() {
                     `  Pan: ${panNow.toExponential(1)} m/s\n` +
                     `  Velocity: ${Math.hypot(vPresence[0], vPresence[1], vPresence[2]).toExponential(1)} m/s\n\n` +
                     `Surface\n` +
+                    `  GPU: ${gpuStatus}\n` +
                     `  Pixels: ${RX}x${RY}\n` +
                     `  Scale: ${gridStep.toExponential(1)} m/px\n` +
                     `  Oscillators in window: ${rawWindowResponse.count}\n` +
