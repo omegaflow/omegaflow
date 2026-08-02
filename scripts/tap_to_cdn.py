@@ -132,12 +132,15 @@ def repair_query_for_schema(url):
     missing = [c for c in sel_cols if c not in actual]
     if not missing:
         return url, False, []
-    # Repair: replace SELECT columns with SELECT *
-    repaired = re.sub(r"SELECT\s+.*?\s+FROM", "SELECT * FROM", decoded, count=1, flags=re.I | re.DOTALL)
+    # Repair: remove invalid columns from SELECT, keep valid ones
+    valid = [c for c in sel_cols if c not in missing]
+    if not valid:
+        return url, False, missing  # no valid columns left -> can't repair
+    repaired_select = "SELECT " + ", ".join(valid) + " FROM"
+    repaired = re.sub(r"SELECT\s+.*?\s+FROM", repaired_select, decoded, count=1, flags=re.I | re.DOTALL)
     repaired = re.sub(r"TOP\s+\d+\s*", "", repaired, count=1, flags=re.I)
     # Remove ORDER BY referencing missing columns
-    for mc in missing:
-        repaired = re.sub(r"\s*ORDER\s+BY\s+" + re.escape(mc) + r"\s*(ASC|DESC)?\s*", " ", repaired, flags=re.I)
+    repaired = re.sub(r"\s+ORDER\s+BY\s+.*$", "", repaired, count=1, flags=re.I)
     # Re-encode query part
     if "QUERY=" in url:
         base, _, _ = url.partition("QUERY=")
