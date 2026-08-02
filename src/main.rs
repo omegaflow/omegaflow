@@ -4463,8 +4463,13 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                 let (sa, ca) = ra.sin_cos();
                                 let (sd, cd) = dec.sin_cos();
                                 let p = [cd * ca * radius, cd * sa * radius, sd * radius];
+                                let row_epoch = if !epoch_key.is_empty() {
+                                    jpath(v, &epoch_key).unwrap_or(now)
+                                } else {
+                                    now
+                                };
                                 pending.push(PendingSample {
-                                    epoch,
+                                    epoch: row_epoch,
                                     position: PendingPosition::StateVector {
                                         p,
                                         v: [0.0, 0.0, 0.0],
