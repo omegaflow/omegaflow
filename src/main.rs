@@ -2065,8 +2065,10 @@ struct SourceConfig {
     stations_lon: String,
     stations_id: String,
     flux_from_mag: Option<String>,
+    abs_mag_from: Option<String>,
     reach_ttl: Option<u64>,
     catalog_epoch: Option<f64>,
+    repeat_ra_bins: u32,
 }
 
 struct Archive {
@@ -2698,8 +2700,10 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_stations_id = String::from("id");
     let mut cur_name = String::new();
     let mut cur_flux_from_mag: Option<String> = None;
+    let mut cur_abs_mag_from: Option<String> = None;
     let mut cur_reach_ttl: Option<u64> = None;
     let mut cur_catalog_epoch: Option<f64> = None;
+    let mut cur_repeat_ra_bins: u32 = 0;
     let mut active = false;
 
     macro_rules! flush {
@@ -2711,6 +2715,11 @@ fn load_sources() -> Vec<SourceConfig> {
                     eprintln!(
                         "source refused (unknown force '{}'): {}",
                         cur_force, cur_name
+                    );
+                } else if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
+                    eprintln!(
+                        "source refused (flux_from_mag and abs_mag_from are mutually exclusive): {}",
+                        cur_name
                     );
                 } else {
                     let has_data_position = cur_pos.is_some()
@@ -2793,8 +2802,10 @@ fn load_sources() -> Vec<SourceConfig> {
                             stations_lon: cur_stations_lon.clone(),
                             stations_id: cur_stations_id.clone(),
                             flux_from_mag: cur_flux_from_mag.clone(),
+                            abs_mag_from: cur_abs_mag_from.clone(),
                             reach_ttl: cur_reach_ttl,
                             catalog_epoch: cur_catalog_epoch,
+                            repeat_ra_bins: cur_repeat_ra_bins,
                         });
                     }
                 }
@@ -2841,8 +2852,10 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_extracts.clear();
                 cur_headers.clear();
                 cur_flux_from_mag = None;
+                cur_abs_mag_from = None;
                 cur_reach_ttl = None;
                 cur_catalog_epoch = None;
+                cur_repeat_ra_bins = 0;
                 cur_name = parts.get(1).unwrap_or(&"").to_string();
                 active = true;
             }
@@ -2858,8 +2871,14 @@ fn load_sources() -> Vec<SourceConfig> {
             "stations_lon" => cur_stations_lon = parts.get(1).unwrap_or(&"lng").to_string(),
             "stations_id" => cur_stations_id = parts.get(1).unwrap_or(&"id").to_string(),
             "flux_from_mag" => cur_flux_from_mag = parts.get(1).map(|s| s.to_string()),
+            "abs_mag_from" => cur_abs_mag_from = parts.get(1).map(|s| s.to_string()),
             "reach_ttl" => cur_reach_ttl = parts.get(1).and_then(|s| s.parse().ok()),
             "catalog_epoch" => cur_catalog_epoch = parts.get(1).and_then(|s| s.parse().ok()),
+            "repeat" => {
+                if parts.len() >= 5 {
+                    cur_repeat_ra_bins = parts.get(4).and_then(|s| s.parse().ok()).unwrap_or(0);
+                }
+            }
             "target" => cur_target = parts.get(1).map(|s| s.to_string()),
             "catalog" => cur_catalog = parts.get(1).map(|s| s.to_string()),
             "max_freq" => cur_max_freq = parts.get(1).and_then(|s| s.parse().ok()),
@@ -3533,6 +3552,15 @@ fn render_source_url(
     }
     if let Some(f) = src.min_freq {
         url = url.replace("{min_freq}", &f.to_string());
+    }
+    if src.repeat_ra_bins > 0 {
+        let ra_deg = f64::atan2(y, x).to_degrees();
+        let ra_norm = ((ra_deg % 360.0) + 360.0) % 360.0;
+        let bin = ((ra_norm / 360.0) * (src.repeat_ra_bins as f64)) as u32;
+        let bin_str = format!("{:02}", bin);
+        url = url
+            .replace("{repeat_bin}", &bin_str)
+            .replace("{bin}", &bin_str);
     }
     if let Some(ar) = archive {
         if let Some(ref st_url) = src.stations_url {
@@ -4659,6 +4687,16 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                 }
                             }
                             ev_fields.push(("_dist_m".to_string(), d));
+                            if let Some(ref mag_field) = src.abs_mag_from {
+                                if let Some(idx) =
+                                    ev_fields.iter().position(|(n, _)| n == mag_field)
+                                {
+                                    let mag = ev_fields[idx].1;
+                                    let dist_pc = d / PARSEC_M;
+                                    let abs_m = mag - 5.0 * (dist_pc / 10.0).log10();
+                                    ev_fields[idx].1 = 10.0f64.powf(-0.4 * abs_m);
+                                }
+                            }
                             if ev_fields.is_empty() {
                                 continue;
                             }
@@ -5017,7 +5055,8 @@ fn fetch_priority(
         };
         let urgency = 1.0 - (ttl.max(1) as f64).log10().min(5.0) / 5.0;
         if url.contains("omegaflow/catalogs") {
-            return 250;
+            let x = (ttl.max(1) as f64).log2() / Φ;
+            return ((255.0 * (1.0 - 1.0 / (1.0 + x))).max(128.0)) as u8;
         }
         return ((proximity * 0.7 + urgency * 0.3) * 240.0) as u8;
     }
@@ -5730,8 +5769,10 @@ mod tests {
             stations_lon: String::new(),
             stations_id: String::new(),
             flux_from_mag: None,
+            abs_mag_from: None,
             reach_ttl: None,
             catalog_epoch: None,
+            repeat_ra_bins: 0,
         };
         let url = render_source_url(&src, 0.0, 0.0, 0.0, 0.0, 1000.0, None);
         assert!(url.contains("Ceres"));
@@ -5765,8 +5806,10 @@ mod tests {
             stations_lon: String::new(),
             stations_id: String::new(),
             flux_from_mag: None,
+            abs_mag_from: None,
             reach_ttl: None,
             catalog_epoch: None,
+            repeat_ra_bins: 0,
         };
         let body = render_source_body(&src, 0.0, 0.0, 0.0, 0.0, 100000.0);
         assert!(body.is_some());
@@ -5814,8 +5857,10 @@ mod tests {
             stations_lon: String::new(),
             stations_id: String::new(),
             flux_from_mag: None,
+            abs_mag_from: None,
             reach_ttl: None,
             catalog_epoch: None,
+            repeat_ra_bins: 0,
         };
         let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
         let now = super::tdb_now();
