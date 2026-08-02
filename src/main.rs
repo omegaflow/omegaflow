@@ -2180,8 +2180,10 @@ fn fetch_one(
     }
 }
 
-fn batch_fetch(
-    tasks: Vec<(
+fn spawn_task_curl(
+    batch_dir: &std::path::Path,
+    n: usize,
+    task: &(
         usize,
         Origin,
         Option<(f64, f64)>,
@@ -2189,106 +2191,36 @@ fn batch_fetch(
         Option<String>,
         Vec<(String, String)>,
         u64,
-    )>,
-    sources: &[SourceConfig],
-    ttl_eff: &Mutex<HashMap<String, f64>>,
-) -> Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)> {
-    if tasks.is_empty() {
-        return Vec::new();
-    }
-    let pid = std::process::id();
-    let ts = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_millis())
-        .unwrap_or(0);
-    let batch_dir = format!("/tmp/omegaflow_batch_{}_{}", pid, ts);
-    std::fs::create_dir_all(&batch_dir).ok();
-
+    ),
+) -> Option<std::process::Child> {
+    let (_i, _origin, _region, url, body, headers, ttl) = task;
     let mut cmd = Command::new("curl");
-    cmd.arg("--parallel");
-    cmd.arg("--parallel-immediate");
     cmd.arg("--remove-on-error");
-    cmd.arg("--retry").arg("3");
+    cmd.arg("--retry").arg("1");
     cmd.arg("-s");
     cmd.arg("--location");
+    cmd.arg("-o")
+        .arg(format!("{}/b_{}", batch_dir.display(), n));
+    cmd.arg("-D")
+        .arg(format!("{}/h_{}", batch_dir.display(), n));
 
-    for (n, task) in tasks.iter().enumerate() {
-        let (_i, _origin, _region, url, body, headers, ttl) = task;
-        if n > 0 {
-            cmd.arg("--next");
-            cmd.arg("--location");
-        }
-        cmd.arg("-o").arg(format!("{}/b_{}", batch_dir, n));
-        cmd.arg("-D").arg(format!("{}/h_{}", batch_dir, n));
+    let connect_t = (((*ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64).min(5);
+    let max_t = (((*ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(45);
+    cmd.arg("-m").arg(max_t.to_string());
+    cmd.arg("--connect-timeout").arg(connect_t.to_string());
 
-        let connect_t = (((*ttl as f64) / (Φ * Φ * Φ)).max(1.0) as u64).min(5);
-        let max_t = (((*ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(120);
-        cmd.arg("-m").arg(max_t.to_string());
-        cmd.arg("--connect-timeout").arg(connect_t.to_string());
-
-        if let Some(b) = body {
-            cmd.arg("-X").arg("POST");
-            cmd.arg("-d").arg(b);
-        }
-        for (k, v) in headers {
-            cmd.arg("-H").arg(format!("{}: {}", k, v));
-        }
-        cmd.arg(url);
+    if let Some(b) = body {
+        cmd.arg("-X").arg("POST");
+        cmd.arg("-d").arg(b);
     }
-
-    cmd.output().ok();
-
-    let mut results: Vec<(usize, Origin, Option<(f64, f64)>, Option<String>)> =
-        Vec::with_capacity(tasks.len());
-
-    for (n, task) in tasks.iter().enumerate() {
-        let (i, origin, region, url, _body, _headers, ttl) = task;
-        let body_file = format!("{}/b_{}", batch_dir, n);
-        let hdr_file = format!("{}/h_{}", batch_dir, n);
-
-        let body_raw = std::fs::read_to_string(&body_file).ok();
-        if let Some(ref hdr) = std::fs::read_to_string(&hdr_file).ok() {
-            for line in hdr.lines() {
-                let line_lower = line.to_lowercase();
-                if let Some(v) = line_lower.strip_prefix("cache-control:") {
-                    for part in v.split(';') {
-                        let p = part.trim();
-                        if let Some(ma) = p.strip_prefix("max-age=") {
-                            if let Ok(max_age) = ma.trim().parse::<f64>() {
-                                let host = url.split('/').nth(2).unwrap_or("").to_string();
-                                ttl_eff
-                                    .lock()
-                                    .unwrap_or_else(|e| e.into_inner())
-                                    .insert(host, max_age.max(*ttl as f64));
-                            }
-                        }
-                    }
-                }
-                if line_lower.starts_with("retry-after:") {
-                    let val = line.splitn(2, ':').nth(1).unwrap_or("").trim();
-                    if let Ok(ra) = val.parse::<f64>() {
-                        let host = url.split('/').nth(2).unwrap_or("").to_string();
-                        ttl_eff
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .insert(host, ra.max(*ttl as f64));
-                    }
-                }
-            }
-        }
-        eprintln!(
-            "FETCH {} {} {}B",
-            sources[*i].name,
-            url,
-            body_raw.as_ref().map(|r| r.len()).unwrap_or(0)
-        );
-        results.push((*i, *origin, *region, body_raw));
-        std::fs::remove_file(&body_file).ok();
-        std::fs::remove_file(&hdr_file).ok();
+    for (k, v) in headers {
+        cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
-
-    std::fs::remove_dir_all(&batch_dir).ok();
-    results
+    cmd.arg(url);
+    cmd.stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .spawn()
+        .ok()
 }
 
 fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
@@ -5032,7 +4964,10 @@ fn fetch_priority(
         // 0 = CDN static catalogs (millions of objects) → instant density.
         // 1..~255 = other static sources, log-scaled by TTL (bigger first).
         if url.contains("omegaflow/catalogs") {
-            return 0;
+            if url.contains("/v1.0/") {
+                return 0;
+            }
+            return 1;
         }
         let log_ttl = (ttl.max(1) as f64).log10().min(5.0) / 5.0;
         return 1 + (255.0 * (1.0 - log_ttl)) as u8;
@@ -5385,17 +5320,6 @@ fn warm_cache(archive: Arc<Archive>) {
         indexed.sort_by_key(|&(_, p)| p);
         let tasks: Vec<_> = indexed.into_iter().map(|(t, _)| t).collect();
 
-        let chunk_size = {
-            let fd = std::process::Command::new("sh")
-                .arg("-c")
-                .arg("ulimit -n")
-                .output()
-                .ok()
-                .and_then(|o| String::from_utf8(o.stdout).ok())
-                .and_then(|s| s.trim().parse::<usize>().ok())
-                .unwrap_or(1024);
-            std::cmp::max(64, fd / 4).min(256)
-        };
         let (tx, rx) = std::sync::mpsc::sync_channel::<
             Vec<(
                 usize,
@@ -5407,141 +5331,163 @@ fn warm_cache(archive: Arc<Archive>) {
                 u64,
             )>,
         >(2);
-        eprintln!(
-            "warm_cache: {} tasks in {} chunks via pipeline",
-            tasks.len(),
-            (tasks.len() + chunk_size - 1) / chunk_size
-        );
+        eprintln!("warm_cache: {} tasks via parallel pool", tasks.len());
         let ar = Arc::clone(&archive);
         let consumer = std::thread::spawn(move || {
             let mut new_samples: Vec<Sample> = Vec::new();
             let mut refreshed: std::collections::HashSet<Origin> = std::collections::HashSet::new();
+            let mut swap_acc: usize = 0;
+            let mut last_swap_len: usize = 0;
+            let pid = std::process::id();
             while let Ok(chunk_tasks) = rx.recv() {
-                let chunk_results = batch_fetch(chunk_tasks, &ar.sources, &ar.ttl_eff);
-                for (src_idx, origin, region, body_opt) in chunk_results {
-                    let src = &ar.sources[src_idx];
-                    let mut origins = ar.origins.lock().unwrap_or_else(|e| e.into_inner());
-                    let entry = origins.entry(origin).or_default();
-                    let Some(body) = body_opt else {
-                        continue;
-                    };
-                    entry.fetched = now;
-                    entry.ttl = src.ttl as f64;
-                    let pendings = extract_pending(src, &body, now);
-                    let may_be_empty = src.extracts.iter().any(|e| {
-                        matches!(
-                            e,
-                            Extract::Map { .. }
-                                | Extract::GeojsonEvents { .. }
-                                | Extract::LastObj { .. }
-                                | Extract::Vectors(_)
-                                | Extract::CelestialMap { .. }
-                                | Extract::Flatten { .. }
-                                | Extract::CmrPolygon { .. }
-                                | Extract::CelestialPolygon { .. }
-                                | Extract::Rows { .. }
-                                | Extract::KeplerMap { .. }
-                        )
-                    });
-                    if pendings.is_empty() {
-                        if !may_be_empty {
-                            let entry = origins.entry(origin).or_default();
-                            entry.zero_yield += 1;
-                            if entry.zero_yield >= 4
-                                && entry.zero_yield & (entry.zero_yield - 1) == 0
-                            {
-                                eprintln!(
-                                    "zero_yield x{} {}",
-                                    entry.zero_yield,
-                                    src.url.split('/').nth(2).unwrap_or("?")
-                                );
-                            }
+                let batch_dir =
+                    std::path::PathBuf::from(format!("/tmp/of_pool_{}_{}", pid, swap_acc));
+                std::fs::create_dir_all(&batch_dir).ok();
+                let mut children: Vec<(usize, std::process::Child)> = Vec::new();
+                let mut next = 0usize;
+                while next < chunk_tasks.len() || !children.is_empty() {
+                    while children.len() < 32 && next < chunk_tasks.len() {
+                        if let Some(c) = spawn_task_curl(&batch_dir, next, &chunk_tasks[next]) {
+                            children.push((next, c));
                         }
-                    } else {
-                        origins.entry(origin).or_default().zero_yield = 0;
-                        refreshed.insert(origin);
-                        let field_names: Vec<&str> = src
-                            .extracts
-                            .iter()
-                            .filter_map(|e| match e {
-                                Extract::Field(_, n)
-                                | Extract::First(_, n)
-                                | Extract::Last(_, n)
-                                | Extract::Count(_, n)
-                                | Extract::LastRow(_, n)
-                                | Extract::LastObj(_, _, _, n)
-                                | Extract::ObjLast(_, n)
-                                | Extract::Path(_, n)
-                                | Extract::Deep(_, n)
-                                | Extract::Regex(_, n)
-                                | Extract::XmlCount(_, n)
-                                | Extract::Ephemeris(n)
-                                | Extract::Vectors(n)
-                                | Extract::LastLine(n) => Some(n.as_str()),
-                                Extract::Map { fields, .. }
-                                | Extract::CelestialMap { fields, .. }
-                                | Extract::KeplerMap { fields, .. }
-                                | Extract::Rows { fields, .. }
-                                | Extract::Flatten { fields, .. }
-                                | Extract::CmrPolygon { fields, .. }
-                                | Extract::CelestialPolygon { fields, .. } => {
-                                    Some(fields.first().map(|(_, n)| n.as_str()).unwrap_or(""))
-                                }
-                                Extract::GeojsonEvents { outputs, .. } => {
-                                    Some(outputs.first().map(|s| s.as_str()).unwrap_or(""))
-                                }
-                                _ => None,
-                            })
-                            .collect();
-                        eprintln!(
-                            "PARSED {}: {} samples [{}]",
-                            src.name,
-                            pendings.len(),
-                            field_names.join(", ")
-                        );
+                        next += 1;
                     }
-                    for pend in pendings {
-                        for smp in materialize(src, origin, region, pend, &mut origins) {
-                            new_samples.push(smp);
+                    let mut done: Option<(usize, usize)> = None;
+                    for (ci, (n, child)) in children.iter_mut().enumerate() {
+                        if let Ok(Some(_)) = child.try_wait() {
+                            done = Some((ci, *n));
+                            break;
                         }
                     }
-                }
-                {
-                    let station_sample = ar
-                        .station
-                        .lock()
-                        .unwrap_or_else(|e| e.into_inner())
-                        .sample
-                        .clone()
-                        .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
-                    let mut all: Vec<Sample> = Vec::new();
-                    {
-                        let old = ar.field.read().unwrap_or_else(|e| e.into_inner()).clone();
-                        for fam in [&old.planet, &old.inertial] {
-                            for v in fam.cells.values() {
-                                for s in v {
-                                    if (now - s.epoch).abs() <= s.ttl * 64.0
-                                        && !refreshed.contains(&s.origin)
-                                    {
-                                        all.push(s.clone());
+                    if let Some((ci, n)) = done {
+                        let (src_idx, origin, region, url, _body, _headers, ttl) =
+                            chunk_tasks[n].clone();
+                        let body_file = batch_dir.join(format!("b_{}", n));
+                        let hdr_file = batch_dir.join(format!("h_{}", n));
+                        let body_raw = std::fs::read_to_string(&body_file).ok();
+                        if let Some(ref hdr) = std::fs::read_to_string(&hdr_file).ok() {
+                            for line in hdr.lines() {
+                                let line_lower = line.to_lowercase();
+                                if let Some(v) = line_lower.strip_prefix("cache-control:") {
+                                    for part in v.split(';') {
+                                        let p = part.trim();
+                                        if let Some(ma) = p.strip_prefix("max-age=") {
+                                            if let Ok(max_age) = ma.trim().parse::<f64>() {
+                                                let host =
+                                                    url.split('/').nth(2).unwrap_or("").to_string();
+                                                ar.ttl_eff
+                                                    .lock()
+                                                    .unwrap_or_else(|e| e.into_inner())
+                                                    .insert(host, max_age.max(ttl as f64));
+                                            }
+                                        }
+                                    }
+                                }
+                                if line_lower.starts_with("retry-after:") {
+                                    let val = line.splitn(2, ':').nth(1).unwrap_or("").trim();
+                                    if let Ok(ra) = val.parse::<f64>() {
+                                        let host = url.split('/').nth(2).unwrap_or("").to_string();
+                                        ar.ttl_eff
+                                            .lock()
+                                            .unwrap_or_else(|e| e.into_inner())
+                                            .insert(host, ra.max(ttl as f64));
                                     }
                                 }
                             }
                         }
+                        let _ = std::fs::remove_file(&body_file);
+                        let _ = std::fs::remove_file(&hdr_file);
+                        let src = &ar.sources[src_idx];
+                        let mut origins = ar.origins.lock().unwrap_or_else(|e| e.into_inner());
+                        if let Some(body) = body_raw {
+                            let entry = origins.entry(origin).or_default();
+                            entry.fetched = now;
+                            entry.ttl = src.ttl as f64;
+                            let pendings = extract_pending(src, &body, now);
+                            let may_be_empty = src.extracts.iter().any(|e| {
+                                matches!(
+                                    e,
+                                    Extract::Map { .. }
+                                        | Extract::GeojsonEvents { .. }
+                                        | Extract::LastObj { .. }
+                                        | Extract::Vectors(_)
+                                        | Extract::CelestialMap { .. }
+                                        | Extract::Flatten { .. }
+                                        | Extract::CmrPolygon { .. }
+                                        | Extract::CelestialPolygon { .. }
+                                        | Extract::Rows { .. }
+                                        | Extract::KeplerMap { .. }
+                                )
+                            });
+                            if pendings.is_empty() {
+                                if !may_be_empty {
+                                    let entry = origins.entry(origin).or_default();
+                                    entry.zero_yield += 1;
+                                    if entry.zero_yield >= 4
+                                        && entry.zero_yield & (entry.zero_yield - 1) == 0
+                                    {
+                                        eprintln!(
+                                            "zero_yield x{} {}",
+                                            entry.zero_yield,
+                                            src.url.split('/').nth(2).unwrap_or("?")
+                                        );
+                                    }
+                                }
+                            } else {
+                                origins.entry(origin).or_default().zero_yield = 0;
+                                refreshed.insert(origin);
+                                for pend in pendings {
+                                    for smp in materialize(src, origin, region, pend, &mut origins)
+                                    {
+                                        new_samples.push(smp);
+                                    }
+                                }
+                            }
+                        }
+                        drop(origins);
+                        children.remove(ci);
+                        swap_acc += 1;
+                        if new_samples.len() != last_swap_len {
+                            last_swap_len = new_samples.len();
+                            let station_sample = ar
+                                .station
+                                .lock()
+                                .unwrap_or_else(|e| e.into_inner())
+                                .sample
+                                .clone()
+                                .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
+                            let mut all: Vec<Sample> = Vec::new();
+                            {
+                                let old =
+                                    ar.field.read().unwrap_or_else(|e| e.into_inner()).clone();
+                                for fam in [&old.planet, &old.inertial] {
+                                    for v in fam.cells.values() {
+                                        for s in v {
+                                            if (now - s.epoch).abs() <= s.ttl * 64.0
+                                                && !refreshed.contains(&s.origin)
+                                            {
+                                                all.push(s.clone());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            all.extend(new_samples.iter().cloned());
+                            if let Some(ref s) = station_sample {
+                                all.push(s.clone());
+                            }
+                            *ar.field.write().unwrap_or_else(|e| e.into_inner()) =
+                                Arc::new(build_buffer(all, cadence));
+                        }
+                    } else {
+                        std::thread::sleep(std::time::Duration::from_millis(15));
                     }
-                    all.extend(new_samples.iter().cloned());
-                    if let Some(ref s) = station_sample {
-                        all.push(s.clone());
-                    }
-                    *ar.field.write().unwrap_or_else(|e| e.into_inner()) =
-                        Arc::new(build_buffer(all, cadence));
                 }
+                std::fs::remove_dir_all(&batch_dir).ok();
             }
             (new_samples, refreshed)
         });
-        for chunk in tasks.chunks(chunk_size) {
-            let _ = tx.send(chunk.to_vec());
-        }
+        let _ = tx.send(tasks);
         drop(tx);
         let (new_samples, refreshed) = consumer
             .join()
