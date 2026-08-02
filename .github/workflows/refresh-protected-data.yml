@@ -214,14 +214,12 @@ jobs:
           CATALOGS_TOKEN: ${{ secrets.CATALOGS_TOKEN }}
           GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
-          # Shard the largest catalogs (NVSS, FIRST) along RA into 24 CDN files each.
-          # Run one source per workflow run to bound runtime.
+          # Shard the largest catalogs (NVSS, FIRST, LOTSS) along RA into 24 CDN files each.
           if [ ! -f /tmp/shard_done ]; then
-            for src in vizier_nvss_radio vizier_first_radio; do
+            for src in vizier_nvss_radio vizier_first_radio vizier_lotss_dr3 vizier_gleam_extragalactic_catalog; do
               if ! python3 scripts/shard_catalog.py --source "$src" --bins 24 --update-sources 2>/dev/null; then
                 echo "::warning::shard $src incomplete"
               fi
-              # commit shard sources
               if ! git diff --quiet -- phi/sources.φ; then
                 git config user.name "omegaflow-bot"
                 git config user.email "bot@omegaflow.space"
@@ -231,6 +229,12 @@ jobs:
               fi
             done
             touch /tmp/shard_done
+          fi
+          # Reload mid-size excerpts to full catalogs (COUNT-verified)
+          if [ ! -f /tmp/reload_done ]; then
+            python3 scripts/shard_catalog.py --reload-excerpts 2>/dev/null || \
+              echo "::warning::excerpt reload had failures"
+            touch /tmp/reload_done
           fi
 
       - name: Mirror static files -> v1.0

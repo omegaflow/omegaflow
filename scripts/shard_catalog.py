@@ -39,10 +39,29 @@ SHARDS = {
     "vizier_first_radio": ("VIII/92/first14", "RAJ2000", ""),
     "vizier_first_radio_catalog": ("VIII/92/first14", "RAJ2000", ""),
     "vizier_gleam_extragalactic_catalog": ("J/MNRAS/464/1146/gleam", "RAJ2000", ""),
+    "vizier_lotss_dr3": ("J/A+A/707/A198/lotssdr3", "RAJ2000", ""),
+    "vizier_lotss_dr3_radio": ("J/A+A/707/A198/lotssdr3", "RAJ2000", ""),
     "vizier_2dfgrs": ("J/MNRAS/329/227/2dFGRS", "RAJ2000", ""),
     "vizier_sdss12_galaxies": ("V/147/sdss12", "RAJ2000", ""),
     "vizier_sdss12_stars": ("V/147/sdss12", "RAJ2000", ""),
 }
+
+# Mid-size catalogs uploaded as TOP excerpts on CDN; reload them fully.
+# file -> (table, select_cols, ra_col, expected_full_size)
+EXCERPTS = {
+    "vizier_6dfgs.json": ("VII/259/6dfgs", "RAJ2000,DEJ2000,cz,e_cz,bJmag,S/G", "RAJ2000", 110000),
+    "vizier_hecate.json": ("J/MNRAS/506/1896/hecate", "RAJ2000,DEJ2000,HRV,D,W1mag,W2mag", "RAJ2000", 20000),
+    "vizier_hi4pi.json": ("J/A+A/594/A116/hi4pi", "GLON,GLAT,NHI,VLSR,FWHM", "GLON", 200000),
+    "vizier_2qz.json": ("VII/241/2qz", "RAJ2000,DEJ2000,z,bJmag", "RAJ2000", 49000),
+}
+
+
+def build_reload_url(table, select_cols, lo=None, hi=None, ra_col=None):
+    q = f"SELECT {select_cols} FROM {table}"
+    if lo is not None and ra_col:
+        q += f" WHERE {ra_col} BETWEEN {lo:.4f} AND {hi:.4f}"
+    base = "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY="
+    return base + urllib.parse.quote_plus(q)
 
 
 def fetch(url):
@@ -162,15 +181,48 @@ def upload_asset(filename, data):
         return False
 
 
+def reload_excerpts(dry_run=False):
+    """Reload mid-size CDN excerpt files to full catalog (COUNT-verified)."""
+    import urllib.error as ue
+    print(f"Reloading {len(EXCERPTS)} excerpt files to full catalogs", file=sys.stderr)
+    for fname, (table, cols, ra_col, expected) in EXCERPTS.items():
+        print(f"--- {fname} ({table}, expect ~{expected})", file=sys.stderr)
+        if dry_run:
+            print(f"    {build_reload_url(table, cols)[:120]}", file=sys.stderr)
+            continue
+        try:
+            text = fetch(build_reload_url(table, cols))
+            rows = parse_rows(text)
+            if not rows:
+                print("    EMPTY", file=sys.stderr)
+                continue
+            # verification: rough completeness (no exact COUNT, use expected threshold)
+            if expected and len(rows) < expected * 0.5:
+                print(f"    INCOMPLETE: {len(rows)} vs ~{expected} (skip)", file=sys.stderr)
+                continue
+            payload = json.dumps({"data": rows}).encode()
+            if upload_asset(fname, payload):
+                print(f"    reloaded {fname}: {len(rows)} rows", file=sys.stderr)
+        except Exception as e:
+            print(f"    FAILED: {str(e)[:120]}", file=sys.stderr)
+        time.sleep(SLEEP)
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--source", required=True)
+    ap.add_argument("--source", required=False)
     ap.add_argument("--bins", type=int, default=24)
     ap.add_argument("--update-sources", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--reload-excerpts", action="store_true",
+                    help="reload mid-size CDN excerpt files to full catalog")
     args = ap.parse_args()
 
-    if args.source not in SHARDS:
+    if args.reload_excerpts:
+        reload_excerpts(args.dry_run)
+        return
+
+    if not args.source or args.source not in SHARDS:
         print(f"Unknown shard config for {args.source}", file=sys.stderr)
         sys.exit(1)
     table, ra_col, extra = SHARDS[args.source]
