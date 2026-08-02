@@ -13,3 +13,4 @@ opencode.json
 reference/
 *.py
 /docs/concepts/
+scripts/__pycache__/
