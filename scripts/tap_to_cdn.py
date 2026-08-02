@@ -32,6 +32,7 @@ RELEASE_URL = "https://uploads.github.com/repos/omegaflow/catalogs/releases/3630
 MAX_ROWS = int(os.environ.get("TAP_MAX_ROWS", "0"))
 TIMEOUT = int(os.environ.get("TAP_TIMEOUT", "120"))
 SLEEP = float(os.environ.get("TAP_SLEEP", "2"))
+MAX_SOURCES = int(os.environ.get("TAP_MAX_SOURCES", "0"))
 
 TAP_MARKERS = [
     "/tap/sync", "tapvizier", "heasarc.gsfc.nasa.gov/xamin",
@@ -203,11 +204,63 @@ def cdn_filename(source):
     return f"{source}.json"
 
 
+def update_source_block(block, cdn_file):
+    """Update a source block in sources.φ to point at the CDN JSON."""
+    new_block = block
+    new_block = re.sub(
+        r"url\s+https?://[^\s]+",
+        f"url https://github.com/omegaflow/catalogs/releases/download/v1.0/{cdn_file}",
+        new_block, count=1)
+    # 2. rows+format text -> map . or cmap . + format json (CDN data is named-object JSON)
+    if "rows" in new_block:
+        new_block = new_block.replace("format text", "format json", 1)
+        # sources needing distance/redshift keys -> cmap . (keeps ra_key/dec_key/z_key)
+        if any(k in new_block for k in ("z_key ", "plx_key ", "dist_key ",
+                                         "pmra_key ", "pmdec_key ", "rv_key ")):
+            new_block = re.sub(r"\nrows\b", "\ncmap .", new_block, count=1)
+        else:
+            new_block = re.sub(r"\nrows\b", "\nmap .", new_block, count=1)
+            new_block = re.sub(r"^ra_key ", "lat_key ", new_block, flags=re.M)
+            new_block = re.sub(r"^dec_key ", "lon_key ", new_block, flags=re.M)
+    # 3. cmap/map with no format -> add format json
+    elif ("cmap " in new_block or "map ." in new_block) and "format " not in new_block:
+        new_block = re.sub(
+            r"(url\s+\S+\n)",
+            r"\1format json\n",
+            new_block, count=1)
+    return new_block
+
+
+def update_sources_file(uploaded, path="phi/sources.φ"):
+    """Rewrite sources.φ so uploaded sources point at their CDN file."""
+    content = open(path).read()
+    blocks = re.split(r"\n(?=source )", content)
+    changed = 0
+    for i, b in enumerate(blocks):
+        m = re.match(r"source (\S+)", b)
+        if not m:
+            continue
+        name = m.group(1)
+        cdn_file = f"{name}.json"
+        if cdn_file not in uploaded:
+            continue
+        new_b = update_source_block(b, cdn_file)
+        if new_b != b:
+            blocks[i] = new_b
+            changed += 1
+            print(f"  updated {name} -> {cdn_file}", file=sys.stderr)
+    if changed:
+        open(path, "w").write("".join(blocks))
+    return changed
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--source", help="process only this source")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--limit", type=int, default=0, help="max rows (debug)")
+    ap.add_argument("--update-sources", action="store_true",
+                    help="rewrite sources.φ so uploaded sources point at their CDN file")
     args = ap.parse_args()
     global MAX_ROWS
     if args.limit:
@@ -216,9 +269,12 @@ def main():
     sources = find_tap_sources()
     if args.source:
         sources = [s for s in sources if s["source"] == args.source]
+    if MAX_SOURCES:
+        sources = sources[:MAX_SOURCES]
     print(f"TAP-STATIC sources: {len(sources)}", file=sys.stderr)
 
     done, skipped, failed = 0, 0, 0
+    uploaded = set()
     for s in sources:
         name = s["source"]
         fname = cdn_filename(name)
@@ -239,12 +295,17 @@ def main():
             payload = json.dumps({"data": rows}).encode()
             if upload_asset(fname, payload):
                 done += 1
+                uploaded.add(fname)
             else:
                 failed += 1
         except Exception as e:
             print(f"    FAILED: {str(e)[:120]}", file=sys.stderr)
             failed += 1
         time.sleep(SLEEP)
+
+    if args.update_sources and uploaded:
+        print(f"\nUpdating sources.φ ({len(uploaded)} files)...", file=sys.stderr)
+        update_sources_file(uploaded)
 
     print(f"\nDone: {done}  Skipped: {skipped}  Failed: {failed}", file=sys.stderr)
 

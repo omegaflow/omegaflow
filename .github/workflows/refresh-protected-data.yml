@@ -191,12 +191,23 @@ jobs:
       - name: TAP catalogs -> CDN
         env:
           CATALOGS_TOKEN: ${{ secrets.CATALOGS_TOKEN }}
+          GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
           TAP_MAX_ROWS: "300000"
+          TAP_MAX_SOURCES: "25"
         run: |
           # astropy handles VOTable BINARY/BINARY2/TABLEDATA (cloud-side only)
           pip install -q astropy numpy 2>/dev/null || true
           # Convert remaining TAP-STATIC catalog sources to CDN JSON on v1.0
-          python3 scripts/tap_to_cdn.py || echo "::warning::TAP conversion had failures (see logs)"
+          python3 scripts/tap_to_cdn.py --update-sources || \
+            echo "::warning::TAP conversion had failures (see logs)"
+          # If sources.φ was updated, commit + push so the server picks up CDN URLs
+          if ! git diff --quiet -- phi/sources.φ; then
+            git config user.name "omegaflow-bot"
+            git config user.email "bot@omegaflow.space"
+            git add phi/sources.φ
+            git commit -m "Mycelium: point TAP sources at v1.0 CDN catalogs" || true
+            git push origin HEAD 2>/dev/null || echo "::warning::push failed (branch locked by parallel work)"
+          fi
 
       - name: Mirror static files -> v1.0
         run: |
