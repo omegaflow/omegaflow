@@ -1955,11 +1955,13 @@ enum Extract {
         pmdec_key: String,
         rv_key: String,
         rv_scale: f64,
+        epoch_key: String,
         fields: Vec<(String, String)>,
     },
     Flatten {
         arr_path: String,
         geom_path: String,
+        epoch_key: String,
         fields: Vec<(String, String)>,
     },
     CmrPolygon {
@@ -3066,6 +3068,7 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::Flatten {
                         arr_path: parts[1].to_string(),
                         geom_path: "geometry".to_string(),
+                        epoch_key: String::new(),
                         fields: Vec::new(),
                     });
                 }
@@ -3103,6 +3106,8 @@ fn load_sources() -> Vec<SourceConfig> {
                         Extract::CmrPolygon { epoch_key, .. }
                         | Extract::CelestialPolygon { epoch_key, .. }
                         | Extract::KeplerMap { epoch_key, .. }
+                        | Extract::CelestialMap { epoch_key, .. }
+                        | Extract::Flatten { epoch_key, .. }
                         | Extract::Map { epoch_key, .. } => {
                             *epoch_key = parts.get(1).unwrap_or(&"").to_string();
                         }
@@ -3175,6 +3180,7 @@ fn load_sources() -> Vec<SourceConfig> {
                         pmdec_key: String::new(),
                         rv_key: String::new(),
                         rv_scale: 1.0,
+                        epoch_key: String::new(),
                         fields: Vec::new(),
                     });
                 }
@@ -4265,6 +4271,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
             Extract::Flatten {
                 arr_path,
                 geom_path,
+                epoch_key,
                 fields,
             } => {
                 if let Some(ref j) = parsed_json {
@@ -4290,8 +4297,13 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                             }
                             ev_fields.push(("_flatten_id".to_string(), idx as f64));
                             for (lon, lat) in vertices {
+                                let row_epoch = if !epoch_key.is_empty() {
+                                    jpath(v, &epoch_key).unwrap_or(now)
+                                } else {
+                                    now
+                                };
                                 pending.push(PendingSample {
-                                    epoch: now,
+                                    epoch: row_epoch,
                                     position: PendingPosition::Geodetic { lat, lon, alt: 0.0 },
                                     fields: ev_fields.clone(),
                                 });
@@ -4588,6 +4600,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 pmdec_key,
                 rv_key,
                 rv_scale,
+                epoch_key,
                 fields,
             } => {
                 if let Some(ref j) = parsed_json {
