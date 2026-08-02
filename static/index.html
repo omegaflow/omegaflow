@@ -422,7 +422,7 @@ fn presence_probe() {
     let hdr_color = in.color * analog_intensity;
     let mapped_color = log2(hdr_color * 4.0 + vec3f(1.0)) / 8.0;
     let absorption = absorption_coeff(in.force_type);
-    let alpha = clamp(1.0 - exp(-absorption * analog_intensity * 10.0), 0.0, 1.0);
+    let alpha = clamp(exp(-absorption * analog_intensity * 10.0), 0.0, 1.0);
     return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), alpha);
 }
 `;
@@ -431,6 +431,17 @@ fn presence_probe() {
         fieldCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;background:#0a0908;';
         document.body.appendChild(fieldCanvas);
         let fieldVisible = true;
+        window.__of_state = () => {
+            const ws = transport && transport.socket;
+            return JSON.stringify({
+                gpu: !!gpu, fieldPipe: !!fieldPipe, fieldBind: !!fieldBind,
+                oscInWindow: rawWindowResponse ? rawWindowResponse.count : -1,
+                uploads: typeof uploadCount === 'number' ? uploadCount : -1,
+                uploadErrors: typeof uploadErrors === 'number' ? uploadErrors : -1,
+                frames: fieldFrames, wsOpen: !!(ws && ws.readyState === 1),
+                lvls0: forceExposeF[0], gridStepLog2: Math.round(Math.log2(gridStep))
+            });
+        };
         let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
         let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0,0];
         let gpuInitPromise = null;
@@ -577,7 +588,7 @@ fn presence_probe() {
                 }
                 for (let ft = 0; ft < 8; ft++) {
                     if (ft_vals[ft].length > 0) {
-                        ft_vals[ft].sort((a, b) => a - b);
+                        ft_vals[ft].sort((a, b) => Math.log10(Math.max(a, 1e-30)) - Math.log10(Math.max(b, 1e-30)));
                         cachedFref[ft] = ft_vals[ft][ft_vals[ft].length >> 1];
                     }
                 }
