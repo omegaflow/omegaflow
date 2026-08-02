@@ -1099,6 +1099,14 @@ fn presence_probe() {
                     `  Round trip: ${transport.rtt.toFixed(0)}ms\n\n` +
                     "Station oscillators\n" +
                     (topLines || "  Waiting for interaction...");
+                const availH = window.innerHeight - 24;
+                const needH = debugEl.scrollHeight;
+                if (needH > availH) {
+                    const f = Math.max(0.45, availH / needH);
+                    debugEl.style.fontSize = (12 * f).toFixed(2) + 'px';
+                } else {
+                    debugEl.style.fontSize = '12px';
+                }
             }
             requestAnimationFrame(ω);
         }
