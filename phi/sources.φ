@@ -19852,6 +19852,18 @@ force em
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_saturn.json
 vectors orbital_saturn_rg
 
+source cosmos_saturn_rings
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/saturn_rings_10k.json
+format json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+dist_key dist_au 1.495978707e11
+field zone ring_zone
+
 source orbit_trace_sun
 ttl 86400
 force em
