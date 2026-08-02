@@ -77,6 +77,42 @@ def strip_top(url):
     )
 
 
+def extract_table(url):
+    """Extract the FROM table name from a TAP URL (decoded)."""
+    decoded = urllib.parse.unquote_plus(url)
+    m = re.search(r"\bFROM\b\s+([A-Za-z0-9_\.]+)", decoded, re.IGNORECASE)
+    if not m:
+        m = re.search(r'FROM\s+"([^"]+)"', decoded, re.IGNORECASE)
+    return m.group(1) if m else None
+
+
+def query_count(url, table):
+    """Run SELECT COUNT(*) FROM <table> and return the expected row count."""
+    if not table:
+        return None
+    base = url.split("QUERY=")[0]
+    count_q = "SELECT COUNT(*) FROM " + table
+    count_url = base + "QUERY=" + urllib.parse.quote_plus(count_q)
+    try:
+        text = fetch(count_url)
+    except Exception:
+        return None
+    rows = votable_to_json(text)
+    if rows is None:
+        rows = csv_to_json(text)
+    if not rows:
+        return None
+    # COUNT(*) returns one row, one column
+    first = rows[0]
+    vals = list(first.values())
+    if not vals:
+        return None
+    try:
+        return int(float(vals[0]))
+    except (TypeError, ValueError):
+        return None
+
+
 def fetch(url):
     """Fetch TAP response. Retries without FORMAT=csv if the server rejects it."""
     attempts = [url]
@@ -293,6 +329,18 @@ def main():
                 print("    EMPTY", file=sys.stderr)
                 skipped += 1
                 continue
+            # ---- Verification: compare loaded rows vs COUNT(*) ----
+            table = extract_table(url)
+            expected = query_count(url, table)
+            if expected is not None:
+                if len(rows) < expected:
+                    print(f"    INCOMPLETE: got {len(rows)} rows, expected {expected} "
+                          f"(skipping, keeping old CDN file)", file=sys.stderr)
+                    skipped += 1
+                    continue
+                print(f"    verified: {len(rows)}/{expected} rows", file=sys.stderr)
+            else:
+                print(f"    no COUNT available, {len(rows)} rows", file=sys.stderr)
             payload = json.dumps({"data": rows}).encode()
             if upload_asset(fname, payload):
                 done += 1
