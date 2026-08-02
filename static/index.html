@@ -42,7 +42,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let lastManifestTime = 0;
         let stableTick = 0;
         let tPresence = 0;
-        let exposureBoost = 4;
+        let exposureBoost = 4.0;
+        let debugFontF = 1.0;
+        let debugFontCnt = 0;
         const forceExposeF = new Float64Array([1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8]);
         let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = -1e9;
         let xPresence = 0, yPresence = 0, zPresence = 0;
@@ -1085,7 +1087,7 @@ fn presence_probe() {
                     `  Scale: ${gridStep.toExponential(1)} m/px\n` +
                     `  Oscillators in window: ${rawWindowResponse.count}\n` +
                     `  Uploads: ${uploadCount} ok / ${uploadErrors} err\n` +
-                    `  Window omega: ${probedOmega.toExponential(2)} (exposure ${(exposureBoost > 0 ? '+' : '') + exposureBoost} oct)\n` +
+                    `  Window omega: ${probedOmega.toExponential(2)} (exp ${(exposureBoost > 0 ? '+' : '') + exposureBoost.toFixed(1)} oct)\n` +
                     "\nField (8 Forces)\n" +
                     `  EM (Electromagnetic): ${probedOmegas[0].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[0], Math.pow(2, -40))))}]\n` +
                     `  Gravity (Gravitational): ${probedOmegas[1].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[1], Math.pow(2, -40))))}]\n` +
@@ -1110,13 +1112,17 @@ fn presence_probe() {
                     `  Round trip: ${transport.rtt.toFixed(0)}ms\n\n` +
                     "Station oscillators\n" +
                     (topLines || "  Waiting for interaction...");
-                const availH = window.innerHeight - 24;
-                const needH = debugEl.scrollHeight;
-                if (needH > availH) {
-                    const f = Math.max(0.45, availH / needH);
-                    debugEl.style.fontSize = (12 * f).toFixed(2) + 'px';
-                } else {
-                    debugEl.style.fontSize = '12px';
+                debugFontCnt++;
+                if (debugFontCnt % 30 === 0) {
+                    const availH = window.innerHeight - 24;
+                    const needH = debugEl.scrollHeight;
+                    if (needH > availH && needH > 0) {
+                        const f = Math.max(0.45, availH / needH);
+                        if (f < debugFontF) {
+                            debugFontF = f;
+                            debugEl.style.fontSize = (12 * f).toFixed(2) + 'px';
+                        }
+                    }
                 }
             }
             requestAnimationFrame(ω);
@@ -1149,7 +1155,7 @@ fn presence_probe() {
         window.addEventListener('keydown', (e) => { recordSample('event.keydown.code', e.keyCode); }, { passive: true });
         window.addEventListener('keyup', (e) => { recordSample('event.keyup.code', e.keyCode); }, { passive: true });
         window.addEventListener('click', (e) => { recordSample('event.click.x', e.clientX); recordSample('event.click.y', e.clientY); }, { passive: true });
-        window.addEventListener('resize', () => { RX = window.innerWidth; RY = window.innerHeight; recordSample('event.resize.width', RX); recordSample('event.resize.height', RY); }, { passive: true });
+        window.addEventListener('resize', () => { RX = window.innerWidth; RY = window.innerHeight; recordSample('event.resize.width', RX); recordSample('event.resize.height', RY); debugFontF = 1.0; debugEl.style.fontSize = '12px'; }, { passive: true });
         window.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'd' && debugEl) {
                 debugEl.style.display = (debugEl.style.display === 'none') ? 'block' : 'none';
@@ -1225,8 +1231,8 @@ fn presence_probe() {
         });
         window.addEventListener('keydown', (e) => {
             if (e.key === 'f') { fieldVisible = !fieldVisible; e.preventDefault(); }
-            if (e.key === 'e') { exposureBoost = Math.min(exposureBoost + 1, 16); e.preventDefault(); }
-            else if (e.key === 'E') { exposureBoost = Math.max(exposureBoost - 1, -8); e.preventDefault(); }
+            if (e.key === 'e') { exposureBoost = Math.min(exposureBoost + 1.0 / Φ, 16); e.preventDefault(); }
+            else if (e.key === 'E') { exposureBoost = Math.max(exposureBoost - 1.0 / Φ, -8); e.preventDefault(); }
         });
         window.addEventListener('keydown', (e) => {
             if (e.key !== 'b') return;
