@@ -4435,7 +4435,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                             if vertices.is_empty() || *radius <= 0.0 {
                                 continue;
                             }
-                            let epoch = if epoch_key.is_empty() {
+                            let _epoch = if epoch_key.is_empty() {
                                 now
                             } else {
                                 jpath_val(v, epoch_key)
@@ -4633,7 +4633,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 pmdec_key,
                 rv_key,
                 rv_scale,
-                epoch_key,
+                epoch_key: _,
                 fields,
             } => {
                 if let Some(ref j) = parsed_json {
