@@ -1016,10 +1016,8 @@ fn presence_probe() {
             for (const surface of surfaces) { try { surface.manifest(); } catch {} }
             lastManifestTime = performance.now() - manifestStart;
             if (!debugEl) {
-                debugEl = document.createElement('textarea');
-                debugEl.readOnly = true;
-                debugEl.setAttribute('wrap', 'off');
-                debugEl.style.cssText = 'position:fixed;bottom:12px;left:12px;font:11px "SF Mono",Menlo,Consolas,monospace;color:#a89878;background:rgba(10,9,8,0.85);padding:14px 16px;margin:0;border:none;border-radius:4px;z-index:9999;line-height:1.65;width:440px;height:400px;resize:none;backdrop-filter:blur(10px);box-shadow:0 4px 24px rgba(0,0,0,0.4);overflow:hidden;white-space:pre;';
+                debugEl = document.createElement('div');
+                debugEl.style.cssText = 'position:fixed;bottom:12px;left:12px;font:12px/1.6 "SF Mono",Menlo,Consolas,monospace;color:#d8c8a0;margin:0;z-index:9999;white-space:pre;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,0.95),0 0 8px rgba(0,0,0,0.8);';
                 document.body.appendChild(debugEl);
             }
             if (ts - lastDebug > stableTick * 6 || lastDebug === 0) {
@@ -1040,7 +1038,7 @@ fn presence_probe() {
                 topOsc.sort((a, b) => Math.abs(b.v) - Math.abs(a.v));
                 const topLines = topOsc.slice(0, 12).map(t => `  ${t.u}: ${t.v.toPrecision(4)}`).join('\n');
 
-                debugEl.value =
+                debugEl.textContent =
                     "Presence\n" +
                     `  X: ${xStr}\n` +
                     `  Y: ${yStr}\n` +
