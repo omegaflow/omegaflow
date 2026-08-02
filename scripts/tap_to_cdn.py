@@ -250,7 +250,8 @@ def update_sources_file(uploaded, path="phi/sources.φ"):
             changed += 1
             print(f"  updated {name} -> {cdn_file}", file=sys.stderr)
     if changed:
-        open(path, "w").write("".join(blocks))
+        # split consumes the \n before 'source '; rejoin with \n restores it
+        open(path, "w").write("\n".join(blocks))
     return changed
 
 
