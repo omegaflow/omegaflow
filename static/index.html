@@ -53,8 +53,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         const pollFns = [];
         window.ω = { syncFrame, φ, transport, oscillators, indexMap };
 
-        φ['archivar.time'] = parseFloat(await (await fetch('/time')).text());
+        φ['archivar.time'] = Date.now() / 1000 - 946728000;
         tPresence = φ['archivar.time'];
+        fetch('/time').then(r => r.text()).then(t => {
+            const parsed = parseFloat(t);
+            if (isFinite(parsed)) {
+                φ['archivar.time'] = parsed;
+                tPresence = parsed;
+            }
+        }).catch(() => {});
         let pPresence = [0, 0, 0], vPresence = [0, 0, 0], t0P = tPresence;
         let qOrientation = [1, 0, 0, 0];
         function qMul(a, b) {
@@ -188,10 +195,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 document.getElementById('consent-no').addEventListener('click', () => finish(false));
             });
         }
-        const { stationFlow: stationFlowConsented } = await awaitConsent();
-        window.ω_consent = { stationFlowConsented };
-
-        if (stationFlowConsented) {
+        let stationFlowConsented = false;
+        window.ω_consent = { get stationFlow() { return stationFlowConsented; } };
+        awaitConsent().then(({ stationFlow }) => {
+            stationFlowConsented = stationFlow;
+            if (!stationFlow) return;
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition((pos) => {
                     const c = pos.coords;
@@ -225,7 +233,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     recordSample('battery.charging', battery.charging ? 1 : 0);
                 }).catch(() => {});
             }
-        }
+        });
         
         const fieldShader = `
 struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, presence: vec4f };
