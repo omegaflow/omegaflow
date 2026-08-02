@@ -209,6 +209,30 @@ jobs:
             git push origin HEAD 2>/dev/null || echo "::warning::push failed (branch locked by parallel work)"
           fi
 
+      - name: Shard huge catalogs
+        env:
+          CATALOGS_TOKEN: ${{ secrets.CATALOGS_TOKEN }}
+          GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          # Shard the largest catalogs (NVSS, FIRST) along RA into 24 CDN files each.
+          # Run one source per workflow run to bound runtime.
+          if [ ! -f /tmp/shard_done ]; then
+            for src in vizier_nvss_radio vizier_first_radio; do
+              if ! python3 scripts/shard_catalog.py --source "$src" --bins 24 --update-sources 2>/dev/null; then
+                echo "::warning::shard $src incomplete"
+              fi
+              # commit shard sources
+              if ! git diff --quiet -- phi/sources.φ; then
+                git config user.name "omegaflow-bot"
+                git config user.email "bot@omegaflow.space"
+                git add phi/sources.φ
+                git commit -m "Mycelium: shard $src into 24 RA bins" || true
+                git push origin HEAD 2>/dev/null || true
+              fi
+            done
+            touch /tmp/shard_done
+          fi
+
       - name: Mirror static files -> v1.0
         run: |
           echo "Mirroring third-party static files to v1.0 release"
