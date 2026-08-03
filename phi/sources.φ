@@ -24358,266 +24358,266 @@ field hits.total solar_helioseismology_papers
 source subatomic_pdg_b_c_plus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S091M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_b_c_plus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_b_c_plus_mass_mev
 
 source subatomic_pdg_b_plus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S041M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_b_plus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_b_plus_mass_mev
 
 source subatomic_pdg_b_zero_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S042M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_b_zero_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_b_zero_mass_mev
 
 source subatomic_pdg_bottom_quark_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/Q005M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_bottom_quark_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_bottom_quark_mass_gev
 
 source subatomic_pdg_charged_pion_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S008M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_charged_pion_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_charged_pion_mass_mev
 
 source subatomic_pdg_charm_quark_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/Q004M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_charm_quark_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_charm_quark_mass_gev
 
 source subatomic_pdg_d_s_star_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S074M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_d_s_star_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_d_s_star_mass_mev
 
 source subatomic_pdg_down_quark_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/Q001M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_down_quark_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_down_quark_mass_mev
 
 source subatomic_pdg_electron_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S003M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_electron_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_electron_mass_mev
 
 source subatomic_pdg_eta_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S014M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_eta_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_eta_mass_mev
 
 source subatomic_pdg_kaon_plus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S010M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_kaon_plus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_kaon_plus_mass_mev
 
 source subatomic_pdg_kaon_zero_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S011M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_kaon_zero_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_kaon_zero_mass_mev
 
 source subatomic_pdg_lambda_b_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S040M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_lambda_b_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_lambda_b_mass_mev
 
 source subatomic_pdg_lambda_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S018M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_lambda_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_lambda_mass_mev
 
 source subatomic_pdg_muon_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S004M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_muon_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_muon_mass_mev
 
 source subatomic_pdg_neutron_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S017M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_neutron_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_neutron_mass_mev
 
 source subatomic_pdg_omega_b_minus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S063M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_omega_b_minus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_omega_b_minus_mass_mev
 
 source subatomic_pdg_omega_c_2770_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S053M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_omega_c_2770_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_omega_c_2770_mass_mev
 
 source subatomic_pdg_omega_c_zero_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S047M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_omega_c_zero_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_omega_c_zero_mass_mev
 
 source subatomic_pdg_pion_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S009M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_pion_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_pion_mass_mev
 
 source subatomic_pdg_proton_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S016M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_proton_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_proton_mass_mev
 
 source subatomic_pdg_sigma_minus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S020M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_sigma_minus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_sigma_minus_mass_mev
 
 source subatomic_pdg_sigma_plus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S019M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_sigma_plus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_sigma_plus_mass_mev
 
 source subatomic_pdg_sigma_zero_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S021M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_sigma_zero_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_sigma_zero_mass_mev
 
 source subatomic_pdg_strange_quark_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/Q003M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_strange_quark_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_strange_quark_mass_mev
 
 source subatomic_pdg_tau_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S035M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_tau_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_tau_mass_mev
 
 source subatomic_pdg_top_quark_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/Q007TP
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_top_quark_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_top_quark_mass_gev
 
 source subatomic_pdg_up_quark_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/Q002M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_up_quark_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_up_quark_mass_mev
 
 source subatomic_pdg_w_boson_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S043M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_w_boson_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_w_boson_mass_gev
 
 source subatomic_pdg_xi_c_plus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S045M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_xi_c_plus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_xi_c_plus_mass_mev
 
 source subatomic_pdg_xi_c_prime_plus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S058M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_xi_c_prime_plus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_xi_c_prime_plus_mass_mev
 
 source subatomic_pdg_xi_c_prime_zero_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S059M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_xi_c_prime_zero_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_xi_c_prime_zero_mass_mev
 
 source subatomic_pdg_xi_c_zero_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S048M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_xi_c_zero_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_xi_c_zero_mass_mev
 
 source subatomic_pdg_xi_cc_plus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S065M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_xi_cc_plus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_xi_cc_plus_mass_mev
 
 source subatomic_pdg_xi_cc_plusplus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S068M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_xi_cc_plusplus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_xi_cc_plusplus_mass_mev
 
 source subatomic_pdg_xi_minus_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S022M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_xi_minus_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_xi_minus_mass_mev
 
 source subatomic_pdg_xi_zero_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S023M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_xi_zero_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_xi_zero_mass_mev
 
 source subatomic_pdg_z_boson_mass
 ttl 604800
 force em
-url https://pdgapi.lbl.gov/summaries/S044M
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_z_boson_mass.json
 wgs84 37.877 -122.247
 field pdg_values.0.value subatomic_z_boson_mass_gev
 
