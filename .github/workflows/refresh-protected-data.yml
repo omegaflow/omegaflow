@@ -281,19 +281,13 @@ jobs:
           done
 
       - name: Publish Release
+        env:
+          GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
+          CATALOGS_REPO: ${{ vars.CATALOGS_REPO || 'omegaflow/catalogs' }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
             echo "::error::no token to publish release"
             exit 1
           fi
-          files=()
-          for f in data/*; do
-            [ -s "$f" ] && files+=("$f")
-          done
-          if [ "${#files[@]}" -eq 0 ]; then
-            echo "::notice::no data to publish"
-            exit 0
-          fi
-          gh release create "$RELEASE_TAG" --repo "$CATALOGS_REPO" \
-            --title "$RELEASE_TAG" --notes "Protected live-data refresh" 2>/dev/null || true
-          gh release upload "$RELEASE_TAG" --repo "$CATALOGS_REPO" --clobber "${files[@]}"
+          gh release create catalogs --repo "$CATALOGS_REPO" --title "catalogs" --notes "Unified CDN. TTL-based refresh." 2>/dev/null || true
+          python3 scripts/refresh_catalogs.py
