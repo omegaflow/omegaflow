@@ -5193,6 +5193,10 @@ fn fetch_priority(
         0.0
     };
     let urgency = 1.0 - (ttl.max(1) as f64).log10().min(5.0) / 5.0;
+    if url.contains("omegaflow/catalogs") {
+        let x = (ttl.max(1) as f64).log2() / Φ;
+        return ((255.0 * (1.0 - 1.0 / (1.0 + x))).max(128.0)) as u8;
+    }
     // Offset 32 keeps stale refreshes below new-source priorities (0..256).
     (32.0 + (proximity * 0.7 + urgency * 0.3) * 200.0) as u8
 }
