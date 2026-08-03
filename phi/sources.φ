@@ -21846,7 +21846,7 @@ field id brewery_db_id
 source biosphere_worldbank_countries
 ttl 86400
 force diffusion
-url https://api.worldbank.org/v2/country/all?format=json&per_page=300
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_countries.json
 map 1
 lat_key latitude
 lon_key longitude
@@ -21859,7 +21859,7 @@ field capitalCity capital_city
 source biosphere_worldbank_forest_area
 ttl 86400
 force diffusion
-url https://api.worldbank.org/v2/country/all/indicator/AG.LND.FRST.ZS?format=json&per_page=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_forest_area.json
 map 1
 lat_key country.latitude
 lon_key country.longitude
@@ -25346,469 +25346,469 @@ field data.0.areaHa biosphere_tree_cover_loss_ha_latest
 source biosphere_worldbank_birth_rate
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CBRT.IN?format=json&date=2023&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_birth_rate.json
 wgs84 38.899 -77.043
 field 1.0.value biosphere_birth_rate_per_1000
 
 source biosphere_worldbank_co2_emissions
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/WLD/indicator/EN.GHG.CO2.MT.CE.AR5?format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_co2_emissions.json
 wgs84 38.899 -77.043
 field 1.0.value worldbank_co2_emissions_value
 
 source biosphere_worldbank_death_rate
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_death_rate.json
 wgs84 38.899 -77.043
 field 1.0.value biosphere_death_rate_per_1000
 
 source biosphere_worldbank_gdp_growth_afghanistan
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/AFG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_afghanistan.json
 wgs84 33.83 67.71
 field 1.0.value biosphere_gdp_growth_afghanistan_pct
 
 source biosphere_worldbank_gdp_growth_albania
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/ALB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_albania.json
 wgs84 41.33 19.82
 field 1.0.value biosphere_gdp_growth_albania_pct
 
 source biosphere_worldbank_gdp_growth_algeria
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/DZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_algeria.json
 wgs84 36.75 3.06
 field 1.0.value biosphere_gdp_growth_algeria_pct
 
 source biosphere_worldbank_gdp_growth_american_samoa
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/ASM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_american_samoa.json
 wgs84 -14.28 -170.70
 field 1.0.value biosphere_gdp_growth_american_samoa_pct
 
 source biosphere_worldbank_gdp_growth_andorra
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/AND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_andorra.json
 wgs84 42.51 1.52
 field 1.0.value biosphere_gdp_growth_andorra_pct
 
 source biosphere_worldbank_gdp_growth_angola
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/AGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_angola.json
 wgs84 -8.84 13.23
 field 1.0.value biosphere_gdp_growth_angola_pct
 
 source biosphere_worldbank_gdp_growth_antigua_and_barbuda
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/ATG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_antigua_and_barbuda.json
 wgs84 17.12 -61.85
 field 1.0.value biosphere_gdp_growth_antigua_and_barbuda_pct
 
 source biosphere_worldbank_gdp_growth_argentina
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/ARG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_argentina.json
 wgs84 -34.60 -58.38
 field 1.0.value biosphere_gdp_growth_argentina_pct
 
 source biosphere_worldbank_gdp_growth_armenia
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/ARM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_armenia.json
 wgs84 40.18 44.51
 field 1.0.value biosphere_gdp_growth_armenia_pct
 
 source biosphere_worldbank_gdp_growth_aruba
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/ABW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_aruba.json
 wgs84 12.52 -70.03
 field 1.0.value biosphere_gdp_growth_aruba_pct
 
 source biosphere_worldbank_gdp_growth_australia
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/AUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_australia.json
 wgs84 -35.28 149.13
 field 1.0.value biosphere_gdp_growth_australia_pct
 
 source biosphere_worldbank_gdp_growth_austria
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/AUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_austria.json
 wgs84 48.21 16.37
 field 1.0.value biosphere_gdp_growth_austria_pct
 
 source biosphere_worldbank_gdp_growth_azerbaijan
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/AZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_azerbaijan.json
 wgs84 40.40 49.87
 field 1.0.value biosphere_gdp_growth_azerbaijan_pct
 
 source biosphere_worldbank_gdp_growth_bahamas
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BHS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bahamas.json
 wgs84 25.06 -77.35
 field 1.0.value biosphere_gdp_growth_bahamas_pct
 
 source biosphere_worldbank_gdp_growth_bahrain
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BHR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bahrain.json
 wgs84 26.23 50.59
 field 1.0.value biosphere_gdp_growth_bahrain_pct
 
 source biosphere_worldbank_gdp_growth_bangladesh
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BGD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bangladesh.json
 wgs84 23.81 90.41
 field 1.0.value biosphere_gdp_growth_bangladesh_pct
 
 source biosphere_worldbank_gdp_growth_barbados
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_barbados.json
 wgs84 13.10 -59.62
 field 1.0.value biosphere_gdp_growth_barbados_pct
 
 source biosphere_worldbank_gdp_growth_belarus
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BLR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_belarus.json
 wgs84 53.90 27.57
 field 1.0.value biosphere_gdp_growth_belarus_pct
 
 source biosphere_worldbank_gdp_growth_belgium
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BEL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_belgium.json
 wgs84 50.85 4.35
 field 1.0.value biosphere_gdp_growth_belgium_pct
 
 source biosphere_worldbank_gdp_growth_belize
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BLZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_belize.json
 wgs84 17.25 -88.77
 field 1.0.value biosphere_gdp_growth_belize_pct
 
 source biosphere_worldbank_gdp_growth_benin
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_benin.json
 wgs84 6.50 2.60
 field 1.0.value biosphere_gdp_growth_benin_pct
 
 source biosphere_worldbank_gdp_growth_bermuda
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BMU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bermuda.json
 wgs84 32.29 -64.78
 field 1.0.value biosphere_gdp_growth_bermuda_pct
 
 source biosphere_worldbank_gdp_growth_bhutan
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BTN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bhutan.json
 wgs84 27.47 89.64
 field 1.0.value biosphere_gdp_growth_bhutan_pct
 
 source biosphere_worldbank_gdp_growth_bolivia
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BOL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bolivia.json
 wgs84 -16.50 -68.15
 field 1.0.value biosphere_gdp_growth_bolivia_pct
 
 source biosphere_worldbank_gdp_growth_bosnia_and_herzegovina
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BIH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bosnia_and_herzegovina.json
 wgs84 43.85 18.41
 field 1.0.value biosphere_gdp_growth_bosnia_and_herzegovina_pct
 
 source biosphere_worldbank_gdp_growth_botswana
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_botswana.json
 wgs84 -24.63 25.90
 field 1.0.value biosphere_gdp_growth_botswana_pct
 
 source biosphere_worldbank_gdp_growth_brazil
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_brazil.json
 wgs84 -15.80 -47.88
 field 1.0.value biosphere_gdp_growth_brazil_pct
 
 source biosphere_worldbank_gdp_growth_british_virgin_islands
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/VGB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_british_virgin_islands.json
 wgs84 18.42 -64.62
 field 1.0.value biosphere_gdp_growth_british_virgin_islands_pct
 
 source biosphere_worldbank_gdp_growth_brunei_darussalam
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_brunei_darussalam.json
 wgs84 4.94 114.94
 field 1.0.value biosphere_gdp_growth_brunei_darussalam_pct
 
 source biosphere_worldbank_gdp_growth_bulgaria
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BGR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bulgaria.json
 wgs84 42.70 23.32
 field 1.0.value biosphere_gdp_growth_bulgaria_pct
 
 source biosphere_worldbank_gdp_growth_burkina_faso
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BFA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_burkina_faso.json
 wgs84 12.37 -1.52
 field 1.0.value biosphere_gdp_growth_burkina_faso_pct
 
 source biosphere_worldbank_gdp_growth_burundi
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/BDI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_burundi.json
 wgs84 -3.36 29.92
 field 1.0.value biosphere_gdp_growth_burundi_pct
 
 source biosphere_worldbank_gdp_growth_cabo_verde
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CPV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_cabo_verde.json
 wgs84 14.93 -23.51
 field 1.0.value biosphere_gdp_growth_cabo_verde_pct
 
 source biosphere_worldbank_gdp_growth_cambodia
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/KHM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_cambodia.json
 wgs84 11.56 104.93
 field 1.0.value biosphere_gdp_growth_cambodia_pct
 
 source biosphere_worldbank_gdp_growth_cameroon
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_cameroon.json
 wgs84 3.87 11.52
 field 1.0.value biosphere_gdp_growth_cameroon_pct
 
 source biosphere_worldbank_gdp_growth_canada
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_canada.json
 wgs84 45.42 -75.70
 field 1.0.value biosphere_gdp_growth_canada_pct
 
 source biosphere_worldbank_gdp_growth_cayman_islands
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CYM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_cayman_islands.json
 wgs84 19.29 -81.37
 field 1.0.value biosphere_gdp_growth_cayman_islands_pct
 
 source biosphere_worldbank_gdp_growth_central_african_republic
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_central_african_republic.json
 wgs84 4.39 18.56
 field 1.0.value biosphere_gdp_growth_central_african_republic_pct
 
 source biosphere_worldbank_gdp_growth_chad
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/TCD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_chad.json
 wgs84 15.45 18.73
 field 1.0.value biosphere_gdp_growth_chad_pct
 
 source biosphere_worldbank_gdp_growth_channel_islands
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CHI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_channel_islands.json
 wgs84 49.19 -2.11
 field 1.0.value biosphere_gdp_growth_channel_islands_pct
 
 source biosphere_worldbank_gdp_growth_chile
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_chile.json
 wgs84 -33.45 -70.67
 field 1.0.value biosphere_gdp_growth_chile_pct
 
 source biosphere_worldbank_gdp_growth_china
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CHN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_china.json
 wgs84 39.91 116.40
 field 1.0.value biosphere_gdp_growth_china_pct
 
 source biosphere_worldbank_gdp_growth_colombia
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/COL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_colombia.json
 wgs84 4.71 -74.07
 field 1.0.value biosphere_gdp_growth_colombia_pct
 
 source biosphere_worldbank_gdp_growth_comoros
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/COM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_comoros.json
 wgs84 -11.72 43.25
 field 1.0.value biosphere_gdp_growth_comoros_pct
 
 source biosphere_worldbank_gdp_growth_congo
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/COD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_congo.json
 wgs84 -4.32 15.30
 field 1.0.value biosphere_gdp_growth_congo_pct
 
 source biosphere_worldbank_gdp_growth_congo_republic
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/COG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_congo_republic.json
 wgs84 -4.26 15.28
 field 1.0.value biosphere_gdp_growth_congo_republic_pct
 
 source biosphere_worldbank_gdp_growth_costa_rica
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_costa_rica.json
 wgs84 9.93 -84.08
 field 1.0.value biosphere_gdp_growth_costa_rica_pct
 
 source biosphere_worldbank_gdp_growth_cote_d_ivoire
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CIV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_cote_d_ivoire.json
 wgs84 5.35 -4.01
 field 1.0.value biosphere_gdp_growth_cote_d_ivoire_pct
 
 source biosphere_worldbank_gdp_growth_croatia
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/HRV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_croatia.json
 wgs84 45.81 15.98
 field 1.0.value biosphere_gdp_growth_croatia_pct
 
 source biosphere_worldbank_gdp_growth_cuba
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CUB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_cuba.json
 wgs84 23.13 -82.38
 field 1.0.value biosphere_gdp_growth_cuba_pct
 
 source biosphere_worldbank_gdp_growth_curacao
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CUW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_curacao.json
 wgs84 12.11 -68.93
 field 1.0.value biosphere_gdp_growth_curacao_pct
 
 source biosphere_worldbank_gdp_growth_cyprus
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CYP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_cyprus.json
 wgs84 35.17 33.36
 field 1.0.value biosphere_gdp_growth_cyprus_pct
 
 source biosphere_worldbank_gdp_growth_czechia
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/CZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_czechia.json
 wgs84 50.08 14.44
 field 1.0.value biosphere_gdp_growth_czechia_pct
 
 source biosphere_worldbank_gdp_growth_denmark
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_denmark.json
 wgs84 55.68 12.57
 field 1.0.value biosphere_gdp_growth_denmark_pct
 
 source biosphere_worldbank_gdp_growth_DEU
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_DEU.json
 wgs84 52.520 13.405
 field 1.0.value biosphere_gdp_growth_pct_DEU
 
 source biosphere_worldbank_gdp_growth_djibouti
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/DJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_djibouti.json
 wgs84 11.58 43.15
 field 1.0.value biosphere_gdp_growth_djibouti_pct
 
 source biosphere_worldbank_gdp_growth_dominica
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/DMA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_dominica.json
 wgs84 15.30 -61.39
 field 1.0.value biosphere_gdp_growth_dominica_pct
 
 source biosphere_worldbank_gdp_growth_dominican_republic
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/DOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_dominican_republic.json
 wgs84 18.49 -69.93
 field 1.0.value biosphere_gdp_growth_dominican_republic_pct
 
 source biosphere_worldbank_gdp_growth_ecuador
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/ECU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_ecuador.json
 wgs84 -0.23 -78.52
 field 1.0.value biosphere_gdp_growth_ecuador_pct
 
 source biosphere_worldbank_gdp_growth_egypt
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/EGY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_egypt.json
 wgs84 30.04 31.24
 field 1.0.value biosphere_gdp_growth_egypt_pct
 
 source biosphere_worldbank_gdp_growth_el_salvador
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/SLV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_el_salvador.json
 wgs84 13.69 -89.19
 field 1.0.value biosphere_gdp_growth_el_salvador_pct
 
 source biosphere_worldbank_gdp_growth_equatorial_guinea
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/GNQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_equatorial_guinea.json
 wgs84 3.75 8.77
 field 1.0.value biosphere_gdp_growth_equatorial_guinea_pct
 
 source biosphere_worldbank_gdp_growth_eritrea
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/ERI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_eritrea.json
 wgs84 15.33 38.93
 field 1.0.value biosphere_gdp_growth_eritrea_pct
 
 source biosphere_worldbank_gdp_growth_estonia
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/EST/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_estonia.json
 wgs84 59.44 24.75
 field 1.0.value biosphere_gdp_growth_estonia_pct
 
