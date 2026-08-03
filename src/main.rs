@@ -4415,6 +4415,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 epoch_key,
                 fields,
             } => {
+                let default_epoch = src.catalog_epoch.unwrap_or(now);
                 if let Some(ref j) = parsed_json {
                     if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
                         for (idx, v) in arr.iter().enumerate() {
@@ -4746,9 +4747,10 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 pmdec_key,
                 rv_key,
                 rv_scale,
-                epoch_key: _,
+                epoch_key,
                 fields,
             } => {
+                let default_epoch = src.catalog_epoch.unwrap_or(now);
                 if let Some(ref j) = parsed_json {
                     if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
                         for v in arr.iter() {
@@ -4846,8 +4848,13 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                 d * (mu_a * a_hat[1] + mu_d * d_hat[1]) + vr * p_hat[1],
                                 d * (mu_a * a_hat[2] + mu_d * d_hat[2]) + vr * p_hat[2],
                             ];
+                            let sample_epoch = if !epoch_key.is_empty() {
+                                jpath(v, epoch_key).unwrap_or(default_epoch)
+                            } else {
+                                default_epoch
+                            };
                             pending.push(PendingSample {
-                                epoch: now,
+                                epoch: sample_epoch,
                                 position: PendingPosition::StateVector {
                                     p,
                                     v: vel,
