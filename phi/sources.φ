@@ -52,7 +52,7 @@ field peak atmosphere_lightning_peak_current_ka
 source biosphere_etf_africa_broad
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_africa_broad.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_africa_broad.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_africa_price
@@ -61,7 +61,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_africa_prev_close
 source biosphere_etf_brazil
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_brazil.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_brazil.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_brazil_price
@@ -70,7 +70,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_brazil_prev_close
 source biosphere_etf_china
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_china.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_china.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_china_price
@@ -79,7 +79,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_china_prev_close
 source biosphere_etf_dollar_index
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_dollar_index.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_dollar_index.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_dollar_index_price
@@ -88,7 +88,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_dollar_index_prev_close
 source biosphere_etf_dry_bulk_shipping
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_dry_bulk_shipping.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_dry_bulk_shipping.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_leading_global_trade_proxy_price
@@ -97,7 +97,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_leading_global_trade_prox
 source biosphere_etf_emerging_markets
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_emerging_markets.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_emerging_markets.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_emerging_markets_price
@@ -106,7 +106,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_emerging_markets_prev_clo
 source biosphere_etf_europe
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_europe.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_europe.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_europe_price
@@ -115,7 +115,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_europe_prev_close
 source biosphere_etf_frontier_markets
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_frontier_markets.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_frontier_markets.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_frontier_markets_price
@@ -124,7 +124,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_frontier_markets_prev_clo
 source biosphere_etf_germany
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_germany.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_germany.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_germany_price
@@ -133,7 +133,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_germany_prev_close
 source biosphere_etf_gold
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_gold.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_gold.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_commodity_gold_price
@@ -142,7 +142,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_commodity_gold_prev_close
 source biosphere_etf_india
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_india.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_india.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_india_price
@@ -151,7 +151,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_india_prev_close
 source biosphere_etf_japan
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_japan.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_japan.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_japan_price
@@ -160,7 +160,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_japan_prev_close
 source biosphere_etf_latin_america_broad
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_latin_america_broad.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_latin_america_broad.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_latin_america_price
@@ -169,7 +169,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_latin_america_prev
 source biosphere_etf_mexico
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_mexico.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_mexico.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_mexico_price
@@ -178,7 +178,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_mexico_prev_close
 source biosphere_etf_middle_east
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_middle_east.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_middle_east.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_gulf_price
@@ -187,7 +187,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_gulf_prev_close
 source biosphere_etf_oil
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_oil.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_oil.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_commodity_oil_price
@@ -196,7 +196,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_commodity_oil_prev_close
 source biosphere_etf_sector_communication
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_communication.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_communication.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_communication_price
@@ -205,7 +205,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_communication_prev
 source biosphere_etf_sector_consumer_discretionary
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_consumer_discretionary.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_consumer_discretionary.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_consumer_discretionary_price
@@ -214,7 +214,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_consumer_discretio
 source biosphere_etf_sector_consumer_staples
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_consumer_staples.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_consumer_staples.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_consumer_staples_price
@@ -223,7 +223,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_consumer_staples_p
 source biosphere_etf_sector_energy
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_energy.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_energy.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_energy_price
@@ -232,7 +232,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_energy_prev_close
 source biosphere_etf_sector_financials
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_financials.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_financials.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_financials_price
@@ -241,7 +241,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_financials_prev_cl
 source biosphere_etf_sector_healthcare
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_healthcare.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_healthcare.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_healthcare_price
@@ -250,7 +250,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_healthcare_prev_cl
 source biosphere_etf_sector_industrials
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_industrials.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_industrials.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_industrials_price
@@ -259,7 +259,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_industrials_prev_c
 source biosphere_etf_sector_materials
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_materials.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_materials.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_materials_price
@@ -268,7 +268,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_materials_prev_clo
 source biosphere_etf_sector_real_estate
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_real_estate.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_real_estate.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_real_estate_price
@@ -277,7 +277,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_real_estate_prev_c
 source biosphere_etf_sector_technology
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_technology.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_technology.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_technology_price
@@ -286,7 +286,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_technology_prev_cl
 source biosphere_etf_sector_utilities
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_sector_utilities.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_sector_utilities.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_sector_utilities_price
@@ -295,7 +295,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_sector_utilities_prev_clo
 source biosphere_etf_semiconductors
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_semiconductors.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_semiconductors.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_leading_semiconductors_price
@@ -304,7 +304,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_leading_semiconductors_pr
 source biosphere_etf_south_africa
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_south_africa.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_south_africa.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_south_africa_price
@@ -313,7 +313,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_south_africa_prev_
 source biosphere_etf_southeast_asia
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_southeast_asia.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_southeast_asia.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_southeast_asia_price
@@ -322,7 +322,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_southeast_asia_pre
 source biosphere_etf_transportation
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_transportation.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_transportation.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_leading_transportation_price
@@ -331,7 +331,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_leading_transportation_pr
 source biosphere_etf_treasury_yield_10y
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_treasury_yield_10y.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_treasury_yield_10y.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_interest_rate_10y_treasury
@@ -340,7 +340,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_interest_rate_10y_treasur
 source biosphere_etf_usa
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_usa.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_usa.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_region_usa_price
@@ -349,7 +349,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_region_usa_prev_close
 source biosphere_etf_volatility
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_volatility.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_volatility.json
 wgs84 41.8781 -87.6298
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_fear_gauge_vix
@@ -358,7 +358,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_fear_gauge_vix_prev
 source biosphere_etf_world_all_country
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_world_all_country.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_world_all_country.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_world_acwi_price
@@ -367,7 +367,7 @@ field chart.result.0.meta.chartPreviousClose biosphere_world_acwi_prev_close
 source biosphere_etf_world_developed
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_etf_world_developed.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_etf_world_developed.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_world_developed_price
@@ -443,7 +443,7 @@ count data.monitors.0.lines biosphere_transport_lines_vienna
 source biosphere_yahoo_finance_markets
 ttl 60
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_yahoo_finance_markets.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_yahoo_finance_markets.json
 wgs84 40.7128 -74.006
 header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 field chart.result.0.meta.regularMarketPrice biosphere_stock_price
@@ -7486,7 +7486,7 @@ field epoch approach_time_jd
 source jpl_horizons_iss_vectors
 ttl 300
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_iss.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_iss.json
 format text
 vectors iss_position
 
@@ -8786,7 +8786,7 @@ source jpl_horizons_parker_solar_probe
 ttl 600
 force gravity
 ssb
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_parker_solar_probe.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_parker_solar_probe.json
 format text
 rows
 field_in 2 x_au
@@ -8997,7 +8997,7 @@ field_in 2 aurora_intensity
 source usgs_nwis_water_data
 ttl 600
 force advective
-url https://github.com/omegaflow/catalogs/releases/download/live-data/usgs_water_daily.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_water_daily.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -10507,28 +10507,28 @@ field pull_count biosphere_software_ubuntu_pulls_dockerhub
 source geosphere_earth_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_earth.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_earth.json
 ephemeris orbital_earth_distance
 extent 4.26e-5
 
 source astro_enceladus_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_enceladus.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_enceladus.json
 ephemeris orbital_enceladus_distance
 extent 1.68e-6
 
 source astro_encke_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_encke.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_encke.json
 ephemeris orbital_encke_distance
 extent 1.34e-8
 
 source astro_eris_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_eris.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_eris.json
 ephemeris orbital_eris_distance
 extent 7.77e-6
 
@@ -10689,7 +10689,7 @@ field year year
 source astro_europa_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_europa.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_europa.json
 ephemeris orbital_europa_distance
 extent 1.04e-5
 
@@ -10732,7 +10732,7 @@ last dst exosphere_dst_nt
 source exosphere_interstellar_object_tracking
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_interstellar_3i.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_interstellar_3i.json
 ephemeris cosmic_interstellar_object_distance
 
 source exosphere_kp_index
@@ -10764,7 +10764,7 @@ field duration duration_s
 source astro_ganymede_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_ganymede.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_ganymede.json
 ephemeris orbital_ganymede_distance
 extent 1.76e-5
 
@@ -11142,7 +11142,7 @@ field created created_utc
 source astro_haumea_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_haumea.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_haumea.json
 ephemeris orbital_haumea_distance
 extent 5.45e-6
 
@@ -11616,14 +11616,14 @@ field place_guess locality
 source astro_io_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_io.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_io.json
 ephemeris orbital_io_distance
 extent 1.22e-5
 
 source irsa_tap_neowiser
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_neowiser_p1bs_psd.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tap_irsa_neowiser_p1bs_psd.csv
 format text
 rows
 ra_key ra
@@ -11699,7 +11699,7 @@ source jpl_horizons_voyager1
 ttl 3600
 force gravity
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_voyager1.json
 format text
 rows
 field_in 2 x_au
@@ -11712,7 +11712,7 @@ field_in 7 vz_au_d
 source jpl_horizons_voyager2
 ttl 3600
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_voyager2.json
 wgs84 0.0 0.0
 format text
 rows
@@ -11726,20 +11726,20 @@ field_in 7 vz_au_d
 source astro_juno_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_juno.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_juno.json
 ephemeris orbital_juno_distance
 
 source astro_jupiter_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_jupiter.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_jupiter.json
 ephemeris orbital_jupiter_distance
 extent 4.67e-4
 
 source astro_jwst_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_jwst.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_jwst.json
 ephemeris orbital_jwst_distance
 
 source astro_lasp_fism2_euv_hr_model
@@ -11819,14 +11819,14 @@ field mag_class magnetosphere_mag_class
 source astro_makemake_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_makemake.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_makemake.json
 ephemeris orbital_makemake_distance
 extent 4.78e-6
 
 source astro_mars_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_mars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_mars.json
 ephemeris orbital_mars_distance
 extent 2.27e-5
 
@@ -11926,7 +11926,7 @@ field em_max wavelength_max_m
 source astro_mercury_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_mercury.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_mercury.json
 ephemeris orbital_mercury_distance
 extent 1.63e-5
 
@@ -11946,7 +11946,7 @@ field altim pressure_hpa
 source astro_moon_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_luna.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_luna.json
 ephemeris orbital_moon_distance
 extent 1.16e-5
 
@@ -12106,14 +12106,14 @@ field imp impact_flag
 source astro_neptune_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_neptune.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_neptune.json
 ephemeris orbital_neptune_distance
 extent 1.65e-4
 
 source astro_new_horizons_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_new_horizons.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_new_horizons.json
 ephemeris orbital_new_horizons_distance
 
 source noaa_coops_tidal_predictions_usa
@@ -12660,7 +12660,7 @@ field total_count item_count
 source orbital_atlas_3i_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_interstellar_3i.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_interstellar_3i.json
 ephemeris orbital_atlas_3i_distance
 extent 3.34e-9
 
@@ -12714,7 +12714,7 @@ field line2 tle_line2
 source orbital_vesta_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_vesta.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_vesta.json
 ephemeris orbital_vesta_distance
 extent 1.76e-6
 
@@ -12731,13 +12731,13 @@ path daily.shortwave_radiation_sum.0 paleoclimate_shortwave_yesterday_mjm2
 source astro_parker_solar_probe_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_parker_solar_probe.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_parker_solar_probe.json
 ephemeris orbital_parker_solar_probe_distance
 
 source astro_pluto_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_pluto.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_pluto.json
 ephemeris orbital_pluto_distance
 extent 7.94e-6
 
@@ -12774,7 +12774,7 @@ xml_count item disaster_count
 source astro_saturn_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_saturn.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_saturn.json
 ephemeris orbital_saturn_distance
 extent 3.89e-4
 
@@ -12796,7 +12796,7 @@ field properties.eo:cloud_cover cloud_cover_pct
 source solar_callisto_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_callisto.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_callisto.json
 ephemeris orbital_callisto_distance
 extent 1.61e-5
 
@@ -12833,13 +12833,13 @@ count . solar_flare_count_noaa
 source solar_orbiter_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_solar_orbiter.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_solar_orbiter.json
 ephemeris orbital_solar_orbiter_distance
 
 source astro_sun_vectors
 ttl 3600
 force em gravity thermal
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_sun.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_sun.json
 ephemeris orbital_sun_distance
 extent 0.004650
 
@@ -12892,14 +12892,14 @@ field properties.uf state
 source astro_titan_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_titan.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_titan.json
 ephemeris orbital_titan_distance
 extent 1.72e-5
 
 source astro_triton_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_triton.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_triton.json
 ephemeris orbital_triton_distance
 extent 9.04e-6
 
@@ -12943,7 +12943,7 @@ field_in 8 velocity_kms
 source astro_uranus_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_uranus.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_uranus.json
 ephemeris orbital_uranus_distance
 extent 1.70e-4
 
@@ -13017,20 +13017,20 @@ field EndDate activity_end_date
 source astro_venus_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_venus.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_venus.json
 ephemeris orbital_venus_distance
 extent 4.05e-5
 
 source astro_voyager1_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_voyager1.json
 ephemeris orbital_voyager1_distance
 
 source astro_voyager2_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_voyager2.json
 ephemeris orbital_voyager2_distance
 
 source geosphere_wfigs_current_fire_perimeters
@@ -13198,7 +13198,7 @@ field Elevation(meters) elevation_m
 source astro_allwise_catalog_irsa_tap
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tap_irsa_allwise_p3as_psd.csv
 format text
 rows
 ra_key ra
@@ -13226,56 +13226,56 @@ field attributes.COUNTRY country
 source technosphere_arxiv_astro_total
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_astro_total.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_astro_total.json
 wgs84 40.712 -74.006
 field feed.totalResults exosphere_arxiv_astro_papers_total
 
 source technosphere_arxiv_cs_total
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_cs_total.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_cs_total.json
 wgs84 40.712 -74.006
 field feed.totalResults biosphere_arxiv_cs_papers_total
 
 source technosphere_arxiv_hep_total
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_hep_total.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_hep_total.json
 wgs84 40.712 -74.006
 field feed.totalResults subatomic_arxiv_hep_papers_total
 
 source technosphere_arxiv_math_total
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_math_total.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_math_total.json
 wgs84 40.712 -74.006
 field feed.totalResults physics_arxiv_math_papers_total
 
 source technosphere_arxiv_physics_total
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_physics_total.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_physics_total.json
 wgs84 40.712 -74.006
 field feed.totalResults physics_arxiv_physics_papers_total
 
 source technosphere_arxiv_qbio_total
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qbio_total.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_qbio_total.json
 wgs84 40.712 -74.006
 field feed.totalResults biosphere_arxiv_qbio_papers_total
 
 source technosphere_arxiv_qfin_total
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qfin_total.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_qfin_total.json
 wgs84 40.712 -74.006
 field feed.totalResults biosphere_arxiv_qfin_papers_total
 
 source technosphere_arxiv_stat_total
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_stat_total.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_stat_total.json
 wgs84 40.712 -74.006
 field feed.totalResults physics_arxiv_stat_papers_total
 
@@ -13374,7 +13374,7 @@ path numberMatched biosphere_ozone_measurement_total_count
 source biosphere_arxiv_total_papers
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_arxiv_total_papers.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_arxiv_total_papers.json
 wgs84 42.3601 -71.0589
 xml_count totalResults biosphere_arxiv_papers_total
 
@@ -13701,7 +13701,7 @@ source biosphere_protected_lands_area
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_10m_parks_area.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_10m_parks_area.geojson
 field scalerank biosphere_park_area_rank
 flatten features
 
@@ -13709,7 +13709,7 @@ source biosphere_protected_lands_point
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_10m_parks_point.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_10m_parks_point.geojson
 field scalerank biosphere_park_rank
 flatten features
 
@@ -14139,7 +14139,7 @@ source geosphere_earth_coastlines_110m
 ttl 86400
 force em
 ssb
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_110m_coastline.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_110m_coastline.geojson
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -14149,7 +14149,7 @@ source geosphere_earth_country_boundaries_110m
 ttl 86400
 force em
 ssb
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_110m_boundaries.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_110m_boundaries.geojson
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -14408,7 +14408,7 @@ count lines exosphere_donki_sep_count_2024
 source exosphere_exoplanet_count
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 cmap .
 tau_key _dist_m
 ra_key ra
@@ -14429,7 +14429,7 @@ field 0.flux exosphere_f107_sfu
 source exosphere_hot_jupiters
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 cmap .
 tau_key _dist_m
 ra_key ra
@@ -14520,7 +14520,7 @@ field eventDate observation_date
 source geosphere_gem_global_active_faults
 ttl 86400
 force seismic-surface
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_gem_active_faults.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_gem_active_faults.geojson
 map features
 lat_key geometry.coordinates.0.0.1
 lon_key geometry.coordinates.0.0.0
@@ -14795,7 +14795,7 @@ field_in 1 soil_temp_0_10cm_k
 source geosphere_global_mangrove_atlas_countries
 ttl 86400
 force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mangrove_countries.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mangrove_countries.json
 map data
 lat_key latitude
 lon_key longitude
@@ -14963,7 +14963,7 @@ field properties.Geologic_Epoch geologic_epoch
 source astro_halley_vectors
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_halley.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_halley.json
 wgs84 34.201 -118.171
 ephemeris orbital_halley_distance
 extent 3.34e-8
@@ -15336,7 +15336,7 @@ dist_key dist
 source heasarc_maxi_gsc7yr_xray
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_gsc7yr_xray.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_maxi_gsc7yr_xray.json
 format json
 cmap .
 ra_key ra
@@ -15819,7 +15819,7 @@ field k_m mag_k
 source irsa_allwise_point_source_database
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tap_irsa_allwise_p3as_psd.csv
 format text
 rows
 ra_key ra
@@ -15834,7 +15834,7 @@ field ph_qual photo_quality
 source irsa_allwise_psd
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tap_irsa_allwise_p3as_psd.csv
 format text
 rows
 ra_key ra
@@ -15929,7 +15929,7 @@ field flags quality_flags
 source irsa_neowise_r10
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_neowiser_p1bs_psd.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tap_irsa_neowiser_p1bs_psd.csv
 format text
 rows
 ra_key ra
@@ -16106,7 +16106,7 @@ field k_m mag_k
 source irsa_tap_allwise
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tap_irsa_allwise_p3as_psd.csv
 format text
 rows
 ra_key ra
@@ -16119,7 +16119,7 @@ field w4mpro mag_w4
 source irsa_wise_zodiacal_emission_proxy
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_allwise_p3as_psd.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tap_irsa_allwise_p3as_psd.csv
 format text
 rows
 ra_key ra
@@ -16297,7 +16297,7 @@ field epoch approach_time_jd
 source jpl_horizons_apophis_elements
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/elements_apophis.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/elements_apophis.json
 wgs84 0.0 0.0
 format text
 rows
@@ -16312,7 +16312,7 @@ field_in 7 time_perihelion_jd
 source jpl_horizons_comet_tsuchinshan_vectors
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_comet_c2023_a3.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_comet_c2023_a3.json
 wgs84 0.0 0.0
 format text
 rows
@@ -16366,7 +16366,7 @@ field 4 solar_distance_au
 source jpl_horizons_voyager1_vectors
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_voyager1.json
 wgs84 0.0 0.0
 format text
 rows
@@ -16381,7 +16381,7 @@ field 6 vz_au_day
 source jpl_horizons_voyager2_vectors
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_voyager2.json
 wgs84 0.0 0.0
 format text
 rows
@@ -16482,7 +16482,7 @@ field diameter estimated_diameter_km
 source astro_kodiaq_quasar_absorbers
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_852_22_sample.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_852_22_sample.json
 cmap .
 tau_key _dist_m
 ra_key _RA
@@ -18263,7 +18263,7 @@ field LastBurst last_outburst_year
 source astro_meteorite_landings_tidy
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_meteorites_tidy.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_meteorites_tidy.csv
 format text
 rows
 lat_key lat
@@ -18333,7 +18333,7 @@ field releases.0.id biosphere_music_releases_total
 source nasa_cmr_gedi_footprints
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_GEDI02_A.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cmr_GEDI02_A.json
 cmr_polygon feed.entry
 field time_start footprint_time_start
 field time_end footprint_time_end
@@ -18343,7 +18343,7 @@ field producer_granule_id footprint_granule_id
 source nasa_cmr_icesat2_atl06_footprints
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_ATL06.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cmr_ATL06.json
 cmr_polygon feed.entry
 field time_start footprint_time_start
 field time_end footprint_time_end
@@ -18353,7 +18353,7 @@ field producer_granule_id footprint_granule_id
 source nasa_cmr_icesat2_footprints
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_ATL03.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cmr_ATL03.json
 cmr_polygon feed.entry
 field time_start footprint_time_start
 field time_end footprint_time_end
@@ -18363,7 +18363,7 @@ field producer_granule_id footprint_granule_id
 source nasa_cmr_swot_ssg_ssh
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_SWOT_L2_LR_SSH_D.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cmr_SWOT_L2_LR_SSH_D.json
 cmr_polygon feed.entry
 field time_start footprint_time_start
 field time_end footprint_time_end
@@ -18373,7 +18373,7 @@ field producer_granule_id footprint_granule_id
 source nasa_cmr_viirs_fire_vnp14_nrt
 ttl 86400
 force thermal
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_VNP14IMG_NRT.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cmr_VNP14IMG_NRT.json
 cmr_polygon feed.entry
 field time_start footprint_time_start
 field time_end footprint_time_end
@@ -18384,7 +18384,7 @@ field day_night_flag fire_day_night
 source nasa_exoplanet_atmospheres
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 map .
 ra_key ra
 dec_key dec
@@ -18399,7 +18399,7 @@ tau_key _dist_m
 source nasa_exoplanet_confirmed
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 map .
 ra_key ra
 dec_key dec
@@ -18417,7 +18417,7 @@ tau_key _dist_m
 source nasa_exoplanet_toi
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 map .
 ra_key ra
 dec_key dec
@@ -18433,7 +18433,7 @@ tau_key _dist_m
 source nasa_exoplanet_toi_catalog
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 map .
 lat_key ra
 lon_key dec
@@ -18477,7 +18477,7 @@ field_in 1 soil_moisture_0_10cm_kgm2
 source nasa_meteorite_landings_all
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_meteorites_nasa_all.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_meteorites_nasa_all.csv
 format text
 rows
 lat_key 7
@@ -18534,7 +18534,7 @@ z_key 3
 source nasa_nexsci_direct_imaging_planets
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 format text
 rows
 ra_key ra
@@ -18555,7 +18555,7 @@ tau_key _dist_m
 source nasa_nexsci_radial_velocity_planets
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 format text
 rows
 ra_key ra
@@ -18577,7 +18577,7 @@ tau_key _dist_m
 source nasa_nexsci_transmission_spectroscopy
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 format text
 rows
 ra_key ra
@@ -18784,7 +18784,7 @@ field site.geography.state state
 source astro_neowise_asteroid_diameters
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/tap_irsa_neowiser_p1bs_psd.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tap_irsa_neowiser_p1bs_psd.csv
 format text
 rows
 ra_key ra
@@ -19649,213 +19649,213 @@ source orbit_celestrak_active
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_active.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_active.json
 count lines orbital_active_satellites_celestrak
 
 source orbit_celestrak_active_satellites
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_active_satellites.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_active_satellites.json
 count lines orbital_active_satellites_celestrak
 
 source orbit_celestrak_all_satellites
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_all_satellites.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_all_satellites.json
 count lines orbital_satellites_active_celestrak
 
 source orbit_celestrak_cubesats
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_cubesats.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_cubesats.json
 count lines orbital_cubesats_celestrak
 
 source orbit_celestrak_debris
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_debris.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_debris.json
 count lines orbital_debris_tracked_celestrak
 
 source orbit_celestrak_debris_analyst
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_debris_analyst.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_debris_analyst.json
 count lines orbital_debris_tracked_celestrak
 
 source orbit_celestrak_engineering_sats
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_engineering_sats.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_engineering_sats.json
 count lines orbital_engineering_sats_celestrak
 
 source orbit_celestrak_glonass
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_glonass.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_glonass.json
 count lines orbital_glonass_satellites_celestrak
 
 source orbit_celestrak_gps
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_gps.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_gps.json
 count lines orbital_gps_satellites_celestrak
 
 source orbit_celestrak_navigation_sats
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_navigation_sats.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_navigation_sats.json
 count lines orbital_navigation_sats_celestrak
 
 source orbit_celestrak_oneweb
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_oneweb.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_oneweb.json
 count lines orbital_oneweb_satellites_celestrak
 
 source orbit_celestrak_science_sats
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_science_sats.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_science_sats.json
 count lines orbital_science_sats_celestrak
 
 source orbit_celestrak_space_stations
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_space_stations.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_space_stations.json
 count lines orbital_space_stations_celestrak
 
 source orbit_celestrak_starlink
 ttl 86400
 force em
 ssb
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_starlink.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_starlink.json
 count lines orbital_starlink_satellites_celestrak
 
 source orbit_celestrak_weather_sats
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_weather_sats.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_weather_sats.json
 count lines orbital_weather_sats_celestrak
 
 source orbit_trace_callisto
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_callisto.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_callisto.json
 vectors orbital_callisto_rg
 
 source orbit_trace_ceres
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_ceres.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_ceres.json
 vectors orbital_ceres_rg
 
 source orbit_trace_earth
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_earth.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_earth.json
 vectors orbital_earth_rg
 
 source orbit_trace_enceladus
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_enceladus.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_enceladus.json
 vectors orbital_enceladus_rg
 
 source orbit_trace_eris
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_eris.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_eris.json
 vectors orbital_eris_rg
 
 source orbit_trace_europa
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_europa.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_europa.json
 vectors orbital_europa_rg
 
 source orbit_trace_ganymede
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_ganymede.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_ganymede.json
 vectors orbital_ganymede_rg
 
 source orbit_trace_haumea
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_haumea.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_haumea.json
 vectors orbital_haumea_rg
 
 source orbit_trace_io
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_io.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_io.json
 vectors orbital_io_rg
 
 source orbit_trace_jupiter
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_jupiter.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_jupiter.json
 vectors orbital_jupiter_rg
 
 source orbit_trace_makemake
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_makemake.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_makemake.json
 vectors orbital_makemake_rg
 
 source orbit_trace_mars
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_mars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_mars.json
 vectors orbital_mars_rg
 
 source orbit_trace_mercury
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_mercury.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_mercury.json
 vectors orbital_mercury_rg
 
 source orbit_trace_moon
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_moon.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_moon.json
 vectors orbital_moon_rg
 
 source orbit_trace_neptune
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_neptune.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_neptune.json
 vectors orbital_neptune_rg
 
 source orbit_trace_pluto
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_pluto.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_pluto.json
 vectors orbital_pluto_rg
 
 source orbit_trace_saturn
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_saturn.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_saturn.json
 vectors orbital_saturn_rg
 
 source astro_saturn_rings
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/saturn_rings_10k.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/saturn_rings_10k.json
 format json
 cmap data
 tau_key _dist_m
@@ -19870,50 +19870,50 @@ field zone ring_zone
 source orbit_trace_sun
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_sun.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_sun.json
 vectors orbital_sun_rg
 
 source orbit_trace_titan
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_titan.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_titan.json
 vectors orbital_titan_rg
 
 source orbit_trace_triton
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_triton.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_triton.json
 vectors orbital_triton_rg
 
 source orbit_trace_uranus
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_uranus.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_uranus.json
 vectors orbital_uranus_rg
 
 source orbit_trace_venus
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_venus.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_venus.json
 vectors orbital_venus_rg
 
 source orbit_trace_vesta
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_vesta.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_vesta.json
 vectors orbital_vesta_rg
 
 source orbital_apophis_vectors
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_apophis.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_apophis.json
 ephemeris orbital_apophis_distance
 extent 1.24e-9
 
 source orbital_bennu_vectors
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_bennu.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_bennu.json
 ephemeris orbital_bennu_distance
 extent 1.75e-9
 
@@ -19930,7 +19930,7 @@ last line geosphere_earth_orientation_raw
 source orbital_ceres_vectors
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_ceres.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_ceres.json
 wgs84 34.201 -118.171
 ephemeris orbital_ceres_distance
 extent 3.16e-6
@@ -19939,7 +19939,7 @@ source orbital_earth_mass
 ttl 86400
 force em
 ecliptic 1
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_earth.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_earth.json
 regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
 
 source orbital_jpl_atmospheric_fireballs
@@ -19953,35 +19953,35 @@ source orbital_jupiter_mass
 ttl 86400
 force em
 ecliptic 5.2
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_jupiter.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_jupiter.json
 regex \(kg\).\W*([0-9.]+) orbital_jupiter_mass_x10_24_kg
 
 source orbital_mars_mass
 ttl 86400
 force em
 ecliptic 1.5
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_mars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_mars.json
 regex \(kg\).\W*([0-9.]+) orbital_mars_mass_x10_24_kg
 
 source orbital_mercury_mass
 ttl 86400
 force em
 ecliptic 0.4
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_mercury.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_mercury.json
 regex \(kg\).\W*([0-9.]+) orbital_mercury_mass_x10_24_kg
 
 source orbital_neptune_mass
 ttl 86400
 force em
 ecliptic 30.0
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_neptune.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_neptune.json
 regex \(kg\).\W*([0-9.]+) orbital_neptune_mass_x10_24_kg
 
 source orbital_saturn_mass
 ttl 86400
 force em
 ecliptic 9.6
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_saturn.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_saturn.json
 regex \(kg\).\W*([0-9.]+) orbital_saturn_mass_x10_24_kg
 
 source orbital_sentry_objects
@@ -19995,14 +19995,14 @@ source orbital_uranus_mass
 ttl 86400
 force em
 ecliptic 19.2
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_uranus.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_uranus.json
 regex \(kg\).\W*([0-9.]+) orbital_uranus_mass_x10_24_kg
 
 source orbital_venus_mass
 ttl 86400
 force em
 ecliptic 0.7
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_venus.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_venus.json
 regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg
 
 source geosphere_orfeus_eida_stations_europe
@@ -20020,7 +20020,7 @@ field Elevation elevation_m
 source technosphere_ourairports_global
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ourairports_global.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ourairports_global.csv
 format csv
 rows
 pos airport_latitude airport_longitude
@@ -20072,7 +20072,7 @@ map .
 source astro_pantheon_plus_sne
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_938_110_table7.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_938_110_table7.json
 cmap .
 tau_key _dist_m
 ra_key _RA
@@ -20297,7 +20297,7 @@ source subatomic_particles
 ttl 86400
 force em
 ssb
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_particle2026.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_particle2026.csv
 format csv
 last_row ID subatomare_last_pdg_id
 last_row Mass subatomare_last_mass_mev
@@ -20347,7 +20347,7 @@ field index spectral_index
 source astro_tns_transient_supernovae
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/B_sn_sncat.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/B_sn_sncat.json
 cmap .
 tau_key _dist_m
 ra_key RAJ2000
@@ -20383,7 +20383,7 @@ field 2 last_modified
 source astro_uhecr_auger_host_galaxies
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_935_170_table4.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_935_170_table4.json
 cmap .
 tau_key _dist_m
 ra_key RAJ2000
@@ -20401,7 +20401,7 @@ field statistics.0.value molecular_proteins_total
 source astro_exoplanet_hosts
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 cmap .
 tau_key _dist_m
 ra_key ra
@@ -20412,7 +20412,7 @@ dist_key 3 3.085677581e16
 source astro_exoplanet_params
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
 cmap .
 tau_key _dist_m
 ra_key ra
@@ -20425,7 +20425,7 @@ dist_key 2 3.085677581e16
 source astro_first_radio
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_first.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_first.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -20436,7 +20436,7 @@ field Fint int_jy
 source astro_frb_catalog_aa
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_frb.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_frb.json
 format json
 cmap data
 tau_key _dist_m
@@ -20448,7 +20448,7 @@ field DM dm
 source astro_frb_catalog_pasa
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_other_PASA_33.45_frbcat.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_other_PASA_33.45_frbcat.json
 cmap data
 tau_key _dist_m
 ra_key 10
@@ -20497,7 +20497,7 @@ reach_ttl 86400
 catalog_epoch 504921600.0
 flux_from_mag celestial_gaia_nearby_g_magnitude
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10_cmap.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10_cmap.json
 ssb
 format json
 cmap data
@@ -20688,7 +20688,7 @@ field_in 2 par
 source astro_nvss_radio
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_nvss.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_nvss.json
 format json
 cmap data
 tau_key _dist_m
@@ -20773,7 +20773,7 @@ field totalResults biosphere_uspto_patents_total
 source astro_viirs_lst_global
 ttl 86400
 force thermal
-url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_viirs_nrt_world.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/firms_viirs_nrt_world.csv
 format text
 rows
 lat_key latitude
@@ -20811,7 +20811,7 @@ field Qflg quality_flag
 source vizier_2qz_qso
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/VII_241_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/VII_241_2qz.json
 format text
 rows
 ra_key RAJ2000
@@ -20834,7 +20834,7 @@ field HR2 hardness_ratio_2
 source vizier_6dfgs
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_6dfgs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_6dfgs.json
 format text
 rows
 ra_key RAJ2000
@@ -20974,7 +20974,7 @@ field Dist distance_pc
 source vizier_catwise_agn_candidates
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_catwise_agn.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_catwise_agn.json
 format text
 rows
 ra_key RA_ICRS
@@ -21015,7 +21015,7 @@ field mT source_type
 source vizier_cosmic_voids
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AplusA_570_A106_void.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_AplusA_570_A106_void.json
 format json
 map .
 lat_key RAJ2000
@@ -21036,7 +21036,7 @@ field Name lens_name
 source vizier_dla_sdss
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_800_7_dla.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_800_7_dla.json
 format json
 map .
 lat_key _RA
@@ -21061,7 +21061,7 @@ dist_key Dist
 source vizier_first_radio
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_first.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_first.json
 format text
 rows
 ra_key RAJ2000
@@ -21074,7 +21074,7 @@ field Min minaxis_arcsec
 source vizier_first_radio_catalog
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_first.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_first.json
 format text
 rows
 ra_key RAJ2000
@@ -21181,7 +21181,7 @@ field Peak peak_brightness_K
 source vizier_gcvs_variable_stars
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/B_gcvs_gcvs_cat.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/B_gcvs_gcvs_cat.json
 format text
 rows
 ra_key RAJ2000
@@ -21211,7 +21211,7 @@ field Fpwide peak_flux_mJy_beam
 source vizier_green_snr_catalog
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/VII_278_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/VII_278_snrs.json
 format json
 map .
 lat_key RAJ2000
@@ -21242,7 +21242,7 @@ dist_key Rsun
 source vizier_hecate_galaxies
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hecate.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_hecate.json
 format text
 rows
 ra_key RAJ2000
@@ -21295,7 +21295,7 @@ field Dist distance_Mpc
 source vizier_hipparcos_astrometry
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/I_311_hip2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/I_311_hip2.json
 format text
 rows
 ra_key RArad
@@ -21311,7 +21311,7 @@ pmdec_key pmDE
 source vizier_iphas_halpha_emitters
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_MNRAS_384_1277_emitters.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_MNRAS_384_1277_emitters.json
 format json
 map .
 lat_key RAJ2000
@@ -21325,7 +21325,7 @@ field Flag quality_flag
 source vizier_lotss_dr3
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_lotss_dr3.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_lotss_dr3.json
 format text
 rows
 ra_key RAJ2000
@@ -21338,7 +21338,7 @@ field Source source_name
 source vizier_lotss_dr3_radio
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_lotss_dr3.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_lotss_dr3.json
 format text
 rows
 ra_key RAJ2000
@@ -21351,7 +21351,7 @@ field Source source_name
 source vizier_milky_way_star_clusters
 ttl 86400
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AplusA_558_A53_catalog.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_AplusA_558_A53_catalog.json
 format json
 map .
 lat_key RAJ2000
@@ -21366,7 +21366,7 @@ dist_key d
 source vizier_mojave_15ghz
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AJ_130_1389_mojave.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_AJ_130_1389_mojave.json
 format json
 map .
 lat_key RAJ2000
@@ -21463,7 +21463,7 @@ source vizier_nvss_radio_shards
 ttl 86400
 force em
 repeat ra 0 360 24
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_nvss_radio_{repeat_bin}.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_nvss_radio_{repeat_bin}.json
 format json
 cmap .
 ra_key RAJ2000
@@ -21486,7 +21486,7 @@ field MajAxis major_axis_arcsec
 source vizier_orion_region_catalog
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJS_229_28_table1.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJS_229_28_table1.json
 format json
 map .
 lat_key RAJ2000
@@ -21540,7 +21540,7 @@ field ymag y_mag
 source vizier_planck_psz2_clusters
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AplusA_594_A27_psz2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_AplusA_594_A27_psz2.json
 format json
 map .
 lat_key RAJ2000
@@ -21631,7 +21631,7 @@ field imag i_magnitude
 source vizier_sl2s_lenses
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_785_144_table1.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_785_144_table1.json
 format json
 map .
 lat_key RAJ2000
@@ -21643,7 +21643,7 @@ field zd deflector_redshift
 source vizier_slacs_lenses
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_851_48_table1.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_851_48_table1.json
 format json
 map .
 lat_key _RA
@@ -21655,7 +21655,7 @@ field Sigma velocity_dispersion_kms
 source vizier_sstar_orbits
 ttl 86400
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_837_30_table3.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_837_30_table3.json
 format json
 map .
 lat_key _RA
@@ -21766,7 +21766,7 @@ field HIIName hii_region_name
 source vizier_catwise_agn
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_catwise_agn.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_catwise_agn.json
 format text
 rows
 ra_key RA_ICRS
@@ -21778,7 +21778,7 @@ field DEPMdeg pm_dec_deg
 source vizier_hmxb_catalog
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hmxb_catalog.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_hmxb_catalog.json
 format text
 rows
 ra_key _RA
@@ -21869,7 +21869,7 @@ field country.iso2Code country_code
 source biosphere_worldbank_pm25_exposure
 ttl 86400
 force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/pm25_exposure_countries.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/pm25_exposure_countries.json
 map data
 lat_key latitude
 lon_key longitude
@@ -21891,7 +21891,7 @@ field country.iso2Code country_code
 source biosphere_worldpop_population_density_global
 ttl 86400
 force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/population_countries.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/population_countries.json
 map data
 lat_key latitude
 lon_key longitude
@@ -21988,7 +21988,7 @@ field properties.ELEV volcano_elevation_m
 source astro_batse_grb
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_batse_grb.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_batse_grb.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22000,7 +22000,7 @@ field flux_64 batse_grb_flux_64
 source astro_batse_pulsar
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_batse_pulsar.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_batse_pulsar.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22011,7 +22011,7 @@ field obsid batse_pulsar_obsid
 source astro_chandra_master
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/chandra_master.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/chandra_master.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22039,7 +22039,7 @@ field class astro_chandra_master_class
 source astro_fermi_4fgl
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/fermi_4fgl.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/fermi_4fgl.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22118,7 +22118,7 @@ field analysis_flags astro_fermi_4fgl_analysis_flags
 source astro_fermi_4lac
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/fermi_4lac.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/fermi_4lac.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22166,7 +22166,7 @@ field highest_energy_photon astro_fermi_4lac_highest_energy_photon
 source astro_frb_chime
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_frb.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_frb.json
 format json
 cmap data
 tau_key _dist_m
@@ -22183,7 +22183,7 @@ field SpInd frb_spectral_index
 source astro_gaia_binaries
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_binaries.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_binaries.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22194,7 +22194,7 @@ field phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
 source astro_gaia_blue_supergiants
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_blue_supergiants.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_blue_supergiants.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22206,7 +22206,7 @@ field bp_rp astro_gaia_blue_supergiants_bp_rp
 source astro_gaia_bright_vmag7
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag7.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag7.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22225,7 +22225,7 @@ field bp_rp astro_gaia_bright_vmag7_bp_rp
 source astro_gaia_bright_vmag9
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22250,7 +22250,7 @@ field mh_gspphot astro_gaia_wide_mh
 source astro_gaia_giants
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_giants.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_giants.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22263,7 +22263,7 @@ field teff_gspphot astro_gaia_giants_teff_gspphot
 source astro_gaia_high_pm
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_high_pm.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_high_pm.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22276,7 +22276,7 @@ field pmdec astro_gaia_high_pm_pmdec
 source astro_gaia_hypervelocity
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_hypervelocity.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_hypervelocity.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22288,7 +22288,7 @@ field radial_velocity astro_gaia_hypervelocity_radial_velocity
 source astro_gaia_metal_poor
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_metal_poor.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_metal_poor.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22300,7 +22300,7 @@ field mh_gspphot astro_gaia_metal_poor_mh_gspphot
 source astro_gaia_nearby_plx10
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22315,7 +22315,7 @@ field radial_velocity astro_gaia_nearby_plx10_radial_velocity
 source astro_gaia_nearby_plx50
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx50.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx50.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22330,7 +22330,7 @@ field radial_velocity astro_gaia_nearby_plx50_radial_velocity
 source astro_gaia_white_dwarfs
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_white_dwarfs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_white_dwarfs.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22342,7 +22342,7 @@ field bp_rp astro_gaia_white_dwarfs_bp_rp
 source astro_heasarc_icecube
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_icecube.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_icecube.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22355,7 +22355,7 @@ field error_radius_deg icecube_error_radius_deg
 source astro_integral_agn
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_agn.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_integral_agn.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22366,7 +22366,7 @@ field sb_flux integral_agn_flux
 source astro_integral_bsc
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_bsc.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_integral_bsc.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22378,7 +22378,7 @@ field isgri_hard_rate integral_hard_rate
 source astro_integral_isgri4yr
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_isgri4yr.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_integral_isgri4yr.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22389,7 +22389,7 @@ field distance integral_isgri_distance
 source astro_integral_var
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_var.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_integral_var.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22401,7 +22401,7 @@ field var_20_40kev integral_variability
 source astro_jpl_asteroids
 ttl 604800
 force gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/jpl_asteroids.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/jpl_asteroids.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22415,7 +22415,7 @@ field i_deg asteroid_inclination_deg
 source astro_maxi_gsc7yr
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_gsc7yr.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_maxi_gsc7yr.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22428,7 +22428,7 @@ field excess_variance maxi_excess_variance
 source astro_maxi_master
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_master.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_maxi_master.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22439,7 +22439,7 @@ field time maxi_master_time
 source astro_maxi_ssc
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_ssc.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_maxi_ssc.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22450,7 +22450,7 @@ field sb_flux maxi_ssc_flux
 source astro_nicer_master
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_nicer_master.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_nicer_master.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22461,7 +22461,7 @@ field exposure nicer_exposure_s
 source astro_nmdb_stations
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/nmdb_stations.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/nmdb_stations.json
 map data
 lat_key latitude
 lon_key longitude
@@ -22474,14 +22474,14 @@ source astro_nsidc_arctic_seaice
 ttl 604800
 force thermal
 wgs84 80.0 0.0
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/nsidc_arctic_seaice.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/nsidc_arctic_seaice.json
 path data.-1.extent_mkm2 arctic_seaice_extent_mkm2
 path data.-1.missing arctic_seaice_missing
 
 source astro_rxte_master
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_rxte_master.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_rxte_master.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22492,7 +22492,7 @@ field exposure rxte_exposure_s
 source astro_rxte_slew
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_rxte_slew.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_rxte_slew.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22503,7 +22503,7 @@ field stop_time rxte_slew_stop_time
 source astro_sdss_galaxies
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/sdss_galaxies.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/sdss_galaxies.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22518,7 +22518,7 @@ field fiberID astro_sdss_galaxies_fiberID
 source astro_sdss_stars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/sdss_stars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/sdss_stars.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22532,7 +22532,7 @@ field psfMag_r astro_sdss_stars_psfMag_r
 source astro_swift_bat
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/swift_bat.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/swift_bat.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22560,7 +22560,7 @@ field source_type astro_swift_bat_source_type
 source astro_swift_grb
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/swift_grb.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/swift_grb.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22745,7 +22745,7 @@ field comments astro_swift_grb_comments
 source astro_tevcat
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/tevcat.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tevcat.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -22770,7 +22770,7 @@ field tevcat_url astro_tevcat_tevcat_url
 source astro_twomass_psc
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/twomass_psc.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/twomass_psc.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22788,7 +22788,7 @@ field Aflg astro_twomass_psc_Aflg
 source astro_vizier_2qz
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22801,7 +22801,7 @@ field intName vizier_2qz_intName
 source astro_vizier_6dfgs
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_6dfgs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_6dfgs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22814,7 +22814,7 @@ field bJmag vizier_6dfgs_bJmag
 source astro_vizier_apass
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_apass.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_apass.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22845,7 +22845,7 @@ field u_e_i'mag astro_vizier_apass_u_e_i'mag
 source astro_vizier_carmenes
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_carmenes.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_carmenes.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22858,7 +22858,7 @@ field Type vizier_carmenes_Type
 source astro_vizier_cosmic_voids
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_cosmic_voids.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_cosmic_voids.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22872,7 +22872,7 @@ field p-value vizier_cosmic_voids_p-value
 source astro_vizier_distant_halo
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_distant_halo.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_distant_halo.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22882,7 +22882,7 @@ plx_key default_plx
 source astro_vizier_dla
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_dla.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_dla.json
 cmap data
 tau_key _dist_m
 ra_key _RA
@@ -22894,7 +22894,7 @@ field NHI dla_neutral_hydrogen
 source astro_vizier_first
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_first.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_first.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22907,7 +22907,7 @@ field Fpeak vizier_first_Fpeak
 source astro_vizier_gcvs_variables
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22920,7 +22920,7 @@ field GCVS vizier_gcvs_variables_GCVS
 source astro_vizier_glade
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_glade.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22951,7 +22951,7 @@ field Flag3 astro_vizier_glade_Flag3
 source astro_vizier_glade2
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_glade2.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22967,7 +22967,7 @@ field HyperLEDA vizier_glade2_HyperLEDA
 source astro_vizier_gleam
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gleam.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gleam.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22979,7 +22979,7 @@ field lrmswide gleam_peak_flux_wide
 source astro_vizier_hecate
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hecate.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_hecate.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -22992,7 +22992,7 @@ field NED vizier_hecate_NED
 source astro_vizier_hi4pi
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hi4pi.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_hi4pi.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23002,7 +23002,7 @@ plx_key default_plx
 source astro_vizier_lotss_dr3
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_lotss_dr3.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_lotss_dr3.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23015,7 +23015,7 @@ field e_DEJ2000 vizier_lotss_dr3_e_DEJ2000
 source astro_vizier_nvss
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_nvss.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_nvss.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23028,7 +23028,7 @@ field Ypos vizier_nvss_Ypos
 source astro_vizier_orion_region
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_orion_region.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_orion_region.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23041,7 +23041,7 @@ field CTot vizier_orion_region_CTot
 source astro_vizier_prigozhin_pulsars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23054,7 +23054,7 @@ field zphot vizier_prigozhin_pulsars_zphot
 source astro_vizier_qso_variable
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_qso_variable.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_qso_variable.json
 cmap data
 tau_key _dist_m
 ra_key _RA
@@ -23066,7 +23066,7 @@ field Dist qso_variable_dist_pc
 source astro_vizier_sdss_qso
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_sdss_qso.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_sdss_qso.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23080,7 +23080,7 @@ field e_umag vizier_sdss_qso_e_umag
 source astro_vizier_snrs
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23093,7 +23093,7 @@ field MinDiam vizier_snrs_MinDiam
 source astro_vizier_tycho2
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_tycho2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_tycho2.json
 cmap data
 tau_key _dist_m
 ra_key RAmdeg
@@ -23139,7 +23139,7 @@ field corr astro_vizier_tycho2_corr
 source astro_vizier_ucac5
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_ucac5.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_ucac5.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23166,7 +23166,7 @@ field Kmag astro_vizier_ucac5_Kmag
 source astro_vizier_variable_stars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_variable_stars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_variable_stars.json
 cmap data
 tau_key _dist_m
 ra_key _RA
@@ -23179,7 +23179,7 @@ field i variable_star_inclination
 source astro_vizier_vsx_variables
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_vsx_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_vsx_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23192,7 +23192,7 @@ field V vizier_vsx_variables_V
 source astro_vizier_xmm4d13s
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_xmm4d13s.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_xmm4d13s.json
 cmap data
 tau_key _dist_m
 ra_key RA_ICRS
@@ -23204,7 +23204,7 @@ field Flux2 xmm4d13_flux2
 source astro_vizier_young_stars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_young_stars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_young_stars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23217,7 +23217,7 @@ field SName vizier_young_stars_SName
 source astro_wise_allsky
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/wise_allsky.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/wise_allsky.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -23231,7 +23231,7 @@ field w4mpro astro_wise_allsky_w4mpro
 source astro_xmm_slew
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_xmm_slew.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/heasarc_xmm_slew.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -23242,7 +23242,7 @@ field flux_b8 xmm_slew_flux_b8
 source astro_xmm_sources
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/xmm_sources.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/xmm_sources.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -23899,7 +23899,7 @@ field petroMag_g sdss_galaxy_mag_g
 source exosphere_simbad_brown_dwarfs
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -23910,7 +23910,7 @@ field phot_g_mean_mag star_g_mag
 source exosphere_simbad_carbon_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -23921,7 +23921,7 @@ field phot_g_mean_mag star_g_mag
 source exosphere_simbad_eclipsing_binaries
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23930,7 +23930,7 @@ dec_key DEJ2000
 source exosphere_simbad_galaxies
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_glade2.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23940,7 +23940,7 @@ z_key z
 source exosphere_simbad_galaxy_clusters
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_glade2.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23950,7 +23950,7 @@ z_key z
 source exosphere_simbad_high_z_galaxies
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23959,7 +23959,7 @@ dec_key DEJ2000
 source exosphere_simbad_highest_redshift_quasar
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23968,7 +23968,7 @@ dec_key DEJ2000
 source exosphere_simbad_millisecond_pulsars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23977,7 +23977,7 @@ dec_key DEJ2000
 source exosphere_simbad_novae
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23986,7 +23986,7 @@ dec_key DEJ2000
 source exosphere_simbad_pulsars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -23995,7 +23995,7 @@ dec_key DEJ2000
 source exosphere_simbad_quasars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24004,7 +24004,7 @@ dec_key DEJ2000
 source exosphere_simbad_supernovae
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24013,7 +24013,7 @@ dec_key DEJ2000
 source exosphere_simbad_symbiotic_stars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24022,7 +24022,7 @@ dec_key DEJ2000
 source exosphere_simbad_white_dwarfs
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24033,7 +24033,7 @@ field phot_g_mean_mag star_g_mag
 source exosphere_simbad_wolf_rayet
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24044,7 +24044,7 @@ field phot_g_mean_mag star_g_mag
 source exosphere_simbad_young_stellar_objects
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24065,7 +24065,7 @@ field Capacity geonuclear_capacity_mw
 source geosphere_earth_impact_craters
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_earth_impact_craters.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_earth_impact_craters.geojson
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -24074,7 +24074,7 @@ field properties.Name geosphere_crater_name
 source geosphere_nasa_meteorite_landings
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_meteorite_strike_data.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_meteorite_strike_data.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -24084,7 +24084,7 @@ field properties.name geosphere_meteorite_name
 source geosphere_ne_10m_places
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_10m_populated_places.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_10m_populated_places.geojson
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -24094,7 +24094,7 @@ field properties.scalerank geosphere_place_rank
 source geosphere_ne_glaciers
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_50m_glaciers.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_50m_glaciers.geojson
 map features
 lat_key geometry.coordinates.0.0.1
 lon_key geometry.coordinates.0.0.0
@@ -24104,7 +24104,7 @@ field properties.scalerank geosphere_ne_glacier_rank
 source geosphere_ne_lakes
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_50m_lakes.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_50m_lakes.geojson
 map features
 lat_key geometry.coordinates.0.0.1
 lon_key geometry.coordinates.0.0.0
@@ -24114,7 +24114,7 @@ field properties.scalerank geosphere_ne_lake_rank
 source geosphere_ne_places
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_110m_populated_places.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_110m_populated_places.geojson
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -24170,7 +24170,7 @@ field hits.total subatomic_higgs_xsec_papers
 source hydrosphere_global_rivers
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_ne_10m_rivers.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_10m_rivers.geojson
 map features
 lat_key geometry.coordinates.0.1
 lon_key geometry.coordinates.0.0
@@ -24179,7 +24179,7 @@ field properties.name hydrosphere_river_name
 source astro_iau_constellation_boundaries
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_constellations_bounds.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_constellations_bounds.json
 celestial_polygon features
 radius 3.085677581e19
 field properties.rank cpoly_rank
@@ -24203,7 +24203,7 @@ lon_key dec
 source subatomic_molecular_periodic_elements
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_periodic_table.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_periodic_table.json
 map elements
 field atomic_mass molecular_element_mass_u
 field density molecular_element_density_g_l
@@ -24318,7 +24318,7 @@ field hits.hits.0.metadata.citation_count physics_time_crystal_research_citation
 source astro_simbad
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24329,7 +24329,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_bright_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24340,7 +24340,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_nearby_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx50.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx50.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24624,7 +24624,7 @@ field pdg_values.0.value subatomic_z_boson_mass_gev
 source astro_technosphere_global_airports
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_jbrooksuk_airports.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_jbrooksuk_airports.json
 map .
 lat_key lat
 lon_key lon
@@ -24641,7 +24641,7 @@ flatten features
 source astro_simbad_agn
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24650,7 +24650,7 @@ dec_key DEJ2000
 source astro_simbad_barium_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24661,7 +24661,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_blazars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24670,7 +24670,7 @@ dec_key DEJ2000
 source astro_simbad_blue_compact_dwarfs
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_glade2.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24680,7 +24680,7 @@ z_key z
 source astro_simbad_blue_giants
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24691,7 +24691,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_blue_supergiants
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24702,7 +24702,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_brown_dwarfs
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24713,7 +24713,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_carbon_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24724,7 +24724,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_carbon_stars_var
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24735,7 +24735,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_cepheids
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24744,7 +24744,7 @@ dec_key DEJ2000
 source astro_simbad_ch_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24755,7 +24755,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_dark_nebulae
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24764,7 +24764,7 @@ dec_key DEJ2000
 source astro_simbad_dwarf_galaxies
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_glade2.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24774,7 +24774,7 @@ z_key z
 source astro_simbad_dwarf_novae
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24783,7 +24783,7 @@ dec_key DEJ2000
 source astro_simbad_eclipsing_binaries
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24792,7 +24792,7 @@ dec_key DEJ2000
 source astro_simbad_emission_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24803,7 +24803,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_flare_stars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24812,7 +24812,7 @@ dec_key DEJ2000
 source astro_simbad_fu_oris
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24821,7 +24821,7 @@ dec_key DEJ2000
 source astro_simbad_galaxies
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_glade2.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24831,7 +24831,7 @@ z_key z
 source astro_simbad_galaxy_clusters
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_glade2.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24841,7 +24841,7 @@ z_key z
 source astro_simbad_gamma_bursts
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24850,7 +24850,7 @@ dec_key DEJ2000
 source astro_simbad_giant_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24861,7 +24861,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_globular_clusters
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hecate.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_hecate.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24870,7 +24870,7 @@ dec_key DEJ2000
 source astro_simbad_gravitational_lenses
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24879,7 +24879,7 @@ dec_key DEJ2000
 source astro_simbad_herbig_haro
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -24890,7 +24890,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_hii_regions
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_glade2.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24900,7 +24900,7 @@ z_key z
 source astro_simbad_hvc
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_glade2.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24910,7 +24910,7 @@ z_key z
 source astro_simbad_interstellar_medium
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24919,7 +24919,7 @@ dec_key DEJ2000
 source astro_simbad_ir_sources
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24928,7 +24928,7 @@ dec_key DEJ2000
 source astro_simbad_ism
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24937,7 +24937,7 @@ dec_key DEJ2000
 source astro_simbad_long_period
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24946,7 +24946,7 @@ dec_key DEJ2000
 source astro_simbad_lpv_mira
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24955,7 +24955,7 @@ dec_key DEJ2000
 source astro_simbad_masers
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24964,7 +24964,7 @@ dec_key DEJ2000
 source astro_simbad_microquasars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24973,7 +24973,7 @@ dec_key DEJ2000
 source astro_simbad_millisecond_pulsars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24982,7 +24982,7 @@ dec_key DEJ2000
 source astro_simbad_mira_variables
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -24991,7 +24991,7 @@ dec_key DEJ2000
 source astro_simbad_molecule_clouds
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25000,7 +25000,7 @@ dec_key DEJ2000
 source astro_simbad_nebulae
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25009,7 +25009,7 @@ dec_key DEJ2000
 source astro_simbad_novae
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25018,7 +25018,7 @@ dec_key DEJ2000
 source astro_simbad_oh_maser
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25027,7 +25027,7 @@ dec_key DEJ2000
 source astro_simbad_oh_masers
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25036,7 +25036,7 @@ dec_key DEJ2000
 source astro_simbad_planetary_nebulae
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25045,7 +25045,7 @@ dec_key DEJ2000
 source astro_simbad_post_agb_stars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25054,7 +25054,7 @@ dec_key DEJ2000
 source astro_simbad_pre_ms_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25065,7 +25065,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_proper_motion
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_high_pm.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_high_pm.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25076,7 +25076,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_pulsars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25085,7 +25085,7 @@ dec_key DEJ2000
 source astro_simbad_pulsating_white_dwarfs
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25096,7 +25096,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_quasars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25105,7 +25105,7 @@ dec_key DEJ2000
 source astro_simbad_rcrb_variables
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25114,7 +25114,7 @@ dec_key DEJ2000
 source astro_simbad_red_giants
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25125,7 +25125,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_red_supergiants
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25136,7 +25136,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_reflection_nebulae
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25145,7 +25145,7 @@ dec_key DEJ2000
 source astro_simbad_rr_lyrae
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25154,7 +25154,7 @@ dec_key DEJ2000
 source astro_simbad_s_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25165,7 +25165,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_stellar_associations
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25176,7 +25176,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_supernova_remnants
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25185,7 +25185,7 @@ dec_key DEJ2000
 source astro_simbad_supernovae
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_snrs.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25194,7 +25194,7 @@ dec_key DEJ2000
 source astro_simbad_symbiotic_stars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25203,7 +25203,7 @@ dec_key DEJ2000
 source astro_simbad_ttauri_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25214,7 +25214,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_variable_stars
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25223,7 +25223,7 @@ dec_key DEJ2000
 source astro_simbad_white_dwarfs
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25234,7 +25234,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_wolf_rayet_stars
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25245,7 +25245,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_xray_sources
 ttl 604800
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
 cmap data
 tau_key _dist_m
 ra_key RAJ2000
@@ -25254,7 +25254,7 @@ dec_key DEJ2000
 source astro_simbad_yellow_supergiants
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25265,7 +25265,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_young_stellar_objects
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25276,7 +25276,7 @@ field phot_g_mean_mag star_g_mag
 source astro_simbad_yso
 ttl 604800
 force em gravity
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
 cmap data
 tau_key _dist_m
 ra_key ra
@@ -25287,7 +25287,7 @@ field phot_g_mean_mag star_g_mag
 source technosphere_wri_global_power_plants
 ttl 604800
 force thermal
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_power_plants_wri.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_power_plants_wri.csv
 format csv
 map .
 lat_key latitude
@@ -27068,19 +27068,19 @@ flatten features
 source lithosphere_pb2002_boundaries
 ttl 2592000
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_pb2002_boundaries.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_pb2002_boundaries.json
 flatten features
 
 source lithosphere_pb2002_orogens
 ttl 2592000
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_pb2002_orogens.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_pb2002_orogens.json
 flatten features
 
 source lithosphere_pb2002_plates
 ttl 2592000
 force em
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mirror_pb2002_plates.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_pb2002_plates.json
 flatten features
 
 source astro_ned
@@ -27437,7 +27437,7 @@ radvel_key 5 1000
 source biosphere_ebird_recent
 ttl 3600
 force em
-url https://github.com/omegaflow/catalogs/releases/download/live-data/ebird_recent.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ebird_recent.json
 map .
 lat_key lat
 lon_key lon
@@ -27448,7 +27448,7 @@ field obsDt ebird_obs_time
 source atmosphere_openaq_pm25
 ttl 3600
 force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/live-data/openaq_pm25.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/openaq_pm25.json
 map .
 lat_key lat
 lon_key lon
@@ -27458,7 +27458,7 @@ field lastUpdated openaq_measurement_time
 source atmosphere_openaq_pm10
 ttl 3600
 force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/live-data/openaq_pm10.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/openaq_pm10.json
 map .
 lat_key lat
 lon_key lon
@@ -27468,7 +27468,7 @@ field lastUpdated openaq_measurement_time
 source geosphere_firms_viirs_global_nrt
 ttl 3600
 force thermal
-url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_viirs_nrt_world.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/firms_viirs_nrt_world.csv
 format csv
 map data
 lat_key latitude
@@ -27481,7 +27481,7 @@ field confidence fire_confidence
 source geosphere_firms_modis_global_nrt
 ttl 3600
 force thermal
-url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_modis_nrt_world.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/firms_modis_nrt_world.csv
 format csv
 map data
 lat_key latitude
@@ -27495,7 +27495,7 @@ field confidence fire_confidence
 source geosphere_noaa_ghcnd_stations
 ttl 86400
 force thermal
-url https://github.com/omegaflow/catalogs/releases/download/live-data/noaa_ghcnd_stations.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ghcnd_stations.json
 map .
 lat_key lat
 lon_key lon
@@ -27505,7 +27505,7 @@ field datacoverage geosphere_station_coverage
 source hydrosphere_oceannetworks_sites
 ttl 86400
 force diffusion
-url https://github.com/omegaflow/catalogs/releases/download/live-data/oceannetworks_sites.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/oceannetworks_sites.json
 map .
 lat_key lat
 lon_key lon
@@ -27515,7 +27515,7 @@ field depth ocean_site_depth_m
 source technosphere_economy_eia_grid_demand
 ttl 3600
 force advective
-url https://github.com/omegaflow/catalogs/releases/download/live-data/eia_grid_demand.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/eia_grid_demand.json
 wgs84 38.907 -77.037
 field total_demand_mw economy_us_grid_demand_mw
 field rto_count economy_us_rto_count
@@ -27523,7 +27523,7 @@ field rto_count economy_us_rto_count
 source geosphere_noaa_cdo_daily
 ttl 86400
 force thermal
-url https://github.com/omegaflow/catalogs/releases/download/live-data/noaa_cdo_daily.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_cdo_daily.json
 map .
 lat_key lat
 lon_key lon

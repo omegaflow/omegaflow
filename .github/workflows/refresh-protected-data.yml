@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CATALOGS_REPO: ${{ secrets.CATALOGS_REPO || 'omegaflow/catalogs' }}
-      RELEASE_TAG: live-data
+      RELEASE_TAG: catalogs
       GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
@@ -205,7 +205,7 @@ jobs:
             git config user.name "omegaflow-bot"
             git config user.email "bot@omegaflow.space"
             git add phi/sources.φ
-            git commit -m "Mycelium: point TAP sources at v1.0 CDN catalogs" || true
+            git commit -m "Mycelium: point TAP sources at catalogs CDN" || true
             git push origin HEAD 2>/dev/null || echo "::warning::push failed (branch locked by parallel work)"
           fi
 
@@ -237,10 +237,10 @@ jobs:
             touch /tmp/reload_done
           fi
 
-      - name: Mirror static files -> v1.0
+      - name: Mirror static files -> catalogs
         run: |
-          echo "Mirroring third-party static files to v1.0 release"
-          # Download each file and upload to v1.0
+          echo "Mirroring third-party static files to catalogs release"
+          # Download each file and upload to catalogs
           declare -A MIRRORS=(
             ["ne_10m_parks_area.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson"
             ["ne_10m_parks_point.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson"
@@ -268,12 +268,12 @@ jobs:
             ["pb2002_orogens.json"]="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_orogens.json"
             ["pb2002_plates.json"]="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json"
           )
-          gh release create v1.0 --repo "$CATALOGS_REPO" --title "omegaflow catalogs v1.0" --notes "" 2>/dev/null || true
+          gh release create catalogs --repo "$CATALOGS_REPO" --title "omegaflow catalogs" --notes "" 2>/dev/null || true
           for fn in "${!MIRRORS[@]}"; do
             url="${MIRRORS[$fn]}"
             echo "  mirror: $fn <- $url"
             if curl -sS --retry 2 --fail -o "data/mirror_$fn" "$url"; then
-              gh release upload v1.0 "data/mirror_$fn" --repo "$CATALOGS_REPO" --clobber
+              gh release upload catalogs "data/mirror_$fn" --repo "$CATALOGS_REPO" --clobber
               echo "    uploaded"
             else
               echo "::warning::mirror $fn failed"

@@ -28,7 +28,7 @@ import urllib.parse
 import urllib.request
 
 TOKEN = os.environ.get("CATALOGS_TOKEN", "")
-RELEASE_URL = "https://uploads.github.com/repos/omegaflow/catalogs/releases/363018488/assets"
+RELEASE_URL = "https://uploads.github.com/repos/omegaflow/catalogs/releases/364488765/assets"
 MAX_ROWS = int(os.environ.get("TAP_MAX_ROWS", "0"))
 TIMEOUT = int(os.environ.get("TAP_TIMEOUT", "120"))
 SLEEP = float(os.environ.get("TAP_SLEEP", "2"))
