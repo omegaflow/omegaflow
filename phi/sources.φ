@@ -11161,11 +11161,11 @@ lon_key dec
 source heasarc_nicer_master_source_catalog
 ttl 3600
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
-format text
-rows
-ra_key ra
-dec_key dec
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_nicer_master_source_catalog.json
+format json
+map .
+lat_key ra
+lon_key dec
 field name source_name
 field obsid observation_id
 field exposure exposure_time_ks
@@ -11851,11 +11851,11 @@ lon_key s_dec
 source mast_jwst_cosmosweb_nircam_metadata
 ttl 3600
 force em
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+calib_level%3D3+AND+obs_id+LIKE+%27jw01727%25%27+ORDER+BY+t_exptime+DESC
-format text
-rows
-ra_key s_ra
-dec_key s_dec
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mast_jwst_cosmosweb_nircam_metadata.json
+format json
+map .
+lat_key s_ra
+lon_key s_dec
 field observationID obs_id
 field target_name field_name
 field t_exptime exposure_s
@@ -11881,11 +11881,11 @@ field em_max wl_max_m
 source mast_jwst_miri_public
 ttl 3600
 force em
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27MIRI%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
-format text
-rows
-ra_key s_ra
-dec_key s_dec
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mast_jwst_miri_public.json
+format json
+map .
+lat_key s_ra
+lon_key s_dec
 field observationID obs_id
 field target_name target_name
 field t_exptime exposure_sec
@@ -11896,11 +11896,11 @@ field em_max wavelength_max_m
 source mast_jwst_nircam_public
 ttl 3600
 force em
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27NIRCAM%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
-format text
-rows
-ra_key s_ra
-dec_key s_dec
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mast_jwst_nircam_public.json
+format json
+map .
+lat_key s_ra
+lon_key s_dec
 field observationID obs_id
 field target_name target_name
 field t_exptime exposure_sec
@@ -11911,11 +11911,11 @@ field em_max wavelength_max_m
 source mast_jwst_nirspec_public
 ttl 3600
 force em
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27NIRSPEC%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
-format text
-rows
-ra_key s_ra
-dec_key s_dec
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mast_jwst_nirspec_public.json
+format json
+map .
+lat_key s_ra
+lon_key s_dec
 field observationID obs_id
 field target_name target_name
 field t_exptime exposure_sec
@@ -15105,21 +15105,21 @@ field exposure exposure_s
 source heasarc_chandra_master
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?request=doQuery&lang=ADQL&format=text&query=SELECT+TOP+100+ra,dec,exposure+FROM+chanmaster
-format text
-rows
-ra_key 0
-dec_key 1
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_chandra_master.json
+format json
+map .
+lat_key 0
+lon_key 1
 field_in 2 chandra_exposure_sec
 
 source heasarc_chandra_obs
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,instrument,obs_date+FROM+chanmaster+WHERE+status%3D'archived'+AND+exposure%3E10000+ORDER+BY+obs_date+DESC
-format text
-rows
-ra_key ra
-dec_key dec
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_chandra_obs.json
+format json
+map .
+lat_key ra
+lon_key dec
 field obsid observation_id
 field exposure exposure_s
 field instrument instrument
@@ -15128,11 +15128,11 @@ field obs_date obs_date
 source heasarc_chandra_obs_archive
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,detector,time+FROM+chanmaster+WHERE+status%3D%27archived%27+AND+exposure%3E10000+ORDER+BY+time+DESC
-format text
-rows
-ra_key ra
-dec_key dec
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_chandra_obs_archive.json
+format json
+map .
+lat_key ra
+lon_key dec
 field obsid chandra_obsid
 field exposure chandra_exposure_sec
 field detector chandra_detector
