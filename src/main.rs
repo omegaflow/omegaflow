@@ -1476,6 +1476,106 @@ fn strip_html_tags(s: &str) -> String {
     out
 }
 
+fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
+    let arr = match jpath_val(j, "data").and_then(|v| {
+        if let JsonVal::Arr(a) = v {
+            Some(a)
+        } else {
+            None
+        }
+    }) {
+        Some(a) => a,
+        None => return vec![],
+    };
+    let first = match arr.first() {
+        Some(JsonVal::Obj(m)) => m,
+        _ => return vec![],
+    };
+    let has_ra = first.contains_key("ra");
+    let has_dec = first.contains_key("dec");
+    let has_lat = first.contains_key("lat");
+    let has_lon = first.contains_key("lon");
+    if has_ra && has_dec {
+        let plx_key = if first.contains_key("plx") { "plx" } else { "" };
+        let pmra_key = if first.contains_key("pmra") {
+            "pmra"
+        } else {
+            ""
+        };
+        let pmdec_key = if first.contains_key("pmdec") {
+            "pmdec"
+        } else {
+            ""
+        };
+        let rv_key = if first.contains_key("radvel") {
+            "radvel"
+        } else {
+            ""
+        };
+        let dist_key = if first.contains_key("dist") {
+            "dist"
+        } else {
+            ""
+        };
+        let z_key = if first.contains_key("z") { "z" } else { "" };
+        let epoch_key = if first.contains_key("t") { "t" } else { "" };
+        let mut fields = vec![];
+        if first.contains_key("val") {
+            fields.push(("val".into(), "val".into()));
+        }
+        if first.contains_key("extent") {
+            fields.push(("extent".into(), "extent".into()));
+        }
+        if first.contains_key("tau") {
+            fields.push(("tau".into(), "tau".into()));
+        }
+        vec![Extract::CelestialMap {
+            arr_path: "data".into(),
+            ra_key: "ra".into(),
+            dec_key: "dec".into(),
+            dist_key: dist_key.into(),
+            dist_scale: 1.0,
+            plx_key: plx_key.into(),
+            z_key: z_key.into(),
+            pmra_key: pmra_key.into(),
+            pmdec_key: pmdec_key.into(),
+            rv_key: rv_key.into(),
+            rv_scale: 1.0,
+            epoch_key: epoch_key.into(),
+            fields,
+        }]
+    } else if has_lat && has_lon {
+        let alt_key = if first.contains_key("alt") { "alt" } else { "" };
+        let epoch_key = if first.contains_key("t") { "t" } else { "" };
+        let vel_key = if first.contains_key("vel") { "vel" } else { "" };
+        let trk_key = if first.contains_key("trk") { "trk" } else { "" };
+        let vr_key = if first.contains_key("vr") { "vr" } else { "" };
+        let mut fields = vec![];
+        if first.contains_key("val") {
+            fields.push(("val".into(), "val".into()));
+        }
+        if first.contains_key("extent") {
+            fields.push(("extent".into(), "extent".into()));
+        }
+        vec![Extract::Map {
+            arr_path: "data".into(),
+            lat_key: "lat".into(),
+            lon_key: "lon".into(),
+            alt_key: alt_key.into(),
+            epoch_key: epoch_key.into(),
+            val_key: String::new(),
+            alt_sign: -1.0,
+            vel_key: vel_key.into(),
+            trk_key: trk_key.into(),
+            vr_key: vr_key.into(),
+            fields,
+            lon_sign: None,
+        }]
+    } else {
+        vec![]
+    }
+}
+
 fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
     if path.is_empty() || path == "." {
         return Some(json);
@@ -3781,10 +3881,23 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
         erddap_csv_to_json(body).and_then(|j| parse_json(&j))
     } else if src.format == "stac" {
         stac_to_json(body).and_then(|j| parse_json(&j))
+    } else if src.format == "universal" {
+        parse_json(body)
     } else {
         None
     };
-    for ext in &src.extracts {
+    let auto_extracts: Option<Vec<Extract>>;
+    let effective_extracts: &[Extract] = if src.format == "universal" && src.extracts.is_empty() {
+        if let Some(ref j) = parsed_json {
+            auto_extracts = Some(universal_auto_detect(j));
+            auto_extracts.as_ref().map(|v| v.as_slice()).unwrap_or(&[])
+        } else {
+            &[]
+        }
+    } else {
+        &src.extracts
+    };
+    for ext in effective_extracts {
         match ext {
             Extract::Field(k, n) => {
                 if let Some(ref j) = parsed_json {
@@ -5919,5 +6032,57 @@ mod tests {
         assert_eq!(super::ymd_to_days(1970, 1, 1).unwrap(), 0);
         assert!(super::ymd_to_days(1900, 1, 1).is_none());
         assert_eq!(super::ymd_to_days(1970, 1, 1).unwrap(), 0);
+    }
+
+    #[test]
+    fn test_universal_auto_detect_celestial() {
+        let body = r#"{"data":[{"ra":83.63,"dec":22.01,"plx":3.14,"val":14.2,"t":2457389.5}]}"#;
+        let j = super::parse_json(body).unwrap();
+        let extracts = super::universal_auto_detect(&j);
+        assert_eq!(extracts.len(), 1);
+        match &extracts[0] {
+            super::Extract::CelestialMap {
+                ra_key,
+                dec_key,
+                plx_key,
+                pmra_key,
+                pmdec_key,
+                arr_path,
+                fields,
+                ..
+            } => {
+                assert_eq!(ra_key, "ra");
+                assert_eq!(dec_key, "dec");
+                assert_eq!(plx_key, "plx");
+                assert_eq!(pmra_key, "");
+                assert_eq!(pmdec_key, "");
+                assert_eq!(arr_path, "data");
+                assert!(!fields.is_empty());
+            }
+            _ => panic!("expected CelestialMap"),
+        }
+    }
+
+    #[test]
+    fn test_universal_auto_detect_terrestrial() {
+        let body = r#"{"data":[{"lat":52.5,"lon":13.4,"val":28.5,"alt":50.0}]}"#;
+        let j = super::parse_json(body).unwrap();
+        let extracts = super::universal_auto_detect(&j);
+        assert_eq!(extracts.len(), 1);
+        match &extracts[0] {
+            super::Extract::Map {
+                lat_key,
+                lon_key,
+                alt_key,
+                arr_path,
+                ..
+            } => {
+                assert_eq!(lat_key, "lat");
+                assert_eq!(lon_key, "lon");
+                assert_eq!(alt_key, "alt");
+                assert_eq!(arr_path, "data");
+            }
+            _ => panic!("expected Map"),
+        }
     }
 }
