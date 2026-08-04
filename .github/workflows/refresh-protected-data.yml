@@ -308,6 +308,12 @@ jobs:
             fi
           done
 
+      - name: Mirror live sources -> CDN (health check)
+        env:
+          OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+        run: |
+          python3 scripts/migrate_live_to_cdn.py --mode mirror-live --max-ttl 300 2>&1 | tail -5
+
       - name: Publish Release
         env:
           GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN || secrets.GITHUB_TOKEN }}

@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
-"""Fetch live sources with TTL >= 300 and migrate them to CDN releases.
-Usage: OMEGAFLOW_TOKEN=ghp_xxx python3 scripts/migrate_live_to_cdn.py [--dry-run] [--workers N]
+"""Mirror live sources to CDN for health checking.
+Modes:
+  --mode migrate    Migrate non-positional TTL>=300 sources to CDN (update sources.φ)
+  --mode mirror-live Mirror ALL non-CDN sources to CDN (keep original URLs, health check)
+  --mode mirror-all  Mirror ALL non-CDN sources AND update sources.φ to CDN
+  --dry-run          Skip actual uploads
+
+Usage: OMEGAFLOW_TOKEN=ghp_xxx python3 scripts/migrate_live_to_cdn.py [--mode MODE] [--dry-run] [--limit N]
 """
 import json
 import os
@@ -9,6 +15,7 @@ import sys
 import time
 import urllib.request
 import urllib.error
+import urllib.parse
 import concurrent.futures
 from pathlib import Path
 
@@ -17,22 +24,27 @@ if not TOKEN:
     print("Missing OMEGAFLOW_TOKEN", file=sys.stderr)
     sys.exit(1)
 
+MODE = "migrate"
+for i, arg in enumerate(sys.argv):
+    if arg == "--mode" and i + 1 < len(sys.argv):
+        MODE = sys.argv[i + 1]
+
 DRY_RUN = "--dry-run" in sys.argv
 WORKERS = 4
+LIMIT = None
+MAX_TTL = None
 for i, arg in enumerate(sys.argv):
     if arg == "--workers" and i + 1 < len(sys.argv):
         WORKERS = int(sys.argv[i + 1])
+    if arg == "--limit" and i + 1 < len(sys.argv):
+        LIMIT = int(sys.argv[i + 1])
+    if arg == "--max-ttl" and i + 1 < len(sys.argv):
+        MAX_TTL = int(sys.argv[i + 1])
 
 API_BASE = "https://api.github.com"
-UA = "omegaflow-migration/1.0"
+UA = "omegaflow-mirror/1.0"
 SOURCES_PHI = Path(__file__).parent.parent / "phi" / "sources.φ"
-
-def api_get(path):
-    req = urllib.request.Request(f"{API_BASE}{path}",
-        headers={"Authorization": f"Bearer {TOKEN}", "User-Agent": UA,
-                 "Accept": "application/vnd.github+json"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read())
+HEALTH_FILE = Path(__file__).parent.parent / "phi" / "health.json"
 
 def fetch_url(url, timeout=30):
     try:
@@ -42,46 +54,47 @@ def fetch_url(url, timeout=30):
     except Exception as e:
         return 0, str(e).encode()
 
-def create_release(repo, tag, name):
-    if DRY_RUN:
-        print(f"  [dry] create release {repo} {tag}")
-        return True
-    data = json.dumps({"tag_name": tag, "name": name, "body": ""}).encode()
-    req = urllib.request.Request(f"{API_BASE}/repos/{repo}/releases", data=data,
-        headers={"Authorization": f"Bearer {TOKEN}", "User-Agent": UA,
-                 "Accept": "application/vnd.github+json",
-                 "Content-Type": "application/json"})
+def api_call(method, path, data=None):
+    url = f"{API_BASE}{path}"
+    headers = {"Authorization": f"Bearer {TOKEN}", "User-Agent": UA,
+               "Accept": "application/vnd.github+json"}
+    if data:
+        headers["Content-Type"] = "application/json"
+        req = urllib.request.Request(url, data=data.encode(), headers=headers, method=method)
+    else:
+        req = urllib.request.Request(url, headers=headers, method=method)
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
-            return r.status in (200, 201)
+            return r.status, json.loads(r.read()) if r.status != 204 else None
     except urllib.error.HTTPError as e:
-        if e.code == 422:  # already exists
-            return True
-        print(f"  release create error: {e}", file=sys.stderr)
-        return False
+        return e.code, json.loads(e.read()) if e.fp else {"message": str(e)}
 
-def upload_asset(repo, release_id, filename, data):
+def create_release(repo, tag):
     if DRY_RUN:
-        print(f"  [dry] upload {filename} ({len(data)} bytes)")
         return True
-    url = f"https://uploads.github.com/repos/{repo}/releases/{release_id}/assets?name={filename}"
+    status, _ = api_call("GET", f"/repos/{repo}/releases/tags/{tag}")
+    if status == 200:
+        return True
+    payload = {"tag_name": tag, "name": tag, "body": ""}
+    status, _ = api_call("POST", f"/repos/{repo}/releases", json.dumps(payload))
+    return status in (200, 201)
+
+def upload_asset(repo, tag, filename, data):
+    if DRY_RUN:
+        return True
+    status, release = api_call("GET", f"/repos/{repo}/releases/tags/{tag}")
+    if status != 200 or release is None:
+        return False
+    upload_url = release["upload_url"].split("{")[0]
+    url = f"{upload_url}?name={urllib.parse.quote(filename)}"
     req = urllib.request.Request(url, data=data,
         headers={"Authorization": f"Bearer {TOKEN}", "User-Agent": UA,
-                 "Accept": "application/vnd.github+json",
-                 "Content-Type": "application/octet-stream"})
+                 "Content-Type": "application/octet-stream"}, method="POST")
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             return r.status == 201
     except Exception as e:
-        print(f"  upload error: {e}", file=sys.stderr)
         return False
-
-def get_release_assets(repo, tag):
-    try:
-        release = api_get(f"/repos/{repo}/releases/tags/{tag}")
-        return release.get("id"), [a["name"] for a in release.get("assets", [])]
-    except:
-        return None, []
 
 def parse_sources():
     with open(SOURCES_PHI) as f:
@@ -93,117 +106,128 @@ def parse_sources():
         if not lines or not lines[0].startswith('source '):
             continue
         name = lines[0].split()[1]
-        if any('releases/download' in l for l in lines):
-            continue  # already CDN
-        
-        source = {"name": name, "raw": block, "lines": lines}
+        is_cdn = any('releases/download' in l for l in lines)
+        ttl = None
+        url = None
         for l in lines:
-            if l.startswith('ttl '): source["ttl"] = int(l.split()[1])
-            if l.startswith('url '): source["url"] = l.split(None, 1)[1]
-            if l.startswith('force '): source["force"] = l.split()[1]
-            if l.startswith('format '): source["format"] = l.split()[1]
-        
-        if source.get("ttl", 0) < 300:
+            if l.startswith('ttl '): ttl = int(l.split()[1])
+            if l.startswith('url '): url = l.split(None, 1)[1].strip()
+        if not url:
             continue
-        
-        # Skip position-dependent sources
-        url = source.get("url", "")
-        if re.search(r'\{lat\}|\{lon\}|\{ra\}|\{dec\}|\{radius\}|\{alt\}', url):
-            continue
-        
-        sources.append(source)
-    
+        sources.append({
+            "name": name, "ttl": ttl, "url": url, "is_cdn": is_cdn,
+            "raw": block, "lines": lines
+        })
     return sources, content
 
 def get_domain_tag(url):
-    """Extract domain-based release tag from URL."""
     from urllib.parse import urlparse
     parsed = urlparse(url)
     return parsed.netloc
 
-def get_cdn_url(source_name, domain_tag):
-    """Build CDN release download URL."""
-    return (f"https://github.com/omegaflow/sources/releases/download/"
-            f"{domain_tag}/{source_name}.json")
-
-def migrate_source(source):
-    name = source["name"]
-    url = source["url"]
+def mirror_source(src, update_phi=False):
+    name = src["name"]
+    url = src["url"]
     domain = get_domain_tag(url)
     
-    # Fetch the data
     status, data = fetch_url(url)
-    if status == 0:
-        print(f"  {name}: FETCH FAILED")
-        return None
-    if status not in (200, 201, 202, 203, 204):
-        print(f"  {name}: HTTP {status}")
-        return None
+    if status == 0 or status >= 400:
+        return {"name": name, "ok": False, "error": f"HTTP {status}", "size": 0}
     
-    # Create release
-    if not create_release("omegaflow/sources", domain, domain):
-        print(f"  {name}: RELEASE FAILED")
-        return None
+    if len(data) < 16:
+        return {"name": name, "ok": False, "error": f"Too small ({len(data)} bytes)", "size": len(data)}
     
-    # Get release ID
-    release_id, existing = get_release_assets("omegaflow/sources", domain)
-    if release_id is None:
-        print(f"  {name}: RELEASE NOT FOUND")
-        return None
+    if not create_release("omegaflow/sources", domain):
+        return {"name": name, "ok": False, "error": "Release create failed", "size": len(data)}
     
-    # Upload asset
     asset_name = f"{name}.json"
-    if not upload_asset("omegaflow/sources", release_id, asset_name, data):
-        print(f"  {name}: UPLOAD FAILED")
-        return None
+    if not upload_asset("omegaflow/sources", domain, asset_name, data):
+        return {"name": name, "ok": False, "error": "Upload failed", "size": len(data)}
     
-    # Build new CDN URL
-    cdn_url = get_cdn_url(name, domain)
-    print(f"  {name}: OK ({len(data)} bytes)")
+    result = {"name": name, "ok": True, "size": len(data), "domain": domain}
     
-    return {
-        "name": name,
-        "old_url": url,
-        "new_url": cdn_url,
-        "domain": domain,
-        "source": source,
-    }
+    if update_phi:
+        cdn_url = f"https://github.com/omegaflow/sources/releases/download/{domain}/{name}.json"
+        result["cdn_url"] = cdn_url
+    
+    return result
 
 def main():
     sources, content = parse_sources()
-    print(f"Sources to migrate: {len(sources)}")
     
-    if len(sources) == 0:
+    # Filter based on mode
+    if MODE == "migrate":
+        # Only non-CDN, non-positional, TTL >= 300
+        candidates = [s for s in sources if not s["is_cdn"] and s.get("ttl", 0) >= 300
+                     and not re.search(r'\{lat\}|\{lon\}|\{ra\}|\{dec\}|\{radius\}|\{alt\}', s["url"])]
+    elif MODE == "mirror-live":
+        # All non-CDN sources (health check — no phi update)
+        candidates = [s for s in sources if not s["is_cdn"]]
+        if MAX_TTL is not None:
+            candidates = [s for s in candidates if s.get("ttl", 999999) <= MAX_TTL]
+    elif MODE == "mirror-all":
+        # All non-CDN sources — update phi to CDN
+        candidates = [s for s in sources if not s["is_cdn"]]
+    else:
+        print(f"Unknown mode: {MODE}", file=sys.stderr)
+        sys.exit(1)
+    
+    if LIMIT:
+        candidates = candidates[:LIMIT]
+    
+    print(f"Mode: {MODE}, sources: {len(candidates)}")
+    
+    if len(candidates) == 0:
         print("Nothing to do.")
         return
     
-    migrated = []
+    update_phi = MODE in ("migrate", "mirror-all")
+    health = {"timestamp": time.time(), "mode": MODE, "results": []}
+    migrated = 0
+    failed = 0
+    
     with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as executor:
-        futures = {executor.submit(migrate_source, s): s for s in sources}
+        futures = {executor.submit(mirror_source, s, update_phi): s for s in candidates}
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
-            if result:
-                migrated.append(result)
+            if result["ok"]:
+                migrated += 1
+                if migrated % 20 == 0:
+                    print(f"  migrated: {migrated}/{len(candidates)}")
+            else:
+                failed += 1
+                print(f"  FAIL: {result['name']} — {result['error']}", file=sys.stderr)
+            health["results"].append(result)
     
-    print(f"\nMigrated: {len(migrated)}/{len(sources)}")
+    print(f"Done: {migrated} ok, {failed} failed")
     
-    if not DRY_RUN and migrated:
-        # Update sources.φ
-        for m in migrated:
-            src = m["source"]
-            old_block = src["raw"]
-            new_lines = []
-            for line in old_block.split('\n'):
-                if line.startswith('url ') and line.split(None, 1)[1].strip() == m["old_url"]:
-                    new_lines.append(f"url {m['new_url']}")
-                else:
-                    new_lines.append(line)
-            new_block = '\n'.join(new_lines)
-            content = content.replace(old_block, new_block)
-        
+    # Write health report
+    with open(HEALTH_FILE, 'w') as f:
+        json.dump(health, f)
+    
+    # Update sources.φ if migrating
+    if update_phi and migrated > 0 and not DRY_RUN:
+        for result in health["results"]:
+            if not result["ok"] or "cdn_url" not in result:
+                continue
+            for src in candidates:
+                if src["name"] == result["name"]:
+                    old_block = src["raw"]
+                    new_lines = []
+                    for line in old_block.split('\n'):
+                        if line.startswith('url ') and line.split(None, 1)[1].strip() == src["url"]:
+                            new_lines.append(f"url {result['cdn_url']}")
+                        else:
+                            new_lines.append(line)
+                    new_block = '\n'.join(new_lines)
+                    content = content.replace(old_block, new_block)
+                    break
         with open(SOURCES_PHI, 'w') as f:
             f.write(content)
         print(f"Updated {SOURCES_PHI}")
+    
+    if failed > 0:
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
