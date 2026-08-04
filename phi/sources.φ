@@ -6697,140 +6697,140 @@ first data.v hydrosphere_tide_height_m_bermuda_biological_station
 source hydrosphere_tide_8311030
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311030&product=water_level&datum=LWD&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8311030.json
 wgs84 44.7028 -75.4944
 first data.v hydrosphere_tide_height_m_ogdensburg
 
 source hydrosphere_tide_8410140
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8410140&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8410140.json
 wgs84 44.9046 -66.9829
 first data.v hydrosphere_tide_height_m_eastport
 
 source hydrosphere_tide_8413320
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8413320&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8413320.json
 wgs84 44.3922 -68.2043
 first data.v hydrosphere_tide_height_m_bar_harbor
 
 source hydrosphere_tide_8418150
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8418150&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8418150.json
 wgs84 43.6581 -70.2442
 first data.v hydrosphere_tide_height_m_portland
 
 source hydrosphere_tide_8443970
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8443970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8443970.json
 wgs84 42.3539 -71.0503
 first data.v hydrosphere_tide_height_m_boston
 
 source hydrosphere_tide_8447435
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447435&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8447435.json
 wgs84 41.6885 -69.9511
 first data.v hydrosphere_tide_height_m_chatham
 
 source hydrosphere_tide_8461490
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8461490&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8461490.json
 wgs84 41.3717 -72.0956
 first data.v hydrosphere_tide_height_m_new_london
 
 source hydrosphere_tide_8516945
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8516945&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8516945.json
 wgs84 40.8103 -73.7649
 first data.v hydrosphere_tide_height_m_kings_point
 
 source hydrosphere_tide_8518962
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518962&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8518962.json
 wgs84 42.0139 -73.9392
 first data.v hydrosphere_tide_height_m_turkey_point_hudson_river_nerr
 
 source hydrosphere_tide_8534720
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8534720&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8534720.json
 wgs84 39.3567 -74.4180
 first data.v hydrosphere_tide_height_m_atlantic_city
 
 source hydrosphere_tide_8551762
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551762&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8551762.json
 wgs84 39.5822 -75.5890
 first data.v hydrosphere_tide_height_m_delaware_city
 
 source hydrosphere_tide_8570283
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8570283.json
 wgs84 38.3283 -75.0917
 first data.v hydrosphere_tide_height_m_ocean_city_inlet
 
 source hydrosphere_tide_8575512
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8575512&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8575512.json
 wgs84 38.9839 -76.4800
 first data.v hydrosphere_tide_height_m_annapolis
 
 source hydrosphere_tide_8632200
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8632200&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8632200.json
 wgs84 37.1652 -75.9884
 first data.v hydrosphere_tide_height_m_kiptopeke
 
 source hydrosphere_tide_8635750
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8635750.json
 wgs84 37.9961 -76.4644
 first data.v hydrosphere_tide_height_m_lewisetta
 
 source hydrosphere_tide_8651370
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8651370&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8651370.json
 wgs84 36.1833 -75.7467
 first data.v hydrosphere_tide_height_m_duck
 
 source hydrosphere_tide_8654467
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8654467&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8654467.json
 wgs84 35.2086 -75.7042
 first data.v hydrosphere_tide_height_m_uscg_station_hatteras
 
 source hydrosphere_tide_8656483
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8656483&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8656483.json
 wgs84 34.7173 -76.6707
 first data.v hydrosphere_tide_height_m_beaufort_duke_marine_lab
 
 source hydrosphere_tide_8658120
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8658120&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8658120.json
 wgs84 34.2267 -77.9533
 first data.v hydrosphere_tide_height_m_wilmington
 
 source hydrosphere_tide_8661070
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8661070&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8661070.json
 wgs84 33.6550 -78.9180
 first data.v hydrosphere_tide_height_m_springmaid_pier
 
