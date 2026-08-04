@@ -10468,12 +10468,14 @@ source biosphere_inaturalist_fungi
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist_fungi.json
+wgs84 47.3769 8.5417
 path total_results biosphere_fungi_observations
 
 source biosphere_inaturalist_fungi_count
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist_fungi_count.json
+wgs84 47.3769 8.5417
 field total_results biosphere_fungi_observations
 field species_count biosphere_fungi_species_count
 
@@ -10481,6 +10483,7 @@ source biosphere_inaturalist_verified
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist_verified.json
+wgs84 47.3769 8.5417
 field total_results biosphere_verified_observations
 
 source biosphere_launch_library
@@ -11634,6 +11637,7 @@ source biosphere_inaturalist
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist.json
+wgs84 47.3769 8.5417
 field total_results biosphere_observations
 
 source inaturalist_amazon_biodiversity
