@@ -1691,7 +1691,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42936_current_speed_cms
 source geosphere_gdacs_disaster_alerts
 ttl 300
 force seismic-body
-url https://gdacs.org/xml/rss.xml
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_gdacs_disaster_alerts.json
 wgs84 38.9072 -77.0369
 xml_count item hazard_event_count
 
@@ -1856,7 +1856,7 @@ source astro_gracedb_lvk_o4_public_superevents
 ttl 300
 force gravity
 ssb
-url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gracedb_lvk_o4_public_superevents.json
 map superevents
 field superevent_id event_id
 field t_0 gps_time
@@ -7788,7 +7788,7 @@ source physics_ligo_grace_db_events
 ttl 300
 force em
 ssb
-url https://gracedb.ligo.org/api/superevents/?format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_ligo_grace_db_events.json
 map results
 field gpstime physics_ligo_event_gpstime
 field far physics_ligo_far_hz
@@ -8890,7 +8890,7 @@ field 6 obs_date
 source nasa_eonet_events
 ttl 600
 force seismic-body
-url https://eonet.gsfc.nasa.gov/api/v3/events?limit=200&open=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/nasa_eonet_events.json
 map events
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -9007,7 +9007,7 @@ source physics_ligo_gracedb_events
 ttl 600
 force em
 ssb
-url https://gracedb.ligo.org/api/superevents/?count=10&category=production
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_ligo_gracedb_events.json
 first superevents.0.superevent_id cosmic_gravitational_wave_latest_id
 count superevents cosmic_gravitational_wave_event_count
 
@@ -10357,7 +10357,7 @@ field critical biosphere_covid_critical_global
 source biosphere_coral_bleach_southeast_florida
 ttl 3600
 force em
-url https://api.coral.tsr.lol/stations/southeast_florida/current
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_coral_bleach_southeast_florida.json
 wgs84 26.100 -80.100
 field current.dhw biosphere_coral_dhw_florida
 field current.baa_7day_max biosphere_coral_alert_florida
@@ -10373,7 +10373,7 @@ last price biosphere_electricity_price_eur_mwh
 source biosphere_eonet_volcanoes
 ttl 3600
 force em
-url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=volcanoes
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_eonet_volcanoes.json
 map events
 lat_key geometry.0.coordinates.1
 lon_key geometry.0.coordinates.0
@@ -10382,7 +10382,7 @@ field id biosphere_volcano_eonet_id
 source biosphere_eonet_wildfires
 ttl 3600
 force em
-url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=wildfires
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_eonet_wildfires.json
 map events
 lat_key geometry.0.coordinates.1
 lon_key geometry.0.coordinates.0
@@ -10511,7 +10511,7 @@ source biosphere_wildfires
 ttl 3600
 force em
 ecliptic 1
-url https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_wildfires.json
 map events
 lat_key geometry.0.coordinates.1
 lon_key geometry.0.coordinates.0
@@ -11136,14 +11136,14 @@ alt_key geometry.coordinates.2
 source geosphere_gdacs_disasters
 ttl 3600
 force em
-url https://gdacs.org/xml/rss.xml
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_gdacs_disasters.json
 wgs84 38.9072 -77.0369
 xml_count item geosphere_disaster_active_total
 
 source geosphere_gdacs_disasters_total
 ttl 3600
 force em
-url https://gdacs.org/xml/rss.xml
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_gdacs_disasters_total.json
 wgs84 38.9072 -77.0369
 xml_count item geosphere_disasters_gdacs
 
@@ -11166,7 +11166,7 @@ source geosphere_natural_events
 ttl 3600
 force em
 ecliptic 1
-url https://eonet.gsfc.nasa.gov/api/v3/events
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_natural_events.json
 map events
 lat_key geometry.0.coordinates.1
 lon_key geometry.0.coordinates.0
@@ -11241,7 +11241,7 @@ source astro_gracedb_latest_confirmed_gw_event
 ttl 3600
 force gravity
 ssb
-url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&label=GW&ordering=-created&per_page=10
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gracedb_latest_confirmed_gw_event.json
 map superevents
 field superevent_id event_id
 field t_0 gps_time
@@ -11255,7 +11255,7 @@ source astro_gracedb_o4_mass_gap_candidates
 ttl 3600
 force gravity
 ssb
-url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&ordering=-created&per_page=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gracedb_o4_mass_gap_candidates.json
 map superevents
 field superevent_id event_id
 field t_0 gps_time
@@ -11897,7 +11897,7 @@ source astro_lasp_lisird_tsis1_tsi_daily
 ttl 3600
 force em
 ssb
-url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_lasp_lisird_tsis1_tsi_daily.json
 format text
 rows
 field time observation_date
@@ -11908,7 +11908,7 @@ source astro_lasp_sdo_eve_l3_ssi_1nm
 ttl 3600
 force em
 ssb
-url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_lasp_sdo_eve_l3_ssi_1nm.json
 format text
 rows
 field time observation_date
@@ -12098,7 +12098,7 @@ source nasa_power_solar_radiation
 ttl 3600
 force em
 ssb
-url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/nasa_power_solar_radiation.json
 obj_last value biosphere_solar_radiation_power
 
 source biosphere_nbn_atlas_uk_bat_acoustic_records
@@ -12268,7 +12268,7 @@ field state state
 source noaa_crw_station_sst_gbr_central
 ttl 3600
 force thermal
-url https://api.coral.tsr.lol/stations/gbr_central/current
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_crw_station_sst_gbr_central.json
 wgs84 -18.0 147.0
 field current.sst_min sst_min_c
 field current.sst_max sst_max_c
@@ -12279,7 +12279,7 @@ field current.baa_7day_max bleach_alert_level
 source noaa_crw_station_sst_gbr_north
 ttl 3600
 force thermal
-url https://api.coral.tsr.lol/stations/gbr_northern/current
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_crw_station_sst_gbr_north.json
 wgs84 -14.0 145.0
 field current.sst_min sst_min_c
 field current.sst_max sst_max_c
@@ -12291,7 +12291,7 @@ field current.baa_7day_max bleach_alert_level
 source noaa_crw_station_sst_gbr_south
 ttl 3600
 force thermal
-url https://api.coral.tsr.lol/stations/gbr_southern/current
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_crw_station_sst_gbr_south.json
 wgs84 -22.0 150.0
 field current.sst_min sst_min_c
 field current.sst_max sst_max_c
@@ -12302,7 +12302,7 @@ field current.baa_7day_max bleach_alert_level
 source noaa_crw_virtual_stations
 ttl 3600
 force thermal
-url https://api.coral.tsr.lol/stations
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_crw_virtual_stations.json
 map .
 lat_key latitude
 lon_key longitude
@@ -12899,7 +12899,7 @@ field current.uv_index radiation_uv_index_openmeteo
 source geosphere_reliefweb_active_humanitarian_disasters
 ttl 3600
 force diffusion
-url https://gdacs.org/xml/rss.xml
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_reliefweb_active_humanitarian_disasters.json
 wgs84 38.9072 -77.0369
 xml_count item disaster_count
 
@@ -12992,7 +12992,7 @@ field validTimeTo valid_to
 source technosphere_technosphere_wikipedia_views
 ttl 3600
 force em
-url https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_technosphere_wikipedia_views.json
 wgs84 40.712 -74.006
 field query.random.0.id technosphere_wikipedia_random_id
 
@@ -13444,7 +13444,7 @@ field content.0.Pollen.Esche.today biosphere_pollen_ash_germany_today
 source atmosphere_enso_oni
 ttl 86400
 force em
-url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_enso_oni.json
 wgs84 38.989 -76.937
 last_row ANOM atmosphere_enso_oni_c
 
@@ -13894,14 +13894,14 @@ last_row VHI biosphere_global_vegetation_health_index
 source biosphere_who_cholera
 ttl 86400
 force em
-url https://ghoapi.azureedge.net/api/CHOLERA_0000000001
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_who_cholera.json
 wgs84 46.234 6.140
 count value biosphere_cholera_record_count
 
 source biosphere_who_gho_tuberculosis
 ttl 86400
 force em
-url https://ghoapi.azureedge.net/api/MDG_0000000020
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_who_gho_tuberculosis.json
 wgs84 46.234 6.140
 count value biosphere_tuberculosis_record_count
 
@@ -14263,7 +14263,7 @@ last_row extent cryosphere_sea_ice_south_mkm2
 source hydrosphere_dartmouth_flood_observatory_global
 ttl 86400
 force diffusion
-url https://gdacs.org/xml/rss.xml
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_dartmouth_flood_observatory_global.json
 wgs84 38.9072 -77.0369
 xml_count item flood_event_count
 
@@ -15026,7 +15026,7 @@ field station.country country
 source geosphere_gvp_wfs_holocene_eruptions
 ttl 86400
 force seismic-surface
-url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=application/json&count=1000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_gvp_wfs_holocene_eruptions.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -15043,7 +15043,7 @@ field properties.Explosivity_Index explosivity_class
 source geosphere_gvp_wfs_holocene_eruptions_csv
 ttl 86400
 force seismic-surface
-url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=csv&count=1000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_gvp_wfs_holocene_eruptions_csv.json
 format text
 rows
 lat_key Latitude
@@ -15059,7 +15059,7 @@ field VEI vei_index
 source geosphere_gvp_wfs_holocene_volcanoes
 ttl 86400
 force seismic-surface
-url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=application/json&count=1000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_gvp_wfs_holocene_volcanoes.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -15077,7 +15077,7 @@ field properties.Major_Rock_Type major_rock_type
 source geosphere_gvp_wfs_holocene_volcanoes_csv
 ttl 86400
 force seismic-surface
-url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=csv&count=1000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_gvp_wfs_holocene_volcanoes_csv.json
 format text
 rows
 lat_key Latitude
@@ -15094,7 +15094,7 @@ field Tectonic_Setting tectonic_setting
 source geosphere_gvp_wfs_pleistocene_volcanoes
 ttl 86400
 force seismic-surface
-url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Pleistocene_Volcanoes&outputFormat=application/json&count=1000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_gvp_wfs_pleistocene_volcanoes.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -16670,7 +16670,7 @@ source astro_lasp_lisird_tsis1_hybrid_reference_spectrum
 ttl 86400
 force em
 ssb
-url https://lasp.colorado.edu/lisird/latis/dap/tsis1_hsrs.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_lasp_lisird_tsis1_hybrid_reference_spectrum.json
 format text
 rows
 field wavelength wavelength_nm
@@ -18321,7 +18321,7 @@ path 2 magnetosphere_wng_f_nt
 source mast_hst_public_observations
 ttl 86400
 force em
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27HST%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/mast_hst_public_observations.json
 format text
 rows
 ra_key s_ra
@@ -18335,7 +18335,7 @@ field energy_bandpassName filter_name
 source mast_kepler_k2_legacy
 ttl 86400
 force em
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27Kepler%27+OR+obs_collection%3D%27K2%27+ORDER+BY+t_exptime+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/mast_kepler_k2_legacy.json
 format text
 rows
 ra_key s_ra
@@ -18744,7 +18744,7 @@ source nasa_power_ag_climate_daily
 ttl 86400
 force thermal
 ecliptic 1
-url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}0101&end={year}1231&format=JSON
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/nasa_power_ag_climate_daily.json
 map properties.parameter.T2M
 lat_key lat
 lon_key lon
@@ -18780,7 +18780,7 @@ source astro_ncei_enso_oni_index
 ttl 86400
 force thermal
 ecliptic 1
-url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_ncei_enso_oni_index.json
 format text
 rows
 field 0 season_year
@@ -18808,7 +18808,7 @@ field AWND average_wind_speed_ms
 source astro_ncei_nao_monthly_index
 ttl 86400
 force thermal
-url https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_ncei_nao_monthly_index.json
 wgs84 0.0 0.0
 format text
 rows
@@ -18858,7 +18858,7 @@ field_in 2 pdo_index pdo_value
 source astro_ncei_soi_monthly_index
 ttl 86400
 force thermal
-url https://www.cpc.ncep.noaa.gov/data/indices/soi
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_ncei_soi_monthly_index.json
 wgs84 0.0 0.0
 format text
 rows
@@ -19106,7 +19106,7 @@ field state state
 source noaa_cpc_enso_nino34
 ttl 86400
 force thermal
-url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_cpc_enso_nino34.json
 wgs84 0.0 -170.0
 format text
 rows
@@ -20195,7 +20195,7 @@ field records_returned paleobiology_pbdb_occurrence_count
 source biosphere_paleoclimate_neotoma_paleoecology
 ttl 86400
 force em
-url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_paleoclimate_neotoma_paleoecology.json
 wgs84 43.073 -89.401
 field total paleoclimate_neotoma_occurrences
 
@@ -20390,7 +20390,7 @@ source astro_sidc_international_sunspot_number
 ttl 86400
 force em
 ssb
-url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_sidc_international_sunspot_number.json
 format text
 rows
 field_in 0 year
@@ -20401,7 +20401,7 @@ field_in 3 sunspot_number
 source astro_sidc_smoothed_monthly_sunspot_number
 ttl 86400
 force em
-url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_sidc_smoothed_monthly_sunspot_number.json
 wgs84 50.85 4.35
 format text
 rows
@@ -20417,7 +20417,7 @@ field 7 smoothed_std
 source astro_sidc_sunspot_number_daily
 ttl 86400
 force em
-url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_sidc_sunspot_number_daily.json
 wgs84 50.85 4.35
 format text
 rows
@@ -20461,14 +20461,14 @@ source astro_sunspot_number_global
 ttl 86400
 force em
 ssb
-url https://www.sidc.be/silso/DATA/SN_d_tot_V2.0.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_sunspot_number_global.json
 last_line solar_sunspot_number_silso
 
 source astro_sunspot_number_monthly
 ttl 86400
 force em
 ssb
-url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_sunspot_number_monthly.json
 last_line solar_sunspot_number_silso
 
 source technosphere_technosphere_stackoverflow_questions
@@ -21942,7 +21942,7 @@ field Target target_name
 source atmosphere_who_gho_air_quality_urban
 ttl 86400
 force diffusion
-url https://ghoapi.azureedge.net/api/AIR_12?\$filter=SpatialDimType+eq+'COUNTRY'&\$top=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_who_gho_air_quality_urban.json
 map value
 field SpatialDim country_code
 field NumericValue pm25_ugm3
@@ -21954,7 +21954,7 @@ source atmosphere_who_gho_urban_air_quality
 ttl 86400
 force diffusion
 ecliptic 1
-url https://ghoapi.azureedge.net/api/AIR_12?$filter=SpatialDimType+eq+'COUNTRY'&$top=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_who_gho_urban_air_quality.json
 map value
 field SpatialDim country_code
 field TimeDim year
@@ -21970,21 +21970,21 @@ field query.statistics.articles biosphere_wikidata_entities_total
 source technosphere_wikipedia_articles_total
 ttl 86400
 force em
-url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_wikipedia_articles_total.json
 wgs84 37.774 -122.419
 field query.statistics.articles biosphere_wikipedia_articles_total
 
 source technosphere_wikipedia_edits_total
 ttl 86400
 force em
-url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_wikipedia_edits_total.json
 wgs84 37.774 -122.419
 field query.statistics.edits biosphere_wikipedia_edits_total
 
 source technosphere_wikipedia_pages_total
 ttl 86400
 force em
-url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_wikipedia_pages_total.json
 wgs84 37.774 -122.419
 field query.statistics.pages biosphere_wikipedia_pages_total
 
@@ -24024,7 +24024,7 @@ regex 2025\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2025_ppm
 source atmosphere_power_climatology
 ttl 604800
 force em
-url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2001&end=2020&format=JSON
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_power_climatology.json
 path properties.parameter.T2M.01 atmosphere_power_temp_jan_clim_c
 path properties.parameter.T2M.07 atmosphere_power_temp_jul_clim_c
 path properties.parameter.PRECTOTCORR.01 atmosphere_power_precip_jan_clim_mm
@@ -27085,7 +27085,7 @@ field hits.hits.0.metadata.citation_count quantum_dark_matter_limit_citations
 source geosphere_geopages
 ttl 2592000
 force em
-url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_geopages.json
 count query.geosearch biosphere_geopages_nearby
 
 source geosphere_cci_datasets
@@ -27190,25 +27190,25 @@ count collections biosphere_planetary_computer_collection_count
 source geosphere_soilgrids_clay
 ttl 2592000
 force em
-url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soilgrids_clay.json
 field properties.layers.0.depths.0.values.mean geosphere_soil_clay_pct
 
 source geosphere_soilgrids_ph
 ttl 2592000
 force em
-url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soilgrids_ph.json
 field properties.layers.0.depths.0.values.mean geosphere_soil_ph_x10
 
 source geosphere_soilgrids_sand
 ttl 2592000
 force em
-url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=sand&depth=0-5cm&value=mean
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soilgrids_sand.json
 field properties.layers.0.depths.0.values.mean geosphere_soil_sand_pct
 
 source geosphere_soilgrids_soc
 ttl 2592000
 force em
-url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soilgrids_soc.json
 field properties.layers.0.depths.0.values.mean geosphere_soil_organic_carbon_x10
 
 source geosphere_usgs_epqs_elevation
