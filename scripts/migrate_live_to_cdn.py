@@ -127,7 +127,10 @@ def parse_sources():
 def get_domain_tag(url):
     from urllib.parse import urlparse
     parsed = urlparse(url)
-    return parsed.netloc
+    domain = parsed.netloc
+    if domain.startswith('www.'):
+        domain = domain[4:]
+    return domain
 
 def mirror_source(src, update_phi=False):
     name = src["name"]
