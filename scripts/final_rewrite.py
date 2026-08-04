@@ -9,8 +9,6 @@ import re, sys
 
 SOURCE_PHI = "phi/sources.φ"
 DRY_RUN = "--dry-run" in sys.argv
-
-# Domain mappings from git archaeology (363 sphere/kp/fcc/vizier fixes)
 SPHERE_FIX = {}
 with open("/tmp/opencode/final_domain_map.tsv") as f:
     for line in f:
@@ -18,10 +16,8 @@ with open("/tmp/opencode/final_domain_map.tsv") as f:
         if len(parts) >= 2:
             SPHERE_FIX[parts[0]] = parts[1]
 
-# Born-CDN astro catalogs → API domain
-# Based on data origin: file names in commit 8dad557 + TAP_MARKERS + build comments
 BORN_CDN_DOMAINS = {
-    # HEASARC TAP → heasarc.gsfc.nasa.gov
+
     "astro_batse_grb": "heasarc.gsfc.nasa.gov",
     "astro_batse_pulsar": "heasarc.gsfc.nasa.gov",
     "astro_chandra_master": "heasarc.gsfc.nasa.gov",
@@ -43,7 +39,7 @@ BORN_CDN_DOMAINS = {
     "astro_tevcat": "heasarc.gsfc.nasa.gov",
     "astro_xmm_slew": "heasarc.gsfc.nasa.gov",
     "astro_xmm_sources": "heasarc.gsfc.nasa.gov",
-    # Gaia TAP → gea.esac.esa.int
+
     "astro_gaia_binaries": "gea.esac.esa.int",
     "astro_gaia_blue_supergiants": "gea.esac.esa.int",
     "astro_gaia_bright_vmag7": "gea.esac.esa.int",
@@ -55,7 +51,7 @@ BORN_CDN_DOMAINS = {
     "astro_gaia_nearby_plx10": "gea.esac.esa.int",
     "astro_gaia_nearby_plx50": "gea.esac.esa.int",
     "astro_gaia_white_dwarfs": "gea.esac.esa.int",
-    # VizieR TAP → tapvizier.cds.unistra.fr
+
     "astro_vizier_2qz": "tapvizier.cds.unistra.fr",
     "astro_vizier_6dfgs": "tapvizier.cds.unistra.fr",
     "astro_vizier_apass": "tapvizier.cds.unistra.fr",
@@ -86,17 +82,17 @@ BORN_CDN_DOMAINS = {
     "astro_frb_chime": "tapvizier.cds.unistra.fr",
     "astro_frb_catalog_aa": "tapvizier.cds.unistra.fr",
     "astro_frb_catalog_pasa": "tapvizier.cds.unistra.fr",
-    # SDSS → skyserver.sdss.org
+
     "astro_sdss_galaxies": "skyserver.sdss.org",
     "astro_sdss_stars": "skyserver.sdss.org",
-    # IRSA → irsa.ipac.caltech.edu
+
     "astro_wise_allsky": "irsa.ipac.caltech.edu",
     "astro_twomass_psc": "irsa.ipac.caltech.edu",
-    # NMDB → nmdb.eu
+
     "astro_nmdb_stations": "nmdb.eu",
-    # JPL → ssd-api.jpl.nasa.gov
+
     "astro_jpl_asteroids": "ssd-api.jpl.nasa.gov",
-    # SIMBAD→Gaia remaps (file contents are Gaia data)
+
     "astro_simbad": "gea.esac.esa.int",
     "astro_simbad_bright_stars": "gea.esac.esa.int",
     "astro_simbad_nearby_stars": "gea.esac.esa.int",
@@ -123,7 +119,7 @@ BORN_CDN_DOMAINS = {
     "astro_simbad_yellow_supergiants": "gea.esac.esa.int",
     "astro_simbad_young_stellar_objects": "gea.esac.esa.int",
     "astro_simbad_yso": "gea.esac.esa.int",
-    # SIMBAD→VizieR remaps (file contents are VizieR data)
+
     "astro_simbad_agn": "tapvizier.cds.unistra.fr",
     "astro_simbad_blazars": "tapvizier.cds.unistra.fr",
     "astro_simbad_blue_compact_dwarfs": "tapvizier.cds.unistra.fr",
@@ -167,7 +163,7 @@ BORN_CDN_DOMAINS = {
     "astro_simbad_symbiotic_stars": "tapvizier.cds.unistra.fr",
     "astro_simbad_variable_stars": "tapvizier.cds.unistra.fr",
     "astro_simbad_xray_sources": "tapvizier.cds.unistra.fr",
-    # Exosphere SIMBAD remaps
+
     "exosphere_simbad_brown_dwarfs": "gea.esac.esa.int",
     "exosphere_simbad_carbon_stars": "gea.esac.esa.int",
     "exosphere_simbad_white_dwarfs": "gea.esac.esa.int",
@@ -184,16 +180,12 @@ BORN_CDN_DOMAINS = {
     "exosphere_simbad_quasars": "tapvizier.cds.unistra.fr",
     "exosphere_simbad_supernovae": "tapvizier.cds.unistra.fr",
     "exosphere_simbad_symbiotic_stars": "tapvizier.cds.unistra.fr",
-    # Legacy sources still on bare 'catalogs' release (pre-domain migration)
+
     "geosphere_noaa_coops_water_levels_usa": "tidesandcurrents.noaa.gov",
     "geosphere_esa_cci_soil_moisture_erddap": "erddap.emodnet-physics.eu",
 }
-
-
 def domain_to_tag(domain):
     return domain.replace("/", "-")
-
-
 def build_full_domain_map(sources_phi_path):
     """Build a complete {source_name: correct_bare_domain_tag} from current sources.φ.
     Derives the correct domain for every source by checking the sphere fix map,
@@ -213,33 +205,23 @@ def build_full_domain_map(sources_phi_path):
             if m:
                 current_tag = m.group(1)
             elif m_bare:
-                current_tag = "catalogs"  # legacy bare release
+                current_tag = "catalogs"
             else:
                 cur_source = None
                 continue
             
-            # Priority: sphere_fix > born_cdn > current_tag
+
             if cur_source in SPHERE_FIX:
                 correct_domain = domain_to_tag(SPHERE_FIX[cur_source])
             elif cur_source in BORN_CDN_DOMAINS:
                 correct_domain = domain_to_tag(BORN_CDN_DOMAINS[cur_source])
             else:
-                # Keep current domain but drop the catalogs- prefix (which we drop anyway)
-                # For now, the "correct" domain is the current tag minus catalogs-
-                # Wait — for already-correct sources, current tag IS the domain
-                # After the prefix drop, the tag becomes bare {domain}
-                # But the tag already has the domain. Just use current tag as-is.
-                # The prefix stripping happens during URL rewrite.
-                correct_domain = current_tag  # will become bare domain
-                # BUT: for github.com variants, keep as-is
-                # For regular domains, keep as-is
+                correct_domain = current_tag
             
             full_map[cur_source] = correct_domain
             cur_source = None
     
     return full_map
-
-
 def rewrite_sources(domain_map, dry=False):
     """Rewrite sources.φ line-by-line.
     Transformations in ONE pass:
@@ -265,7 +247,7 @@ def rewrite_sources(domain_map, dry=False):
         if not line.startswith("url "):
             continue
         
-        # Handle raw.githubusercontent.com URLs (just repo rename)
+
         if "raw.githubusercontent.com/omegaflow/catalogs" in line:
             new_line = line.replace("omegaflow/catalogs", "omegaflow/sources")
             if new_line != line:
@@ -280,27 +262,27 @@ def rewrite_sources(domain_map, dry=False):
         if "releases/download/" not in line:
             continue
         
-        # Transformation 1: repo name
+
         new_line = line.replace("omegaflow/catalogs", "omegaflow/sources")
         
-        # Determine correct domain tag
+
         if current_source in domain_map:
             correct_tag = domain_map[current_source]
         else:
-            # Keep current tag, stripping catalogs- prefix
+
             m = re.search(r"catalogs-?([^/]*)/", new_line)
             if m:
                 old_tag = m.group(1)
                 correct_tag = old_tag if old_tag else "catalogs"
             else:
-                # No catalogs match — probably already bare
+
                 lines[i] = new_line
                 continue
         
-        # Handle bare 'catalogs' release → replace with domain
+
         if "releases/download/catalogs/" in new_line:
             new_line = new_line.replace("releases/download/catalogs/", f"releases/download/{correct_tag}/", 1)
-        # Handle catalogs-{tag} → {tag}
+
         elif "releases/download/catalogs-" in new_line:
             m = re.search(r"catalogs-([^/]+)/", new_line)
             if m:
@@ -320,7 +302,7 @@ def rewrite_sources(domain_map, dry=False):
         lines[i] = new_line
         count += 1
     
-    # Update comments referencing old repo
+
     for i in range(len(lines)):
         if "# All serve from raw.githubusercontent.com/omegaflow/catalogs/main/" in lines[i]:
             lines[i] = lines[i].replace("omegaflow/catalogs", "omegaflow/sources")
@@ -334,23 +316,21 @@ def rewrite_sources(domain_map, dry=False):
         open(SOURCE_PHI, "w").writelines(lines)
     
     return count
-
-
 def main():
-    # Build domain map
+
     print("Building domain map...", file=sys.stderr)
     domain_map = build_full_domain_map(SOURCE_PHI)
     
-    # Count unique domains
+
     unique_domains = set(domain_map.values())
     print(f"Sources mapped: {len(domain_map)}, unique domains: {len(unique_domains)}", file=sys.stderr)
     
-    # Verify no catalogs- remnants in map values
+
     catalogs_values = [v for v in domain_map.values() if v.startswith("catalogs-")]
     if catalogs_values:
         print(f"WARNING: {len(catalogs_values)} catalogs- prefixes in map!", file=sys.stderr)
     
-    # Rewrite
+
     count = rewrite_sources(domain_map, dry=DRY_RUN)
     action = "Would rewrite" if DRY_RUN else "Rewrote"
     print(f"{action} {count} URLs", file=sys.stderr)
@@ -358,7 +338,7 @@ def main():
     if DRY_RUN:
         return
     
-    # Verify final state
+
     content = open(SOURCE_PHI).read()
     cats_prefix = len(re.findall(r"catalogs-[a-z]", content))
     cats_release = len(re.findall(r"releases/download/catalogs/", content))
@@ -373,7 +353,5 @@ def main():
     
     if not cats_prefix and not cats_release and not cats_repo:
         print("ALL CLEAN: no catalogs- prefix, no catalogs repo refs", file=sys.stderr)
-
-
 if __name__ == "__main__":
     main()

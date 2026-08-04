@@ -9,10 +9,10 @@ Uses astropy.io.votable for BINARY/BINARY2/TABLEDATA decoding (cloud-side);
 falls back to a plain CSV parser when astropy is unavailable.
 
 Usage:
-    python3 scripts/tap_to_cdn.py                  # process all, small first
-    python3 scripts/tap_to_cdn.py --source <name>   # process one source
-    python3 scripts/tap_to_cdn.py --dry-run         # just list what would run
-    python3 scripts/tap_to_cdn.py --limit 5000      # cap rows (debug)
+    python3 scripts/tap_to_cdn.py
+    python3 scripts/tap_to_cdn.py --source <name>
+    python3 scripts/tap_to_cdn.py --dry-run
+    python3 scripts/tap_to_cdn.py --limit 5000
 
 Env:
     OMEGAFLOW_TOKEN: PAT with contents write to omegaflow/sources
@@ -34,8 +34,6 @@ TIMEOUT = int(os.environ.get("TAP_TIMEOUT", "120"))
 SLEEP = float(os.environ.get("TAP_SLEEP", "2"))
 MAX_SOURCES = int(os.environ.get("TAP_MAX_SOURCES", "0"))
 
-# Catalogs too large for a single flat JSON (would exceed release/server limits).
-# These need spatial sharding; skip them so they don't fail verification.
 HUGE_CATALOGS = {
     "vizier_nvss_radio", "vizier_nvss_radio_catalog", "vizier_nvss_galcenter",
     "vizier_first_radio", "vizier_first_radio_catalog", "vizier_gleam_extragalactic_catalog",
@@ -49,8 +47,6 @@ TAP_MARKERS = [
     "skyserver.sdss.org", "ned.ipac.caltech.edu/tap",
     "gea.esac.esa.int/tap-server", "gaia.ari.uni-heidelberg.de/tap",
 ]
-
-
 def find_tap_sources(path="phi/sources.φ"):
     content = open(path).read()
     blocks = re.split(r"\n(?=source )", content)
@@ -72,8 +68,6 @@ def find_tap_sources(path="phi/sources.φ"):
             continue
         out.append({"source": name, "url": url})
     return out
-
-
 def strip_top(url):
     """Remove TOP n (incl. +-encoded) from a TAP URL to fetch the full catalog.
     Operates on the raw query to preserve existing encoding (%22 etc)."""
@@ -84,8 +78,6 @@ def strip_top(url):
         flags=re.IGNORECASE,
         count=1,
     )
-
-
 def extract_table(url):
     """Extract the FROM table name from a TAP URL (decoded)."""
     decoded = urllib.parse.unquote_plus(url)
@@ -93,8 +85,6 @@ def extract_table(url):
     if not m:
         m = re.search(r'FROM\s+"([^"]+)"', decoded, re.IGNORECASE)
     return m.group(1) if m else None
-
-
 def tap_schema_columns(url, table):
     """Query TAP_SCHEMA.columns for the actual column names.
     Returns list of column names, or None if the query fails."""
@@ -112,8 +102,6 @@ def tap_schema_columns(url, table):
     if not rows:
         return None
     return [list(r.values())[0] for r in rows]
-
-
 def repair_query_for_schema(url):
     """Check SELECT columns against TAP_SCHEMA. If they don't match,
     return a repaired URL that uses SELECT * (or available columns).
@@ -132,23 +120,21 @@ def repair_query_for_schema(url):
     missing = [c for c in sel_cols if c not in actual]
     if not missing:
         return url, False, []
-    # Repair: remove invalid columns from SELECT, keep valid ones
+
     valid = [c for c in sel_cols if c not in missing]
     if not valid:
-        return url, False, missing  # no valid columns left -> can't repair
+        return url, False, missing
     repaired_select = "SELECT " + ", ".join(valid) + " FROM"
     repaired = re.sub(r"SELECT\s+.*?\s+FROM", repaired_select, decoded, count=1, flags=re.I | re.DOTALL)
     repaired = re.sub(r"TOP\s+\d+\s*", "", repaired, count=1, flags=re.I)
-    # Remove ORDER BY referencing missing columns
+
     repaired = re.sub(r"\s+ORDER\s+BY\s+.*$", "", repaired, count=1, flags=re.I)
-    # Re-encode query part
+
     if "QUERY=" in url:
         base, _, _ = url.partition("QUERY=")
         q = repaired.split("QUERY=", 1)[1] if "QUERY=" in repaired else repaired
         return base + "QUERY=" + urllib.parse.quote_plus(q), True, missing
     return repaired, True, missing
-
-
 def detect_ra_col(url):
     """Detect the RA column name from the SELECT list."""
     decoded = urllib.parse.unquote_plus(url)
@@ -160,13 +146,11 @@ def detect_ra_col(url):
     for cand in candidates:
         if cand in cols:
             return cand
-    # fuzzy: any column with 'ra' in the name (case-insensitive)
+
     for c in cols:
         if 'ra' in c.lower():
             return c
     return None
-
-
 def try_fetch_rows(url):
     """Try a single fetch, return (rows, truncated)."""
     text = fetch(url)
@@ -176,25 +160,23 @@ def try_fetch_rows(url):
     truncated = False
     if rows:
         n = len(rows)
-        # Heuristic: common server limits indicate truncation
+
         if n in (5000, 2000, 10000, 50000, 3000, 1000):
             truncated = True
-        # Also check for OVERFLOW status in VOTable XML
+
         if 'value="OVERFLOW"' in text:
             truncated = True
     return rows, truncated
-
-
 def spatial_fetch(url_template, lo, hi, ra_col, limit):
     """Recursive spatial fetch: query RA bin, split if saturated."""
-    # Inject WHERE clause into the query, keeping encoding intact
+
     decoded = urllib.parse.unquote_plus(url_template)
     where_clause = f"{ra_col} BETWEEN {lo:.6f} AND {hi:.6f}"
     if "WHERE" in decoded:
         decoded = re.sub(r"WHERE\s+.*$", f"WHERE {where_clause}", decoded, count=1, flags=re.I)
     else:
         decoded = decoded + f" WHERE {where_clause}"
-    # Re-encode the query part only
+
     if "QUERY=" in url_template:
         base, _, _ = url_template.partition("QUERY=")
         q = decoded.split("QUERY=", 1)[1] if "QUERY=" in decoded else ""
@@ -219,8 +201,6 @@ def spatial_fetch(url_template, lo, hi, ra_col, limit):
     time.sleep(SLEEP * 0.5)
     right = spatial_fetch(url_template, mid, hi, ra_col, limit)
     return left + right
-
-
 def fetch_full_spatial(url, ra_col):
     """Fetch a complete catalog:
     1. Try full fetch (no WHERE). If complete, return rows.
@@ -231,15 +211,13 @@ def fetch_full_spatial(url, ra_col):
         return [], False, 0
     if not truncated:
         return rows, False, 0
-    limit = len(rows)  # server limit detected from saturation
+    limit = len(rows)
     print(f"    spatial sharding (limit={limit})", file=sys.stderr)
     ra_col = ra_col or "RAJ2000"
-    # Recurse RA 0-360
+
     rows = spatial_fetch(url, 0.0, 360.0, ra_col, limit)
     print(f"    spatial complete: {len(rows)} rows", file=sys.stderr)
     return rows, True, 0
-
-
 def fetch(url):
     """Fetch TAP response. Retries without FORMAT=csv if the server rejects it."""
     attempts = [url]
@@ -260,8 +238,6 @@ def fetch(url):
                 continue
             raise
     return last_text
-
-
 def csv_to_json(text):
     """Plain CSV -> [ {col: val}, ... ]. Returns [] if not CSV-shaped."""
     lines = [l.rstrip("\n") for l in text.split("\n") if l.strip()]
@@ -302,8 +278,6 @@ def csv_to_json(text):
         if MAX_ROWS and len(rows) >= MAX_ROWS:
             break
     return rows
-
-
 def votable_to_json(text):
     """Parse VOTable (any encoding) via astropy. Falls back to None if astropy absent."""
     if "<VOTABLE" not in text:
@@ -339,8 +313,6 @@ def votable_to_json(text):
     except Exception as e:
         print(f"    astropy parse failed: {str(e)[:80]}", file=sys.stderr)
         return None
-
-
 def get_release_for_domain(domain):
     """Get (release_id, tag_name) for a domain. Creates release if missing."""
     tag = f"{domain}"
@@ -369,11 +341,7 @@ def get_release_for_domain(domain):
             return d["id"], tag
     except Exception:
         return None, None
-
-
 _RELEASE_CACHE = {}
-
-
 def get_upload_url(domain):
     """Return (upload_url, release_tag) for a domain."""
     if domain not in _RELEASE_CACHE:
@@ -383,12 +351,10 @@ def get_upload_url(domain):
         else:
             return None, None
     return _RELEASE_CACHE[domain]
-
-
 def extract_domain_from_url(url):
     """Extract clean domain from a TAP URL."""
     host = urllib.parse.urlparse(url).hostname or ""
-    # Map to canonical domain for release tagging
+
     domain_map = {
         "tapvizier.cds.unistra.fr": "tapvizier.cds.unistra.fr",
         "cds.unistra.fr": "tapvizier.cds.unistra.fr",
@@ -403,8 +369,6 @@ def extract_domain_from_url(url):
     if host in domain_map:
         return domain_map[host]
     return host
-
-
 def upload_asset(filename, data, domain):
     if not TOKEN:
         print("  !! no OMEGAFLOW_TOKEN, skip upload", file=sys.stderr)
@@ -429,12 +393,8 @@ def upload_asset(filename, data, domain):
         body = e.read().decode(errors="replace")[:200]
         print(f"  upload failed {e.code}: {body}", file=sys.stderr)
         return False
-
-
 def cdn_filename(source):
     return f"{source}.json"
-
-
 def update_source_block(block, cdn_file, domain):
     """Update a source block in sources.φ to point at the CDN JSON."""
     cdn_url = f"https://github.com/omegaflow/sources/releases/download/catalogs-{domain}/{cdn_file}"
@@ -443,10 +403,10 @@ def update_source_block(block, cdn_file, domain):
         r"url\s+https?://[^\s]+",
         f"url {cdn_url}",
         new_block, count=1)
-    # 2. rows+format text -> map . or cmap . + format json (CDN data is named-object JSON)
+
     if "rows" in new_block:
         new_block = new_block.replace("format text", "format json", 1)
-        # sources needing distance/redshift keys -> cmap . (keeps ra_key/dec_key/z_key)
+
         if any(k in new_block for k in ("z_key ", "plx_key ", "dist_key ",
                                          "pmra_key ", "pmdec_key ", "rv_key ")):
             new_block = re.sub(r"\nrows\b", "\ncmap .", new_block, count=1)
@@ -454,15 +414,13 @@ def update_source_block(block, cdn_file, domain):
             new_block = re.sub(r"\nrows\b", "\nmap .", new_block, count=1)
             new_block = re.sub(r"^ra_key ", "lat_key ", new_block, flags=re.M)
             new_block = re.sub(r"^dec_key ", "lon_key ", new_block, flags=re.M)
-    # 3. cmap/map with no format -> add format json
+
     elif ("cmap " in new_block or "map ." in new_block) and "format " not in new_block:
         new_block = re.sub(
             r"(url\s+\S+\n)",
             r"\1format json\n",
             new_block, count=1)
     return new_block
-
-
 def update_sources_file(uploaded, path="phi/sources.φ"):
     """Rewrite sources.φ so uploaded sources point at their CDN file.
     uploaded = {cdn_file: domain_tag}"""
@@ -486,8 +444,6 @@ def update_sources_file(uploaded, path="phi/sources.φ"):
     if changed:
         open(path, "w").write("\n".join(blocks))
     return changed
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--source", help="process only this source")
@@ -561,7 +517,5 @@ def main():
         update_sources_file(uploaded)
 
     print(f"\nDone: {done}  Skipped: {skipped}  Failed: {failed}", file=sys.stderr)
-
-
 if __name__ == "__main__":
     main()

@@ -10,7 +10,7 @@ Each particle carries:
 import math, json, random
 
 AU_M = 1.495978707e11
-GM_SATURN = 3.7931207e16  # G * M_saturn (m^3/s^2)
+GM_SATURN = 3.7931207e16
 
 SAT_RA_DEG = 251.75
 SAT_DEC_DEG = -21.0
@@ -53,7 +53,7 @@ def radec_of(v):
     dec = math.degrees(math.asin(v[2] / d))
     return ra, dec, d
 
-MAS_PER_YR = (math.pi / 180 / 3600 / 1000) / (365.25 * 86400)  # rad/s per mas/yr
+MAS_PER_YR = (math.pi / 180 / 3600 / 1000) / (365.25 * 86400)
 
 N_PER_ZONE = 2048
 particles = []
@@ -63,18 +63,18 @@ for zone_name, r_inner_km, r_outer_km, tau_zone in RINGS:
         r_m = r_km * 1000.0
         theta = 2 * math.pi * random.random()
         ct, st = math.cos(theta), math.sin(theta)
-        # position in ring plane around Saturn
+
         p_icrs = [sat_pos[0] + r_m*ct*xp[0] + r_m*st*yp[0],
                   sat_pos[1] + r_m*ct*xp[1] + r_m*st*yp[1],
                   sat_pos[2] + r_m*ct*xp[2] + r_m*st*yp[2]]
         ra, dec, dist_m = radec_of(p_icrs)
-        # Keplerian orbital speed, tangential direction in ring plane
+
         v_t = math.sqrt(GM_SATURN / r_m)
         tang = [-st * xp[0] + ct * yp[0],
                 -st * xp[1] + ct * yp[1],
                 -st * xp[2] + ct * yp[2]]
         v_vec = [v_t * tang[0], v_t * tang[1], v_t * tang[2]]
-        # project velocity onto RA/Dec unit vectors -> proper motion
+
         ra_r, dec_r = math.radians(ra), math.radians(dec)
         a_hat = [-math.sin(ra_r), math.cos(ra_r), 0.0]
         d_hat = [-math.sin(dec_r)*math.cos(ra_r), -math.sin(dec_r)*math.sin(ra_r), math.cos(dec_r)]

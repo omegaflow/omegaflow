@@ -259,13 +259,13 @@ const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
 
 fn absorption_coeff(force_type: u32) -> f32 {
     switch force_type {
-        case 0u, 1u: { return 0.0; }          // em, gravity: vacuum
-        case 2u: { return ALPHA_AIR; }          // acoustic
-        case 3u: { return 1.0 / V_P_GRANITE; } // seismic-body
-        case 4u: { return 1.0 / V_S_GRANITE; } // seismic-surface
-        case 5u: { return ALPHA_AIR; }          // thermal
-        case 6u: { return D_AIR; }              // diffusion
-        case 7u: { return 0.1; }                // advective
+        case 0u, 1u: { return 0.0; }
+        case 2u: { return ALPHA_AIR; }
+        case 3u: { return 1.0 / V_P_GRANITE; }
+        case 4u: { return 1.0 / V_S_GRANITE; }
+        case 5u: { return ALPHA_AIR; }
+        case 6u: { return D_AIR; }
+        case 7u: { return 0.1; }
         default: { return 0.0; }
     }
 }

@@ -194,12 +194,9 @@ jobs:
           TAP_MAX_ROWS: "0"
           TAP_MAX_SOURCES: "25"
         run: |
-          # astropy handles VOTable BINARY/BINARY2/TABLEDATA (cloud-side only)
           pip install -q astropy numpy 2>/dev/null || true
-          # Convert remaining TAP-STATIC catalog sources to CDN JSON
           python3 scripts/tap_to_cdn.py --update-sources || \
             echo "::warning::TAP conversion had failures (see logs)"
-          # If sources.φ was updated, commit + push so the server picks up CDN URLs
           if ! git diff --quiet -- phi/sources.φ; then
             git config user.name "omegaflow-bot"
             git config user.email "bot@omegaflow.space"
@@ -213,7 +210,6 @@ jobs:
           OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
           GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
-          # Shard the largest catalogs (NVSS, FIRST, LOTSS) along RA into 24 CDN files each.
           if [ ! -f /tmp/shard_done ]; then
             for src in vizier_nvss_radio vizier_first_radio vizier_lotss_dr3 vizier_gleam_extragalactic_catalog; do
               if ! python3 scripts/shard_catalog.py --source "$src" --bins 24 --update-sources 2>/dev/null; then
@@ -229,7 +225,6 @@ jobs:
             done
             touch /tmp/shard_done
           fi
-          # Reload mid-size excerpts to full catalogs (COUNT-verified)
           if [ ! -f /tmp/reload_done ]; then
             python3 scripts/shard_catalog.py --reload-excerpts 2>/dev/null || \
               echo "::warning::excerpt reload had failures"
@@ -266,7 +261,6 @@ jobs:
             ["pb2002_orogens.json"]="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_orogens.json"
             ["pb2002_plates.json"]="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json"
           )
-          # Domain mapping: mirror filename -> domain tag (matches catalogs-{domain} release)
           declare -A MIRROR_DOMAINS=(
             ["ne_10m_parks_area.geojson"]="github.com-nvkelso-natural-earth-vector"
             ["ne_10m_parks_point.geojson"]="github.com-nvkelso-natural-earth-vector"

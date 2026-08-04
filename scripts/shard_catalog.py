@@ -31,8 +31,6 @@ SHARD_DOMAIN = "tapvizier.cds.unistra.fr"
 _SHARD_RELEASE_ID = None
 TIMEOUT = int(os.environ.get("TAP_TIMEOUT", "180"))
 SLEEP = float(os.environ.get("TAP_SLEEP", "2"))
-
-# source name -> (table, ra_col, extra_where)
 SHARDS = {
     "vizier_nvss_radio": ("VIII/65/nvss", "RAJ2000", ""),
     "vizier_nvss_radio_catalog": ("VIII/65/nvss", "RAJ2000", ""),
@@ -48,30 +46,22 @@ SHARDS = {
     "vizier_sdss12_stars": ("V/147/sdss12", "RAJ2000", ""),
 }
 
-# Mid-size catalogs uploaded as TOP excerpts on CDN; reload them fully.
-# file -> (table, select_cols, ra_col, expected_full_size)
 EXCERPTS = {
     "vizier_6dfgs.json": ("VII/259/6dfgs", "RAJ2000,DEJ2000,cz,e_cz,bJmag,S/G", "RAJ2000", 110000),
     "vizier_hecate.json": ("J/MNRAS/506/1896/hecate", "RAJ2000,DEJ2000,HRV,D,W1mag,W2mag", "RAJ2000", 20000),
     "vizier_hi4pi.json": ("J/A+A/594/A116/hi4pi", "GLON,GLAT,NHI,VLSR,FWHM", "GLON", 200000),
     "vizier_2qz.json": ("VII/241/2qz", "RAJ2000,DEJ2000,z,bJmag", "RAJ2000", 49000),
 }
-
-
 def build_reload_url(table, select_cols, lo=None, hi=None, ra_col=None):
     q = f"SELECT {select_cols} FROM {table}"
     if lo is not None and ra_col:
         q += f" WHERE {ra_col} BETWEEN {lo:.4f} AND {hi:.4f}"
     base = "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY="
     return base + urllib.parse.quote_plus(q)
-
-
 def fetch(url):
     req = urllib.request.Request(url, headers={"User-Agent": "omegaflow-bot/1.0"})
     with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
         return r.read().decode("utf-8", errors="replace")
-
-
 def votable_to_json(text):
     if "<VOTABLE" not in text:
         return None
@@ -103,8 +93,6 @@ def votable_to_json(text):
         return rows
     except Exception:
         return None
-
-
 def csv_to_json(text):
     lines = [l.rstrip("\n") for l in text.split("\n") if l.strip()]
     if not lines:
@@ -142,25 +130,19 @@ def csv_to_json(text):
                 row[col] = v
         rows.append(row)
     return rows
-
-
 def parse_rows(text):
     rows = votable_to_json(text)
     if rows is None:
         rows = csv_to_json(text)
     return rows
-
-
 def build_shard_url(table, ra_col, lo, hi, extra_where, select_cols="*"):
-    # Use the server's native TAP sync with CSV output
+
     q = f"SELECT {select_cols} FROM {table} WHERE {ra_col} BETWEEN {lo:.4f} AND {hi:.4f}{extra_where}"
     if table.startswith(("VIII/", "J/", "V/", "B/")):
         base = "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY="
     else:
         base = "https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY="
     return base + urllib.parse.quote_plus(q)
-
-
 def get_shard_release_id():
     global _SHARD_RELEASE_ID
     if _SHARD_RELEASE_ID:
@@ -177,8 +159,6 @@ def get_shard_release_id():
             return _SHARD_RELEASE_ID
     except Exception:
         return None
-
-
 def upload_asset(filename, data):
     if not TOKEN:
         print(f"  !! no OMEGAFLOW_TOKEN, skip {filename}", file=sys.stderr)
@@ -204,8 +184,6 @@ def upload_asset(filename, data):
         body = e.read().decode(errors="replace")[:200]
         print(f"  upload failed {e.code}: {body}", file=sys.stderr)
         return False
-
-
 def reload_excerpts(dry_run=False):
     """Reload mid-size CDN excerpt files to full catalog (COUNT-verified)."""
     import urllib.error as ue
@@ -221,7 +199,7 @@ def reload_excerpts(dry_run=False):
             if not rows:
                 print("    EMPTY", file=sys.stderr)
                 continue
-            # verification: rough completeness (no exact COUNT, use expected threshold)
+
             if expected and len(rows) < expected * 0.5:
                 print(f"    INCOMPLETE: {len(rows)} vs ~{expected} (skip)", file=sys.stderr)
                 continue
@@ -231,8 +209,6 @@ def reload_excerpts(dry_run=False):
         except Exception as e:
             print(f"    FAILED: {str(e)[:120]}", file=sys.stderr)
         time.sleep(SLEEP)
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--source", required=False)
@@ -251,8 +227,6 @@ def main():
         print(f"Unknown shard config for {args.source}", file=sys.stderr)
         sys.exit(1)
     table, ra_col, extra = SHARDS[args.source]
-
-    # Sample the select columns from sources.phi if present
     select_cols = "*"
     content = open("phi/sources.φ").read()
     blocks = re.split(r"\n(?=source )", content)
@@ -265,7 +239,7 @@ def main():
                 sel = re.search(r"SELECT\s+(.*?)\s+FROM", dec, re.I | re.DOTALL)
                 if sel:
                     cols = re.sub(r"TOP\s*\d+\s*", "", sel.group(1), flags=re.I).strip()
-                    # dedupe columns, keep order
+
                     seen = set()
                     uniq = []
                     for c in re.split(r",", cols):
@@ -310,10 +284,8 @@ def main():
     print(f"\nTotal rows across shards: {total}", file=sys.stderr)
 
     if args.update_sources and uploaded:
-        # rewrite the single source into N shard sources
+
         rewrite_shard_sources(args.source, uploaded)
-
-
 def rewrite_shard_sources(src_name, shards):
     content = open("phi/sources.φ").read()
     blocks = re.split(r"\n(?=source )", content)
@@ -322,7 +294,7 @@ def rewrite_shard_sources(src_name, shards):
     for b in blocks:
         m = re.match(rf"source ({src_name})\n(.*?)(\Z)", b, re.DOTALL)
         if m:
-            # keep base directives (ttl, force) from original
+
             body = m.group(2)
             ttl = re.search(r"ttl (\d+)", body)
             force = re.search(r"force (\S+)", body)
@@ -342,7 +314,5 @@ def rewrite_shard_sources(src_name, shards):
     if replaced:
         open("phi/sources.φ", "w").write("\n".join(out))
         print(f"Rewrote {src_name} -> {len(shards)} shard sources", file=sys.stderr)
-
-
 if __name__ == "__main__":
     main()

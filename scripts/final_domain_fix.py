@@ -7,8 +7,6 @@ import re, sys
 SOURCE_PHI = "phi/sources.φ"
 MAP_FILE = "/tmp/opencode/final_domain_map.tsv"
 DRY_RUN = "--dry-run" in sys.argv
-
-
 def load_domain_map():
     """Return {source_name: correct_domain}."""
     result = {}
@@ -21,14 +19,10 @@ def load_domain_map():
             if len(parts) >= 2:
                 result[parts[0]] = parts[1]
     return result
-
-
 def domain_to_tag(domain):
     """Convert a domain string to a catalogs-{tag} suffix.
     github.com/owner/repo -> github.com-owner-repo"""
     return domain.replace("/", "-")
-
-
 def apply_fixes(domain_map):
     """Rewrite sources.φ line-by-line. Safe — no block splitting."""
     lines = open(SOURCE_PHI).readlines()
@@ -54,7 +48,7 @@ def apply_fixes(domain_map):
             continue
 
         correct_domain = domain_map[current_source]
-        # Don't double-fix
+
         if current_source in updated:
             continue
 
@@ -86,16 +80,12 @@ def apply_fixes(domain_map):
         open(SOURCE_PHI, "w").writelines(lines)
 
     return count
-
-
 def main():
     domain_map = load_domain_map()
     print(f"Loaded {len(domain_map)} corrections", file=sys.stderr)
 
     count = apply_fixes(domain_map)
     print(f"{'Would fix' if DRY_RUN else 'Fixed'} {count} URLs", file=sys.stderr)
-
-    # Verify no sphere tags remain
     content = open(SOURCE_PHI).read()
     sphere_tags = re.findall(r"catalogs-(astro|geosphere|subatomic|atmosphere|magnetosphere|biosphere|exosphere|technosphere|hydrosphere)", content)
     if sphere_tags:
@@ -110,7 +100,5 @@ def main():
     fcc_count = len(re.findall(r"catalogs-github\.com-FreeCodeCamp", content))
     if fcc_count:
         print(f"WARNING: {fcc_count} FreeCodeCamp tags remain", file=sys.stderr)
-
-
 if __name__ == "__main__":
     main()

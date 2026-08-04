@@ -15,23 +15,15 @@ SOURCE_PHI = "phi/sources.φ"
 DRY_RUN = "--dry-run" in sys.argv
 WORKERS = int(sys.argv[sys.argv.index("--workers") + 1]) if "--workers" in sys.argv else 8
 LIMIT = int(sys.argv[sys.argv.index("--limit") + 1]) if "--limit" in sys.argv else 0
-
-# Old releases that HAVE assets
 OLD_RELEASES = [
     ("catalogs-v2", 364587472),
     ("catalogs", 364488765),
     ("v1.0", 363018488),
 ]
-
-# Sphere prefixes from commit e93c1a6
 SPHERES = ["astro", "geosphere", "hydrosphere", "atmosphere", "magnetosphere",
            "biosphere", "exosphere", "subatomic", "technosphere"]
-
-
 def log(msg):
     print(msg, file=sys.stderr, flush=True)
-
-
 def get_current_mapping():
     """Return {source_name: {domain_tag, release_url}} for all CDN sources in sources.φ."""
     result = {}
@@ -52,8 +44,6 @@ def get_current_mapping():
                 }
             cur = None
     return result
-
-
 def list_old_assets():
     """Return {filename: (release_id, asset_id, url)} for all old release assets."""
     assets = {}
@@ -69,7 +59,7 @@ def list_old_assets():
                     break
                 for a in data:
                     name = a["name"]
-                    if name not in assets:  # prefer first found (v2 > catalogs > v1.0)
+                    if name not in assets:
                         assets[name] = {
                             "release_id": rid,
                             "asset_id": a["id"],
@@ -82,27 +72,21 @@ def list_old_assets():
                 log(f"  Error listing {tag} page {page}: {e}")
                 break
     return assets
-
-
 def find_old_filename(current_name):
     """Try to find an old asset filename matching the current source name.
     Pre-rename (e93c1a6): strip sphere prefix. E.g. geosphere_arcgis_* -> arcgis_*"""
-    # Direct match
+
     yield f"{current_name}.json"
     
-    # Strip sphere prefix
+
     for s in SPHERES:
         if current_name.startswith(f"{s}_"):
             old = current_name[len(s) + 1:]
             yield f"{old}.json"
     
-    # Other known transformations
-    # Some sources had 'universe_' prefix renamed to 'astro_'
     if current_name.startswith("astro_"):
-        old = current_name[5:]  # strip 'astro_'
+        old = current_name[5:]
         yield f"universe_{old}.json"
-
-
 def get_release_id_for_tag(domain_tag):
     """Get the release ID for a domain tag. Returns None if not found."""
     tag_name = f"{domain_tag}"
@@ -114,21 +98,19 @@ def get_release_id_for_tag(domain_tag):
             return d["id"]
     except Exception:
         return None
-
-
 def migrate_one(source_name, info, old_assets, release_id_cache):
     """Migrate one asset from old release to new domain release."""
     current_filename = info["filename"]
     domain_tag = info["domain_tag"]
     
     if DRY_RUN:
-        # Check if old asset exists
+
         for old_fn in find_old_filename(source_name):
             if old_fn in old_assets:
                 return (source_name, f"dry-run: {old_assets[old_fn]['from_tag']} -> {domain_tag}")
         return (source_name, "MISSING")
     
-    # Find old asset
+
     old_entry = None
     for old_fn in find_old_filename(source_name):
         if old_fn in old_assets:
@@ -138,7 +120,7 @@ def migrate_one(source_name, info, old_assets, release_id_cache):
     if not old_entry:
         return (source_name, "MISSING")
     
-    # Get target release ID
+
     if domain_tag not in release_id_cache:
         rid = get_release_id_for_tag(domain_tag)
         if not rid:
@@ -146,7 +128,7 @@ def migrate_one(source_name, info, old_assets, release_id_cache):
         release_id_cache[domain_tag] = rid
     target_rid = release_id_cache[domain_tag]
     
-    # Download from old release
+
     try:
         req = urllib.request.Request(old_entry["download_url"], headers=HEADERS)
         with urllib.request.urlopen(req, timeout=120) as r:
@@ -154,7 +136,7 @@ def migrate_one(source_name, info, old_assets, release_id_cache):
     except Exception as e:
         return (source_name, f"DOWNLOAD_FAIL {str(e)[:50]}")
     
-    # Upload to new release
+
     upload_req = urllib.request.Request(
         f"{UPLOAD_URL.format(release_id=target_rid)}?name={current_filename}",
         data=data, method="POST",
@@ -163,29 +145,27 @@ def migrate_one(source_name, info, old_assets, release_id_cache):
         with urllib.request.urlopen(upload_req, timeout=120) as r:
             return (source_name, "OK")
     except urllib.error.HTTPError as e:
-        if e.code == 422:  # already exists
+        if e.code == 422:
             return (source_name, "EXISTS")
         err = e.read().decode(errors="replace")[:80]
         return (source_name, f"UPLOAD_{e.code} {err}")
-
-
 def main():
     log("=== RELEASE ASSET MIGRATION ===")
     
-    # Get current source -> domain mapping
+
     log("Step 1: Current mapping...")
     current = get_current_mapping()
     log(f"  {len(current)} CDN sources, {len(set(i['domain_tag'] for i in current.values()))} domain tags")
     
-    # List old assets
+
     log("Step 2: Listing old assets...")
     old_assets = list_old_assets()
     log(f"  {len(old_assets)} old assets across {len(OLD_RELEASES)} releases")
     
-    # Cache release IDs for domain tags
+
     release_id_cache = {}
     
-    # Migrate
+
     log(f"Step 3: Migrating {len(current)} assets ({WORKERS} workers)...")
     if LIMIT:
         current = dict(list(current.items())[:LIMIT])
@@ -215,7 +195,5 @@ def main():
         log("WARNING: Some sources had no old asset — these may be live-only or never-uploaded")
     if failed > 0:
         log("WARNING: Some uploads failed — re-run to retry")
-
-
 if __name__ == "__main__":
     main()

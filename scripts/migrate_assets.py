@@ -16,26 +16,18 @@ DRY_RUN = "--dry-run" in sys.argv
 CREATE_ONLY = "--create-only" in sys.argv
 MIGRATE_ONLY = "--migrate-only" in sys.argv
 WORKERS = 8
-
-# Old sphere releases (assets are still there)
 OLD_SPHERE_TAGS = [
     "catalogs-astro", "catalogs-geosphere", "catalogs-subatomic",
     "catalogs-atmosphere", "catalogs-magnetosphere", "catalogs-biosphere",
     "catalogs-exosphere", "catalogs-technosphere", "catalogs-hydrosphere",
-    "catalogs-kp.gfz.de",  # mis-mapped USGS
-    "catalogs-github.com-FreeCodeCamp-ProjectReferenceData",  # mis-mapped NASA
+    "catalogs-kp.gfz.de",
+    "catalogs-github.com-FreeCodeCamp-ProjectReferenceData",
 ]
-
-
 def log(msg):
     print(msg, file=sys.stderr, flush=True)
-
-
 def extract_domain_tag(url_line):
     m = re.search(r"catalogs-([^/]+)/", url_line)
     return m.group(1) if m else None
-
-
 def get_current_releases():
     """Return {tag: source_names} from current sources.φ."""
     result = defaultdict(list)
@@ -50,8 +42,6 @@ def get_current_releases():
                 result[tag].append(cur)
             cur = None
     return dict(result)
-
-
 def get_old_asset_urls():
     """Return {source_name: old_cdn_url} for all former-sphere sources."""
     content = open(SOURCE_PHI).read()
@@ -65,16 +55,14 @@ def get_old_asset_urls():
         for name in all_sources:
             old_urls[name] = f"https://github.com/omegaflow/sources/releases/download/{tag}/{name}.json"
     
-    # Also check older releases: catalogs, catalogs-v2, v1.0
+
     old_format_tags = ["catalogs-v2", "catalogs"]
     for tag in old_format_tags:
         for name in all_sources:
-            # pre-rename names might differ
+
             old_urls[name] = f"https://github.com/omegaflow/sources/releases/download/{tag}/{name}.json"
     
     return old_urls
-
-
 def get_or_create_release(domain):
     """Get existing release ID or create a new one. Returns release_id.
     domain = the human-readable label (e.g. 'ndbc.noaa.gov').
@@ -115,8 +103,6 @@ def get_or_create_release(domain):
         err_body = e.read().decode(errors="replace")[:200]
         log(f"  FAIL create {full_tag}: {e.code} {err_body}")
         return None
-
-
 def migrate_one(source_name, old_url, new_release_id):
     """Download from old release, upload to new release. Returns (name, success)."""
     if DRY_RUN:
@@ -124,7 +110,7 @@ def migrate_one(source_name, old_url, new_release_id):
     
     data = None
     
-    # Try old sphere tag URL first
+
     for old_tag in OLD_SPHERE_TAGS:
         url = f"https://github.com/omegaflow/sources/releases/download/{old_tag}/{source_name}.json"
         try:
@@ -136,7 +122,7 @@ def migrate_one(source_name, old_url, new_release_id):
             data = None
             continue
     
-    # Try older formats
+
     if data is None:
         for old_tag in ["catalogs-v2", "catalogs"]:
             url = f"https://github.com/omegaflow/sources/releases/download/{old_tag}/{source_name}.json"
@@ -152,7 +138,7 @@ def migrate_one(source_name, old_url, new_release_id):
         log(f"  MISS {source_name}: not found in any old release")
         return (source_name, False)
     
-    # Upload to new release
+
     upload_req = urllib.request.Request(
         f"{UPLOAD_URL.format(release_id=new_release_id)}?name={source_name}.json",
         data=data, method="POST",
@@ -162,21 +148,19 @@ def migrate_one(source_name, old_url, new_release_id):
             return (source_name, True)
     except urllib.error.HTTPError as e:
         body = e.read().decode(errors="replace")[:100]
-        if e.code == 422:  # already exists
+        if e.code == 422:
             return (source_name, True)
         log(f"  UPLOAD FAIL {source_name}: {e.code} {body}")
         return (source_name, False)
-
-
 def main():
     log("=== ASSET MIGRATION ===")
     
-    # Get current source -> tag mapping
+
     log("Step 1: Scanning sources.φ...")
     releases = get_current_releases()
     log(f"  {len(releases)} unique domain tags, {sum(len(v) for v in releases.values())} assets")
     
-    # Create missing releases
+
     if not MIGRATE_ONLY:
         log(f"Step 2: Creating missing releases (existing: {len(releases)} tags)...")
         release_ids = {}
@@ -193,10 +177,10 @@ def main():
         if CREATE_ONLY:
             return
     
-    # Migrate assets
+
     if not CREATE_ONLY:
         log(f"Step 3: Migrating assets ({sum(len(v) for v in releases.values())} files)...")
-        # Build tag -> release_id from existing releases
+
         release_ids = {}
         for tag in releases.keys():
             rid = get_or_create_release(tag)
@@ -208,12 +192,12 @@ def main():
             log("  Dry run — would migrate all assets")
             return
         
-        # Use ThreadPool for parallel migration
+
         total = sum(len(sources) for sources in releases.values())
         done = 0
         failed = 0
         
-        # Flatten tasks: (source_name, target_release_id)
+
         tasks = []
         for tag, sources in releases.items():
             rid = release_ids.get(tag)
@@ -234,7 +218,5 @@ def main():
                     log(f"  Progress: {done}/{len(tasks)} ({failed} failed)")
         
         log(f"\nDone. Migrated: {done - failed}/{done} ({failed} failed)")
-
-
 if __name__ == "__main__":
     main()

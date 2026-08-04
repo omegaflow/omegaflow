@@ -18,8 +18,6 @@ import urllib.error
 import urllib.parse
 import concurrent.futures
 from pathlib import Path
-
-# Add parent to path for flatten_cdn import
 sys.path.insert(0, str(Path(__file__).parent))
 from flatten_cdn import flatten_to_universal
 
@@ -144,7 +142,7 @@ def mirror_source(src, update_phi=False):
     if len(data) < 16:
         return {"name": name, "ok": False, "error": f"Too small ({len(data)} bytes)", "size": len(data)}
     
-    # Flatten to universal CDN format
+
     try:
         flat_data, fmt_hint = flatten_to_universal(data, name)
     except Exception as e:
@@ -168,20 +166,20 @@ def mirror_source(src, update_phi=False):
 def main():
     sources, content = parse_sources()
     
-    # Filter based on mode
+
     if MODE == "migrate":
-        # Only non-CDN, non-positional, TTL >= 300
+
         candidates = [s for s in sources if not s["is_cdn"] and s.get("ttl", 0) >= 300
                      and not re.search(r'\{lat\}|\{lon\}|\{ra\}|\{dec\}|\{radius\}|\{alt\}', s["url"])]
     elif MODE == "mirror-live":
-        # All non-CDN sources (health check — no phi update)
+
         candidates = [s for s in sources if not s["is_cdn"]]
         if MAX_TTL is not None:
             candidates = [s for s in candidates if s.get("ttl", 999999) <= MAX_TTL]
     elif MODE == "mirror-all":
-        # All non-CDN sources — update phi only for TTL >= 300 non-positional
+
         candidates = [s for s in sources if not s["is_cdn"]]
-        update_phi = False  # controlled per-source below
+        update_phi = False
     else:
         print(f"Unknown mode: {MODE}", file=sys.stderr)
         sys.exit(1)
@@ -218,11 +216,11 @@ def main():
     
     print(f"Done: {migrated} ok, {failed} failed")
     
-    # Write health report
+
     with open(HEALTH_FILE, 'w') as f:
         json.dump(health, f)
     
-    # Update sources.φ for sources marked for CDN migration
+
     phi_updated = 0
     for result in health["results"]:
         if not result["ok"] or "cdn_url" not in result:

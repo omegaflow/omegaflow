@@ -18,19 +18,13 @@ API = f"https://api.github.com/repos/{REPO}"
 DRY_RUN = "--dry-run" in sys.argv
 WORKERS = int(sys.argv[sys.argv.index("--workers") + 1]) if "--workers" in sys.argv else 6
 SOURCE_PHI = "phi/sources.φ"
-
-# Old release tags on the renamed repo (assets are here)
 OLD_LEGACY = [
     ("catalogs", 364488765),
     ("catalogs-v2", 364587472),
     ("v1.0", 363018488),
 ]
-
-
 def log(msg):
     print(msg, file=sys.stderr, flush=True)
-
-
 def get_current_domains():
     """Return {(domain_tag, source_name, cdn_filename)} for all CDN sources."""
     results = set()
@@ -47,8 +41,6 @@ def get_current_domains():
                 results.add((domain_tag, cur, cdn_filename))
             cur = None
     return results
-
-
 def api_get(url):
     req = urllib.request.Request(url, headers=HEADERS)
     try:
@@ -56,8 +48,6 @@ def api_get(url):
             return json.load(r)
     except Exception:
         return None
-
-
 def list_all_releases():
     """Return {tag_name: release_id} for all releases on the repo."""
     releases = {}
@@ -71,8 +61,6 @@ def list_all_releases():
         page += 1
         time.sleep(0.3)
     return releases
-
-
 def get_release_assets(release_id):
     """Return {asset_name: asset_info} for a release."""
     assets = {}
@@ -86,8 +74,6 @@ def get_release_assets(release_id):
         page += 1
         time.sleep(0.3)
     return assets
-
-
 def create_release(domain_tag):
     tag = domain_tag.replace("/", "-")
     body = json.dumps({"tag_name": tag, "name": tag, "body": f"CDN for {domain_tag}", "draft": False}).encode()
@@ -99,13 +85,11 @@ def create_release(domain_tag):
             log(f"  CREATED {tag} (id={d['id']})")
             return d["id"]
     except urllib.error.HTTPError as e:
-        if e.code == 422:  # already exists
+        if e.code == 422:
             return None
         err = e.read().decode(errors="replace")[:150]
         log(f"  FAIL {tag}: {e.code} {err}")
         return None
-
-
 def migrate_assets_for_domain(domain, sources, existing_releases, old_assets_cache):
     """For a domain, ensure release exists and upload all its sources' assets."""
     tag = domain.replace("/", "-")
@@ -128,11 +112,11 @@ def migrate_assets_for_domain(domain, sources, existing_releases, old_assets_cac
             ok += 1
             continue
         
-        # Find the asset in any old release
+
         data = None
         old_fn = f"{source_name}.json"
         
-        # First check catalogs-{domain} old release (from pre-rename migration)
+
         old_cats_tag = f"catalogs-{domain}"
         if old_cats_tag in existing_releases:
             old_rid = existing_releases[old_cats_tag]
@@ -148,30 +132,30 @@ def migrate_assets_for_domain(domain, sources, existing_releases, old_assets_cac
                 except Exception:
                     pass
         
-        # Fallback to legacy releases
+
         if data is None:
             for old_tag, old_rid in OLD_LEGACY:
                 if old_rid not in old_assets_cache:
                     old_assets_cache[old_rid] = get_release_assets(old_rid)
                 
-                # Try various old filename patterns (pre-rename)
+
                 sp = source_name.split("_", 2)
                 if len(sp) >= 3:
-                    old_name = f"{sp[2]}.json"  # strip sphere prefix
+                    old_name = f"{sp[2]}.json"
                 else:
                     old_name = old_fn
                 
                 candidates = [old_fn, old_name]
-                # Canonical rename: try reverse mappings
+
                 parts2 = source_name.split("_")
                 if len(parts2) >= 3 and parts2[1] == "intermagnet":
                     candidates.append(f"{parts2[0]}_{parts2[2]}.json")
                 if len(parts2) >= 3 and parts2[2] == "main":
                     candidates.append(f"{parts2[0]}_{parts2[1]}.json")
-                # Type B reverse: strip provider prefix
+
                 if len(parts2) >= 3 and parts2[1] in ("gml","openmeteo","nws","usgs","wikipedia","swpc","emsc","gwis","satnogs","pdg"):
                     candidates.append(f"{parts2[0]}_{parts2[2]}.json")
-                # Generic: try just sphere_token2
+
                 if len(parts2) >= 3:
                     candidates.append(f"{parts2[0]}_{parts2[2]}.json")
                 found = False
@@ -193,7 +177,7 @@ def migrate_assets_for_domain(domain, sources, existing_releases, old_assets_cac
             fail += 1
             continue
         
-        # Upload
+
         upload_req = urllib.request.Request(
             f"{upload_url}?name={cdn_filename}",
             data=data, method="POST",
@@ -203,17 +187,15 @@ def migrate_assets_for_domain(domain, sources, existing_releases, old_assets_cac
                 ok += 1
         except urllib.error.HTTPError as e:
             if e.code == 422:
-                ok += 1  # already exists
+                ok += 1
             else:
                 fail += 1
     
     return ok, fail
-
-
 def main():
     log("=== BOOTSTRAP: bare-domain releases + asset migration ===")
     
-    # Get domain→sources mapping
+
     log("Step 1: Domain→source mapping...")
     domain_sources = {}
     for domain, source_name, cdn_filename in get_current_domains():
@@ -222,16 +204,16 @@ def main():
         domain_sources[domain].append((source_name, cdn_filename))
     log(f"  {len(domain_sources)} unique domains, {sum(len(v) for v in domain_sources.values())} assets")
     
-    # List existing releases
+
     log("Step 2: Existing releases...")
     existing = list_all_releases()
     log(f"  {len(existing)} releases exist")
     
-    # Count catalogs- prefixed releases (to be replaced)
+
     old_cats = {k: v for k, v in existing.items() if k.startswith("catalogs-")}
     log(f"  {len(old_cats)} old catalogs- releases to migrate from")
     
-    # Create missing bare releases + migrate assets
+
     log(f"Step 3: Bare releases + migration ({len(domain_sources)} domains, {WORKERS} workers)...")
     
     if DRY_RUN:
@@ -245,14 +227,14 @@ def main():
     done = 0
     old_assets_cache = {}
     
-    # Download old assets cache for legacy releases (one-time)
+
     log("  Caching legacy release assets...")
     for old_tag, old_rid in OLD_LEGACY:
         if old_rid not in old_assets_cache:
             old_assets_cache[old_rid] = get_release_assets(old_rid)
             log(f"    {old_tag}: {len(old_assets_cache[old_rid])} assets")
     
-    # Also cache old catalogs- releases (sample ~10 largest)
+
     for old_tag in sorted(old_cats.keys())[:50]:
         old_rid = old_cats[old_tag]
         if old_rid not in old_assets_cache:
@@ -281,7 +263,5 @@ def main():
     
     if total_fail > 0:
         log("Re-run to retry failed assets")
-
-
 if __name__ == "__main__":
     main()

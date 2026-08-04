@@ -9,8 +9,6 @@ import re, sys
 
 SOURCE_PHI = "phi/sources.φ"
 DRY_RUN = "--dry-run" in sys.argv
-
-# Type B: {domain → provider_token}
 DOMAIN_PROVIDER = {
     "gml.noaa.gov": "gml",
     "open-meteo.com": "openmeteo",
@@ -23,8 +21,6 @@ DOMAIN_PROVIDER = {
     "network.satnogs.org": "satnogs",
     "github.com-scikit-hep-particle": "pdg",
 }
-
-# Type A: {source → detail_suffix}
 TYPE_A_DETAIL = {
     "astro_heasarc": "main",
     "astro_irsa": "main",
@@ -41,8 +37,6 @@ TYPE_A_DETAIL = {
     "geosphere_geopages": "list",
 }
 
-# Type C: INTERMAGNET station codes (token2 is a station code)
-# Rename magnetosphere_{code} → magnetosphere_intermagnet_{code}
 INTERMAGNET_PREFIX = "magnetosphere"
 INTERMAGNET_CODES = {
     "abg", "abk", "aia", "ars", "asp", "bdv", "bel", "bfo", "bou", "brw",
@@ -56,8 +50,6 @@ INTERMAGNET_CODES = {
     "thL", "thy", "tirm", "tlon", "tsu", "ttb", "tuc", "ups", "valL",
     "vna", "vos", "vss", "wic", "wng",
 }
-
-
 def build_rename_map():
     """Parse sources.φ and build {old_name: new_name} for all 2-token sources."""
     renames = {}
@@ -74,13 +66,13 @@ def build_rename_map():
         if not cur_source:
             continue
         
-        # Extract domain from CDN URLs
+
         if line.startswith("url ") and "releases/download/" in line:
             m = re.search(r"releases/download/([^/]+)/(.+)", line)
             if m:
                 cur_domain = m.group(1)
         
-        # Extract domain from live API URLs
+
         if line.startswith("url ") and "releases/download/" not in line and "://" in line:
             m = re.search(r"://([^/\s]+)", line)
             if m:
@@ -99,20 +91,18 @@ def build_rename_map():
         sphere, t2 = tokens[0], tokens[1]
         new_name = None
         
-        # Type C: INTERMAGNET stations
+
         if sphere == INTERMAGNET_PREFIX and (t2.lower() in {c.lower() for c in INTERMAGNET_CODES} or t2 in INTERMAGNET_CODES):
             new_name = f"{sphere}_intermagnet_{t2}"
-        # Type B: token2 is data type, provider from domain
+
         elif cur_domain in DOMAIN_PROVIDER:
             provider = DOMAIN_PROVIDER[cur_domain]
             new_name = f"{sphere}_{provider}_{t2}"
-        # Type A: check per-source mapping
+
         elif cur_source in TYPE_A_DETAIL:
             detail = TYPE_A_DETAIL[cur_source]
             new_name = f"{sphere}_{t2}_{detail}"
         else:
-            # Generic: use domain-based provider or add _main
-            # Try domain-based first
             domain_prov = cur_domain.split(".")[0] if "." in cur_domain else cur_domain
             new_name = f"{sphere}_{domain_prov}_{t2}"
         
@@ -122,8 +112,6 @@ def build_rename_map():
         cur_source = None
     
     return renames
-
-
 def apply_renames(rename_map, dry=False):
     """Rewrite sources.φ line-by-line, renaming source blocks and CDN filenames."""
     lines = open(SOURCE_PHI).readlines()
@@ -143,19 +131,17 @@ def apply_renames(rename_map, dry=False):
                     else:
                         lines[i] = new_line
                         count += 1
-                    break  # only one rename per line
+                    break
     
     if not dry and count > 0:
         open(SOURCE_PHI, "w").writelines(lines)
     
     return count, errors
-
-
 def main():
     rename_map = build_rename_map()
     print(f"Rename map: {len(rename_map)} sources", file=sys.stderr)
     
-    # Show by category
+
     intermagnet = {k: v for k, v in rename_map.items() if k.startswith("magnetosphere_") and "intermagnet" in v}
     type_b = {k: v for k, v in rename_map.items() if k not in intermagnet and k not in TYPE_A_DETAIL}
     type_a = {k: v for k, v in rename_map.items() if k in TYPE_A_DETAIL}
@@ -177,7 +163,7 @@ def main():
     print(f"\n{action} {count} occurrences", file=sys.stderr)
     
     if not DRY_RUN and count > 0:
-        # Verify no 2-token sources remain
+
         remaining = 0
         for line in open(SOURCE_PHI):
             if line.startswith("source "):
@@ -186,7 +172,5 @@ def main():
                     remaining += 1
                     print(f"  REMAINING: {name}", file=sys.stderr)
         print(f"Remaining 2-token sources: {remaining}", file=sys.stderr)
-
-
 if __name__ == "__main__":
     main()

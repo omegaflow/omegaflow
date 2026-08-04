@@ -14,48 +14,48 @@ def flatten_to_universal(raw_bytes, source_name=""):
     if not text:
         return json.dumps({"data": []}).encode(), "terrestrial"
     
-    # Try JSON first
+
     try:
         data = json.loads(text)
         return _flatten_json(data, source_name)
     except (json.JSONDecodeError, ValueError):
         pass
     
-    # Try text/CSV
+
     return _flatten_text(text, source_name)
 
 def _flatten_json(data, source_name):
     """Flatten JSON data to universal format."""
-    # Already in universal format?
+
     if isinstance(data, dict) and "data" in data and isinstance(data["data"], list):
         return json.dumps(data).encode(), _detect_format(data["data"])
     
-    # Array of objects
+
     if isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
         flat = [_normalize_keys(item) for item in data]
         return json.dumps({"data": flat}).encode(), _detect_format(flat)
     
-    # Object with known array keys
+
     if isinstance(data, dict):
         for key in ("data", "results", "features", "rows", "items", "records", "stations"):
             if key in data and isinstance(data[key], list):
                 arr = data[key]
                 if len(arr) > 0 and isinstance(arr[0], dict):
-                    # Normalize known field names
+
                     flat = []
                     for item in arr:
                         flat.append(_normalize_keys(item))
                     return json.dumps({"data": flat}).encode(), _detect_format(flat)
         
-        # Single object — wrap in array
+
         flat_obj = _normalize_keys(data)
         return json.dumps({"data": [flat_obj]}).encode(), _detect_format([flat_obj])
     
-    # Array of primitives — can't extract fields
+
     if isinstance(data, list):
         return json.dumps({"data": [{"val": v} for v in data if isinstance(v, (int, float))]}).encode(), "terrestrial"
     
-    # Fallback: wrap raw value
+
     return json.dumps({"data": [{"val": str(data)}]}).encode(), "terrestrial"
 
 def _flatten_text(text, source_name):
@@ -64,32 +64,32 @@ def _flatten_text(text, source_name):
     if not lines:
         return json.dumps({"data": []}).encode(), "terrestrial"
     
-    # Try to find a header row
+
     header = None
     data_start = 0
     for i, line in enumerate(lines):
-        # Look for comma/whitespace-separated values
+
         parts = _split_line(line)
         if len(parts) >= 2:
-            # Check if this looks like a header (contains non-numeric values)
+
             numeric = sum(1 for p in parts if _is_numeric(p))
-            if numeric < len(parts) * 0.5:  # Less than half numeric → probably header
+            if numeric < len(parts) * 0.5:
                 header = [p.strip('"\' ') for p in parts]
                 data_start = i + 1
                 break
     
     if header is None:
-        # No header — use col0, col1, ...
+
         first_parts = _split_line(lines[0])
         header = [f"col{i}" for i in range(len(first_parts))]
         data_start = 0
     
-    # Parse data rows
+
     rows = []
     for line in lines[data_start:]:
         parts = _split_line(line)
         if len(parts) < 2:
-            # Single value line
+
             if _is_numeric(parts[0] if parts else ""):
                 rows.append({"val": float(parts[0])})
             continue
@@ -135,11 +135,11 @@ def _normalize_keys(obj):
     
     result = {}
     
-    # Known nested patterns to extract
+
     nested_patterns = [
-        # GeoJSON geometry
+
         ("geometry", lambda v: _extract_geojson_coords(v, result)),
-        # Common centroid patterns
+
         ("centroid_coordinates", lambda v: _extract_centroid(v, result)),
         ("centroid", lambda v: _extract_centroid(v, result)),
         ("coordinates", lambda v: _extract_coords(v, result)),
@@ -158,7 +158,7 @@ def _normalize_keys(obj):
                 break
         if not handled:
             mapped = KEY_MAP.get(k, k)
-            # Recursively normalize nested dicts
+
             if isinstance(v, dict):
                 result[mapped] = _normalize_keys(v)
             else:
@@ -203,8 +203,6 @@ def _extract_location(obj, result):
 
 def _extract_geolocation(obj, result):
     _extract_coords(obj, result)
-
-# Known key mappings
 KEY_MAP = {
     'latitude': 'lat', 'LAT': 'lat', 'LATITUDE': 'lat', 'site_lat': 'lat',
     'Site_Latitude(Degrees)': 'lat', 'location_lat': 'lat', 'lat_deg': 'lat',

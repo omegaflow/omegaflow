@@ -19,8 +19,6 @@ TTL_MAP = {}
 HEALTH = {"updated": "", "hashes": {}, "corrupt": [], "unchanged": []}
 LAST_HASHES = {}
 FILENAME_DOMAIN = {}
-
-
 def load_filename_domain_map():
     """Build {cdn_filename: domain_tag} from sources.φ."""
     result = {}
@@ -38,13 +36,9 @@ def load_filename_domain_map():
                 result[cdn_name] = domain_tag
             cur = None
     return result
-
-
 def cdn_url_for(filename):
     domain = FILENAME_DOMAIN.get(filename, "system")
     return f"https://github.com/{CATALOGS_REPO}/releases/download/{domain}/{filename}"
-
-
 def load_last_hashes():
     try:
         url = f"https://github.com/{CATALOGS_REPO}/releases/download/system/SYSTEM_HEALTH.json"
@@ -54,8 +48,6 @@ def load_last_hashes():
         return d.get("hashes", {})
     except Exception:
         return {}
-
-
 def load_ttl_from_sources():
     ttl = {}
     if not os.path.exists("phi/sources.φ"):
@@ -77,8 +69,6 @@ def load_ttl_from_sources():
             except ValueError:
                 pass
     return ttl
-
-
 def should_skip(fname):
     ttl = TTL_MAP.get(fname, 300)
     try:
@@ -93,8 +83,6 @@ def should_skip(fname):
     except Exception:
         pass
     return False
-
-
 def validate_asset(fname, data):
     min_sz = MIN_SIZES.get(fname, DEFAULT_MIN_JSON if fname.endswith(".json") else DEFAULT_MIN_CSV)
     if len(data) < min_sz:
@@ -115,8 +103,6 @@ def validate_asset(fname, data):
             HEALTH["corrupt"].append(fname)
             return False
     return True
-
-
 def upload_asset(fname, path):
     import subprocess
     domain_tag = FILENAME_DOMAIN.get(fname, "system")
@@ -128,8 +114,6 @@ def upload_asset(fname, path):
         return True
     print(f"  upload failed: {r.stderr[:200]}", file=sys.stderr)
     return False
-
-
 def main():
     global TTL_MAP, LAST_HASHES, FILENAME_DOMAIN
     FILENAME_DOMAIN = load_filename_domain_map()
@@ -173,13 +157,11 @@ def main():
     HEALTH["hashes"] = LAST_HASHES
     with open(os.path.join(data_dir, "SYSTEM_HEALTH.json"), "w") as f:
         json.dump(HEALTH, f)
-    # SYSTEM_HEALTH goes to system release
+
     FILENAME_DOMAIN["SYSTEM_HEALTH.json"] = "system"
     upload_asset("SYSTEM_HEALTH.json", os.path.join(data_dir, "SYSTEM_HEALTH.json"))
 
     print(f"\nChecked: {checked}  Skipped: {skipped}  Uploaded: {uploaded}  Corrupt: {len(HEALTH['corrupt'])}",
           file=sys.stderr)
-
-
 if __name__ == "__main__":
     main()

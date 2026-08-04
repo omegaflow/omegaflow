@@ -16,8 +16,6 @@ USER = os.environ.get("GBIF_USER", "")
 PASS = os.environ.get("GBIF_PASS", "")
 MAX_ROWS = int(os.environ.get("GBIF_MAX_ROWS", "0"))
 BASE = "https://api.gbif.org/v1/occurrence/download"
-
-
 def http_req(url, method="GET", data=None, ua=None):
     headers = {"User-Agent": ua or f"{USER}/1.0", "Accept": "application/json"}
     body = None
@@ -30,8 +28,6 @@ def http_req(url, method="GET", data=None, ua=None):
     req.add_header("Authorization", "Basic " + base64.b64encode(auth).decode())
     with urllib.request.urlopen(req, timeout=300) as resp:
         return resp.read()
-
-
 def main():
     if len(sys.argv) < 3:
         print("usage: gbif_download.py <taxonKey> <outfile.json>", file=sys.stderr)
@@ -42,8 +38,6 @@ def main():
         print("GBIF_USER/GBIF_PASS not set", file=sys.stderr)
         return 1
     ua = f"{USER}/1.0"
-
-    # 1) request download
     payload = {
         "predicate": {
             "type": "and",
@@ -61,8 +55,6 @@ def main():
     if not dlkey or "error" in dlkey.lower():
         print(f"request failed: {resp.decode()[:200]}", file=sys.stderr)
         return 1
-
-    # 2) poll
     status = ""
     for i in range(360):
         try:
@@ -85,8 +77,6 @@ def main():
     if status != "SUCCEEDED":
         print(f"download {status}", file=sys.stderr)
         return 1
-
-    # 3) fetch zip via downloadLink (redirect to CDN, urllib follows 302)
     zipdata = b""
     for attempt in range(30):
         try:
@@ -100,8 +90,6 @@ def main():
                 raise
     with open("/tmp/gbif_download.zip", "wb") as f:
         f.write(zipdata)
-
-    # 4) extract occurrence.txt
     import zipfile
     with zipfile.ZipFile("/tmp/gbif_download.zip") as z:
         names = [n for n in z.namelist() if n.endswith("occurrence.txt")]
@@ -142,7 +130,5 @@ def main():
         json.dump(out, f)
     print(f"rows: {len(out)} -> {outfile}", file=sys.stderr)
     return 0
-
-
 if __name__ == "__main__":
     sys.exit(main())

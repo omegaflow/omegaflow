@@ -1928,7 +1928,7 @@ fn load_sources() -> Vec<SourceConfig> {
             "max_freq" => cur_max_freq = parts.get(1).and_then(|s| s.parse().ok()),
             "min_freq" => cur_min_freq = parts.get(1).and_then(|s| s.parse().ok()),
             "body" => cur_body = Some(line.get(5..).unwrap_or("").trim().to_string()),
-            "verify" => {} // ignored, kept for compat
+            "verify" => {}
             "wgs84" => {
                 cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
                 cur_lat = cur_lat_str.parse().ok();
@@ -3379,8 +3379,6 @@ fn fetch_priority(
     presences: &[(f64, f64, f64, f64, f64)],
 ) -> u8 {
     if is_new {
-        // First run: materialize near the presence first (First Light in seconds).
-        // Proximity-weighted, short-TTL live sources first; big CDN catalogs last.
         let mut min_d = f64::INFINITY;
         for &(_, px, py, pz, _) in presences {
             let d = ((px - pos.0).powi(2) + (py - pos.1).powi(2) + (pz - pos.2).powi(2)).sqrt();
@@ -3400,8 +3398,6 @@ fn fetch_priority(
         }
         return ((proximity * 0.7 + urgency * 0.3) * 240.0) as u8;
     }
-    // Steady state: hybrid of proximity (how relevant to the observer)
-    // and refresh urgency (short TTL = must refresh sooner).
     let mut min_d = f64::INFINITY;
     for &(_, px, py, pz, _) in presences {
         let d = ((px - pos.0).powi(2) + (py - pos.1).powi(2) + (pz - pos.2).powi(2)).sqrt();
@@ -3419,7 +3415,6 @@ fn fetch_priority(
         let x = (ttl.max(1) as f64).log2() / Φ;
         return ((255.0 * (1.0 - 1.0 / (1.0 + x))).max(128.0)) as u8;
     }
-    // Offset 32 keeps stale refreshes below new-source priorities (0..256).
     (32.0 + (proximity * 0.7 + urgency * 0.3) * 200.0) as u8
 }
 

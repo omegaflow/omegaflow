@@ -14,12 +14,8 @@ UPLOAD_URL = "https://uploads.github.com/repos/omegaflow/sources/releases/{relea
 
 SOURCE_PHI = "phi/sources.φ"
 DRY_RUN = "--dry-run" in sys.argv
-
-
 def log(msg):
     print(msg, file=sys.stderr, flush=True)
-
-
 def extract_cdn_sources():
     """Return {source_name: (sphere_release, cdn_url)} for all CDN sources."""
     content = open(SOURCE_PHI).read()
@@ -36,8 +32,6 @@ def extract_cdn_sources():
         if not rel_m: continue
         result[name] = (rel_m.group(1), url)
     return result
-
-
 def build_domain_map(cdn_sources):
     """Map each CDN source to its REAL origin domain from git history."""
     cmd = ["git", "log", "--all", "--oneline", "--", SOURCE_PHI]
@@ -66,14 +60,14 @@ def build_domain_map(cdn_sources):
                         old_live_url_for[current_source] = d
                 current_source = None
     
-    # Build provider-token -> domain mapping from successful matches
+
     provider_domain = {}
     for name, domain in old_live_url_for.items():
         parts = name.split('_')
         if len(parts) >= 2:
             provider_domain.setdefault(parts[1], domain)
     
-    # Apply to all sources
+
     result = {}
     for name in cdn_sources:
         if name in old_live_url_for:
@@ -86,29 +80,25 @@ def build_domain_map(cdn_sources):
         result[name] = parts[0] if parts else 'default'
     
     return result
-
-
 def extract_domain(url):
     """Extract a clean domain label from a URL."""
     url = urllib.parse.unquote(url)
     m = re.match(r"https?://([^/]+)", url)
     if not m: return None
     domain = m.group(1)
-    # Clean: remove www, api, services6/services9 prefix for grouping
+
     domain = re.sub(r"^(www|api|services\d+)\.", "", domain)
-    # For raw.githubusercontent.com paths, use the repo: github.com/{owner}
+
     if "raw.githubusercontent.com" in domain:
         repo = re.search(r"raw\.githubusercontent\.com/([^/]+/[^/]+)", url)
         if repo:
             return "github.com/" + repo.group(1)
         return "github.com"
     return domain
-
-
 def get_or_create_release(domain):
     """Get existing release ID or create a new one. Returns release_id."""
-    tag = f"catalogs-{domain.replace('/', '-')}"  # keep dots, only fix slashes
-    # Check if exists
+    tag = f"catalogs-{domain.replace('/', '-')}"
+
     req = urllib.request.Request(f"{RELEASES_URL}/tags/{tag}", headers=HEADERS)
     try:
         with urllib.request.urlopen(req) as r:
@@ -119,15 +109,13 @@ def get_or_create_release(domain):
         pass
     if DRY_RUN:
         return 0, tag
-    # Create
+
     body = json.dumps({"tag_name": tag, "name": f"catalogs-{domain}", 
                        "body": f"CDN for {domain}", "draft": False}).encode()
     req = urllib.request.Request(RELEASES_URL, data=body, headers={**HEADERS, "Content-Type": "application/json"})
     with urllib.request.urlopen(req) as r:
         d = json.load(r)
         return d['id'], tag
-
-
 def migrate_assets(cdn_sources, domain_map):
     """Download from sphere releases, upload to domain releases. Returns {source: new_cdn_url}."""
     releases_cache = {}
@@ -148,7 +136,7 @@ def migrate_assets(cdn_sources, domain_map):
         
         new_urls[name] = f"https://github.com/omegaflow/sources/releases/download/{tag}/{name}.json"
         
-        # Download from old sphere release
+
         try:
             req = urllib.request.Request(old_url, headers=HEADERS)
             with urllib.request.urlopen(req, timeout=60) as r:
@@ -156,20 +144,18 @@ def migrate_assets(cdn_sources, domain_map):
         except Exception:
             continue
         
-        # Upload to new domain release
+
         upload_req = urllib.request.Request(
             f"{UPLOAD_URL.format(release_id=rid)}?name={name}.json",
             data=data, method="POST",
             headers={**HEADERS, "Content-Type": "application/octet-stream"})
         try:
             with urllib.request.urlopen(upload_req, timeout=120) as r:
-                pass  # success
+                pass
         except Exception as e:
             print(f"  FAIL upload {name}: {e}", file=sys.stderr)
     
     return new_urls
-
-
 def rewrite_sources(new_urls):
     """Rewrite sources.φ URLs line-by-line (safe, no block splitting)."""
     lines = open(SOURCE_PHI).readlines()
@@ -184,8 +170,6 @@ def rewrite_sources(new_urls):
             cur_name = None
     open(SOURCE_PHI, "w").writelines(lines)
     return count
-
-
 def main():
     log("=== DOMAIN RELEASE MIGRATION ===")
     
@@ -197,7 +181,7 @@ def main():
     domain_map = build_domain_map(cdn)
     mapped = sum(1 for n in cdn if n in domain_map)
     log(f"  Mapped {mapped}/{len(cdn)} sources")
-    # Show top domains
+
     from collections import Counter
     dom_counts = Counter(domain_map.values())
     for d, c in dom_counts.most_common(10):
@@ -217,7 +201,7 @@ def main():
             log(f"  FAIL create catalogs-{domain}: {e}")
     log(f"  {created} releases ready")
     
-    # Build new URL map (without migrating assets — assets stay on old releases temporarily)
+
     new_urls = {}
     for name, (sphere, old_url) in sorted(cdn.items()):
         domain = domain_map.get(name, "github.com/omegaflow")
@@ -236,13 +220,11 @@ def main():
     else:
         log(f"  WARNING: could not verify server load")
     
-    # Commit if not dry-run
+
     if not DRY_RUN and rewritten > 0:
         subprocess.run(["git", "add", SOURCE_PHI])
         subprocess.run(["git", "commit", "-m", f"Domain migration: {rewritten} URLs → catalogs-{{domain}}"])
     
     log(f"\nDone. Rewritten: {rewritten}. {'Dry-run complete.' if DRY_RUN else 'Commit ready.'}")
-
-
 if __name__ == "__main__":
     main()
