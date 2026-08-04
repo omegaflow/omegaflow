@@ -1814,7 +1814,8 @@ fn load_sources() -> Vec<SourceConfig> {
                     {
                         Some(Frame::Query)
                     } else {
-                        Some(Frame::Data)
+                        eprintln!("source refused (no reference frame): {}", cur_name);
+                        None
                     };
                     if let Some(frame) = frame {
                         let auto_tau_key = if cur_tau_key.is_none() && cur_tau.is_none() {
@@ -1927,7 +1928,7 @@ fn load_sources() -> Vec<SourceConfig> {
             "max_freq" => cur_max_freq = parts.get(1).and_then(|s| s.parse().ok()),
             "min_freq" => cur_min_freq = parts.get(1).and_then(|s| s.parse().ok()),
             "body" => cur_body = Some(line.get(5..).unwrap_or("").trim().to_string()),
-            "verify" => {}
+            "verify" => {} // ignored, kept for compat
             "wgs84" => {
                 cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
                 cur_lat = cur_lat_str.parse().ok();
@@ -2665,17 +2666,16 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
         None
     };
     let auto_extracts: Option<Vec<Extract>>;
-    let effective_extracts: &[Extract] =
-        if (src.format == "universal" || src.format.is_empty()) && src.extracts.is_empty() {
-            if let Some(ref j) = parsed_json {
-                auto_extracts = Some(universal_auto_detect(j));
-                auto_extracts.as_ref().map(|v| v.as_slice()).unwrap_or(&[])
-            } else {
-                &[]
-            }
+    let effective_extracts: &[Extract] = if src.format == "universal" && src.extracts.is_empty() {
+        if let Some(ref j) = parsed_json {
+            auto_extracts = Some(universal_auto_detect(j));
+            auto_extracts.as_ref().map(|v| v.as_slice()).unwrap_or(&[])
         } else {
-            &src.extracts
-        };
+            &[]
+        }
+    } else {
+        &src.extracts
+    };
     for ext in effective_extracts {
         match ext {
             Extract::Field(k, n) => {
@@ -3379,6 +3379,8 @@ fn fetch_priority(
     presences: &[(f64, f64, f64, f64, f64)],
 ) -> u8 {
     if is_new {
+        // First run: materialize near the presence first (First Light in seconds).
+        // Proximity-weighted, short-TTL live sources first; big CDN catalogs last.
         let mut min_d = f64::INFINITY;
         for &(_, px, py, pz, _) in presences {
             let d = ((px - pos.0).powi(2) + (py - pos.1).powi(2) + (pz - pos.2).powi(2)).sqrt();
@@ -3398,6 +3400,8 @@ fn fetch_priority(
         }
         return ((proximity * 0.7 + urgency * 0.3) * 240.0) as u8;
     }
+    // Steady state: hybrid of proximity (how relevant to the observer)
+    // and refresh urgency (short TTL = must refresh sooner).
     let mut min_d = f64::INFINITY;
     for &(_, px, py, pz, _) in presences {
         let d = ((px - pos.0).powi(2) + (py - pos.1).powi(2) + (pz - pos.2).powi(2)).sqrt();
@@ -3415,6 +3419,7 @@ fn fetch_priority(
         let x = (ttl.max(1) as f64).log2() / Φ;
         return ((255.0 * (1.0 - 1.0 / (1.0 + x))).max(128.0)) as u8;
     }
+    // Offset 32 keeps stale refreshes below new-source priorities (0..256).
     (32.0 + (proximity * 0.7 + urgency * 0.3) * 200.0) as u8
 }
 
@@ -4025,7 +4030,7 @@ fn main() {
             .presence
             .lock()
             .unwrap_or_else(|e| e.into_inner())
-            .insert("0_0_0".to_string(), (tdb_now(), 0.0, 0.0, 0.0, 1e13));
+            .insert("0_0_0".to_string(), (tdb_now(), 0.0, 0.0, 0.0, 1e11));
         let ar = Arc::clone(&archive);
         thread::spawn(move || warm_cache(ar));
     }
