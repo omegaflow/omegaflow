@@ -7425,7 +7425,7 @@ first data.v hydrosphere_tide_height_m_arecibo
 source hydrosphere_tide_9759938
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759938&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9759938.json
 wgs84 18.0893 -67.9382
 first data.v hydrosphere_tide_height_m_mona_island
 
@@ -7582,7 +7582,7 @@ field properties.timeZone timezone
 source noaa_coops_air_temperature_realtime
 ttl 300
 force thermal
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_air_temperature_realtime.json
 wgs84 40.7 -74.01
 map data
 field t observation_time_utc
@@ -7591,7 +7591,7 @@ field v air_temperature_c
 source noaa_coops_water_level_realtime
 ttl 300
 force acoustic
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_water_level_realtime.json
 wgs84 40.7 -74.01
 map data
 field t observation_time_utc
@@ -7603,7 +7603,7 @@ field q quality_code
 source noaa_coops_water_temperature_realtime
 ttl 300
 force thermal
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_water_temperature_realtime.json
 wgs84 40.7 -74.01
 map data
 field t observation_time_utc
@@ -7612,18 +7612,18 @@ field v water_temperature_c
 source noaa_ibtracs_active_storms
 ttl 300
 force acoustic
-url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ACTIVE.list.v04r00.csv
-format text
-rows
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ibtracs_active_storms.json
+format json
+map data
 lat_key LAT
 lon_key LON
-field NAME storm_name
-field SID storm_id
-field ISO_TIME timestamp_utc
-field WMO_WIND max_wind_kt
-field WMO_PRES min_pressure_hpa
-field DIST2LAND dist_to_land_km
-field SUBBASIN subbasin_code
+field_in NAME storm_name
+field_in SID storm_id
+field_in ISO_TIME timestamp_utc
+field_in WMO_WIND max_wind_kt
+field_in WMO_PRES min_pressure_hpa
+field_in DIST2LAND dist_to_land_km
+field_in SUBBASIN subbasin_code
 
 source noaa_ndbc_dart_realtime_pressure
 ttl 300
@@ -7936,16 +7936,16 @@ field values.0.value.0.dateTime measurement_time
 source noaa_coops_water_levels_usa
 ttl 360
 force acoustic
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&station=8518750&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_water_levels_usa.json
 map data
 field t timestamp_utc
 field v water_level_m
 field q data_quality_flag
 
-url https://firms.modaps.eosdis.nasa.gov/api/country/csv/2204981707-VIR-24h/ZAF/1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_water_levels_usa.json
 ttl 600
 force thermal
-url http://afis.meraka.org.za/afis/data/json/
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_water_levels_usa.json
 map fires
 lat_key lat
 lon_key lon
@@ -12119,7 +12119,7 @@ ephemeris orbital_new_horizons_distance
 source noaa_coops_tidal_predictions_usa
 ttl 3600
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=9414290&product=predictions&datum=MLLW&time_zone=GMT&units=metric&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_tidal_predictions_usa.json
 map predictions
 lat_key lat
 lon_key lon
@@ -12128,7 +12128,7 @@ field v predicted_tide_m
 source noaa_coops_water_temp_network
 ttl 3600
 force thermal
-url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?expand=details&type=watertemp
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_water_temp_network.json
 map stations
 lat_key lat
 lon_key lng
@@ -18950,7 +18950,7 @@ field eSearchResult.Count biosphere_taxonomy_total
 source noaa_coops_current_stations
 ttl 86400
 force advective
-url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=currents
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_current_stations.json
 map stations
 lat_key lat
 lon_key lng
@@ -18986,7 +18986,7 @@ field_in 2 pdo_index
 source noaa_ghcnd_global_daily
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,SNWD&startDate={today}&endDate={today}&includeAttributes=false&format=json&limit=10000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ghcnd_global_daily.json
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -19001,22 +19001,24 @@ field SNWD snow_depth_mm
 source noaa_ghcnd_global_station_inventory
 ttl 86400
 force diffusion
-url https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
-format text
-rows
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ghcnd_global_station_inventory.json
+format json
+map data
 lat_key 1
 lon_key 2
-field 0 station_id
-field 3 elevation_m
-field 4 state
-field 5 station_name
+field_in 0 station_id
+field_in 3 elevation_m
+field_in 4 state
+field_in 5 station_name
 
 source noaa_ghcnd_station_inventory
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
-format text
-rows
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ghcnd_station_inventory.json
+format json
+map data
+lat_key 1
+lon_key 2
 pos station_latitude station_longitude
 field_in 0 station_id
 field_in 1 station_latitude
@@ -19153,23 +19155,23 @@ field VISIB visibility_miles
 source noaa_ibtracs_last3years
 ttl 86400
 force acoustic
-url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.last3years.list.v04r00.csv
-format text
-rows
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ibtracs_last3years.json
+format json
+map data
 lat_key LAT
 lon_key LON
-field NAME storm_name
-field SID storm_id
-field SEASON season_year
-field ISO_TIME timestamp_utc
-field WMO_WIND max_wind_kt
-field WMO_PRES min_pressure_hpa
-field BASIN basin_code
+field_in NAME storm_name
+field_in SID storm_id
+field_in SEASON season_year
+field_in ISO_TIME timestamp_utc
+field_in WMO_WIND max_wind_kt
+field_in WMO_PRES min_pressure_hpa
+field_in BASIN basin_code
 
 source noaa_isd_china_daily
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=CH&startDate={today}&endDate={today}&includeAttributes=false&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_isd_china_daily.json
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -19185,7 +19187,7 @@ field SLP sea_level_pressure_hpa
 source noaa_isd_south_africa_daily
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=SF&startDate={today}&endDate={today}&includeAttributes=false&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_isd_south_africa_daily.json
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -19200,7 +19202,7 @@ field PRCP precipitation_inches
 source noaa_itrdb_northern_hemisphere
 ttl 86400
 force diffusion
-url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=30&maxLat=90&minLon=-180&maxLon=180&headersOnly=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_itrdb_northern_hemisphere.json
 map study
 lat_key site.0.geo.geometry.coordinates.1
 lon_key site.0.geo.geometry.coordinates.0
@@ -19214,7 +19216,7 @@ field species.0.speciesCode tree_species
 source noaa_itrdb_southern_hemisphere
 ttl 86400
 force diffusion
-url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=-90&maxLat=30&minLon=-180&maxLon=180&headersOnly=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_itrdb_southern_hemisphere.json
 map study
 lat_key site.0.geo.geometry.coordinates.1
 lon_key site.0.geo.geometry.coordinates.0
@@ -19227,7 +19229,7 @@ field species.0.speciesCode tree_species
 source noaa_ncei_climate_extremes_monthly
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ncei_climate_extremes_monthly.json
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -19241,7 +19243,7 @@ field PRCP monthly_prcp_tenths_mm
 source noaa_ncei_climate_normals_1991_2020
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-daily&dataTypes=TEMP_NORMAL_MAX,TEMP_NORMAL_MIN,PRCP_NORMAL&stations=GM000003026,USW00094728,UK000003772,JN000047412&startDate=2010-01-01&endDate=2010-01-31&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ncei_climate_normals_1991_2020.json
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -27108,13 +27110,15 @@ field hits.hits.0.metadata.citation_count quantum_double_beta_limit_citations
 source noaa_epica_domec_deuterium
 ttl 2592000
 force diffusion
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/dc_ch4_hol_fl02-noaa.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_epica_domec_deuterium.json
 wgs84 -75.1 123.35
-format text
-rows
-field 0 depth_m
-field 1 age_yr_bp
-field 2 ch4_ppbv
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 depth_m
+field_in 1 age_yr_bp
+field_in 2 ch4_ppbv
 
 source noaa_vostok_deuterium
 ttl 2592000
