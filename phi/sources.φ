@@ -1887,9 +1887,9 @@ field type burst_classification
 source hydrosphere_ndbc_buoy_41001
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41001.json
 wgs84 34.7 -72.4
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41001_wind_dir
 last_row WSPD hydrosphere_buoy_41001_wind_speed
 last_row WVHT hydrosphere_buoy_41001_wave_height
@@ -1900,9 +1900,9 @@ last_row WTMP hydrosphere_buoy_41001_water_temp
 source hydrosphere_ndbc_buoy_42001
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42001.json
 wgs84 25.90 -89.67
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42001_wind_dir
 last_row WSPD hydrosphere_buoy_42001_wind_speed
 last_row WVHT hydrosphere_buoy_42001_wave_height
@@ -1913,9 +1913,9 @@ last_row WTMP hydrosphere_buoy_42001_water_temp
 source hydrosphere_ndbc_buoy_42002
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42002.json
 wgs84 25.16 -94.42
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42002_wind_dir
 last_row WSPD hydrosphere_buoy_42002_wind_speed
 last_row WVHT hydrosphere_buoy_42002_wave_height
@@ -1926,9 +1926,9 @@ last_row WTMP hydrosphere_buoy_42002_water_temp
 source hydrosphere_ndbc_buoy_42036
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42036.json
 wgs84 28.50 -84.52
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42036_wind_dir
 last_row WSPD hydrosphere_buoy_42036_wind_speed
 last_row WVHT hydrosphere_buoy_42036_wave_height
@@ -1952,9 +1952,9 @@ last_row WTMP hydrosphere_buoy_42040_water_temp
 source hydrosphere_ndbc_buoy_42055
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42055.json
 wgs84 22.14 -91.39
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42055_wind_dir
 last_row WSPD hydrosphere_buoy_42055_wind_speed
 last_row WVHT hydrosphere_buoy_42055_wave_height
@@ -1965,9 +1965,9 @@ last_row WTMP hydrosphere_buoy_42055_water_temp
 source hydrosphere_ndbc_buoy_44009
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44009.json
 wgs84 38.46 -74.70
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44009_wind_dir
 last_row WSPD hydrosphere_buoy_44009_wind_speed
 last_row WVHT hydrosphere_buoy_44009_wave_height
@@ -1978,9 +1978,9 @@ last_row WTMP hydrosphere_buoy_44009_water_temp
 source hydrosphere_ndbc_buoy_44013
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44013.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44013.json
 wgs84 42.35 -70.69
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44013_wind_dir
 last_row WSPD hydrosphere_buoy_44013_wind_speed
 last_row WVHT hydrosphere_buoy_44013_wave_height
@@ -1991,9 +1991,9 @@ last_row WTMP hydrosphere_buoy_44013_water_temp
 source hydrosphere_ndbc_buoy_44014
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44014.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44014.json
 wgs84 36.61 -74.84
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44014_wind_dir
 last_row WSPD hydrosphere_buoy_44014_wind_speed
 last_row WVHT hydrosphere_buoy_44014_wave_height
@@ -2004,9 +2004,9 @@ last_row WTMP hydrosphere_buoy_44014_water_temp
 source hydrosphere_ndbc_buoy_44025
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44025.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44025.json
 wgs84 40.25 -73.17
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44025_wind_dir
 last_row WSPD hydrosphere_buoy_44025_wind_speed
 last_row WVHT hydrosphere_buoy_44025_wave_height
@@ -2017,9 +2017,9 @@ last_row WTMP hydrosphere_buoy_44025_water_temp
 source hydrosphere_ndbc_buoy_46001
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46001.json
 wgs84 56.30 -148.17
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46001_wind_dir
 last_row WSPD hydrosphere_buoy_46001_wind_speed
 last_row WVHT hydrosphere_buoy_46001_wave_height
@@ -2030,9 +2030,9 @@ last_row WTMP hydrosphere_buoy_46001_water_temp
 source hydrosphere_ndbc_buoy_46002
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46002.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46002.json
 wgs84 42.67 -124.82
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46002_wind_dir
 last_row WSPD hydrosphere_buoy_46002_wind_speed
 last_row WVHT hydrosphere_buoy_46002_wave_height
@@ -2043,9 +2043,9 @@ last_row WTMP hydrosphere_buoy_46002_water_temp
 source hydrosphere_ndbc_buoy_46005
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46005.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46005.json
 wgs84 46.06 -124.96
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46005_wind_dir
 last_row WSPD hydrosphere_buoy_46005_wind_speed
 last_row WVHT hydrosphere_buoy_46005_wave_height
@@ -2056,9 +2056,9 @@ last_row WTMP hydrosphere_buoy_46005_water_temp
 source hydrosphere_ndbc_buoy_46006
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46006.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46006.json
 wgs84 55.06 -137.07
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46006_wind_dir
 last_row WSPD hydrosphere_buoy_46006_wind_speed
 last_row WVHT hydrosphere_buoy_46006_wave_height
@@ -2069,9 +2069,9 @@ last_row WTMP hydrosphere_buoy_46006_water_temp
 source hydrosphere_ndbc_buoy_46012
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46012.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46012.json
 wgs84 37.36 -122.88
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46012_wind_dir
 last_row WSPD hydrosphere_buoy_46012_wind_speed
 last_row WVHT hydrosphere_buoy_46012_wave_height
@@ -2082,9 +2082,9 @@ last_row WTMP hydrosphere_buoy_46012_water_temp
 source hydrosphere_ndbc_buoy_46013
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46013.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46013.json
 wgs84 38.24 -123.30
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46013_wind_dir
 last_row WSPD hydrosphere_buoy_46013_wind_speed
 last_row WVHT hydrosphere_buoy_46013_wave_height
@@ -2095,9 +2095,9 @@ last_row WTMP hydrosphere_buoy_46013_water_temp
 source hydrosphere_ndbc_buoy_46022
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46022.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46022.json
 wgs84 40.74 -124.54
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46022_wind_dir
 last_row WSPD hydrosphere_buoy_46022_wind_speed
 last_row WVHT hydrosphere_buoy_46022_wave_height
@@ -2108,9 +2108,9 @@ last_row WTMP hydrosphere_buoy_46022_water_temp
 source hydrosphere_ndbc_buoy_46025
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46025.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46025.json
 wgs84 33.75 -119.20
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46025_wind_dir
 last_row WSPD hydrosphere_buoy_46025_wind_speed
 last_row WVHT hydrosphere_buoy_46025_wave_height
@@ -2121,9 +2121,9 @@ last_row WTMP hydrosphere_buoy_46025_water_temp
 source hydrosphere_ndbc_buoy_46026
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46026.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46026.json
 wgs84 37.75 -122.84
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46026_wind_dir
 last_row WSPD hydrosphere_buoy_46026_wind_speed
 last_row WVHT hydrosphere_buoy_46026_wave_height
@@ -2134,9 +2134,9 @@ last_row WTMP hydrosphere_buoy_46026_water_temp
 source hydrosphere_ndbc_buoy_46027
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46027.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46027.json
 wgs84 41.85 -124.38
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46027_wind_dir
 last_row WSPD hydrosphere_buoy_46027_wind_speed
 last_row WVHT hydrosphere_buoy_46027_wave_height
@@ -2147,9 +2147,9 @@ last_row WTMP hydrosphere_buoy_46027_water_temp
 source hydrosphere_ndbc_buoy_46029
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46029.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46029.json
 wgs84 46.12 -124.51
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46029_wind_dir
 last_row WSPD hydrosphere_buoy_46029_wind_speed
 last_row WVHT hydrosphere_buoy_46029_wave_height
@@ -2160,9 +2160,9 @@ last_row WTMP hydrosphere_buoy_46029_water_temp
 source hydrosphere_ndbc_buoy_46047
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46047.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46047.json
 wgs84 32.42 -119.53
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46047_wind_dir
 last_row WSPD hydrosphere_buoy_46047_wind_speed
 last_row WVHT hydrosphere_buoy_46047_wave_height
@@ -2173,9 +2173,9 @@ last_row WTMP hydrosphere_buoy_46047_water_temp
 source hydrosphere_ndbc_buoy_46053
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46053.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46053.json
 wgs84 34.26 -119.86
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46053_wind_dir
 last_row WSPD hydrosphere_buoy_46053_wind_speed
 last_row WVHT hydrosphere_buoy_46053_wave_height
@@ -2186,9 +2186,9 @@ last_row WTMP hydrosphere_buoy_46053_water_temp
 source hydrosphere_ndbc_buoy_46054
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46054.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46054.json
 wgs84 34.27 -120.68
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46054_wind_dir
 last_row WSPD hydrosphere_buoy_46054_wind_speed
 last_row WVHT hydrosphere_buoy_46054_wave_height
@@ -2199,9 +2199,9 @@ last_row WTMP hydrosphere_buoy_46054_water_temp
 source hydrosphere_ndbc_buoy_46059
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46059.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46059.json
 wgs84 38.07 -124.03
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46059_wind_dir
 last_row WSPD hydrosphere_buoy_46059_wind_speed
 last_row WVHT hydrosphere_buoy_46059_wave_height
@@ -2212,9 +2212,9 @@ last_row WTMP hydrosphere_buoy_46059_water_temp
 source hydrosphere_ndbc_buoy_46069
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46069.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46069.json
 wgs84 33.66 -120.20
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46069_wind_dir
 last_row WSPD hydrosphere_buoy_46069_wind_speed
 last_row WVHT hydrosphere_buoy_46069_wave_height
@@ -2225,9 +2225,9 @@ last_row WTMP hydrosphere_buoy_46069_water_temp
 source hydrosphere_ndbc_buoy_46086
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46086.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46086.json
 wgs84 32.49 -118.02
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46086_wind_dir
 last_row WSPD hydrosphere_buoy_46086_wind_speed
 last_row WVHT hydrosphere_buoy_46086_wave_height
@@ -2238,9 +2238,9 @@ last_row WTMP hydrosphere_buoy_46086_water_temp
 source hydrosphere_ndbc_buoy_51000
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51000.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51000.json
 wgs84 23.52 -153.82
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51000_wind_dir
 last_row WSPD hydrosphere_buoy_51000_wind_speed
 last_row WVHT hydrosphere_buoy_51000_wave_height
@@ -2251,9 +2251,9 @@ last_row WTMP hydrosphere_buoy_51000_water_temp
 source hydrosphere_ndbc_buoy_51001
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51001.json
 wgs84 24.44 -162.00
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51001_wind_dir
 last_row WSPD hydrosphere_buoy_51001_wind_speed
 last_row WVHT hydrosphere_buoy_51001_wave_height
@@ -2264,9 +2264,9 @@ last_row WTMP hydrosphere_buoy_51001_water_temp
 source hydrosphere_ndbc_buoy_51002
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51002.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51002.json
 wgs84 17.14 -157.80
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51002_wind_dir
 last_row WSPD hydrosphere_buoy_51002_wind_speed
 last_row WVHT hydrosphere_buoy_51002_wave_height
@@ -2277,9 +2277,9 @@ last_row WTMP hydrosphere_buoy_51002_water_temp
 source hydrosphere_ndbc_buoy_51004
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51004.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51004.json
 wgs84 17.56 -152.39
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51004_wind_dir
 last_row WSPD hydrosphere_buoy_51004_wind_speed
 last_row WVHT hydrosphere_buoy_51004_wave_height
@@ -2290,9 +2290,9 @@ last_row WTMP hydrosphere_buoy_51004_water_temp
 source hydrosphere_ndbc_buoy_13002
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/13002.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_13002.json
 wgs84 21.0 -23.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_13002_wind_dir
 last_row WSPD hydrosphere_buoy_13002_wind_speed
 last_row WVHT hydrosphere_buoy_13002_wave_height
@@ -2303,9 +2303,9 @@ last_row WTMP hydrosphere_buoy_13002_water_temp
 source hydrosphere_ndbc_buoy_14049
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/14049.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_14049.json
 wgs84 -12.0 65.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_14049_wind_dir
 last_row WSPD hydrosphere_buoy_14049_wind_speed
 last_row WVHT hydrosphere_buoy_14049_wave_height
@@ -2316,9 +2316,9 @@ last_row WTMP hydrosphere_buoy_14049_water_temp
 source hydrosphere_ndbc_buoy_15001
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/15001.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_15001.json
 wgs84 -10.0 -10.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_15001_wind_dir
 last_row WSPD hydrosphere_buoy_15001_wind_speed
 last_row WVHT hydrosphere_buoy_15001_wave_height
@@ -2329,9 +2329,9 @@ last_row WTMP hydrosphere_buoy_15001_water_temp
 source hydrosphere_ndbc_buoy_15002
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/15002.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_15002.json
 wgs84 0.0 -10.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_15002_wind_dir
 last_row WSPD hydrosphere_buoy_15002_wind_speed
 last_row WVHT hydrosphere_buoy_15002_wave_height
@@ -2342,9 +2342,9 @@ last_row WTMP hydrosphere_buoy_15002_water_temp
 source hydrosphere_ndbc_buoy_15006
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/15006.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_15006.json
 wgs84 -6.0 -10.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_15006_wind_dir
 last_row WSPD hydrosphere_buoy_15006_wind_speed
 last_row WVHT hydrosphere_buoy_15006_wave_height
@@ -2355,9 +2355,9 @@ last_row WTMP hydrosphere_buoy_15006_water_temp
 source hydrosphere_ndbc_buoy_15009
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/15009.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_15009.json
 wgs84 0.0 -3.051
-format csv
+format json
 last_row WDIR hydrosphere_buoy_15009_wind_dir
 last_row WSPD hydrosphere_buoy_15009_wind_speed
 last_row WVHT hydrosphere_buoy_15009_wave_height
@@ -2368,9 +2368,9 @@ last_row WTMP hydrosphere_buoy_15009_water_temp
 source hydrosphere_ndbc_buoy_23009
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/23009.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_23009.json
 wgs84 15.0 90.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_23009_wind_dir
 last_row WSPD hydrosphere_buoy_23009_wind_speed
 last_row WVHT hydrosphere_buoy_23009_wave_height
@@ -2381,9 +2381,9 @@ last_row WTMP hydrosphere_buoy_23009_water_temp
 source hydrosphere_ndbc_buoy_23019
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/23019.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_23019.json
 wgs84 -4.0 65.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_23019_wind_dir
 last_row WSPD hydrosphere_buoy_23019_wind_speed
 last_row WVHT hydrosphere_buoy_23019_wave_height
@@ -2394,9 +2394,9 @@ last_row WTMP hydrosphere_buoy_23019_water_temp
 source hydrosphere_ndbc_buoy_31003
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/31003.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_31003.json
 wgs84 -8.0 -30.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_31003_wind_dir
 last_row WSPD hydrosphere_buoy_31003_wind_speed
 last_row WVHT hydrosphere_buoy_31003_wave_height
@@ -2407,9 +2407,9 @@ last_row WTMP hydrosphere_buoy_31003_water_temp
 source hydrosphere_ndbc_buoy_31006
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/31006.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_31006.json
 wgs84 4.0 -23.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_31006_wind_dir
 last_row WSPD hydrosphere_buoy_31006_wind_speed
 last_row WVHT hydrosphere_buoy_31006_wave_height
@@ -2420,9 +2420,9 @@ last_row WTMP hydrosphere_buoy_31006_water_temp
 source hydrosphere_ndbc_buoy_31007
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/31007.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_31007.json
 wgs84 0.0 -23.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_31007_wind_dir
 last_row WSPD hydrosphere_buoy_31007_wind_speed
 last_row WVHT hydrosphere_buoy_31007_wave_height
@@ -2433,9 +2433,9 @@ last_row WTMP hydrosphere_buoy_31007_water_temp
 source hydrosphere_ndbc_buoy_41002
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41002.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41002.json
 wgs84 31.743 -74.955
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41002_wind_dir
 last_row WSPD hydrosphere_buoy_41002_wind_speed
 last_row WVHT hydrosphere_buoy_41002_wave_height
@@ -2446,9 +2446,9 @@ last_row WTMP hydrosphere_buoy_41002_water_temp
 source hydrosphere_ndbc_buoy_41004
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41004.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41004.json
 wgs84 32.502 -79.099
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41004_wind_dir
 last_row WSPD hydrosphere_buoy_41004_wind_speed
 last_row WVHT hydrosphere_buoy_41004_wave_height
@@ -2459,9 +2459,9 @@ last_row WTMP hydrosphere_buoy_41004_water_temp
 source hydrosphere_ndbc_buoy_41008
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41008.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41008.json
 wgs84 31.4 -80.866
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41008_wind_dir
 last_row WSPD hydrosphere_buoy_41008_wind_speed
 last_row WVHT hydrosphere_buoy_41008_wave_height
@@ -2472,9 +2472,9 @@ last_row WTMP hydrosphere_buoy_41008_water_temp
 source hydrosphere_ndbc_buoy_41009
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41009.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41009.json
 wgs84 28.508 -80.185
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41009_wind_dir
 last_row WSPD hydrosphere_buoy_41009_wind_speed
 last_row WVHT hydrosphere_buoy_41009_wave_height
@@ -2485,9 +2485,9 @@ last_row WTMP hydrosphere_buoy_41009_water_temp
 source hydrosphere_ndbc_buoy_41010
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41010.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41010.json
 wgs84 28.86 -78.478
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41010_wind_dir
 last_row WSPD hydrosphere_buoy_41010_wind_speed
 last_row WVHT hydrosphere_buoy_41010_wave_height
@@ -2498,9 +2498,9 @@ last_row WTMP hydrosphere_buoy_41010_water_temp
 source hydrosphere_ndbc_buoy_41013
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41013.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41013.json
 wgs84 33.436 -77.764
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41013_wind_dir
 last_row WSPD hydrosphere_buoy_41013_wind_speed
 last_row WVHT hydrosphere_buoy_41013_wave_height
@@ -2511,9 +2511,9 @@ last_row WTMP hydrosphere_buoy_41013_water_temp
 source hydrosphere_ndbc_buoy_41024
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41024.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41024.json
 wgs84 33.837 -78.477
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41024_wind_dir
 last_row WSPD hydrosphere_buoy_41024_wind_speed
 last_row WVHT hydrosphere_buoy_41024_wave_height
@@ -2524,9 +2524,9 @@ last_row WTMP hydrosphere_buoy_41024_water_temp
 source hydrosphere_ndbc_buoy_41025
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41025.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41025.json
 wgs84 35.026 -75.38
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41025_wind_dir
 last_row WSPD hydrosphere_buoy_41025_wind_speed
 last_row WVHT hydrosphere_buoy_41025_wave_height
@@ -2537,9 +2537,9 @@ last_row WTMP hydrosphere_buoy_41025_water_temp
 source hydrosphere_ndbc_buoy_41029
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41029.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41029.json
 wgs84 32.803 -79.624
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41029_wind_dir
 last_row WSPD hydrosphere_buoy_41029_wind_speed
 last_row WVHT hydrosphere_buoy_41029_wave_height
@@ -2550,9 +2550,9 @@ last_row WTMP hydrosphere_buoy_41029_water_temp
 source hydrosphere_ndbc_buoy_41033
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41033.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41033.json
 wgs84 32.279 -80.406
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41033_wind_dir
 last_row WSPD hydrosphere_buoy_41033_wind_speed
 last_row WVHT hydrosphere_buoy_41033_wave_height
@@ -2563,9 +2563,9 @@ last_row WTMP hydrosphere_buoy_41033_water_temp
 source hydrosphere_ndbc_buoy_41037
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41037.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41037.json
 wgs84 33.988 -77.362
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41037_wind_dir
 last_row WSPD hydrosphere_buoy_41037_wind_speed
 last_row WVHT hydrosphere_buoy_41037_wave_height
@@ -2576,9 +2576,9 @@ last_row WTMP hydrosphere_buoy_41037_water_temp
 source hydrosphere_ndbc_buoy_41038
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41038.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41038.json
 wgs84 34.141 -77.715
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41038_wind_dir
 last_row WSPD hydrosphere_buoy_41038_wind_speed
 last_row WVHT hydrosphere_buoy_41038_wave_height
@@ -2589,9 +2589,9 @@ last_row WTMP hydrosphere_buoy_41038_water_temp
 source hydrosphere_ndbc_buoy_41040
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41040.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41040.json
 wgs84 14.568 -53.037
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41040_wind_dir
 last_row WSPD hydrosphere_buoy_41040_wind_speed
 last_row WVHT hydrosphere_buoy_41040_wave_height
@@ -2602,9 +2602,9 @@ last_row WTMP hydrosphere_buoy_41040_water_temp
 source hydrosphere_ndbc_buoy_41041
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41041.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41041.json
 wgs84 14.259 -46.052
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41041_wind_dir
 last_row WSPD hydrosphere_buoy_41041_wind_speed
 last_row WVHT hydrosphere_buoy_41041_wave_height
@@ -2615,9 +2615,9 @@ last_row WTMP hydrosphere_buoy_41041_water_temp
 source hydrosphere_ndbc_buoy_41043
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41043.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41043.json
 wgs84 21.09 -64.864
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41043_wind_dir
 last_row WSPD hydrosphere_buoy_41043_wind_speed
 last_row WVHT hydrosphere_buoy_41043_wave_height
@@ -2628,9 +2628,9 @@ last_row WTMP hydrosphere_buoy_41043_water_temp
 source hydrosphere_ndbc_buoy_41044
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41044.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41044.json
 wgs84 21.582 -58.63
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41044_wind_dir
 last_row WSPD hydrosphere_buoy_41044_wind_speed
 last_row WVHT hydrosphere_buoy_41044_wave_height
@@ -2641,9 +2641,9 @@ last_row WTMP hydrosphere_buoy_41044_water_temp
 source hydrosphere_ndbc_buoy_41046
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41046.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41046.json
 wgs84 23.84 -68.34
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41046_wind_dir
 last_row WSPD hydrosphere_buoy_41046_wind_speed
 last_row WVHT hydrosphere_buoy_41046_wave_height
@@ -2654,9 +2654,9 @@ last_row WTMP hydrosphere_buoy_41046_water_temp
 source hydrosphere_ndbc_buoy_41047
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41047.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41047.json
 wgs84 27.557 -71.48
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41047_wind_dir
 last_row WSPD hydrosphere_buoy_41047_wind_speed
 last_row WVHT hydrosphere_buoy_41047_wave_height
@@ -2667,9 +2667,9 @@ last_row WTMP hydrosphere_buoy_41047_water_temp
 source hydrosphere_ndbc_buoy_41048
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41048.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41048.json
 wgs84 31.878 -69.722
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41048_wind_dir
 last_row WSPD hydrosphere_buoy_41048_wind_speed
 last_row WVHT hydrosphere_buoy_41048_wave_height
@@ -2680,9 +2680,9 @@ last_row WTMP hydrosphere_buoy_41048_water_temp
 source hydrosphere_ndbc_buoy_41049
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41049.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41049.json
 wgs84 27.505 -62.271
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41049_wind_dir
 last_row WSPD hydrosphere_buoy_41049_wind_speed
 last_row WVHT hydrosphere_buoy_41049_wave_height
@@ -2693,9 +2693,9 @@ last_row WTMP hydrosphere_buoy_41049_water_temp
 source hydrosphere_ndbc_buoy_41052
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41052.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41052.json
 wgs84 18.249 -64.763
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41052_wind_dir
 last_row WSPD hydrosphere_buoy_41052_wind_speed
 last_row WVHT hydrosphere_buoy_41052_wave_height
@@ -2706,9 +2706,9 @@ last_row WTMP hydrosphere_buoy_41052_water_temp
 source hydrosphere_ndbc_buoy_41053
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41053.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41053.json
 wgs84 18.474 -66.099
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41053_wind_dir
 last_row WSPD hydrosphere_buoy_41053_wind_speed
 last_row WVHT hydrosphere_buoy_41053_wave_height
@@ -2719,9 +2719,9 @@ last_row WTMP hydrosphere_buoy_41053_water_temp
 source hydrosphere_ndbc_buoy_41056
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41056.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41056.json
 wgs84 18.261 -65.464
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41056_wind_dir
 last_row WSPD hydrosphere_buoy_41056_wind_speed
 last_row WVHT hydrosphere_buoy_41056_wave_height
@@ -2732,9 +2732,9 @@ last_row WTMP hydrosphere_buoy_41056_water_temp
 source hydrosphere_ndbc_buoy_41064
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41064.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41064.json
 wgs84 34.207 -76.949
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41064_wind_dir
 last_row WSPD hydrosphere_buoy_41064_wind_speed
 last_row WVHT hydrosphere_buoy_41064_wave_height
@@ -2745,9 +2745,9 @@ last_row WTMP hydrosphere_buoy_41064_water_temp
 source hydrosphere_ndbc_buoy_41065
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41065.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41065.json
 wgs84 32.802 -79.619
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41065_wind_dir
 last_row WSPD hydrosphere_buoy_41065_wind_speed
 last_row WVHT hydrosphere_buoy_41065_wave_height
@@ -2758,9 +2758,9 @@ last_row WTMP hydrosphere_buoy_41065_water_temp
 source hydrosphere_ndbc_buoy_41066
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41066.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41066.json
 wgs84 32.536 -79.656
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41066_wind_dir
 last_row WSPD hydrosphere_buoy_41066_wind_speed
 last_row WVHT hydrosphere_buoy_41066_wave_height
@@ -2771,9 +2771,9 @@ last_row WTMP hydrosphere_buoy_41066_water_temp
 source hydrosphere_ndbc_buoy_41067
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41067.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41067.json
 wgs84 32.276 -80.406
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41067_wind_dir
 last_row WSPD hydrosphere_buoy_41067_wind_speed
 last_row WVHT hydrosphere_buoy_41067_wave_height
@@ -2784,9 +2784,9 @@ last_row WTMP hydrosphere_buoy_41067_water_temp
 source hydrosphere_ndbc_buoy_41068
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41068.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41068.json
 wgs84 27.593 -80.189
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41068_wind_dir
 last_row WSPD hydrosphere_buoy_41068_wind_speed
 last_row WVHT hydrosphere_buoy_41068_wave_height
@@ -2797,9 +2797,9 @@ last_row WTMP hydrosphere_buoy_41068_water_temp
 source hydrosphere_ndbc_buoy_41069
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41069.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41069.json
 wgs84 29.289 -80.803
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41069_wind_dir
 last_row WSPD hydrosphere_buoy_41069_wind_speed
 last_row WVHT hydrosphere_buoy_41069_wave_height
@@ -2810,9 +2810,9 @@ last_row WTMP hydrosphere_buoy_41069_water_temp
 source hydrosphere_ndbc_buoy_41070
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41070.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41070.json
 wgs84 29.289 -80.803
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41070_wind_dir
 last_row WSPD hydrosphere_buoy_41070_wind_speed
 last_row WVHT hydrosphere_buoy_41070_wave_height
@@ -2823,9 +2823,9 @@ last_row WTMP hydrosphere_buoy_41070_water_temp
 source hydrosphere_ndbc_buoy_41076
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41076.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41076.json
 wgs84 32.536 -79.659
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41076_wind_dir
 last_row WSPD hydrosphere_buoy_41076_wind_speed
 last_row WVHT hydrosphere_buoy_41076_wave_height
@@ -2836,9 +2836,9 @@ last_row WTMP hydrosphere_buoy_41076_water_temp
 source hydrosphere_ndbc_buoy_41082
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41082.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41082.json
 wgs84 35.95 -75.125
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41082_wind_dir
 last_row WSPD hydrosphere_buoy_41082_wind_speed
 last_row WVHT hydrosphere_buoy_41082_wave_height
@@ -2849,9 +2849,9 @@ last_row WTMP hydrosphere_buoy_41082_water_temp
 source hydrosphere_ndbc_buoy_41083
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41083.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41083.json
 wgs84 35.725 -74.853
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41083_wind_dir
 last_row WSPD hydrosphere_buoy_41083_wind_speed
 last_row WVHT hydrosphere_buoy_41083_wave_height
@@ -2862,9 +2862,9 @@ last_row WTMP hydrosphere_buoy_41083_water_temp
 source hydrosphere_ndbc_buoy_41108
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41108.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41108.json
 wgs84 33.719 -78.016
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41108_wind_dir
 last_row WSPD hydrosphere_buoy_41108_wind_speed
 last_row WVHT hydrosphere_buoy_41108_wave_height
@@ -2875,9 +2875,9 @@ last_row WTMP hydrosphere_buoy_41108_water_temp
 source hydrosphere_ndbc_buoy_41110
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41110.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41110.json
 wgs84 34.144 -77.715
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41110_wind_dir
 last_row WSPD hydrosphere_buoy_41110_wind_speed
 last_row WVHT hydrosphere_buoy_41110_wave_height
@@ -2888,9 +2888,9 @@ last_row WTMP hydrosphere_buoy_41110_water_temp
 source hydrosphere_ndbc_buoy_41112
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41112.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41112.json
 wgs84 30.709 -81.292
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41112_wind_dir
 last_row WSPD hydrosphere_buoy_41112_wind_speed
 last_row WVHT hydrosphere_buoy_41112_wave_height
@@ -2901,9 +2901,9 @@ last_row WTMP hydrosphere_buoy_41112_water_temp
 source hydrosphere_ndbc_buoy_41113
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41113.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41113.json
 wgs84 28.4 -80.533
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41113_wind_dir
 last_row WSPD hydrosphere_buoy_41113_wind_speed
 last_row WVHT hydrosphere_buoy_41113_wave_height
@@ -2914,9 +2914,9 @@ last_row WTMP hydrosphere_buoy_41113_water_temp
 source hydrosphere_ndbc_buoy_41115
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41115.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41115.json
 wgs84 18.376 -67.28
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41115_wind_dir
 last_row WSPD hydrosphere_buoy_41115_wind_speed
 last_row WVHT hydrosphere_buoy_41115_wave_height
@@ -2927,9 +2927,9 @@ last_row WTMP hydrosphere_buoy_41115_water_temp
 source hydrosphere_ndbc_buoy_41117
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41117.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41117.json
 wgs84 29.999 -81.079
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41117_wind_dir
 last_row WSPD hydrosphere_buoy_41117_wind_speed
 last_row WVHT hydrosphere_buoy_41117_wave_height
@@ -2940,9 +2940,9 @@ last_row WTMP hydrosphere_buoy_41117_water_temp
 source hydrosphere_ndbc_buoy_41120
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41120.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41120.json
 wgs84 35.258 -75.285
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41120_wind_dir
 last_row WSPD hydrosphere_buoy_41120_wind_speed
 last_row WVHT hydrosphere_buoy_41120_wave_height
@@ -2953,9 +2953,9 @@ last_row WTMP hydrosphere_buoy_41120_water_temp
 source hydrosphere_ndbc_buoy_41121
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41121.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41121.json
 wgs84 18.491 -66.701
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41121_wind_dir
 last_row WSPD hydrosphere_buoy_41121_wind_speed
 last_row WVHT hydrosphere_buoy_41121_wave_height
@@ -2966,9 +2966,9 @@ last_row WTMP hydrosphere_buoy_41121_water_temp
 source hydrosphere_ndbc_buoy_41122
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41122.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41122.json
 wgs84 26.001 -80.096
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41122_wind_dir
 last_row WSPD hydrosphere_buoy_41122_wind_speed
 last_row WVHT hydrosphere_buoy_41122_wave_height
@@ -2979,9 +2979,9 @@ last_row WTMP hydrosphere_buoy_41122_water_temp
 source hydrosphere_ndbc_buoy_41159
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41159.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41159.json
 wgs84 34.211 -76.944
-format csv
+format json
 last_row WDIR hydrosphere_buoy_41159_wind_dir
 last_row WSPD hydrosphere_buoy_41159_wind_speed
 last_row WVHT hydrosphere_buoy_41159_wave_height
@@ -2992,9 +2992,9 @@ last_row WTMP hydrosphere_buoy_41159_water_temp
 source hydrosphere_ndbc_buoy_42012
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42012.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42012.json
 wgs84 30.061 -87.547
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42012_wind_dir
 last_row WSPD hydrosphere_buoy_42012_wind_speed
 last_row WVHT hydrosphere_buoy_42012_wave_height
@@ -3005,9 +3005,9 @@ last_row WTMP hydrosphere_buoy_42012_water_temp
 source hydrosphere_ndbc_buoy_42013
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42013.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42013.json
 wgs84 27.173 -82.924
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42013_wind_dir
 last_row WSPD hydrosphere_buoy_42013_wind_speed
 last_row WVHT hydrosphere_buoy_42013_wave_height
@@ -3018,9 +3018,9 @@ last_row WTMP hydrosphere_buoy_42013_water_temp
 source hydrosphere_ndbc_buoy_42022
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42022.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42022.json
 wgs84 27.505 -83.741
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42022_wind_dir
 last_row WSPD hydrosphere_buoy_42022_wind_speed
 last_row WVHT hydrosphere_buoy_42022_wave_height
@@ -3031,9 +3031,9 @@ last_row WTMP hydrosphere_buoy_42022_water_temp
 source hydrosphere_ndbc_buoy_42023
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42023.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42023.json
 wgs84 26.01 -83.086
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42023_wind_dir
 last_row WSPD hydrosphere_buoy_42023_wind_speed
 last_row WVHT hydrosphere_buoy_42023_wave_height
@@ -3044,9 +3044,9 @@ last_row WTMP hydrosphere_buoy_42023_water_temp
 source hydrosphere_ndbc_buoy_42026
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42026.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42026.json
 wgs84 25.171 -83.475
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42026_wind_dir
 last_row WSPD hydrosphere_buoy_42026_wind_speed
 last_row WVHT hydrosphere_buoy_42026_wave_height
@@ -3057,9 +3057,9 @@ last_row WTMP hydrosphere_buoy_42026_water_temp
 source hydrosphere_ndbc_buoy_42027
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42027.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42027.json
 wgs84 29.045 -85.305
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42027_wind_dir
 last_row WSPD hydrosphere_buoy_42027_wind_speed
 last_row WVHT hydrosphere_buoy_42027_wave_height
@@ -3070,9 +3070,9 @@ last_row WTMP hydrosphere_buoy_42027_water_temp
 source hydrosphere_ndbc_buoy_42028
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42028.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42028.json
 wgs84 29.745 -86.227
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42028_wind_dir
 last_row WSPD hydrosphere_buoy_42028_wind_speed
 last_row WVHT hydrosphere_buoy_42028_wave_height
@@ -3083,9 +3083,9 @@ last_row WTMP hydrosphere_buoy_42028_water_temp
 source hydrosphere_ndbc_buoy_42035
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42035.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42035.json
 wgs84 29.235 -94.41
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42035_wind_dir
 last_row WSPD hydrosphere_buoy_42035_wind_speed
 last_row WVHT hydrosphere_buoy_42035_wave_height
@@ -3096,9 +3096,9 @@ last_row WTMP hydrosphere_buoy_42035_water_temp
 source hydrosphere_ndbc_buoy_42039
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42039.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42039.json
 wgs84 28.768 -86.024
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42039_wind_dir
 last_row WSPD hydrosphere_buoy_42039_wind_speed
 last_row WVHT hydrosphere_buoy_42039_wave_height
@@ -3109,9 +3109,9 @@ last_row WTMP hydrosphere_buoy_42039_water_temp
 source hydrosphere_ndbc_buoy_42056
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42056.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42056.json
 wgs84 19.82 -84.98
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42056_wind_dir
 last_row WSPD hydrosphere_buoy_42056_wind_speed
 last_row WVHT hydrosphere_buoy_42056_wave_height
@@ -3122,9 +3122,9 @@ last_row WTMP hydrosphere_buoy_42056_water_temp
 source hydrosphere_ndbc_buoy_42057
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42057.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42057.json
 wgs84 16.975 -81.578
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42057_wind_dir
 last_row WSPD hydrosphere_buoy_42057_wind_speed
 last_row WVHT hydrosphere_buoy_42057_wave_height
@@ -3135,9 +3135,9 @@ last_row WTMP hydrosphere_buoy_42057_water_temp
 source hydrosphere_ndbc_buoy_42058
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42058.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42058.json
 wgs84 14.114 -75.949
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42058_wind_dir
 last_row WSPD hydrosphere_buoy_42058_wind_speed
 last_row WVHT hydrosphere_buoy_42058_wave_height
@@ -3148,9 +3148,9 @@ last_row WTMP hydrosphere_buoy_42058_water_temp
 source hydrosphere_ndbc_buoy_42059
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42059.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42059.json
 wgs84 15.255 -67.621
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42059_wind_dir
 last_row WSPD hydrosphere_buoy_42059_wind_speed
 last_row WVHT hydrosphere_buoy_42059_wave_height
@@ -3161,9 +3161,9 @@ last_row WTMP hydrosphere_buoy_42059_water_temp
 source hydrosphere_ndbc_buoy_42060
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42060.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42060.json
 wgs84 16.428 -63.21
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42060_wind_dir
 last_row WSPD hydrosphere_buoy_42060_wind_speed
 last_row WVHT hydrosphere_buoy_42060_wave_height
@@ -3174,9 +3174,9 @@ last_row WTMP hydrosphere_buoy_42060_water_temp
 source hydrosphere_ndbc_buoy_42067
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42067.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42067.json
 wgs84 30.05 -88.583
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42067_wind_dir
 last_row WSPD hydrosphere_buoy_42067_wind_speed
 last_row WVHT hydrosphere_buoy_42067_wave_height
@@ -3187,9 +3187,9 @@ last_row WTMP hydrosphere_buoy_42067_water_temp
 source hydrosphere_ndbc_buoy_42084
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42084.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42084.json
 wgs84 28.988 -89.649
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42084_wind_dir
 last_row WSPD hydrosphere_buoy_42084_wind_speed
 last_row WVHT hydrosphere_buoy_42084_wave_height
@@ -3200,9 +3200,9 @@ last_row WTMP hydrosphere_buoy_42084_water_temp
 source hydrosphere_ndbc_buoy_42085
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42085.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42085.json
 wgs84 17.87 -66.537
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42085_wind_dir
 last_row WSPD hydrosphere_buoy_42085_wind_speed
 last_row WVHT hydrosphere_buoy_42085_wave_height
@@ -3213,9 +3213,9 @@ last_row WTMP hydrosphere_buoy_42085_water_temp
 source hydrosphere_ndbc_buoy_42092
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42092.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42092.json
 wgs84 27.639 -97.012
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42092_wind_dir
 last_row WSPD hydrosphere_buoy_42092_wind_speed
 last_row WVHT hydrosphere_buoy_42092_wave_height
@@ -3226,9 +3226,9 @@ last_row WTMP hydrosphere_buoy_42092_water_temp
 source hydrosphere_ndbc_buoy_42095
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42095.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42095.json
 wgs84 24.407 -81.968
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42095_wind_dir
 last_row WSPD hydrosphere_buoy_42095_wind_speed
 last_row WVHT hydrosphere_buoy_42095_wave_height
@@ -3239,9 +3239,9 @@ last_row WTMP hydrosphere_buoy_42095_water_temp
 source hydrosphere_ndbc_buoy_42097
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42097.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42097.json
 wgs84 25.704 -83.654
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42097_wind_dir
 last_row WSPD hydrosphere_buoy_42097_wind_speed
 last_row WVHT hydrosphere_buoy_42097_wave_height
@@ -3252,9 +3252,9 @@ last_row WTMP hydrosphere_buoy_42097_water_temp
 source hydrosphere_ndbc_buoy_42098
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42098.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42098.json
 wgs84 27.59 -82.931
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42098_wind_dir
 last_row WSPD hydrosphere_buoy_42098_wind_speed
 last_row WVHT hydrosphere_buoy_42098_wave_height
@@ -3265,9 +3265,9 @@ last_row WTMP hydrosphere_buoy_42098_water_temp
 source hydrosphere_ndbc_buoy_42099
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42099.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42099.json
 wgs84 27.352 -84.275
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42099_wind_dir
 last_row WSPD hydrosphere_buoy_42099_wind_speed
 last_row WVHT hydrosphere_buoy_42099_wave_height
@@ -3278,9 +3278,9 @@ last_row WTMP hydrosphere_buoy_42099_water_temp
 source hydrosphere_ndbc_buoy_42354
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42354.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42354.json
 wgs84 29.579 -88.643
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42354_wind_dir
 last_row WSPD hydrosphere_buoy_42354_wind_speed
 last_row WVHT hydrosphere_buoy_42354_wave_height
@@ -3291,9 +3291,9 @@ last_row WTMP hydrosphere_buoy_42354_water_temp
 source hydrosphere_ndbc_buoy_42357
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42357.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42357.json
 wgs84 30.092 -88.212
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42357_wind_dir
 last_row WSPD hydrosphere_buoy_42357_wind_speed
 last_row WVHT hydrosphere_buoy_42357_wave_height
@@ -3304,9 +3304,9 @@ last_row WTMP hydrosphere_buoy_42357_water_temp
 source hydrosphere_ndbc_buoy_42358
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/42358.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42358.json
 wgs84 27.874 -93.815
-format csv
+format json
 last_row WDIR hydrosphere_buoy_42358_wind_dir
 last_row WSPD hydrosphere_buoy_42358_wind_speed
 last_row WVHT hydrosphere_buoy_42358_wave_height
@@ -3317,9 +3317,9 @@ last_row WTMP hydrosphere_buoy_42358_water_temp
 source hydrosphere_ndbc_buoy_44007
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44007.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44007.json
 wgs84 43.525 -70.14
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44007_wind_dir
 last_row WSPD hydrosphere_buoy_44007_wind_speed
 last_row WVHT hydrosphere_buoy_44007_wave_height
@@ -3330,9 +3330,9 @@ last_row WTMP hydrosphere_buoy_44007_water_temp
 source hydrosphere_ndbc_buoy_44008
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44008.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44008.json
 wgs84 40.5 -69.254
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44008_wind_dir
 last_row WSPD hydrosphere_buoy_44008_wind_speed
 last_row WVHT hydrosphere_buoy_44008_wave_height
@@ -3343,9 +3343,9 @@ last_row WTMP hydrosphere_buoy_44008_water_temp
 source hydrosphere_ndbc_buoy_44011
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44011.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44011.json
 wgs84 41.088 -66.546
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44011_wind_dir
 last_row WSPD hydrosphere_buoy_44011_wind_speed
 last_row WVHT hydrosphere_buoy_44011_wave_height
@@ -3356,9 +3356,9 @@ last_row WTMP hydrosphere_buoy_44011_water_temp
 source hydrosphere_ndbc_buoy_44020
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44020.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44020.json
 wgs84 41.497 -70.283
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44020_wind_dir
 last_row WSPD hydrosphere_buoy_44020_wind_speed
 last_row WVHT hydrosphere_buoy_44020_wave_height
@@ -3369,9 +3369,9 @@ last_row WTMP hydrosphere_buoy_44020_water_temp
 source hydrosphere_ndbc_buoy_44027
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44027.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44027.json
 wgs84 44.284 -67.301
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44027_wind_dir
 last_row WSPD hydrosphere_buoy_44027_wind_speed
 last_row WVHT hydrosphere_buoy_44027_wave_height
@@ -3382,9 +3382,9 @@ last_row WTMP hydrosphere_buoy_44027_water_temp
 source hydrosphere_ndbc_buoy_44029
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44029.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44029.json
 wgs84 42.523 -70.566
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44029_wind_dir
 last_row WSPD hydrosphere_buoy_44029_wind_speed
 last_row WVHT hydrosphere_buoy_44029_wave_height
@@ -3395,9 +3395,9 @@ last_row WTMP hydrosphere_buoy_44029_water_temp
 source hydrosphere_ndbc_buoy_44030
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44030.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44030.json
 wgs84 43.179 -70.426
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44030_wind_dir
 last_row WSPD hydrosphere_buoy_44030_wind_speed
 last_row WVHT hydrosphere_buoy_44030_wave_height
@@ -3408,9 +3408,9 @@ last_row WTMP hydrosphere_buoy_44030_water_temp
 source hydrosphere_ndbc_buoy_44032
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44032.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44032.json
 wgs84 43.715 -69.355
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44032_wind_dir
 last_row WSPD hydrosphere_buoy_44032_wind_speed
 last_row WVHT hydrosphere_buoy_44032_wave_height
@@ -3421,9 +3421,9 @@ last_row WTMP hydrosphere_buoy_44032_water_temp
 source hydrosphere_ndbc_buoy_44033
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44033.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44033.json
 wgs84 44.055 -68.996
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44033_wind_dir
 last_row WSPD hydrosphere_buoy_44033_wind_speed
 last_row WVHT hydrosphere_buoy_44033_wave_height
@@ -3434,9 +3434,9 @@ last_row WTMP hydrosphere_buoy_44033_water_temp
 source hydrosphere_ndbc_buoy_44034
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44034.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44034.json
 wgs84 44.103 -68.112
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44034_wind_dir
 last_row WSPD hydrosphere_buoy_44034_wind_speed
 last_row WVHT hydrosphere_buoy_44034_wave_height
@@ -3447,9 +3447,9 @@ last_row WTMP hydrosphere_buoy_44034_water_temp
 source hydrosphere_ndbc_buoy_44042
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44042.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44042.json
 wgs84 38.033 -76.335
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44042_wind_dir
 last_row WSPD hydrosphere_buoy_44042_wind_speed
 last_row WVHT hydrosphere_buoy_44042_wave_height
@@ -3460,9 +3460,9 @@ last_row WTMP hydrosphere_buoy_44042_water_temp
 source hydrosphere_ndbc_buoy_44056
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44056.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44056.json
 wgs84 36.2 -75.714
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44056_wind_dir
 last_row WSPD hydrosphere_buoy_44056_wind_speed
 last_row WVHT hydrosphere_buoy_44056_wave_height
@@ -3473,9 +3473,9 @@ last_row WTMP hydrosphere_buoy_44056_water_temp
 source hydrosphere_ndbc_buoy_44058
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44058.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44058.json
 wgs84 37.567 -76.257
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44058_wind_dir
 last_row WSPD hydrosphere_buoy_44058_wind_speed
 last_row WVHT hydrosphere_buoy_44058_wave_height
@@ -3486,9 +3486,9 @@ last_row WTMP hydrosphere_buoy_44058_water_temp
 source hydrosphere_ndbc_buoy_44062
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44062.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44062.json
 wgs84 38.556 -76.415
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44062_wind_dir
 last_row WSPD hydrosphere_buoy_44062_wind_speed
 last_row WVHT hydrosphere_buoy_44062_wave_height
@@ -3499,9 +3499,9 @@ last_row WTMP hydrosphere_buoy_44062_water_temp
 source hydrosphere_ndbc_buoy_44063
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44063.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44063.json
 wgs84 38.963 -76.448
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44063_wind_dir
 last_row WSPD hydrosphere_buoy_44063_wind_speed
 last_row WVHT hydrosphere_buoy_44063_wave_height
@@ -3512,9 +3512,9 @@ last_row WTMP hydrosphere_buoy_44063_water_temp
 source hydrosphere_ndbc_buoy_44065
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44065.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44065.json
 wgs84 40.368 -73.701
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44065_wind_dir
 last_row WSPD hydrosphere_buoy_44065_wind_speed
 last_row WVHT hydrosphere_buoy_44065_wave_height
@@ -3525,9 +3525,9 @@ last_row WTMP hydrosphere_buoy_44065_water_temp
 source hydrosphere_ndbc_buoy_44069
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44069.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44069.json
 wgs84 40.699 -73.087
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44069_wind_dir
 last_row WSPD hydrosphere_buoy_44069_wind_speed
 last_row WVHT hydrosphere_buoy_44069_wave_height
@@ -3538,9 +3538,9 @@ last_row WTMP hydrosphere_buoy_44069_water_temp
 source hydrosphere_ndbc_buoy_44072
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44072.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44072.json
 wgs84 37.201 -76.266
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44072_wind_dir
 last_row WSPD hydrosphere_buoy_44072_wind_speed
 last_row WVHT hydrosphere_buoy_44072_wave_height
@@ -3551,9 +3551,9 @@ last_row WTMP hydrosphere_buoy_44072_water_temp
 source hydrosphere_ndbc_buoy_44073
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44073.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44073.json
 wgs84 43.02 -70.54
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44073_wind_dir
 last_row WSPD hydrosphere_buoy_44073_wind_speed
 last_row WVHT hydrosphere_buoy_44073_wave_height
@@ -3564,9 +3564,9 @@ last_row WTMP hydrosphere_buoy_44073_water_temp
 source hydrosphere_ndbc_buoy_44074
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44074.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44074.json
 wgs84 43.071 -70.868
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44074_wind_dir
 last_row WSPD hydrosphere_buoy_44074_wind_speed
 last_row WVHT hydrosphere_buoy_44074_wave_height
@@ -3577,9 +3577,9 @@ last_row WTMP hydrosphere_buoy_44074_water_temp
 source hydrosphere_ndbc_buoy_44078
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44078.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44078.json
 wgs84 59.94 -39.52
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44078_wind_dir
 last_row WSPD hydrosphere_buoy_44078_wind_speed
 last_row WVHT hydrosphere_buoy_44078_wave_height
@@ -3590,9 +3590,9 @@ last_row WTMP hydrosphere_buoy_44078_water_temp
 source hydrosphere_ndbc_buoy_44079
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44079.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44079.json
 wgs84 36.175 -74.827
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44079_wind_dir
 last_row WSPD hydrosphere_buoy_44079_wind_speed
 last_row WVHT hydrosphere_buoy_44079_wave_height
@@ -3603,9 +3603,9 @@ last_row WTMP hydrosphere_buoy_44079_water_temp
 source hydrosphere_ndbc_buoy_44080
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44080.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44080.json
 wgs84 39.223 -76.528
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44080_wind_dir
 last_row WSPD hydrosphere_buoy_44080_wind_speed
 last_row WVHT hydrosphere_buoy_44080_wave_height
@@ -3616,9 +3616,9 @@ last_row WTMP hydrosphere_buoy_44080_water_temp
 source hydrosphere_ndbc_buoy_44084
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44084.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44084.json
 wgs84 38.537 -75.044
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44084_wind_dir
 last_row WSPD hydrosphere_buoy_44084_wind_speed
 last_row WVHT hydrosphere_buoy_44084_wave_height
@@ -3629,9 +3629,9 @@ last_row WTMP hydrosphere_buoy_44084_water_temp
 source hydrosphere_ndbc_buoy_44085
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44085.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44085.json
 wgs84 41.387 -71.032
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44085_wind_dir
 last_row WSPD hydrosphere_buoy_44085_wind_speed
 last_row WVHT hydrosphere_buoy_44085_wave_height
@@ -3642,9 +3642,9 @@ last_row WTMP hydrosphere_buoy_44085_water_temp
 source hydrosphere_ndbc_buoy_44086
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44086.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44086.json
 wgs84 36.001 -75.421
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44086_wind_dir
 last_row WSPD hydrosphere_buoy_44086_wind_speed
 last_row WVHT hydrosphere_buoy_44086_wave_height
@@ -3655,9 +3655,9 @@ last_row WTMP hydrosphere_buoy_44086_water_temp
 source hydrosphere_ndbc_buoy_44088
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44088.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44088.json
 wgs84 36.612 -74.839
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44088_wind_dir
 last_row WSPD hydrosphere_buoy_44088_wind_speed
 last_row WVHT hydrosphere_buoy_44088_wave_height
@@ -3668,9 +3668,9 @@ last_row WTMP hydrosphere_buoy_44088_water_temp
 source hydrosphere_ndbc_buoy_44090
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44090.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44090.json
 wgs84 41.84 -70.329
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44090_wind_dir
 last_row WSPD hydrosphere_buoy_44090_wind_speed
 last_row WVHT hydrosphere_buoy_44090_wave_height
@@ -3681,9 +3681,9 @@ last_row WTMP hydrosphere_buoy_44090_water_temp
 source hydrosphere_ndbc_buoy_44091
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44091.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44091.json
 wgs84 39.772 -73.769
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44091_wind_dir
 last_row WSPD hydrosphere_buoy_44091_wind_speed
 last_row WVHT hydrosphere_buoy_44091_wave_height
@@ -3694,9 +3694,9 @@ last_row WTMP hydrosphere_buoy_44091_water_temp
 source hydrosphere_ndbc_buoy_44095
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44095.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44095.json
 wgs84 35.75 -75.33
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44095_wind_dir
 last_row WSPD hydrosphere_buoy_44095_wind_speed
 last_row WVHT hydrosphere_buoy_44095_wave_height
@@ -3707,9 +3707,9 @@ last_row WTMP hydrosphere_buoy_44095_water_temp
 source hydrosphere_ndbc_buoy_44097
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44097.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44097.json
 wgs84 40.967 -71.124
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44097_wind_dir
 last_row WSPD hydrosphere_buoy_44097_wind_speed
 last_row WVHT hydrosphere_buoy_44097_wave_height
@@ -3720,9 +3720,9 @@ last_row WTMP hydrosphere_buoy_44097_water_temp
 source hydrosphere_ndbc_buoy_44098
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44098.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44098.json
 wgs84 42.8 -70.169
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44098_wind_dir
 last_row WSPD hydrosphere_buoy_44098_wind_speed
 last_row WVHT hydrosphere_buoy_44098_wave_height
@@ -3733,9 +3733,9 @@ last_row WTMP hydrosphere_buoy_44098_water_temp
 source hydrosphere_ndbc_buoy_44099
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44099.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44099.json
 wgs84 36.915 -75.722
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44099_wind_dir
 last_row WSPD hydrosphere_buoy_44099_wind_speed
 last_row WVHT hydrosphere_buoy_44099_wave_height
@@ -3746,9 +3746,9 @@ last_row WTMP hydrosphere_buoy_44099_water_temp
 source hydrosphere_ndbc_buoy_44100
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44100.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44100.json
 wgs84 36.257 -75.593
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44100_wind_dir
 last_row WSPD hydrosphere_buoy_44100_wind_speed
 last_row WVHT hydrosphere_buoy_44100_wave_height
@@ -3759,9 +3759,9 @@ last_row WTMP hydrosphere_buoy_44100_water_temp
 source hydrosphere_ndbc_buoy_44137
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44137.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44137.json
 wgs84 42.26 -62.03
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44137_wind_dir
 last_row WSPD hydrosphere_buoy_44137_wind_speed
 last_row WVHT hydrosphere_buoy_44137_wave_height
@@ -3772,9 +3772,9 @@ last_row WTMP hydrosphere_buoy_44137_water_temp
 source hydrosphere_ndbc_buoy_44139
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44139.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44139.json
 wgs84 44.24 -57.1
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44139_wind_dir
 last_row WSPD hydrosphere_buoy_44139_wind_speed
 last_row WVHT hydrosphere_buoy_44139_wave_height
@@ -3785,9 +3785,9 @@ last_row WTMP hydrosphere_buoy_44139_water_temp
 source hydrosphere_ndbc_buoy_44150
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44150.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44150.json
 wgs84 42.5 -64.02
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44150_wind_dir
 last_row WSPD hydrosphere_buoy_44150_wind_speed
 last_row WVHT hydrosphere_buoy_44150_wave_height
@@ -3798,9 +3798,9 @@ last_row WTMP hydrosphere_buoy_44150_water_temp
 source hydrosphere_ndbc_buoy_44258
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44258.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44258.json
 wgs84 44.5 -63.4
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44258_wind_dir
 last_row WSPD hydrosphere_buoy_44258_wind_speed
 last_row WVHT hydrosphere_buoy_44258_wave_height
@@ -3811,9 +3811,9 @@ last_row WTMP hydrosphere_buoy_44258_water_temp
 source hydrosphere_ndbc_buoy_44488
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44488.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44488.json
 wgs84 45.44 -60.95
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44488_wind_dir
 last_row WSPD hydrosphere_buoy_44488_wind_speed
 last_row WVHT hydrosphere_buoy_44488_wave_height
@@ -3824,9 +3824,9 @@ last_row WTMP hydrosphere_buoy_44488_water_temp
 source hydrosphere_ndbc_buoy_44489
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/44489.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44489.json
 wgs84 45.49 -61.14
-format csv
+format json
 last_row WDIR hydrosphere_buoy_44489_wind_dir
 last_row WSPD hydrosphere_buoy_44489_wind_speed
 last_row WVHT hydrosphere_buoy_44489_wave_height
@@ -3837,9 +3837,9 @@ last_row WTMP hydrosphere_buoy_44489_water_temp
 source hydrosphere_ndbc_buoy_45001
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45001.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45001.json
 wgs84 48.061 -87.793
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45001_wind_dir
 last_row WSPD hydrosphere_buoy_45001_wind_speed
 last_row WVHT hydrosphere_buoy_45001_wave_height
@@ -3850,9 +3850,9 @@ last_row WTMP hydrosphere_buoy_45001_water_temp
 source hydrosphere_ndbc_buoy_45002
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45002.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45002.json
 wgs84 45.344 -86.411
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45002_wind_dir
 last_row WSPD hydrosphere_buoy_45002_wind_speed
 last_row WVHT hydrosphere_buoy_45002_wave_height
@@ -3863,9 +3863,9 @@ last_row WTMP hydrosphere_buoy_45002_water_temp
 source hydrosphere_ndbc_buoy_45004
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45004.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45004.json
 wgs84 47.583 -86.586
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45004_wind_dir
 last_row WSPD hydrosphere_buoy_45004_wind_speed
 last_row WVHT hydrosphere_buoy_45004_wave_height
@@ -3876,9 +3876,9 @@ last_row WTMP hydrosphere_buoy_45004_water_temp
 source hydrosphere_ndbc_buoy_45005
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45005.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45005.json
 wgs84 41.677 -82.398
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45005_wind_dir
 last_row WSPD hydrosphere_buoy_45005_wind_speed
 last_row WVHT hydrosphere_buoy_45005_wave_height
@@ -3889,9 +3889,9 @@ last_row WTMP hydrosphere_buoy_45005_water_temp
 source hydrosphere_ndbc_buoy_45006
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45006.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45006.json
 wgs84 47.335 -89.793
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45006_wind_dir
 last_row WSPD hydrosphere_buoy_45006_wind_speed
 last_row WVHT hydrosphere_buoy_45006_wave_height
@@ -3902,9 +3902,9 @@ last_row WTMP hydrosphere_buoy_45006_water_temp
 source hydrosphere_ndbc_buoy_45012
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45012.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45012.json
 wgs84 43.621 -77.401
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45012_wind_dir
 last_row WSPD hydrosphere_buoy_45012_wind_speed
 last_row WVHT hydrosphere_buoy_45012_wave_height
@@ -3915,9 +3915,9 @@ last_row WTMP hydrosphere_buoy_45012_water_temp
 source hydrosphere_ndbc_buoy_45013
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45013.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45013.json
 wgs84 43.098 -87.85
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45013_wind_dir
 last_row WSPD hydrosphere_buoy_45013_wind_speed
 last_row WVHT hydrosphere_buoy_45013_wave_height
@@ -3928,9 +3928,9 @@ last_row WTMP hydrosphere_buoy_45013_water_temp
 source hydrosphere_ndbc_buoy_45014
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45014.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45014.json
 wgs84 44.794 -87.758
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45014_wind_dir
 last_row WSPD hydrosphere_buoy_45014_wind_speed
 last_row WVHT hydrosphere_buoy_45014_wave_height
@@ -3941,9 +3941,9 @@ last_row WTMP hydrosphere_buoy_45014_water_temp
 source hydrosphere_ndbc_buoy_45022
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45022.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45022.json
 wgs84 45.404 -85.088
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45022_wind_dir
 last_row WSPD hydrosphere_buoy_45022_wind_speed
 last_row WVHT hydrosphere_buoy_45022_wave_height
@@ -3954,9 +3954,9 @@ last_row WTMP hydrosphere_buoy_45022_water_temp
 source hydrosphere_ndbc_buoy_45023
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45023.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45023.json
 wgs84 47.27 -88.607
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45023_wind_dir
 last_row WSPD hydrosphere_buoy_45023_wind_speed
 last_row WVHT hydrosphere_buoy_45023_wave_height
@@ -3967,9 +3967,9 @@ last_row WTMP hydrosphere_buoy_45023_water_temp
 source hydrosphere_ndbc_buoy_45024
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45024.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45024.json
 wgs84 43.98 -86.56
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45024_wind_dir
 last_row WSPD hydrosphere_buoy_45024_wind_speed
 last_row WVHT hydrosphere_buoy_45024_wave_height
@@ -3980,9 +3980,9 @@ last_row WTMP hydrosphere_buoy_45024_water_temp
 source hydrosphere_ndbc_buoy_45025
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45025.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45025.json
 wgs84 46.969 -88.398
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45025_wind_dir
 last_row WSPD hydrosphere_buoy_45025_wind_speed
 last_row WVHT hydrosphere_buoy_45025_wave_height
@@ -3993,9 +3993,9 @@ last_row WTMP hydrosphere_buoy_45025_water_temp
 source hydrosphere_ndbc_buoy_45026
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45026.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45026.json
 wgs84 41.982 -86.619
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45026_wind_dir
 last_row WSPD hydrosphere_buoy_45026_wind_speed
 last_row WVHT hydrosphere_buoy_45026_wave_height
@@ -4006,9 +4006,9 @@ last_row WTMP hydrosphere_buoy_45026_water_temp
 source hydrosphere_ndbc_buoy_45027
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45027.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45027.json
 wgs84 46.86 -91.93
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45027_wind_dir
 last_row WSPD hydrosphere_buoy_45027_wind_speed
 last_row WVHT hydrosphere_buoy_45027_wave_height
@@ -4019,9 +4019,9 @@ last_row WTMP hydrosphere_buoy_45027_water_temp
 source hydrosphere_ndbc_buoy_45028
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45028.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45028.json
 wgs84 46.814 -91.829
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45028_wind_dir
 last_row WSPD hydrosphere_buoy_45028_wind_speed
 last_row WVHT hydrosphere_buoy_45028_wave_height
@@ -4032,9 +4032,9 @@ last_row WTMP hydrosphere_buoy_45028_water_temp
 source hydrosphere_ndbc_buoy_45029
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45029.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45029.json
 wgs84 42.9 -86.272
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45029_wind_dir
 last_row WSPD hydrosphere_buoy_45029_wind_speed
 last_row WVHT hydrosphere_buoy_45029_wave_height
@@ -4045,9 +4045,9 @@ last_row WTMP hydrosphere_buoy_45029_water_temp
 source hydrosphere_ndbc_buoy_45132
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45132.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45132.json
 wgs84 42.46 -81.22
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45132_wind_dir
 last_row WSPD hydrosphere_buoy_45132_wind_speed
 last_row WVHT hydrosphere_buoy_45132_wave_height
@@ -4058,9 +4058,9 @@ last_row WTMP hydrosphere_buoy_45132_water_temp
 source hydrosphere_ndbc_buoy_45135
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45135.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45135.json
 wgs84 43.78 -76.87
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45135_wind_dir
 last_row WSPD hydrosphere_buoy_45135_wind_speed
 last_row WVHT hydrosphere_buoy_45135_wave_height
@@ -4071,9 +4071,9 @@ last_row WTMP hydrosphere_buoy_45135_water_temp
 source hydrosphere_ndbc_buoy_45136
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45136.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45136.json
 wgs84 48.54 -86.95
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45136_wind_dir
 last_row WSPD hydrosphere_buoy_45136_wind_speed
 last_row WVHT hydrosphere_buoy_45136_wave_height
@@ -4084,9 +4084,9 @@ last_row WTMP hydrosphere_buoy_45136_water_temp
 source hydrosphere_ndbc_buoy_45137
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45137.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45137.json
 wgs84 45.54 -81.02
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45137_wind_dir
 last_row WSPD hydrosphere_buoy_45137_wind_speed
 last_row WVHT hydrosphere_buoy_45137_wave_height
@@ -4097,9 +4097,9 @@ last_row WTMP hydrosphere_buoy_45137_water_temp
 source hydrosphere_ndbc_buoy_45139
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45139.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45139.json
 wgs84 43.25 -79.53
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45139_wind_dir
 last_row WSPD hydrosphere_buoy_45139_wind_speed
 last_row WVHT hydrosphere_buoy_45139_wave_height
@@ -4110,9 +4110,9 @@ last_row WTMP hydrosphere_buoy_45139_water_temp
 source hydrosphere_ndbc_buoy_45140
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45140.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45140.json
 wgs84 50.8 -96.73
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45140_wind_dir
 last_row WSPD hydrosphere_buoy_45140_wind_speed
 last_row WVHT hydrosphere_buoy_45140_wave_height
@@ -4123,9 +4123,9 @@ last_row WTMP hydrosphere_buoy_45140_water_temp
 source hydrosphere_ndbc_buoy_45142
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45142.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45142.json
 wgs84 42.74 -79.29
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45142_wind_dir
 last_row WSPD hydrosphere_buoy_45142_wind_speed
 last_row WVHT hydrosphere_buoy_45142_wave_height
@@ -4136,9 +4136,9 @@ last_row WTMP hydrosphere_buoy_45142_water_temp
 source hydrosphere_ndbc_buoy_45143
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45143.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45143.json
 wgs84 44.94 -80.627
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45143_wind_dir
 last_row WSPD hydrosphere_buoy_45143_wind_speed
 last_row WVHT hydrosphere_buoy_45143_wave_height
@@ -4149,9 +4149,9 @@ last_row WTMP hydrosphere_buoy_45143_water_temp
 source hydrosphere_ndbc_buoy_45144
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45144.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45144.json
 wgs84 53.23 -98.29
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45144_wind_dir
 last_row WSPD hydrosphere_buoy_45144_wind_speed
 last_row WVHT hydrosphere_buoy_45144_wave_height
@@ -4162,9 +4162,9 @@ last_row WTMP hydrosphere_buoy_45144_water_temp
 source hydrosphere_ndbc_buoy_45145
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45145.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45145.json
 wgs84 51.87 -96.97
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45145_wind_dir
 last_row WSPD hydrosphere_buoy_45145_wind_speed
 last_row WVHT hydrosphere_buoy_45145_wave_height
@@ -4175,9 +4175,9 @@ last_row WTMP hydrosphere_buoy_45145_water_temp
 source hydrosphere_ndbc_buoy_45147
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45147.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45147.json
 wgs84 42.43 -82.68
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45147_wind_dir
 last_row WSPD hydrosphere_buoy_45147_wind_speed
 last_row WVHT hydrosphere_buoy_45147_wave_height
@@ -4188,9 +4188,9 @@ last_row WTMP hydrosphere_buoy_45147_water_temp
 source hydrosphere_ndbc_buoy_45148
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45148.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45148.json
 wgs84 49.65 -94.5
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45148_wind_dir
 last_row WSPD hydrosphere_buoy_45148_wind_speed
 last_row WVHT hydrosphere_buoy_45148_wave_height
@@ -4201,9 +4201,9 @@ last_row WTMP hydrosphere_buoy_45148_water_temp
 source hydrosphere_ndbc_buoy_45149
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45149.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45149.json
 wgs84 43.54 -82.08
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45149_wind_dir
 last_row WSPD hydrosphere_buoy_45149_wind_speed
 last_row WVHT hydrosphere_buoy_45149_wave_height
@@ -4214,9 +4214,9 @@ last_row WTMP hydrosphere_buoy_45149_water_temp
 source hydrosphere_ndbc_buoy_45151
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45151.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45151.json
 wgs84 44.5 -79.37
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45151_wind_dir
 last_row WSPD hydrosphere_buoy_45151_wind_speed
 last_row WVHT hydrosphere_buoy_45151_wave_height
@@ -4227,9 +4227,9 @@ last_row WTMP hydrosphere_buoy_45151_water_temp
 source hydrosphere_ndbc_buoy_45152
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45152.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45152.json
 wgs84 46.23 -79.72
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45152_wind_dir
 last_row WSPD hydrosphere_buoy_45152_wind_speed
 last_row WVHT hydrosphere_buoy_45152_wave_height
@@ -4240,9 +4240,9 @@ last_row WTMP hydrosphere_buoy_45152_water_temp
 source hydrosphere_ndbc_buoy_45154
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45154.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45154.json
 wgs84 46.05 -82.64
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45154_wind_dir
 last_row WSPD hydrosphere_buoy_45154_wind_speed
 last_row WVHT hydrosphere_buoy_45154_wave_height
@@ -4253,9 +4253,9 @@ last_row WTMP hydrosphere_buoy_45154_water_temp
 source hydrosphere_ndbc_buoy_45159
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45159.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45159.json
 wgs84 43.77 -78.98
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45159_wind_dir
 last_row WSPD hydrosphere_buoy_45159_wind_speed
 last_row WVHT hydrosphere_buoy_45159_wave_height
@@ -4266,9 +4266,9 @@ last_row WTMP hydrosphere_buoy_45159_water_temp
 source hydrosphere_ndbc_buoy_45161
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45161.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45161.json
 wgs84 43.185 -86.354
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45161_wind_dir
 last_row WSPD hydrosphere_buoy_45161_wind_speed
 last_row WVHT hydrosphere_buoy_45161_wave_height
@@ -4279,9 +4279,9 @@ last_row WTMP hydrosphere_buoy_45161_water_temp
 source hydrosphere_ndbc_buoy_45162
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45162.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45162.json
 wgs84 44.988 -83.269
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45162_wind_dir
 last_row WSPD hydrosphere_buoy_45162_wind_speed
 last_row WVHT hydrosphere_buoy_45162_wave_height
@@ -4292,9 +4292,9 @@ last_row WTMP hydrosphere_buoy_45162_water_temp
 source hydrosphere_ndbc_buoy_45163
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45163.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45163.json
 wgs84 43.983 -83.6
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45163_wind_dir
 last_row WSPD hydrosphere_buoy_45163_wind_speed
 last_row WVHT hydrosphere_buoy_45163_wave_height
@@ -4305,9 +4305,9 @@ last_row WTMP hydrosphere_buoy_45163_water_temp
 source hydrosphere_ndbc_buoy_45164
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45164.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45164.json
 wgs84 41.748 -81.698
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45164_wind_dir
 last_row WSPD hydrosphere_buoy_45164_wind_speed
 last_row WVHT hydrosphere_buoy_45164_wave_height
@@ -4318,9 +4318,9 @@ last_row WTMP hydrosphere_buoy_45164_water_temp
 source hydrosphere_ndbc_buoy_45165
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45165.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45165.json
 wgs84 41.704 -83.264
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45165_wind_dir
 last_row WSPD hydrosphere_buoy_45165_wind_speed
 last_row WVHT hydrosphere_buoy_45165_wave_height
@@ -4331,9 +4331,9 @@ last_row WTMP hydrosphere_buoy_45165_water_temp
 source hydrosphere_ndbc_buoy_45167
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45167.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45167.json
 wgs84 42.185 -80.135
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45167_wind_dir
 last_row WSPD hydrosphere_buoy_45167_wind_speed
 last_row WVHT hydrosphere_buoy_45167_wave_height
@@ -4344,9 +4344,9 @@ last_row WTMP hydrosphere_buoy_45167_water_temp
 source hydrosphere_ndbc_buoy_45168
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45168.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45168.json
 wgs84 42.397 -86.331
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45168_wind_dir
 last_row WSPD hydrosphere_buoy_45168_wind_speed
 last_row WVHT hydrosphere_buoy_45168_wave_height
@@ -4357,9 +4357,9 @@ last_row WTMP hydrosphere_buoy_45168_water_temp
 source hydrosphere_ndbc_buoy_45170
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45170.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45170.json
 wgs84 41.755 -86.968
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45170_wind_dir
 last_row WSPD hydrosphere_buoy_45170_wind_speed
 last_row WVHT hydrosphere_buoy_45170_wave_height
@@ -4370,9 +4370,9 @@ last_row WTMP hydrosphere_buoy_45170_water_temp
 source hydrosphere_ndbc_buoy_45174
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45174.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45174.json
 wgs84 42.135 -87.655
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45174_wind_dir
 last_row WSPD hydrosphere_buoy_45174_wind_speed
 last_row WVHT hydrosphere_buoy_45174_wave_height
@@ -4383,9 +4383,9 @@ last_row WTMP hydrosphere_buoy_45174_water_temp
 source hydrosphere_ndbc_buoy_45175
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45175.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45175.json
 wgs84 45.825 -84.772
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45175_wind_dir
 last_row WSPD hydrosphere_buoy_45175_wind_speed
 last_row WVHT hydrosphere_buoy_45175_wave_height
@@ -4396,9 +4396,9 @@ last_row WTMP hydrosphere_buoy_45175_water_temp
 source hydrosphere_ndbc_buoy_45176
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45176.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45176.json
 wgs84 41.55 -81.765
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45176_wind_dir
 last_row WSPD hydrosphere_buoy_45176_wind_speed
 last_row WVHT hydrosphere_buoy_45176_wave_height
@@ -4409,9 +4409,9 @@ last_row WTMP hydrosphere_buoy_45176_water_temp
 source hydrosphere_ndbc_buoy_45178
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45178.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45178.json
 wgs84 44.603 -73.394
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45178_wind_dir
 last_row WSPD hydrosphere_buoy_45178_wind_speed
 last_row WVHT hydrosphere_buoy_45178_wave_height
@@ -4422,9 +4422,9 @@ last_row WTMP hydrosphere_buoy_45178_water_temp
 source hydrosphere_ndbc_buoy_45183
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45183.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45183.json
 wgs84 44.982 -85.831
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45183_wind_dir
 last_row WSPD hydrosphere_buoy_45183_wind_speed
 last_row WVHT hydrosphere_buoy_45183_wave_height
@@ -4435,9 +4435,9 @@ last_row WTMP hydrosphere_buoy_45183_water_temp
 source hydrosphere_ndbc_buoy_45186
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45186.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45186.json
 wgs84 42.368 -87.795
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45186_wind_dir
 last_row WSPD hydrosphere_buoy_45186_wind_speed
 last_row WVHT hydrosphere_buoy_45186_wave_height
@@ -4448,9 +4448,9 @@ last_row WTMP hydrosphere_buoy_45186_water_temp
 source hydrosphere_ndbc_buoy_45187
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45187.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45187.json
 wgs84 42.491 -87.779
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45187_wind_dir
 last_row WSPD hydrosphere_buoy_45187_wind_speed
 last_row WVHT hydrosphere_buoy_45187_wave_height
@@ -4461,9 +4461,9 @@ last_row WTMP hydrosphere_buoy_45187_water_temp
 source hydrosphere_ndbc_buoy_45190
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45190.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45190.json
 wgs84 43.282 -76.961
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45190_wind_dir
 last_row WSPD hydrosphere_buoy_45190_wind_speed
 last_row WVHT hydrosphere_buoy_45190_wave_height
@@ -4474,9 +4474,9 @@ last_row WTMP hydrosphere_buoy_45190_water_temp
 source hydrosphere_ndbc_buoy_45191
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45191.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45191.json
 wgs84 43.388 -78.192
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45191_wind_dir
 last_row WSPD hydrosphere_buoy_45191_wind_speed
 last_row WVHT hydrosphere_buoy_45191_wave_height
@@ -4487,9 +4487,9 @@ last_row WTMP hydrosphere_buoy_45191_water_temp
 source hydrosphere_ndbc_buoy_45194
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45194.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45194.json
 wgs84 45.803 -84.792
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45194_wind_dir
 last_row WSPD hydrosphere_buoy_45194_wind_speed
 last_row WVHT hydrosphere_buoy_45194_wave_height
@@ -4500,9 +4500,9 @@ last_row WTMP hydrosphere_buoy_45194_water_temp
 source hydrosphere_ndbc_buoy_45196
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45196.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45196.json
 wgs84 41.521 -81.88
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45196_wind_dir
 last_row WSPD hydrosphere_buoy_45196_wind_speed
 last_row WVHT hydrosphere_buoy_45196_wave_height
@@ -4513,9 +4513,9 @@ last_row WTMP hydrosphere_buoy_45196_water_temp
 source hydrosphere_ndbc_buoy_45197
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45197.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45197.json
 wgs84 41.619 -81.617
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45197_wind_dir
 last_row WSPD hydrosphere_buoy_45197_wind_speed
 last_row WVHT hydrosphere_buoy_45197_wave_height
@@ -4526,9 +4526,9 @@ last_row WTMP hydrosphere_buoy_45197_water_temp
 source hydrosphere_ndbc_buoy_45198
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45198.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45198.json
 wgs84 41.892 -87.563
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45198_wind_dir
 last_row WSPD hydrosphere_buoy_45198_wind_speed
 last_row WVHT hydrosphere_buoy_45198_wave_height
@@ -4539,9 +4539,9 @@ last_row WTMP hydrosphere_buoy_45198_water_temp
 source hydrosphere_ndbc_buoy_45199
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45199.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45199.json
 wgs84 42.702 -87.647
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45199_wind_dir
 last_row WSPD hydrosphere_buoy_45199_wind_speed
 last_row WVHT hydrosphere_buoy_45199_wave_height
@@ -4552,9 +4552,9 @@ last_row WTMP hydrosphere_buoy_45199_water_temp
 source hydrosphere_ndbc_buoy_45200
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45200.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45200.json
 wgs84 41.724 -83.37
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45200_wind_dir
 last_row WSPD hydrosphere_buoy_45200_wind_speed
 last_row WVHT hydrosphere_buoy_45200_wave_height
@@ -4565,9 +4565,9 @@ last_row WTMP hydrosphere_buoy_45200_water_temp
 source hydrosphere_ndbc_buoy_45201
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45201.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45201.json
 wgs84 41.601 -82.781
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45201_wind_dir
 last_row WSPD hydrosphere_buoy_45201_wind_speed
 last_row WVHT hydrosphere_buoy_45201_wave_height
@@ -4578,9 +4578,9 @@ last_row WTMP hydrosphere_buoy_45201_water_temp
 source hydrosphere_ndbc_buoy_45202
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45202.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45202.json
 wgs84 41.532 -82.941
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45202_wind_dir
 last_row WSPD hydrosphere_buoy_45202_wind_speed
 last_row WVHT hydrosphere_buoy_45202_wave_height
@@ -4591,9 +4591,9 @@ last_row WTMP hydrosphere_buoy_45202_water_temp
 source hydrosphere_ndbc_buoy_45203
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45203.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45203.json
 wgs84 41.393 -82.512
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45203_wind_dir
 last_row WSPD hydrosphere_buoy_45203_wind_speed
 last_row WVHT hydrosphere_buoy_45203_wave_height
@@ -4604,9 +4604,9 @@ last_row WTMP hydrosphere_buoy_45203_water_temp
 source hydrosphere_ndbc_buoy_45204
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45204.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45204.json
 wgs84 41.508 -82.115
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45204_wind_dir
 last_row WSPD hydrosphere_buoy_45204_wind_speed
 last_row WVHT hydrosphere_buoy_45204_wave_height
@@ -4617,9 +4617,9 @@ last_row WTMP hydrosphere_buoy_45204_water_temp
 source hydrosphere_ndbc_buoy_45205
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45205.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45205.json
 wgs84 41.501 -81.748
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45205_wind_dir
 last_row WSPD hydrosphere_buoy_45205_wind_speed
 last_row WVHT hydrosphere_buoy_45205_wave_height
@@ -4630,9 +4630,9 @@ last_row WTMP hydrosphere_buoy_45205_water_temp
 source hydrosphere_ndbc_buoy_45206
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45206.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45206.json
 wgs84 41.585 -81.583
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45206_wind_dir
 last_row WSPD hydrosphere_buoy_45206_wind_speed
 last_row WVHT hydrosphere_buoy_45206_wave_height
@@ -4643,9 +4643,9 @@ last_row WTMP hydrosphere_buoy_45206_water_temp
 source hydrosphere_ndbc_buoy_45207
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45207.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45207.json
 wgs84 41.731 -81.367
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45207_wind_dir
 last_row WSPD hydrosphere_buoy_45207_wind_speed
 last_row WVHT hydrosphere_buoy_45207_wave_height
@@ -4656,9 +4656,9 @@ last_row WTMP hydrosphere_buoy_45207_water_temp
 source hydrosphere_ndbc_buoy_45208
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45208.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45208.json
 wgs84 41.913 -80.807
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45208_wind_dir
 last_row WSPD hydrosphere_buoy_45208_wind_speed
 last_row WVHT hydrosphere_buoy_45208_wave_height
@@ -4669,9 +4669,9 @@ last_row WTMP hydrosphere_buoy_45208_water_temp
 source hydrosphere_ndbc_buoy_45209
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45209.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45209.json
 wgs84 43.129 -82.391
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45209_wind_dir
 last_row WSPD hydrosphere_buoy_45209_wind_speed
 last_row WVHT hydrosphere_buoy_45209_wave_height
@@ -4682,9 +4682,9 @@ last_row WTMP hydrosphere_buoy_45209_water_temp
 source hydrosphere_ndbc_buoy_45210
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45210.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45210.json
 wgs84 44.055 -87.05
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45210_wind_dir
 last_row WSPD hydrosphere_buoy_45210_wind_speed
 last_row WVHT hydrosphere_buoy_45210_wave_height
@@ -4695,9 +4695,9 @@ last_row WTMP hydrosphere_buoy_45210_water_temp
 source hydrosphere_ndbc_buoy_45211
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45211.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45211.json
 wgs84 46.973 -86.568
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45211_wind_dir
 last_row WSPD hydrosphere_buoy_45211_wind_speed
 last_row WVHT hydrosphere_buoy_45211_wave_height
@@ -4708,9 +4708,9 @@ last_row WTMP hydrosphere_buoy_45211_water_temp
 source hydrosphere_ndbc_buoy_45212
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45212.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45212.json
 wgs84 45.351 -82.84
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45212_wind_dir
 last_row WSPD hydrosphere_buoy_45212_wind_speed
 last_row WVHT hydrosphere_buoy_45212_wave_height
@@ -4721,9 +4721,9 @@ last_row WTMP hydrosphere_buoy_45212_water_temp
 source hydrosphere_ndbc_buoy_45213
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45213.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45213.json
 wgs84 47.588 -86.588
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45213_wind_dir
 last_row WSPD hydrosphere_buoy_45213_wind_speed
 last_row WVHT hydrosphere_buoy_45213_wave_height
@@ -4734,9 +4734,9 @@ last_row WTMP hydrosphere_buoy_45213_water_temp
 source hydrosphere_ndbc_buoy_45214
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45214.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45214.json
 wgs84 42.674 -87.026
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45214_wind_dir
 last_row WSPD hydrosphere_buoy_45214_wind_speed
 last_row WVHT hydrosphere_buoy_45214_wave_height
@@ -4747,9 +4747,9 @@ last_row WTMP hydrosphere_buoy_45214_water_temp
 source hydrosphere_ndbc_buoy_45215
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45215.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45215.json
 wgs84 43.501 -76.539
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45215_wind_dir
 last_row WSPD hydrosphere_buoy_45215_wind_speed
 last_row WVHT hydrosphere_buoy_45215_wave_height
@@ -4760,9 +4760,9 @@ last_row WTMP hydrosphere_buoy_45215_water_temp
 source hydrosphere_ndbc_buoy_45216
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45216.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45216.json
 wgs84 46.907 -89.354
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45216_wind_dir
 last_row WSPD hydrosphere_buoy_45216_wind_speed
 last_row WVHT hydrosphere_buoy_45216_wave_height
@@ -4773,9 +4773,9 @@ last_row WTMP hydrosphere_buoy_45216_water_temp
 source hydrosphere_ndbc_buoy_45217
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45217.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45217.json
 wgs84 46.708 -92.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45217_wind_dir
 last_row WSPD hydrosphere_buoy_45217_wind_speed
 last_row WVHT hydrosphere_buoy_45217_wave_height
@@ -4786,9 +4786,9 @@ last_row WTMP hydrosphere_buoy_45217_water_temp
 source hydrosphere_ndbc_buoy_45219
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45219.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45219.json
 wgs84 47.021 -91.625
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45219_wind_dir
 last_row WSPD hydrosphere_buoy_45219_wind_speed
 last_row WVHT hydrosphere_buoy_45219_wave_height
@@ -4799,9 +4799,9 @@ last_row WTMP hydrosphere_buoy_45219_water_temp
 source hydrosphere_ndbc_buoy_45220
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45220.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45220.json
 wgs84 42.561 -79.432
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45220_wind_dir
 last_row WSPD hydrosphere_buoy_45220_wind_speed
 last_row WVHT hydrosphere_buoy_45220_wave_height
@@ -4812,9 +4812,9 @@ last_row WTMP hydrosphere_buoy_45220_water_temp
 source hydrosphere_ndbc_buoy_45221
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45221.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45221.json
 wgs84 44.756 -73.355
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45221_wind_dir
 last_row WSPD hydrosphere_buoy_45221_wind_speed
 last_row WVHT hydrosphere_buoy_45221_wave_height
@@ -4825,9 +4825,9 @@ last_row WTMP hydrosphere_buoy_45221_water_temp
 source hydrosphere_ndbc_buoy_45222
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45222.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45222.json
 wgs84 42.126 -80.148
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45222_wind_dir
 last_row WSPD hydrosphere_buoy_45222_wind_speed
 last_row WVHT hydrosphere_buoy_45222_wave_height
@@ -4838,9 +4838,9 @@ last_row WTMP hydrosphere_buoy_45222_water_temp
 source hydrosphere_ndbc_buoy_45223
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/45223.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45223.json
 wgs84 42.144 -80.139
-format csv
+format json
 last_row WDIR hydrosphere_buoy_45223_wind_dir
 last_row WSPD hydrosphere_buoy_45223_wind_speed
 last_row WVHT hydrosphere_buoy_45223_wave_height
@@ -4851,9 +4851,9 @@ last_row WTMP hydrosphere_buoy_45223_water_temp
 source hydrosphere_ndbc_buoy_46004
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46004.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46004.json
 wgs84 50.93 -136.1
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46004_wind_dir
 last_row WSPD hydrosphere_buoy_46004_wind_speed
 last_row WVHT hydrosphere_buoy_46004_wave_height
@@ -4864,9 +4864,9 @@ last_row WTMP hydrosphere_buoy_46004_water_temp
 source hydrosphere_ndbc_buoy_46011
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46011.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46011.json
 wgs84 34.937 -120.999
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46011_wind_dir
 last_row WSPD hydrosphere_buoy_46011_wind_speed
 last_row WVHT hydrosphere_buoy_46011_wave_height
@@ -4877,9 +4877,9 @@ last_row WTMP hydrosphere_buoy_46011_water_temp
 source hydrosphere_ndbc_buoy_46014
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46014.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46014.json
 wgs84 39.225 -123.98
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46014_wind_dir
 last_row WSPD hydrosphere_buoy_46014_wind_speed
 last_row WVHT hydrosphere_buoy_46014_wave_height
@@ -4890,9 +4890,9 @@ last_row WTMP hydrosphere_buoy_46014_water_temp
 source hydrosphere_ndbc_buoy_46015
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46015.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46015.json
 wgs84 42.754 -124.839
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46015_wind_dir
 last_row WSPD hydrosphere_buoy_46015_wind_speed
 last_row WVHT hydrosphere_buoy_46015_wave_height
@@ -4903,9 +4903,9 @@ last_row WTMP hydrosphere_buoy_46015_water_temp
 source hydrosphere_ndbc_buoy_46028
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46028.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46028.json
 wgs84 35.763 -121.9
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46028_wind_dir
 last_row WSPD hydrosphere_buoy_46028_wind_speed
 last_row WVHT hydrosphere_buoy_46028_wave_height
@@ -4916,9 +4916,9 @@ last_row WTMP hydrosphere_buoy_46028_water_temp
 source hydrosphere_ndbc_buoy_46035
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46035.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46035.json
 wgs84 57.034 -177.468
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46035_wind_dir
 last_row WSPD hydrosphere_buoy_46035_wind_speed
 last_row WVHT hydrosphere_buoy_46035_wave_height
@@ -4929,9 +4929,9 @@ last_row WTMP hydrosphere_buoy_46035_water_temp
 source hydrosphere_ndbc_buoy_46036
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46036.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46036.json
 wgs84 48.36 -133.94
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46036_wind_dir
 last_row WSPD hydrosphere_buoy_46036_wind_speed
 last_row WVHT hydrosphere_buoy_46036_wave_height
@@ -4942,9 +4942,9 @@ last_row WTMP hydrosphere_buoy_46036_water_temp
 source hydrosphere_ndbc_buoy_46041
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46041.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46041.json
 wgs84 47.351 -124.741
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46041_wind_dir
 last_row WSPD hydrosphere_buoy_46041_wind_speed
 last_row WVHT hydrosphere_buoy_46041_wave_height
@@ -4955,9 +4955,9 @@ last_row WTMP hydrosphere_buoy_46041_water_temp
 source hydrosphere_ndbc_buoy_46042
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46042.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46042.json
 wgs84 36.787 -122.408
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46042_wind_dir
 last_row WSPD hydrosphere_buoy_46042_wind_speed
 last_row WVHT hydrosphere_buoy_46042_wave_height
@@ -4968,9 +4968,9 @@ last_row WTMP hydrosphere_buoy_46042_water_temp
 source hydrosphere_ndbc_buoy_46050
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46050.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46050.json
 wgs84 44.679 -124.535
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46050_wind_dir
 last_row WSPD hydrosphere_buoy_46050_wind_speed
 last_row WVHT hydrosphere_buoy_46050_wave_height
@@ -4981,9 +4981,9 @@ last_row WTMP hydrosphere_buoy_46050_water_temp
 source hydrosphere_ndbc_buoy_46060
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46060.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46060.json
 wgs84 60.571 -146.795
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46060_wind_dir
 last_row WSPD hydrosphere_buoy_46060_wind_speed
 last_row WVHT hydrosphere_buoy_46060_wave_height
@@ -4994,9 +4994,9 @@ last_row WTMP hydrosphere_buoy_46060_water_temp
 source hydrosphere_ndbc_buoy_46061
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46061.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46061.json
 wgs84 60.23 -146.837
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46061_wind_dir
 last_row WSPD hydrosphere_buoy_46061_wind_speed
 last_row WVHT hydrosphere_buoy_46061_wave_height
@@ -5007,9 +5007,9 @@ last_row WTMP hydrosphere_buoy_46061_water_temp
 source hydrosphere_ndbc_buoy_46066
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46066.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46066.json
 wgs84 52.776 -154.992
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46066_wind_dir
 last_row WSPD hydrosphere_buoy_46066_wind_speed
 last_row WVHT hydrosphere_buoy_46066_wave_height
@@ -5020,9 +5020,9 @@ last_row WTMP hydrosphere_buoy_46066_water_temp
 source hydrosphere_ndbc_buoy_46070
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46070.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46070.json
 wgs84 55.048 175.246
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46070_wind_dir
 last_row WSPD hydrosphere_buoy_46070_wind_speed
 last_row WVHT hydrosphere_buoy_46070_wave_height
@@ -5033,9 +5033,9 @@ last_row WTMP hydrosphere_buoy_46070_water_temp
 source hydrosphere_ndbc_buoy_46071
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46071.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46071.json
 wgs84 51.035 179.808
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46071_wind_dir
 last_row WSPD hydrosphere_buoy_46071_wind_speed
 last_row WVHT hydrosphere_buoy_46071_wave_height
@@ -5046,9 +5046,9 @@ last_row WTMP hydrosphere_buoy_46071_water_temp
 source hydrosphere_ndbc_buoy_46072
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46072.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46072.json
 wgs84 51.645 -172.145
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46072_wind_dir
 last_row WSPD hydrosphere_buoy_46072_wind_speed
 last_row WVHT hydrosphere_buoy_46072_wave_height
@@ -5059,9 +5059,9 @@ last_row WTMP hydrosphere_buoy_46072_water_temp
 source hydrosphere_ndbc_buoy_46073
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46073.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46073.json
 wgs84 54.985 -171.874
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46073_wind_dir
 last_row WSPD hydrosphere_buoy_46073_wind_speed
 last_row WVHT hydrosphere_buoy_46073_wave_height
@@ -5072,9 +5072,9 @@ last_row WTMP hydrosphere_buoy_46073_water_temp
 source hydrosphere_ndbc_buoy_46075
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46075.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46075.json
 wgs84 53.938 -160.735
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46075_wind_dir
 last_row WSPD hydrosphere_buoy_46075_wind_speed
 last_row WVHT hydrosphere_buoy_46075_wave_height
@@ -5085,9 +5085,9 @@ last_row WTMP hydrosphere_buoy_46075_water_temp
 source hydrosphere_ndbc_buoy_46076
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46076.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46076.json
 wgs84 59.508 -148.005
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46076_wind_dir
 last_row WSPD hydrosphere_buoy_46076_wind_speed
 last_row WVHT hydrosphere_buoy_46076_wave_height
@@ -5098,9 +5098,9 @@ last_row WTMP hydrosphere_buoy_46076_water_temp
 source hydrosphere_ndbc_buoy_46077
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46077.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46077.json
 wgs84 57.869 -154.211
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46077_wind_dir
 last_row WSPD hydrosphere_buoy_46077_wind_speed
 last_row WVHT hydrosphere_buoy_46077_wave_height
@@ -5111,9 +5111,9 @@ last_row WTMP hydrosphere_buoy_46077_water_temp
 source hydrosphere_ndbc_buoy_46078
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46078.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46078.json
 wgs84 55.561 -152.599
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46078_wind_dir
 last_row WSPD hydrosphere_buoy_46078_wind_speed
 last_row WVHT hydrosphere_buoy_46078_wave_height
@@ -5124,9 +5124,9 @@ last_row WTMP hydrosphere_buoy_46078_water_temp
 source hydrosphere_ndbc_buoy_46080
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46080.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46080.json
 wgs84 57.91 -150.129
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46080_wind_dir
 last_row WSPD hydrosphere_buoy_46080_wind_speed
 last_row WVHT hydrosphere_buoy_46080_wave_height
@@ -5137,9 +5137,9 @@ last_row WTMP hydrosphere_buoy_46080_water_temp
 source hydrosphere_ndbc_buoy_46081
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46081.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46081.json
 wgs84 60.802 -148.283
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46081_wind_dir
 last_row WSPD hydrosphere_buoy_46081_wind_speed
 last_row WVHT hydrosphere_buoy_46081_wave_height
@@ -5150,9 +5150,9 @@ last_row WTMP hydrosphere_buoy_46081_water_temp
 source hydrosphere_ndbc_buoy_46082
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46082.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46082.json
 wgs84 59.67 -143.353
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46082_wind_dir
 last_row WSPD hydrosphere_buoy_46082_wind_speed
 last_row WVHT hydrosphere_buoy_46082_wave_height
@@ -5163,9 +5163,9 @@ last_row WTMP hydrosphere_buoy_46082_water_temp
 source hydrosphere_ndbc_buoy_46083
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46083.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46083.json
 wgs84 58.276 -138.024
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46083_wind_dir
 last_row WSPD hydrosphere_buoy_46083_wind_speed
 last_row WVHT hydrosphere_buoy_46083_wave_height
@@ -5176,9 +5176,9 @@ last_row WTMP hydrosphere_buoy_46083_water_temp
 source hydrosphere_ndbc_buoy_46084
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46084.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46084.json
 wgs84 56.614 -136.04
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46084_wind_dir
 last_row WSPD hydrosphere_buoy_46084_wind_speed
 last_row WVHT hydrosphere_buoy_46084_wave_height
@@ -5189,9 +5189,9 @@ last_row WTMP hydrosphere_buoy_46084_water_temp
 source hydrosphere_ndbc_buoy_46085
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46085.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46085.json
 wgs84 55.84 -142.895
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46085_wind_dir
 last_row WSPD hydrosphere_buoy_46085_wind_speed
 last_row WVHT hydrosphere_buoy_46085_wave_height
@@ -5202,9 +5202,9 @@ last_row WTMP hydrosphere_buoy_46085_water_temp
 source hydrosphere_ndbc_buoy_46087
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46087.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46087.json
 wgs84 48.493 -124.727
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46087_wind_dir
 last_row WSPD hydrosphere_buoy_46087_wind_speed
 last_row WVHT hydrosphere_buoy_46087_wave_height
@@ -5215,9 +5215,9 @@ last_row WTMP hydrosphere_buoy_46087_water_temp
 source hydrosphere_ndbc_buoy_46088
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46088.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46088.json
 wgs84 48.332 -123.179
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46088_wind_dir
 last_row WSPD hydrosphere_buoy_46088_wind_speed
 last_row WVHT hydrosphere_buoy_46088_wave_height
@@ -5228,9 +5228,9 @@ last_row WTMP hydrosphere_buoy_46088_water_temp
 source hydrosphere_ndbc_buoy_46089
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46089.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46089.json
 wgs84 45.928 -125.815
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46089_wind_dir
 last_row WSPD hydrosphere_buoy_46089_wind_speed
 last_row WVHT hydrosphere_buoy_46089_wave_height
@@ -5241,9 +5241,9 @@ last_row WTMP hydrosphere_buoy_46089_water_temp
 source hydrosphere_ndbc_buoy_46092
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46092.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46092.json
 wgs84 36.751 -122.029
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46092_wind_dir
 last_row WSPD hydrosphere_buoy_46092_wind_speed
 last_row WVHT hydrosphere_buoy_46092_wave_height
@@ -5254,9 +5254,9 @@ last_row WTMP hydrosphere_buoy_46092_water_temp
 source hydrosphere_ndbc_buoy_46108
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46108.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46108.json
 wgs84 59.598 -151.828
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46108_wind_dir
 last_row WSPD hydrosphere_buoy_46108_wind_speed
 last_row WVHT hydrosphere_buoy_46108_wave_height
@@ -5267,9 +5267,9 @@ last_row WTMP hydrosphere_buoy_46108_water_temp
 source hydrosphere_ndbc_buoy_46118
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46118.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46118.json
 wgs84 48.724 -122.576
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46118_wind_dir
 last_row WSPD hydrosphere_buoy_46118_wind_speed
 last_row WVHT hydrosphere_buoy_46118_wave_height
@@ -5280,9 +5280,9 @@ last_row WTMP hydrosphere_buoy_46118_water_temp
 source hydrosphere_ndbc_buoy_46119
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46119.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46119.json
 wgs84 47.967 -124.95
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46119_wind_dir
 last_row WSPD hydrosphere_buoy_46119_wind_speed
 last_row WVHT hydrosphere_buoy_46119_wave_height
@@ -5293,9 +5293,9 @@ last_row WTMP hydrosphere_buoy_46119_water_temp
 source hydrosphere_ndbc_buoy_46120
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46120.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46120.json
 wgs84 47.761 -122.397
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46120_wind_dir
 last_row WSPD hydrosphere_buoy_46120_wind_speed
 last_row WVHT hydrosphere_buoy_46120_wave_height
@@ -5306,9 +5306,9 @@ last_row WTMP hydrosphere_buoy_46120_water_temp
 source hydrosphere_ndbc_buoy_46123
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46123.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46123.json
 wgs84 47.375 -123.008
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46123_wind_dir
 last_row WSPD hydrosphere_buoy_46123_wind_speed
 last_row WVHT hydrosphere_buoy_46123_wave_height
@@ -5319,9 +5319,9 @@ last_row WTMP hydrosphere_buoy_46123_water_temp
 source hydrosphere_ndbc_buoy_46125
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46125.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46125.json
 wgs84 47.907 -122.627
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46125_wind_dir
 last_row WSPD hydrosphere_buoy_46125_wind_speed
 last_row WVHT hydrosphere_buoy_46125_wave_height
@@ -5332,9 +5332,9 @@ last_row WTMP hydrosphere_buoy_46125_water_temp
 source hydrosphere_ndbc_buoy_46131
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46131.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46131.json
 wgs84 49.91 -124.98
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46131_wind_dir
 last_row WSPD hydrosphere_buoy_46131_wind_speed
 last_row WVHT hydrosphere_buoy_46131_wave_height
@@ -5345,9 +5345,9 @@ last_row WTMP hydrosphere_buoy_46131_water_temp
 source hydrosphere_ndbc_buoy_46132
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46132.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46132.json
 wgs84 49.78 -127.89
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46132_wind_dir
 last_row WSPD hydrosphere_buoy_46132_wind_speed
 last_row WVHT hydrosphere_buoy_46132_wave_height
@@ -5358,9 +5358,9 @@ last_row WTMP hydrosphere_buoy_46132_water_temp
 source hydrosphere_ndbc_buoy_46145
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46145.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46145.json
 wgs84 54.37 -132.42
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46145_wind_dir
 last_row WSPD hydrosphere_buoy_46145_wind_speed
 last_row WVHT hydrosphere_buoy_46145_wave_height
@@ -5371,9 +5371,9 @@ last_row WTMP hydrosphere_buoy_46145_water_temp
 source hydrosphere_ndbc_buoy_46146
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46146.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46146.json
 wgs84 49.34 -123.73
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46146_wind_dir
 last_row WSPD hydrosphere_buoy_46146_wind_speed
 last_row WVHT hydrosphere_buoy_46146_wave_height
@@ -5384,9 +5384,9 @@ last_row WTMP hydrosphere_buoy_46146_water_temp
 source hydrosphere_ndbc_buoy_46147
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46147.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46147.json
 wgs84 51.83 -131.22
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46147_wind_dir
 last_row WSPD hydrosphere_buoy_46147_wind_speed
 last_row WVHT hydrosphere_buoy_46147_wave_height
@@ -5397,9 +5397,9 @@ last_row WTMP hydrosphere_buoy_46147_water_temp
 source hydrosphere_ndbc_buoy_46181
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46181.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46181.json
 wgs84 53.83 -128.83
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46181_wind_dir
 last_row WSPD hydrosphere_buoy_46181_wind_speed
 last_row WVHT hydrosphere_buoy_46181_wave_height
@@ -5410,9 +5410,9 @@ last_row WTMP hydrosphere_buoy_46181_water_temp
 source hydrosphere_ndbc_buoy_46183
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46183.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46183.json
 wgs84 53.62 -131.1
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46183_wind_dir
 last_row WSPD hydrosphere_buoy_46183_wind_speed
 last_row WVHT hydrosphere_buoy_46183_wave_height
@@ -5423,9 +5423,9 @@ last_row WTMP hydrosphere_buoy_46183_water_temp
 source hydrosphere_ndbc_buoy_46184
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46184.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46184.json
 wgs84 53.92 -138.85
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46184_wind_dir
 last_row WSPD hydrosphere_buoy_46184_wind_speed
 last_row WVHT hydrosphere_buoy_46184_wave_height
@@ -5436,9 +5436,9 @@ last_row WTMP hydrosphere_buoy_46184_water_temp
 source hydrosphere_ndbc_buoy_46185
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46185.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46185.json
 wgs84 52.42 -129.79
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46185_wind_dir
 last_row WSPD hydrosphere_buoy_46185_wind_speed
 last_row WVHT hydrosphere_buoy_46185_wave_height
@@ -5449,9 +5449,9 @@ last_row WTMP hydrosphere_buoy_46185_water_temp
 source hydrosphere_ndbc_buoy_46204
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46204.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46204.json
 wgs84 51.38 -128.77
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46204_wind_dir
 last_row WSPD hydrosphere_buoy_46204_wind_speed
 last_row WVHT hydrosphere_buoy_46204_wave_height
@@ -5462,9 +5462,9 @@ last_row WTMP hydrosphere_buoy_46204_water_temp
 source hydrosphere_ndbc_buoy_46205
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46205.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46205.json
 wgs84 54.18 -134.32
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46205_wind_dir
 last_row WSPD hydrosphere_buoy_46205_wind_speed
 last_row WVHT hydrosphere_buoy_46205_wave_height
@@ -5475,9 +5475,9 @@ last_row WTMP hydrosphere_buoy_46205_water_temp
 source hydrosphere_ndbc_buoy_46206
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46206.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46206.json
 wgs84 48.84 -126.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46206_wind_dir
 last_row WSPD hydrosphere_buoy_46206_wind_speed
 last_row WVHT hydrosphere_buoy_46206_wave_height
@@ -5488,9 +5488,9 @@ last_row WTMP hydrosphere_buoy_46206_water_temp
 source hydrosphere_ndbc_buoy_46207
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46207.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46207.json
 wgs84 50.87 -129.92
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46207_wind_dir
 last_row WSPD hydrosphere_buoy_46207_wind_speed
 last_row WVHT hydrosphere_buoy_46207_wave_height
@@ -5501,9 +5501,9 @@ last_row WTMP hydrosphere_buoy_46207_water_temp
 source hydrosphere_ndbc_buoy_46208
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46208.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46208.json
 wgs84 52.52 -132.69
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46208_wind_dir
 last_row WSPD hydrosphere_buoy_46208_wind_speed
 last_row WVHT hydrosphere_buoy_46208_wave_height
@@ -5514,9 +5514,9 @@ last_row WTMP hydrosphere_buoy_46208_water_temp
 source hydrosphere_ndbc_buoy_46211
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46211.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46211.json
 wgs84 46.857 -124.243
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46211_wind_dir
 last_row WSPD hydrosphere_buoy_46211_wind_speed
 last_row WVHT hydrosphere_buoy_46211_wave_height
@@ -5527,9 +5527,9 @@ last_row WTMP hydrosphere_buoy_46211_water_temp
 source hydrosphere_ndbc_buoy_46213
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46213.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46213.json
 wgs84 40.291 -124.748
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46213_wind_dir
 last_row WSPD hydrosphere_buoy_46213_wind_speed
 last_row WVHT hydrosphere_buoy_46213_wave_height
@@ -5540,9 +5540,9 @@ last_row WTMP hydrosphere_buoy_46213_water_temp
 source hydrosphere_ndbc_buoy_46214
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46214.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46214.json
 wgs84 37.944 -123.466
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46214_wind_dir
 last_row WSPD hydrosphere_buoy_46214_wind_speed
 last_row WVHT hydrosphere_buoy_46214_wave_height
@@ -5553,9 +5553,9 @@ last_row WTMP hydrosphere_buoy_46214_water_temp
 source hydrosphere_ndbc_buoy_46215
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46215.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46215.json
 wgs84 35.204 -120.859
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46215_wind_dir
 last_row WSPD hydrosphere_buoy_46215_wind_speed
 last_row WVHT hydrosphere_buoy_46215_wave_height
@@ -5566,9 +5566,9 @@ last_row WTMP hydrosphere_buoy_46215_water_temp
 source hydrosphere_ndbc_buoy_46218
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46218.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46218.json
 wgs84 34.452 -120.78
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46218_wind_dir
 last_row WSPD hydrosphere_buoy_46218_wind_speed
 last_row WVHT hydrosphere_buoy_46218_wave_height
@@ -5579,9 +5579,9 @@ last_row WTMP hydrosphere_buoy_46218_water_temp
 source hydrosphere_ndbc_buoy_46219
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46219.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46219.json
 wgs84 33.226 -119.891
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46219_wind_dir
 last_row WSPD hydrosphere_buoy_46219_wind_speed
 last_row WVHT hydrosphere_buoy_46219_wave_height
@@ -5592,9 +5592,9 @@ last_row WTMP hydrosphere_buoy_46219_water_temp
 source hydrosphere_ndbc_buoy_46221
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46221.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46221.json
 wgs84 33.86 -118.641
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46221_wind_dir
 last_row WSPD hydrosphere_buoy_46221_wind_speed
 last_row WVHT hydrosphere_buoy_46221_wave_height
@@ -5605,9 +5605,9 @@ last_row WTMP hydrosphere_buoy_46221_water_temp
 source hydrosphere_ndbc_buoy_46222
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46222.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46222.json
 wgs84 33.614 -118.314
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46222_wind_dir
 last_row WSPD hydrosphere_buoy_46222_wind_speed
 last_row WVHT hydrosphere_buoy_46222_wave_height
@@ -5618,9 +5618,9 @@ last_row WTMP hydrosphere_buoy_46222_water_temp
 source hydrosphere_ndbc_buoy_46224
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46224.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46224.json
 wgs84 33.178 -117.472
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46224_wind_dir
 last_row WSPD hydrosphere_buoy_46224_wind_speed
 last_row WVHT hydrosphere_buoy_46224_wave_height
@@ -5631,9 +5631,9 @@ last_row WTMP hydrosphere_buoy_46224_water_temp
 source hydrosphere_ndbc_buoy_46225
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46225.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46225.json
 wgs84 32.933 -117.391
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46225_wind_dir
 last_row WSPD hydrosphere_buoy_46225_wind_speed
 last_row WVHT hydrosphere_buoy_46225_wave_height
@@ -5644,9 +5644,9 @@ last_row WTMP hydrosphere_buoy_46225_water_temp
 source hydrosphere_ndbc_buoy_46232
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46232.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46232.json
 wgs84 32.517 -117.425
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46232_wind_dir
 last_row WSPD hydrosphere_buoy_46232_wind_speed
 last_row WVHT hydrosphere_buoy_46232_wave_height
@@ -5657,9 +5657,9 @@ last_row WTMP hydrosphere_buoy_46232_water_temp
 source hydrosphere_ndbc_buoy_46236
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46236.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46236.json
 wgs84 36.759 -121.95
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46236_wind_dir
 last_row WSPD hydrosphere_buoy_46236_wind_speed
 last_row WVHT hydrosphere_buoy_46236_wave_height
@@ -5670,9 +5670,9 @@ last_row WTMP hydrosphere_buoy_46236_water_temp
 source hydrosphere_ndbc_buoy_46237
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46237.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46237.json
 wgs84 37.788 -122.634
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46237_wind_dir
 last_row WSPD hydrosphere_buoy_46237_wind_speed
 last_row WVHT hydrosphere_buoy_46237_wave_height
@@ -5683,9 +5683,9 @@ last_row WTMP hydrosphere_buoy_46237_water_temp
 source hydrosphere_ndbc_buoy_46239
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46239.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46239.json
 wgs84 36.342 -122.11
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46239_wind_dir
 last_row WSPD hydrosphere_buoy_46239_wind_speed
 last_row WVHT hydrosphere_buoy_46239_wave_height
@@ -5696,9 +5696,9 @@ last_row WTMP hydrosphere_buoy_46239_water_temp
 source hydrosphere_ndbc_buoy_46243
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46243.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46243.json
 wgs84 46.215 -124.129
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46243_wind_dir
 last_row WSPD hydrosphere_buoy_46243_wind_speed
 last_row WVHT hydrosphere_buoy_46243_wave_height
@@ -5709,9 +5709,9 @@ last_row WTMP hydrosphere_buoy_46243_water_temp
 source hydrosphere_ndbc_buoy_46244
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46244.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46244.json
 wgs84 40.896 -124.358
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46244_wind_dir
 last_row WSPD hydrosphere_buoy_46244_wind_speed
 last_row WVHT hydrosphere_buoy_46244_wave_height
@@ -5722,9 +5722,9 @@ last_row WTMP hydrosphere_buoy_46244_water_temp
 source hydrosphere_ndbc_buoy_46246
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46246.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46246.json
 wgs84 49.903 -145.246
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46246_wind_dir
 last_row WSPD hydrosphere_buoy_46246_wind_speed
 last_row WVHT hydrosphere_buoy_46246_wave_height
@@ -5735,9 +5735,9 @@ last_row WTMP hydrosphere_buoy_46246_water_temp
 source hydrosphere_ndbc_buoy_46248
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46248.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46248.json
 wgs84 46.133 -124.64
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46248_wind_dir
 last_row WSPD hydrosphere_buoy_46248_wind_speed
 last_row WVHT hydrosphere_buoy_46248_wave_height
@@ -5748,9 +5748,9 @@ last_row WTMP hydrosphere_buoy_46248_water_temp
 source hydrosphere_ndbc_buoy_46251
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46251.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46251.json
 wgs84 33.769 -119.565
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46251_wind_dir
 last_row WSPD hydrosphere_buoy_46251_wind_speed
 last_row WVHT hydrosphere_buoy_46251_wave_height
@@ -5761,9 +5761,9 @@ last_row WTMP hydrosphere_buoy_46251_water_temp
 source hydrosphere_ndbc_buoy_46253
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46253.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46253.json
 wgs84 33.576 -118.182
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46253_wind_dir
 last_row WSPD hydrosphere_buoy_46253_wind_speed
 last_row WVHT hydrosphere_buoy_46253_wave_height
@@ -5774,9 +5774,9 @@ last_row WTMP hydrosphere_buoy_46253_water_temp
 source hydrosphere_ndbc_buoy_46254
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46254.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46254.json
 wgs84 32.868 -117.267
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46254_wind_dir
 last_row WSPD hydrosphere_buoy_46254_wind_speed
 last_row WVHT hydrosphere_buoy_46254_wave_height
@@ -5787,9 +5787,9 @@ last_row WTMP hydrosphere_buoy_46254_water_temp
 source hydrosphere_ndbc_buoy_46256
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46256.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46256.json
 wgs84 33.7 -118.201
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46256_wind_dir
 last_row WSPD hydrosphere_buoy_46256_wind_speed
 last_row WVHT hydrosphere_buoy_46256_wave_height
@@ -5800,9 +5800,9 @@ last_row WTMP hydrosphere_buoy_46256_water_temp
 source hydrosphere_ndbc_buoy_46258
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46258.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46258.json
 wgs84 32.749 -117.502
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46258_wind_dir
 last_row WSPD hydrosphere_buoy_46258_wind_speed
 last_row WVHT hydrosphere_buoy_46258_wave_height
@@ -5813,9 +5813,9 @@ last_row WTMP hydrosphere_buoy_46258_water_temp
 source hydrosphere_ndbc_buoy_46259
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46259.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46259.json
 wgs84 34.774 -121.491
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46259_wind_dir
 last_row WSPD hydrosphere_buoy_46259_wind_speed
 last_row WVHT hydrosphere_buoy_46259_wave_height
@@ -5826,9 +5826,9 @@ last_row WTMP hydrosphere_buoy_46259_water_temp
 source hydrosphere_ndbc_buoy_46266
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46266.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46266.json
 wgs84 32.957 -117.279
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46266_wind_dir
 last_row WSPD hydrosphere_buoy_46266_wind_speed
 last_row WVHT hydrosphere_buoy_46266_wave_height
@@ -5839,9 +5839,9 @@ last_row WTMP hydrosphere_buoy_46266_water_temp
 source hydrosphere_ndbc_buoy_46267
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46267.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46267.json
 wgs84 48.171 -123.6
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46267_wind_dir
 last_row WSPD hydrosphere_buoy_46267_wind_speed
 last_row WVHT hydrosphere_buoy_46267_wave_height
@@ -5852,9 +5852,9 @@ last_row WTMP hydrosphere_buoy_46267_water_temp
 source hydrosphere_ndbc_buoy_46268
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46268.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46268.json
 wgs84 34.022 -118.578
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46268_wind_dir
 last_row WSPD hydrosphere_buoy_46268_wind_speed
 last_row WVHT hydrosphere_buoy_46268_wave_height
@@ -5865,9 +5865,9 @@ last_row WTMP hydrosphere_buoy_46268_water_temp
 source hydrosphere_ndbc_buoy_46274
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46274.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46274.json
 wgs84 33.062 -117.314
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46274_wind_dir
 last_row WSPD hydrosphere_buoy_46274_wind_speed
 last_row WVHT hydrosphere_buoy_46274_wave_height
@@ -5878,9 +5878,9 @@ last_row WTMP hydrosphere_buoy_46274_water_temp
 source hydrosphere_ndbc_buoy_46275
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46275.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46275.json
 wgs84 33.291 -117.501
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46275_wind_dir
 last_row WSPD hydrosphere_buoy_46275_wind_speed
 last_row WVHT hydrosphere_buoy_46275_wave_height
@@ -5891,9 +5891,9 @@ last_row WTMP hydrosphere_buoy_46275_water_temp
 source hydrosphere_ndbc_buoy_46277
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46277.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46277.json
 wgs84 33.336 -117.659
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46277_wind_dir
 last_row WSPD hydrosphere_buoy_46277_wind_speed
 last_row WVHT hydrosphere_buoy_46277_wave_height
@@ -5904,9 +5904,9 @@ last_row WTMP hydrosphere_buoy_46277_water_temp
 source hydrosphere_ndbc_buoy_46278
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46278.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46278.json
 wgs84 45.559 -123.991
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46278_wind_dir
 last_row WSPD hydrosphere_buoy_46278_wind_speed
 last_row WVHT hydrosphere_buoy_46278_wave_height
@@ -5917,9 +5917,9 @@ last_row WTMP hydrosphere_buoy_46278_water_temp
 source hydrosphere_ndbc_buoy_46283
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46283.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46283.json
 wgs84 44.567 -124.237
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46283_wind_dir
 last_row WSPD hydrosphere_buoy_46283_wind_speed
 last_row WVHT hydrosphere_buoy_46283_wave_height
@@ -5930,9 +5930,9 @@ last_row WTMP hydrosphere_buoy_46283_water_temp
 source hydrosphere_ndbc_buoy_46285
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46285.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46285.json
 wgs84 33.445 -117.68
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46285_wind_dir
 last_row WSPD hydrosphere_buoy_46285_wind_speed
 last_row WVHT hydrosphere_buoy_46285_wave_height
@@ -5943,9 +5943,9 @@ last_row WTMP hydrosphere_buoy_46285_water_temp
 source hydrosphere_ndbc_buoy_46303
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46303.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46303.json
 wgs84 49.02 -123.43
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46303_wind_dir
 last_row WSPD hydrosphere_buoy_46303_wind_speed
 last_row WVHT hydrosphere_buoy_46303_wave_height
@@ -5956,9 +5956,9 @@ last_row WTMP hydrosphere_buoy_46303_water_temp
 source hydrosphere_ndbc_buoy_46304
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46304.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46304.json
 wgs84 49.3 -123.36
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46304_wind_dir
 last_row WSPD hydrosphere_buoy_46304_wind_speed
 last_row WVHT hydrosphere_buoy_46304_wave_height
@@ -5969,9 +5969,9 @@ last_row WTMP hydrosphere_buoy_46304_water_temp
 source hydrosphere_ndbc_buoy_46453
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/46453.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46453.json
 wgs84 47.45 -124.43
-format csv
+format json
 last_row WDIR hydrosphere_buoy_46453_wind_dir
 last_row WSPD hydrosphere_buoy_46453_wind_speed
 last_row WVHT hydrosphere_buoy_46453_wave_height
@@ -5982,9 +5982,9 @@ last_row WTMP hydrosphere_buoy_46453_water_temp
 source hydrosphere_ndbc_buoy_48400
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/48400.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_48400.json
 wgs84 50.055 -144.873
-format csv
+format json
 last_row WDIR hydrosphere_buoy_48400_wind_dir
 last_row WSPD hydrosphere_buoy_48400_wind_speed
 last_row WVHT hydrosphere_buoy_48400_wave_height
@@ -5995,9 +5995,9 @@ last_row WTMP hydrosphere_buoy_48400_water_temp
 source hydrosphere_ndbc_buoy_51101
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51101.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51101.json
 wgs84 24.359 -162.081
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51101_wind_dir
 last_row WSPD hydrosphere_buoy_51101_wind_speed
 last_row WVHT hydrosphere_buoy_51101_wave_height
@@ -6008,9 +6008,9 @@ last_row WTMP hydrosphere_buoy_51101_water_temp
 source hydrosphere_ndbc_buoy_51111
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51111.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51111.json
 wgs84 -14.245 -169.509
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51111_wind_dir
 last_row WSPD hydrosphere_buoy_51111_wind_speed
 last_row WVHT hydrosphere_buoy_51111_wave_height
@@ -6021,9 +6021,9 @@ last_row WTMP hydrosphere_buoy_51111_water_temp
 source hydrosphere_ndbc_buoy_51201
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51201.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51201.json
 wgs84 21.671 -158.118
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51201_wind_dir
 last_row WSPD hydrosphere_buoy_51201_wind_speed
 last_row WVHT hydrosphere_buoy_51201_wave_height
@@ -6034,9 +6034,9 @@ last_row WTMP hydrosphere_buoy_51201_water_temp
 source hydrosphere_ndbc_buoy_51202
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51202.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51202.json
 wgs84 21.414 -157.681
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51202_wind_dir
 last_row WSPD hydrosphere_buoy_51202_wind_speed
 last_row WVHT hydrosphere_buoy_51202_wave_height
@@ -6047,9 +6047,9 @@ last_row WTMP hydrosphere_buoy_51202_water_temp
 source hydrosphere_ndbc_buoy_51205
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51205.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51205.json
 wgs84 21.018 -156.421
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51205_wind_dir
 last_row WSPD hydrosphere_buoy_51205_wind_speed
 last_row WVHT hydrosphere_buoy_51205_wave_height
@@ -6060,9 +6060,9 @@ last_row WTMP hydrosphere_buoy_51205_water_temp
 source hydrosphere_ndbc_buoy_51206
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51206.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51206.json
 wgs84 19.779 -154.97
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51206_wind_dir
 last_row WSPD hydrosphere_buoy_51206_wind_speed
 last_row WVHT hydrosphere_buoy_51206_wave_height
@@ -6073,9 +6073,9 @@ last_row WTMP hydrosphere_buoy_51206_water_temp
 source hydrosphere_ndbc_buoy_51208
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51208.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51208.json
 wgs84 22.285 -159.574
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51208_wind_dir
 last_row WSPD hydrosphere_buoy_51208_wind_speed
 last_row WVHT hydrosphere_buoy_51208_wave_height
@@ -6086,9 +6086,9 @@ last_row WTMP hydrosphere_buoy_51208_water_temp
 source hydrosphere_ndbc_buoy_51209
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51209.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51209.json
 wgs84 -14.273 -170.501
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51209_wind_dir
 last_row WSPD hydrosphere_buoy_51209_wind_speed
 last_row WVHT hydrosphere_buoy_51209_wave_height
@@ -6099,9 +6099,9 @@ last_row WTMP hydrosphere_buoy_51209_water_temp
 source hydrosphere_ndbc_buoy_51210
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51210.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51210.json
 wgs84 21.477 -157.757
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51210_wind_dir
 last_row WSPD hydrosphere_buoy_51210_wind_speed
 last_row WVHT hydrosphere_buoy_51210_wave_height
@@ -6112,9 +6112,9 @@ last_row WTMP hydrosphere_buoy_51210_water_temp
 source hydrosphere_ndbc_buoy_51211
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51211.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51211.json
 wgs84 21.297 -157.959
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51211_wind_dir
 last_row WSPD hydrosphere_buoy_51211_wind_speed
 last_row WVHT hydrosphere_buoy_51211_wave_height
@@ -6125,9 +6125,9 @@ last_row WTMP hydrosphere_buoy_51211_water_temp
 source hydrosphere_ndbc_buoy_51212
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51212.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51212.json
 wgs84 21.323 -158.149
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51212_wind_dir
 last_row WSPD hydrosphere_buoy_51212_wind_speed
 last_row WVHT hydrosphere_buoy_51212_wave_height
@@ -6138,9 +6138,9 @@ last_row WTMP hydrosphere_buoy_51212_water_temp
 source hydrosphere_ndbc_buoy_51213
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51213.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51213.json
 wgs84 20.75 -157.002
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51213_wind_dir
 last_row WSPD hydrosphere_buoy_51213_wind_speed
 last_row WVHT hydrosphere_buoy_51213_wave_height
@@ -6151,9 +6151,9 @@ last_row WTMP hydrosphere_buoy_51213_water_temp
 source hydrosphere_ndbc_buoy_51214
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51214.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_51214.json
 wgs84 -14.296 -170.875
-format csv
+format json
 last_row WDIR hydrosphere_buoy_51214_wind_dir
 last_row WSPD hydrosphere_buoy_51214_wind_speed
 last_row WVHT hydrosphere_buoy_51214_wave_height
@@ -6164,9 +6164,9 @@ last_row WTMP hydrosphere_buoy_51214_water_temp
 source hydrosphere_ndbc_buoy_52162
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/52162.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_52162.json
 wgs84 15.15 145.694
-format csv
+format json
 last_row WDIR hydrosphere_buoy_52162_wind_dir
 last_row WSPD hydrosphere_buoy_52162_wind_speed
 last_row WVHT hydrosphere_buoy_52162_wave_height
@@ -6177,9 +6177,9 @@ last_row WTMP hydrosphere_buoy_52162_water_temp
 source hydrosphere_ndbc_buoy_52200
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/52200.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_52200.json
 wgs84 13.354 144.788
-format csv
+format json
 last_row WDIR hydrosphere_buoy_52200_wind_dir
 last_row WSPD hydrosphere_buoy_52200_wind_speed
 last_row WVHT hydrosphere_buoy_52200_wave_height
@@ -6190,9 +6190,9 @@ last_row WTMP hydrosphere_buoy_52200_water_temp
 source hydrosphere_ndbc_buoy_52201
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/52201.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_52201.json
 wgs84 7.078 171.384
-format csv
+format json
 last_row WDIR hydrosphere_buoy_52201_wind_dir
 last_row WSPD hydrosphere_buoy_52201_wind_speed
 last_row WVHT hydrosphere_buoy_52201_wave_height
@@ -6203,9 +6203,9 @@ last_row WTMP hydrosphere_buoy_52201_water_temp
 source hydrosphere_ndbc_buoy_52211
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/52211.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_52211.json
 wgs84 15.269 145.664
-format csv
+format json
 last_row WDIR hydrosphere_buoy_52211_wind_dir
 last_row WSPD hydrosphere_buoy_52211_wind_speed
 last_row WVHT hydrosphere_buoy_52211_wave_height
@@ -6216,9 +6216,9 @@ last_row WTMP hydrosphere_buoy_52211_water_temp
 source hydrosphere_ndbc_buoy_52214
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/52214.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_52214.json
 wgs84 9.678 138.176
-format csv
+format json
 last_row WDIR hydrosphere_buoy_52214_wind_dir
 last_row WSPD hydrosphere_buoy_52214_wind_speed
 last_row WVHT hydrosphere_buoy_52214_wave_height
@@ -6229,9 +6229,9 @@ last_row WTMP hydrosphere_buoy_52214_water_temp
 source hydrosphere_ndbc_buoy_52216
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/52216.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_52216.json
 wgs84 7.323 171.641
-format csv
+format json
 last_row WDIR hydrosphere_buoy_52216_wind_dir
 last_row WSPD hydrosphere_buoy_52216_wind_speed
 last_row WVHT hydrosphere_buoy_52216_wave_height
@@ -6242,9 +6242,9 @@ last_row WTMP hydrosphere_buoy_52216_water_temp
 source hydrosphere_ndbc_buoy_62029
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62029.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62029.json
 wgs84 48.72 -12.43
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62029_wind_dir
 last_row WSPD hydrosphere_buoy_62029_wind_speed
 last_row WVHT hydrosphere_buoy_62029_wave_height
@@ -6255,9 +6255,9 @@ last_row WTMP hydrosphere_buoy_62029_water_temp
 source hydrosphere_ndbc_buoy_62030
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62030.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62030.json
 wgs84 50.25 -4.217
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62030_wind_dir
 last_row WSPD hydrosphere_buoy_62030_wind_speed
 last_row WVHT hydrosphere_buoy_62030_wave_height
@@ -6268,9 +6268,9 @@ last_row WTMP hydrosphere_buoy_62030_water_temp
 source hydrosphere_ndbc_buoy_62050
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62050.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62050.json
 wgs84 50.0 -4.4
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62050_wind_dir
 last_row WSPD hydrosphere_buoy_62050_wind_speed
 last_row WVHT hydrosphere_buoy_62050_wave_height
@@ -6281,9 +6281,9 @@ last_row WTMP hydrosphere_buoy_62050_water_temp
 source hydrosphere_ndbc_buoy_62081
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62081.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62081.json
 wgs84 51.0 -13.55
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62081_wind_dir
 last_row WSPD hydrosphere_buoy_62081_wind_speed
 last_row WVHT hydrosphere_buoy_62081_wave_height
@@ -6294,9 +6294,9 @@ last_row WTMP hydrosphere_buoy_62081_water_temp
 source hydrosphere_ndbc_buoy_62103
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62103.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62103.json
 wgs84 49.9 -2.9
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62103_wind_dir
 last_row WSPD hydrosphere_buoy_62103_wind_speed
 last_row WVHT hydrosphere_buoy_62103_wave_height
@@ -6307,9 +6307,9 @@ last_row WTMP hydrosphere_buoy_62103_water_temp
 source hydrosphere_ndbc_buoy_62105
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62105.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62105.json
 wgs84 55.41 -11.81
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62105_wind_dir
 last_row WSPD hydrosphere_buoy_62105_wind_speed
 last_row WVHT hydrosphere_buoy_62105_wave_height
@@ -6320,9 +6320,9 @@ last_row WTMP hydrosphere_buoy_62105_water_temp
 source hydrosphere_ndbc_buoy_62107
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62107.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62107.json
 wgs84 50.102 -6.1
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62107_wind_dir
 last_row WSPD hydrosphere_buoy_62107_wind_speed
 last_row WVHT hydrosphere_buoy_62107_wave_height
@@ -6333,9 +6333,9 @@ last_row WTMP hydrosphere_buoy_62107_water_temp
 source hydrosphere_ndbc_buoy_62114
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62114.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62114.json
 wgs84 58.3 0.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62114_wind_dir
 last_row WSPD hydrosphere_buoy_62114_wind_speed
 last_row WVHT hydrosphere_buoy_62114_wave_height
@@ -6346,9 +6346,9 @@ last_row WTMP hydrosphere_buoy_62114_water_temp
 source hydrosphere_ndbc_buoy_62121
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62121.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62121.json
 wgs84 53.5 2.7
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62121_wind_dir
 last_row WSPD hydrosphere_buoy_62121_wind_speed
 last_row WVHT hydrosphere_buoy_62121_wave_height
@@ -6359,9 +6359,9 @@ last_row WTMP hydrosphere_buoy_62121_water_temp
 source hydrosphere_ndbc_buoy_62124
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62124.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62124.json
 wgs84 53.6 -3.6
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62124_wind_dir
 last_row WSPD hydrosphere_buoy_62124_wind_speed
 last_row WVHT hydrosphere_buoy_62124_wave_height
@@ -6372,9 +6372,9 @@ last_row WTMP hydrosphere_buoy_62124_water_temp
 source hydrosphere_ndbc_buoy_62127
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62127.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62127.json
 wgs84 54.0 0.7
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62127_wind_dir
 last_row WSPD hydrosphere_buoy_62127_wind_speed
 last_row WVHT hydrosphere_buoy_62127_wave_height
@@ -6385,9 +6385,9 @@ last_row WTMP hydrosphere_buoy_62127_water_temp
 source hydrosphere_ndbc_buoy_62130
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62130.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62130.json
 wgs84 58.7 1.3
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62130_wind_dir
 last_row WSPD hydrosphere_buoy_62130_wind_speed
 last_row WVHT hydrosphere_buoy_62130_wave_height
@@ -6398,9 +6398,9 @@ last_row WTMP hydrosphere_buoy_62130_water_temp
 source hydrosphere_ndbc_buoy_62144
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62144.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62144.json
 wgs84 53.4 1.7
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62144_wind_dir
 last_row WSPD hydrosphere_buoy_62144_wind_speed
 last_row WVHT hydrosphere_buoy_62144_wave_height
@@ -6411,9 +6411,9 @@ last_row WTMP hydrosphere_buoy_62144_water_temp
 source hydrosphere_ndbc_buoy_62145
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62145.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62145.json
 wgs84 53.102 2.8
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62145_wind_dir
 last_row WSPD hydrosphere_buoy_62145_wind_speed
 last_row WVHT hydrosphere_buoy_62145_wave_height
@@ -6424,9 +6424,9 @@ last_row WTMP hydrosphere_buoy_62145_water_temp
 source hydrosphere_ndbc_buoy_62146
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62146.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62146.json
 wgs84 57.2 2.1
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62146_wind_dir
 last_row WSPD hydrosphere_buoy_62146_wind_speed
 last_row WVHT hydrosphere_buoy_62146_wave_height
@@ -6437,9 +6437,9 @@ last_row WTMP hydrosphere_buoy_62146_water_temp
 source hydrosphere_ndbc_buoy_62148
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62148.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62148.json
 wgs84 53.6 1.5
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62148_wind_dir
 last_row WSPD hydrosphere_buoy_62148_wind_speed
 last_row WVHT hydrosphere_buoy_62148_wave_height
@@ -6450,9 +6450,9 @@ last_row WTMP hydrosphere_buoy_62148_water_temp
 source hydrosphere_ndbc_buoy_62149
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62149.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62149.json
 wgs84 53.7 1.1
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62149_wind_dir
 last_row WSPD hydrosphere_buoy_62149_wind_speed
 last_row WVHT hydrosphere_buoy_62149_wave_height
@@ -6463,9 +6463,9 @@ last_row WTMP hydrosphere_buoy_62149_water_temp
 source hydrosphere_ndbc_buoy_62163
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62163.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62163.json
 wgs84 47.55 -8.47
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62163_wind_dir
 last_row WSPD hydrosphere_buoy_62163_wind_speed
 last_row WVHT hydrosphere_buoy_62163_wave_height
@@ -6476,9 +6476,9 @@ last_row WTMP hydrosphere_buoy_62163_water_temp
 source hydrosphere_ndbc_buoy_62164
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62164.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62164.json
 wgs84 57.2 0.8
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62164_wind_dir
 last_row WSPD hydrosphere_buoy_62164_wind_speed
 last_row WVHT hydrosphere_buoy_62164_wave_height
@@ -6489,9 +6489,9 @@ last_row WTMP hydrosphere_buoy_62164_water_temp
 source hydrosphere_ndbc_buoy_62165
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62165.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62165.json
 wgs84 54.0 1.1
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62165_wind_dir
 last_row WSPD hydrosphere_buoy_62165_wind_speed
 last_row WVHT hydrosphere_buoy_62165_wave_height
@@ -6502,9 +6502,9 @@ last_row WTMP hydrosphere_buoy_62165_water_temp
 source hydrosphere_ndbc_buoy_62170
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62170.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62170.json
 wgs84 51.24 2.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62170_wind_dir
 last_row WSPD hydrosphere_buoy_62170_wind_speed
 last_row WVHT hydrosphere_buoy_62170_wave_height
@@ -6515,9 +6515,9 @@ last_row WTMP hydrosphere_buoy_62170_water_temp
 source hydrosphere_ndbc_buoy_62304
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62304.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62304.json
 wgs84 51.102 1.8
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62304_wind_dir
 last_row WSPD hydrosphere_buoy_62304_wind_speed
 last_row WVHT hydrosphere_buoy_62304_wave_height
@@ -6528,9 +6528,9 @@ last_row WTMP hydrosphere_buoy_62304_water_temp
 source hydrosphere_ndbc_buoy_62305
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62305.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62305.json
 wgs84 50.4 0.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62305_wind_dir
 last_row WSPD hydrosphere_buoy_62305_wind_speed
 last_row WVHT hydrosphere_buoy_62305_wave_height
@@ -6541,9 +6541,9 @@ last_row WTMP hydrosphere_buoy_62305_water_temp
 source hydrosphere_ndbc_buoy_62442
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/62442.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_62442.json
 wgs84 49.0 -16.5
-format csv
+format json
 last_row WDIR hydrosphere_buoy_62442_wind_dir
 last_row WSPD hydrosphere_buoy_62442_wind_speed
 last_row WVHT hydrosphere_buoy_62442_wave_height
@@ -6554,9 +6554,9 @@ last_row WTMP hydrosphere_buoy_62442_water_temp
 source hydrosphere_ndbc_buoy_63110
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/63110.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_63110.json
 wgs84 59.5 1.5
-format csv
+format json
 last_row WDIR hydrosphere_buoy_63110_wind_dir
 last_row WSPD hydrosphere_buoy_63110_wind_speed
 last_row WVHT hydrosphere_buoy_63110_wave_height
@@ -6567,9 +6567,9 @@ last_row WTMP hydrosphere_buoy_63110_water_temp
 source hydrosphere_ndbc_buoy_63112
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/63112.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_63112.json
 wgs84 61.1 1.0
-format csv
+format json
 last_row WDIR hydrosphere_buoy_63112_wind_dir
 last_row WSPD hydrosphere_buoy_63112_wind_speed
 last_row WVHT hydrosphere_buoy_63112_wave_height
@@ -6580,9 +6580,9 @@ last_row WTMP hydrosphere_buoy_63112_water_temp
 source hydrosphere_ndbc_buoy_63115
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/63115.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_63115.json
 wgs84 61.6 1.3
-format csv
+format json
 last_row WDIR hydrosphere_buoy_63115_wind_dir
 last_row WSPD hydrosphere_buoy_63115_wind_speed
 last_row WVHT hydrosphere_buoy_63115_wave_height
@@ -6593,9 +6593,9 @@ last_row WTMP hydrosphere_buoy_63115_water_temp
 source hydrosphere_ndbc_buoy_64045
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/64045.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_64045.json
 wgs84 59.15 -11.79
-format csv
+format json
 last_row WDIR hydrosphere_buoy_64045_wind_dir
 last_row WSPD hydrosphere_buoy_64045_wind_speed
 last_row WVHT hydrosphere_buoy_64045_wave_height
@@ -6606,9 +6606,9 @@ last_row WTMP hydrosphere_buoy_64045_water_temp
 source hydrosphere_ndbc_buoy_64046
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/64046.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_64046.json
 wgs84 60.483 -4.167
-format csv
+format json
 last_row WDIR hydrosphere_buoy_64046_wind_dir
 last_row WSPD hydrosphere_buoy_64046_wind_speed
 last_row WVHT hydrosphere_buoy_64046_wave_height
@@ -7628,7 +7628,7 @@ field SUBBASIN subbasin_code
 source noaa_ndbc_dart_realtime_pressure
 ttl 300
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/51407.dart
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ndbc_dart_realtime_pressure.txt
 wgs84 19.63 -156.49
 format text
 rows
@@ -9411,7 +9411,7 @@ field wxString weather_string
 source ndbc_buoys_north_pacific
 ttl 1800
 force acoustic
-url https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_buoys_north_pacific.txt
 format text
 rows
 lat_key 1
@@ -12024,7 +12024,7 @@ field seaLevelPressure pressure_hpa
 source ndbc_active_stations
 ttl 3600
 force diffusion
-url https://www.ndbc.noaa.gov/activestations.xml
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_active_stations.txt
 format text
 rows
 lat_key lat
@@ -12036,7 +12036,7 @@ field owner owner
 source ndbc_dart_21413_nwpacific
 ttl 3600
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_dart_21413_nwpacific.txt
 wgs84 38.7 148.7
 format text
 rows
@@ -12050,7 +12050,7 @@ field_in 7 sea_level_height_m
 source ndbc_dart_23401_indian_ocean
 ttl 3600
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_dart_23401_indian_ocean.txt
 wgs84 -8.4 67.5
 format text
 rows
@@ -12063,7 +12063,7 @@ field_in 7 sea_level_height_m
 source ndbc_dart_32401_spac
 ttl 3600
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_dart_32401_spac.txt
 wgs84 -19.6 -162.1
 format text
 rows
@@ -12076,7 +12076,7 @@ field_in 7 sea_level_height_m
 source ndbc_dart_41420_caribbean
 ttl 3600
 force acoustic
-url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_dart_41420_caribbean.txt
 wgs84 17.9 -74.9
 format text
 rows
@@ -19314,7 +19314,7 @@ field sal_surface surface_sal_psu
 source noaa_ndbc_dart_buoys_metadata
 ttl 86400
 force acoustic
-url https://www.ndbc.noaa.gov/activestations.xml
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ndbc_dart_buoys_metadata.txt
 format text
 rows
 lat_key lat
