@@ -41,7 +41,7 @@ def get_current_mapping():
         if line.startswith("source "):
             cur = line.strip().split()[1]
         if cur and line.startswith("url ") and "releases/download/" in line:
-            m = re.search(r"catalogs-([^/]+)/(.+)", line)
+            m = re.search(r"releases/download/([^/]+)/(.+)", line)
             if m:
                 domain_tag = m.group(1)
                 filename = m.group(2).rstrip()
