@@ -162,6 +162,18 @@ def migrate_assets_for_domain(domain, sources, existing_releases, old_assets_cac
                     old_name = old_fn
                 
                 candidates = [old_fn, old_name]
+                # Canonical rename: try reverse mappings
+                parts2 = source_name.split("_")
+                if len(parts2) >= 3 and parts2[1] == "intermagnet":
+                    candidates.append(f"{parts2[0]}_{parts2[2]}.json")
+                if len(parts2) >= 3 and parts2[2] == "main":
+                    candidates.append(f"{parts2[0]}_{parts2[1]}.json")
+                # Type B reverse: strip provider prefix
+                if len(parts2) >= 3 and parts2[1] in ("gml","openmeteo","nws","usgs","wikipedia","swpc","emsc","gwis","satnogs","pdg"):
+                    candidates.append(f"{parts2[0]}_{parts2[2]}.json")
+                # Generic: try just sphere_token2
+                if len(parts2) >= 3:
+                    candidates.append(f"{parts2[0]}_{parts2[2]}.json")
                 found = False
                 for candidate in candidates:
                     if candidate in old_assets_cache.get(old_rid, {}):
