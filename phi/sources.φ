@@ -11325,7 +11325,7 @@ field return_period hydrosphere_glofas_return_period_years
 source hydrosphere_drifters_hourly
 ttl 3600
 force em
-url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_drifters_hourly.json
 map table.rows
 lat_key 0
 lon_key 1
@@ -14810,7 +14810,7 @@ source geosphere_intermagnet_observatories
 ttl 86400
 force em
 ecliptic 1
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_intermagnet_observatories.json
 map catalog
 field id geosphere_magnetometer_id
 field title geosphere_magnetometer_title
@@ -15853,7 +15853,7 @@ field subhalo_count num_subhalos
 source magnetosphere_intermagnet_global_geomagnetic_observatories
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_intermagnet_global_geomagnetic_observatories.json
 map catalog
 field id dataset_id
 field title station_title
@@ -16034,7 +16034,7 @@ field sqf_3_6 source_quality_3_6
 source irsa_glimpse_ii_inner_galactic_plane
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag8_0,e_mag4_5+FROM+glimpseii_psc+WHERE+ra+IS+NOT+NULL+AND+mag4_5<12+ORDER+BY+mag4_5+ASC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/irsa_glimpse_ii_inner_galactic_plane.json
 format text
 rows
 ra_key ra
@@ -16048,7 +16048,7 @@ field e_mag4_5 irac_4_5um_error
 source irsa_iras_psc_infrared
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100,var_flg+FROM+iraspsc+WHERE+fnu_25>10+AND+fnu_60>10+ORDER+BY+fnu_60+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/irsa_iras_psc_infrared.json
 format text
 rows
 ra_key ra
@@ -16062,7 +16062,7 @@ field var_flg variability_flag
 source irsa_mipsgal_24um_point_source_catalog
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,f24,e_f24,snr24,flags+FROM+mipsgal_psc+WHERE+ra+IS+NOT+NULL+AND+f24>10+ORDER+BY+f24+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/irsa_mipsgal_24um_point_source_catalog.json
 format text
 rows
 ra_key ra
@@ -16088,7 +16088,7 @@ field mjd mjd_obs
 source irsa_planck_pccs2_100ghz_compact_sources
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_100mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_100+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_100mJy+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/irsa_planck_pccs2_100ghz_compact_sources.json
 format text
 rows
 ra_key ra
@@ -16200,7 +16200,7 @@ field mag8_0 irac_8_0um_mag
 source irsa_sings_nearby_galaxies
 ttl 86400
 force em
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+target,ra,dec,mips_24_flux,mips_70_flux,mips_160_flux+FROM+spitzer.sings_mipssed_spec+WHERE+ra+IS+NOT+NULL+ORDER+BY+mips_70_flux+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/irsa_sings_nearby_galaxies.json
 format text
 rows
 ra_key ra
