@@ -1025,7 +1025,7 @@ field properties.tsunami quake3d_tsunami_flag
 source arcgis_goes_bolides
 ttl 300
 force em
-url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,detected_duration,detected_energy,detected_latitude,detected_longitude&outSR=4326&f=geojson&resultRecordCount=2000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/arcgis_goes_bolides.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1123,7 +1123,7 @@ source arcgis_space_weather_scales
 ttl 300
 force gravity
 ssb
-url https://services3.arcgis.com/UJlXKlDHq85VvxWm/arcgis/rest/services/SpaceWeatherCurrent/FeatureServer/0/query?where=1%3D1&orderByFields=OBJECTID+DESC&resultRecordCount=1&returnGeometry=false&outFields=date_time_current,Geomagnetic,RadioBlackouts,RadiationStorms&f=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/arcgis_space_weather_scales.json
 path features.0.attributes.Geomagnetic space_weather_geomagnetic_scale
 path features.0.attributes.RadioBlackouts space_weather_radio_blackout_scale
 path features.0.attributes.RadiationStorms space_weather_radiation_storm_scale
@@ -1350,7 +1350,7 @@ field eventDate observation_date
 source gcoos_buoy_wmo_42043
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42043/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42043.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1361,7 +1361,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42043_current_speed_cms
 source gcoos_buoy_wmo_42084
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42084/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42084.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1372,7 +1372,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42084_current_speed_cms
 source gcoos_buoy_wmo_42091
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42091/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42091.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1383,7 +1383,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42091_current_speed_cms
 source gcoos_buoy_wmo_42095
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42095/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42095.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1394,7 +1394,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42095_current_speed_cms
 source gcoos_buoy_wmo_42098
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42098/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42098.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1405,7 +1405,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42098_current_speed_cms
 source gcoos_buoy_wmo_42099
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42099/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42099.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1416,7 +1416,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42099_current_speed_cms
 source gcoos_buoy_wmo_42360
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42360/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42360.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1493,7 +1493,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42369_current_speed_cms
 source gcoos_buoy_wmo_42370
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42370/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42370.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1570,7 +1570,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42384_current_speed_cms
 source gcoos_buoy_wmo_42386
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42386/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42386.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1592,7 +1592,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42388_current_speed_cms
 source gcoos_buoy_wmo_42395
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42395/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42395.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1614,7 +1614,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42400_current_speed_cms
 source gcoos_buoy_wmo_42873
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42873/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42873.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1625,7 +1625,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42873_current_speed_cms
 source gcoos_buoy_wmo_42876
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42876/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42876.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1636,7 +1636,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42876_current_speed_cms
 source gcoos_buoy_wmo_42881
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42881/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42881.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1647,7 +1647,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42881_current_speed_cms
 source gcoos_buoy_wmo_42884
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42884/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42884.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1658,7 +1658,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42884_current_speed_cms
 source gcoos_buoy_wmo_42887
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42887/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42887.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1669,7 +1669,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42887_current_speed_cms
 source gcoos_buoy_wmo_42934
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42934/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42934.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1680,7 +1680,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42934_current_speed_cms
 source gcoos_buoy_wmo_42936
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42936/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42936.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8301,7 +8301,7 @@ path current.snow_depth cryosphere_snow_depth_m
 source esri_active_hurricanes_sampler
 ttl 600
 force advective
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_active_hurricanes_sampler.json
 map features
 field attributes.OBJECTID objectid
 field attributes.STORMNAME stormname
@@ -8317,7 +8317,7 @@ lon_key geometry.x
 source esri_active_hurricanes_v1
 ttl 600
 force advective
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_active_hurricanes_v1.json
 map features
 field attributes.OBJECTID objectid
 field attributes.STORMNAME stormname
@@ -8333,7 +8333,7 @@ lon_key geometry.x
 source esri_air_quality_pm25_latest_results
 ttl 600
 force diffusion
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_air_quality_pm25_latest_results.json
 map features
 field attributes.OBJECTID objectid
 field attributes.location_id location_id
@@ -8349,7 +8349,7 @@ lon_key geometry.x
 source esri_asam_events_v1
 ttl 600
 force em
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/ASAM_events_V1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_asam_events_v1.json
 map features
 field attributes.OBJECTID objectid
 field attributes.reference reference
@@ -8365,7 +8365,7 @@ lon_key geometry.x
 source esri_canada_air_quality
 ttl 600
 force diffusion
-url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/AirQualityHealthIndexCanada/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_canada_air_quality.json
 map features
 field attributes.id observation_id
 field attributes.aqhi_type observation_type
@@ -8377,7 +8377,7 @@ lon_key geometry.x
 source esri_cwfis_hotspots
 ttl 600
 force thermal
-url https://services.arcgis.com/txWDfZ2LIgzmw5Ts/arcgis/rest/services/Hotspots_(CWFIS)/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_cwfis_hotspots.json
 map features
 field attributes.lat latitude
 field attributes.lon longitude
@@ -8389,7 +8389,7 @@ lon_key geometry.x
 source esri_live_stream_gauges_v1
 ttl 600
 force advective
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Live_Stream_Gauges_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_live_stream_gauges_v1.json
 map features
 field attributes.OBJECTID objectid
 field attributes.stationid stationid
@@ -8403,7 +8403,7 @@ lon_key geometry.x
 source esri_modis_thermal_v1
 ttl 600
 force thermal
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/MODIS_Thermal_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_modis_thermal_v1.json
 map features
 field attributes.OBJECTID objectid
 field attributes.BRIGHTNESS brightness
@@ -8419,7 +8419,7 @@ lon_key geometry.x
 source esri_noaa_storm_reports_sampler
 ttl 600
 force seismic-body
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_storm_reports_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_noaa_storm_reports_sampler.json
 map features
 field attributes.OBJECTID objectid
 field attributes.UTC_DATETIME utc_datetime
@@ -8435,7 +8435,7 @@ lon_key geometry.x
 source esri_noaa_storm_reports_v1
 ttl 600
 force seismic-body
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_storm_reports_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_noaa_storm_reports_v1.json
 map features
 field attributes.OBJECTID objectid
 field attributes.UTC_DATETIME utc_datetime
@@ -8451,7 +8451,7 @@ lon_key geometry.x
 source esri_recent_hurricanes_v1
 ttl 600
 force advective
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Recent_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_recent_hurricanes_v1.json
 map features
 field attributes.OBJECTID objectid
 field attributes.STORMNAME stormname
@@ -8467,7 +8467,7 @@ lon_key geometry.x
 source esri_usa_wildfires_v1
 ttl 600
 force thermal
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USA_Wildfires_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_usa_wildfires_v1.json
 map features
 field attributes.OBJECTID objectid
 field attributes.IncidentName incidentname
@@ -8479,7 +8479,7 @@ lon_key geometry.x
 source esri_usgs_seismic_data_v1
 ttl 600
 force seismic-body
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_usgs_seismic_data_v1.json
 map features
 field attributes.OBJECTID objectid
 field attributes.id id
@@ -8495,7 +8495,7 @@ lon_key geometry.x
 source esri_viirs_thermal_hotspots
 ttl 600
 force thermal
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_viirs_thermal_hotspots.json
 map features
 field attributes.latitude latitude
 field attributes.longitude longitude
@@ -8509,7 +8509,7 @@ lon_key geometry.x
 source esri_wildfire_aggregated_v1
 ttl 600
 force thermal
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Wildfire_aggregated_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_wildfire_aggregated_v1.json
 map features
 field attributes.OBJECTID objectid
 field attributes.IRWINID irwinid
@@ -9678,7 +9678,7 @@ field comments observer_comments
 source arcgis_pager_cat_earthquake_impacts
 ttl 3600
 force seismic-body
-url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&outFields=mag,place,time,alert,fatalities&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/arcgis_pager_cat_earthquake_impacts.json
 map features
 lat_key geometry.y
 lon_key geometry.x
@@ -10558,7 +10558,7 @@ lon_key dec
 source esri_coral_reef_stations
 ttl 3600
 force diffusion
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Coral_Reef_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_coral_reef_stations.json
 map features
 field attributes.name name
 field attributes.date date
@@ -10574,7 +10574,7 @@ lon_key geometry.x
 source esri_epa_aqs_monitoring
 ttl 3600
 force diffusion
-url https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/AQS_Monitor_Sites/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_epa_aqs_monitoring.json
 map features
 field attributes.AQS_Site_ID site_id
 field attributes.State state
@@ -10586,7 +10586,7 @@ lon_key geometry.x
 source esri_historical_quakes
 ttl 3600
 force seismic-body
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Historical_Quakes/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_historical_quakes.json
 map features
 field attributes.id id
 field attributes.code code
@@ -10598,7 +10598,7 @@ lon_key geometry.x
 source esri_inat_preuc_view
 ttl 3600
 force diffusion
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/iNat_PreUC_View/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_inat_preuc_view.json
 map features
 field attributes.OBJECTID objectid
 field attributes.observation_uuid observation_uuid
@@ -10613,7 +10613,7 @@ lon_key geometry.x
 source esri_inaturalist
 ttl 3600
 force diffusion
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/iNaturalist/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_inaturalist.json
 map features
 field attributes.OBJECTID objectid
 field attributes.observation_id observation_id
@@ -10629,7 +10629,7 @@ lon_key geometry.x
 source esri_monitored_volcanos
 ttl 3600
 force em
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Monitored_Global_USGS_Volcanos/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_monitored_volcanos.json
 map features
 field attributes.Volcano_Name name
 field attributes.Observation observation
@@ -10656,7 +10656,7 @@ lon_key geometry.x
 source esri_noaa_temp_latest
 ttl 3600
 force thermal
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_latest/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_noaa_temp_latest.json
 map features
 field attributes.OBJECTID objectid
 field attributes.Date_ date_
@@ -11059,7 +11059,7 @@ source geosphere_nifc_fires
 ttl 3600
 force em
 ecliptic 1
-url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_nifc_fires.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -13036,7 +13036,7 @@ ephemeris orbital_voyager2_distance
 source geosphere_wfigs_current_fire_perimeters
 ttl 3600
 force thermal
-url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_YearToDate/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_wfigs_current_fire_perimeters.json
 flatten features
 field properties.poly_GISAcres fire_acres
 field properties.poly_PolygonDateTime fire_polygon_ms
@@ -13212,7 +13212,7 @@ field w4mpro mag_w4_22um
 source arcgis_pager_earthquake_impacts
 ttl 86400
 force seismic-body
-url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/arcgis_pager_earthquake_impacts.json
 map features
 lat_key attributes.LATITUDE
 lon_key attributes.LONGITUDE
@@ -14193,7 +14193,7 @@ field attributes.last-update last_update
 source geosphere_emdat_disasters
 ttl 86400
 force gravity
-url https://services.arcgis.com/LG9Yn2oFqZi5PnO5/arcgis/rest/services/EDMAT_Disaster_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_emdat_disasters.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -14281,7 +14281,7 @@ field properties.cloudCover cloud_cover_pct
 source esri_alternate_fuel
 ttl 86400
 force em
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Alternate_Fuel/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_alternate_fuel.json
 map features
 field attributes.OBJECTID objectid
 field attributes.Station_Id station_id
@@ -14297,7 +14297,7 @@ lon_key geometry.x
 source esri_noaa_temp_historic
 ttl 86400
 force thermal
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_historic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_noaa_temp_historic.json
 map features
 field attributes.OBJECTID objectid
 field attributes.Date_ date_
@@ -14308,7 +14308,7 @@ lon_key geometry.x
 source esri_noaa_temp_yearly_historic
 ttl 86400
 force thermal
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_yearly_historic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_noaa_temp_yearly_historic.json
 map features
 field attributes.OBJECTID objectid
 field attributes.Date_ date_
