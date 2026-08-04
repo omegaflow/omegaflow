@@ -8,7 +8,4 @@ description = "φ(x,y,z,t)"
 repository = "https://github.com/omegaflow/omegaflow"
 homepage = "https://omegaflow.space"
 
-[lib]
-crate-type = ["cdylib", "rlib"]
-
 [dependencies]

@@ -581,6 +581,7 @@ struct OriginState {
     resid_ema: f64,
     has_prev: bool,
     zero_yield: u32,
+    last_body_hash: [u8; 20],
 }
 
 struct StationState {
@@ -5209,10 +5210,23 @@ fn fetch_priority(
     (32.0 + (proximity * 0.7 + urgency * 0.3) * 200.0) as u8
 }
 
+fn per_origin_sleep(archive: &Archive, fallback: f64) -> f64 {
+    let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+    if origins.is_empty() {
+        return fallback;
+    }
+    let now = tdb_now();
+    origins
+        .values()
+        .map(|o| o.fetched + o.ttl / Φ - now)
+        .fold(fallback, f64::min)
+        .max(0.1)
+}
+
 fn warm_cache(archive: Arc<Archive>) {
     loop {
         let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
-        let cadence = ((min_ttl as f64) / (Φ * Φ)).max(1.0);
+        let cadence = ((min_ttl as f64) / Φ).max(1.0);
         let now = tdb_now();
         archive
             .presence
@@ -5237,9 +5251,10 @@ fn warm_cache(archive: Arc<Archive>) {
                 .unwrap_or_else(|e| e.into_inner())
                 .is_empty();
             if still_empty {
+                let sleep_secs = per_origin_sleep(&archive, cadence);
                 let _ = archive
                     .warm_cache_cv
-                    .wait_timeout(lock, std::time::Duration::from_secs_f64(cadence));
+                    .wait_timeout(lock, std::time::Duration::from_secs_f64(sleep_secs));
             }
             continue;
         }
@@ -5622,43 +5637,59 @@ fn warm_cache(archive: Arc<Archive>) {
                             let entry = origins.entry(origin).or_default();
                             entry.fetched = now;
                             entry.ttl = src.ttl as f64;
-                            let pendings = extract_pending(src, &body, now);
-                            let may_be_empty = src.extracts.iter().any(|e| {
-                                matches!(
-                                    e,
-                                    Extract::Map { .. }
-                                        | Extract::GeojsonEvents { .. }
-                                        | Extract::LastObj { .. }
-                                        | Extract::Vectors(_)
-                                        | Extract::CelestialMap { .. }
-                                        | Extract::Flatten { .. }
-                                        | Extract::CmrPolygon { .. }
-                                        | Extract::CelestialPolygon { .. }
-                                        | Extract::Rows { .. }
-                                        | Extract::KeplerMap { .. }
-                                )
-                            });
-                            if pendings.is_empty() {
-                                if !may_be_empty {
-                                    let entry = origins.entry(origin).or_default();
-                                    entry.zero_yield += 1;
-                                    if entry.zero_yield >= 4
-                                        && entry.zero_yield & (entry.zero_yield - 1) == 0
-                                    {
-                                        eprintln!(
-                                            "zero_yield x{} {}",
-                                            entry.zero_yield,
-                                            src.url.split('/').nth(2).unwrap_or("?")
-                                        );
-                                    }
-                                }
+                            let body_bytes = body.as_bytes();
+                            let mut pendings: Option<Vec<PendingSample>> = None;
+                            if body_bytes.len() < 50 {
+                                entry.zero_yield += 1;
                             } else {
-                                origins.entry(origin).or_default().zero_yield = 0;
-                                refreshed.insert(origin);
-                                for pend in pendings {
-                                    for smp in materialize(src, origin, region, pend, &mut origins)
-                                    {
-                                        new_samples.push(smp);
+                                let body_hash = sha1(body_bytes);
+                                if entry.last_body_hash != [0u8; 20]
+                                    && entry.last_body_hash == body_hash
+                                {
+                                } else {
+                                    entry.last_body_hash = body_hash;
+                                    pendings = Some(extract_pending(src, &body, now));
+                                }
+                            }
+                            if let Some(pendings) = pendings {
+                                let may_be_empty = src.extracts.iter().any(|e| {
+                                    matches!(
+                                        e,
+                                        Extract::Map { .. }
+                                            | Extract::GeojsonEvents { .. }
+                                            | Extract::LastObj { .. }
+                                            | Extract::Vectors(_)
+                                            | Extract::CelestialMap { .. }
+                                            | Extract::Flatten { .. }
+                                            | Extract::CmrPolygon { .. }
+                                            | Extract::CelestialPolygon { .. }
+                                            | Extract::Rows { .. }
+                                            | Extract::KeplerMap { .. }
+                                    )
+                                });
+                                if pendings.is_empty() {
+                                    if !may_be_empty {
+                                        let entry = origins.entry(origin).or_default();
+                                        entry.zero_yield += 1;
+                                        if entry.zero_yield >= 4
+                                            && entry.zero_yield & (entry.zero_yield - 1) == 0
+                                        {
+                                            eprintln!(
+                                                "zero_yield x{} {}",
+                                                entry.zero_yield,
+                                                src.url.split('/').nth(2).unwrap_or("?")
+                                            );
+                                        }
+                                    }
+                                } else {
+                                    origins.entry(origin).or_default().zero_yield = 0;
+                                    refreshed.insert(origin);
+                                    for pend in pendings {
+                                        for smp in
+                                            materialize(src, origin, region, pend, &mut origins)
+                                        {
+                                            new_samples.push(smp);
+                                        }
                                     }
                                 }
                             }
@@ -5748,13 +5779,14 @@ fn warm_cache(archive: Arc<Archive>) {
             .lock()
             .unwrap_or_else(|e| e.into_inner())
             .retain(|_, o| (now - o.fetched).abs() < o.ttl.max(1.0) * 64.0);
+        let sleep_secs = per_origin_sleep(&archive, cadence);
         let lock = archive
             .warm_cache_mutex
             .lock()
             .unwrap_or_else(|e| e.into_inner());
         let _ = archive
             .warm_cache_cv
-            .wait_timeout(lock, std::time::Duration::from_secs_f64(cadence));
+            .wait_timeout(lock, std::time::Duration::from_secs_f64(sleep_secs));
     }
 }
 
