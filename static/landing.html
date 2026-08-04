@@ -18,30 +18,26 @@ a:hover { background: #141210; }
 <a id="link" href="#">Download</a>
 <script>
 const ua = navigator.userAgent;
-let url = '';
-let text = 'Launch in Browser';
-
-if (ua.includes('Win')) {
-    url = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_windows.exe';
-    text = 'Download for Windows';
-} else if (ua.includes('Mac')) {
-    url = ua.includes('Arm')
-        ? 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_macos_arm64'
-        : 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_macos_intel';
-    text = 'Download for macOS';
-} else if (ua.includes('Linux')) {
-    url = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_linux';
-    text = 'Download for Linux';
-}
-
 const isMobile = ua.includes('Android') || ua.includes('iPhone') || ua.includes('iPad') || ua.includes('Mobi');
+const link = document.getElementById('link');
 
 if (isMobile) {
-    document.getElementById('link').href = '/app.html';
-    document.getElementById('link').textContent = 'Open';
+    link.href = '/app.html';
+    link.textContent = 'Open';
+} else if (ua.includes('Win')) {
+    link.href = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_windows.exe';
+    link.textContent = 'Download for Windows';
+} else if (ua.includes('Mac')) {
+    link.href = ua.includes('Arm')
+        ? 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_macos_arm64'
+        : 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_macos_intel';
+    link.textContent = 'Download for macOS';
+} else if (ua.includes('Linux')) {
+    link.href = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_linux';
+    link.textContent = 'Download for Linux';
 } else {
-    document.getElementById('link').href = url || '/app.html';
-    document.getElementById('link').textContent = text;
+    link.href = 'https://github.com/omegaflow/omegaflow/releases';
+    link.textContent = 'Releases';
 }
 </script>
 </body>
