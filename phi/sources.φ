@@ -10034,9 +10034,9 @@ path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm
 source atmosphere_co2_mauna_loa
 ttl 3600
 force em
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_co2_mauna_loa.json
 wgs84 19.5362 -155.5763 3397
-format csv
+format json
 last_row (ppm) atmosphere_co2_weekly_ppm
 
 source atmosphere_daily_forecast
@@ -10085,16 +10085,16 @@ source atmosphere_methane
 ttl 3600
 force em
 ecliptic 1
-url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
-format csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_methane.json
+format json
 last_row average atmosphere_methane_global_ppb
 
 source atmosphere_n2o
 ttl 3600
 force em
 ecliptic 1
-url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
-format csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_n2o.json
+format json
 last_row average atmosphere_n2o_global_ppb
 
 source atmosphere_openmeteo_bom
@@ -10183,8 +10183,8 @@ source atmosphere_sf6
 ttl 3600
 force em
 ecliptic 1
-url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
-format csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_sf6.json
+format json
 last_row average atmosphere_sf6_global_ppt
 
 source atmosphere_sunrise_sunset
@@ -12211,9 +12211,9 @@ field AWND avg_wind_speed_tenth_ms
 source noaa_gml_co2_weekly_mlo
 ttl 3600
 force diffusion
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_co2_weekly_mlo.json
 wgs84 19.5 -155.6
-format text
+format json
 rows
 field 0 year
 field 1 month
@@ -14695,35 +14695,35 @@ alt_key geometry.coordinates.2
 source geosphere_noaa_ch4_global
 ttl 86400
 force em
-url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_noaa_ch4_global.json
 wgs84 19.5362 -155.5763
 last_row average atmosphere_ch4_ppb_global
 
 source geosphere_noaa_co2_annual_mean
 ttl 86400
 force em
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_noaa_co2_annual_mean.json
 wgs84 19.5362 -155.5763
 last_line atmosphere_co2_annual_mean_global
 
 source geosphere_noaa_co2_mlo_monthly
 ttl 86400
 force em
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_noaa_co2_mlo_monthly.json
 wgs84 19.5362 -155.5763
 last_row average atmosphere_co2_ppm_mlo_monthly
 
 source geosphere_noaa_n2o_global
 ttl 86400
 force em
-url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_noaa_n2o_global.json
 wgs84 19.5362 -155.5763
 last_row average atmosphere_n2o_ppb_global
 
 source geosphere_noaa_sf6_global
 ttl 86400
 force em
-url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_noaa_sf6_global.json
 wgs84 19.5362 -155.5763
 last_row average atmosphere_sf6_ppt_global
 
@@ -19028,9 +19028,9 @@ field_in 3 station_elevation_m
 source noaa_gml_ch4_global
 ttl 86400
 force diffusion
-url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_ch4_global.json
 wgs84 0.0 0.0
-format text
+format json
 rows
 field_in 0 year
 field_in 1 month
@@ -19040,9 +19040,9 @@ field_in 3 ch4_ppb_uncertainty
 source noaa_gml_ch4_global_trend_monthly
 ttl 86400
 force diffusion
-url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_ch4_global_trend_monthly.json
 wgs84 0.0 0.0
-format text
+format json
 rows
 field 0 year
 field 1 month
@@ -19054,9 +19054,9 @@ field 5 trend_uncertainty
 source noaa_gml_co2_global_growth_rate
 ttl 86400
 force diffusion
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_co2_global_growth_rate.json
 wgs84 0.0 0.0
-format text
+format json
 rows
 field 0 year
 field 1 co2_growth_rate_ppm_yr
@@ -19065,9 +19065,9 @@ field 2 growth_rate_uncertainty
 source noaa_gml_co2_mauna_loa
 ttl 86400
 force diffusion
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_co2_mauna_loa.json
 wgs84 19.5 -155.6
-format text
+format json
 rows
 field_in 0 year
 field_in 1 month
@@ -19079,9 +19079,9 @@ field_in 7 co2_10_yr_ago
 source noaa_gml_co2_mauna_loa_realtime
 ttl 86400
 force diffusion
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_co2_mauna_loa_realtime.json
 wgs84 19.5 -155.6
-format text
+format json
 rows
 field_in 0 year
 field_in 1 month
@@ -19091,9 +19091,9 @@ field_in 3 co2_ppm
 source noaa_gml_global_xco2_long_term_trend
 ttl 86400
 force diffusion
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_global_xco2_long_term_trend.json
 wgs84 0.0 0.0
-format text
+format json
 rows
 field 0 year
 field 1 co2_annual_mean_ppm
@@ -19102,9 +19102,9 @@ field 2 co2_uncertainty_ppm
 source noaa_gml_n2o_global
 ttl 86400
 force diffusion
-url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_n2o_global.json
 wgs84 0.0 0.0
-format text
+format json
 rows
 field_in 0 year
 field_in 1 month
@@ -19114,9 +19114,9 @@ field_in 3 n2o_ppb_uncertainty
 source noaa_gml_sf6_global
 ttl 86400
 force diffusion
-url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_sf6_global.json
 wgs84 0.0 0.0
-format text
+format json
 rows
 field_in 0 year
 field_in 1 month
@@ -19127,8 +19127,8 @@ source noaa_gml_stratospheric_aerosol
 ttl 86400
 force diffusion
 ecliptic 1
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
-format text
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_stratospheric_aerosol.json
+format json
 rows
 field_in 0 year
 field_in 1 co2_ppm_mean
@@ -23867,7 +23867,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_tibet_temp_min_dec_2024_c
 source atmosphere_co2_historical
 ttl 604800
 force em
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_co2_historical.json
 wgs84 19.5 -155.6
 regex 2000\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2000_ppm
 regex 2020\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2020_ppm
