@@ -26,7 +26,9 @@ import urllib.parse
 import urllib.request
 
 TOKEN = os.environ.get("CATALOGS_TOKEN", "")
-RELEASE_URL = "https://uploads.github.com/repos/omegaflow/catalogs/releases/364488765/assets"
+RELEASE_URL = "https://uploads.github.com/repos/omegaflow/catalogs/releases/{release_id}/assets"
+SHARD_DOMAIN = "tapvizier.cds.unistra.fr"
+_SHARD_RELEASE_ID = None
 TIMEOUT = int(os.environ.get("TAP_TIMEOUT", "180"))
 SLEEP = float(os.environ.get("TAP_SLEEP", "2"))
 
@@ -159,12 +161,35 @@ def build_shard_url(table, ra_col, lo, hi, extra_where, select_cols="*"):
     return base + urllib.parse.quote_plus(q)
 
 
+def get_shard_release_id():
+    global _SHARD_RELEASE_ID
+    if _SHARD_RELEASE_ID:
+        return _SHARD_RELEASE_ID
+    tag = f"catalogs-{SHARD_DOMAIN}"
+    url = f"https://api.github.com/repos/omegaflow/catalogs/releases/tags/{urllib.parse.quote(tag, safe='')}"
+    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {TOKEN}",
+                                                "Accept": "application/vnd.github+json",
+                                                "User-Agent": "omegaflow-bot/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=15) as r:
+            d = json.load(r)
+            _SHARD_RELEASE_ID = d["id"]
+            return _SHARD_RELEASE_ID
+    except Exception:
+        return None
+
+
 def upload_asset(filename, data):
     if not TOKEN:
         print(f"  !! no CATALOGS_TOKEN, skip {filename}", file=sys.stderr)
         return False
+    rid = get_shard_release_id()
+    if not rid:
+        print(f"  !! no release for {SHARD_DOMAIN}", file=sys.stderr)
+        return False
+    upload_url = RELEASE_URL.format(release_id=rid)
     req = urllib.request.Request(
-        f"{RELEASE_URL}?name={filename}",
+        f"{upload_url}?name={filename}",
         data=data, method="POST",
         headers={"Authorization": f"Bearer {TOKEN}",
                  "Content-Type": "application/octet-stream",
@@ -306,7 +331,7 @@ def rewrite_shard_sources(src_name, shards):
                 fname = f"{bname}.json"
                 out.append(
                     f"source {bname}\n{base}\n"
-                    f"url https://github.com/omegaflow/catalogs/releases/download/v1.0/{fname}\n"
+                    f"url https://github.com/omegaflow/catalogs/releases/download/catalogs-{SHARD_DOMAIN}/{fname}\n"
                     f"format json\nmap .\n"
                     f"lat_key RAJ2000\nlon_key DEJ2000\n"
                     f"wgs84 0.0 {ra_center:.2f}\n"

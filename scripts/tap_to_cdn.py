@@ -28,8 +28,8 @@ import urllib.parse
 import urllib.request
 
 TOKEN = os.environ.get("CATALOGS_TOKEN", "")
-RELEASE_URL = "https://uploads.github.com/repos/omegaflow/catalogs/releases/364488765/assets"
 MAX_ROWS = int(os.environ.get("TAP_MAX_ROWS", "0"))
+CATALOGS_REPO = "omegaflow/catalogs"
 TIMEOUT = int(os.environ.get("TAP_TIMEOUT", "120"))
 SLEEP = float(os.environ.get("TAP_SLEEP", "2"))
 MAX_SOURCES = int(os.environ.get("TAP_MAX_SOURCES", "0"))
@@ -341,12 +341,80 @@ def votable_to_json(text):
         return None
 
 
-def upload_asset(filename, data):
+def get_release_for_domain(domain):
+    """Get (release_id, tag_name) for a domain. Creates release if missing."""
+    tag = f"catalogs-{domain}"
+    api_url = f"https://api.github.com/repos/{CATALOGS_REPO}/releases/tags/{urllib.parse.quote(tag, safe='')}"
+    req = urllib.request.Request(api_url, headers={"Authorization": f"Bearer {TOKEN}",
+                                                     "Accept": "application/vnd.github+json",
+                                                     "User-Agent": "omegaflow-bot/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=15) as r:
+            d = json.load(r)
+            return d["id"], tag
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            return None, None
+    
+    body = json.dumps({"tag_name": tag, "name": tag, "body": f"CDN for {domain}", "draft": False}).encode()
+    create_url = f"https://api.github.com/repos/{CATALOGS_REPO}/releases"
+    req = urllib.request.Request(create_url, data=body,
+                                 headers={"Authorization": f"Bearer {TOKEN}",
+                                          "Content-Type": "application/json",
+                                          "Accept": "application/vnd.github+json",
+                                          "User-Agent": "omegaflow-bot/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=15) as r:
+            d = json.load(r)
+            return d["id"], tag
+    except Exception:
+        return None, None
+
+
+_RELEASE_CACHE = {}
+
+
+def get_upload_url(domain):
+    """Return (upload_url, release_tag) for a domain."""
+    if domain not in _RELEASE_CACHE:
+        rid, tag = get_release_for_domain(domain)
+        if rid:
+            _RELEASE_CACHE[domain] = (f"https://uploads.github.com/repos/{CATALOGS_REPO}/releases/{rid}/assets", tag)
+        else:
+            return None, None
+    return _RELEASE_CACHE[domain]
+
+
+def extract_domain_from_url(url):
+    """Extract clean domain from a TAP URL."""
+    host = urllib.parse.urlparse(url).hostname or ""
+    # Map to canonical domain for release tagging
+    domain_map = {
+        "tapvizier.cds.unistra.fr": "tapvizier.cds.unistra.fr",
+        "cds.unistra.fr": "tapvizier.cds.unistra.fr",
+        "heasarc.gsfc.nasa.gov": "heasarc.gsfc.nasa.gov",
+        "irsa.ipac.caltech.edu": "irsa.ipac.caltech.edu",
+        "mast.stsci.edu": "mast.stsci.edu",
+        "skyserver.sdss.org": "skyserver.sdss.org",
+        "gea.esac.esa.int": "gea.esac.esa.int",
+        "gaia.ari.uni-heidelberg.de": "gaia.ari.uni-heidelberg.de",
+        "ned.ipac.caltech.edu": "ned.ipac.caltech.edu",
+    }
+    if host in domain_map:
+        return domain_map[host]
+    return host
+
+
+def upload_asset(filename, data, domain):
     if not TOKEN:
         print("  !! no CATALOGS_TOKEN, skip upload", file=sys.stderr)
         return False
+    upload_url, tag = get_upload_url(domain)
+    if not upload_url:
+        print(f"  !! no release for {domain}", file=sys.stderr)
+        return False
     req = urllib.request.Request(
-        f"{RELEASE_URL}?name={filename}",
+        f"{upload_url}?name={filename}",
         data=data, method="POST",
         headers={"Authorization": f"Bearer {TOKEN}",
                  "Content-Type": "application/octet-stream",
@@ -367,12 +435,13 @@ def cdn_filename(source):
     return f"{source}.json"
 
 
-def update_source_block(block, cdn_file):
+def update_source_block(block, cdn_file, domain):
     """Update a source block in sources.φ to point at the CDN JSON."""
+    cdn_url = f"https://github.com/omegaflow/catalogs/releases/download/catalogs-{domain}/{cdn_file}"
     new_block = block
     new_block = re.sub(
         r"url\s+https?://[^\s]+",
-        f"url https://github.com/omegaflow/catalogs/releases/download/v1.0/{cdn_file}",
+        f"url {cdn_url}",
         new_block, count=1)
     # 2. rows+format text -> map . or cmap . + format json (CDN data is named-object JSON)
     if "rows" in new_block:
@@ -395,7 +464,8 @@ def update_source_block(block, cdn_file):
 
 
 def update_sources_file(uploaded, path="phi/sources.φ"):
-    """Rewrite sources.φ so uploaded sources point at their CDN file."""
+    """Rewrite sources.φ so uploaded sources point at their CDN file.
+    uploaded = {cdn_file: domain_tag}"""
     content = open(path).read()
     blocks = re.split(r"\n(?=source )", content)
     changed = 0
@@ -407,13 +477,13 @@ def update_sources_file(uploaded, path="phi/sources.φ"):
         cdn_file = f"{name}.json"
         if cdn_file not in uploaded:
             continue
-        new_b = update_source_block(b, cdn_file)
+        domain = uploaded[cdn_file]
+        new_b = update_source_block(b, cdn_file, domain)
         if new_b != b:
             blocks[i] = new_b
             changed += 1
             print(f"  updated {name} -> {cdn_file}", file=sys.stderr)
     if changed:
-        # split consumes the \n before 'source '; rejoin with \n restores it
         open(path, "w").write("\n".join(blocks))
     return changed
 
@@ -438,10 +508,11 @@ def main():
     print(f"TAP-STATIC sources: {len(sources)}", file=sys.stderr)
 
     done, skipped, failed = 0, 0, 0
-    uploaded = set()
+    uploaded = {}
     for s in sources:
         name = s["source"]
         fname = cdn_filename(name)
+        domain = extract_domain_from_url(s["url"])
         print(f"--- {name}", file=sys.stderr)
         if args.dry_run:
             print(f"    {s['url'][:120]}", file=sys.stderr)
@@ -465,7 +536,6 @@ def main():
                 print("    EMPTY", file=sys.stderr)
                 skipped += 1
                 continue
-            # Verification: if source had original TOP limit, check we got MORE than that
             top_m = re.search(r'TOP\+?(\d+)', s["url"], re.I)
             if top_m:
                 orig_top = int(top_m.group(1))
@@ -476,9 +546,9 @@ def main():
                     continue
             print(f"    {len(rows)} rows{' (spatial)' if truncated else ''}", file=sys.stderr)
             payload = json.dumps({"data": rows}).encode()
-            if upload_asset(fname, payload):
+            if upload_asset(fname, payload, domain):
                 done += 1
-                uploaded.add(fname)
+                uploaded[fname] = domain
             else:
                 failed += 1
         except Exception as e:

@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CATALOGS_REPO: ${{ secrets.CATALOGS_REPO || 'omegaflow/catalogs' }}
-      RELEASE_TAG: catalogs
       GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
@@ -197,7 +196,7 @@ jobs:
         run: |
           # astropy handles VOTable BINARY/BINARY2/TABLEDATA (cloud-side only)
           pip install -q astropy numpy 2>/dev/null || true
-          # Convert remaining TAP-STATIC catalog sources to CDN JSON on v1.0
+          # Convert remaining TAP-STATIC catalog sources to CDN JSON
           python3 scripts/tap_to_cdn.py --update-sources || \
             echo "::warning::TAP conversion had failures (see logs)"
           # If sources.φ was updated, commit + push so the server picks up CDN URLs
@@ -239,8 +238,7 @@ jobs:
 
       - name: Mirror static files -> catalogs
         run: |
-          echo "Mirroring third-party static files to catalogs release"
-          # Download each file and upload to catalogs
+          echo "Mirroring third-party static files to domain releases"
           declare -A MIRRORS=(
             ["ne_10m_parks_area.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson"
             ["ne_10m_parks_point.geojson"]="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson"
@@ -268,12 +266,42 @@ jobs:
             ["pb2002_orogens.json"]="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_orogens.json"
             ["pb2002_plates.json"]="https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json"
           )
-          gh release create catalogs --repo "$CATALOGS_REPO" --title "omegaflow catalogs" --notes "" 2>/dev/null || true
+          # Domain mapping: mirror filename -> domain tag (matches catalogs-{domain} release)
+          declare -A MIRROR_DOMAINS=(
+            ["ne_10m_parks_area.geojson"]="github.com-nvkelso-natural-earth-vector"
+            ["ne_10m_parks_point.geojson"]="github.com-nvkelso-natural-earth-vector"
+            ["ne_110m_coastline.geojson"]="github.com-nvkelso-natural-earth-vector"
+            ["ne_110m_boundaries.geojson"]="github.com-nvkelso-natural-earth-vector"
+            ["gem_active_faults.geojson"]="github.com-GEMScienceTools-gem-global-active-faults"
+            ["meteorites_tidy.csv"]="github.com-rfordatascience-tidytuesday"
+            ["meteorites_nasa_all.csv"]="github.com-rfordatascience-tidytuesday"
+            ["ourairports_global.csv"]="github.com-davidmegginson-ourairports-data"
+            ["particle2026.csv"]="github.com-scikit-hep-particle"
+            ["nuclear_power_plants.csv"]="github.com-cristianst85-GeoNuclearData"
+            ["earth_impact_craters.geojson"]="github.com-arijguest-3D-meteorite-viewer"
+            ["meteorite_strike_data.json"]="github.com-FreeCodeCamp-ProjectReferenceData"
+            ["ne_10m_populated_places.geojson"]="github.com-nvkelso-natural-earth-vector"
+            ["ne_50m_glaciers.geojson"]="github.com-nvkelso-natural-earth-vector"
+            ["ne_50m_lakes.geojson"]="github.com-nvkelso-natural-earth-vector"
+            ["ne_110m_populated_places.geojson"]="github.com-nvkelso-natural-earth-vector"
+            ["ne_10m_rivers.geojson"]="github.com-nvkelso-natural-earth-vector"
+            ["constellations_bounds.json"]="github.com-ofrohn-d3-celestial"
+            ["periodic_table.json"]="github.com-Bowserinator-Periodic-Table-JSON"
+            ["jbrooksuk_airports.json"]="github.com-jbrooksuk-JSON-Airports"
+            ["power_plants_wri.csv"]="github.com-wri-global-power-plant-database"
+            ["gem_faults_harmonized.geojson"]="github.com-cossatot-gem-global-active-faults"
+            ["pb2002_boundaries.json"]="github.com-fraxen-tectonicplates"
+            ["pb2002_orogens.json"]="github.com-fraxen-tectonicplates"
+            ["pb2002_plates.json"]="github.com-fraxen-tectonicplates"
+          )
           for fn in "${!MIRRORS[@]}"; do
             url="${MIRRORS[$fn]}"
-            echo "  mirror: $fn <- $url"
+            domain="${MIRROR_DOMAINS[$fn]}"
+            release_tag="catalogs-${domain}"
+            echo "  mirror: $fn -> $release_tag <- $url"
+            gh release create "$release_tag" --repo "$CATALOGS_REPO" --title "$release_tag" --notes "" 2>/dev/null || true
             if curl -sS --retry 2 --fail -o "data/mirror_$fn" "$url"; then
-              gh release upload catalogs "data/mirror_$fn" --repo "$CATALOGS_REPO" --clobber
+              gh release upload "$release_tag" "data/mirror_$fn" --repo "$CATALOGS_REPO" --clobber
               echo "    uploaded"
             else
               echo "::warning::mirror $fn failed"
@@ -289,5 +317,4 @@ jobs:
             echo "::error::no token to publish release"
             exit 1
           fi
-          gh release create catalogs --repo "$CATALOGS_REPO" --title "catalogs" --notes "Unified CDN. TTL-based refresh." 2>/dev/null || true
           python3 scripts/refresh_catalogs.py
