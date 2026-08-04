@@ -4510,24 +4510,11 @@ fn fetch_priority(
     presences: &[(f64, f64, f64, f64, f64)],
 ) -> u8 {
     if is_new {
-        let mut min_d = f64::INFINITY;
-        for &(_, px, py, pz, _) in presences {
-            let d = ((px - pos.0).powi(2) + (py - pos.1).powi(2) + (pz - pos.2).powi(2)).sqrt();
-            if d < min_d {
-                min_d = d;
-            }
-        }
-        let proximity = if r > 0.0 {
-            1.0 - (min_d / (r + min_d)).min(1.0)
-        } else {
-            0.0
-        };
-        let urgency = 1.0 - (ttl.max(1) as f64).log10().min(5.0) / 5.0;
         if url.contains("omegaflow/sources") {
-            let x = (ttl.max(1) as f64).log2() / Φ;
-            return ((255.0 * (1.0 - 1.0 / (1.0 + x))).max(128.0)) as u8;
+            return 0;
         }
-        return ((proximity * 0.7 + urgency * 0.3) * 240.0) as u8;
+        let log_ttl = (ttl.max(1) as f64).log10().min(5.0) / 5.0;
+        return 1 + (255.0 * (1.0 - log_ttl)) as u8;
     }
     let mut min_d = f64::INFINITY;
     for &(_, px, py, pz, _) in presences {
