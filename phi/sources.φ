@@ -464,7 +464,7 @@ field quality signal_quality
 source magnetosphere_cosmic_radiation_jung
 ttl 60
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=46.95&longitude=7.86&current=shortwave_radiation,uv_index&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_cosmic_radiation_jung.json
 wgs84 46.95 7.86
 field current.shortwave_radiation cosmic_radiation_shortwave_wm2
 field current.uv_index cosmic_radiation_uv_index
@@ -998,7 +998,7 @@ field station_count kp_station_count
 source arcgis_air_quality_pm25
 ttl 300
 force diffusion
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/0/query?where=1%3D1&outFields=value,value_2,parameter,city,country,lastUpdated&outSR=4326&f=geojson&resultRecordCount=5000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arcgis_air_quality_pm25.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1008,7 +1008,7 @@ field properties.value_2 pm25_value_2
 source arcgis_earthquake_3d
 ttl 300
 force seismic-body
-url https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/Earthquake_Archive_3D/FeatureServer/0/query?where=1%3D1&outFields=mag,kmDepth,felt,cdi,mmi,tsunami,sig,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=2000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arcgis_earthquake_3d.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1055,7 +1055,7 @@ field properties.f6 gsn_seismic_elevation_m
 source arcgis_historical_quakes
 ttl 300
 force seismic-body
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Historical_Quakes/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,depth,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=5000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arcgis_historical_quakes.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1070,7 +1070,7 @@ field properties.tsunami quake_tsunami_flag
 source arcgis_metar_weather
 ttl 300
 force thermal
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/0/query?where=1%3D1&outFields=LATITUDE,LONGITUDE,TEMP,DEW_POINT,R_HUMIDITY,WIND_DIRECT,WIND_SPEED,WIND_GUST,WIND_CHILL,PRESSURE,VISIBILITY,HEAT_INDEX,ELEVATION&outSR=4326&f=geojson&resultRecordCount=5000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arcgis_metar_weather.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1087,7 +1087,7 @@ field properties.ELEVATION metar_elevation_m
 source arcgis_ntad_dams
 ttl 300
 force gravity
-url https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Dams/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,nidHeight,damHeight&outSR=4326&f=geojson&resultRecordCount=5000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arcgis_ntad_dams.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1131,7 +1131,7 @@ path features.0.attributes.RadiationStorms space_weather_radiation_storm_scale
 source arcgis_usgs_seismic
 ttl 300
 force seismic-body
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,longitude,latitude,depth&outSR=4326&f=geojson&resultRecordCount=2000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arcgis_usgs_seismic.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1145,7 +1145,7 @@ field properties.tsunami usgs_tsunami_flag
 source arcgis_viirs_fire
 ttl 300
 force thermal
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,bright_ti4,bright_ti5,frp,confidence&outSR=4326&f=geojson&resultRecordCount=5000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arcgis_viirs_fire.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1171,7 +1171,7 @@ source atmosphere_open_meteo_current
 ttl 300
 force advective
 pos atmosphere_lat atmosphere_lon
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,pressure_msl,wind_speed_10m,wind_direction_10m
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_open_meteo_current.json
 path latitude atmosphere_lat
 path longitude atmosphere_lon
 path current.temperature_2m atmosphere_temperature_c
@@ -1282,7 +1282,7 @@ field emsc:depth depth_km
 source esri_current_wind_speed
 ttl 300
 force advective
-url https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/Current_Wind_Speed/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/esri_current_wind_speed.json
 map features
 field attributes.name station_name
 field attributes.stid station_id
@@ -1296,7 +1296,7 @@ lon_key geometry.x
 source esri_env_canada_wind
 ttl 300
 force advective
-url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/esri_env_canada_wind.json
 map features
 field attributes.Station_Name station_name
 field attributes.Temperature_C temp_c
@@ -1308,7 +1308,7 @@ lon_key geometry.x
 source esri_lightning_global
 ttl 300
 force em
-url https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/esri_lightning_global.json
 map features
 field attributes.type strike_type
 field attributes.intensity intensity_ka
@@ -1319,7 +1319,7 @@ lon_key geometry.x
 source esri_noaa_metar_wind
 ttl 300
 force advective
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/esri_noaa_metar_wind.json
 map features
 field attributes.ICAO icao_code
 field attributes.STATION_NAME station_name
