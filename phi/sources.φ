@@ -17896,216 +17896,6 @@ dec_key 11
 field_in 1 frb_name
 field_in 23 dm
 
-source astro_gaia_astrometric_binaries
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_astrometric_binaries.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 phot_g_mean_mag
-field_in 3 parallax_mas
-field_in 4 ruwe
-
-source astro_gaia_blue_stragglers
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_blue_stragglers.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 bp_rp
-
-source astro_gaia_bright_giants
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_bright_giants.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 par
-
-source astro_gaia_nearby_cmap
-ttl 315576000000
-reach_ttl 86400
-catalog_epoch 504921600.0
-flux_from_mag celestial_gaia_nearby_g_magnitude
-force gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_nearby_cmap.json
-ssb
-format universal
-tau_key _dist_m
-ra_key ra
-dec_key dec
-plx_key parallax
-pmra_key pmra
-pmdec_key pmdec
-field phot_g_mean_mag celestial_gaia_nearby_g_magnitude
-
-source astro_gaia_bulge
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_bulge.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-
-source astro_gaia_cool_dwarfs
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_cool_dwarfs.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-
-source astro_gaia_deep_mag
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_deep_mag.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-field_in 3 par
-
-source astro_gaia_extreme_blue
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_extreme_blue.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-field_in 3 par
-field_in 4 bp_rp
-
-source astro_gaia_extreme_red
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_extreme_red.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-field_in 3 par
-field_in 4 bp_rp
-
-source astro_gaia_galactic_plane
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_galactic_plane.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-
-source astro_gaia_giant_branch
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_giant_branch.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-
-source astro_gaia_high_velocity
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_high_velocity.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-field_in 3 par
-
-source astro_gaia_hot_subdwarfs
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_hot_subdwarfs.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-
-source astro_gaia_lmc
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_lmc.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 2
-field_in 2 par
-
-source astro_gaia_main_sequence
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_main_sequence.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-
-source astro_gaia_metallicity
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_metallicity.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 phot_g_mean_mag
-field_in 3 parallax_mas
-field_in 4 metallicity_dex
-
-source astro_gaia_nearby_1000
-ttl 315576000000
-reach_ttl 86400
-catalog_epoch 504921600.0
-abs_mag_from mag_g
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_nearby_1000.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 mag_g
-
-source astro_gaia_red_clump
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_red_clump.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 3
-field_in 2 bp_rp
-
-source astro_gaia_smc
-ttl 86400
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_smc.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 2
-field_in 2 par
-
 source astro_nvss_radio
 ttl 86400
 force em
@@ -19555,16 +19345,6 @@ field Fluence frb_fluence_jy_ms
 field Widthfitb frb_width_ms
 field SpInd frb_spectral_index
 
-source astro_gaia_binaries
-ttl 604800
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_binaries.json
-tau_key _dist_m
-ra_key ra
-dec_key dec
-plx_key parallax
-field phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
-
 source astro_gaia_blue_supergiants
 ttl 604800
 force em gravity
@@ -19652,31 +19432,6 @@ dec_key dec
 plx_key parallax
 field phot_g_mean_mag astro_gaia_hypervelocity_phot_g_mean_mag
 field radial_velocity astro_gaia_hypervelocity_radial_velocity
-
-source astro_gaia_metal_poor
-ttl 604800
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_metal_poor.json
-tau_key _dist_m
-ra_key ra
-dec_key dec
-plx_key parallax
-field phot_g_mean_mag astro_gaia_metal_poor_phot_g_mean_mag
-field mh_gspphot astro_gaia_metal_poor_mh_gspphot
-
-source astro_gaia_nearby_plx10
-ttl 604800
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_nearby_plx10.json
-tau_key _dist_m
-ra_key ra
-dec_key dec
-plx_key parallax
-field pmra astro_gaia_nearby_plx10_pmra
-field pmdec astro_gaia_nearby_plx10_pmdec
-field phot_g_mean_mag astro_gaia_nearby_plx10_phot_g_mean_mag
-field bp_rp astro_gaia_nearby_plx10_bp_rp
-field radial_velocity astro_gaia_nearby_plx10_radial_velocity
 
 source astro_gaia_nearby_plx50
 ttl 604800
@@ -24601,32 +24356,6 @@ dec_key 1
 plx_key 2
 field_in 3 universe_panstarrs_gaia_g_mag
 
-source exosphere_gaia_nearby_stars
-ttl 604800
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/exosphere_gaia_nearby_stars.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 2
-field_in 6 gaia_nearby_star_mag
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
-source exosphere_gaia_stars
-ttl 604800
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/exosphere_gaia_stars.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 2
-field_in 6 cosmic_star_magnitude
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
 source exosphere_gaia_stellar_ages
 ttl 604800
 force em gravity
@@ -24638,19 +24367,6 @@ dec_key 1
 plx_key 2
 field_in 6 cosmic_oldest_star_age_gyr
 field_in 7 cosmic_oldest_star_temp_k
-pmra_key 3
-pmdec_key 4
-radvel_key 5 1000
-
-source exosphere_gaia_variable_stars
-ttl 604800
-force em gravity
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/exosphere_gaia_variable_stars.json
-tau_key _dist_m
-ra_key 0
-dec_key 1
-plx_key 2
-field_in 6 gaia_cepheid_period_d
 pmra_key 3
 pmdec_key 4
 radvel_key 5 1000

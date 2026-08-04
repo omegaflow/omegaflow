@@ -28,9 +28,10 @@ DEFAULT_LIMIT = 200000
 # Format: (table, columns, where clause)
 GAIA_QUERIES = {
     "astro_gaia_astrometric_binaries": {
-        "table": "gaiadr3.astrometric_binaries",
+        "table": "gaiadr3.binary_masses",
         "columns": "source_id,ra,dec,parallax,phot_g_mean_mag",
         "where": "parallax > 0",
+        "limit": 10000,
     },
     "astro_gaia_blue_stragglers": {
         "table": "gaiadr3.gaia_source",
@@ -205,12 +206,16 @@ def upload_to_release(filename, data_bytes):
         return True
     
     status, release = api_call("GET", f"/repos/{RELEASE_REPO}/releases/tags/{RELEASE_DOMAIN}")
-    if status != 200:
+    if status != 200 or release is None:
         payload = json.dumps({"tag_name": RELEASE_DOMAIN, "name": RELEASE_DOMAIN, "body": ""})
         status, release = api_call("POST", f"/repos/{RELEASE_REPO}/releases", payload)
         if status not in (200, 201):
             print(f"    Release error: {status}")
             return False
+    
+    if not release:
+        print(f"    Release error: no data")
+        return False
     
     upload_url = release["upload_url"].split("{")[0]
     url = f"{upload_url}?name={urllib.parse.quote(filename)}"
