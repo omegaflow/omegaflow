@@ -1202,7 +1202,7 @@ source biosphere_inaturalist_observations
 ttl 300
 force em
 ecliptic 1
-url https://api.inaturalist.org/v1/observations?per_page=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist_observations.json
 field total_results biosphere_inaturalist_obs_count
 
 source biosphere_opensky_states
@@ -8286,7 +8286,7 @@ field count biosphere_bird_count
 source biosphere_inaturalist_nearby
 ttl 600
 force em
-url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&per_page=20&order=desc&order_by=observed_on
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist_nearby.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -8296,7 +8296,7 @@ source biosphere_inaturalist_observations_count
 ttl 600
 force em
 ecliptic 1
-url https://api.inaturalist.org/v1/observations?per_page=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist_observations_count.json
 path total_results biosphere_inaturalist_observations_total
 
 source biosphere_inpe_fire_foci
@@ -9269,7 +9269,7 @@ field variable.unit.unitCode unit_code
 source aeronet_aod500_europe
 ttl 1800
 force diffusion
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_aod500_europe.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9281,7 +9281,7 @@ source aeronet_aod_asia
 ttl 1800
 force diffusion
 ecliptic 1
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-10.0&lon1=60.0&lat2=55.0&lon2=150.0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_aod_asia.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9293,7 +9293,7 @@ source aeronet_aod_europe
 ttl 1800
 force diffusion
 ecliptic 1
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_aod_europe.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9310,7 +9310,7 @@ source aeronet_aod_north_america
 ttl 1800
 force diffusion
 ecliptic 1
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=15.0&lon1=-170.0&lat2=80.0&lon2=-40.0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_aod_north_america.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9323,7 +9323,7 @@ source aeronet_aod_south_america
 ttl 1800
 force diffusion
 ecliptic 1
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-60.0&lon1=-90.0&lat2=15.0&lon2=-30.0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_aod_south_america.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9606,7 +9606,7 @@ field line2 tle_line2
 source aeronet_aod440_global
 ttl 3600
 force diffusion
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_aod440_global.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9618,7 +9618,7 @@ field Precipitable_Water(cm) precip_water
 source aeronet_aod_africa
 ttl 3600
 force diffusion
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_aod_africa.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9630,7 +9630,7 @@ source aeronet_aod_africa_mideast
 ttl 3600
 force diffusion
 ecliptic 1
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_aod_africa_mideast.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9641,7 +9641,7 @@ field AOD_500nm aod_500nm
 source aeronet_aod_americas
 ttl 3600
 force diffusion
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-55.0&lon1=-130.0&lat2=60.0&lon2=-30.0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_aod_americas.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9653,7 +9653,7 @@ source aeronet_aod_global
 ttl 3600
 force diffusion
 ecliptic 1
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_aod_global.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9696,7 +9696,7 @@ source aeronet_sda_global
 ttl 3600
 force diffusion
 ecliptic 1
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&SDA15=1&AVG=10&if_no_html=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_sda_global.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -9709,7 +9709,7 @@ source aeronet_tot_global
 ttl 3600
 force diffusion
 ecliptic 1
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&TOT15=1&AVG=10&if_no_html=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_tot_global.json
 format text
 rows
 lat_key Site_Latitude(Degrees)
@@ -10467,20 +10467,20 @@ field meta.total_count biosphere_legislation_votes
 source biosphere_inaturalist_fungi
 ttl 3600
 force em
-url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist_fungi.json
 path total_results biosphere_fungi_observations
 
 source biosphere_inaturalist_fungi_count
 ttl 3600
 force em
-url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist_fungi_count.json
 field total_results biosphere_fungi_observations
 field species_count biosphere_fungi_species_count
 
 source biosphere_inaturalist_verified
 ttl 3600
 force em
-url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist_verified.json
 field total_results biosphere_verified_observations
 
 source biosphere_launch_library
@@ -11633,7 +11633,7 @@ field time obs_time
 source biosphere_inaturalist
 ttl 3600
 force em
-url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inaturalist.json
 field total_results biosphere_observations
 
 source inaturalist_amazon_biodiversity
@@ -11672,7 +11672,7 @@ field place_guess locality
 source inaturalist_fungi_global
 ttl 3600
 force diffusion
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/inaturalist_fungi_global.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -11684,7 +11684,7 @@ field place_guess locality
 source inaturalist_invasive_insects
 ttl 3600
 force diffusion
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/inaturalist_invasive_insects.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -11695,7 +11695,7 @@ field place_guess locality
 source inaturalist_mammalia_global
 ttl 3600
 force diffusion
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/inaturalist_mammalia_global.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -11707,7 +11707,7 @@ field place_guess locality
 source inaturalist_marine_fish
 ttl 3600
 force diffusion
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/inaturalist_marine_fish.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -11718,7 +11718,7 @@ field observed_on observation_date
 source inaturalist_reptilia_global
 ttl 3600
 force diffusion
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/inaturalist_reptilia_global.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -11730,7 +11730,7 @@ field place_guess locality
 source inaturalist_threatened_species
 ttl 3600
 force diffusion
-url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/inaturalist_threatened_species.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -13315,7 +13315,7 @@ source aeronet_site_list
 ttl 86400
 force diffusion
 ecliptic 1
-url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/aeronet_site_list.json
 format text
 rows
 lat_key Latitude(decimal_degrees)
@@ -20229,7 +20229,7 @@ field mBcorr pantheon_mBcorr
 source subatomic_particle_physics_papers_total
 ttl 86400
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=find+tc&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_particle_physics_papers_total.json
 wgs84 46.233 6.056
 field hits.total subatomic_papers_total
 
@@ -20250,7 +20250,7 @@ field message.total-results cosmic_jwst_high_z_discovery_papers
 source physics_inspirehep_iter_fusion_papers
 ttl 86400
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_inspirehep_iter_fusion_papers.json
 wgs84 43.709 5.777
 field hits.hits.0.metadata.citation_count physics_fusion_research_citations
 
@@ -24312,7 +24312,7 @@ field properties.db_area cryosphere_glims_glacier_area_km2
 source subatomic_higgs_production_xsec_papers
 ttl 604800
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Higgs+production+cross+section&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_higgs_production_xsec_papers.json
 wgs84 46.233 6.056
 field hits.total subatomic_higgs_xsec_papers
 
@@ -24361,7 +24361,7 @@ field melt molecular_element_melt_k
 source subatomic_muon_gminus2_papers
 ttl 604800
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=muon+g-2+anomalous+magnetic+moment&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_muon_gminus2_papers.json
 wgs84 41.833 -87.627
 field hits.total subatomic_muon_g2_papers
 
@@ -24390,7 +24390,7 @@ field station_type hydrosphere_ndbc_station_type
 source subatomic_neutrino_oscillation_papers
 ttl 604800
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrino+oscillation&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_neutrino_oscillation_papers.json
 wgs84 42.454 13.576
 field hits.total subatomic_neutrino_oscillation_papers
 
@@ -24432,35 +24432,35 @@ field message.total-results biosphere_synthetic_genome_research_total
 source physics_inspirehep_bell_test_papers
 ttl 604800
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=loophole-free+Bell+test&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_inspirehep_bell_test_papers.json
 wgs84 52.086 5.171
 field hits.hits.0.metadata.citation_count physics_bell_test_loophole_free_citations
 
 source physics_inspirehep_organoid_papers
 ttl 604800
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=organoid+intelligence+biocomputing&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_inspirehep_organoid_papers.json
 wgs84 -37.813 144.963
 field hits.hits.0.metadata.citation_count biosphere_organoid_computing_citations
 
 source physics_inspirehep_proton_decay_papers
 ttl 604800
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_inspirehep_proton_decay_papers.json
 wgs84 36.428 137.310
 field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
 
 source physics_inspirehep_quantum_teleport_papers
 ttl 604800
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=quantum+entanglement+satellite+distance+record&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_inspirehep_quantum_teleport_papers.json
 wgs84 39.904 116.407
 field hits.hits.0.metadata.citation_count quantum_entanglement_distance_record_citations
 
 source physics_inspirehep_time_crystal_papers
 ttl 604800
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=time+crystal&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_inspirehep_time_crystal_papers.json
 wgs84 42.360 -71.093
 field hits.hits.0.metadata.citation_count physics_time_crystal_research_citations
 
@@ -24500,7 +24500,7 @@ field phot_g_mean_mag star_g_mag
 source solar_helioseismology_papers
 ttl 604800
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=helioseismology&fields=titles
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_helioseismology_papers.json
 wgs84 37.774 -122.419
 field hits.total solar_helioseismology_papers
 
@@ -27073,7 +27073,7 @@ field 1.0.value biosphere_urban_population_pct
 source subatomic_dark_matter_direct_limits
 ttl 2592000
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=dark+matter+direct+detection+limit+XENONnT+LZ&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_dark_matter_direct_limits.json
 wgs84 42.454 13.576
 field hits.hits.0.metadata.citation_count quantum_dark_matter_limit_citations
 
@@ -27252,7 +27252,7 @@ lon_key dec
 source subatomic_neutrinoless_double_beta_limits
 ttl 2592000
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrinoless+double+beta+decay+limit&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_neutrinoless_double_beta_limits.json
 wgs84 42.454 13.576
 field hits.hits.0.metadata.citation_count quantum_double_beta_limit_citations
 
@@ -27350,28 +27350,28 @@ field message.total-results biosphere_biophoton_research_total
 source physics_inspirehep_cmb_anomaly_papers
 ttl 2592000
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_inspirehep_cmb_anomaly_papers.json
 wgs84 5.230 -52.769
 field hits.hits.0.metadata.citation_count cosmic_cmb_anomaly_research_citations
 
 source physics_inspirehep_vacuum_metastability_papers
 ttl 2592000
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_inspirehep_vacuum_metastability_papers.json
 wgs84 46.233 6.055
 field hits.hits.0.metadata.citation_count physics_vacuum_metastability_citations
 
 source physics_inspirehep_xenonnt_papers
 ttl 2592000
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+matter&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_inspirehep_xenonnt_papers.json
 wgs84 42.454 13.576
 field hits.hits.0.metadata.citation_count physics_dark_matter_limit_citations
 
 source subatomic_quantum_gravity_lorentz_bounds
 ttl 2592000
 force em
-url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Lorentz+invariance+violation+quantum+gravity&fields=titles,citation_count
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_quantum_gravity_lorentz_bounds.json
 wgs84 42.454 13.576
 field hits.hits.0.metadata.citation_count quantum_lorentz_bounds_citations
 
