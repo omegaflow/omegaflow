@@ -1427,7 +1427,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42360_current_speed_cms
 source gcoos_buoy_wmo_42361
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42361/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42361.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1438,7 +1438,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42361_current_speed_cms
 source gcoos_buoy_wmo_42362
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42362/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42362.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1449,7 +1449,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42362_current_speed_cms
 source gcoos_buoy_wmo_42363
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42363/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42363.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1460,7 +1460,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42363_current_speed_cms
 source gcoos_buoy_wmo_42364
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42364/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42364.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1471,7 +1471,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42364_current_speed_cms
 source gcoos_buoy_wmo_42365
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42365/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42365.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1482,7 +1482,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42365_current_speed_cms
 source gcoos_buoy_wmo_42369
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42369/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42369.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1504,7 +1504,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42370_current_speed_cms
 source gcoos_buoy_wmo_42373
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42373/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42373.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1515,7 +1515,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42373_current_speed_cms
 source gcoos_buoy_wmo_42374
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42374/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42374.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1526,7 +1526,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42374_current_speed_cms
 source gcoos_buoy_wmo_42377
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42377/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42377.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1537,7 +1537,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42377_current_speed_cms
 source gcoos_buoy_wmo_42379
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42379/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42379.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1548,7 +1548,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42379_current_speed_cms
 source gcoos_buoy_wmo_42382
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42382/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42382.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1559,7 +1559,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42382_current_speed_cms
 source gcoos_buoy_wmo_42384
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42384/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42384.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1581,7 +1581,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42386_current_speed_cms
 source gcoos_buoy_wmo_42388
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42388/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42388.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1603,7 +1603,7 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42395_current_speed_cms
 source gcoos_buoy_wmo_42400
 ttl 300
 force acoustic
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42400/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42400.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
