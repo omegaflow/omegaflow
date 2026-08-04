@@ -249,7 +249,7 @@ jobs:
             ["gem_active_faults.geojson"]="https://raw.githubusercontent.com/GEMScienceTools/gem-global-active-faults/master/geojson/gem_active_faults.geojson"
             ["meteorites_tidy.csv"]="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv"
             ["meteorites_nasa_all.csv"]="https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2019/2019-06-11/meteorites.csv"
-            ["ourairports_global.csv"]="https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv"
+            ["ourairports_global.csv"]="https://ourairports.com/data/airports.csv"
             ["particle2026.csv"]="https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv"
             ["nuclear_power_plants.csv"]="https://raw.githubusercontent.com/cristianst85/GeoNuclearData/master/data/csv/denormalized/reactors.csv"
             ["earth_impact_craters.geojson"]="https://raw.githubusercontent.com/arijguest/3D-meteorite-viewer/main/earth-impact-craters-v2.geojson"
