@@ -9284,7 +9284,7 @@ field elev station_elevation_m
 source geosphere_earthquakes_m1_month
 ttl 1800
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_m1_month.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -9307,7 +9307,7 @@ alt_key geometry.coordinates.2
 source geosphere_usgs_earthquakes_day
 ttl 1800
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_usgs_earthquakes_day.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -10967,13 +10967,13 @@ geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 source geosphere_earthquakes_m3_monthly
 ttl 3600
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_m3_monthly.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_significant_month
 ttl 3600
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_significant_month.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -10983,7 +10983,7 @@ source geosphere_earthquakes_usgs_all_month
 ttl 3600
 force em
 ecliptic 1
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_usgs_all_month.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -11087,7 +11087,7 @@ path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
 source geosphere_usgs_earthquakes_month
 ttl 3600
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_usgs_earthquakes_month.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -12950,7 +12950,7 @@ extent 1.70e-4
 source usgs_earthquakes_weekly
 ttl 3600
 force acoustic
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.5&orderby=magnitude&limit=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_earthquakes_weekly.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -14560,61 +14560,61 @@ field spatial_extent.bbox.3 geosphere_clms_bbox_maxy
 source geosphere_earthquakes_2015_M5
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2015_M5.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2016_M5
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2016_M5.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2017_M5
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2017_M5.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2018_M5
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2018_M5.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2019_M5
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2019_M5.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2020_M5
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2020_M5.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2021_M5
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2021_M5.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2022_M5
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2022_M5.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2023_M5
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2023_M5.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_2024_M5
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2024_M5.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_historical
@@ -14626,19 +14626,19 @@ geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 source geosphere_earthquakes_m4_decade
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_m4_decade.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_m6_historical
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_m6_historical.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_usgs_m4plus_decade
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4.5&limit=300
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_usgs_m4plus_decade.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_ga_seismic_stations
@@ -20715,7 +20715,7 @@ field_in 0 Source
 source usgs_earthquakes_hazard_layer
 ttl 86400
 force em
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6.0&orderby=time&limit=20
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_earthquakes_hazard_layer.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
