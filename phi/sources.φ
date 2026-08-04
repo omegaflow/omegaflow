@@ -9712,7 +9712,7 @@ path current.pm10 atmosphere_pm10_ugm3
 source atmosphere_biome_amazon
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=-3.47&longitude=-62.22&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_amazon.json
 wgs84 -3.47 -62.22
 path current.temperature_2m atmosphere_biome_amazon_temp_c
 path current.precipitation atmosphere_biome_amazon_precip_mm
@@ -9728,7 +9728,7 @@ path daily.sunshine_duration.0 atmosphere_biome_amazon_sunshine_yesterday_s
 source atmosphere_biome_antarctic
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=-80.0&longitude=100.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_antarctic.json
 wgs84 -80.0 100.0
 path current.temperature_2m atmosphere_biome_antarctic_temp_c
 path current.precipitation atmosphere_biome_antarctic_precip_mm
@@ -9744,7 +9744,7 @@ path daily.sunshine_duration.0 atmosphere_biome_antarctic_sunshine_yesterday_s
 source atmosphere_biome_atacama
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=-24.0&longitude=-69.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_atacama.json
 wgs84 -24.0 -69.5
 path current.temperature_2m atmosphere_biome_atacama_temp_c
 path current.precipitation atmosphere_biome_atacama_precip_mm
@@ -9760,7 +9760,7 @@ path daily.sunshine_duration.0 atmosphere_biome_atacama_sunshine_yesterday_s
 source atmosphere_biome_borneo
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=0.5&longitude=114.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_borneo.json
 wgs84 0.5 114.0
 path current.temperature_2m atmosphere_biome_borneo_temp_c
 path current.precipitation atmosphere_biome_borneo_precip_mm
@@ -9776,7 +9776,7 @@ path daily.sunshine_duration.0 atmosphere_biome_borneo_sunshine_yesterday_s
 source atmosphere_biome_cairo
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=30.0&longitude=31.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_cairo.json
 wgs84 30.0 31.0
 path current.temperature_2m atmosphere_biome_cairo_temp_c
 path current.precipitation atmosphere_biome_cairo_precip_mm
@@ -9792,7 +9792,7 @@ path daily.sunshine_duration.0 atmosphere_biome_cairo_sunshine_yesterday_s
 source atmosphere_biome_cape_town
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=-34.0&longitude=18.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_cape_town.json
 wgs84 -34.0 18.5
 path current.temperature_2m atmosphere_biome_cape_town_temp_c
 path current.precipitation atmosphere_biome_cape_town_precip_mm
@@ -9808,7 +9808,7 @@ path daily.sunshine_duration.0 atmosphere_biome_cape_town_sunshine_yesterday_s
 source atmosphere_biome_congo
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=0.0&longitude=18.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_congo.json
 wgs84 0.0 18.0
 path current.temperature_2m atmosphere_biome_congo_temp_c
 path current.precipitation atmosphere_biome_congo_precip_mm
@@ -9824,7 +9824,7 @@ path daily.sunshine_duration.0 atmosphere_biome_congo_sunshine_yesterday_s
 source atmosphere_biome_death_valley
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=36.5&longitude=-117.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_death_valley.json
 wgs84 36.5 -117.0
 path current.temperature_2m atmosphere_biome_death_valley_temp_c
 path current.precipitation atmosphere_biome_death_valley_precip_mm
@@ -9840,7 +9840,7 @@ path daily.sunshine_duration.0 atmosphere_biome_death_valley_sunshine_yesterday_
 source atmosphere_biome_fiji
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=-18.0&longitude=178.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_fiji.json
 wgs84 -18.0 178.0
 path current.temperature_2m atmosphere_biome_fiji_temp_c
 path current.precipitation atmosphere_biome_fiji_precip_mm
@@ -9856,7 +9856,7 @@ path daily.sunshine_duration.0 atmosphere_biome_fiji_sunshine_yesterday_s
 source atmosphere_biome_gobi
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=44.0&longitude=105.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_gobi.json
 wgs84 44.0 105.0
 path current.temperature_2m atmosphere_biome_gobi_temp_c
 path current.precipitation atmosphere_biome_gobi_precip_mm
@@ -9872,7 +9872,7 @@ path daily.sunshine_duration.0 atmosphere_biome_gobi_sunshine_yesterday_s
 source atmosphere_biome_greenland
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=72.0&longitude=-40.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_greenland.json
 wgs84 72.0 -40.0
 path current.temperature_2m atmosphere_biome_greenland_temp_c
 path current.precipitation atmosphere_biome_greenland_precip_mm
