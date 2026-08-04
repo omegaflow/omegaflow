@@ -1753,7 +1753,7 @@ source geosphere_nws_alerts
 ttl 300
 force em
 ecliptic 1
-url https://api.weather.gov/alerts/active
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_nws_alerts.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1766,7 +1766,7 @@ source geosphere_nws_tsunami_warnings
 ttl 300
 force gravity
 ecliptic 1
-url https://api.weather.gov/alerts/active?event=Tsunami%20Warning
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_nws_tsunami_warnings.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -7756,7 +7756,7 @@ field event_x x_flare_prob_pct
 source biosphere_obis_marine_occurrences_recent
 ttl 300
 force diffusion
-url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_marine_occurrences_recent.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -8168,7 +8168,7 @@ source atmosphere_weather_alerts_us
 ttl 600
 force em
 ecliptic 1
-url https://api.weather.gov/alerts/active
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_weather_alerts_us.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8963,7 +8963,7 @@ field flux xray_flux_W_m2
 source noaa_weather_alerts
 ttl 600
 force em
-url https://api.weather.gov/alerts/active
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_weather_alerts.json
 map features
 lat_key 38.9
 lon_key -77.0
@@ -9394,7 +9394,7 @@ path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.longitude hydrospher
 source inaturalist_needs_id_global
 ttl 1800
 force diffusion
-url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&geojson=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/inaturalist_needs_id_global.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -9545,7 +9545,7 @@ field_in 2 aurora_probability_pct
 source noaa_weather_observations
 ttl 1800
 force diffusion
-url https://api.weather.gov/stations/KTOP/observations/latest
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_weather_observations.json
 map properties
 lat_key 39.073
 lon_key -95.626
@@ -9581,21 +9581,21 @@ source orbital_celestrak_debris
 ttl 1800
 force em
 ecliptic 1
-url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=IRIDIUM+33
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_celestrak_debris.json
 field totalItems orbital_debris_iridium33
 
 source orbital_celestrak_gps
 ttl 1800
 force em
 ecliptic 1
-url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=NAVSTAR
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_celestrak_gps.json
 field totalItems orbital_gps_count
 
 source orbital_celestrak_satellites
 ttl 1800
 force em
 ecliptic 1
-url https://tle.ivanstanojevic.me/api/tle/?page-size=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_celestrak_satellites.json
 map member
 field satelliteId satellite_norad_id
 field name satellite_name
@@ -11334,7 +11334,7 @@ field_in 2 hydrosphere_drifter_sst_k
 source hydrosphere_erddap_smartbay_spl
 ttl 3600
 force em
-url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_ERD_INT_UWN_NAT.csv?time,TotalSPL,SPL63Hz,SPL125Hz,SPL2kHz,SPL5kHz
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_erddap_smartbay_spl.json
 wgs84 42.62682 -8.78233
 format csv
 last_row TotalSPL hydrosphere_sound_pressure_db
@@ -11537,7 +11537,7 @@ last_row navd88_meters hydrosphere_tide_level_m
 source hydrosphere_emodnet_slev_europe
 ttl 86400
 force gravity
-url https://erddap.emodnet-physics.eu/erddap/tabledap/ERD_EP_SLEV_NRT_5m.csv?time,latitude,longitude,SLEV&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_emodnet_slev_europe.json
 wgs84 48.0 -5.0
 format erddap
 map data
@@ -11546,7 +11546,7 @@ field SLEV hydrosphere_sea_level_m
 source hydrosphere_tmednet_med_temp
 ttl 86400
 force thermal
-url https://erddap.emodnet-physics.eu/erddap/tabledap/T-MEDNet.csv?time,latitude,longitude,temperature,site_name&time>=max(time)-2day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_tmednet_med_temp.json
 wgs84 40.0 5.0
 format erddap
 map data
@@ -11555,7 +11555,7 @@ field temperature hydrosphere_med_temp_c
 source hydrosphere_ctd_arcticnet_profiles
 ttl 86400
 force thermal
-url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PR_CTD_ArcticNet_collection.csv?time,latitude,longitude,depth,PSAL,TEMP&time>=max(time)-30day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_ctd_arcticnet_profiles.json
 wgs84 70.0 -130.0
 format erddap
 map data
@@ -11643,7 +11643,7 @@ field total_results biosphere_observations
 source inaturalist_amazon_biodiversity
 ttl 3600
 force diffusion
-url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/inaturalist_amazon_biodiversity.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -11654,7 +11654,7 @@ field observed_on observation_date
 source inaturalist_amphibia_global
 ttl 3600
 force diffusion
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/inaturalist_amphibia_global.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -11664,7 +11664,7 @@ field observed_on observation_date
 source inaturalist_europe_recent
 ttl 3600
 force diffusion
-url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=35&swlng=-10&nelat=70&nelng=40
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/inaturalist_europe_recent.json
 map results
 lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
@@ -12451,7 +12451,7 @@ field g wind_gust_ms
 source noaa_weather_api_points
 ttl 3600
 force diffusion
-url https://api.weather.gov/points/39.7456,-97.0892
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_weather_api_points.json
 map properties
 lat_key 39.7456
 lon_key -97.0892
@@ -12467,7 +12467,7 @@ field radarStation radar_station
 source noaa_weather_forecast_hourly
 ttl 3600
 force diffusion
-url https://api.weather.gov/gridpoints/TOP/31,80/forecast/hourly
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_weather_forecast_hourly.json
 map properties
 lat_key 39.7456
 lon_key -97.0892
@@ -12522,7 +12522,7 @@ field totalResults biosphere_cyber_vulnerability_count_nvd
 source biosphere_obis_marine_mammals_turtles
 ttl 3600
 force diffusion
-url https://api.obis.org/v3/occurrence?taxonid=180130,137206&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_marine_mammals_turtles.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -12534,7 +12534,7 @@ field date_year obs_year
 source biosphere_obis_marine_occurrences_global
 ttl 3600
 force diffusion
-url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=1000&fields=decimalLatitude,decimalLongitude,scientificName,class,order,family,genus,species,date_year,country
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_marine_occurrences_global.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -12797,7 +12797,7 @@ source orbital_celestrak_starlink
 ttl 3600
 force em
 ssb
-url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=STARLINK
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_celestrak_starlink.json
 header User-Agent "omegaflow"
 field totalItems orbital_starlink_count
 
@@ -12832,7 +12832,7 @@ field count biosphere_fireball_event_count
 source orbital_tle_mirror_full
 ttl 3600
 force em
-url https://tle.ivanstanojevic.me/api/tle/?page-size=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_tle_mirror_full.json
 map member
 field satelliteId satellite_norad_id
 field name satellite_name
@@ -13536,14 +13536,14 @@ field totalCount biosphere_crispr_trials_recruiting
 source biosphere_crossref_dois_total
 ttl 86400
 force em
-url https://api.crossref.org/works?rows=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_crossref_dois_total.json
 wgs84 38.9072 -77.0369
 field message.total-results biosphere_doi_registrations_crossref
 
 source biosphere_crossref_members_total
 ttl 86400
 force em
-url https://api.crossref.org/members?rows=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_crossref_members_total.json
 wgs84 38.9072 -77.0369
 field message.total-results biosphere_doi_members_crossref
 
@@ -13794,7 +13794,7 @@ field subset.0.1 biosphere_ndvi_local
 source biosphere_obis_cetaceans
 ttl 86400
 force em
-url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_cetaceans.json
 wgs84 51.231 2.928
 path total biosphere_cetacean_observations_24h
 
@@ -13802,7 +13802,7 @@ source biosphere_obis_marine_global
 ttl 86400
 force em
 ecliptic 1
-url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_marine_global.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13814,7 +13814,7 @@ source biosphere_obis_marine_records
 ttl 86400
 force em
 ecliptic 1
-url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_marine_records.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13826,13 +13826,13 @@ field aphiaID biosphere_obis_aphia_id
 source biosphere_obis_species
 ttl 86400
 force em
-url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_species.json
 field total biosphere_ocean_occurrences_50km
 
 source biosphere_obis_statistics
 ttl 86400
 force em
-url https://api.obis.org/v3/statistics
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_statistics.json
 wgs84 51.231 2.928
 field taxa biosphere_ocean_species_known
 field records biosphere_ocean_records_total
@@ -14010,7 +14010,7 @@ field v_component_of_current current_v_ms
 source cmems_aviso_mesoscale_eddy_tracking
 ttl 86400
 force diffusion
-url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN_DESEASONALIZED.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cmems_aviso_mesoscale_eddy_tracking.json
 format text
 rows
 lat_key latitude
@@ -14022,7 +14022,7 @@ field eddy_type cyclonic_anticyclonic
 source cmems_duacs_dt2024_sla_global_grid
 ttl 86400
 force gravity
-url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_TREND.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cmems_duacs_dt2024_sla_global_grid.json
 format text
 rows
 lat_key latitude
@@ -14042,7 +14042,7 @@ field Salinity ocean_salinity_psu
 source cmems_global_sla_altimetry
 ttl 86400
 force acoustic
-url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cmems_global_sla_altimetry.json
 format text
 rows
 lat_key latitude
@@ -14103,7 +14103,7 @@ field chlor_a chlorophyll_mgm3
 source cmems_sla_global_adt
 ttl 86400
 force gravity
-url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cmems_sla_global_adt.json
 format text
 rows
 lat_key latitude
@@ -14175,7 +14175,7 @@ source astro_tle_catalog
 ttl 86400
 force em
 ssb
-url https://tle.ivanstanojevic.me/api/tle/
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_tle_catalog.json
 field totalItems cosmos_tle_total_satellites
 field totalItems cosmos_tle_total_satellites
 count member cosmos_tle_page_count
@@ -14184,7 +14184,7 @@ source astro_tle_search_iss
 ttl 86400
 force em
 ssb
-url https://tle.ivanstanojevic.me/api/tle/?search=ISS&page-size=50
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_tle_search_iss.json
 field totalItems cosmos_tle_iss_related_total
 field member.0.satelliteId cosmos_tle_iss_satellite_id
 count member cosmos_tle_iss_related_count
@@ -14299,7 +14299,7 @@ field properties.name boundary_name
 source geosphere_earthscope_fdsn_stations
 ttl 86400
 force acoustic
-url https://service.earthscope.org/fdsnws/station/1/query?format=text&limit=50000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_earthscope_fdsn_stations.json
 format text
 rows
 pos station_latitude station_longitude
@@ -14817,7 +14817,7 @@ source geosphere_iris_seismic_networks
 ttl 86400
 force em
 ecliptic 1
-url https://service.earthscope.org/fdsnws/station/1/query?level=network&format=geocsv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_iris_seismic_networks.json
 map features
 field properties.network geosphere_seismic_network_code
 field properties.description geosphere_seismic_network_name
@@ -15868,7 +15868,7 @@ field observations ioc_station_observations
 source geosphere_iris_fdsn_ic_au_regional_seismic_networks
 ttl 86400
 force seismic-body
-url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=IC,AU
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_iris_fdsn_ic_au_regional_seismic_networks.json
 format text
 rows
 lat_key Latitude
@@ -15882,7 +15882,7 @@ field StartTime deployment_start
 source geosphere_iris_fdsn_ida_network_stations
 ttl 86400
 force seismic-body
-url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=II
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_iris_fdsn_ida_network_stations.json
 format text
 rows
 lat_key Latitude
@@ -15897,7 +15897,7 @@ field StartTime start_date
 source geosphere_iris_fdsn_iu_global_seismographic_network
 ttl 86400
 force seismic-body
-url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=IU
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_iris_fdsn_iu_global_seismographic_network.json
 format text
 rows
 lat_key Latitude
@@ -15911,7 +15911,7 @@ field StartTime deployment_start
 source geosphere_iris_ph5_stations
 ttl 86400
 force seismic-body
-url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&starttime=2020-01-01
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_iris_ph5_stations.json
 format text
 rows
 lat_key Latitude
@@ -19661,7 +19661,7 @@ field redshift redshift
 source biosphere_obis_coral_species_global
 ttl 86400
 force diffusion
-url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_coral_species_global.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -19672,7 +19672,7 @@ field date_year obs_year
 source biosphere_obis_threatened_marine_species
 ttl 86400
 force diffusion
-url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_threatened_marine_species.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -19686,7 +19686,7 @@ source hydrosphere_oceanography_cmems_global_analysis
 ttl 86400
 force em
 ecliptic 1
-url https://erddap.emodnet-physics.eu/erddap/tabledap/index.json?page=1&itemsPerPage=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_oceanography_cmems_global_analysis.json
 format json
 map .
 field id oceanography_cmems_service_id
@@ -20240,14 +20240,14 @@ field hits.total subatomic_papers_total
 source physics_crossref_dois
 ttl 86400
 force em
-url https://api.crossref.org/works?rows=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_crossref_dois.json
 wgs84 42.530 -71.048
 field message.total-results biosphere_crossref_doi_count
 
 source physics_crossref_jwst_high_z_papers
 ttl 86400
 force em
-url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_crossref_jwst_high_z_papers.json
 wgs84 39.328 -76.620
 field message.total-results cosmic_jwst_high_z_discovery_papers
 
@@ -24422,14 +24422,14 @@ count aggregations.experiment.buckets biosphere_cern_total_record_count
 source physics_crossref_longevity_age_research
 ttl 604800
 force em
-url https://api.crossref.org/works?query=biological+age+clock+epigenetic&rows=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_crossref_longevity_age_research.json
 wgs84 51.500 -0.126
 field message.total-results biosphere_longevity_research_total
 
 source physics_crossref_synthetic_genome_papers
 ttl 604800
 force em
-url https://api.crossref.org/works?query=synthetic+genome+writing+minimal+cell&rows=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_crossref_synthetic_genome_papers.json
 wgs84 42.373 -71.110
 field message.total-results biosphere_synthetic_genome_research_total
 
@@ -27347,7 +27347,7 @@ field hits.total physics_cern_opendata_total
 source physics_crossref_biophoton_papers
 ttl 2592000
 force em
-url https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/physics_crossref_biophoton_papers.json
 wgs84 50.775 6.084
 field message.total-results biosphere_biophoton_research_total
 
@@ -27484,7 +27484,7 @@ field elevation geosphere_raspberry_shake_elevation_m
 source geosphere_iris_stations
 ttl 86400
 force seismic-body
-url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_iris_stations.json
 format csv
 rows
 lat_key Latitude
