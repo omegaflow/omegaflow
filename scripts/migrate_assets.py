@@ -6,7 +6,7 @@ import json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-TOKEN = os.environ.get("CATALOGS_TOKEN", "")
+TOKEN = os.environ.get("OMEGAFLOW_TOKEN", "")
 HEADERS = {"Authorization": f"Bearer {TOKEN}", "Accept": "application/vnd.github+json",
            "User-Agent": "omegaflow-bot/1.0"}
 RELEASES_URL = "https://api.github.com/repos/omegaflow/sources/releases"

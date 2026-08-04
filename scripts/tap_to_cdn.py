@@ -3,7 +3,7 @@
 
 Reads phi/sources.φ, finds sources pointing at TAP endpoints (no template vars),
 downloads the FULL table (removing TOP limits), converts to {"data":[...]},
-and uploads to the v1.0 release via the CATALOGS_TOKEN.
+and uploads to the v1.0 release via the OMEGAFLOW_TOKEN.
 
 Uses astropy.io.votable for BINARY/BINARY2/TABLEDATA decoding (cloud-side);
 falls back to a plain CSV parser when astropy is unavailable.
@@ -15,7 +15,7 @@ Usage:
     python3 scripts/tap_to_cdn.py --limit 5000      # cap rows (debug)
 
 Env:
-    CATALOGS_TOKEN: PAT with contents write to omegaflow/sources
+    OMEGAFLOW_TOKEN: PAT with contents write to omegaflow/sources
 """
 import argparse
 import json
@@ -27,7 +27,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-TOKEN = os.environ.get("CATALOGS_TOKEN", "")
+TOKEN = os.environ.get("OMEGAFLOW_TOKEN", "")
 MAX_ROWS = int(os.environ.get("TAP_MAX_ROWS", "0"))
 CATALOGS_REPO = "omegaflow/sources"
 TIMEOUT = int(os.environ.get("TAP_TIMEOUT", "120"))
@@ -407,7 +407,7 @@ def extract_domain_from_url(url):
 
 def upload_asset(filename, data, domain):
     if not TOKEN:
-        print("  !! no CATALOGS_TOKEN, skip upload", file=sys.stderr)
+        print("  !! no OMEGAFLOW_TOKEN, skip upload", file=sys.stderr)
         return False
     upload_url, tag = get_upload_url(domain)
     if not upload_url:

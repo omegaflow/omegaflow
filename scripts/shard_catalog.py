@@ -11,7 +11,7 @@ Usage:
     python3 scripts/shard_catalog.py --source vizier_nvss_radio --bins 24 --update-sources
 
 Env:
-    CATALOGS_TOKEN: PAT with contents write to omegaflow/sources
+    OMEGAFLOW_TOKEN: PAT with contents write to omegaflow/sources
     TAP_TIMEOUT: per-request timeout (default 180)
     TAP_SLEEP: seconds between requests (default 2)
 """
@@ -25,7 +25,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-TOKEN = os.environ.get("CATALOGS_TOKEN", "")
+TOKEN = os.environ.get("OMEGAFLOW_TOKEN", "")
 RELEASE_URL = "https://uploads.github.com/repos/omegaflow/sources/releases/{release_id}/assets"
 SHARD_DOMAIN = "tapvizier.cds.unistra.fr"
 _SHARD_RELEASE_ID = None
@@ -181,7 +181,7 @@ def get_shard_release_id():
 
 def upload_asset(filename, data):
     if not TOKEN:
-        print(f"  !! no CATALOGS_TOKEN, skip {filename}", file=sys.stderr)
+        print(f"  !! no OMEGAFLOW_TOKEN, skip {filename}", file=sys.stderr)
         return False
     rid = get_shard_release_id()
     if not rid:

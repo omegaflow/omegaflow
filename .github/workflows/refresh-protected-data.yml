@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CATALOGS_REPO: ${{ secrets.CATALOGS_REPO || 'omegaflow/sources' }}
-      GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN || secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -189,8 +189,8 @@ jobs:
 
       - name: TAP catalogs -> CDN
         env:
-          CATALOGS_TOKEN: ${{ secrets.CATALOGS_TOKEN }}
-          GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
+          OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+          GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN || secrets.GITHUB_TOKEN }}
           TAP_MAX_ROWS: "0"
           TAP_MAX_SOURCES: "25"
         run: |
@@ -210,8 +210,8 @@ jobs:
 
       - name: Shard huge catalogs
         env:
-          CATALOGS_TOKEN: ${{ secrets.CATALOGS_TOKEN }}
-          GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
+          OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+          GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           # Shard the largest catalogs (NVSS, FIRST, LOTSS) along RA into 24 CDN files each.
           if [ ! -f /tmp/shard_done ]; then
@@ -310,7 +310,7 @@ jobs:
 
       - name: Publish Release
         env:
-          GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN || secrets.GITHUB_TOKEN }}
           CATALOGS_REPO: ${{ vars.CATALOGS_REPO || 'omegaflow/sources' }}
         run: |
           if [ -z "$GH_TOKEN" ]; then

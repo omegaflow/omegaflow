@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Post-rename bootstrap: create bare-domain releases and migrate assets.
 Run AFTER the repo has been renamed to omegaflow/sources.
-Usage: CATALOGS_TOKEN=ghp_xxx python3 scripts/bootstrap.py [--dry-run] [--workers N]
+Usage: OMEGAFLOW_TOKEN=ghp_xxx python3 scripts/bootstrap.py [--dry-run] [--workers N]
 """
 import json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-TOKEN = os.environ.get("CATALOGS_TOKEN", "")
+TOKEN = os.environ.get("OMEGAFLOW_TOKEN", "")
 if not TOKEN:
-    print("Missing CATALOGS_TOKEN", file=sys.stderr)
+    print("Missing OMEGAFLOW_TOKEN", file=sys.stderr)
     sys.exit(1)
 
 HEADERS = {"Authorization": f"Bearer {TOKEN}", "Accept": "application/vnd.github+json",

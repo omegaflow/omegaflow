@@ -22,7 +22,7 @@ GitHub → Settings → Secrets and variables → Actions → New repository sec
 | `FIRMS_MAP_KEY` | — | `geosphere_firms_viirs_global_nrt.csv`, `geosphere_firms_modis_global_nrt.csv` | https://firms.modaps.eosdis.nasa.gov/api/area/ → „Get MAP_KEY" (mit Earthdata-Login) |
 | `EARTHDATA_EDL_TOKEN` | — | `astro_nasa_cmr_*.json` via `cmr.earthdata.nasa.gov` Release | https://urs.earthdata.nasa.gov → Profil → „Generate Token" |
 | `CATALOGS_REPO` *(optional)* | — | — | `omegaflow/sources` (Standard) |
-| `CATALOGS_TOKEN` | — | — | PAT mit `Contents-write` auf `omegaflow/sources`, sonst fällt der Workflow auf `GITHUB_TOKEN` zurück (nur eigenes Repo) |
+| `OMEGAFLOW_TOKEN` | — | — | PAT mit `Contents-write` auf `omegaflow/sources`, sonst fällt der Workflow auf `GITHUB_TOKEN` zurück (nur eigenes Repo) |
 
 ## Ablauf
 

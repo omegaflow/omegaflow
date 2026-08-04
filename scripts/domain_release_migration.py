@@ -6,7 +6,7 @@ Output: 2308 CDN source URLs in sources.φ rewritten to catalogs-{domain}/ schem
 import json, os, re, subprocess, sys, time, urllib.parse, urllib.request
 from collections import defaultdict
 
-TOKEN = os.environ.get("CATALOGS_TOKEN", "")
+TOKEN = os.environ.get("OMEGAFLOW_TOKEN", "")
 HEADERS = {"Authorization": f"Bearer {TOKEN}", "Accept": "application/vnd.github+json",
            "User-Agent": "omegaflow-bot/1.0"}
 RELEASES_URL = "https://api.github.com/repos/omegaflow/sources/releases"

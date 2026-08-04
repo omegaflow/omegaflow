@@ -29,7 +29,7 @@ Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben 
 | `EARTHDATA_EDL_TOKEN` | ✅ | NASA Earthdata (PD) | https://urs.earthdata.nasa.gov → Profil → Generate Token |
 | `USGS_WATER_KEY` | ✅ | USGS Water (PD) | https://api.waterdata.usgs.gov/ogcapi/ |
 | `GBIF_USER`/`GBIF_PASS` | ✅ | GBIF (CC-BY-NC) | https://www.gbif.org/user/profile |
-| `CATALOGS_REPO`/`CATALOGS_TOKEN` | ✅ | Publish-Ziel | PAT mit Contents-write |
+| `CATALOGS_REPO`/`OMEGAFLOW_TOKEN` | ✅ | Publish-Ziel | PAT mit Contents-write |
 
 ### ❌ Entfernt (4 — ToS verbieten Redistribution via CDN)
  
