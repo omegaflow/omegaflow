@@ -1786,7 +1786,9 @@ fn load_sources() -> Vec<SourceConfig> {
                                     | Extract::Rows { .. }
                             )
                         });
-                    let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
+                    let frame = if cur_url.contains("omegaflow/sources") {
+                        Some(Frame::CDN)
+                    } else if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
                         if cur_mars_surface {
                             Some(Frame::IAU2000 {
                                 lat,
