@@ -10321,7 +10321,7 @@ field count biosphere_gbif_occurrence_count
 source biosphere_gbif_occurrences
 ttl 3600
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=1&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_occurrences.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -10332,7 +10332,7 @@ source biosphere_gbif_species_observations_count
 ttl 3600
 force em
 ecliptic 1
-url https://api.gbif.org/v1/occurrence/count?isGeoreferenced=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_species_observations_count.json
 path . biosphere_gbif_species_observations_total
 
 source biosphere_gdelt_news_volume
@@ -10799,7 +10799,7 @@ field stateProvince region
 source gbif_chiroptera_observations
 ttl 3600
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&basisOfRecord=MACHINE_OBSERVATION
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gbif_chiroptera_observations.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -10842,7 +10842,7 @@ field individualCount group_size
 source gbif_occurrence_search
 ttl 3600
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gbif_occurrence_search.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13452,7 +13452,7 @@ obj_last value biosphere_unemployment_eu_eurostat
 source biosphere_gbif_amphibians
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_amphibians.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13470,7 +13470,7 @@ field key biosphere_gbif_arachnid_key
 source biosphere_gbif_arthropods
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_arthropods.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13479,7 +13479,7 @@ field key biosphere_gbif_arthropod_key
 source biosphere_gbif_biodiversity_global
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_biodiversity_global.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13491,7 +13491,7 @@ field locality biosphere_gbif_biodiversity_locality
 source biosphere_gbif_birds
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_birds.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13520,7 +13520,7 @@ field key biosphere_gbif_cnidarian_key
 source biosphere_gbif_cnidarians
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_cnidarians.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13529,7 +13529,7 @@ field key biosphere_gbif_cnidarian_key
 source biosphere_gbif_echinoderms
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_echinoderms.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13538,7 +13538,7 @@ field key biosphere_gbif_echinoderm_key
 source biosphere_gbif_fungi
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_fungi.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13556,7 +13556,7 @@ field key biosphere_gbif_insect_key
 source biosphere_gbif_mammals
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_mammals.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13566,7 +13566,7 @@ source biosphere_gbif_marine_species
 ttl 86400
 force em
 ecliptic 1
-url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_marine_species.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13584,7 +13584,7 @@ field count biosphere_migratory_bird_records_this_month
 source biosphere_gbif_mollusks
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_mollusks.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13593,7 +13593,7 @@ field key biosphere_gbif_mollusk_key
 source biosphere_gbif_occurrences_precise
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_occurrences_precise.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -27355,7 +27355,7 @@ field occurrenceStatus biosphere_gbif_occurrence_status
 source biosphere_gbif_range_shifts
 ttl 86400
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&year=2026,2026&limit=300&offset=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_range_shifts.json
 format json
 map results
 lat_key decimalLatitude
