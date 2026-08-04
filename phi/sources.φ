@@ -493,7 +493,7 @@ source exosphere_magnetometer
 ttl 60
 force gravity
 ssb
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_magnetometer.json
 field 0.bt exosphere_mag_bt_nt
 field 0.bz_gsm exosphere_mag_bz_gsm_nt
 
@@ -501,7 +501,7 @@ source exosphere_solar_flares
 ttl 60
 force em
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_solar_flares.json
 field 0.current_int_xrlong exosphere_solar_flare_intensity
 field 0.current_class exosphere_solar_flare_class
 
@@ -509,7 +509,7 @@ source exosphere_solar_wind
 ttl 60
 force advective
 ssb
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_solar_wind.json
 field 0.proton_speed exosphere_proton_speed_kms
 field 0.proton_density exosphere_proton_density_ncc
 field 0.proton_temperature exosphere_proton_temp_k
@@ -631,14 +631,14 @@ source magnetosphere_dst_index
 ttl 60
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/products/kyoto-dst.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_dst_index.json
 last dst magnetosphere_dst_index_nt
 
 source magnetosphere_geomag_forecast
 ttl 60
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_geomag_forecast.json
 format csv
 last_row kp magnetosphere_forecast_kp_max
 
@@ -646,7 +646,7 @@ source magnetosphere_goes
 ttl 60
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_goes.json
 last Hp magnetosphere_hp_nt
 last He magnetosphere_he_nt
 last total magnetosphere_bt_nt
@@ -655,14 +655,14 @@ source magnetosphere_kp_index
 ttl 60
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kp_index.json
 last kp_index magnetosphere_kp_index
 
 source magnetosphere_solar_wind
 ttl 60
 force gravity
 ssb
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_solar_wind.json
 last bz_gsm magnetosphere_imf_bz_nt
 last bt magnetosphere_imf_bt_nt
 last by_gsm magnetosphere_imf_by_nt
@@ -671,7 +671,7 @@ source noaa_goes18_electron_flux
 ttl 60
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_goes18_electron_flux.json
 map .
 field_in 0 timestamp_utc
 field_in 1 electron_2mev_flux
@@ -681,7 +681,7 @@ source noaa_goes18_eps_energetic_particles
 ttl 60
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_goes18_eps_energetic_particles.json
 map .
 field_in 0 timestamp_utc
 field_in 1 flux_10mev_p_cm2s
@@ -692,7 +692,7 @@ source noaa_goes_exis_xrays
 ttl 60
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_goes_exis_xrays.json
 map
 field time_tag observation_time
 field flux_long_1_8A flux_1_8A_W_m2
@@ -702,7 +702,7 @@ source noaa_goes_r_exis_euv_realtime
 ttl 60
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_goes_r_exis_euv_realtime.json
 map .
 field_in 0 timestamp_utc
 field_in 1 flux_short_wm2
@@ -712,7 +712,7 @@ source noaa_swpc_alerts_current
 ttl 60
 force em
 ssb
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_alerts_current.json
 map .
 field time_tag alert_time_utc
 field message alert_message
@@ -722,7 +722,7 @@ source noaa_swpc_geomagnetic_alerts
 ttl 60
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_geomagnetic_alerts.json
 map
 field issue_time alert_time
 field message alert_text
@@ -731,7 +731,7 @@ source noaa_swpc_geomagnetic_storm_alerts
 ttl 60
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_geomagnetic_storm_alerts.json
 map .
 field_in 0 timestamp_utc
 field_in 1 alert_type
@@ -740,7 +740,7 @@ field_in 2 alert_message
 source noaa_swpc_goes_proton_primary
 ttl 60
 force diffusion
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_goes_proton_primary.json
 map .
 field time_tag timestamp_utc
 field satellite satellite_id
@@ -751,7 +751,7 @@ source noaa_swpc_goes_xray_flux
 ttl 60
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_goes_xray_flux.json
 map .
 field 0 datetime_utc
 field 1 flux_short_0_5_4A
@@ -760,7 +760,7 @@ field 2 flux_long_1_8A
 source noaa_swpc_goes_xray_primary
 ttl 60
 force em
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_goes_xray_primary.json
 map .
 field time_tag timestamp_utc
 field satellite satellite_id
@@ -771,7 +771,7 @@ source noaa_swpc_solar_events
 ttl 60
 force em
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_solar_events.json
 map
 field time_tag observation_time
 field flux_long_1_8A xray_1_8A_W_m2
@@ -781,7 +781,7 @@ source noaa_swpc_xray_flares_latest
 ttl 60
 force em
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_xray_flares_latest.json
 map .
 field time_tag flare_time_utc
 field class flare_classification
@@ -811,14 +811,14 @@ source radiation_electrons
 ttl 60
 force diffusion
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/radiation_electrons.json
 last_obj energy ">=2 MeV" flux radiation_electron_flux_2mev
 
 source radiation_proton_flux
 ttl 60
 force diffusion
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/radiation_proton_flux.json
 last_obj energy "40300-73400 keV" flux radiation_proton_flux_40mev
 last_obj energy "83700-98500 keV" flux radiation_proton_flux_80mev
 
@@ -826,7 +826,7 @@ source radiation_protons
 ttl 60
 force diffusion
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/radiation_protons.json
 last_obj energy ">=100 MeV" flux radiation_proton_flux_100mev
 
 source geosphere_scedc_california_earthquakes
@@ -847,35 +847,35 @@ source solar_events
 ttl 60
 force em
 ssb
-url https://services.swpc.noaa.gov/json/edited_events.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_events.json
 last coded_type magnetosphere_swpc_latest_event
 
 source solar_indices
 ttl 60
 force em
 ssb
-url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_indices.json
 last ssn solar_sunspot_number_observed
 
 source solar_radio_flux
 ttl 60
 force em
 ssb
-url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_radio_flux.json
 path 0.details.0.flux solar_radio_flux_sfu
 
 source solar_sunspots
 ttl 60
 force em
 ssb
-url https://services.swpc.noaa.gov/json/solar_regions.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_sunspots.json
 count . solar_active_region_count
 
 source solar_wind
 ttl 60
 force advective
 ssb
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_wind.json
 last proton_speed solar_wind_speed_km_s
 last proton_density solar_wind_density_cm3
 last proton_temperature solar_wind_temp_k
@@ -884,14 +884,14 @@ source solar_xray
 ttl 60
 force em
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_xray.json
 last flux solar_xray_flux_wm2
 
 source solar_xray_flares
 ttl 60
 force em
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_xray_flares.json
 count . solar_flare_count_7d
 last max_class solar_flare_class_7d
 last max_xrlong solar_flare_xray_intensity
@@ -988,7 +988,7 @@ field reg region
 source noaa_swpc_kp_index
 ttl 180
 force gravity
-url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_kp_index.json
 map .
 field time_tag timestamp_utc
 field Kp kp_index
@@ -7441,7 +7441,7 @@ field measures.0.latestReading.value hydrosphere_water_level_m
 source magnetosphere_intermagnet_niemegk_realtime
 ttl 300
 force em
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_intermagnet_niemegk_realtime.json
 wgs84 52.07 12.68
 map .
 field 0 timestamp_utc
@@ -7451,7 +7451,7 @@ field 2 total_field_f_nT
 source magnetosphere_intermagnet_niemegk_realtime_magnetic_data
 ttl 300
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_intermagnet_niemegk_realtime_magnetic_data.json
 wgs84 52.07 12.68
 map .
 field 0 timestamp_utc
@@ -16725,7 +16725,7 @@ radvel_key 4 1000
 source magnetosphere_abg
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_abg.json
 wgs84 18.638 72.872
 path 1.0 magnetosphere_abg_x_nt
 path 1.1 magnetosphere_abg_y_nt
@@ -16735,7 +16735,7 @@ path 2 magnetosphere_abg_s_nt
 source magnetosphere_abk
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_abk.json
 wgs84 68.358 18.823
 path 1.0 magnetosphere_abk_x_nt
 path 1.1 magnetosphere_abk_y_nt
@@ -16745,7 +16745,7 @@ path 2 magnetosphere_abk_s_nt
 source magnetosphere_abk_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_abk_hapi.json
 wgs84 68.358 18.823
 path 1.0 magnetosphere_abk_x_nt
 path 1.1 magnetosphere_abk_y_nt
@@ -16755,7 +16755,7 @@ path 2 magnetosphere_abk_f_nt
 source magnetosphere_aia
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_aia.json
 wgs84 -65.245 -64.25799999999998
 path 1.0 magnetosphere_aia_x_nt
 path 1.1 magnetosphere_aia_y_nt
@@ -16765,7 +16765,7 @@ path 2 magnetosphere_aia_s_nt
 source magnetosphere_ars
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_ars.json
 wgs84 56.433 58.567
 path 1.0 magnetosphere_ars_x_nt
 path 1.1 magnetosphere_ars_y_nt
@@ -16775,7 +16775,7 @@ path 2 magnetosphere_ars_s_nt
 source magnetosphere_asp
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_asp.json
 wgs84 -23.762 133.883
 path 1.0 magnetosphere_asp_x_nt
 path 1.1 magnetosphere_asp_y_nt
@@ -16785,7 +16785,7 @@ path 2 magnetosphere_asp_s_nt
 source magnetosphere_asp_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_asp_hapi.json
 wgs84 -23.762 133.883
 path 1.0 magnetosphere_asp_x_nt
 path 1.1 magnetosphere_asp_y_nt
@@ -16795,7 +16795,7 @@ path 2 magnetosphere_asp_f_nt
 source magnetosphere_bdv
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_bdv.json
 wgs84 49.08 14.02
 path 1.0 magnetosphere_bdv_x_nt
 path 1.1 magnetosphere_bdv_y_nt
@@ -16805,7 +16805,7 @@ path 2 magnetosphere_bdv_s_nt
 source magnetosphere_bdv_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_bdv_hapi.json
 wgs84 49.08 14.02
 path 1.0 magnetosphere_bdv_x_nt
 path 1.1 magnetosphere_bdv_y_nt
@@ -16815,7 +16815,7 @@ path 2 magnetosphere_bdv_f_nt
 source magnetosphere_bel
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_bel.json
 wgs84 51.836 20.789
 path 1.0 magnetosphere_bel_x_nt
 path 1.1 magnetosphere_bel_y_nt
@@ -16825,7 +16825,7 @@ path 2 magnetosphere_bel_s_nt
 source magnetosphere_bel_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_bel_hapi.json
 wgs84 51.836 20.789
 path 1.0 magnetosphere_bel_x_nt
 path 1.1 magnetosphere_bel_y_nt
@@ -16835,7 +16835,7 @@ path 2 magnetosphere_bel_f_nt
 source magnetosphere_bfo
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_bfo.json
 wgs84 48.331 8.325
 path 1.0 magnetosphere_bfo_x_nt
 path 1.1 magnetosphere_bfo_y_nt
@@ -16845,7 +16845,7 @@ path 2 magnetosphere_bfo_s_nt
 source magnetosphere_bfo_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_bfo_hapi.json
 wgs84 48.331 8.325
 path 1.0 magnetosphere_bfo_x_nt
 path 1.1 magnetosphere_bfo_y_nt
@@ -16855,7 +16855,7 @@ path 2 magnetosphere_bfo_f_nt
 source magnetosphere_bou
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_bou.json
 wgs84 40.14 -105.233
 path 1.0 magnetosphere_bou_x_nt
 path 1.1 magnetosphere_bou_y_nt
@@ -16865,7 +16865,7 @@ path 2 magnetosphere_bou_s_nt
 source magnetosphere_bou_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_bou_hapi.json
 wgs84 40.14 -105.233
 path 1.0 magnetosphere_bou_x_nt
 path 1.1 magnetosphere_bou_y_nt
@@ -16875,7 +16875,7 @@ path 2 magnetosphere_bou_f_nt
 source magnetosphere_brw
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_brw.json
 wgs84 71.32 -156.62
 path 1.0 magnetosphere_brw_x_nt
 path 1.1 magnetosphere_brw_y_nt
@@ -16885,7 +16885,7 @@ path 2 magnetosphere_brw_s_nt
 source magnetosphere_brw_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_brw_hapi.json
 wgs84 71.32 -156.62
 path 1.0 magnetosphere_brw_x_nt
 path 1.1 magnetosphere_brw_y_nt
@@ -16895,7 +16895,7 @@ path 2 magnetosphere_brw_f_nt
 source magnetosphere_bsl
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_bsl.json
 wgs84 30.35 -89.63999999999999
 path 1.0 magnetosphere_bsl_x_nt
 path 1.1 magnetosphere_bsl_y_nt
@@ -16905,7 +16905,7 @@ path 2 magnetosphere_bsl_s_nt
 source magnetosphere_bsl_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_bsl_hapi.json
 wgs84 30.35 -89.63999999999999
 path 1.0 magnetosphere_bsl_x_nt
 path 1.1 magnetosphere_bsl_y_nt
@@ -16915,7 +16915,7 @@ path 2 magnetosphere_bsl_f_nt
 source magnetosphere_cki
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cki.json
 wgs84 -12.188 96.834
 path 1.0 magnetosphere_cki_x_nt
 path 1.1 magnetosphere_cki_y_nt
@@ -16925,7 +16925,7 @@ path 2 magnetosphere_cki_s_nt
 source magnetosphere_cki_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cki_hapi.json
 wgs84 -12.188 96.834
 path 1.0 magnetosphere_cki_x_nt
 path 1.1 magnetosphere_cki_y_nt
@@ -16955,7 +16955,7 @@ path 2 magnetosphere_clf_f_nt
 source magnetosphere_cmo
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cmo.json
 wgs84 64.87 -147.86
 path 1.0 magnetosphere_cmo_x_nt
 path 1.1 magnetosphere_cmo_y_nt
@@ -16965,7 +16965,7 @@ path 2 magnetosphere_cmo_s_nt
 source magnetosphere_cmo_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cmo_hapi.json
 wgs84 64.87 -147.86
 path 1.0 magnetosphere_cmo_x_nt
 path 1.1 magnetosphere_cmo_y_nt
@@ -16975,7 +16975,7 @@ path 2 magnetosphere_cmo_f_nt
 source magnetosphere_cnb
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cnb.json
 wgs84 -35.32 149.36
 path 1.0 magnetosphere_cnb_x_nt
 path 1.1 magnetosphere_cnb_y_nt
@@ -16985,7 +16985,7 @@ path 2 magnetosphere_cnb_s_nt
 source magnetosphere_cnb_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cnb_hapi.json
 wgs84 -35.32 149.36
 path 1.0 magnetosphere_cnb_x_nt
 path 1.1 magnetosphere_cnb_y_nt
@@ -16995,7 +16995,7 @@ path 2 magnetosphere_cnb_f_nt
 source magnetosphere_cpL
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cpL.json
 wgs84 17.294 78.919
 path 1.0 magnetosphere_cpl_x_nt
 path 1.1 magnetosphere_cpl_y_nt
@@ -17004,7 +17004,7 @@ path 2 magnetosphere_cpl_s_nt
 source magnetosphere_csy
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_csy.json
 wgs84 -66.283 110.533
 path 1.0 magnetosphere_csy_x_nt
 path 1.1 magnetosphere_csy_y_nt
@@ -17014,7 +17014,7 @@ path 2 magnetosphere_csy_s_nt
 source magnetosphere_csy_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_csy_hapi.json
 wgs84 -66.283 110.533
 path 1.0 magnetosphere_csy_x_nt
 path 1.1 magnetosphere_csy_y_nt
@@ -17024,7 +17024,7 @@ path 2 magnetosphere_csy_f_nt
 source magnetosphere_cta
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cta.json
 wgs84 -20.09 146.264
 path 1.0 magnetosphere_cta_x_nt
 path 1.1 magnetosphere_cta_y_nt
@@ -17034,7 +17034,7 @@ path 2 magnetosphere_cta_s_nt
 source magnetosphere_cta_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cta_hapi.json
 wgs84 -20.09 146.264
 path 1.0 magnetosphere_cta_x_nt
 path 1.1 magnetosphere_cta_y_nt
@@ -17044,7 +17044,7 @@ path 2 magnetosphere_cta_f_nt
 source magnetosphere_cyg
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cyg.json
 wgs84 36.37 126.854
 path 1.0 magnetosphere_cyg_x_nt
 path 1.1 magnetosphere_cyg_y_nt
@@ -17054,7 +17054,7 @@ path 2 magnetosphere_cyg_s_nt
 source magnetosphere_cyg_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_cyg_hapi.json
 wgs84 36.37 126.854
 path 1.0 magnetosphere_cyg_x_nt
 path 1.1 magnetosphere_cyg_y_nt
@@ -17064,7 +17064,7 @@ path 2 magnetosphere_cyg_f_nt
 source magnetosphere_ded
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_ded.json
 wgs84 70.36 -148.79
 path 1.0 magnetosphere_ded_x_nt
 path 1.1 magnetosphere_ded_y_nt
@@ -17074,7 +17074,7 @@ path 2 magnetosphere_ded_s_nt
 source magnetosphere_ded_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_ded_hapi.json
 wgs84 70.36 -148.79
 path 1.0 magnetosphere_ded_x_nt
 path 1.1 magnetosphere_ded_y_nt
@@ -17104,7 +17104,7 @@ path 2 magnetosphere_dlt_f_nt
 source magnetosphere_dou
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_dou.json
 wgs84 50.1 4.6
 path 1.0 magnetosphere_dou_x_nt
 path 1.1 magnetosphere_dou_y_nt
@@ -17114,7 +17114,7 @@ path 2 magnetosphere_dou_s_nt
 source magnetosphere_dou_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_dou_hapi.json
 wgs84 50.1 4.6
 path 1.0 magnetosphere_dou_x_nt
 path 1.1 magnetosphere_dou_y_nt
@@ -17164,7 +17164,7 @@ path 2 magnetosphere_ebr_f_nt
 source magnetosphere_eyr
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_eyr.json
 wgs84 -43.474 172.393
 path 1.0 magnetosphere_eyr_x_nt
 path 1.1 magnetosphere_eyr_y_nt
@@ -17174,7 +17174,7 @@ path 2 magnetosphere_eyr_s_nt
 source magnetosphere_eyr_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_eyr_hapi.json
 wgs84 -43.474 172.393
 path 1.0 magnetosphere_eyr_x_nt
 path 1.1 magnetosphere_eyr_y_nt
@@ -17184,7 +17184,7 @@ path 2 magnetosphere_eyr_f_nt
 source magnetosphere_frd
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_frd.json
 wgs84 38.21 -77.36700000000002
 path 1.0 magnetosphere_frd_x_nt
 path 1.1 magnetosphere_frd_y_nt
@@ -17194,7 +17194,7 @@ path 2 magnetosphere_frd_s_nt
 source magnetosphere_frd_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_frd_hapi.json
 wgs84 38.21 -77.36700000000002
 path 1.0 magnetosphere_frd_x_nt
 path 1.1 magnetosphere_frd_y_nt
@@ -17204,7 +17204,7 @@ path 2 magnetosphere_frd_f_nt
 source magnetosphere_frn
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_frn.json
 wgs84 37.09 -119.72
 path 1.0 magnetosphere_frn_x_nt
 path 1.1 magnetosphere_frn_y_nt
@@ -17214,7 +17214,7 @@ path 2 magnetosphere_frn_s_nt
 source magnetosphere_frn_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_frn_hapi.json
 wgs84 37.09 -119.72
 path 1.0 magnetosphere_frn_x_nt
 path 1.1 magnetosphere_frn_y_nt
@@ -17224,7 +17224,7 @@ path 2 magnetosphere_frn_f_nt
 source magnetosphere_fur
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_fur.json
 wgs84 48.17 11.28
 path 1.0 magnetosphere_fur_x_nt
 path 1.1 magnetosphere_fur_y_nt
@@ -17235,7 +17235,7 @@ source magnetosphere_fur_hapi
 ttl 86400
 force gravity
 lon 11.28 V
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_fur_hapi.json
 wgs84 48.17 11.28
 path 1.0 magnetosphere_fur_x_nt
 path 1.1 magnetosphere_fur_y_nt
@@ -17245,7 +17245,7 @@ path 2 magnetosphere_fur_f_nt
 source magnetosphere_gan
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gan.json
 wgs84 -0.695 73.154
 path 1.0 magnetosphere_gan_x_nt
 path 1.1 magnetosphere_gan_y_nt
@@ -17255,7 +17255,7 @@ path 2 magnetosphere_gan_s_nt
 source magnetosphere_gan_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gan_hapi.json
 wgs84 -0.695 73.154
 path 1.0 magnetosphere_gan_x_nt
 path 1.1 magnetosphere_gan_y_nt
@@ -17265,7 +17265,7 @@ path 2 magnetosphere_gan_f_nt
 source magnetosphere_gck
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gck.json
 wgs84 44.633 20.767
 path 1.0 magnetosphere_gck_x_nt
 path 1.1 magnetosphere_gck_y_nt
@@ -17274,7 +17274,7 @@ path 1.2 magnetosphere_gck_z_nt
 source magnetosphere_gdh
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gdh.json
 wgs84 69.252 -53.533000000000015
 path 1.0 magnetosphere_gdh_x_nt
 path 1.1 magnetosphere_gdh_y_nt
@@ -17284,7 +17284,7 @@ path 2 magnetosphere_gdh_s_nt
 source magnetosphere_gng
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gng.json
 wgs84 -31.356 115.715
 path 1.0 magnetosphere_gng_x_nt
 path 1.1 magnetosphere_gng_y_nt
@@ -17294,7 +17294,7 @@ path 2 magnetosphere_gng_s_nt
 source magnetosphere_gng_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gng_hapi.json
 wgs84 -31.356 115.715
 path 1.0 magnetosphere_gng_x_nt
 path 1.1 magnetosphere_gng_y_nt
@@ -17304,7 +17304,7 @@ path 2 magnetosphere_gng_f_nt
 source magnetosphere_gua
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gua.json
 wgs84 13.59 144.87
 path 1.0 magnetosphere_gua_x_nt
 path 1.1 magnetosphere_gua_y_nt
@@ -17314,7 +17314,7 @@ path 2 magnetosphere_gua_s_nt
 source magnetosphere_gua_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gua_hapi.json
 wgs84 13.59 144.87
 path 1.0 magnetosphere_gua_x_nt
 path 1.1 magnetosphere_gua_y_nt
@@ -17344,7 +17344,7 @@ path 2 magnetosphere_gui_f_nt
 source magnetosphere_hbk
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hbk.json
 wgs84 -25.88 27.71
 path 1.0 magnetosphere_hbk_x_nt
 path 1.1 magnetosphere_hbk_y_nt
@@ -17354,7 +17354,7 @@ path 2 magnetosphere_hbk_s_nt
 source magnetosphere_her
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HER/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_her.json
 wgs84 -34.43 19.23
 path 1.0 magnetosphere_her_x_nt
 path 1.1 magnetosphere_her_y_nt
@@ -17364,7 +17364,7 @@ path 2 magnetosphere_her_s_nt
 source magnetosphere_hlp
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hlp.json
 wgs84 54.603 18.811
 path 1.0 magnetosphere_hlp_x_nt
 path 1.1 magnetosphere_hlp_y_nt
@@ -17374,7 +17374,7 @@ path 2 magnetosphere_hlp_s_nt
 source magnetosphere_hlp_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hlp_hapi.json
 wgs84 54.603 18.811
 path 1.0 magnetosphere_hlp_x_nt
 path 1.1 magnetosphere_hlp_y_nt
@@ -17384,7 +17384,7 @@ path 2 magnetosphere_hlp_f_nt
 source magnetosphere_hon
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hon.json
 wgs84 21.32 -158.0
 path 1.0 magnetosphere_hon_x_nt
 path 1.1 magnetosphere_hon_y_nt
@@ -17394,7 +17394,7 @@ path 2 magnetosphere_hon_s_nt
 source magnetosphere_hon_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hon_hapi.json
 wgs84 21.32 -158.0
 path 1.0 magnetosphere_hon_x_nt
 path 1.1 magnetosphere_hon_y_nt
@@ -17424,7 +17424,7 @@ path 2 magnetosphere_hrb_f_nt
 source magnetosphere_hrn
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hrn.json
 wgs84 77.0 15.55
 path 1.0 magnetosphere_hrn_x_nt
 path 1.1 magnetosphere_hrn_y_nt
@@ -17434,7 +17434,7 @@ path 2 magnetosphere_hrn_s_nt
 source magnetosphere_hrn_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hrn_hapi.json
 wgs84 77.0 15.55
 path 1.0 magnetosphere_hrn_x_nt
 path 1.1 magnetosphere_hrn_y_nt
@@ -17444,7 +17444,7 @@ path 2 magnetosphere_hrn_f_nt
 source magnetosphere_hua
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hua.json
 wgs84 -12.05 -75.32999999999998
 path 1.0 magnetosphere_hua_x_nt
 path 1.1 magnetosphere_hua_y_nt
@@ -17454,7 +17454,7 @@ path 2 magnetosphere_hua_s_nt
 source magnetosphere_hyb
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hyb.json
 wgs84 17.42 78.55
 path 1.0 magnetosphere_hyb_x_nt
 path 1.2 magnetosphere_hyb_z_nt
@@ -17463,7 +17463,7 @@ path 2 magnetosphere_hyb_s_nt
 source magnetosphere_hyb_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hyb_hapi.json
 wgs84 17.42 78.55
 path 1.0 magnetosphere_hyb_x_nt
 path 1.1 magnetosphere_hyb_y_nt
@@ -17503,7 +17503,7 @@ path 2 magnetosphere_ipm_f_nt
 source magnetosphere_irt
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_irt.json
 wgs84 52.17 104.45
 path 1.0 magnetosphere_irt_x_nt
 path 1.1 magnetosphere_irt_y_nt
@@ -17513,7 +17513,7 @@ path 2 magnetosphere_irt_s_nt
 source magnetosphere_izn
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_izn.json
 wgs84 40.5 29.72
 path 1.0 magnetosphere_izn_x_nt
 path 1.1 magnetosphere_izn_y_nt
@@ -17523,7 +17523,7 @@ path 2 magnetosphere_izn_s_nt
 source magnetosphere_izn_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_izn_hapi.json
 wgs84 40.5 29.72
 path 1.0 magnetosphere_izn_x_nt
 path 1.1 magnetosphere_izn_y_nt
@@ -17533,7 +17533,7 @@ path 2 magnetosphere_izn_f_nt
 source magnetosphere_jai
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_jai.json
 wgs84 26.92 75.8
 path 1.0 magnetosphere_jai_x_nt
 path 1.1 magnetosphere_jai_y_nt
@@ -17543,7 +17543,7 @@ path 2 magnetosphere_jai_s_nt
 source magnetosphere_kak
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kak.json
 wgs84 36.232 140.186
 path 1.0 magnetosphere_kak_x_nt
 path 1.1 magnetosphere_kak_y_nt
@@ -17553,7 +17553,7 @@ path 2 magnetosphere_kak_s_nt
 source magnetosphere_kak_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kak_hapi.json
 wgs84 36.232 140.186
 path 1.0 magnetosphere_kak_x_nt
 path 1.1 magnetosphere_kak_y_nt
@@ -17564,7 +17564,7 @@ source magnetosphere_kdu
 ttl 86400
 force gravity
 lon 132.47 Vv
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kdu.json
 wgs84 -12.69 132.47
 path 1.0 magnetosphere_kdu_x_nt
 path 1.1 magnetosphere_kdu_y_nt
@@ -17574,7 +17574,7 @@ path 2 magnetosphere_kdu_s_nt
 source magnetosphere_kdu_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kdu_hapi.json
 wgs84 -12.69 132.47
 path 1.0 magnetosphere_kdu_x_nt
 path 1.1 magnetosphere_kdu_y_nt
@@ -17584,7 +17584,7 @@ path 2 magnetosphere_kdu_f_nt
 source magnetosphere_kir
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kir.json
 wgs84 67.843 20.42
 path 1.0 magnetosphere_kir_x_nt
 path 1.1 magnetosphere_kir_y_nt
@@ -17595,7 +17595,7 @@ source magnetosphere_kir_hapi
 ttl 86400
 force gravity
 lon 20.42 V
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kir_hapi.json
 wgs84 67.843 20.42
 path 1.0 magnetosphere_kir_x_nt
 path 1.1 magnetosphere_kir_y_nt
@@ -17605,7 +17605,7 @@ path 2 magnetosphere_kir_f_nt
 source magnetosphere_kmh
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kmh.json
 wgs84 -26.54 18.11
 path 1.0 magnetosphere_kmh_x_nt
 path 1.1 magnetosphere_kmh_y_nt
@@ -17615,7 +17615,7 @@ path 2 magnetosphere_kmh_s_nt
 source magnetosphere_kny
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kny.json
 wgs84 31.42 130.88
 path 1.0 magnetosphere_kny_x_nt
 path 1.1 magnetosphere_kny_y_nt
@@ -17625,7 +17625,7 @@ path 2 magnetosphere_kny_s_nt
 source magnetosphere_kny_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kny_hapi.json
 wgs84 31.42 130.88
 path 1.0 magnetosphere_kny_x_nt
 path 1.1 magnetosphere_kny_y_nt
@@ -17655,7 +17655,7 @@ path 2 magnetosphere_kou_f_nt
 source magnetosphere_lrm_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_lrm_hapi.json
 wgs84 -22.22 114.1
 path 1.0 magnetosphere_trm_x_nt
 path 1.1 magnetosphere_trm_y_nt
@@ -17666,7 +17666,7 @@ source magnetosphere_lvv
 ttl 86400
 force gravity
 lon 23.75 Lb
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_lvv.json
 wgs84 49.9 23.75
 path 1.0 magnetosphere_lvv_x_nt
 path 1.1 magnetosphere_lvv_y_nt
@@ -17676,7 +17676,7 @@ path 2 magnetosphere_lvv_s_nt
 source magnetosphere_lyc
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_lyc.json
 wgs84 64.612 18.748
 path 1.0 magnetosphere_lyc_x_nt
 path 1.1 magnetosphere_lyc_y_nt
@@ -17686,7 +17686,7 @@ path 2 magnetosphere_lyc_s_nt
 source magnetosphere_lyc_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_lyc_hapi.json
 wgs84 64.612 18.748
 path 1.0 magnetosphere_lyc_x_nt
 path 1.1 magnetosphere_lyc_y_nt
@@ -17696,7 +17696,7 @@ path 2 magnetosphere_lyc_f_nt
 source magnetosphere_mab
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_mab.json
 wgs84 50.298 5.682
 path 1.0 magnetosphere_mab_x_nt
 path 1.1 magnetosphere_mab_y_nt
@@ -17706,7 +17706,7 @@ path 2 magnetosphere_mab_s_nt
 source magnetosphere_mab_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_mab_hapi.json
 wgs84 50.298 5.682
 path 1.0 magnetosphere_mab_x_nt
 path 1.1 magnetosphere_mab_y_nt
@@ -17716,7 +17716,7 @@ path 2 magnetosphere_mab_f_nt
 source magnetosphere_maw
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_maw.json
 wgs84 -67.6 62.88
 path 1.0 magnetosphere_maw_x_nt
 path 1.1 magnetosphere_maw_y_nt
@@ -17746,7 +17746,7 @@ path 2 magnetosphere_mcqg_s_nt
 source magnetosphere_mmb
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_mmb.json
 wgs84 43.91 144.19
 path 1.0 magnetosphere_mmb_x_nt
 path 1.1 magnetosphere_mmb_y_nt
@@ -17755,7 +17755,7 @@ path 1.2 magnetosphere_mmb_z_nt
 source magnetosphere_mmb_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_mmb_hapi.json
 wgs84 43.91 144.19
 path 1.0 magnetosphere_mmb_x_nt
 path 1.1 magnetosphere_mmb_y_nt
@@ -17776,7 +17776,7 @@ path 2 magnetosphere_nag_s_nt
 source magnetosphere_nck
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_nck.json
 wgs84 47.63 16.72
 path 1.0 magnetosphere_nck_x_nt
 path 1.1 magnetosphere_nck_y_nt
@@ -17786,7 +17786,7 @@ path 2 magnetosphere_nck_s_nt
 source magnetosphere_new
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_new.json
 wgs84 48.27 -117.12
 path 1.0 magnetosphere_new_x_nt
 path 1.1 magnetosphere_new_y_nt
@@ -17796,7 +17796,7 @@ path 2 magnetosphere_new_s_nt
 source magnetosphere_new_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_new_hapi.json
 wgs84 48.27 -117.12
 path 1.0 magnetosphere_new_x_nt
 path 1.1 magnetosphere_new_y_nt
@@ -17806,7 +17806,7 @@ path 2 magnetosphere_new_f_nt
 source magnetosphere_ngk
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_ngk.json
 wgs84 52.07 12.68
 path 1.0 magnetosphere_ngk_x_nt
 path 1.1 magnetosphere_ngk_y_nt
@@ -17816,7 +17816,7 @@ path 2 magnetosphere_ngk_s_nt
 source magnetosphere_ngk_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_ngk_hapi.json
 wgs84 52.07 12.68
 path 1.0 magnetosphere_ngk_x_nt
 path 1.1 magnetosphere_ngk_y_nt
@@ -17826,7 +17826,7 @@ path 2 magnetosphere_ngk_f_nt
 source magnetosphere_nur
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_nur.json
 wgs84 60.51 24.66
 path 1.0 magnetosphere_nur_x_nt
 path 1.1 magnetosphere_nur_y_nt
@@ -17837,7 +17837,7 @@ path 2 magnetosphere_nur_s_nt
 source magnetosphere_nvs
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_nvs.json
 wgs84 54.85 83.23
 path 1.0 magnetosphere_nvs_x_nt
 path 1.1 magnetosphere_nvs_y_nt
@@ -17847,7 +17847,7 @@ path 2 magnetosphere_nvs_s_nt
 source magnetosphere_orc
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_orc.json
 wgs84 -60.737 -44.73700000000002
 path 1.0 magnetosphere_orc_x_nt
 path 1.1 magnetosphere_orc_y_nt
@@ -17857,7 +17857,7 @@ path 2 magnetosphere_orc_s_nt
 source magnetosphere_pag
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_pag.json
 wgs84 42.515 24.177
 path 1.0 magnetosphere_pag_x_nt
 path 1.1 magnetosphere_pag_y_nt
@@ -17867,7 +17867,7 @@ path 2 magnetosphere_pag_s_nt
 source magnetosphere_pag_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_pag_hapi.json
 wgs84 42.515 24.177
 path 1.0 magnetosphere_pag_x_nt
 path 1.1 magnetosphere_pag_y_nt
@@ -17877,7 +17877,7 @@ path 2 magnetosphere_pag_f_nt
 source magnetosphere_peg
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_peg.json
 wgs84 38.1 23.9
 path 1.0 magnetosphere_peg_x_nt
 path 1.1 magnetosphere_peg_y_nt
@@ -17907,7 +17907,7 @@ path 2 magnetosphere_phu_f_nt
 source magnetosphere_pil
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_pil.json
 wgs84 -31.667 -63.88099999999997
 path 1.0 magnetosphere_pil_x_nt
 path 1.1 magnetosphere_pil_y_nt
@@ -17957,7 +17957,7 @@ path 2 magnetosphere_reu_f_nt
 source magnetosphere_sba
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_sba.json
 wgs84 -77.829 166.671
 path 1.0 magnetosphere_sba_x_nt
 path 1.1 magnetosphere_sba_y_nt
@@ -17995,7 +17995,7 @@ path 2 magnetosphere_sfs_f_nt
 source magnetosphere_she
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_she.json
 wgs84 -15.961 -5.747000000000014
 path 1.0 magnetosphere_she_x_nt
 path 1.1 magnetosphere_she_y_nt
@@ -18005,7 +18005,7 @@ path 2 magnetosphere_she_s_nt
 source magnetosphere_shu
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_shu.json
 wgs84 55.35 -160.46
 path 1.0 magnetosphere_shu_x_nt
 path 1.1 magnetosphere_shu_y_nt
@@ -18015,7 +18015,7 @@ path 2 magnetosphere_shu_s_nt
 source magnetosphere_shu_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_shu_hapi.json
 wgs84 55.35 -160.46
 path 1.0 magnetosphere_shu_x_nt
 path 1.1 magnetosphere_shu_y_nt
@@ -18025,7 +18025,7 @@ path 2 magnetosphere_shu_f_nt
 source magnetosphere_sit
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_sit.json
 wgs84 57.06 -135.33
 path 1.0 magnetosphere_sit_x_nt
 path 1.1 magnetosphere_sit_y_nt
@@ -18035,7 +18035,7 @@ path 2 magnetosphere_sit_s_nt
 source magnetosphere_sit_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_sit_hapi.json
 wgs84 57.06 -135.33
 path 1.0 magnetosphere_sit_x_nt
 path 1.1 magnetosphere_sit_y_nt
@@ -18045,7 +18045,7 @@ path 2 magnetosphere_sit_f_nt
 source magnetosphere_sjg
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_sjg.json
 wgs84 18.11 -66.14999999999998
 path 1.0 magnetosphere_sjg_x_nt
 path 1.1 magnetosphere_sjg_y_nt
@@ -18055,7 +18055,7 @@ path 2 magnetosphere_sjg_s_nt
 source magnetosphere_sjg_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_sjg_hapi.json
 wgs84 18.11 -66.14999999999998
 path 1.0 magnetosphere_sjg_x_nt
 path 1.1 magnetosphere_sjg_y_nt
@@ -18065,7 +18065,7 @@ path 2 magnetosphere_sjg_f_nt
 source magnetosphere_sod
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_sod.json
 wgs84 67.37 26.63
 path 1.0 magnetosphere_sod_x_nt
 path 1.1 magnetosphere_sod_y_nt
@@ -18114,7 +18114,7 @@ source magnetosphere_tdc_hapi
 ttl 86400
 force gravity
 lon -12.315999999999974 A
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_tdc_hapi.json
 wgs84 -37.067 -12.315999999999974
 path 1.0 magnetosphere_tdc_x_nt
 path 1.1 magnetosphere_tdc_y_nt
@@ -18124,7 +18124,7 @@ path 2 magnetosphere_tdc_f_nt
 source magnetosphere_thL
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_thL.json
 wgs84 77.47 -69.22699999999998
 path 1.1 magnetosphere_thl_y_nt
 path 1.2 magnetosphere_thl_z_nt
@@ -18133,7 +18133,7 @@ path 2 magnetosphere_thl_s_nt
 source magnetosphere_thy
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_thy.json
 wgs84 46.9 17.89
 path 1.0 magnetosphere_thy_x_nt
 path 1.1 magnetosphere_thy_y_nt
@@ -18163,7 +18163,7 @@ path 2 magnetosphere_lon_s_nt
 source magnetosphere_tsu
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_tsu.json
 wgs84 -19.202 17.584
 path 1.0 magnetosphere_tsu_x_nt
 path 1.1 magnetosphere_tsu_y_nt
@@ -18173,7 +18173,7 @@ path 2 magnetosphere_tsu_s_nt
 source magnetosphere_ttb
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_ttb.json
 wgs84 -1.205 -48.51299999999998
 path 1.0 magnetosphere_ttb_x_nt
 path 1.1 magnetosphere_ttb_y_nt
@@ -18183,7 +18183,7 @@ path 2 magnetosphere_ttb_s_nt
 source magnetosphere_ttb_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_ttb_hapi.json
 wgs84 -1.205 -48.51299999999998
 path 1.0 magnetosphere_ttb_x_nt
 path 1.1 magnetosphere_ttb_y_nt
@@ -18193,7 +18193,7 @@ path 2 magnetosphere_ttb_f_nt
 source magnetosphere_tuc
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_tuc.json
 wgs84 32.17 -110.72999999999999
 path 1.0 magnetosphere_tuc_x_nt
 path 1.1 magnetosphere_tuc_y_nt
@@ -18203,7 +18203,7 @@ path 2 magnetosphere_tuc_s_nt
 source magnetosphere_tuc_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_tuc_hapi.json
 wgs84 32.17 -110.72999999999999
 path 1.0 magnetosphere_tuc_x_nt
 path 1.1 magnetosphere_tuc_y_nt
@@ -18213,7 +18213,7 @@ path 2 magnetosphere_tuc_f_nt
 source magnetosphere_ups
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_ups.json
 wgs84 59.903 17.353
 path 1.0 magnetosphere_ups_x_nt
 path 1.1 magnetosphere_ups_y_nt
@@ -18233,7 +18233,7 @@ path 2 magnetosphere_val_s_nt
 source magnetosphere_vna
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_vna.json
 wgs84 -70.683 -8.281999999999982
 path 1.0 magnetosphere_vna_x_nt
 path 1.1 magnetosphere_vna_y_nt
@@ -18243,7 +18243,7 @@ path 2 magnetosphere_vna_s_nt
 source magnetosphere_vna_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_vna_hapi.json
 wgs84 -22.4 -43.64999999999998
 path 1.0 magnetosphere_vna_x_nt
 path 1.1 magnetosphere_vna_y_nt
@@ -18256,7 +18256,7 @@ path 2 magnetosphere_vss_f_nt
 source magnetosphere_vos
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_vos.json
 wgs84 -78.464 106.835
 path 1.0 magnetosphere_vos_x_nt
 path 1.1 magnetosphere_vos_y_nt
@@ -18266,7 +18266,7 @@ path 2 magnetosphere_vos_s_nt
 source magnetosphere_vss
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_vss.json
 wgs84 -22.4 -43.64999999999998
 path 1.0 magnetosphere_vss_x_nt
 path 1.1 magnetosphere_vss_y_nt
@@ -18296,7 +18296,7 @@ path 2 magnetosphere_wic_f_nt
 source magnetosphere_wng
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_wng.json
 wgs84 53.725 9.053
 path 1.0 magnetosphere_wng_x_nt
 path 1.1 magnetosphere_wng_y_nt
@@ -18306,7 +18306,7 @@ path 2 magnetosphere_wng_s_nt
 source magnetosphere_wng_hapi
 ttl 86400
 force gravity
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_wng_hapi.json
 wgs84 53.725 9.053
 path 1.0 magnetosphere_wng_x_nt
 path 1.1 magnetosphere_wng_y_nt
