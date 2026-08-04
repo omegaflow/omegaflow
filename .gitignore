@@ -15,3 +15,4 @@ reference/
 /docs/concepts/
 scripts/__pycache__/
 omegaflow.wasm
+phi/health.json
