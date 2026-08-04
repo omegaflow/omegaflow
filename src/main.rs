@@ -15,6 +15,7 @@ const EARTH_ECC: f64 = 0.0167086;
 const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
+const GAUSS_K: f64 = 0.01720209895;
 const PARSEC_M: f64 = 3.085677581e16;
 const C_LIGHT: f64 = 299792458.0;
 const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
@@ -473,6 +474,11 @@ fn sense_buffer(
     );
 }
 
+fn ecliptic_to_field(v: [f64; 3]) -> [f64; 3] {
+    let (c, s) = (ECLIPTIC_OBLIQUITY.cos(), ECLIPTIC_OBLIQUITY.sin());
+    [v[0], v[1] * c - v[2] * s, v[1] * s + v[2] * c]
+}
+
 fn ecef_vec_to_field(v: [f64; 3], t: f64) -> [f64; 3] {
     let g = compute_gmst(t);
     let (cg, sg) = (g.cos(), g.sin());
@@ -505,6 +511,17 @@ fn flow_motion(lat: f64, lon: f64, alt: f64, speed: f64, track: f64, vrate: f64,
             v_frame[2] + v_rot[2],
         ],
     }
+}
+
+fn horizons_nums(line: &str, keys: [&str; 3]) -> Option<[f64; 3]> {
+    let mut out = [0.0; 3];
+    for (i, k) in keys.iter().enumerate() {
+        let p = line.find(k)?;
+        let r = line[p + k.len()..].trim_start_matches(|c: char| c == '=' || c == ' ' || c == '\t');
+        let end = r.find(|c: char| c.is_whitespace()).unwrap_or(r.len());
+        out[i] = r[..end].parse().ok()?;
+    }
+    Some(out)
 }
 
 fn tdb_now() -> f64 {
@@ -565,6 +582,7 @@ struct OriginState {
     has_prev: bool,
     zero_yield: u32,
     last_body_hash: [u8; 20],
+    unchanged_count: u32,
 }
 
 struct StationState {
@@ -995,6 +1013,33 @@ fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64)> {
     result
 }
 
+fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
+    match json {
+        JsonVal::Obj(map) => {
+            if let Some(v) = map.get(key) {
+                if let Some(n) = scalar_of(v) {
+                    return Some(n);
+                }
+            }
+            for v in map.values() {
+                if let Some(n) = jdeep_find_num(v, key) {
+                    return Some(n);
+                }
+            }
+            None
+        }
+        JsonVal::Arr(arr) => {
+            for v in arr {
+                if let Some(n) = jdeep_find_num(v, key) {
+                    return Some(n);
+                }
+            }
+            None
+        }
+        _ => None,
+    }
+}
+
 fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
     if path == "." || path.is_empty() {
         if let JsonVal::Arr(arr) = json {
@@ -1017,6 +1062,42 @@ fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
                 None
             }
         }
+        _ => None,
+    }
+}
+
+fn jfirst(json: &JsonVal, key: &str) -> Option<f64> {
+    if key.contains('.') {
+        let target_path = key.rsplit_once('.').map(|(p, _)| p).unwrap_or("");
+        let final_key = key.rsplit_once('.').map(|(_, k)| k).unwrap_or(key);
+        let parent = if target_path.is_empty() {
+            json
+        } else {
+            jpath_val(json, target_path)?
+        };
+        if let JsonVal::Arr(arr) = parent {
+            return arr.first().and_then(|v| {
+                if let JsonVal::Obj(o) = v {
+                    o.get(final_key).and_then(scalar_of)
+                } else {
+                    scalar_of(v)
+                }
+            });
+        }
+        return None;
+    }
+    match json {
+        JsonVal::Arr(arr) => arr.first().and_then(|v| match v {
+            JsonVal::Obj(o) => o.get(key).and_then(scalar_of),
+            other => scalar_of(other),
+        }),
+        JsonVal::Obj(map) => map.get(key).and_then(|v| {
+            if let JsonVal::Arr(a) = v {
+                a.first().and_then(scalar_of)
+            } else {
+                None
+            }
+        }),
         _ => None,
     }
 }
@@ -1057,18 +1138,267 @@ fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
     }
 }
 
+fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
+    let pat_bytes = pat.as_bytes();
+    let body_bytes = body.as_bytes();
+
+    let first = pat.find('(')?;
+    let last = pat.rfind(')')?;
+    if first >= last {
+        return None;
+    }
+    let inner = &pat[first + 1..last];
+
+    if inner.contains("...") {
+        let (prefix, suffix) = inner.split_once("...")?;
+        let p = body.find(prefix)?;
+        let r = &body[p + prefix.len()..];
+        let e = if suffix.is_empty() {
+            r.find(|c: char| c.is_whitespace() || c == '<' || c == '"')
+                .unwrap_or(r.len())
+        } else {
+            r.find(suffix).unwrap_or(r.len())
+        };
+        return r[..e].trim().parse::<f64>().ok();
+    }
+
+    let mut capture: Option<f64> = None;
+
+    fn match_re(
+        mut pi: usize,
+        p: &[u8],
+        mut bi: usize,
+        b: &[u8],
+        cap: &mut Option<f64>,
+    ) -> Option<usize> {
+        while pi < p.len() {
+            let bc = || b.get(bi).copied();
+            match p[pi] {
+                b'\\' => {
+                    pi += 1;
+                    let esc = p.get(pi).copied()?;
+                    let ok = match esc {
+                        b'd' => bc().map_or(false, |c| c.is_ascii_digit()),
+                        b's' => bc().map_or(false, |c| c.is_ascii_whitespace()),
+                        b'w' => bc().map_or(false, |c| c.is_ascii_alphanumeric() || c == b'_'),
+                        b'D' => bc().map_or(true, |c| !c.is_ascii_digit()),
+                        b'S' => bc().map_or(true, |c| !c.is_ascii_whitespace()),
+                        b'W' => bc().map_or(true, |c| !(c.is_ascii_alphanumeric() || c == b'_')),
+                        _ => bc() == Some(esc),
+                    };
+                    if !ok {
+                        return None;
+                    }
+                    bi += 1;
+                    pi += 1;
+                    let check = |c: u8| -> bool {
+                        match esc {
+                            b'd' => c.is_ascii_digit(),
+                            b's' => c.is_ascii_whitespace(),
+                            b'w' => c.is_ascii_alphanumeric() || c == b'_',
+                            b'D' => !c.is_ascii_digit(),
+                            b'S' => !c.is_ascii_whitespace(),
+                            b'W' => !(c.is_ascii_alphanumeric() || c == b'_'),
+                            _ => c == esc,
+                        }
+                    };
+                    if pi < p.len() {
+                        match p[pi] {
+                            b'+' => {
+                                pi += 1;
+                                while b.get(bi).map_or(false, |&c| check(c)) {
+                                    bi += 1;
+                                }
+                            }
+                            b'*' => {
+                                pi += 1;
+                                while b.get(bi).map_or(false, |&c| check(c)) {
+                                    bi += 1;
+                                }
+                            }
+                            b'?' => {
+                                pi += 1;
+                            }
+                            _ => {}
+                        }
+                    }
+                }
+                b'.' => {
+                    pi += 1;
+                    if bc().is_none() || bc() == Some(b'\n') {
+                        return None;
+                    }
+                    let (min, max, greedy) = if pi < p.len() {
+                        match p[pi] {
+                            b'+' => {
+                                pi += 1;
+                                (1, usize::MAX, true)
+                            }
+                            b'*' => {
+                                pi += 1;
+                                (0, usize::MAX, true)
+                            }
+                            b'?' => {
+                                pi += 1;
+                                (0, 1, true)
+                            }
+                            _ => (1, 1, true),
+                        }
+                    } else {
+                        (1, 1, true)
+                    };
+
+                    if greedy {
+                        let mut best: Option<usize> = None;
+                        for len in (min..=max).rev() {
+                            let end = bi + len;
+                            if end > b.len() {
+                                continue;
+                            }
+                            if b[bi..end].iter().any(|&c| c == b'\n') {
+                                continue;
+                            }
+                            if let Some(res) = match_re(pi, p, end, b, cap) {
+                                best = Some(res);
+                                break;
+                            }
+                        }
+                        if let Some(res) = best {
+                            bi = res;
+                        } else {
+                            return None;
+                        }
+                    } else {
+                        if let Some(res) = match_re(pi, p, bi + 1, b, cap) {
+                            bi = res;
+                        } else {
+                            return None;
+                        }
+                    }
+                }
+                b'(' => {
+                    let mut depth = 1;
+                    let mut end = pi + 1;
+                    while end < p.len() && depth > 0 {
+                        if p[end] == b'\\' {
+                            end += 2;
+                            continue;
+                        }
+                        if p[end] == b'(' {
+                            depth += 1;
+                        }
+                        if p[end] == b')' {
+                            depth -= 1;
+                            if depth == 0 {
+                                break;
+                            }
+                        }
+                        end += 1;
+                    }
+                    if depth != 0 {
+                        return None;
+                    }
+                    let save = bi;
+                    if let Some(new_bi) = match_re(pi + 1, &p[pi + 1..end], bi, b, cap) {
+                        if cap.is_none() {
+                            if let Ok(s) = std::str::from_utf8(&b[save..new_bi]) {
+                                if let Ok(v) = s.parse::<f64>() {
+                                    *cap = Some(v);
+                                }
+                            }
+                        }
+                        bi = new_bi;
+                        pi = end + 1;
+                    } else {
+                        return None;
+                    }
+                }
+                b'[' => {
+                    pi += 1;
+                    let neg = pi < p.len() && p[pi] == b'^';
+                    if neg {
+                        pi += 1;
+                    }
+                    let mut cls = Vec::new();
+                    while pi < p.len() && p[pi] != b']' {
+                        if p[pi] == b'\\' {
+                            cls.push(p[pi + 1]);
+                            pi += 2;
+                        } else {
+                            cls.push(p[pi]);
+                            pi += 1;
+                        }
+                    }
+                    pi += 1;
+                    let in_cls = bc().map_or(false, |c| cls.contains(&c));
+                    if neg == in_cls {
+                        return None;
+                    }
+                    let (min, max) = if pi < p.len() {
+                        match p[pi] {
+                            b'+' => {
+                                pi += 1;
+                                (1, usize::MAX)
+                            }
+                            b'*' => {
+                                pi += 1;
+                                (0, usize::MAX)
+                            }
+                            b'?' => {
+                                pi += 1;
+                                (0, 1)
+                            }
+                            _ => (1, 1),
+                        }
+                    } else {
+                        (1, 1)
+                    };
+                    if min > 0 {
+                        bi += 1;
+                    }
+                    if max == usize::MAX {
+                        while b.get(bi).map_or(false, |c| cls.contains(c) != neg) {
+                            bi += 1;
+                        }
+                    }
+                }
+                c => {
+                    if bc().map_or(false, |bc| bc == c) {
+                        bi += 1;
+                        pi += 1;
+                    } else {
+                        return None;
+                    }
+                }
+            }
+        }
+        Some(bi)
+    }
+
+    if let Some(_) = match_re(0, pat_bytes, 0, body_bytes, &mut capture) {
+        capture
+    } else {
+        None
+    }
+}
+
 #[derive(Clone)]
 enum Extract {
     Field(String, String),
+    First(String, String),
     Last(String, String),
     Count(String, String),
+    LastRow(String, String),
     LastObj(String, String, String, String),
+    LastLine(String),
+    ObjLast(String, String),
     GeojsonEvents {
         mag_key: String,
         min_mag: f64,
         outputs: Vec<String>,
     },
     Path(String, String),
+    Deep(String, String),
     Map {
         arr_path: String,
         lat_key: String,
@@ -1083,6 +1413,10 @@ enum Extract {
         fields: Vec<(String, String)>,
         lon_sign: Option<String>,
     },
+    Regex(String, String),
+    XmlCount(String, String),
+    Ephemeris(String),
+    Vectors(String),
     CelestialMap {
         arr_path: String,
         ra_key: String,
@@ -1104,10 +1438,36 @@ enum Extract {
         epoch_key: String,
         fields: Vec<(String, String)>,
     },
+    CmrPolygon {
+        arr_path: String,
+        fields: Vec<(String, String)>,
+        epoch_key: String,
+        alt_key: String,
+        val_key: String,
+    },
+    CelestialPolygon {
+        arr_path: String,
+        radius: f64,
+        fields: Vec<(String, String)>,
+        epoch_key: String,
+        val_key: String,
+    },
     Rows {
         last_line: bool,
         fields: Vec<(String, String)>,
     },
+    KeplerMap {
+        arr_path: String,
+        a_key: String,
+        e_key: String,
+        i_key: String,
+        om_key: String,
+        w_key: String,
+        ma_key: String,
+        epoch_key: String,
+        fields: Vec<(String, String)>,
+    },
+    Hapi(Vec<(String, String)>),
 }
 
 fn force_constants(force: &str) -> Option<(f64, f64, bool, u8)> {
@@ -1701,6 +2061,70 @@ fn is_leap(y: u32) -> bool {
     (y % 4 == 0 && y % 100 != 0) || y % 400 == 0
 }
 
+fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
+    if let JsonVal::Arr(arr) = json {
+        if arr.len() < 2 {
+            return None;
+        }
+        if let JsonVal::Arr(headers) = &arr[0] {
+            let col_idx = headers.iter().position(|h| {
+                if let JsonVal::Str(s) = h {
+                    s.eq_ignore_ascii_case(col) || s.starts_with(col)
+                } else {
+                    false
+                }
+            })?;
+            if let Some(JsonVal::Arr(last_row)) = arr.last() {
+                return last_row.get(col_idx).and_then(scalar_of);
+            }
+        }
+    }
+    None
+}
+
+fn text_last_col(data: &str, col: &str) -> Option<f64> {
+    let mut header_idx: Option<usize> = None;
+    for line in data.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+        let stripped = trimmed.strip_prefix('#').unwrap_or(trimmed).trim();
+        let cols = split_data_line(stripped);
+        if header_idx.is_none() {
+            if let Some(idx) = cols
+                .iter()
+                .position(|c| c.eq_ignore_ascii_case(col) || c.starts_with(col))
+            {
+                header_idx = Some(idx);
+                break;
+            }
+            continue;
+        }
+    }
+    let idx = header_idx?;
+    for line in data.lines().rev() {
+        let trimmed = line.trim();
+        if trimmed.is_empty()
+            || trimmed.starts_with('#')
+            || trimmed
+                .chars()
+                .next()
+                .map(|c| c.is_alphabetic())
+                .unwrap_or(false)
+        {
+            continue;
+        }
+        let cols = split_data_line(trimmed);
+        if let Some(v) = cols.get(idx) {
+            if let Ok(f) = v.trim_matches('"').parse::<f64>() {
+                return Some(f);
+            }
+        }
+    }
+    None
+}
+
 fn load_env() {
     if let Ok(content) = std::fs::read_to_string(".env") {
         for line in content.lines() {
@@ -1780,9 +2204,14 @@ fn load_sources() -> Vec<SourceConfig> {
                                 e,
                                 Extract::Map { .. }
                                     | Extract::GeojsonEvents { .. }
+                                    | Extract::Ephemeris(_)
+                                    | Extract::Vectors(_)
                                     | Extract::CelestialMap { .. }
                                     | Extract::Flatten { .. }
+                                    | Extract::CmrPolygon { .. }
+                                    | Extract::CelestialPolygon { .. }
                                     | Extract::Rows { .. }
+                                    | Extract::KeplerMap { .. }
                             )
                         });
                     let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
@@ -1819,7 +2248,10 @@ fn load_sources() -> Vec<SourceConfig> {
                     };
                     if let Some(frame) = frame {
                         let auto_tau_key = if cur_tau_key.is_none() && cur_tau.is_none() {
-                            None
+                            cur_extracts.iter().find_map(|e| match e {
+                                Extract::Ephemeris(n) | Extract::Vectors(n) => Some(n.clone()),
+                                _ => None,
+                            })
                         } else {
                             cur_tau_key.clone()
                         };
@@ -1928,7 +2360,7 @@ fn load_sources() -> Vec<SourceConfig> {
             "max_freq" => cur_max_freq = parts.get(1).and_then(|s| s.parse().ok()),
             "min_freq" => cur_min_freq = parts.get(1).and_then(|s| s.parse().ok()),
             "body" => cur_body = Some(line.get(5..).unwrap_or("").trim().to_string()),
-            "verify" => {} // ignored, kept for compat
+            "verify" => {}
             "wgs84" => {
                 cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
                 cur_lat = cur_lat_str.parse().ok();
@@ -1969,6 +2401,11 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::Field(parts[1].to_string(), parts[2].to_string()));
                 }
             }
+            "first" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::First(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
             "last" => {
                 if parts.len() >= 3 {
                     cur_extracts.push(Extract::Last(parts[1].to_string(), parts[2].to_string()));
@@ -1979,9 +2416,63 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::Count(parts[1].to_string(), parts[2].to_string()));
                 }
             }
+            "last_row" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::LastRow(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
             "path" => {
                 if parts.len() >= 3 {
                     cur_extracts.push(Extract::Path(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
+            "deep" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::Deep(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
+            "regex" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::Regex(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
+            "xml_count" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::XmlCount(
+                        parts[1].to_string(),
+                        parts[2].to_string(),
+                    ));
+                }
+            }
+            "ephemeris" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::Ephemeris(parts[1].to_string()));
+                }
+            }
+            "vectors" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::Vectors(parts[1].to_string()));
+                }
+            }
+            "last_line" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::LastLine(parts[1].to_string()));
+                }
+            }
+            "obj_last" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::ObjLast(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
+            "hapi" => {
+                if parts.len() >= 3 {
+                    let param = parts[1].to_string();
+                    let name = parts[2].to_string();
+                    if let Some(Extract::Hapi(fields)) = cur_extracts.last_mut() {
+                        fields.push((param, name));
+                    } else {
+                        cur_extracts.push(Extract::Hapi(vec![(param, name)]));
+                    }
                 }
             }
             "last_obj" => {
@@ -2035,7 +2526,7 @@ fn load_sources() -> Vec<SourceConfig> {
             "alt_key" => {
                 if let Some(e) = cur_extracts.last_mut() {
                     match e {
-                        Extract::Map { alt_key, .. } => {
+                        Extract::Map { alt_key, .. } | Extract::CmrPolygon { alt_key, .. } => {
                             *alt_key = parts.get(1).unwrap_or(&"").to_string();
                         }
                         _ => {}
@@ -2077,10 +2568,40 @@ fn load_sources() -> Vec<SourceConfig> {
                     });
                 }
             }
+            "cmr_polygon" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::CmrPolygon {
+                        arr_path: parts[1].to_string(),
+                        fields: Vec::new(),
+                        epoch_key: String::new(),
+                        alt_key: String::new(),
+                        val_key: String::new(),
+                    });
+                }
+            }
+            "celestial_polygon" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::CelestialPolygon {
+                        arr_path: parts[1].to_string(),
+                        radius: 0.0,
+                        fields: Vec::new(),
+                        epoch_key: String::new(),
+                        val_key: String::new(),
+                    });
+                }
+            }
+            "radius" => {
+                if let Some(Extract::CelestialPolygon { radius, .. }) = cur_extracts.last_mut() {
+                    *radius = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+                }
+            }
             "epoch_key" => {
                 if let Some(e) = cur_extracts.last_mut() {
                     match e {
-                        Extract::CelestialMap { epoch_key, .. }
+                        Extract::CmrPolygon { epoch_key, .. }
+                        | Extract::CelestialPolygon { epoch_key, .. }
+                        | Extract::KeplerMap { epoch_key, .. }
+                        | Extract::CelestialMap { epoch_key, .. }
                         | Extract::Flatten { epoch_key, .. }
                         | Extract::Map { epoch_key, .. } => {
                             *epoch_key = parts.get(1).unwrap_or(&"").to_string();
@@ -2092,7 +2613,9 @@ fn load_sources() -> Vec<SourceConfig> {
             "val_key" => {
                 if let Some(e) = cur_extracts.last_mut() {
                     match e {
-                        Extract::Map { val_key, .. } => {
+                        Extract::CmrPolygon { val_key, .. }
+                        | Extract::CelestialPolygon { val_key, .. }
+                        | Extract::Map { val_key, .. } => {
                             *val_key = parts.get(1).unwrap_or(&"").to_string();
                         }
                         _ => {}
@@ -2116,17 +2639,54 @@ fn load_sources() -> Vec<SourceConfig> {
                     fields: Vec::new(),
                 });
             }
+            "kepler_map" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::KeplerMap {
+                        arr_path: parts[1].to_string(),
+                        a_key: String::new(),
+                        e_key: String::new(),
+                        i_key: String::new(),
+                        om_key: String::new(),
+                        w_key: String::new(),
+                        ma_key: String::new(),
+                        epoch_key: String::new(),
+                        fields: Vec::new(),
+                    });
+                }
+            }
             "field_in" => {
                 if parts.len() >= 3 {
                     match cur_extracts.last_mut() {
                         Some(Extract::Map { fields, .. })
                         | Some(Extract::CelestialMap { fields, .. })
                         | Some(Extract::Flatten { fields, .. })
-                        | Some(Extract::Rows { fields, .. }) => {
+                        | Some(Extract::CmrPolygon { fields, .. })
+                        | Some(Extract::CelestialPolygon { fields, .. })
+                        | Some(Extract::Rows { fields, .. })
+                        | Some(Extract::KeplerMap { fields, .. }) => {
                             fields.push((parts[1].to_string(), parts[2].to_string()));
                         }
                         _ => {}
                     }
+                }
+            }
+            "cmap" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::CelestialMap {
+                        arr_path: parts[1].to_string(),
+                        ra_key: String::new(),
+                        dec_key: String::new(),
+                        dist_key: String::new(),
+                        dist_scale: 1.0,
+                        plx_key: String::new(),
+                        z_key: String::new(),
+                        pmra_key: String::new(),
+                        pmdec_key: String::new(),
+                        rv_key: String::new(),
+                        rv_scale: 1.0,
+                        epoch_key: String::new(),
+                        fields: Vec::new(),
+                    });
                 }
             }
             "ra_key" => {
@@ -2177,6 +2737,36 @@ fn load_sources() -> Vec<SourceConfig> {
                 {
                     *rv_key = parts.get(1).unwrap_or(&"").to_string();
                     *rv_scale = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(1.0);
+                }
+            }
+            "a_key" => {
+                if let Some(Extract::KeplerMap { a_key, .. }) = cur_extracts.last_mut() {
+                    *a_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "e_key" => {
+                if let Some(Extract::KeplerMap { e_key, .. }) = cur_extracts.last_mut() {
+                    *e_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "i_key" => {
+                if let Some(Extract::KeplerMap { i_key, .. }) = cur_extracts.last_mut() {
+                    *i_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "om_key" => {
+                if let Some(Extract::KeplerMap { om_key, .. }) = cur_extracts.last_mut() {
+                    *om_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "w_key" => {
+                if let Some(Extract::KeplerMap { w_key, .. }) = cur_extracts.last_mut() {
+                    *w_key = parts.get(1).unwrap_or(&"").to_string();
+                }
+            }
+            "ma_key" => {
+                if let Some(Extract::KeplerMap { ma_key, .. }) = cur_extracts.last_mut() {
+                    *ma_key = parts.get(1).unwrap_or(&"").to_string();
                 }
             }
             _ => {}
@@ -2685,6 +3275,13 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     }
                 }
             }
+            Extract::First(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = jfirst(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                }
+            }
             Extract::Last(k, n) => {
                 if let Some(ref j) = parsed_json {
                     if let Some(v) = jlast(j, k) {
@@ -2722,10 +3319,285 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     extracted.insert(n.clone(), v);
                 }
             }
+            Extract::LastRow(k, n) => {
+                if src.format == "csv" {
+                    if let Some(v) = text_last_col(body, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                } else if let Some(ref j) = parsed_json {
+                    if let Some(v) = j2d_last_row(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                } else if let Some(v) = text_last_col(body, k) {
+                    extracted.insert(n.clone(), v);
+                }
+            }
             Extract::Path(k, n) => {
                 if let Some(ref j) = parsed_json {
                     if let Some(v) = jpath(j, k) {
                         extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::Deep(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = jdeep_find_num(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::LastLine(n) => {
+                if let Some(v) = body
+                    .lines()
+                    .filter(|l| {
+                        let t = l.trim();
+                        !t.is_empty() && !t.starts_with('#')
+                    })
+                    .last()
+                    .and_then(|line| {
+                        split_data_line(line)
+                            .into_iter()
+                            .filter_map(|t| t.parse::<f64>().ok())
+                            .last()
+                    })
+                {
+                    extracted.insert(n.clone(), v);
+                }
+            }
+            Extract::ObjLast(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(obj) = jpath_val(j, k) {
+                        if let JsonVal::Obj(m) = obj {
+                            if let Some(last_key) = m.keys().max_by(|a, b| {
+                                let ka = a.parse::<i64>().unwrap_or(0);
+                                let kb = b.parse::<i64>().unwrap_or(0);
+                                ka.cmp(&kb)
+                            }) {
+                                if let Some(val) = m.get(last_key).and_then(scalar_of) {
+                                    extracted.insert(n.clone(), val);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Extract::Regex(pat, n) => {
+                if let Some(v) = extract_regex_val(body, pat) {
+                    extracted.insert(n.clone(), v);
+                }
+            }
+            Extract::XmlCount(tag, n) => {
+                let count = body.matches(&format!("<{}>", tag)).count() as f64;
+                extracted.insert(n.clone(), count);
+            }
+            Extract::Ephemeris(n) => {
+                let ht = if let Some(ref j) = parsed_json {
+                    if let JsonVal::Obj(m) = j {
+                        if let Some(JsonVal::Str(s)) = m.get("result") {
+                            s.clone()
+                        } else {
+                            eprintln!("EPH no result key fmt={}", src.format);
+                            body.to_string()
+                        }
+                    } else {
+                        eprintln!("EPH not obj fmt={}", src.format);
+                        body.to_string()
+                    }
+                } else {
+                    eprintln!(
+                        "EPH parse_json failed fmt={} len={} head={:?}",
+                        src.format,
+                        body.len(),
+                        body.get(..40.min(body.len()))
+                    );
+                    body.to_string()
+                };
+                if let Some(soe) = ht.find("$$SOE") {
+                    let a = &ht[soe + 5..];
+                    let e = a.find("$$EOE").unwrap_or(a.len());
+                    let blk = &a[..e];
+                    let mut rows: Vec<(f64, [f64; 3], [f64; 3], Option<f64>)> = Vec::new();
+                    let mut cur_jd: Option<f64> = None;
+                    let mut cur_p: Option<[f64; 3]> = None;
+                    let mut cur_v: Option<[f64; 3]> = None;
+                    let mut cur_rg: Option<f64> = None;
+                    for line in blk.lines() {
+                        let t = line.trim();
+                        if t.is_empty() {
+                            continue;
+                        }
+                        let c0 = t.chars().next().unwrap_or(' ');
+                        if c0.is_ascii_digit() {
+                            if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
+                                rows.push((jd, p, v, cur_rg));
+                            }
+                            cur_jd = t
+                                .split('=')
+                                .next()
+                                .and_then(|s| s.trim().parse::<f64>().ok());
+                            cur_p = None;
+                            cur_v = None;
+                            cur_rg = None;
+                        } else if t.starts_with("VX") {
+                            cur_v = horizons_nums(t, ["VX", "VY", "VZ"]);
+                        } else if t.starts_with('X') {
+                            cur_p = horizons_nums(t, ["X", "Y", "Z"]);
+                        } else if t.starts_with("LT") {
+                            if let Some(r) = horizons_nums(t, ["RG", "LT", "RR"]) {
+                                cur_rg = Some(r[0]);
+                            }
+                        }
+                    }
+                    if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
+                        rows.push((jd, p, v, cur_rg));
+                    }
+                    if let Some(&(jd0, p0k, v0k, rg0)) = rows.first() {
+                        let p0 =
+                            ecliptic_to_field([p0k[0] * 1000.0, p0k[1] * 1000.0, p0k[2] * 1000.0]);
+                        let row_epoch = (jd0 - J2000_EPOCH) * 86400.0;
+                        let v = if rows.len() > 1 {
+                            let &(jd1, p1k, _, _) = rows.last().unwrap_or(&rows[0]);
+                            let p1 = ecliptic_to_field([
+                                p1k[0] * 1000.0,
+                                p1k[1] * 1000.0,
+                                p1k[2] * 1000.0,
+                            ]);
+                            let dt = (jd1 - jd0) * 86400.0;
+                            if dt > 0.0 {
+                                [
+                                    (p1[0] - p0[0]) / dt,
+                                    (p1[1] - p0[1]) / dt,
+                                    (p1[2] - p0[2]) / dt,
+                                ]
+                            } else {
+                                ecliptic_to_field([
+                                    v0k[0] * 1000.0,
+                                    v0k[1] * 1000.0,
+                                    v0k[2] * 1000.0,
+                                ])
+                            }
+                        } else {
+                            ecliptic_to_field([v0k[0] * 1000.0, v0k[1] * 1000.0, v0k[2] * 1000.0])
+                        };
+                        let shift = now - row_epoch;
+                        let p_now = [
+                            p0[0] + v[0] * shift,
+                            p0[1] + v[1] * shift,
+                            p0[2] + v[2] * shift,
+                        ];
+                        let mut fields = Vec::new();
+                        if let Some(rg) = rg0 {
+                            fields.push((n.clone(), rg * 1000.0));
+                        }
+                        pending.push(PendingSample {
+                            epoch: now,
+                            position: PendingPosition::StateVector {
+                                p: p_now,
+                                v,
+                                track: true,
+                            },
+                            fields,
+                        });
+                    }
+                }
+            }
+            Extract::Vectors(n) => {
+                let ht = if let Some(ref j) = parsed_json {
+                    if let JsonVal::Obj(m) = j {
+                        if let Some(JsonVal::Str(s)) = m.get("result") {
+                            s.clone()
+                        } else {
+                            eprintln!("VEC no result key fmt={}", src.format);
+                            body.to_string()
+                        }
+                    } else {
+                        eprintln!("VEC not obj fmt={}", src.format);
+                        body.to_string()
+                    }
+                } else {
+                    eprintln!(
+                        "VEC parse_json failed fmt={} len={} head={:?}",
+                        src.format,
+                        body.len(),
+                        body.get(..40.min(body.len()))
+                    );
+                    body.to_string()
+                };
+                if let Some(soe) = ht.find("$$SOE") {
+                    let a = &ht[soe + 5..];
+                    let e = a.find("$$EOE").unwrap_or(a.len());
+                    let blk = &a[..e];
+                    let mut cur_jd: Option<f64> = None;
+                    let mut cur_p: Option<[f64; 3]> = None;
+                    let mut cur_v: Option<[f64; 3]> = None;
+                    let mut cur_rg: Option<f64> = None;
+                    for line in blk.lines() {
+                        let t = line.trim();
+                        if t.is_empty() {
+                            continue;
+                        }
+                        let c0 = t.chars().next().unwrap_or(' ');
+                        if c0.is_ascii_digit() {
+                            if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
+                                let p_f = ecliptic_to_field([
+                                    p[0] * 1000.0,
+                                    p[1] * 1000.0,
+                                    p[2] * 1000.0,
+                                ]);
+                                let v_f = ecliptic_to_field([
+                                    v[0] * 1000.0,
+                                    v[1] * 1000.0,
+                                    v[2] * 1000.0,
+                                ]);
+                                let row_epoch = (jd - J2000_EPOCH) * 86400.0;
+                                let mut fields = Vec::new();
+                                if let Some(rg) = cur_rg {
+                                    fields.push((n.clone(), rg * 1000.0));
+                                }
+                                pending.push(PendingSample {
+                                    epoch: row_epoch,
+                                    position: PendingPosition::StateVector {
+                                        p: p_f,
+                                        v: v_f,
+                                        track: true,
+                                    },
+                                    fields,
+                                });
+                            }
+                            cur_jd = t
+                                .split('=')
+                                .next()
+                                .and_then(|s| s.trim().parse::<f64>().ok());
+                            cur_p = None;
+                            cur_v = None;
+                            cur_rg = None;
+                        } else if t.starts_with("VX") {
+                            cur_v = horizons_nums(t, ["VX", "VY", "VZ"]);
+                        } else if t.starts_with('X') {
+                            cur_p = horizons_nums(t, ["X", "Y", "Z"]);
+                        } else if t.starts_with("LT") {
+                            if let Some(r) = horizons_nums(t, ["RG", "LT", "RR"]) {
+                                cur_rg = Some(r[0]);
+                            }
+                        }
+                    }
+                    if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
+                        let p_f = ecliptic_to_field([p[0] * 1000.0, p[1] * 1000.0, p[2] * 1000.0]);
+                        let v_f = ecliptic_to_field([v[0] * 1000.0, v[1] * 1000.0, v[2] * 1000.0]);
+                        let row_epoch = (jd - J2000_EPOCH) * 86400.0;
+                        let mut fields = Vec::new();
+                        if let Some(rg) = cur_rg {
+                            fields.push((n.clone(), rg * 1000.0));
+                        }
+                        pending.push(PendingSample {
+                            epoch: row_epoch,
+                            position: PendingPosition::StateVector {
+                                p: p_f,
+                                v: v_f,
+                                track: true,
+                            },
+                            fields,
+                        });
                     }
                 }
             }
@@ -2902,6 +3774,148 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     }
                 }
             }
+            Extract::CmrPolygon {
+                arr_path,
+                fields,
+                epoch_key,
+                alt_key,
+                val_key,
+            } => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
+                        for (idx, v) in arr.iter().enumerate() {
+                            let polys = match jpath_val(v, "polygons") {
+                                Some(JsonVal::Arr(p)) => p,
+                                _ => continue,
+                            };
+                            let mut vertices: Vec<(f64, f64)> = Vec::new();
+                            for ring_list in polys {
+                                if let JsonVal::Arr(rings) = ring_list {
+                                    for ring_str_val in rings {
+                                        if let JsonVal::Str(s) = ring_str_val {
+                                            let nums: Vec<f64> = s
+                                                .split_whitespace()
+                                                .filter_map(|n| n.parse().ok())
+                                                .collect();
+                                            for pair in nums.chunks(2) {
+                                                if pair.len() == 2 {
+                                                    vertices.push((pair[1], pair[0]));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if vertices.is_empty() {
+                                continue;
+                            }
+                            let epoch = if epoch_key.is_empty() {
+                                now
+                            } else {
+                                jpath_val(v, epoch_key)
+                                    .and_then(|ev| match ev {
+                                        JsonVal::Str(s) => parse_iso_tdb(s),
+                                        JsonVal::Num(n) => Some(*n - UNIX_J2000_OFFSET),
+                                        _ => None,
+                                    })
+                                    .unwrap_or(now)
+                            };
+                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            for (fk, fn_) in fields {
+                                if let Some(val) = jpath(v, fk) {
+                                    if val_key.is_empty() || fk == val_key {
+                                        ev_fields.push((fn_.clone(), val));
+                                    }
+                                }
+                            }
+                            if ev_fields.is_empty() {
+                                ev_fields.push(("_cmr_id".to_string(), idx as f64));
+                            }
+                            let alt = if alt_key.is_empty() {
+                                0.0
+                            } else {
+                                jpath(v, alt_key).unwrap_or(0.0)
+                            };
+                            for (lon, lat) in vertices {
+                                pending.push(PendingSample {
+                                    epoch,
+                                    position: PendingPosition::Geodetic { lat, lon, alt },
+                                    fields: ev_fields.clone(),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            Extract::CelestialPolygon {
+                arr_path,
+                radius,
+                fields,
+                epoch_key,
+                val_key,
+            } => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
+                        for (idx, v) in arr.iter().enumerate() {
+                            let geom = match jpath_val(v, "geometry") {
+                                Some(g) => g,
+                                None => continue,
+                            };
+                            let coords = match jpath_val(geom, "coordinates") {
+                                Some(JsonVal::Arr(c)) => c,
+                                _ => continue,
+                            };
+                            let vertices = flatten_geojson_coords(coords);
+                            if vertices.is_empty() || *radius <= 0.0 {
+                                continue;
+                            }
+                            let _epoch = if epoch_key.is_empty() {
+                                now
+                            } else {
+                                jpath_val(v, epoch_key)
+                                    .and_then(|ev| match ev {
+                                        JsonVal::Str(s) => parse_iso_tdb(s),
+                                        JsonVal::Num(n) => Some(*n - UNIX_J2000_OFFSET),
+                                        _ => None,
+                                    })
+                                    .unwrap_or(now)
+                            };
+                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            for (fk, fn_) in fields {
+                                if let Some(val) = jpath(v, fk) {
+                                    if val_key.is_empty() || fk == val_key {
+                                        ev_fields.push((fn_.clone(), val));
+                                    }
+                                }
+                            }
+                            if ev_fields.is_empty() {
+                                ev_fields.push(("_cpoly_id".to_string(), idx as f64));
+                            }
+                            for (ra_deg, dec_deg) in vertices {
+                                let ra = ra_deg.to_radians();
+                                let dec = dec_deg.to_radians();
+                                let (sa, ca) = ra.sin_cos();
+                                let (sd, cd) = dec.sin_cos();
+                                let p = [cd * ca * radius, cd * sa * radius, sd * radius];
+                                let row_epoch = if !epoch_key.is_empty() {
+                                    jpath(v, &epoch_key).unwrap_or(now)
+                                } else {
+                                    now
+                                };
+                                pending.push(PendingSample {
+                                    epoch: row_epoch,
+                                    position: PendingPosition::StateVector {
+                                        p,
+                                        v: [0.0, 0.0, 0.0],
+                                        track: false,
+                                    },
+                                    fields: ev_fields.clone(),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
             Extract::Rows { last_line, fields } => {
                 if let Frame::WGS84 { lat, lon, alt } | Frame::IAU2000 { lat, lon, alt } = src.frame
                 {
@@ -2973,6 +3987,94 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                             pending.push(PendingSample {
                                 epoch: now,
                                 position: PendingPosition::Geodetic { lat, lon, alt },
+                                fields: ev_fields,
+                            });
+                        }
+                    }
+                }
+            }
+            Extract::KeplerMap {
+                arr_path,
+                a_key,
+                e_key,
+                i_key,
+                om_key,
+                w_key,
+                ma_key,
+                epoch_key,
+                fields,
+            } => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
+                        let jd_now = tdb_to_jd(now);
+                        for v in arr.iter() {
+                            let (
+                                Some(a_val),
+                                Some(e_val),
+                                Some(i_val),
+                                Some(om_val),
+                                Some(w_val),
+                                Some(ma_val),
+                                Some(epoch_val),
+                            ) = (
+                                jpath(v, a_key),
+                                jpath(v, e_key),
+                                jpath(v, i_key),
+                                jpath(v, om_key),
+                                jpath(v, w_key),
+                                jpath(v, ma_key),
+                                jpath(v, epoch_key),
+                            )
+                            else {
+                                continue;
+                            };
+                            let a_au = a_val.max(1e-10);
+                            let n = GAUSS_K * (1.0 / (a_au * a_au * a_au)).sqrt();
+                            let m = ma_val.to_radians() + n * (jd_now - epoch_val);
+                            let e = e_val.clamp(0.0, 0.999);
+                            let mut e_anom = m;
+                            for _ in 0..5 {
+                                e_anom = e_anom
+                                    - (e_anom - e * e_anom.sin() - m) / (1.0 - e * e_anom.cos());
+                            }
+                            let (cos_e, sin_e) = (e_anom.cos(), e_anom.sin());
+                            let sqrt_1me2 = (1.0 - e * e).sqrt();
+                            let x_orb = a_au * (cos_e - e);
+                            let y_orb = a_au * sqrt_1me2 * sin_e;
+                            let r = a_au * (1.0 - e * cos_e);
+                            let n_rad_s = n / 86400.0;
+                            let vx_orb = -a_au * sin_e * n_rad_s / r;
+                            let vy_orb = a_au * sqrt_1me2 * cos_e * n_rad_s / r;
+                            let (sin_om, cos_om) = om_val.to_radians().sin_cos();
+                            let (sin_i, cos_i) = i_val.to_radians().sin_cos();
+                            let (sin_w, cos_w) = w_val.to_radians().sin_cos();
+                            let x1 = cos_w * x_orb - sin_w * y_orb;
+                            let y1 = sin_w * x_orb + cos_w * y_orb;
+                            let vx1 = cos_w * vx_orb - sin_w * vy_orb;
+                            let vy1 = sin_w * vx_orb + cos_w * vy_orb;
+                            let p = [
+                                (cos_om * x1 - sin_om * cos_i * y1) * AU,
+                                (sin_om * x1 + cos_om * cos_i * y1) * AU,
+                                sin_i * y1 * AU,
+                            ];
+                            let vel = [
+                                (cos_om * vx1 - sin_om * cos_i * vy1) * AU,
+                                (sin_om * vx1 + cos_om * cos_i * vy1) * AU,
+                                sin_i * vy1 * AU,
+                            ];
+                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            for (fk, fn_) in fields {
+                                if let Some(val) = jpath(v, fk) {
+                                    ev_fields.push((fn_.clone(), val));
+                                }
+                            }
+                            pending.push(PendingSample {
+                                epoch: now,
+                                position: PendingPosition::StateVector {
+                                    p,
+                                    v: vel,
+                                    track: false,
+                                },
                                 fields: ev_fields,
                             });
                         }
@@ -3161,6 +4263,35 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                                                         (outputs[1].clone(), ed * 1000.0),
                                                     ],
                                                 });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Extract::Hapi(pairs) => {
+                if let Some(ref j) = parsed_json {
+                    if let JsonVal::Obj(root) = j {
+                        if let (Some(JsonVal::Arr(data)), Some(JsonVal::Arr(params))) =
+                            (root.get("data"), root.get("parameters"))
+                        {
+                            let mut col: HashMap<String, usize> = HashMap::new();
+                            for (i, p) in params.iter().enumerate() {
+                                if let JsonVal::Obj(po) = p {
+                                    if let Some(JsonVal::Str(nn)) = po.get("name") {
+                                        col.insert(nn.clone(), i);
+                                    }
+                                }
+                            }
+                            if let Some(last_row) = data.last() {
+                                if let JsonVal::Arr(row) = last_row {
+                                    for (param, name) in pairs {
+                                        if let Some(&idx) = col.get(param) {
+                                            if let Some(val) = row.get(idx).and_then(scalar_of) {
+                                                extracted.insert(name.clone(), val);
                                             }
                                         }
                                     }
@@ -3379,8 +4510,6 @@ fn fetch_priority(
     presences: &[(f64, f64, f64, f64, f64)],
 ) -> u8 {
     if is_new {
-        // First run: materialize near the presence first (First Light in seconds).
-        // Proximity-weighted, short-TTL live sources first; big CDN catalogs last.
         let mut min_d = f64::INFINITY;
         for &(_, px, py, pz, _) in presences {
             let d = ((px - pos.0).powi(2) + (py - pos.1).powi(2) + (pz - pos.2).powi(2)).sqrt();
@@ -3400,8 +4529,6 @@ fn fetch_priority(
         }
         return ((proximity * 0.7 + urgency * 0.3) * 240.0) as u8;
     }
-    // Steady state: hybrid of proximity (how relevant to the observer)
-    // and refresh urgency (short TTL = must refresh sooner).
     let mut min_d = f64::INFINITY;
     for &(_, px, py, pz, _) in presences {
         let d = ((px - pos.0).powi(2) + (py - pos.1).powi(2) + (pz - pos.2).powi(2)).sqrt();
@@ -3419,7 +4546,6 @@ fn fetch_priority(
         let x = (ttl.max(1) as f64).log2() / Φ;
         return ((255.0 * (1.0 - 1.0 / (1.0 + x))).max(128.0)) as u8;
     }
-    // Offset 32 keeps stale refreshes below new-source priorities (0..256).
     (32.0 + (proximity * 0.7 + urgency * 0.3) * 200.0) as u8
 }
 
@@ -3436,7 +4562,100 @@ fn per_origin_sleep(archive: &Archive, fallback: f64) -> f64 {
         .max(0.1)
 }
 
+fn auto_defect(name: &str, host: &str, zero_yield: u32) {
+    if zero_yield < 4 || zero_yield & (zero_yield - 1) != 0 {
+        return;
+    }
+    let title = format!("[AUTO-DEFECT] {} — zero_yield x{}", name, zero_yield);
+    let body = format!(
+        "`{}` returned no data for {} consecutive fetch cycles.\n\nHost: `{}`\n\nCheck `phi/sources.φ`.",
+        name, zero_yield, host
+    );
+    let _ = Command::new("gh")
+        .args([
+            "issue",
+            "create",
+            "--title",
+            &title,
+            "--body",
+            &body,
+            "--label",
+            "auto-defect",
+        ])
+        .spawn();
+}
+
+fn write_health_report(archive: &Archive) {
+    let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+    let ttl_eff = archive
+        .ttl_eff
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .clone();
+    let sources = &archive.sources;
+    let mut out = String::from("{\n  \"updated\": ");
+    if let Ok(now_unix) = SystemTime::now().duration_since(UNIX_EPOCH) {
+        out.push_str(&format!("{:.3}", now_unix.as_secs_f64()));
+    } else {
+        out.push_str("0.0");
+    }
+    out.push_str(&format!(",\n  \"total_sources\": {}", sources.len()));
+    out.push_str(&format!(",\n  \"active_origins\": {}", origins.len()));
+    let mut zero_lines: Vec<String> = Vec::new();
+    let mut unch_lines: Vec<String> = Vec::new();
+    for (origin, state) in origins.iter() {
+        if state.zero_yield >= 1 {
+            let si = origin.0 as usize;
+            let name = sources.get(si).map(|s| s.name.as_str()).unwrap_or("?");
+            let host = sources
+                .get(si)
+                .and_then(|s| s.url.split('/').nth(2))
+                .unwrap_or("?");
+            zero_lines.push(format!(
+                "    {{\"source\":\"{}\",\"host\":\"{}\",\"zero_yield\":{}}}",
+                name.replace('\\', "\\\\").replace('\"', "\\\""),
+                host,
+                state.zero_yield
+            ));
+            auto_defect(name, host, state.zero_yield);
+        }
+        if state.unchanged_count >= 1 {
+            let si = origin.0 as usize;
+            let name = sources.get(si).map(|s| s.name.as_str()).unwrap_or("?");
+            let host = sources
+                .get(si)
+                .and_then(|s| s.url.split('/').nth(2))
+                .unwrap_or("?");
+            unch_lines.push(format!(
+                "    {{\"source\":\"{}\",\"host\":\"{}\",\"unchanged\":{}}}",
+                name.replace('\\', "\\\\").replace('\"', "\\\""),
+                host,
+                state.unchanged_count
+            ));
+        }
+    }
+    out.push_str(",\n  \"zero_yield_sources\": [\n");
+    out.push_str(&zero_lines.join(",\n"));
+    out.push_str("\n  ]");
+    out.push_str(",\n  \"unchanged_sources\": [\n");
+    out.push_str(&unch_lines.join(",\n"));
+    out.push_str("\n  ]");
+    out.push_str(",\n  \"ttl_eff\": {\n");
+    let mut first = true;
+    for (host, ttl) in ttl_eff.iter() {
+        if !first {
+            out.push_str(",\n");
+        }
+        first = false;
+        out.push_str(&format!("    \"{}\": {}", host, ttl));
+    }
+    out.push_str("\n  }\n}\n");
+    drop(origins);
+    let _ = std::fs::write("phi/health.json", out);
+}
+
 fn warm_cache(archive: Arc<Archive>) {
+    let mut health_counter: u32 = 0;
     loop {
         let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
         let cadence = ((min_ttl as f64) / Φ).max(1.0);
@@ -3859,8 +5078,10 @@ fn warm_cache(archive: Arc<Archive>) {
                                 if entry.last_body_hash != [0u8; 20]
                                     && entry.last_body_hash == body_hash
                                 {
+                                    entry.unchanged_count += 1;
                                 } else {
                                     entry.last_body_hash = body_hash;
+                                    entry.unchanged_count = 0;
                                     pendings = Some(extract_pending(src, &body, now));
                                 }
                             }
@@ -3871,9 +5092,13 @@ fn warm_cache(archive: Arc<Archive>) {
                                         Extract::Map { .. }
                                             | Extract::GeojsonEvents { .. }
                                             | Extract::LastObj { .. }
+                                            | Extract::Vectors(_)
                                             | Extract::CelestialMap { .. }
                                             | Extract::Flatten { .. }
+                                            | Extract::CmrPolygon { .. }
+                                            | Extract::CelestialPolygon { .. }
                                             | Extract::Rows { .. }
+                                            | Extract::KeplerMap { .. }
                                     )
                                 });
                                 if pendings.is_empty() {
@@ -3892,6 +5117,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                     }
                                 } else {
                                     origins.entry(origin).or_default().zero_yield = 0;
+                                    origins.entry(origin).or_default().unchanged_count = 0;
                                     refreshed.insert(origin);
                                     for pend in pendings {
                                         for smp in
@@ -3988,6 +5214,11 @@ fn warm_cache(archive: Arc<Archive>) {
             .lock()
             .unwrap_or_else(|e| e.into_inner())
             .retain(|_, o| (now - o.fetched).abs() < o.ttl.max(1.0) * 64.0);
+        health_counter += 1;
+        if health_counter == 1 || health_counter % 5 == 0 {
+            write_health_report(&archive);
+            eprintln!("health report written (cycle {})", health_counter);
+        }
         let sleep_secs = per_origin_sleep(&archive, cadence);
         let lock = archive
             .warm_cache_mutex
