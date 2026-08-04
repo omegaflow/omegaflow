@@ -34,7 +34,7 @@ field 0.altitude universe_iss_history_alt
 source subatomic_anu_quantum_entropy
 ttl 60
 force em
-url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_anu_quantum_entropy.json
 wgs84 -35.2809 149.1300
 path data.0 quantum_entropy_anu
 
@@ -384,7 +384,7 @@ count . biosphere_github_events_per_minute
 source biosphere_inex_traffic
 ttl 60
 force em
-url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_inex_traffic.json
 wgs84 53.3 -6.2
 field statistics.curin biosphere_traffic_bits_in_per_s
 field statistics.curout biosphere_traffic_bits_out_per_s
@@ -392,14 +392,14 @@ field statistics.curout biosphere_traffic_bits_out_per_s
 source biosphere_irail_belgium
 ttl 60
 force em
-url https://api.irail.be/liveboard/?station=Brussels&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_irail_belgium.json
 wgs84 50.8 4.3
 count departures.departure biosphere_train_departures_belgium
 
 source biosphere_irish_rail_realtime
 ttl 60
 force em
-url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_irish_rail_realtime.json
 wgs84 53.3 -6.2
 format xml
 xml_count ObjStationData technosphere_train_departures_dublin
@@ -436,7 +436,7 @@ count stationboard biosphere_transport_departures_zurich
 source biosphere_wiener_linien_realtime
 ttl 60
 force em
-url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_wiener_linien_realtime.json
 wgs84 48.2 16.3
 count data.monitors.0.lines biosphere_transport_lines_vienna
 
@@ -473,7 +473,7 @@ source subatomic_drand_quantum_entropy
 ttl 60
 force em
 ecliptic 1
-url https://api.drand.sh/public/latest
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_drand_quantum_entropy.json
 field round quantum_entropy_generation_round
 
 source geosphere_emsc_european_seismic_realtime
@@ -615,7 +615,7 @@ field properties.depth depth_km
 source magnetosphere_jma_japan_eew_public_api
 ttl 60
 force seismic-body
-url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_jma_japan_eew_public_api.json
 map .
 lat_key earthquake.hypocenter.latitude
 lon_key earthquake.hypocenter.longitude
@@ -803,7 +803,7 @@ field track track_deg
 source subatomic_quantum_nist_randomness_beacon
 ttl 60
 force em
-url https://beacon.nist.gov/beacon/2.0/pulse/last
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_quantum_nist_randomness_beacon.json
 wgs84 39.9916 -105.2748
 path pulse.pulseIndex quantum_entropy_nist_beacon
 
@@ -832,7 +832,7 @@ last_obj energy ">=100 MeV" flux radiation_proton_flux_100mev
 source geosphere_scedc_california_earthquakes
 ttl 60
 force seismic-body
-url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=text&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_scedc_california_earthquakes.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1188,7 +1188,7 @@ source atmosphere_rain_radar
 ttl 300
 force acoustic
 ecliptic 1
-url https://api.rainviewer.com/public/weather-maps.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_rain_radar.json
 field generated hydrosphere_rain_radar_generated_time
 
 source biosphere_energy_charts_renewable
@@ -1231,7 +1231,7 @@ path data.0.intensity.actual technosphere_grid_carbon_intensity_gco2_kwh
 source atmosphere_bom_nsw_weather_observations
 ttl 300
 force diffusion
-url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_bom_nsw_weather_observations.json
 map observations.data
 lat_key lat
 lon_key lon
@@ -7432,7 +7432,7 @@ first data.v hydrosphere_tide_height_m_mona_island
 source hydrosphere_uk_flood_monitoring
 ttl 300
 force em
-url https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_uk_flood_monitoring.json
 map items
 lat_key Lat
 lon_key Long
@@ -7463,7 +7463,7 @@ field 4 f_nT
 source magnetosphere_ionosphere_giro_dxpredictor
 ttl 300
 force em
-url https://www.ionosonde.iap-kborn.de/actuellz.htm
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_ionosphere_giro_dxpredictor.json
 wgs84 54.6 13.4
 format html_table:1
 field data.0.MUF_D__MHz ionosonde_fof2_mhz
@@ -8584,7 +8584,7 @@ source geosphere_bmkg_earthquakes
 ttl 600
 force em
 ecliptic 1
-url https://bmkg-restapi.vercel.app/v1/earthquake/recent
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_bmkg_earthquakes.json
 map data
 lat_key coordinates.lat
 lon_key coordinates.lon
@@ -8638,7 +8638,7 @@ alt_key geometry.coordinates.2
 source geosphere_earthquakes_jma
 ttl 600
 force seismic-surface
-url https://www.jma.go.jp/bosai/quake/data/list.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_earthquakes_jma.json
 wgs84 35.68 139.69
 last_line geosphere_earthquakes_jma_recent_mag
 
@@ -9225,7 +9225,7 @@ source magnetosphere_ionosphere_total_electron_content
 ttl 900
 force em
 ecliptic 1
-url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_ionosphere_total_electron_content.json
 field data.grid.features.0.properties.vtec_assimilated_tecu ionosphere_tec_assimilated_tecu
 field data.grid.features.0.properties.vtec_rms_tecu ionosphere_tec_rms_tecu
 
@@ -9757,7 +9757,7 @@ field attributes.fatalities fatalities
 source hydrosphere_argovis_core_profiles
 ttl 3600
 force diffusion
-url https://argovis-api.colorado.edu/argo?startDate=2026-07-26T00:00:00Z&endDate=2026-07-27T00:00:00Z&box=%5B%5B-180,-90%5D,%5B180,90%5D%5D
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_argovis_core_profiles.json
 map .
 lat_key lat
 lon_key lon
@@ -10348,7 +10348,7 @@ source biosphere_cdc_covid_global
 ttl 3600
 force em
 ecliptic 1
-url https://disease.sh/v3/covid-19/all
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_cdc_covid_global.json
 field cases biosphere_covid_cases_global
 field deaths biosphere_covid_deaths_global
 field active biosphere_covid_active_global
@@ -10392,7 +10392,7 @@ source biosphere_exchangerate_api
 ttl 3600
 force em
 ecliptic 1
-url https://api.exchangerate-api.com/v4/latest/USD
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_exchangerate_api.json
 field rates.EUR biosphere_usd_eur_rate
 field rates.GBP biosphere_usd_gbp_rate
 field rates.JPY biosphere_usd_jpy_rate
@@ -10401,7 +10401,7 @@ source biosphere_exchangerate_global
 ttl 3600
 force em
 ecliptic 1
-url https://open.er-api.com/v6/latest/USD
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_exchangerate_global.json
 field rates.EUR biosphere_usd_eur_rate
 field rates.CNY biosphere_usd_cny_rate
 field rates.INR biosphere_usd_inr_rate
@@ -10454,13 +10454,13 @@ source biosphere_gdelt_news_volume
 ttl 3600
 force em
 ecliptic 1
-url http://data.gdeltproject.org/normfiles/daily.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gdelt_news_volume.json
 count lines biosphere_news_climate_volume_intensity
 
 source biosphere_govtrack_votes
 ttl 3600
 force em
-url https://www.govtrack.us/api/v2/vote?created__gt={yesterday}&limit=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_govtrack_votes.json
 wgs84 38.9 -77.0
 field meta.total_count biosphere_legislation_votes
 
@@ -10490,21 +10490,21 @@ source biosphere_launch_library
 ttl 3600
 force em
 ecliptic 1
-url https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_launch_library.json
 field count orbital_upcoming_launches
 
 source biosphere_tor_relays_running
 ttl 3600
 force em
 ecliptic 1
-url https://onionoo.torproject.org/summary?running=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_tor_relays_running.json
 field relays_published biosphere_tor_relay_count
 
 source biosphere_wikipedia_pageviews_total
 ttl 3600
 force em
 ecliptic 1
-url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_wikipedia_pageviews_total.json
 path items.0.views social_wikipedia_pageviews_daily
 
 source biosphere_wildfires
@@ -10864,13 +10864,13 @@ source exosphere_satnogs_radio_observations
 ttl 3600
 force em
 ecliptic 1
-url https://network.satnogs.org/api/observations/?format=json&limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_satnogs_radio_observations.json
 count items biosphere_satnogs_observations
 
 source astro_fripon_fireballs
 ttl 3600
 force em
-url https://fireball.fripon.org/ajax/liste_multiple.ajax.php
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_fripon_fireballs.json
 map .
 lat_key lat
 lon_key lon
@@ -11045,7 +11045,7 @@ field 8 rake_deg
 source astro_gemini_archive
 ttl 3600
 force em
-url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gemini_archive.json
 verify false
 map .
 lat_key ra
@@ -11342,7 +11342,7 @@ last_row TotalSPL hydrosphere_sound_pressure_db
 source hydrosphere_onc_salinity_burrard
 ttl 86400
 force diffusion
-url https://dap.oceannetworks.ca/erddap/tabledap/scalar_1202591.csv?time,latitude,longitude,salinity&time>=max(time)-7day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_onc_salinity_burrard.json
 wgs84 49.301 -123.109
 format erddap
 last_row salinity hydrosphere_salinity_psu
@@ -11599,7 +11599,7 @@ first river_discharge hydrosphere_river_discharge_m3s
 source hydrosphere_pegelonline_water_level
 ttl 3600
 force gravity
-url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_pegelonline_water_level.json
 format json
 map .
 lat_key latitude
@@ -12104,7 +12104,7 @@ obj_last value biosphere_solar_radiation_power
 source biosphere_nbn_atlas_uk_bat_acoustic_records
 ttl 3600
 force acoustic
-url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_nbn_atlas_uk_bat_acoustic_records.json
 map occurrences
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -12515,7 +12515,7 @@ field site recording_site
 source technosphere_nvd_cve_count
 ttl 3600
 force em
-url https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nvd_cve_count.json
 wgs84 38.9072 -77.0369
 field totalResults biosphere_cyber_vulnerability_count_nvd
 
@@ -12876,7 +12876,7 @@ extent 7.94e-6
 source radiation_safecast
 ttl 3600
 force em
-url https://api.safecast.org/en-US/measurements.json?limit=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/radiation_safecast.json
 map .
 lat_key latitude
 lon_key longitude
@@ -13176,7 +13176,7 @@ field properties.poly_PolygonDateTime fire_polygon_ms
 source technosphere_satellite_satnogs_active
 ttl 14400
 force em
-url https://db.satnogs.org/api/tle/?format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_satellite_satnogs_active.json
 map .
 field tle0 satellite_name
 field tle1 satellite_tle_line1
@@ -13189,7 +13189,7 @@ ttl 43200
 wgs84 33.797 0.0
 86400
 force em
-url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_cdc_covid_variants.json
 field share biosphere_covid_variant_share
 
 source atmosphere_coastwatch_ascat_wind
@@ -13267,7 +13267,7 @@ field_in 3 socat_xco2_water_dry_ppm
 source atmosphere_wyoming_radiosonde_berlin
 ttl 43200
 force thermal
-url https://weather.uwyo.edu/wsgi/sounding?datetime={today}%2000:00:00&type=TEXT:CSV&id=10393&src=UNKNOWN
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_wyoming_radiosonde_berlin.json
 format csv
 map .
 lat_key latitude
@@ -13434,7 +13434,7 @@ field class dynamical_class
 source atmosphere_dwd_pollen_germany
 ttl 86400
 force em
-url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_dwd_pollen_germany.json
 wgs84 51.0 10.0
 field content.0.Pollen.Graeser.today biosphere_pollen_grass_germany_today
 field content.0.Pollen.Birke.today biosphere_pollen_birch_germany_today
@@ -13485,7 +13485,7 @@ last wind_gusts_10m atmosphere_hist_wind_gusts_10m_ms
 source atmosphere_met_norway_sun
 ttl 86400
 force em
-url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_met_norway_sun.json
 header User-Agent "omegaflow"
 field properties.sunrise.time atmosphere_sunrise_time
 field properties.solar_noon.elevation atmosphere_solar_elevation_max_deg
@@ -13550,14 +13550,14 @@ field message.total-results biosphere_doi_members_crossref
 source biosphere_ecdc_monkeypox
 ttl 86400
 force em
-url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/json/data.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_ecdc_monkeypox.json
 wgs84 59.365 18.016
 count . biosphere_monkeypox_record_count
 
 source biosphere_epoch_ai_compute_trends
 ttl 86400
 force em
-url https://epoch.ai/data/notable_ai_models.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_epoch_ai_compute_trends.json
 wgs84 37.774 -122.419
 format csv
 last_row Training_compute_FLOP biosphere_ai_training_flops_frontier
@@ -13774,7 +13774,7 @@ field key biosphere_gbif_reptile_key
 source biosphere_global_ixp_count
 ttl 86400
 force em
-url https://www.peeringdb.com/api/ix?limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_global_ixp_count.json
 wgs84 38.899 -77.043
 count data biosphere_ixp_count
 
@@ -13858,7 +13858,7 @@ flatten features
 source biosphere_restcountries_population
 ttl 86400
 force em
-url https://restcountries.com/v3.1/all?fields=name,population,latlng
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_restcountries_population.json
 wgs84 38.899 -77.043
 field 0.population biosphere_country_population_sample
 
@@ -13872,21 +13872,21 @@ field meta.count biosphere_semantic_scholar_papers_total
 source biosphere_submarine_cables
 ttl 86400
 force em
-url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_submarine_cables.json
 wgs84 38.899 -77.043
 count features biosphere_submarine_cable_count
 
 source biosphere_unhcr_displacement
 ttl 86400
 force em
-url https://api.unhcr.org/population/v1/population/?limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_unhcr_displacement.json
 wgs84 46.234 6.140
 count items biosphere_displacement_record_count
 
 source biosphere_vegetation_health
 ttl 86400
 force em
-url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_vegetation_health.json
 wgs84 38.978 -76.919
 format csv
 last_row VHI biosphere_global_vegetation_health_index
@@ -14094,7 +14094,7 @@ field significant_wave_height wave_height_m
 source cmems_sentinel3_chlorophyll_global
 ttl 86400
 force diffusion
-url https://oceanwatch.pifsc.noaa.gov/erddap/griddap/noaa_snpp_chla_daily.csv?chlor_a%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cmems_sentinel3_chlorophyll_global.json
 format text
 rows
 lat_key latitude
@@ -14159,14 +14159,14 @@ epoch_key epoch
 source astro_mars_landers
 ttl 86400
 force em
-url https://gist.githubusercontent.com/burritojustice/2d967b31c3bd11165b4439ebe98ecb01/raw/8594b09096f93f723c929c397de49ed7ac8ecc64/mars_landers.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_mars_landers.json
 areocentric 1
 flatten features
 
 source astro_mars_weather
 ttl 86400
 force em
-url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_mars_weather.json
 path soles.0.min_temp cosmos_mars_min_temp_c
 path soles.0.max_temp cosmos_mars_max_temp_c
 path soles.0.pressure cosmos_mars_pressure_pa
@@ -14193,7 +14193,7 @@ count member cosmos_tle_iss_related_count
 source technosphere_cratesio_crates_total
 ttl 86400
 force em
-url https://crates.io/api/v1/crates?per_page=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_cratesio_crates_total.json
 wgs84 37.774 -122.419
 field meta.total biosphere_cratesio_crates_total
 
@@ -14239,7 +14239,7 @@ last line cryosphere_sea_ice_extent_south_raw
 source cryosphere_permafrost_barrow
 ttl 86400
 force em
-url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_permafrost_barrow.json
 wgs84 71.29 -156.57
 format csv
 last_row 8 cryosphere_permafrost_temp_barrow_c
@@ -14412,7 +14412,7 @@ lon_key Longitude
 source astro_esa_worldcover_stac
 ttl 86400
 force diffusion
-url https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_esa_worldcover_stac.json
 map features
 lat_key geometry.coordinates.0.0.1
 lon_key geometry.coordinates.0.0.0
@@ -14887,7 +14887,7 @@ field_in 4 geosphere_orfeus_elevation_m
 source geosphere_usdm_conus_drought
 ttl 86400
 force em
-url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_usdm_conus_drought.json
 wgs84 40.820 -96.702
 field 0.DSCI hydrosphere_conus_drought_severity_index
 
@@ -15738,7 +15738,7 @@ dist_key dist
 source hydrosphere_emodnet_vessel_density
 ttl 86400
 force em
-url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_emodnet_vessel_density.json
 wgs84 51.231 2.928
 count features biosphere_vessel_density_feature_count
 
@@ -15754,7 +15754,7 @@ field_in 4 hydrosphere_sst_c
 source hydrosphere_ooi_ga01sumo_pco2
 ttl 86400
 force em
-url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_ooi_ga01sumo_pco2.json
 wgs84 46.05 -125.00
 format csv
 last_row surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm
@@ -15806,7 +15806,7 @@ source astro_iers_rapid_eop_c04
 ttl 86400
 force gravity
 ecliptic 1
-url https://datacenter.iers.org/data/9/finals2000A.all
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_iers_rapid_eop_c04.json
 format text
 rows
 field 0 mjd
@@ -15821,13 +15821,13 @@ source astro_iers_ut1_utc
 ttl 86400
 force em
 ecliptic 1
-url https://maia.usno.navy.mil/ser7/finals2000A.daily
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_iers_ut1_utc.json
 last_line geosphere_ut1_utc_iers
 
 source astro_igs_gnss_stations_global
 ttl 86400
 force seismic-surface
-url https://network.igs.org/api/public/stations?format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_igs_gnss_stations_global.json
 map .
 lat_key lat
 lon_key lon
@@ -15860,7 +15860,7 @@ field title station_title
 source hydrosphere_ioc_psmsl_stationlist
 ttl 86400
 force gravity
-url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_ioc_psmsl_stationlist.json
 map .
 lat_key Lat
 lon_key Lon
@@ -16472,7 +16472,7 @@ field 6 vz_au_day
 source jpl_horizons_jupiter_observer
 ttl 86400
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_horizons_jupiter_observer.json
 wgs84 0.0 0.0
 format text
 rows
@@ -16485,7 +16485,7 @@ field 4 solar_distance_au
 source jpl_horizons_mars_observer
 ttl 86400
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_horizons_mars_observer.json
 wgs84 0.0 0.0
 format text
 rows
@@ -16498,7 +16498,7 @@ field 4 solar_distance_au
 source jpl_horizons_saturn_observer
 ttl 86400
 force gravity
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_horizons_saturn_observer.json
 wgs84 0.0 0.0
 format text
 rows
@@ -16655,7 +16655,7 @@ field properties.landsat:wrs_row wrs_row
 source astro_landsatlook_c2l2
 ttl 86400
 force em
-url https://landsatlook.usgs.gov/stac-server/search
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_landsatlook_c2l2.json
 method post
 body {"collections":["landsat-c2l2"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
 map features
@@ -18362,7 +18362,7 @@ field t_max tess_sector_end
 source mast_tess_toi_official_release
 ttl 86400
 force em
-url https://tess.mit.edu/wp-content/uploads/all_targets_S001_v1.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/mast_tess_toi_official_release.json
 format text
 rows
 ra_key RA_deg
@@ -18423,7 +18423,7 @@ field mass mass_grams
 source subatomic_molecular_crystallography_xrd
 ttl 86400
 force em
-url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_molecular_crystallography_xrd.json
 wgs84 54.683 25.287
 field a molecular_lattice_constant_a
 
@@ -18437,7 +18437,7 @@ field rcsb_id biosphere_protein_structure_id
 source astro_moon_phase
 ttl 86400
 force em
-url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_moon_phase.json
 wgs84 34.201 -118.171
 path properties.data.curphase cosmic_moon_phase
 path properties.data.fracillum cosmic_moon_illumination_pct
@@ -18603,7 +18603,7 @@ last_line exosphere_fermi_gamma_ray_sources_total
 source nasa_giss_gistemp_v4_global_temperature
 ttl 86400
 force thermal
-url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/nasa_giss_gistemp_v4_global_temperature.json
 wgs84 0.0 0.0
 format text
 rows
@@ -18957,7 +18957,7 @@ field year last_eruption_year
 source subatomic_nist_codata_fundamental_constants
 ttl 86400
 force em
-url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/subatomic_nist_codata_fundamental_constants.json
 format text
 rows
 field 0 quantity_name
@@ -19120,7 +19120,7 @@ field_in 8 nino34_sst_anom_c
 source noaa_cpc_pdo_index
 ttl 86400
 force thermal
-url https://psl.noaa.gov/data/correlation/pdo.data
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_cpc_pdo_index.json
 wgs84 40.0 -170.0
 format text
 rows
@@ -19401,7 +19401,7 @@ field PRCP_NORMAL daily_normal_precip_mm
 source noaa_ncei_gebco_bathymetry
 ttl 86400
 force gravity
-url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22:{lon},%22y%22:{lat}%7D&geometryType=esriGeometryPoint&returnGeometry=false&f=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_ncei_gebco_bathymetry.json
 field value depth_m
 field objectId gebco_cell_id
 
@@ -19792,7 +19792,7 @@ field size biosphere_openlibrary_authors_total
 source technosphere_openlibrary_books_total
 ttl 86400
 force em
-url https://openlibrary.org/books.json?limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_openlibrary_books_total.json
 wgs84 40.712 -74.006
 field size biosphere_openlibrary_books_total
 
@@ -20188,7 +20188,7 @@ field_in 13 iata_code
 source biosphere_paleobiology_pbdb_paleobiology
 ttl 86400
 force em
-url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_paleobiology_pbdb_paleobiology.json
 wgs84 43.073 -89.401
 field records_returned paleobiology_pbdb_occurrence_count
 
@@ -20315,7 +20315,7 @@ field data.graphStatistics.totalEntries molecular_pdb_structures_total
 source technosphere_ripe_atlas_probes
 ttl 86400
 force em
-url https://atlas.ripe.net/api/v2/probes/?status=1&page_size=500&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_ripe_atlas_probes.json
 map results
 field id probe_id
 field description description
@@ -20380,7 +20380,7 @@ field z mag_z
 source geosphere_servir_smap_soil_moisture_global
 ttl 86400
 force diffusion
-url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_servir_smap_soil_moisture_global.json
 map features
 lat_key geometry.y
 lon_key geometry.x
@@ -20443,7 +20443,7 @@ last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
 source technosphere_stackoverflow_questions_total
 ttl 86400
 force em
-url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_stackoverflow_questions_total.json
 wgs84 37.774 -122.419
 field total biosphere_stackoverflow_questions_total
 
@@ -20474,7 +20474,7 @@ last_line solar_sunspot_number_silso
 source technosphere_technosphere_stackoverflow_questions
 ttl 86400
 force em
-url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_technosphere_stackoverflow_questions.json
 wgs84 40.712 -74.006
 path items.0.count technosphere_stackoverflow_questions_total
 
@@ -20488,7 +20488,7 @@ last_line exosphere_tess_candidates_total
 source astro_tevcat2_sources
 ttl 86400
 force em
-url https://tevcat2.tevcat.org/api/sources
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_tevcat2_sources.json
 map .
 ra_key ra
 dec_key dec
@@ -20895,7 +20895,7 @@ field gage_ht gage_height_ft
 source usgs_sciencebase_nlcd
 ttl 86400
 force diffusion
-url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/usgs_sciencebase_nlcd.json
 map items
 lat_key spatial.boundingBox.minY
 lon_key spatial.boundingBox.minX
@@ -21963,7 +21963,7 @@ field NumericValue pm10_annual_mean
 source technosphere_wikidata_entities_total
 ttl 86400
 force em
-url https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_wikidata_entities_total.json
 wgs84 37.774 -122.419
 field query.statistics.articles biosphere_wikidata_entities_total
 
@@ -21991,7 +21991,7 @@ field query.statistics.pages biosphere_wikipedia_pages_total
 source biosphere_world_open_brewery_db
 ttl 86400
 force em
-url https://api.openbrewerydb.org/v1/breweries?per_page=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_world_open_brewery_db.json
 map .
 lat_key latitude
 lon_key longitude
@@ -22035,7 +22035,7 @@ field year data_year
 source biosphere_worldbank_water_access
 ttl 86400
 force diffusion
-url https://api.worldbank.org/v2/country/all/indicator/SH.H2O.BASIC.ZS?format=json&per_page=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_worldbank_water_access.json
 map 1
 lat_key country.latitude
 lon_key country.longitude
@@ -24033,7 +24033,7 @@ path properties.parameter.PRECTOTCORR.07 atmosphere_power_precip_jul_clim_mm
 source esri_so2_volcano_emissions
 ttl 604800
 force diffusion
-url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_so2_volcano_emissions.json
 map features
 lat_key properties.Lat
 lon_key properties.Long
@@ -24209,7 +24209,7 @@ field phot_g_mean_mag star_g_mag
 source technosphere_geonuclear_power_plants
 ttl 604800
 force thermal
-url https://raw.githubusercontent.com/cristianst85/GeoNuclearData/master/data/csv/denormalized/nuclear_power_plants.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_geonuclear_power_plants.json
 format csv
 map .
 lat_key Latitude
@@ -24278,7 +24278,7 @@ field properties.scalerank geosphere_ne_place_rank
 source geosphere_unesco_heritage
 ttl 604800
 force em
-url https://gist.githubusercontent.com/rsicarelli/ba4b383a7b56c2f4292597e8c0965cc7/raw/a421c3ba23938f6963b120c6372ac74ca3186052/real.planet.world-heritage.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_unesco_heritage.json
 map .
 lat_key lat
 lon_key lng
@@ -24298,7 +24298,7 @@ field properties.PEI geosphere_volcano_pei
 source geosphere_world_volcanoes
 ttl 604800
 force em
-url https://gist.githubusercontent.com/vasturiano/3c27138769a04d1780562ce04afbedf2/raw/83dde896972fad0f1f823191ea90e3d451d3977a/world_volcanoes.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_world_volcanoes.json
 map .
 lat_key lat
 lon_key lon
@@ -24307,7 +24307,7 @@ field elevation geosphere_volcano_elevation_m
 source cryosphere_glims_glacier_points
 ttl 604800
 force thermal
-url https://www.glims.org/geoserver/ows?service=wfs&version=2.0.0&request=GetFeature&typeName=GLIMS:GLIMS_Points&bbox={lon_min},{lat_min},{lon_max},{lat_max},EPSG:4326&count=500&outputFormat=application/json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_glims_glacier_points.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -24787,7 +24787,7 @@ field elevation technosphere_airport_elevation_ft
 source technosphere_technosphere_submarine_cables
 ttl 604800
 force em
-url https://github.com/lifewinning/submarine-cable-taps/raw/master/data/submarine_cables.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_technosphere_submarine_cables.json
 field properties.name technosphere_cable_name
 field properties.length technosphere_cable_length_km
 flatten features
@@ -25452,7 +25452,7 @@ field primary_fuel wri_primary_fuel
 source astro_alfalfa_catalog
 ttl 2592000
 force em
-url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_alfalfa_catalog.json
 verify false
 format csv
 map data
@@ -25488,7 +25488,7 @@ first precipitation_sum atmosphere_climate_precip_mm
 source atmosphere_hadcrut5_temp
 ttl 2592000
 force em
-url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_hadcrut5_temp.json
 wgs84 50.727 -3.476
 format csv
 last line atmosphere_hadcrut5_temp_anomaly_raw
@@ -25496,7 +25496,7 @@ last line atmosphere_hadcrut5_temp_anomaly_raw
 source biosphere_globalforestwatch_tree_cover_loss
 ttl 2592000
 force em
-url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_globalforestwatch_tree_cover_loss.json
 wgs84 38.907 -77.036
 field data.0.areaHa biosphere_tree_cover_loss_ha_latest
 
@@ -27050,7 +27050,7 @@ field 1.0.value biosphere_life_expectancy_years
 source biosphere_worldbank_median_age
 ttl 2592000
 force em
-url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.MEDN?format=json&date=2023&per_page=1&mrv=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_worldbank_median_age.json
 wgs84 38.899 -77.043
 field 1.0.value biosphere_median_age_years
 
@@ -27091,7 +27091,7 @@ count query.geosearch biosphere_geopages_nearby
 source geosphere_cci_datasets
 ttl 2592000
 force em
-url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_cci_datasets.json
 wgs84 51.2802 -0.5231
 path response.numFound climate_esa_cci_datasets
 
@@ -27105,7 +27105,7 @@ first elevation geosphere_elevation_m
 source geosphere_eoapi_collections
 ttl 2592000
 force em
-url https://stac.eoapi.dev/collections
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_eoapi_collections.json
 wgs84 38.900 -77.020
 count collections biosphere_eoapi_collection_count
 
@@ -27119,14 +27119,14 @@ last_row undulate geosphere_geoid_height_m
 source geosphere_macrostrat_ages
 ttl 2592000
 force em
-url https://macrostrat.org/api/v2/units?format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_macrostrat_ages.json
 wgs84 43.073 -89.401
 count success.data macrostrat_unit_count
 
 source geosphere_macrostrat_timescale
 ttl 2592000
 force em
-url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_macrostrat_timescale.json
 wgs84 43.073 -89.401
 path success.data.0.n_intervals geosphere_ics_timescale_units
 
@@ -27220,7 +27220,7 @@ path value geosphere_elevation_epqs_m
 source lithosphere_gem_active_faults
 ttl 2592000
 force em
-url https://raw.githubusercontent.com/cossatot/gem-global-active-faults/master/geojson/gem_active_faults_harmonized.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/lithosphere_gem_active_faults.json
 flatten features
 
 source lithosphere_pb2002_boundaries
@@ -27474,7 +27474,7 @@ field v_component_of_current hydrosphere_cmems_current_v_ms
 source geosphere_raspberry_shake_stations
 ttl 43200
 force seismic-surface
-url https://stationview.raspberryshake.org/stations?online=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_raspberry_shake_stations.json
 format json
 map .
 lat_key latitude
@@ -27550,7 +27550,7 @@ field_in 3 universe_panstarrs_gaia_g_mag
 source exosphere_gaia_nearby_stars
 ttl 604800
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax+>+0+ORDER+BY+parallax+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_gaia_nearby_stars.json
 cmap data
 tau_key _dist_m
 ra_key 0
