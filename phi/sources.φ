@@ -7966,6 +7966,9 @@ source atmosphere_air_quality_full
 ttl 600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_air_quality_full.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 field current.pm2_5 atmosphere_pm25_ugm3
 field current.pm10 atmosphere_pm10_ugm3
 field current.nitrogen_dioxide atmosphere_no2_ugm3
@@ -7977,6 +7980,9 @@ source atmosphere_air_quality_trace
 ttl 600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_air_quality_trace.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 field current.ammonia atmosphere_ammonia_ugm3
 field current.dust atmosphere_dust_ugm3
 field current.formaldehyde atmosphere_formaldehyde_ugm3
@@ -7986,6 +7992,9 @@ source atmosphere_air_quality_us
 ttl 600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_air_quality_us.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 field current.us_aqi atmosphere_aqi_us
 
 source atmosphere_bom_observations
@@ -8800,6 +8809,9 @@ source hydrosphere_marine
 ttl 600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_marine.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 field current.wave_height hydrosphere_wave_height_m
 field current.wave_direction hydrosphere_wave_direction_deg
 field current.wave_period hydrosphere_wave_period_s
@@ -8808,6 +8820,9 @@ source hydrosphere_marine_ocean
 ttl 600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_marine_ocean.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 path current.sea_surface_temperature hydrosphere_sst_c
 path current.ocean_current_velocity hydrosphere_current_velocity_kmh
 path current.ocean_current_direction hydrosphere_current_direction_deg
@@ -8817,6 +8832,9 @@ source hydrosphere_marine_waves
 ttl 600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_marine_waves.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 path current.wind_wave_height hydrosphere_wind_wave_m
 path current.wind_wave_direction hydrosphere_wind_wave_dir_deg
 path current.wind_wave_period hydrosphere_wind_wave_period_s
@@ -8964,6 +8982,9 @@ source open_meteo_airquality_full
 ttl 600
 force diffusion
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_airquality_full.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 path latitude atmosphere_lat
 path longitude atmosphere_lon
 path current.pm10 atmosphere_pm10_ugm3
@@ -9750,6 +9771,9 @@ source atmosphere_aerosol_optical_depth
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_aerosol_optical_depth.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 path current.aerosol_optical_depth atmosphere_aod
 path current.dust atmosphere_dust_ugm3
 path current.pm2_5 atmosphere_pm25_ugm3
@@ -10101,6 +10125,9 @@ source atmosphere_ensemble_forecast
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_ensemble_forecast.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 path daily.temperature_2m_max.0 atmosphere_ensemble_temp_max_c
 path daily.precipitation_sum.0 atmosphere_ensemble_precip_mm
 
@@ -10118,6 +10145,9 @@ source atmosphere_marine_daily
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_marine_daily.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 path daily.wave_height_max.0 atmosphere_marine_wave_height_max_m
 path daily.wave_period_max.0 atmosphere_marine_wave_period_max_s
 path daily.swell_wave_height_max.0 atmosphere_marine_swell_height_max_m
@@ -10126,6 +10156,9 @@ source atmosphere_marine_sst
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_marine_sst.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 path current.sea_surface_temperature atmosphere_marine_sst_c
 path current.wave_height atmosphere_marine_wave_height_m
 path current.swell_wave_height atmosphere_marine_swell_height_m
@@ -10295,6 +10328,9 @@ source atmosphere_uv_daily
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_uv_daily.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 path daily.uv_index_max.0 atmosphere_uv_index_max
 path daily.uv_index_clear_sky_max.0 atmosphere_uv_index_clear_sky_max
 
@@ -11552,6 +11588,9 @@ source hydrosphere_flood
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_flood.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 first river_discharge hydrosphere_river_discharge_m3s
 
 source hydrosphere_pegelonline_water_level
@@ -13409,6 +13448,9 @@ source atmosphere_historical_daily
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_historical_daily.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 last temperature_2m_max atmosphere_hist_temp_max_c
 last temperature_2m_min atmosphere_hist_temp_min_c
 last precipitation_sum atmosphere_hist_precip_sum_mm
@@ -13418,6 +13460,9 @@ source atmosphere_historical_weather
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_historical_weather.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 last temperature_2m atmosphere_hist_temp_c
 last precipitation atmosphere_hist_precip_mm
 last windspeed_10m atmosphere_hist_wind_ms
@@ -13426,6 +13471,9 @@ source atmosphere_historical_wind
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_historical_wind.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 last wind_speed_10m atmosphere_hist_wind_speed_10m_ms
 last wind_speed_100m atmosphere_hist_wind_speed_100m_ms
 last wind_gusts_10m atmosphere_hist_wind_gusts_10m_ms
@@ -14746,6 +14794,9 @@ source geosphere_historical_soil
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_historical_soil.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 last soil_temperature_0_to_7cm geosphere_hist_soil_temp_surface_c
 last soil_moisture_0_to_7cm geosphere_hist_soil_moisture_surface_m3m3
 
@@ -20378,6 +20429,9 @@ source solar_historical_surface
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_historical_surface.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 last shortwave_radiation atmosphere_hist_solar_radiation_wm2
 last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
 
@@ -25419,6 +25473,9 @@ source atmosphere_climate_projection
 ttl 2592000
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_climate_projection.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
 first temperature_2m_max atmosphere_climate_temp_max_c
 first temperature_2m_min atmosphere_climate_temp_min_c
 first precipitation_sum atmosphere_climate_precip_mm
