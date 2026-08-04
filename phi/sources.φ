@@ -557,7 +557,7 @@ field isFinal geosphere_jma_eew_is_final
 source geosphere_usgs_earthquake_detail
 ttl 60
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_usgs_earthquake_detail.json
 geojson events properties.mag 0.0 seismic_magnitude_mw seismic_depth_m
 
 source geosphere_usgs_earthquakes_24h
@@ -584,7 +584,7 @@ field properties.mag geosphere_quake_magnitude
 source geosphere_usgs_significant_rms
 ttl 60
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_usgs_significant_rms.json
 wgs84 39.749 -105.221
 path features.0.properties.rms geosphere_earth_hum_rms
 
@@ -899,7 +899,7 @@ last max_xrlong solar_flare_xray_intensity
 source usgs_anss_comprehensive_earthquake_catalog
 ttl 60
 force seismic-body
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=1000&orderby=time&starttime={today}T00:00:00
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/usgs_anss_comprehensive_earthquake_catalog.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1157,7 +1157,7 @@ field properties.confidence viirs_confidence_pct
 source atmosphere_noaa_metar
 ttl 300
 force acoustic
-url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_noaa_metar.json
 map .
 lat_key lat
 lon_key lon
@@ -1716,7 +1716,7 @@ geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 source geosphere_earthquakes_significant_day
 ttl 300
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_earthquakes_significant_day.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -7103,7 +7103,7 @@ first data.v hydrosphere_tide_height_m_marquette_c.g.
 source hydrosphere_tide_9099044
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_tide_9099044.json
 wgs84 46.874443 -89.324165
 first data.v hydrosphere_tide_height_m_ontonagon
 
@@ -7299,7 +7299,7 @@ first data.v hydrosphere_tide_height_m_seldovia
 source hydrosphere_tide_9455760
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455760&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_tide_9455760.json
 wgs84 60.6833 -151.3980
 first data.v hydrosphere_tide_height_m_nikiski
 
@@ -7411,14 +7411,14 @@ first data.v hydrosphere_tide_height_m_christiansted_harbor_st_croix
 source hydrosphere_tide_9753216
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_tide_9753216.json
 wgs84 18.335278 -65.63111
 first data.v hydrosphere_tide_height_m_fajardo
 
 source hydrosphere_tide_9757811
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_tide_9757811.json
 wgs84 18.480528 -66.70236
 first data.v hydrosphere_tide_height_m_arecibo
 
@@ -7826,7 +7826,7 @@ path 0.proton_speed solar_wind_speed_kms
 source usgs_aftershock_forecast_significant
 ttl 300
 force seismic-body
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.5&limit=100&orderby=time&producttype=aftershock-forecast
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/usgs_aftershock_forecast_significant.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -7840,7 +7840,7 @@ field properties.cdi community_intensity
 source usgs_deep_focus_earthquakes
 ttl 300
 force seismic-body
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3.5&mindepth=300&limit=500&orderby=time&starttime={today}T00:00:00
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/usgs_deep_focus_earthquakes.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -7882,7 +7882,7 @@ depth_key geometry.coordinates.2
 source usgs_pager_recent_alerts
 ttl 300
 force seismic-body
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.0&limit=100&orderby=time&producttype=pager
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/usgs_pager_recent_alerts.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8040,7 +8040,7 @@ field minutely_15.lightning_potential atmosphere_lightning_potential
 source atmosphere_metar_global
 ttl 600
 force acoustic
-url https://aviationweather.gov/api/data/metar?format=json&bbox=-180,-90,180,90
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_metar_global.json
 map .
 lat_key lat
 lon_key lon
@@ -8113,7 +8113,7 @@ source atmosphere_sigmet
 ttl 600
 force em
 ecliptic 1
-url https://aviationweather.gov/api/data/airsigmet?format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_sigmet.json
 map .
 field altitudeHi1 atmosphere_sigmet_alt_hi_ft
 field movementDir atmosphere_sigmet_movement_dir
@@ -8231,7 +8231,7 @@ path current.pressure_msl atmosphere_pressure_msl_hpa
 source atmosphere_aviation_pireps
 ttl 600
 force acoustic
-url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_aviation_pireps.json
 ecliptic 1
 map
 lat_key lat
@@ -8250,7 +8250,7 @@ field rawOb raw_report
 source atmosphere_aviation_sigmets
 ttl 600
 force acoustic
-url https://aviationweather.gov/api/data/airsigmet?format=json&hours=3
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_aviation_sigmets.json
 ecliptic 1
 map
 lat_key coords.0.lat
@@ -8708,7 +8708,7 @@ alt_key geometry.coordinates.2
 source geosphere_earthquakes_weekly
 ttl 600
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={week_ago}&endtime={today}&minmagnitude=2.5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_earthquakes_weekly.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_emsc_earthquakes_global
@@ -9335,7 +9335,7 @@ field AOD_870nm aod_870nm
 source atmosphere_aviation_tafs
 ttl 1800
 force em
-url https://aviationweather.gov/api/data/taf?ids=KJFK&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_aviation_tafs.json
 ecliptic 1
 map
 lat_key lat
@@ -9416,7 +9416,7 @@ field_in 7 velocity_km_s
 source atmosphere_metar_africa_mideast_bbox
 ttl 1800
 force acoustic
-url https://aviationweather.gov/api/data/metar?bbox=-35,-20,38,65&format=json&hours=2
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_metar_africa_mideast_bbox.json
 map .
 lat_key lat
 lon_key lon
@@ -9430,7 +9430,7 @@ field wxString weather_string
 source atmosphere_metar_asia_pacific_bbox
 ttl 1800
 force acoustic
-url https://aviationweather.gov/api/data/metar?bbox=-10,60,55,150&format=json&hours=2
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_metar_asia_pacific_bbox.json
 map .
 lat_key lat
 lon_key lon
@@ -9445,7 +9445,7 @@ field wxString weather_string
 source atmosphere_metar_europe_bbox
 ttl 1800
 force acoustic
-url https://aviationweather.gov/api/data/metar?bbox=35,-10,70,40&format=json&hours=2
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_metar_europe_bbox.json
 map .
 lat_key lat
 lon_key lon
@@ -9462,7 +9462,7 @@ field rawOb raw_metar
 source atmosphere_metar_north_america_bbox
 ttl 1800
 force acoustic
-url https://aviationweather.gov/api/data/metar?bbox=25,-170,72,-50&format=json&hours=2
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_metar_north_america_bbox.json
 map .
 lat_key lat
 lon_key lon
@@ -9526,7 +9526,7 @@ field pressure pressure_mb
 source noaa_awc_sigmet_international
 ttl 1800
 force acoustic
-url https://aviationweather.gov/api/data/sigmet?format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_awc_sigmet_international.json
 map .
 lat_key lat
 lon_key lon
@@ -11222,7 +11222,7 @@ field properties.mag geosphere_quake_magnitude
 source geosphere_usgs_significant_earthquakes
 ttl 3600
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={yesterday}&endtime={today}&minmagnitude=6.0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_usgs_significant_earthquakes.json
 wgs84 38.9072 -77.0369
 field metadata.count geosphere_earthquakes_magnitude6_usgs
 
@@ -12062,7 +12062,7 @@ extent 1.63e-5
 source atmosphere_metar_polar_regions
 ttl 3600
 force acoustic
-url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_metar_polar_regions.json
 map .
 lat_key lat
 lon_key lon
@@ -12117,7 +12117,7 @@ source atmosphere_ncei_global_hourly_multi_station
 ttl 3600
 wgs84 0.0 0.0
 force diffusion
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_ncei_global_hourly_multi_station.json
 map
 lat_key 40.74
   lon_key -73.98
@@ -12135,7 +12135,7 @@ source atmosphere_ncei_global_hourly_weather
 ttl 3600
 wgs84 0.0 0.0
 force diffusion
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_ncei_global_hourly_weather.json
 map
 lat_key 40.74
   lon_key -73.98
@@ -12325,7 +12325,7 @@ field running_avg_kp running_average_kp
 source noaa_ghcnd_daily_weather_summary
 ttl 3600
 force thermal
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={today}&endDate={today}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_ghcnd_daily_weather_summary.json
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -12429,7 +12429,7 @@ field d current_direction
 source noaa_tides_water_temperature
 ttl 3600
 force diffusion
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=water_temperature&units=metric&time_zone=gmt&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_tides_water_temperature.json
 map data
 lat_key 32.757
 lon_key -117.226
@@ -12978,7 +12978,7 @@ extent 0.004650
 source atmosphere_taf_global_forecasts
 ttl 3600
 force acoustic
-url https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_taf_global_forecasts.json
 map .
 lat_key lat
 lon_key lon
@@ -14200,20 +14200,20 @@ source cryosphere_nsidc_antarctic_sea_ice_v4
 ttl 86400
 force em
 ecliptic 1
-url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_nsidc_antarctic_sea_ice_v4.json
 last_line cryosphere_antarctic_sea_ice_extent_nsidc
 
 source cryosphere_nsidc_arctic_sea_ice_v4
 ttl 86400
 force em
 ecliptic 1
-url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_nsidc_arctic_sea_ice_v4.json
 last_line cryosphere_arctic_sea_ice_extent_nsidc
 
 source cryosphere_nsidc_sea_ice
 ttl 86400
 force em
-url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_nsidc_sea_ice.json
 wgs84 40.008 -105.263
 format csv
 last_row extent hydrosphere_sea_ice_extent_north_mkm2
@@ -14222,7 +14222,7 @@ last_row area hydrosphere_sea_ice_area_north_mkm2
 source cryosphere_nsidc_sea_ice_north
 ttl 86400
 force em
-url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_nsidc_sea_ice_north.json
 wgs84 40.008 -105.263
 format csv
 last line cryosphere_sea_ice_extent_north_raw
@@ -14230,7 +14230,7 @@ last line cryosphere_sea_ice_extent_north_raw
 source cryosphere_nsidc_sea_ice_south
 ttl 86400
 force em
-url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_nsidc_sea_ice_south.json
 wgs84 -75.250 -0.071
 format csv
 last line cryosphere_sea_ice_extent_south_raw
@@ -14246,7 +14246,7 @@ last_row 8 cryosphere_permafrost_temp_barrow_c
 source cryosphere_sea_ice_north
 ttl 86400
 force em
-url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_sea_ice_north.json
 wgs84 40.008 -105.263
 format csv
 last_row extent cryosphere_sea_ice_north_mkm2
@@ -14254,7 +14254,7 @@ last_row extent cryosphere_sea_ice_north_mkm2
 source cryosphere_sea_ice_south
 ttl 86400
 force em
-url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_sea_ice_south.json
 wgs84 -75.250 -0.071
 format csv
 last_row extent cryosphere_sea_ice_south_mkm2
@@ -14761,7 +14761,7 @@ geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 source geosphere_earthquakes_historical
 ttl 86400
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_earthquakes_historical.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_m4_decade
@@ -18790,7 +18790,7 @@ source atmosphere_ncei_global_summary_weather
 ttl 86400
 wgs84 0.0 0.0
 force diffusion
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_ncei_global_summary_weather.json
 map
 lat_key 40.74
   lon_key -73.98
@@ -19281,7 +19281,7 @@ field_in 2 co2_ppm_uncertainty
 source noaa_gsod_global_surface_summary
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB&stations=72420314733,10637099999,47678099999,94120099999&startDate={today}&endDate={today}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gsod_global_surface_summary.json
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
