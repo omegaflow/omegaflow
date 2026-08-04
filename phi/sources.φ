@@ -396,14 +396,6 @@ url https://api.irail.be/liveboard/?station=Brussels&format=json
 wgs84 50.8 4.3
 count departures.departure biosphere_train_departures_belgium
 
-source biosphere_irish_rail_realtime
-ttl 60
-force em
-url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
-wgs84 53.3 -6.2
-format xml
-xml_count ObjStationData technosphere_train_departures_dublin
-
 source biosphere_ripe_bgp_default_route
 ttl 60
 force em
@@ -639,8 +631,9 @@ ttl 60
 force gravity
 ecliptic 1
 url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
-format csv
-last_row kp magnetosphere_forecast_kp_max
+format text
+tail
+field_in kp magnetosphere_forecast_kp_max
 
 source magnetosphere_swpc_goes
 ttl 60
@@ -1930,13 +1923,14 @@ ttl 300
 force acoustic
 url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
 wgs84 29.22 -88.23
-format csv
-last_row WDIR hydrosphere_buoy_42040_wind_dir
-last_row WSPD hydrosphere_buoy_42040_wind_speed
-last_row WVHT hydrosphere_buoy_42040_wave_height
-last_row DPD hydrosphere_buoy_42040_dominant_period
-last_row PRES hydrosphere_buoy_42040_pressure
-last_row WTMP hydrosphere_buoy_42040_water_temp
+tail
+format text
+field_in WDIR hydrosphere_buoy_42040_wind_dir
+field_in WSPD hydrosphere_buoy_42040_wind_speed
+field_in WVHT hydrosphere_buoy_42040_wave_height
+field_in DPD hydrosphere_buoy_42040_dominant_period
+field_in PRES hydrosphere_buoy_42040_pressure
+field_in WTMP hydrosphere_buoy_42040_water_temp
 
 source hydrosphere_ndbc_buoy_42055
 ttl 300
@@ -7947,8 +7941,9 @@ ttl 600
 force em
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
 wgs84 38.99 -76.84
-format csv
-last_row AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
+tail
+format text
+field_in AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
 
 source atmosphere_air_quality_full
 ttl 600
@@ -9705,18 +9700,6 @@ lon_key Site_Longitude(Degrees)
 field Total_Optical_Depth_440nm tot_od_440nm
 field Total_Optical_Depth_500nm tot_od_500nm
 
-source astro_alma_archive
-ttl 3600
-force em
-url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-verify false
-format votable
-map data
-field source_name target
-field project_code project
-lat_key ra
-lon_key dec
-
 source astro_ams_fireball_events_recent
 ttl 3600
 force gravity
@@ -10507,19 +10490,6 @@ field title wildfire_title
 field categories.0.title event_category
 field id wildfire_eonet_id
 
-source astro_cadc_main
-ttl 3600
-force em
-url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+target,+obsid,+collection+FROM+caom2.Observation+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-verify false
-format votable
-map data
-field target target_name
-field obsid observation_id
-field collection collection
-lat_key ra
-lon_key dec
-
 source magnetosphere_cdaweb_mms1_fgm_magnetic_field
 ttl 3600
 force em
@@ -10638,22 +10608,12 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ephemeris orbital_eris_distance
 extent 7.77e-6
 
-source astro_esasky_main
-ttl 3600
-force em
-url https://sky.esa.int/esasky-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-verify false
-format votable
-map data
-lat_key ra
-lon_key dec
-
 source astro_eso_archive
 ttl 3600
 force em
-url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt,sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt,sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
 verify false
-format votable
+format json
 map data
 field main_id target_name
 field otype_txt instrument
@@ -11950,9 +11910,9 @@ extent 2.27e-5
 source astro_mast_caom
 ttl 3600
 force em
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1&FORMAT=json
 verify false
-format votable
+format json
 map data
 field s_ra ra_deg
 field s_dec dec_deg
@@ -12466,24 +12426,12 @@ field generatedAt generation_time
 source astro_noirlab_archive
 ttl 3600
 force em
-url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
 verify false
-format votable
+format json
 map data
 field main_id observation_id
 field otype_txt instrument
-lat_key ra
-lon_key dec
-
-source astro_nrao_archive
-ttl 3600
-force em
-url https://archive.nrao.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+obs_id,+project+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-verify false
-format votable
-map data
-field obs_id observation_id
-field project project_code
 lat_key ra
 lon_key dec
 
@@ -15754,8 +15702,9 @@ ttl 86400
 force em
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
 wgs84 47.606 -122.335
-format csv
-last line hydrosphere_pmel_co2_mooring_raw
+tail
+format text
+field_in 0 hydrosphere_pmel_co2_mooring_raw
 
 source hydrosphere_pmel_co2_ph
 ttl 86400
@@ -27101,8 +27050,9 @@ source geosphere_icgem_geoid_height
 ttl 2592000
 force em
 url https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf
-format csv
-last_row undulate geosphere_geoid_height_m
+format text
+tail
+field_in undulate geosphere_geoid_height_m
 
 source geosphere_macrostrat_ages
 ttl 2592000
@@ -27232,19 +27182,6 @@ ttl 2592000
 force em
 url https://github.com/omegaflow/sources/releases/download/github.com-fraxen-tectonicplates/lithosphere_pb2002_plates.json
 flatten features
-
-source astro_ned_main
-ttl 2592000
-force em
-url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-verify false
-format votable
-map data
-field preferredname name
-field redshift redshift
-field vel velocity_km_s
-lat_key ra
-lon_key dec
 
 source subatomic_neutrinoless_double_beta_limits
 ttl 2592000
@@ -27417,7 +27354,7 @@ source atmosphere_aeronet_aod_full
 ttl 10800
 force thermal
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
-format csv
+format text
 rows
 lat_key 1
 lon_key 2

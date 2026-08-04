@@ -850,634 +850,6 @@ fn scalar_of(v: &JsonVal) -> Option<f64> {
     }
 }
 
-fn votable_to_json(votable: &str) -> Option<String> {
-    let b = votable;
-    let mut cols: Vec<&str> = Vec::new();
-    let mut pos = 0;
-    while let Some(f_start) = b[pos..].find("<FIELD") {
-        let tag_start = pos + f_start;
-        let rest = &b[tag_start + 6..];
-        if let Some(na) = rest.find("name=\"") {
-            let vs = na + 6;
-            if let Some(ve) = rest[vs..].find('"') {
-                cols.push(&rest[vs..vs + ve]);
-            }
-        }
-        pos = tag_start + 6 + 1;
-    }
-    let tds = b.find("<TABLEDATA>")?;
-    let tde = b[tds + 11..].find("</TABLEDATA>")?;
-    let td = &b[tds + 11..tds + 11 + tde];
-    let mut rows: Vec<String> = Vec::new();
-    for tr in td.split("</TR>") {
-        let t = tr.trim();
-        if !t.starts_with("<TR>") {
-            continue;
-        }
-        let inner = &t[4..];
-        let mut vals: Vec<&str> = Vec::new();
-        for td_cell in inner.split("</TD>") {
-            let c = td_cell.trim();
-            if c.is_empty() {
-                continue;
-            }
-            if let Some(s) = c.find("<TD>") {
-                vals.push(c[s + 4..].trim());
-            }
-        }
-        if vals.is_empty() {
-            continue;
-        }
-        let mut o = String::from("{");
-        for (i, v) in vals.iter().enumerate() {
-            if i > 0 {
-                o.push(',');
-            }
-            if i < cols.len() {
-                o.push('"');
-                o.push_str(cols[i]);
-                o.push('"');
-                o.push(':');
-                if v.parse::<f64>().is_ok() {
-                    o.push_str(v);
-                } else {
-                    o.push('"');
-                    o.push_str(v);
-                    o.push('"');
-                }
-            }
-        }
-        o.push('}');
-        rows.push(o);
-    }
-    if rows.is_empty() {
-        return None;
-    }
-    Some(format!("{{\"data\":[{}]}}", rows.join(",")))
-}
-
-fn csv_to_json(csv: &str) -> Option<String> {
-    let lines: Vec<&str> = csv
-        .lines()
-        .map(|l| l.trim())
-        .filter(|l| !l.is_empty())
-        .collect();
-    if lines.is_empty() {
-        return None;
-    }
-    let header_idx = match lines.iter().position(|l| !l.starts_with('#')) {
-        Some(0) => 0,
-        Some(i) => {
-            if lines[0].starts_with('#')
-                && lines[0].trim_start_matches('#').split_whitespace().count() > 1
-                && lines[i]
-                    .split_whitespace()
-                    .next()
-                    .map(|t| t.parse::<f64>().is_ok())
-                    == Some(true)
-            {
-                0
-            } else {
-                i
-            }
-        }
-        None => 0,
-    };
-    let header_line = lines[header_idx].trim_start_matches('#');
-    let delim = if header_line.contains('\t') {
-        '\t'
-    } else if header_line.contains('|') && header_line.split('|').count() > 1 {
-        '|'
-    } else if header_line.contains(',') && header_line.split(',').count() > 1 {
-        ','
-    } else {
-        ' '
-    };
-    let cols: Vec<String> = if delim == ' ' {
-        header_line
-            .split_whitespace()
-            .map(|c| c.trim_matches('"').to_string())
-            .collect()
-    } else {
-        split_csv_line(header_line, delim)
-            .into_iter()
-            .map(|c| c.trim_matches('"').to_string())
-            .collect()
-    };
-    if cols.is_empty() {
-        return None;
-    }
-    let mut rows: Vec<String> = Vec::new();
-    for line in lines.iter().skip(header_idx + 1) {
-        if line.starts_with('#') {
-            continue;
-        }
-        let vals: Vec<String> = if delim == ' ' {
-            line.split_whitespace().map(|s| s.to_string()).collect()
-        } else {
-            split_csv_line(line, delim)
-        };
-        if vals.is_empty() {
-            continue;
-        }
-        let mut o = String::from("{");
-        for (i, v) in vals.iter().enumerate() {
-            if i > 0 {
-                o.push(',');
-            }
-            let col_name = if i < cols.len() {
-                &cols[i]
-            } else {
-                &format!("col{}", i)
-            };
-            o.push('"');
-            o.push_str(col_name);
-            o.push('"');
-            o.push(':');
-            let cleaned = v.trim_matches('"');
-            if cleaned.parse::<f64>().is_ok() {
-                o.push_str(cleaned);
-            } else {
-                o.push('"');
-                o.push_str(cleaned);
-                o.push('"');
-            }
-        }
-        o.push('}');
-        rows.push(o);
-    }
-    if rows.is_empty() {
-        return None;
-    }
-    Some(format!("{{\"data\":[{}]}}", rows.join(",")))
-}
-
-fn split_csv_line(line: &str, delim: char) -> Vec<String> {
-    let mut result: Vec<String> = Vec::new();
-    let mut current = String::new();
-    let mut in_quotes = false;
-    let mut chars = line.chars();
-    while let Some(c) = chars.next() {
-        if in_quotes {
-            if c == '"' {
-                if let Some('"') = chars.clone().next() {
-                    current.push('"');
-                    chars.next();
-                } else {
-                    in_quotes = false;
-                }
-            } else {
-                current.push(c);
-            }
-        } else if c == '"' {
-            in_quotes = true;
-        } else if c == delim {
-            result.push(current.trim().to_string());
-            current = String::new();
-        } else {
-            current.push(c);
-        }
-    }
-    result.push(current.trim().to_string());
-    result
-}
-
-fn erddap_csv_to_json(csv: &str) -> Option<String> {
-    let lines: Vec<&str> = csv
-        .lines()
-        .map(|l| l.trim())
-        .filter(|l| !l.is_empty())
-        .collect();
-    if lines.len() < 2 {
-        return None;
-    }
-    let header_idx = match lines.iter().position(|l| !l.starts_with('#')) {
-        Some(0) => 0,
-        Some(i) => {
-            if lines[0].starts_with('#')
-                && lines[0].trim_start_matches('#').split_whitespace().count() > 1
-                && lines[i]
-                    .split_whitespace()
-                    .next()
-                    .map(|t| t.parse::<f64>().is_ok())
-                    == Some(true)
-            {
-                0
-            } else {
-                i
-            }
-        }
-        None => 0,
-    };
-    let header_line = lines[header_idx].trim_start_matches('#');
-    let delim = if header_line.contains('\t') {
-        '\t'
-    } else if header_line.contains('|') && header_line.split('|').count() > 1 {
-        '|'
-    } else if header_line.contains(',') && header_line.split(',').count() > 1 {
-        ','
-    } else {
-        ' '
-    };
-    let cols: Vec<String> = if delim == ' ' {
-        header_line
-            .split_whitespace()
-            .map(|s| s.trim().to_string())
-            .collect()
-    } else {
-        header_line
-            .split(delim)
-            .map(|s| s.trim().trim_matches('"').to_string())
-            .collect()
-    };
-    if cols.is_empty() || cols.iter().all(|c| c.is_empty()) {
-        return None;
-    }
-    let mut rows: Vec<String> = Vec::new();
-    let mut skip = 0u32;
-    for (_li, line) in lines.iter().enumerate().skip(header_idx + 1) {
-        if line.starts_with('#') {
-            continue;
-        }
-        if skip < 1 {
-            let lower = line.to_lowercase();
-            let is_unit_row = lower.contains("degrees_")
-                || lower.contains("degree_")
-                || lower.contains("seconds since")
-                || lower.trim() == "utc"
-                || lower.contains(" utc")
-                || lower.contains(" utc,")
-                || lower.starts_with("utc,")
-                || lower.contains("1e-3")
-                || lower.contains("db")
-                || lower.contains("m/s")
-                || lower.contains("knots")
-                || lower.contains("ug/l")
-                || lower.contains("μmol");
-            if is_unit_row {
-                skip += 1;
-                continue;
-            }
-            skip += 1;
-        }
-        let vals: Vec<String> = if delim == ' ' {
-            line.split_whitespace()
-                .map(|s| s.trim().to_string())
-                .collect()
-        } else {
-            split_csv_line(line, delim)
-        };
-        if vals.is_empty() {
-            continue;
-        }
-        let mut o = String::from("{");
-        for (i, v) in vals.iter().enumerate() {
-            if i > 0 {
-                o.push(',');
-            }
-            if i < cols.len() {
-                o.push('"');
-                o.push_str(&cols[i]);
-                o.push('"');
-                o.push(':');
-            } else {
-                o.push('"');
-                o.push_str(&format!("col{}", i));
-                o.push('"');
-                o.push(':');
-            }
-            let cleaned = v.trim().trim_matches('"');
-            if cleaned.parse::<f64>().is_ok() {
-                o.push_str(cleaned);
-            } else {
-                o.push('"');
-                for ch in cleaned.chars() {
-                    match ch {
-                        '"' => o.push_str("\\\""),
-                        '\\' => o.push_str("\\\\"),
-                        _ => o.push(ch),
-                    }
-                }
-                o.push('"');
-            }
-        }
-        o.push('}');
-        rows.push(o);
-    }
-    if rows.is_empty() {
-        return None;
-    }
-    Some(format!("{{\"data\":[{}]}}", rows.join(",")))
-}
-
-fn stac_to_json(body: &str) -> Option<String> {
-    let parsed = parse_json(body)?;
-    let features = jpath_val(&parsed, "features")?;
-    let arr = match features {
-        JsonVal::Arr(a) => a,
-        _ => return None,
-    };
-    let mut rows: Vec<String> = Vec::new();
-    for feature in arr.iter() {
-        let bbox = jpath_val(feature, "bbox");
-        let geometry = jpath_val(feature, "geometry");
-        let props = jpath_val(feature, "properties");
-
-        let (lat, lon) = match (bbox, geometry) {
-            (Some(JsonVal::Arr(b)), _) if b.len() >= 4 => {
-                let minlon = scalar_of(&b[0]).unwrap_or(0.0);
-                let minlat = scalar_of(&b[1]).unwrap_or(0.0);
-                let maxlon = scalar_of(&b[2]).unwrap_or(0.0);
-                let maxlat = scalar_of(&b[3]).unwrap_or(0.0);
-                ((minlat + maxlat) / 2.0, (minlon + maxlon) / 2.0)
-            }
-            (_, Some(JsonVal::Obj(g))) => {
-                if let Some(coords) = g.get("coordinates") {
-                    let (mut clat, mut clon, mut count) = (0.0f64, 0.0f64, 0u32);
-                    fn sum_ring(ring: &[JsonVal], lat: &mut f64, lon: &mut f64, count: &mut u32) {
-                        for point in ring.iter() {
-                            if let JsonVal::Arr(p) = point {
-                                if p.len() >= 2 {
-                                    *lon += scalar_of(&p[0]).unwrap_or(0.0);
-                                    *lat += scalar_of(&p[1]).unwrap_or(0.0);
-                                    *count += 1;
-                                }
-                            }
-                        }
-                    }
-                    if let JsonVal::Arr(outer) = coords {
-                        if let Some(first) = outer.first() {
-                            if matches!(first, JsonVal::Arr(inner) if inner.first().map_or(false, |v| matches!(v, JsonVal::Num(_))))
-                            {
-                                for ring in outer.iter() {
-                                    if let JsonVal::Arr(r) = ring {
-                                        sum_ring(r, &mut clat, &mut clon, &mut count);
-                                    }
-                                }
-                            } else {
-                                sum_ring(outer, &mut clat, &mut clon, &mut count);
-                            }
-                        }
-                    }
-                    if count > 0 {
-                        (clat / count as f64, clon / count as f64)
-                    } else {
-                        (0.0, 0.0)
-                    }
-                } else {
-                    continue;
-                }
-            }
-            _ => continue,
-        };
-
-        let dt = props
-            .and_then(|p| jpath_val(p, "datetime"))
-            .and_then(|v| match v {
-                JsonVal::Str(s) => Some(s.clone()),
-                _ => None,
-            })
-            .unwrap_or_default();
-
-        let collection = props
-            .and_then(|p| jpath_val(p, "collection"))
-            .and_then(|v| match v {
-                JsonVal::Str(s) => Some(s.clone()),
-                _ => None,
-            })
-            .unwrap_or_default();
-
-        let mut o = String::from("{\"lat\":");
-        o.push_str(&format!("{}", lat));
-        o.push_str(",\"lon\":");
-        o.push_str(&format!("{}", lon));
-        o.push_str(",\"datetime\":\"");
-        o.push_str(&dt);
-        o.push('"');
-        if !collection.is_empty() {
-            o.push_str(",\"collection\":\"");
-            o.push_str(&collection);
-            o.push('"');
-        }
-        if let Some(JsonVal::Obj(pmap)) = props {
-            for (k, v) in pmap.iter() {
-                if k == "datetime" || k == "collection" {
-                    continue;
-                }
-                let clean_key = k.replace(':', "_").replace('.', "_");
-                o.push(',');
-                o.push('"');
-                o.push_str("stac_");
-                o.push_str(&clean_key);
-                o.push('"');
-                o.push(':');
-                match v {
-                    JsonVal::Num(n) => o.push_str(&format!("{}", n)),
-                    JsonVal::Str(s) => {
-                        o.push('"');
-                        for ch in s.chars() {
-                            match ch {
-                                '"' => o.push_str("\\\""),
-                                '\\' => o.push_str("\\\\"),
-                                _ => o.push(ch),
-                            }
-                        }
-                        o.push('"');
-                    }
-                    JsonVal::Bool(b) => o.push_str(if *b { "true" } else { "false" }),
-                    _ => o.push_str("null"),
-                }
-            }
-        }
-        o.push('}');
-        rows.push(o);
-    }
-    if rows.is_empty() {
-        return None;
-    }
-    Some(format!("{{\"data\":[{}]}}", rows.join(",")))
-}
-
-fn sanitize_col_name(name: &str) -> String {
-    let mut out = String::new();
-    for c in name.chars() {
-        match c {
-            '[' | ']' | '(' | ')' | '/' | '\\' | '.' | '%' => out.push('_'),
-            ' ' | '\t' | '\n' | '\r' => {
-                if !out.ends_with('_') {
-                    out.push('_')
-                }
-            }
-            _ => out.push(c),
-        }
-    }
-    out.trim_matches('_').to_string()
-}
-
-fn html_table_to_json(html: &str, target_idx: usize) -> Option<String> {
-    let lower = html.to_lowercase();
-    let mut table_pos = 0usize;
-    let mut current_idx = 0usize;
-    while current_idx <= target_idx {
-        let search = &lower[table_pos..];
-        let found = search.find("<table")?;
-        let abs = table_pos + found;
-        let rest = &html[abs..];
-        let end = find_closing_tag(rest, "table")?;
-        if current_idx == target_idx {
-            let table = &rest[..end];
-            return parse_html_table(table);
-        }
-        table_pos = abs + end;
-        current_idx += 1;
-    }
-    None
-}
-
-fn parse_html_table(table: &str) -> Option<String> {
-    let mut header: Vec<String> = Vec::new();
-    let mut rows: Vec<String> = Vec::new();
-
-    let mut pos = 0;
-    while let Some(tr_start) = table[pos..].to_lowercase().find("<tr") {
-        let tr_abs = pos + tr_start;
-        let tr_rest = &table[tr_abs..];
-        let tr_end = find_closing_tag(tr_rest, "tr")?;
-        let tr_content = &tr_rest[..tr_end];
-        pos = tr_abs + tr_end;
-
-        let mut cells: Vec<String> = Vec::new();
-        let mut cp = 0;
-        while cp < tr_content.len() {
-            let rest = &tr_content[cp..];
-            let lower_rest = rest.to_lowercase();
-            if let Some(td_start) = lower_rest.find("<td") {
-                let td_abs = cp + td_start;
-                let td_rest = &tr_content[td_abs..];
-                if let Some(td_end) = find_closing_tag(td_rest, "td") {
-                    let inner = &td_rest[..td_end];
-                    let gt = inner.find('>').unwrap_or(0);
-                    let val = strip_html_tags(&inner[gt + 1..]);
-                    cells.push(val.trim().to_string());
-                    cp = td_abs + td_end;
-                    continue;
-                }
-            }
-            if let Some(th_start) = lower_rest.find("<th") {
-                let th_abs = cp + th_start;
-                let th_rest = &tr_content[th_abs..];
-                if let Some(th_end) = find_closing_tag(th_rest, "th") {
-                    let inner = &th_rest[..th_end];
-                    let gt = inner.find('>').unwrap_or(0);
-                    let val = strip_html_tags(&inner[gt + 1..]);
-                    cells.push(val.trim().to_string());
-                    cp = th_abs + th_end;
-                    continue;
-                }
-            }
-            break;
-        }
-
-        if cells.is_empty() {
-            continue;
-        }
-
-        let is_header = tr_content.to_lowercase().contains("<th");
-        let has_colspan = tr_content.to_lowercase().contains("colspan");
-
-        if has_colspan && is_header {
-            continue;
-        }
-
-        if header.is_empty() && (is_header || cells.iter().any(|c| c.parse::<f64>().is_err())) {
-            header = cells.into_iter().map(|c| sanitize_col_name(&c)).collect();
-            if header.iter().all(|h| h.is_empty()) {
-                header.clear();
-            }
-            continue;
-        }
-
-        let mut o = String::from("{");
-        for (i, v) in cells.iter().enumerate() {
-            if i > 0 {
-                o.push(',');
-            }
-            let col = if i < header.len() && !header[i].is_empty() {
-                &header[i]
-            } else if i < header.len() {
-                "val"
-            } else {
-                "col"
-            };
-            o.push('"');
-            o.push_str(col);
-            o.push('"');
-            o.push(':');
-            let cleaned = v.trim();
-            if cleaned.parse::<f64>().is_ok() {
-                o.push_str(cleaned);
-            } else {
-                o.push('"');
-                for ch in cleaned.chars() {
-                    match ch {
-                        '"' => o.push_str("\\\""),
-                        '\\' => o.push_str("\\\\"),
-                        _ => o.push(ch),
-                    }
-                }
-                o.push('"');
-            }
-        }
-        o.push('}');
-        rows.push(o);
-    }
-
-    if rows.is_empty() {
-        return None;
-    }
-    Some(format!("{{\"data\":[{}]}}", rows.join(",")))
-}
-
-fn find_closing_tag(html: &str, tag: &str) -> Option<usize> {
-    let open = format!("<{}", tag);
-    let close = format!("</{}>", tag);
-    let mut depth = 1u32;
-    let mut pos = html.find(&open)? + open.len();
-    while depth > 0 {
-        let rest = &html[pos..];
-        let lower = rest.to_lowercase();
-        let next_open = lower.find(&open);
-        let next_close = lower.find(&close);
-        match (next_open, next_close) {
-            (_, Some(ci)) if next_open.map_or(true, |oi| ci < oi) => {
-                depth -= 1;
-                pos += ci + close.len();
-            }
-            (Some(oi), _) => {
-                depth += 1;
-                pos += oi + open.len();
-            }
-            _ => return None,
-        }
-    }
-    Some(pos)
-}
-
-fn strip_html_tags(s: &str) -> String {
-    let mut out = String::new();
-    let mut in_tag = false;
-    for c in s.chars() {
-        if c == '<' {
-            in_tag = true;
-        } else if c == '>' {
-            in_tag = false;
-        } else if !in_tag {
-            out.push(c);
-        }
-    }
-    out
-}
-
 fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
     let arr = match jpath_val(j, "data").and_then(|v| {
         if let JsonVal::Arr(a) = v {
@@ -2081,6 +1453,7 @@ enum Extract {
         val_key: String,
     },
     Rows {
+        last_line: bool,
         fields: Vec<(String, String)>,
     },
     KeplerMap {
@@ -3254,8 +2627,17 @@ fn load_sources() -> Vec<SourceConfig> {
                     *geom_path = parts.get(1).unwrap_or(&"").to_string();
                 }
             }
+            "tail" => {
+                cur_extracts.push(Extract::Rows {
+                    last_line: true,
+                    fields: Vec::new(),
+                });
+            }
             "rows" => {
-                cur_extracts.push(Extract::Rows { fields: Vec::new() });
+                cur_extracts.push(Extract::Rows {
+                    last_line: false,
+                    fields: Vec::new(),
+                });
             }
             "kepler_map" => {
                 if parts.len() >= 2 {
@@ -3867,44 +3249,9 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
 fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSample> {
     let mut pending: Vec<PendingSample> = Vec::new();
     let mut extracted: HashMap<String, f64> = HashMap::new();
-    let parsed_json = if src.format == "json" || src.format.is_empty() {
+    let parsed_json = if src.format == "json" || src.format.is_empty() || src.format == "universal"
+    {
         parse_json(body)
-    } else if src.format == "votable" {
-        votable_to_json(body).and_then(|j| parse_json(&j))
-    } else if src.format == "csv" {
-        csv_to_json(body).and_then(|j| parse_json(&j))
-    } else if src.format.starts_with("html_table") {
-        let table_idx: usize = if src.format.len() > 10 {
-            src.format[11..].parse().unwrap_or(0)
-        } else {
-            0
-        };
-        html_table_to_json(body, table_idx).and_then(|j| parse_json(&j))
-    } else if src.format == "erddap" {
-        erddap_csv_to_json(body).and_then(|j| parse_json(&j))
-    } else if src.format == "stac" {
-        stac_to_json(body).and_then(|j| parse_json(&j))
-    } else if src.format == "universal" {
-        let trimmed = body.trim_start();
-        if trimmed.starts_with('{') || trimmed.starts_with('[') {
-            parse_json(body)
-        } else if trimmed.starts_with("<?xml")
-            || trimmed.contains("<VOTABLE")
-            || trimmed.contains("<votable")
-        {
-            votable_to_json(body).and_then(|j| parse_json(&j))
-        } else if trimmed.contains("<table") {
-            html_table_to_json(body, 0).and_then(|j| parse_json(&j))
-        } else if trimmed.contains("\"stac_version\"")
-            || trimmed.contains("\"type\":\"FeatureCollection\"")
-        {
-            stac_to_json(body).and_then(|j| parse_json(&j))
-        } else {
-            csv_to_json(body)
-                .and_then(|j| parse_json(&j))
-                .or_else(|| erddap_csv_to_json(body).and_then(|j| parse_json(&j)))
-                .or_else(|| parse_json(body))
-        }
     } else {
         None
     };
@@ -4286,58 +3633,9 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 fields,
                 lon_sign,
             } => {
-                let (eff_lat_key, eff_lon_key, eff_epoch_key) = if src.format == "erddap"
-                    && (lat_key.is_empty() || lon_key.is_empty())
-                {
-                    if let Some(ref j) = parsed_json {
-                        if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                            if let Some(first) = arr.first() {
-                                if let JsonVal::Obj(map) = first {
-                                    let detect = |candidates: &[&str]| -> String {
-                                        for c in candidates {
-                                            if map.contains_key(*c) {
-                                                return c.to_string();
-                                            }
-                                        }
-                                        for (k, _) in map.iter() {
-                                            let kl = k.to_lowercase();
-                                            if candidates.iter().any(|c| kl.contains(c)) {
-                                                return k.clone();
-                                            }
-                                        }
-                                        String::new()
-                                    };
-                                    let lk = if lat_key.is_empty() {
-                                        detect(&["latitude", "lat", "LAT", "LATITUDE"])
-                                    } else {
-                                        lat_key.clone()
-                                    };
-                                    let lnk = if lon_key.is_empty() {
-                                        detect(&["longitude", "lon", "LON", "LONGITUDE", "long"])
-                                    } else {
-                                        lon_key.clone()
-                                    };
-                                    let ek = if epoch_key.is_empty() {
-                                        detect(&["time", "TIME", "Time", "date", "DATE"])
-                                    } else {
-                                        epoch_key.clone()
-                                    };
-                                    (lk, lnk, ek)
-                                } else {
-                                    (lat_key.clone(), lon_key.clone(), epoch_key.clone())
-                                }
-                            } else {
-                                (lat_key.clone(), lon_key.clone(), epoch_key.clone())
-                            }
-                        } else {
-                            (lat_key.clone(), lon_key.clone(), epoch_key.clone())
-                        }
-                    } else {
-                        (lat_key.clone(), lon_key.clone(), epoch_key.clone())
-                    }
-                } else {
-                    (lat_key.clone(), lon_key.clone(), epoch_key.clone())
-                };
+                let eff_lat_key = lat_key.clone();
+                let eff_lon_key = lon_key.clone();
+                let eff_epoch_key = epoch_key.clone();
                 if let Some(ref j) = parsed_json {
                     if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
                         for v in arr.iter() {
@@ -4618,7 +3916,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                     }
                 }
             }
-            Extract::Rows { fields } => {
+            Extract::Rows { last_line, fields } => {
                 if let Frame::WGS84 { lat, lon, alt } | Frame::IAU2000 { lat, lon, alt } = src.frame
                 {
                     let col_indices: Vec<(usize, &String)> = fields
@@ -4643,29 +3941,55 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                             }
                         })
                         .collect();
-                    for line in body.lines() {
-                        let trimmed = line.trim();
-                        if trimmed.is_empty() || trimmed.starts_with('#') {
-                            continue;
-                        }
-                        let cols = split_data_line(trimmed);
-                        let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                        for (idx, fn_) in &col_indices {
-                            if let Some(val) = cols
-                                .get(*idx)
-                                .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok())
-                            {
-                                ev_fields.push((fn_.to_string(), val));
+                    if *last_line {
+                        let last_data_line = body.lines().rev().find(|line| {
+                            let t = line.trim();
+                            !t.is_empty() && !t.starts_with('#')
+                        });
+                        if let Some(line) = last_data_line {
+                            let cols = split_data_line(line.trim());
+                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            for (idx, fn_) in &col_indices {
+                                if let Some(val) = cols
+                                    .get(*idx)
+                                    .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok())
+                                {
+                                    ev_fields.push((fn_.to_string(), val));
+                                }
+                            }
+                            if !ev_fields.is_empty() {
+                                pending.push(PendingSample {
+                                    epoch: now,
+                                    position: PendingPosition::Geodetic { lat, lon, alt },
+                                    fields: ev_fields,
+                                });
                             }
                         }
-                        if ev_fields.is_empty() {
-                            continue;
+                    } else {
+                        for line in body.lines() {
+                            let trimmed = line.trim();
+                            if trimmed.is_empty() || trimmed.starts_with('#') {
+                                continue;
+                            }
+                            let cols = split_data_line(trimmed);
+                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
+                            for (idx, fn_) in &col_indices {
+                                if let Some(val) = cols
+                                    .get(*idx)
+                                    .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok())
+                                {
+                                    ev_fields.push((fn_.to_string(), val));
+                                }
+                            }
+                            if ev_fields.is_empty() {
+                                continue;
+                            }
+                            pending.push(PendingSample {
+                                epoch: now,
+                                position: PendingPosition::Geodetic { lat, lon, alt },
+                                fields: ev_fields,
+                            });
                         }
-                        pending.push(PendingSample {
-                            epoch: now,
-                            position: PendingPosition::Geodetic { lat, lon, alt },
-                            fields: ev_fields,
-                        });
                     }
                 }
             }
@@ -5243,6 +4567,29 @@ fn per_origin_sleep(archive: &Archive, fallback: f64) -> f64 {
         .max(0.1)
 }
 
+fn auto_defect(name: &str, host: &str, zero_yield: u32) {
+    if zero_yield < 4 || zero_yield & (zero_yield - 1) != 0 {
+        return;
+    }
+    let title = format!("[AUTO-DEFECT] {} — zero_yield x{}", name, zero_yield);
+    let body = format!(
+        "`{}` returned no data for {} consecutive fetch cycles.\n\nHost: `{}`\n\nCheck `phi/sources.φ`.",
+        name, zero_yield, host
+    );
+    let _ = Command::new("gh")
+        .args([
+            "issue",
+            "create",
+            "--title",
+            &title,
+            "--body",
+            &body,
+            "--label",
+            "auto-defect",
+        ])
+        .spawn();
+}
+
 fn write_health_report(archive: &Archive) {
     let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
     let ttl_eff = archive
@@ -5251,25 +4598,14 @@ fn write_health_report(archive: &Archive) {
         .unwrap_or_else(|e| e.into_inner())
         .clone();
     let sources = &archive.sources;
-    let mut out = String::from("{\n  \"updated\": \"");
+    let mut out = String::from("{\n  \"updated\": ");
     if let Ok(now_unix) = SystemTime::now().duration_since(UNIX_EPOCH) {
-        let secs = now_unix.as_secs();
-        let days_since_epoch = secs / 86400;
-        let (y, mo, d) = days_to_ymd(days_since_epoch + 719528);
-        let rem = secs % 86400;
-        let h = rem / 3600;
-        let mi = (rem % 3600) / 60;
-        let s = rem % 60;
-        use std::fmt::Write;
-        let _ = write!(
-            out,
-            "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z",
-            y, mo, d, h, mi, s
-        );
+        out.push_str(&format!("{:.3}", now_unix.as_secs_f64()));
+    } else {
+        out.push_str("0.0");
     }
-    out.push('"');
-    let _ = write!(out, ",\n  \"total_sources\": {}", sources.len());
-    let _ = write!(out, ",\n  \"active_origins\": {}", origins.len());
+    out.push_str(&format!(",\n  \"total_sources\": {}", sources.len()));
+    out.push_str(&format!(",\n  \"active_origins\": {}", origins.len()));
     let mut zero_lines: Vec<String> = Vec::new();
     let mut unch_lines: Vec<String> = Vec::new();
     for (origin, state) in origins.iter() {
@@ -5286,6 +4622,7 @@ fn write_health_report(archive: &Archive) {
                 host,
                 state.zero_yield
             ));
+            auto_defect(name, host, state.zero_yield);
         }
         if state.unchanged_count >= 1 {
             let si = origin.0 as usize;
@@ -5315,7 +4652,7 @@ fn write_health_report(archive: &Archive) {
             out.push_str(",\n");
         }
         first = false;
-        let _ = write!(out, "    \"{}\": {}", host, ttl);
+        out.push_str(&format!("    \"{}\": {}", host, ttl));
     }
     out.push_str("\n  }\n}\n");
     drop(origins);
@@ -5323,6 +4660,7 @@ fn write_health_report(archive: &Archive) {
 }
 
 fn warm_cache(archive: Arc<Archive>) {
+    let mut health_counter: u32 = 0;
     loop {
         let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
         let cadence = ((min_ttl as f64) / Φ).max(1.0);
@@ -5748,6 +5086,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                     entry.unchanged_count += 1;
                                 } else {
                                     entry.last_body_hash = body_hash;
+                                    entry.unchanged_count = 0;
                                     pendings = Some(extract_pending(src, &body, now));
                                 }
                             }
@@ -5783,6 +5122,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                     }
                                 } else {
                                     origins.entry(origin).or_default().zero_yield = 0;
+                                    origins.entry(origin).or_default().unchanged_count = 0;
                                     refreshed.insert(origin);
                                     for pend in pendings {
                                         for smp in
@@ -5879,6 +5219,11 @@ fn warm_cache(archive: Arc<Archive>) {
             .lock()
             .unwrap_or_else(|e| e.into_inner())
             .retain(|_, o| (now - o.fetched).abs() < o.ttl.max(1.0) * 64.0);
+        health_counter += 1;
+        if health_counter == 1 || health_counter % 5 == 0 {
+            write_health_report(&archive);
+            eprintln!("health report written (cycle {})", health_counter);
+        }
         let sleep_secs = per_origin_sleep(&archive, cadence);
         let lock = archive
             .warm_cache_mutex
@@ -5942,69 +5287,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::{
-        csv_to_json, render_source_body, render_source_url, votable_to_json, SourceConfig,
-    };
-
-    #[test]
-    fn test_votable_irsa() {
-        let xml = include_str!("../test_data/irsa_votable.xml");
-        let result = votable_to_json(xml);
-        assert!(result.is_some());
-        let json = result.unwrap();
-        assert!(json.contains("150.167002"));
-        assert_eq!(json.matches("\"ra\"").count(), 3);
-    }
-
-    #[test]
-    fn test_votable_mast() {
-        let xml = include_str!("../test_data/mast_caom_votable.xml");
-        let result = votable_to_json(xml);
-        assert!(result.is_some());
-        let json = result.unwrap();
-        assert!(json.contains("149.96846"));
-        assert_eq!(json.matches("\"s_ra\"").count(), 3);
-    }
-
-    #[test]
-    fn test_csv_basic() {
-        let csv = "ra,dec,parallax,mag_g\n56.75,24.12,1.23,12.34\n57.12,23.78,0.98,13.45";
-        let result = csv_to_json(csv);
-        assert!(result.is_some());
-        let json = result.unwrap();
-        assert!(json.contains("56.75"));
-        assert_eq!(json.matches("\"ra\"").count(), 2);
-    }
-
-    #[test]
-    fn test_csv_quoted() {
-        let csv = "\"name\",\"value\"\n\"foo,bar\",123\n\"baz\",456";
-        let result = csv_to_json(csv);
-        assert!(result.is_some());
-        let json = result.unwrap();
-        assert!(json.contains("foo,bar"));
-        assert_eq!(json.matches("\"name\"").count(), 2);
-    }
-
-    #[test]
-    fn test_csv_comment_lines() {
-        let csv = "# header comment\nra,dec\n# data comment\n1.0,2.0\n3.0,4.0";
-        let result = csv_to_json(csv);
-        assert!(result.is_some());
-        let json = result.unwrap();
-        assert_eq!(json.matches("\"ra\"").count(), 2);
-    }
-
-    #[test]
-    fn test_csv_alfalfa() {
-        let csv = include_str!("../test_data/alfalfa_sample.csv");
-        let result = csv_to_json(csv);
-        assert!(result.is_some());
-        let json = result.unwrap();
-        assert!(json.contains("0.01042"));
-        assert!(json.contains("456-013"));
-        assert_eq!(json.matches("\"AGCNr\"").count(), 5);
-    }
+    use super::{render_source_body, render_source_url, SourceConfig};
 
     #[test]
     fn test_render_source_url_substitutions() {
