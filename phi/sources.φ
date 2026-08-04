@@ -11310,7 +11310,7 @@ last_row salinity hydrosphere_salinity_psu
 source hydrosphere_neracoos_a01_met_temp
 ttl 3600
 force thermal
-url https://data.neracoos.org/erddap/tabledap/A01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_a01_met_temp.json
 wgs84 42.523 -70.566
 format erddap
 last_row air_temperature hydrosphere_buoy_air_temp_c
@@ -11319,7 +11319,7 @@ last_row barometric_pressure hydrosphere_buoy_pressure_hpa
 source hydrosphere_neracoos_a01_met_wind
 ttl 3600
 force advective
-url https://data.neracoos.org/erddap/tabledap/A01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_a01_met_wind.json
 wgs84 42.523 -70.566
 format erddap
 last_row wind_speed hydrosphere_buoy_wind_speed_ms
@@ -11328,7 +11328,7 @@ last_row wind_gust hydrosphere_buoy_wind_gust_ms
 source hydrosphere_neracoos_a01_surface_current
 ttl 3600
 force advective
-url https://data.neracoos.org/erddap/tabledap/A01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_a01_surface_current.json
 wgs84 42.523 -70.566
 format erddap
 last_row current_speed hydrosphere_buoy_current_speed_cms
@@ -11337,7 +11337,7 @@ last_row current_direction hydrosphere_buoy_current_dir_deg
 source hydrosphere_neracoos_b01_surface_current
 ttl 3600
 force advective
-url https://data.neracoos.org/erddap/tabledap/B01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_b01_surface_current.json
 wgs84 43.179 -70.427
 format erddap
 last_row current_speed hydrosphere_buoy_current_speed_cms
@@ -11346,7 +11346,7 @@ last_row current_direction hydrosphere_buoy_current_dir_deg
 source hydrosphere_neracoos_e01_surface_current
 ttl 3600
 force advective
-url https://data.neracoos.org/erddap/tabledap/E01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_e01_surface_current.json
 wgs84 43.715 -69.358
 format erddap
 last_row current_speed hydrosphere_buoy_current_speed_cms
@@ -11355,7 +11355,7 @@ last_row current_direction hydrosphere_buoy_current_dir_deg
 source hydrosphere_neracoos_f01_surface_current
 ttl 3600
 force advective
-url https://data.neracoos.org/erddap/tabledap/F01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_f01_surface_current.json
 wgs84 44.055 -68.998
 format erddap
 last_row current_speed hydrosphere_buoy_current_speed_cms
@@ -11364,7 +11364,7 @@ last_row current_direction hydrosphere_buoy_current_dir_deg
 source hydrosphere_neracoos_i01_surface_current
 ttl 3600
 force advective
-url https://data.neracoos.org/erddap/tabledap/I01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_i01_surface_current.json
 wgs84 44.102 -68.113
 format erddap
 last_row current_speed hydrosphere_buoy_current_speed_cms
@@ -11373,7 +11373,7 @@ last_row current_direction hydrosphere_buoy_current_dir_deg
 source hydrosphere_neracoos_m01_surface_current
 ttl 3600
 force advective
-url https://data.neracoos.org/erddap/tabledap/M01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_m01_surface_current.json
 wgs84 43.491 -67.880
 format erddap
 last_row current_speed hydrosphere_buoy_current_speed_cms
@@ -11382,7 +11382,7 @@ last_row current_direction hydrosphere_buoy_current_dir_deg
 source hydrosphere_neracoos_n01_surface_current
 ttl 3600
 force advective
-url https://data.neracoos.org/erddap/tabledap/N01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_n01_surface_current.json
 wgs84 42.330 -65.914
 format erddap
 last_row current_speed hydrosphere_buoy_current_speed_cms
@@ -11391,7 +11391,7 @@ last_row current_direction hydrosphere_buoy_current_dir_deg
 source hydrosphere_neracoos_b01_met_temp
 ttl 3600
 force thermal
-url https://data.neracoos.org/erddap/tabledap/B01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_b01_met_temp.json
 wgs84 43.181 -70.428
 format erddap
 last_row air_temperature hydrosphere_buoy_air_temp_c
@@ -11400,7 +11400,7 @@ last_row barometric_pressure hydrosphere_buoy_pressure_hpa
 source hydrosphere_neracoos_e01_met_temp
 ttl 3600
 force thermal
-url https://data.neracoos.org/erddap/tabledap/E01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_e01_met_temp.json
 wgs84 43.714 -69.356
 format erddap
 last_row air_temperature hydrosphere_buoy_air_temp_c
@@ -11408,7 +11408,7 @@ last_row air_temperature hydrosphere_buoy_air_temp_c
 source hydrosphere_neracoos_i01_met_temp
 ttl 3600
 force thermal
-url https://data.neracoos.org/erddap/tabledap/I01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_i01_met_temp.json
 wgs84 44.103 -68.109
 format erddap
 last_row air_temperature hydrosphere_buoy_air_temp_c
@@ -11416,7 +11416,7 @@ last_row air_temperature hydrosphere_buoy_air_temp_c
 source hydrosphere_neracoos_a01_waves
 ttl 3600
 force acoustic
-url https://data.neracoos.org/erddap/tabledap/A01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_a01_waves.json
 wgs84 42.523 -70.566
 format erddap
 last_row significant_wave_height hydrosphere_wave_height_m
@@ -11424,7 +11424,7 @@ last_row significant_wave_height hydrosphere_wave_height_m
 source hydrosphere_neracoos_b01_waves
 ttl 3600
 force acoustic
-url https://data.neracoos.org/erddap/tabledap/B01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_b01_waves.json
 wgs84 43.181 -70.428
 format erddap
 last_row significant_wave_height hydrosphere_wave_height_m
@@ -11432,7 +11432,7 @@ last_row significant_wave_height hydrosphere_wave_height_m
 source hydrosphere_neracoos_e01_waves
 ttl 3600
 force acoustic
-url https://data.neracoos.org/erddap/tabledap/E01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_e01_waves.json
 wgs84 43.714 -69.356
 format erddap
 last_row significant_wave_height hydrosphere_wave_height_m
@@ -11440,7 +11440,7 @@ last_row significant_wave_height hydrosphere_wave_height_m
 source hydrosphere_neracoos_i01_waves
 ttl 3600
 force acoustic
-url https://data.neracoos.org/erddap/tabledap/I01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_i01_waves.json
 wgs84 44.103 -68.109
 format erddap
 last_row significant_wave_height hydrosphere_wave_height_m
@@ -11448,7 +11448,7 @@ last_row significant_wave_height hydrosphere_wave_height_m
 source hydrosphere_neracoos_a01_ocean_temp
 ttl 3600
 force thermal
-url https://data.neracoos.org/erddap/tabledap/A01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_a01_ocean_temp.json
 wgs84 42.523 -70.566
 format erddap
 last_row temperature hydrosphere_ocean_temp_c
@@ -11457,7 +11457,7 @@ last_row salinity hydrosphere_ocean_salinity_psu
 source hydrosphere_neracoos_b01_ocean_temp
 ttl 3600
 force thermal
-url https://data.neracoos.org/erddap/tabledap/B01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_b01_ocean_temp.json
 wgs84 43.181 -70.428
 format erddap
 last_row temperature hydrosphere_ocean_temp_c
@@ -11465,7 +11465,7 @@ last_row temperature hydrosphere_ocean_temp_c
 source hydrosphere_neracoos_e01_ocean_temp
 ttl 3600
 force thermal
-url https://data.neracoos.org/erddap/tabledap/E01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_e01_ocean_temp.json
 wgs84 43.714 -69.356
 format erddap
 last_row temperature hydrosphere_ocean_temp_c
@@ -11473,7 +11473,7 @@ last_row temperature hydrosphere_ocean_temp_c
 source hydrosphere_neracoos_tide_adams
 ttl 3600
 force gravity
-url https://data.neracoos.org/erddap/tabledap/Hohonu_tide_Adams_Point_NH.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_tide_adams.json
 wgs84 43.09 -70.74
 format erddap
 last_row navd88_meters hydrosphere_tide_level_m
@@ -11481,7 +11481,7 @@ last_row navd88_meters hydrosphere_tide_level_m
 source hydrosphere_neracoos_tide_rockland
 ttl 3600
 force gravity
-url https://data.neracoos.org/erddap/tabledap/Greenstream_tide_ME_RKL.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_tide_rockland.json
 wgs84 44.104 -69.109
 format erddap
 last_row navd88_meters hydrosphere_tide_level_m
@@ -11489,7 +11489,7 @@ last_row navd88_meters hydrosphere_tide_level_m
 source hydrosphere_neracoos_tide_bowdoinham
 ttl 3600
 force gravity
-url https://data.neracoos.org/erddap/tabledap/Greenstream_tide_ME_BWD.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_tide_bowdoinham.json
 wgs84 44.01 -69.90
 format erddap
 last_row navd88_meters hydrosphere_tide_level_m
