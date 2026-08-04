@@ -1334,7 +1334,7 @@ lon_key geometry.x
 source gbif_global_occurrence_search
 ttl 300
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_global_occurrence_search.json
 map .
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -1872,7 +1872,7 @@ field created created_utc
 source heasarc_integral_ibas_sgr_burst_alerts
 ttl 300
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_integral_ibas_sgr_burst_alerts.json
 format text
 rows
 ra_key ra
@@ -8261,7 +8261,7 @@ field validTimeTo valid_to_epoch
 source biosphere_gbif_nearby_species
 ttl 600
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_nearby_species.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -8270,7 +8270,7 @@ field species biosphere_species_nearby
 source biosphere_gbif_recent_birds
 ttl 600
 force em
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_recent_birds.json
 wgs84 55.685000 12.571000
 field count biosphere_bird_count
 
@@ -10386,7 +10386,7 @@ field rates.PHP biosphere_usd_php_rate
 source biosphere_gbif_bird_hotspots
 ttl 3600
 force em
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_bird_hotspots.json
 wgs84 42.4809 -76.4527
 field count biosphere_birding_hotspots
 
@@ -10850,13 +10850,13 @@ extent 1.76e-5
 source biosphere_gbif
 ttl 3600
 force em
-url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif.json
 field count biosphere_species_count
 
 source gbif_amphibian_global_occurrences
 ttl 3600
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_amphibian_global_occurrences.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -10866,7 +10866,7 @@ field family family
 source gbif_bat_acoustic_monitoring_data
 ttl 3600
 force acoustic
-url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_bat_acoustic_monitoring_data.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -10890,7 +10890,7 @@ field occurrenceDate observation_date
 source gbif_ept_macroinvertebrate_bioindicators
 ttl 3600
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_ept_macroinvertebrate_bioindicators.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -10899,7 +10899,7 @@ field species species_name
 source gbif_freshwater_fish_observations
 ttl 3600
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_freshwater_fish_observations.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -10908,7 +10908,7 @@ field species species_name
 source gbif_marine_mammal_sightings
 ttl 3600
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?orderKey=180130&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_marine_mammal_sightings.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -10945,7 +10945,7 @@ depth_key coordinatePrecision
 source gbif_pollinator_bee_monitoring
 ttl 3600
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_pollinator_bee_monitoring.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -10958,7 +10958,7 @@ field individualCount individual_count
 source gbif_shorebird_coastal_occurrences
 ttl 3600
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?orderKey=719&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_shorebird_coastal_occurrences.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -10967,7 +10967,7 @@ field species species_name
 source gbif_species_occurrences_global
 ttl 3600
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_species_occurrences_global.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -10978,7 +10978,7 @@ field kingdom kingdom
 source gbif_threatened_species
 ttl 3600
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_threatened_species.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -11234,7 +11234,7 @@ extent 5.45e-6
 source astro_heasarc
 ttl 3600
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+name,+t_scid+FROM+hst+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_heasarc.json
 verify false
 format votable
 map data
@@ -11260,7 +11260,7 @@ field type source_classification
 source heasarc_sgra_multiwavelength_flares
 ttl 3600
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+date,band,peak_flux,duration,type+FROM+sgraflares+WHERE+date+IS+NOT+NULL+ORDER+BY+date+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_sgra_multiwavelength_flares.json
 wgs84 -29.008 266.417
 format text
 rows
@@ -13370,7 +13370,7 @@ field feed.totalResults physics_arxiv_stat_papers_total
 source astro_asas_sn_variables_vizier
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,Vmag+FROM+%22II/366/catv2021%22
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_asas_sn_variables_vizier.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -13549,7 +13549,7 @@ field key biosphere_gbif_amphibian_key
 source biosphere_gbif_arachnids
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_arachnids.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13588,7 +13588,7 @@ field key biosphere_gbif_bird_key
 source biosphere_gbif_birds_migratory
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_birds_migratory.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13599,7 +13599,7 @@ field locality biosphere_gbif_bird_locality
 source biosphere_gbif_cnidaria
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_cnidaria.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13635,7 +13635,7 @@ field key biosphere_gbif_fungi_key
 source biosphere_gbif_insects
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_insects.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13665,7 +13665,7 @@ field eventDate biosphere_gbif_marine_date
 source biosphere_gbif_migrations
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_migrations.json
 wgs84 55.7022 12.5592
 field count biosphere_migratory_bird_records_this_month
 
@@ -13701,7 +13701,7 @@ field coordinateUncertaintyInMeters biosphere_gbif_plant_uncertainty_m
 source biosphere_gbif_plants_bbox
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_plants_bbox.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13712,7 +13712,7 @@ field eventDate biosphere_gbif_plant_date
 source biosphere_gbif_reptiles
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_reptiles.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -14529,7 +14529,7 @@ dist_key sy_dist 3.085677581e16
 source astro_fermi_4fgl_dr3_vizier
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,F1000i,PLGam+FROM+%22IX/67/4fgldr3%22
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_fermi_4fgl_dr3_vizier.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -14540,7 +14540,7 @@ field_in 3 agn_pl_index
 source astro_fermi_lat_4fgl_dr4
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,redshift,flux_100_300000,spectral_index,object_type,nu_flux,z_phot+FROM+fermilpsc+WHERE+flux_100_300000+IS+NOT+NULL+ORDER+BY+flux_100_300000+DESC&FORMAT=text&limit=2000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_fermi_lat_4fgl_dr4.json
 format text
 rows
 ra_key ra
@@ -14567,7 +14567,7 @@ field year observation_year
 source gbif_marine_species_global
 ttl 86400
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&basisOfRecord=HUMAN_OBSERVATION&decimalLatitude=-90,90&habitat=MARINE
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_marine_species_global.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -14594,7 +14594,7 @@ field basisOfRecord basis_of_record
 source gbif_species_richness_africa
 ttl 86400
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&decimalLatitude=-35,38&decimalLongitude=-20,55&basisOfRecord=HUMAN_OBSERVATION
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_species_richness_africa.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -15069,7 +15069,7 @@ field organization.title org
 source heasarc_3fhl_high_energy_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_10_1000,flux_10_30,flux_30_100,flux_100_1000,spectral_index,redshift,assoc_name+FROM+fermifhl+WHERE+flux_10_1000+IS+NOT+NULL+ORDER+BY+flux_10_1000+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_3fhl_high_energy_catalog.json
 format text
 rows
 ra_key ra
@@ -15082,7 +15082,7 @@ field assoc_name associated_name
 source heasarc_4fgl_blazars_only
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,redshift,spectral_index,nu_synpeak,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','FSRQ')+AND+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_4fgl_blazars_only.json
 format text
 rows
 ra_key ra
@@ -15096,7 +15096,7 @@ field assoc_name associated_name
 source heasarc_4fgl_dr4_gamma_ray_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,extended,assoc_name,redshift+FROM+fermilpsc+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_4fgl_dr4_gamma_ray_catalog.json
 format text
 rows
 ra_key ra
@@ -15111,7 +15111,7 @@ field assoc_name associated_name
 source heasarc_batse_4b_grb_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2704+name,ra,dec,t90,fluence,peak_flux,time_trigger+FROM+batsegrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_batse_4b_grb_catalog.json
 format text
 rows
 ra_key ra
@@ -15125,7 +15125,7 @@ field time_trigger trigger_time_utc
 source heasarc_black_hole_binary_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,type,period,mass_donor,mass_bh,dist,classification+FROM+blackholebin+WHERE+ra+IS+NOT+NULL+ORDER+BY+mass_bh+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_black_hole_binary_catalog.json
 format text
 rows
 ra_key ra
@@ -15141,7 +15141,7 @@ dist_key dist
 source heasarc_chandra_csc2
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,extent_flag,var_flag,conf_flag+FROM+csc+WHERE+conf_flag%3D0+ORDER+BY+name+ASC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_chandra_csc2.json
 format text
 rows
 ra_key ra
@@ -15153,7 +15153,7 @@ field var_flag xray_variable_flag
 source heasarc_chandra_deep_field_north
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+700+name,ra,dec,soft_flux,hard_flux,full_flux,band_ratio,photon_index,redshift+FROM+cdfnchandra+WHERE+ra+IS+NOT+NULL+ORDER+BY+full_flux+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_chandra_deep_field_north.json
 format text
 rows
 ra_key ra
@@ -15167,7 +15167,7 @@ field photon_index photon_idx
 source heasarc_chandra_deep_field_south_7ms
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,flux_s,flux_h,flux_f,photon_index_ap,z_ap+FROM+cdfs7ms+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_f+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_chandra_deep_field_south_7ms.json
 format text
 rows
 ra_key ra
@@ -15181,7 +15181,7 @@ field photon_index_ap photon_idx
 source heasarc_chandra_galactic_center
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,photon_index,exposure+FROM+chan_gc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_chandra_galactic_center.json
 format text
 rows
 ra_key ra
@@ -15228,7 +15228,7 @@ field detector chandra_detector
 source heasarc_chandra_snr_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,distance,age,type,obs_id+FROM+chansnr+WHERE+ra+IS+NOT+NULL+ORDER+BY+distance+ASC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_chandra_snr_catalog.json
 format text
 rows
 ra_key ra
@@ -15241,7 +15241,7 @@ field type snr_type
 source heasarc_fermi_4fgl_all
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_fermi_4fgl_all.json
 format text
 rows
 ra_key ra
@@ -15256,7 +15256,7 @@ field assoc_name associated_name
 source heasarc_fermi_4fgl_blazars
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+name,ra,dec,pl_flux_density,pl_index,detection_significance,source_type+FROM+fermilpsc+WHERE+detection_significance%3E10+AND+source_type+IN+(%27bll%27,%27fsrq%27,%27bcu%27)+ORDER+BY+pl_flux_density+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_fermi_4fgl_blazars.json
 format text
 rows
 ra_key ra
@@ -15268,7 +15268,7 @@ field source_type blazar_class
 source heasarc_fermi_4fgl_dr4
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,detection_significance,pl_flux_density,pl_index,source_type+FROM+fermilpsc+WHERE+detection_significance%3E10+ORDER+BY+detection_significance+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_fermi_4fgl_dr4.json
 format text
 rows
 ra_key ra
@@ -15281,7 +15281,7 @@ field source_type gamma_source_class
 source heasarc_fermi_4lac_agn
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3500+name,ra,dec,redshift,flux_1_100_gev,source_type,nu_syn+FROM+fermilac+WHERE+redshift+IS+NOT+NULL+AND+redshift%3E0+ORDER+BY+flux_1_100_gev+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_fermi_4lac_agn.json
 format text
 rows
 ra_key ra
@@ -15295,7 +15295,7 @@ field source_type agn_class
 source heasarc_fermi_blazars
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','bll','FSRQ','fsrq','BCU','bcu')+ORDER+BY+flux_density+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_fermi_blazars.json
 format text
 rows
 ra_key ra
@@ -15309,7 +15309,7 @@ field assoc_name associated_name
 source heasarc_fermi_gbm_burst_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,t90,fluence,peak_flux,redshift,trigger_time,classification+FROM+fermigbrst+WHERE+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_fermi_gbm_burst_catalog.json
 format text
 rows
 ra_key ra
@@ -15325,7 +15325,7 @@ field classification burst_classification
 source heasarc_fermi_gbm_tgf_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,lat,lon,trigger_time,duration,e_mean,counts+FROM+fermitgf+WHERE+lat+IS+NOT+NULL+ORDER+BY+counts+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_fermi_gbm_tgf_catalog.json
 format text
 rows
 lat_key lat
@@ -15339,7 +15339,7 @@ field counts total_photon_counts
 source heasarc_fourfgl_dr4
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Source_Name,CLASS1,GLON,GLAT,nu_flux,nu_flux_1000,LP_Index,Pivot_Energy,TS+FROM+public.angel_fourfgl+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+nu_flux+DESC&FORMAT=text
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_fourfgl_dr4.json
 format text
 rows
 ra_key RAJ2000
@@ -15352,7 +15352,7 @@ field LP_Index spectral_index
 source heasarc_hmxb_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,spinper,dist,optical_name+FROM+hmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_hmxb_catalog.json
 format text
 rows
 ra_key ra
@@ -15368,7 +15368,7 @@ dist_key dist
 source heasarc_icecube_10yr_ps_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,ts,flux,p_value,sigma+FROM+icecube_ps_10y+WHERE+ra+IS+NOT+NULL+ORDER+BY+ts+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_icecube_10yr_ps_catalog.json
 format text
 rows
 ra_key ra
@@ -15381,7 +15381,7 @@ field sigma significance_sigma
 source heasarc_integral_ibis
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+name,ra,dec,sb_flux,hb_flux,source_type+FROM+intibisag2+WHERE+sb_flux+IS+NOT+NULL+ORDER+BY+sb_flux+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_integral_ibis.json
 format text
 rows
 ra_key 1
@@ -15394,7 +15394,7 @@ field_in 5 source_type
 source heasarc_integral_ibis_grb_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,t90,fluence,peak_flux,time_trigger,error_radius+FROM+intgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_integral_ibis_grb_catalog.json
 format text
 rows
 ra_key ra
@@ -15409,7 +15409,7 @@ field error_radius position_error_arcmin
 source heasarc_lmxb_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,dist,compact_type+FROM+lmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_lmxb_catalog.json
 format text
 rows
 ra_key ra
@@ -15440,7 +15440,7 @@ field hardness_ratio_1 hardness_ratio
 source heasarc_maxi_gsc_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_4_10,flux_10_20,flux_20_40,n_sigma,type+FROM+maxigsc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_maxi_gsc_catalog.json
 format text
 rows
 ra_key ra
@@ -15454,7 +15454,7 @@ field type source_type
 source heasarc_mopitt_co_profile_l3
 ttl 86400
 force diffusion
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+latitude,longitude,co_total_column,co_surface,co_500hpa,co_300hpa,date+FROM+mopittl3m+WHERE+latitude+IS+NOT+NULL+ORDER+BY+co_total_column+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_mopitt_co_profile_l3.json
 format text
 rows
 lat_key latitude
@@ -15468,7 +15468,7 @@ field date obs_date
 source heasarc_pulsar_wind_nebulae
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+name,ra,dec,dist,assoc_pulsar,luminosity_x,size_arcmin+FROM+pwncat+WHERE+ra+IS+NOT+NULL+ORDER+BY+luminosity_x+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_pulsar_wind_nebulae.json
 format text
 rows
 ra_key ra
@@ -15482,7 +15482,7 @@ field size_arcmin angular_size_arcmin
 source heasarc_rosat_2rxs
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,source_extent,hardness_ratio_1,hardness_ratio_2,detection_likelihood+FROM+rass2rxs+WHERE+detection_likelihood%3E6+ORDER+BY+count_rate+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_rosat_2rxs.json
 format text
 rows
 ra_key 1
@@ -15497,7 +15497,7 @@ field_in 7 detection_likelihood
 source heasarc_rosat_bright_source_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_rosat_bright_source_catalog.json
 format text
 rows
 ra_key ra
@@ -15510,7 +15510,7 @@ field ext source_extent
 source heasarc_rosat_bsc
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_rosat_bsc.json
 format text
 rows
 ra_key 1
@@ -15524,7 +15524,7 @@ field_in 6 source_extent
 source heasarc_rosat_xclass_clusters
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,redshift,count_rate,flux_0_1_2_4,luminosity_0_1_2_4,ext+FROM+xcsunion+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_0_1_2_4+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_rosat_xclass_clusters.json
 format text
 rows
 ra_key ra
@@ -15538,7 +15538,7 @@ field ext extent
 source heasarc_rxte_asm
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Name,Avg_Rate,Rate_Err+FROM+public.rxte_asm+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Avg_Rate+DESC&FORMAT=text
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_rxte_asm.json
 format text
 rows
 ra_key RAJ2000
@@ -15550,7 +15550,7 @@ field Rate_Err rate_error
 source heasarc_rxte_asm_xray_sources
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,count_rate+FROM+rxmtasm+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_rxte_asm_xray_sources.json
 format text
 rows
 ra_key ra
@@ -15575,7 +15575,7 @@ field ext1020 extinction_1020nm_km
 source heasarc_swift_bat105m
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+2000+name,ra,dec,flux,redshift,source_type+FROM+swbat105m+WHERE+flux+IS+NOT+NULL+ORDER+BY+flux+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_swift_bat105m.json
 format text
 rows
 ra_key 1
@@ -15588,7 +15588,7 @@ field_in 5 source_type
 source heasarc_swift_bat_grb_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,t90,fluence,redshift,time_trigger,xrt_column,host_galaxy+FROM+swiftgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_swift_bat_grb_catalog.json
 format text
 rows
 ra_key ra
@@ -15617,7 +15617,7 @@ field association association
 source heasarc_threefhl
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Source_Name,ASSOC1,TeV_Flag,GLON,GLAT,Energy_Flux_Band3,Power_Index+FROM+public.angel_threefhl+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Energy_Flux_Band3+DESC&FORMAT=text
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_threefhl.json
 format text
 rows
 ra_key RAJ2000
@@ -15629,7 +15629,7 @@ field Energy_Flux_Band3 energy_flux_10gev_2tev_erg_cm2s
 source heasarc_xmm_4xmm_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_xmm_4xmm_catalog.json
 format text
 rows
 ra_key ra
@@ -15640,7 +15640,7 @@ field ep_flux xmm_flux_erg_cm2s
 source heasarc_xmm_4xmm_dr13
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_xmm_4xmm_dr13.json
 format text
 rows
 ra_key sc_ra
@@ -15652,7 +15652,7 @@ field sc_var_flag variability_flag
 source heasarc_xmm_obs
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,target_name,ra,dec,duration,revolution+FROM+xmmmaster+WHERE+pn_filter+IS+NOT+NULL+ORDER+BY+revolution+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_xmm_obs.json
 format text
 rows
 ra_key ra
@@ -15665,7 +15665,7 @@ field revolution revolution
 source heasarc_xrb_catalog
 ttl 86400
 force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_xrb_catalog.json
 format text
 rows
 ra_key ra
@@ -16661,7 +16661,7 @@ regex <Count>([0-9]+)</Count> lidar_mola_mars_pedr_product_count
 source astro_local_group_dwarf_spheroids
 ttl 86400
 force gravity
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,D,Mass,HRV+FROM+%22J/AJ/144/4/catalog%22
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_local_group_dwarf_spheroids.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20553,7 +20553,7 @@ field_in 23 dm
 source astro_gaia_astrometric_binaries
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_astrometric_binaries.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20566,7 +20566,7 @@ field_in 4 ruwe
 source astro_gaia_blue_stragglers
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.1%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%3E2
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_blue_stragglers.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20577,7 +20577,7 @@ field_in 2 bp_rp
 source astro_gaia_bright_giants
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20%3C%208%20AND%20parallax%20%3E%205
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_bright_giants.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20606,7 +20606,7 @@ field phot_g_mean_mag celestial_gaia_nearby_g_magnitude
 source astro_gaia_bulge
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20SQRT%28POWER%28ra-266.4%2C2%29%2BPOWER%28dec%2B29%2C2%29%29%3C5%20AND%20parallax%20IS%20NOT%20NULL
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_bulge.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20617,7 +20617,7 @@ field_in 2 mag_g
 source astro_gaia_cool_dwarfs
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E2%20AND%20bp_rp%3C4%20AND%20parallax%3E20
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_cool_dwarfs.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20628,7 +20628,7 @@ field_in 2 mag_g
 source astro_gaia_deep_mag
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20BETWEEN%2015%20AND%2018%20AND%20parallax%20IS%20NOT%20NULL
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_deep_mag.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20640,7 +20640,7 @@ field_in 3 par
 source astro_gaia_extreme_blue
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%20-0.3%20AND%20phot_g_mean_mag%20%3C%2013
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_extreme_blue.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20653,7 +20653,7 @@ field_in 4 bp_rp
 source astro_gaia_extreme_red
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3E%203.5%20AND%20phot_g_mean_mag%20%3C%2014
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_extreme_red.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20666,7 +20666,7 @@ field_in 4 bp_rp
 source astro_gaia_galactic_plane
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ABS%28b%29%3C10%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%20IS%20NOT%20NULL
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_galactic_plane.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20677,7 +20677,7 @@ field_in 2 mag_g
 source astro_gaia_giant_branch
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E1.5%20AND%20bp_rp%3C3%20AND%20phot_g_mean_mag%3C12%20AND%20parallax%3E2
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_giant_branch.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20688,7 +20688,7 @@ field_in 2 mag_g
 source astro_gaia_high_velocity
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20radial_velocity%20IS%20NOT%20NULL%20AND%20ABS%28radial_velocity%29%20%3E%20200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_high_velocity.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20700,7 +20700,7 @@ field_in 3 par
 source astro_gaia_hot_subdwarfs
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.3%20AND%20phot_g_mean_mag%3C15%20AND%20parallax%3E1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_hot_subdwarfs.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20711,7 +20711,7 @@ field_in 2 mag_g
 source astro_gaia_lmc
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_lmc.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20722,7 +20722,7 @@ field_in 2 par
 source astro_gaia_main_sequence
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E-0.2%20AND%20bp_rp%3C1%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E5
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_main_sequence.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20733,7 +20733,7 @@ field_in 2 mag_g
 source astro_gaia_metallicity
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cmh_gspphot%20FROM%20gaiadr3.gaia_source%20WHERE%20mh_gspphot%20IS%20NOT%20NULL%20AND%20parallax%20%3E%202
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_metallicity.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20749,7 +20749,7 @@ reach_ttl 86400
 catalog_epoch 504921600.0
 abs_mag_from mag_g
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_nearby_1000.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20760,7 +20760,7 @@ field_in 2 mag_g
 source astro_gaia_red_clump
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E0.8%20AND%20bp_rp%3C1.2%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E3
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_red_clump.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20771,7 +20771,7 @@ field_in 2 bp_rp
 source astro_gaia_smc
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_smc.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -20793,7 +20793,7 @@ field S1_4 flux_14ghz_mjy
 source astro_xmm_4xmm_dr13
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Source,RA_ICRS,DE_ICRS+FROM+%22IX/69/xmm4d13s%22
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_xmm_4xmm_dr13.json
 cmap data
 tau_key _dist_m
 ra_key 1
@@ -20880,7 +20880,7 @@ field satellite satellite
 source vizier_2dfgrs
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,bJmag,z,SpClass+FROM+"J/MNRAS/329/227/2dFGRS"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+bJmag+ASC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_2dfgrs.json
 format text
 rows
 ra_key RAJ2000
@@ -20891,7 +20891,7 @@ field z redshift
 source vizier_2mass_psc_bright
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,%222MASS%22,Jmag,Hmag,Kmag,Qflg+FROM+%22II/246/out%22+WHERE+Jmag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+Jmag+ASC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_2mass_psc_bright.json
 format text
 rows
 ra_key RAJ2000
@@ -20916,7 +20916,7 @@ field bJmag bj_magnitude
 source vizier_4xmm_dr13
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RA_ICRS,DE_ICRS,Flux2,Flux3,%22HR1%22,%22HR2%22,4XMM+FROM+"IX/69/xmm4d13s"+WHERE+RA_ICRS+IS+NOT+NULL+ORDER+BY+Flux2+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_4xmm_dr13.json
 format text
 rows
 ra_key RA_ICRS
@@ -21081,7 +21081,7 @@ pmdec_key pmDE
 source vizier_chandra_gc_xray
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,%22F2-8%22,%22HR0%22,%22HR1%22,%22HR2%22+FROM+"J/ApJS/235/26/table3"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+%22F2-8%22+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_chandra_gc_xray.json
 format text
 rows
 ra_key RAJ2000
@@ -21180,7 +21180,7 @@ field Maj major_axis_arcsec
 source vizier_gaia_binary_candidates
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RAJ2000,DEJ2000,Gmag,Plx,pmRA,pmDE,RUWE+FROM+"I/355/gaiadr3"+WHERE+RAJ2000+IS+NOT+NULL+AND+RUWE>1.4+ORDER+BY+Gmag+ASC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_gaia_binary_candidates.json
 format text
 rows
 ra_key RAJ2000
@@ -21194,7 +21194,7 @@ pmdec_key pmDE
 source vizier_gaia_dr3_full_astrometric_catalog
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+DR3Name%2CRA_ICRS%2CDE_ICRS%2CPlx%2Ce_Plx%2CPM%2CpmRA%2Ce_pmRA%2CpmDE%2Ce_pmDE%2CGmag%2CBPmag%2CRPmag%2CRV%2Ce_RV+FROM+%22I%2F355%2Fgaiadr3%22+WHERE+RA_ICRS+IS+NOT+NULL+AND+Plx%3E5+ORDER+BY+Gmag+ASC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_gaia_dr3_full_astrometric_catalog.json
 format text
 rows
 ra_key RA_ICRS
@@ -21217,7 +21217,7 @@ radvel_key RadialVelocity
 source vizier_gaia_dr3_radial_velocities
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+DR3Name%2CRA_ICRS%2CDE_ICRS%2CPlx%2CpmRA%2CpmDE%2CRV%2Ce_RV%2CGmag%2CTeff+FROM+%22I%2F355%2Fgaiadr3%22+WHERE+RV+IS+NOT+NULL+AND+Plx%3E5+ORDER+BY+Plx+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_gaia_dr3_radial_velocities.json
 format text
 rows
 ra_key ra
@@ -21359,7 +21359,7 @@ field FWHM line_width_km_s
 source vizier_higal_250um_compact_sources
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Fint,Fpeak,FWHMA,FWHMB,PA,SNR+FROM+%22J/A%2BA/591/A149/higalpsw%22+WHERE+RAJ2000+IS+NOT+NULL+AND+Fpeak>0.1+ORDER+BY+Fpeak+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_higal_250um_compact_sources.json
 format text
 rows
 ra_key RAJ2000
@@ -21533,7 +21533,7 @@ dist_key Dist
 source vizier_nvss_galcenter
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,"S1.4",MajAxis+FROM+"VIII/65/nvss"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_nvss_galcenter.json
 format text
 rows
 ra_key RAJ2000
@@ -21544,7 +21544,7 @@ field MajAxis majaxis_arcsec
 source vizier_nvss_radio
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,RAJ2000,DEJ2000,"S1.4",MajAxis,MinAxis+FROM+"VIII/65/nvss"+WHERE+"S1.4"%3E50+ORDER+BY+"S1.4"+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_nvss_radio.json
 format text
 rows
 ra_key RAJ2000
@@ -21569,7 +21569,7 @@ field MinAxis minaxis_arcsec
 source vizier_nvss_radio_catalog
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,%22S1.4%22,MajAxis+FROM+%22VIII/65/nvss%22+WHERE+%22S1.4%22%3E20+ORDER+BY+%22S1.4%22+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_nvss_radio_catalog.json
 format text
 rows
 ra_key RAJ2000
@@ -21604,7 +21604,7 @@ field GLAT galactic_latitude
 source vizier_ovro_blazar_monitoring
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+IRAS,z,logLIR,F12um,F25um,F60um,F100um,_RA,_DE+FROM+%22J/ApJS/274/5/table1%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_ovro_blazar_monitoring.json
 format text
 rows
 ra_key _RA
@@ -21619,7 +21619,7 @@ field F100um flux_100um_jy
 source vizier_panstarrs_dr2_catalog
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+objID,RAJ2000,DEJ2000,gmag,rmag,imag,zmag,ymag+FROM+%22II/349/ps1%22+WHERE+RAJ2000+IS+NOT+NULL+AND+gmag<15
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_panstarrs_dr2_catalog.json
 format text
 rows
 ra_key RAJ2000
@@ -21677,7 +21677,7 @@ field Title source_title
 source vizier_sdss12_galaxies
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RA_ICRS,DE_ICRS,zsp,rmag,gmag,imag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D3+AND+zsp+IS+NOT+NULL+AND+zsp%3E0.01
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_sdss12_galaxies.json
 format text
 rows
 ra_key RA_ICRS
@@ -21690,7 +21690,7 @@ field imag mag_i
 source vizier_sdss12_quasars
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RA_ICRS,DE_ICRS,zsp,rmag,gmag+FROM+%22V/147/sdss12%22+WHERE+zsp+IS+NOT+NULL+AND+zsp%3E0.5
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_sdss12_quasars.json
 format text
 rows
 ra_key RA_ICRS
@@ -21804,7 +21804,7 @@ field RMS local_rms_mJy
 source vizier_vsx_cataclysmic_variables
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+(Type+LIKE+'CV%25'+OR+Type+LIKE+'UG%25'+OR+Type+LIKE+'CN%25'+OR+Type+LIKE+'AM%25'+OR+Type+LIKE+'DQ%25')+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_vsx_cataclysmic_variables.json
 format text
 rows
 ra_key RAJ2000
@@ -21818,7 +21818,7 @@ field min min_magnitude
 source vizier_vsx_galactic_center_variables
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+1%3DCONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_vsx_galactic_center_variables.json
 format text
 rows
 ra_key RAJ2000
@@ -21831,7 +21831,7 @@ field max max_magnitude
 source vizier_vsx_mira_longperiod
 ttl 86400
 force em
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+(Type+LIKE+'M+%25'+OR+Type+LIKE+'M%25'+OR+Type+LIKE+'SR%25'+OR+Type+LIKE+'SRA%25'+OR+Type+LIKE+'SRB%25')+AND+Period>100+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+Period+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_vsx_mira_longperiod.json
 format text
 rows
 ra_key RAJ2000
@@ -27455,7 +27455,7 @@ field year biosphere_gbif_year
 source biosphere_gbif_marine_invasives
 ttl 86400
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&datasetKey=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&limit=300
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_marine_invasives.json
 format json
 map results
 lat_key decimalLatitude
@@ -27465,7 +27465,7 @@ field depth biosphere_gbif_depth_m
 source astro_vizier_2mass
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_vizier_2mass.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -27476,7 +27476,7 @@ field_in 3 universe_2mass_gaia_g_mag
 source astro_vizier_panstarrs
 ttl 86400
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_vizier_panstarrs.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -27501,7 +27501,7 @@ radvel_key 5 1000
 source exosphere_gaia_stars
 ttl 604800
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+6+AND+parallax+>+0+ORDER+BY+phot_g_mean_mag
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_gaia_stars.json
 cmap data
 tau_key _dist_m
 ra_key 0
@@ -27530,7 +27530,7 @@ radvel_key 5 1000
 source exosphere_gaia_variable_stars
 ttl 604800
 force em gravity
-url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,v.pf+FROM+gaiadr3.vari_cepheid+AS+v+JOIN+gaiadr3.gaia_source+AS+g+ON+v.source_id=g.source_id+WHERE+g.parallax+>+0+ORDER+BY+v.pf+DESC
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_gaia_variable_stars.json
 cmap data
 tau_key _dist_m
 ra_key 0
