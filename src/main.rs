@@ -2665,16 +2665,17 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
         None
     };
     let auto_extracts: Option<Vec<Extract>>;
-    let effective_extracts: &[Extract] = if src.format == "universal" && src.extracts.is_empty() {
-        if let Some(ref j) = parsed_json {
-            auto_extracts = Some(universal_auto_detect(j));
-            auto_extracts.as_ref().map(|v| v.as_slice()).unwrap_or(&[])
+    let effective_extracts: &[Extract] =
+        if (src.format == "universal" || src.format.is_empty()) && src.extracts.is_empty() {
+            if let Some(ref j) = parsed_json {
+                auto_extracts = Some(universal_auto_detect(j));
+                auto_extracts.as_ref().map(|v| v.as_slice()).unwrap_or(&[])
+            } else {
+                &[]
+            }
         } else {
-            &[]
-        }
-    } else {
-        &src.extracts
-    };
+            &src.extracts
+        };
     for ext in effective_extracts {
         match ext {
             Extract::Field(k, n) => {
