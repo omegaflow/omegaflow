@@ -790,7 +790,7 @@ field satellite goes_satellite
 source exosphere_opensky_europe_flights
 ttl 60
 force em
-url https://api.adsb.lol/v2/point/50/10/1500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_opensky_europe_flights.json
 map ac
 lat_key lat
 lon_key lon
