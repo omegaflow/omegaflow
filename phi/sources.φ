@@ -6627,70 +6627,70 @@ last value hydrosphere_water_level_cm
 source hydrosphere_tide_1611400
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1611400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1611400.json
 wgs84 21.9544 -159.3561
 first data.v hydrosphere_tide_height_m_nawiliwili
 
 source hydrosphere_tide_1612340
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1612340.json
 wgs84 21.3033 -157.8645
 first data.v hydrosphere_tide_height_m_honolulu
 
 source hydrosphere_tide_1615680
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1615680&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1615680.json
 wgs84 20.8949 -156.4690
 first data.v hydrosphere_tide_height_m_kahului_kahului_harbor
 
 source hydrosphere_tide_1617433
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617433&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1617433.json
 wgs84 20.0366 -155.8294
 first data.v hydrosphere_tide_height_m_kawaihae
 
 source hydrosphere_tide_1619910
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1619910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1619910.json
 wgs84 28.2117 -177.3600
 first data.v hydrosphere_tide_height_m_sand_island_midway_islands
 
 source hydrosphere_tide_1630000
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1630000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1630000.json
 wgs84 13.4434 144.6564
 first data.v hydrosphere_tide_height_m_apra_harbor_guam
 
 source hydrosphere_tide_1770000
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1770000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1770000.json
 wgs84 -14.28 -170.69
 first data.v hydrosphere_tide_height_m_pago_pago_american_samoa
 
 source hydrosphere_tide_1820000
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1820000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1820000.json
 wgs84 8.7317 167.7361
 first data.v hydrosphere_tide_height_m_kwajalein_marshall_islands
 
 source hydrosphere_tide_1890000
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1890000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1890000.json
 wgs84 19.2906 166.6175
 first data.v hydrosphere_tide_height_m_wake_island_pacific_ocean
 
 source hydrosphere_tide_2695535
 ttl 300
 force gravity
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695535&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_2695535.json
 wgs84 32.3702 -64.6957
 first data.v hydrosphere_tide_height_m_bermuda_biological_station
 
@@ -13911,12 +13911,12 @@ field sla sea_level_anomaly_m
 source cmems_global_sst_analysis
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?sst%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
-format text
-rows
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cmems_global_sst_analysis.json
+format json
+map data
 lat_key latitude
 lon_key longitude
-field sst sea_surface_temp_c
+field_in sst sea_surface_temp_c
 
 source cmems_glorys12_ocean_3d
 ttl 86400
@@ -13972,12 +13972,12 @@ field sla absolute_dyn_top_m
 source cmems_sst_anomaly_global_l4
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?anom%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
-format text
-rows
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cmems_sst_anomaly_global_l4.json
+format json
+map data
 lat_key latitude
 lon_key longitude
-field anom sst_anomaly_c
+field_in anom sst_anomaly_c
 
 source astro_cneos_fireballs_infrasound
 ttl 86400
@@ -14240,23 +14240,23 @@ count feed.entry viirs_ntl_granule_count
 source geosphere_esa_cci_soil_moisture_erddap
 ttl 86400
 force diffusion
-url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?err%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
-format text
-rows
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_esa_cci_soil_moisture_erddap.json
+format json
+map data
 lat_key latitude
 lon_key longitude
-field err sea_level_anomaly_m
+field_in err sea_level_anomaly_m
 
-url https://data.ceda.ac.uk/neodc/esacci/sst/data
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_esa_cci_soil_moisture_erddap.json
 ttl 86400
 force thermal
-url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_esa_cci_soil_moisture_erddap.json
 map .
 lat_key lat
 lon_key lon
-field sst_analysed sea_surface_temp_c
-field sst_uncertainty sst_uncertainty_k
-field time observation_time
+field_in sst_analysed sea_surface_temp_c
+field_in sst_uncertainty sst_uncertainty_k
+field_in time observation_time
 
 source magnetosphere_esa_swarm_magnetic_field_hapi
 ttl 86400
@@ -18674,7 +18674,7 @@ field 2 nao_index nao_value
 source geosphere_ncei_paleo_treering_parameters
 ttl 86400
 force diffusion
-url https://www.ncei.noaa.gov/access/paleo-search/study/params.json?dataTypeId=18
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_ncei_paleo_treering_parameters.json
 wgs84 0.0 0.0
 map .
 field name parameter_name
@@ -18684,7 +18684,7 @@ field units parameter_units
 source geosphere_ncei_paleo_treering_studies
 ttl 86400
 force diffusion
-url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataTypeId=18&limit=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_ncei_paleo_treering_studies.json
 map .
 lat_key site.latitude
 lon_key site.longitude
@@ -18700,13 +18700,15 @@ field publication.0.year publication_year
 source astro_ncei_pdo_monthly_index
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.pdo.dat
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/astro_ncei_pdo_monthly_index.json
 wgs84 0.0 0.0
-format text
-rows
-field 0 year
-field 1 month
-field 2 pdo_index pdo_value
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 year
+field_in 1 month
+field_in 2 pdo_index pdo_value
 
 source astro_ncei_soi_monthly_index
 ttl 86400
@@ -27140,30 +27142,36 @@ field 3 co2_sigma_ppmv
 source cryosphere_paleoclimate_dome_fuji_co2
 ttl 2592000
 force em
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cryosphere_paleoclimate_dome_fuji_co2.json
 wgs84 -77.3190 39.7030
-format csv
-rows
+format json
+map data
+lat_key lat
+lon_key lon
 field_in 0 paleoclimate_domefuji_age_bp
 field_in 1 paleoclimate_domefuji_co2_ppm
 
 source cryosphere_paleoclimate_epica_co2
 ttl 2592000
 force em
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cryosphere_paleoclimate_epica_co2.json
 wgs84 -75.100 123.350
-format text
-rows
+format json
+map data
+lat_key lat
+lon_key lon
 field_in 3 paleoclimate_epica_age_bp
 field_in 4 paleoclimate_epica_co2_ppm
 
 source cryosphere_paleoclimate_vostok_icecore
 ttl 2592000
 force em
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cryosphere_paleoclimate_vostok_icecore.json
 wgs84 -78.464 106.833
-format text
-rows
+format json
+map data
+lat_key lat
+lon_key lon
 field_in 0 paleoclimate_vostok_depth_m
 field_in 1 paleoclimate_vostok_age_bp
 field_in 2 paleoclimate_vostok_co2_ppm
@@ -27224,12 +27232,12 @@ lon_key DEJ2000
 source hydrosphere_cmems_sst_global
 ttl 21600
 force thermal
-url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?sst%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
-format text
-rows
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_cmems_sst_global.json
+format json
+map data
 lat_key latitude
 lon_key longitude
-field sst hydrosphere_cmems_sst_c
+field_in sst hydrosphere_cmems_sst_c
 
 source hydrosphere_cmems_heat_content_700m
 ttl 21600
