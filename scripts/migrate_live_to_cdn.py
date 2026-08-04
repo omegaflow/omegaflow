@@ -19,6 +19,10 @@ import urllib.parse
 import concurrent.futures
 from pathlib import Path
 
+# Add parent to path for flatten_cdn import
+sys.path.insert(0, str(Path(__file__).parent))
+from flatten_cdn import flatten_to_universal
+
 TOKEN = os.environ.get("OMEGAFLOW_TOKEN", "")
 if not TOKEN:
     print("Missing OMEGAFLOW_TOKEN", file=sys.stderr)
@@ -137,12 +141,18 @@ def mirror_source(src, update_phi=False):
     if len(data) < 16:
         return {"name": name, "ok": False, "error": f"Too small ({len(data)} bytes)", "size": len(data)}
     
+    # Flatten to universal CDN format
+    try:
+        flat_data, fmt_hint = flatten_to_universal(data, name)
+    except Exception as e:
+        return {"name": name, "ok": False, "error": f"Flatten failed: {e}", "size": len(data)}
+    
     if not create_release("omegaflow/sources", domain):
         return {"name": name, "ok": False, "error": "Release create failed", "size": len(data)}
     
     asset_name = f"{name}.json"
-    if not upload_asset("omegaflow/sources", domain, asset_name, data):
-        return {"name": name, "ok": False, "error": "Upload failed", "size": len(data)}
+    if not upload_asset("omegaflow/sources", domain, asset_name, flat_data):
+        return {"name": name, "ok": False, "error": "Upload failed", "size": len(flat_data)}
     
     result = {"name": name, "ok": True, "size": len(data), "domain": domain}
     
