@@ -563,7 +563,7 @@ geojson events properties.mag 0.0 seismic_magnitude_mw seismic_depth_m
 source geosphere_usgs_earthquakes_24h
 ttl 60
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_usgs_earthquakes_24h.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -574,7 +574,7 @@ field metadata.count seismic_count_24h
 source geosphere_usgs_earthquakes_hour
 ttl 60
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_usgs_earthquakes_hour.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -914,7 +914,7 @@ field properties.status review_status
 source usgs_earthquake_significant_6
 ttl 60
 force seismic-body
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6&limit=50&orderby=time&eventtype=earthquake
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_earthquake_significant_6.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -929,7 +929,7 @@ field properties.sig significance_score
 source usgs_earthquakes_realtime
 ttl 60
 force acoustic
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&orderby=time
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_earthquakes_realtime.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -947,7 +947,7 @@ depth_key geometry.coordinates.2
 source usgs_fdsn_earthquake_events_global
 ttl 60
 force seismic-body
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=magnitude
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_fdsn_earthquake_events_global.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1710,7 +1710,7 @@ field 1.location geosphere_cenc_eq_location
 source geosphere_earthquakes
 ttl 300
 force seismic-surface
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes.json
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 source geosphere_earthquakes_significant_day
@@ -7852,7 +7852,7 @@ field properties.depth depth_km
 source usgs_earthquake_all_2.5
 ttl 300
 force seismic-body
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200&orderby=time
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_earthquake_all_2.5.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -7867,7 +7867,7 @@ field properties.dmin epicentral_distance_deg
 source usgs_earthquakes_significant
 ttl 300
 force acoustic
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&orderby=time&limit=50
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_earthquakes_significant.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -7896,7 +7896,7 @@ field properties.cdi community_intensity
 source usgs_shakemap_significant_events
 ttl 300
 force seismic-body
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&limit=50&orderby=time&producttype=shakemap
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_shakemap_significant_events.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8549,7 +8549,7 @@ field dirasakan geosphere_bmkg_felt
 source geosphere_earthquakes_2_5_weekly
 ttl 600
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2_5_weekly.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8559,7 +8559,7 @@ field properties.sig geosphere_earthquake_significance
 source geosphere_earthquakes_4_5_weekly
 ttl 600
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_4_5_weekly.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8597,7 +8597,7 @@ last_line geosphere_earthquakes_jma_recent_mag
 source geosphere_earthquakes_m1_day
 ttl 600
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_m1_day.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8607,7 +8607,7 @@ field properties.sig geosphere_quake_sig
 source geosphere_earthquakes_m1_week
 ttl 600
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_m1_week.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8616,7 +8616,7 @@ field properties.mag geosphere_quake_mag
 source geosphere_earthquakes_m2_5_day
 ttl 600
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_m2_5_day.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8626,7 +8626,7 @@ field properties.sig geosphere_quake_sig
 source geosphere_earthquakes_m4_5_day
 ttl 600
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_m4_5_day.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8636,7 +8636,7 @@ field properties.sig geosphere_quake_sig
 source geosphere_earthquakes_significant_week
 ttl 600
 force seismic-surface
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_significant_week.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8647,7 +8647,7 @@ source geosphere_earthquakes_usgs_m2_week
 ttl 600
 force em
 ecliptic 1
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_usgs_m2_week.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
