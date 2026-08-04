@@ -27148,7 +27148,7 @@ alt_key elevation
 source geosphere_opentopo_eudem25m
 ttl 2592000
 force em
-url https://api.opentopodata.org/v1/eudem25m?locations={grid}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_opentopo_eudem25m.json
 map results
 lat_key location.lat
 lon_key location.lng
@@ -27158,7 +27158,7 @@ alt_key elevation
 source geosphere_opentopo_gebco_bathymetry
 ttl 2592000
 force em
-url https://api.opentopodata.org/v1/gebco2020?locations={grid}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_opentopo_gebco_bathymetry.json
 map results
 lat_key location.lat
 lon_key location.lng
@@ -27168,7 +27168,7 @@ alt_key elevation
 source geosphere_opentopo_mapzen_terrain
 ttl 2592000
 force em
-url https://api.opentopodata.org/v1/mapzen?locations={grid}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_opentopo_mapzen_terrain.json
 map results
 lat_key location.lat
 lon_key location.lng
@@ -27178,7 +27178,7 @@ alt_key elevation
 source geosphere_opentopo_srtm30m
 ttl 2592000
 force em
-url https://api.opentopodata.org/v1/srtm30m?locations={grid}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_opentopo_srtm30m.json
 map results
 lat_key location.lat
 lon_key location.lng
