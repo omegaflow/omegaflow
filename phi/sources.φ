@@ -7476,7 +7476,7 @@ vectors iss_position
 source geosphere_koeri_turkey_earthquakes
 ttl 300
 force seismic-body
-url https://tadas.afad.gov.tr/api/event/list?limit=200
+url https://github.com/omegaflow/sources/releases/download/tadas.afad.gov.tr/geosphere_koeri_turkey_earthquakes.json
 map .
 lat_key latitude
 lon_key longitude
@@ -7761,7 +7761,7 @@ field current.carbon_monoxide carbon_monoxide
 source subatomic_physics_gcn_icecube_circulars
 ttl 300
 force em
-url https://gcn.nasa.gov/circulars?query=icecube
+url https://github.com/omegaflow/sources/releases/download/gcn.nasa.gov/subatomic_physics_gcn_icecube_circulars.json
 wgs84 -90.0 0.0 2835
 header User-Agent "omegaflow"
 regex ("totalItems":...,) cosmic_icecube_alert_circular_count
@@ -8982,7 +8982,7 @@ source subatomic_physics_gcn_ligo_circulars
 ttl 600
 force em
 ssb
-url https://gcn.nasa.gov/circulars?query=IceCube%20LVK
+url https://github.com/omegaflow/sources/releases/download/gcn.nasa.gov/subatomic_physics_gcn_ligo_circulars.json
 header User-Agent "omegaflow"
 regex ("totalItems":...,) cosmic_neutrino_gravwave_coincidence_count
 
