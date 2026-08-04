@@ -11,7 +11,7 @@ Usage:
     python3 scripts/shard_catalog.py --source vizier_nvss_radio --bins 24 --update-sources
 
 Env:
-    CATALOGS_TOKEN: PAT with contents write to omegaflow/catalogs
+    CATALOGS_TOKEN: PAT with contents write to omegaflow/sources
     TAP_TIMEOUT: per-request timeout (default 180)
     TAP_SLEEP: seconds between requests (default 2)
 """
@@ -26,7 +26,7 @@ import urllib.parse
 import urllib.request
 
 TOKEN = os.environ.get("CATALOGS_TOKEN", "")
-RELEASE_URL = "https://uploads.github.com/repos/omegaflow/catalogs/releases/{release_id}/assets"
+RELEASE_URL = "https://uploads.github.com/repos/omegaflow/sources/releases/{release_id}/assets"
 SHARD_DOMAIN = "tapvizier.cds.unistra.fr"
 _SHARD_RELEASE_ID = None
 TIMEOUT = int(os.environ.get("TAP_TIMEOUT", "180"))
@@ -165,8 +165,8 @@ def get_shard_release_id():
     global _SHARD_RELEASE_ID
     if _SHARD_RELEASE_ID:
         return _SHARD_RELEASE_ID
-    tag = f"catalogs-{SHARD_DOMAIN}"
-    url = f"https://api.github.com/repos/omegaflow/catalogs/releases/tags/{urllib.parse.quote(tag, safe='')}"
+    tag = f"{SHARD_DOMAIN}"
+    url = f"https://api.github.com/repos/omegaflow/sources/releases/tags/{urllib.parse.quote(tag, safe='')}"
     req = urllib.request.Request(url, headers={"Authorization": f"Bearer {TOKEN}",
                                                 "Accept": "application/vnd.github+json",
                                                 "User-Agent": "omegaflow-bot/1.0"})
@@ -331,7 +331,7 @@ def rewrite_shard_sources(src_name, shards):
                 fname = f"{bname}.json"
                 out.append(
                     f"source {bname}\n{base}\n"
-                    f"url https://github.com/omegaflow/catalogs/releases/download/catalogs-{SHARD_DOMAIN}/{fname}\n"
+                    f"url https://github.com/omegaflow/sources/releases/download/catalogs-{SHARD_DOMAIN}/{fname}\n"
                     f"format json\nmap .\n"
                     f"lat_key RAJ2000\nlon_key DEJ2000\n"
                     f"wgs84 0.0 {ra_center:.2f}\n"

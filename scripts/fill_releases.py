@@ -9,8 +9,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 TOKEN = os.environ.get("CATALOGS_TOKEN", "")
 HEADERS = {"Authorization": f"Bearer {TOKEN}", "Accept": "application/vnd.github+json",
            "User-Agent": "omegaflow-bot/1.0"}
-CATALOGS_API = "https://api.github.com/repos/omegaflow/catalogs"
-UPLOAD_URL = "https://uploads.github.com/repos/omegaflow/catalogs/releases/{release_id}/assets"
+CATALOGS_API = "https://api.github.com/repos/omegaflow/sources"
+UPLOAD_URL = "https://uploads.github.com/repos/omegaflow/sources/releases/{release_id}/assets"
 SOURCE_PHI = "phi/sources.φ"
 DRY_RUN = "--dry-run" in sys.argv
 WORKERS = int(sys.argv[sys.argv.index("--workers") + 1]) if "--workers" in sys.argv else 8
@@ -105,7 +105,7 @@ def find_old_filename(current_name):
 
 def get_release_id_for_tag(domain_tag):
     """Get the release ID for a domain tag. Returns None if not found."""
-    tag_name = f"catalogs-{domain_tag}"
+    tag_name = f"{domain_tag}"
     url = f"{CATALOGS_API}/releases/tags/{urllib.parse.quote(tag_name, safe='')}"
     req = urllib.request.Request(url, headers=HEADERS)
     try:

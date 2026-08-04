@@ -48,15 +48,15 @@ Legende:
 
 ## Konsequenz für Release-Namen
 
-Releases heißen `catalogs-{fetch_domain}`, wobei `fetch_domain` die ACTUAL URL
-ist, von der der Workflow fetched:
+Releases heißen `{fetch_domain}`, wobei `fetch_domain` die ACTUAL URL
+ist, von der der Workflow fetched (der Release-Tag IST der Domain-Name):
 
 | Fetch-Quelle | Release-Tag |
 |-------------|-------------|
-| `raw.githubusercontent.com/nvkelso/natural-earth-vector` | `catalogs-raw.githubusercontent.com/nvkelso/natural-earth-vector` |
-| `raw.githubusercontent.com/wri/global-power-plant-database` | `catalogs-raw.githubusercontent.com/wri/global-power-plant-database` |
-| `github.com/cossatot/gem-global-active-faults` | `catalogs-github.com/cossatot/gem-global-active-faults` |
-| `ourairports.com` | `catalogs-ourairports.com` |
+| `raw.githubusercontent.com/nvkelso/natural-earth-vector` | `raw.githubusercontent.com/nvkelso/natural-earth-vector` |
+| `raw.githubusercontent.com/wri/global-power-plant-database` | `raw.githubusercontent.com/wri/global-power-plant-database` |
+| `github.com/cossatot/gem-global-active-faults` | `github.com/cossatot/gem-global-active-faults` |
+| `ourairports.com` | `ourairports.com` |
 
 ## Bereits umgesetzt
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert live TAP-STATIC catalog sources to CDN JSON on the omegaflow/catalogs release.
+"""Convert live TAP-STATIC catalog sources to CDN JSON on the omegaflow/sources release.
 
 Reads phi/sources.φ, finds sources pointing at TAP endpoints (no template vars),
 downloads the FULL table (removing TOP limits), converts to {"data":[...]},
@@ -15,7 +15,7 @@ Usage:
     python3 scripts/tap_to_cdn.py --limit 5000      # cap rows (debug)
 
 Env:
-    CATALOGS_TOKEN: PAT with contents write to omegaflow/catalogs
+    CATALOGS_TOKEN: PAT with contents write to omegaflow/sources
 """
 import argparse
 import json
@@ -29,7 +29,7 @@ import urllib.request
 
 TOKEN = os.environ.get("CATALOGS_TOKEN", "")
 MAX_ROWS = int(os.environ.get("TAP_MAX_ROWS", "0"))
-CATALOGS_REPO = "omegaflow/catalogs"
+CATALOGS_REPO = "omegaflow/sources"
 TIMEOUT = int(os.environ.get("TAP_TIMEOUT", "120"))
 SLEEP = float(os.environ.get("TAP_SLEEP", "2"))
 MAX_SOURCES = int(os.environ.get("TAP_MAX_SOURCES", "0"))
@@ -343,7 +343,7 @@ def votable_to_json(text):
 
 def get_release_for_domain(domain):
     """Get (release_id, tag_name) for a domain. Creates release if missing."""
-    tag = f"catalogs-{domain}"
+    tag = f"{domain}"
     api_url = f"https://api.github.com/repos/{CATALOGS_REPO}/releases/tags/{urllib.parse.quote(tag, safe='')}"
     req = urllib.request.Request(api_url, headers={"Authorization": f"Bearer {TOKEN}",
                                                      "Accept": "application/vnd.github+json",
@@ -437,7 +437,7 @@ def cdn_filename(source):
 
 def update_source_block(block, cdn_file, domain):
     """Update a source block in sources.φ to point at the CDN JSON."""
-    cdn_url = f"https://github.com/omegaflow/catalogs/releases/download/catalogs-{domain}/{cdn_file}"
+    cdn_url = f"https://github.com/omegaflow/sources/releases/download/catalogs-{domain}/{cdn_file}"
     new_block = block
     new_block = re.sub(
         r"url\s+https?://[^\s]+",

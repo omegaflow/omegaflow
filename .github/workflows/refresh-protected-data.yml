@@ -12,7 +12,7 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     env:
-      CATALOGS_REPO: ${{ secrets.CATALOGS_REPO || 'omegaflow/catalogs' }}
+      CATALOGS_REPO: ${{ secrets.CATALOGS_REPO || 'omegaflow/sources' }}
       GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
@@ -311,7 +311,7 @@ jobs:
       - name: Publish Release
         env:
           GH_TOKEN: ${{ secrets.CATALOGS_TOKEN || secrets.GITHUB_TOKEN }}
-          CATALOGS_REPO: ${{ vars.CATALOGS_REPO || 'omegaflow/catalogs' }}
+          CATALOGS_REPO: ${{ vars.CATALOGS_REPO || 'omegaflow/sources' }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
             echo "::error::no token to publish release"

@@ -5180,7 +5180,7 @@ fn fetch_priority(
             0.0
         };
         let urgency = 1.0 - (ttl.max(1) as f64).log10().min(5.0) / 5.0;
-        if url.contains("omegaflow/catalogs") {
+        if url.contains("omegaflow/sources") {
             let x = (ttl.max(1) as f64).log2() / Φ;
             return ((255.0 * (1.0 - 1.0 / (1.0 + x))).max(128.0)) as u8;
         }
@@ -5201,7 +5201,7 @@ fn fetch_priority(
         0.0
     };
     let urgency = 1.0 - (ttl.max(1) as f64).log10().min(5.0) / 5.0;
-    if url.contains("omegaflow/catalogs") {
+    if url.contains("omegaflow/sources") {
         let x = (ttl.max(1) as f64).log2() / Φ;
         return ((255.0 * (1.0 - 1.0 / (1.0 + x))).max(128.0)) as u8;
     }

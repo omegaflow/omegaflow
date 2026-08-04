@@ -2,7 +2,7 @@
 """Mycelium CDN refresh with integrity checks. Domain-based releases."""
 import hashlib, json, os, re, sys, time, urllib.error, urllib.request
 
-CATALOGS_REPO = os.environ.get("CATALOGS_REPO", "omegaflow/catalogs")
+CATALOGS_REPO = os.environ.get("CATALOGS_REPO", "omegaflow/sources")
 
 MIN_SIZES = {
     "eia_grid_demand.json": 2000,
@@ -31,7 +31,7 @@ def load_filename_domain_map():
         if line.startswith("source "):
             cur = line.strip().split()[1]
         if cur and line.startswith("url ") and "releases/download/" in line:
-            m = re.search(r"catalogs-([^/]+)/(.+)", line)
+            m = re.search(r"releases/download/([^/]+)/(.+)", line)
             if m:
                 domain_tag = m.group(1)
                 cdn_name = m.group(2).rstrip()
@@ -41,13 +41,13 @@ def load_filename_domain_map():
 
 
 def cdn_url_for(filename):
-    domain = FILENAME_DOMAIN.get(filename, "catalogs")
-    return f"https://github.com/{CATALOGS_REPO}/releases/download/catalogs-{domain}/{filename}"
+    domain = FILENAME_DOMAIN.get(filename, "system")
+    return f"https://github.com/{CATALOGS_REPO}/releases/download/{domain}/{filename}"
 
 
 def load_last_hashes():
     try:
-        url = f"https://github.com/{CATALOGS_REPO}/releases/download/catalogs/SYSTEM_HEALTH.json"
+        url = f"https://github.com/{CATALOGS_REPO}/releases/download/system/SYSTEM_HEALTH.json"
         req = urllib.request.Request(url, headers={"User-Agent": "omegaflow-bot/1.0"})
         with urllib.request.urlopen(req, timeout=30) as r:
             d = json.load(r)
@@ -68,7 +68,7 @@ def load_ttl_from_sources():
         if line.startswith("source "):
             cur = line.strip().split()[1]
         if line.startswith("url ") and "catalogs" in line and cur:
-            m = re.search(r"download/catalogs-[^/]+/(.+)", line)
+            m = re.search(r"download/[^/]+/(.+)", line)
             if m:
                 cur_file = m.group(1).rstrip()
         if cur and cur_file and line.startswith("ttl ") and cur_file.endswith((".json", ".csv")):
@@ -119,8 +119,8 @@ def validate_asset(fname, data):
 
 def upload_asset(fname, path):
     import subprocess
-    domain_tag = FILENAME_DOMAIN.get(fname, "catalogs")
-    release = f"catalogs-{domain_tag}"
+    domain_tag = FILENAME_DOMAIN.get(fname, "system")
+    release = domain_tag
     cmd = ["gh", "release", "upload", release, path, "--repo", CATALOGS_REPO, "--clobber"]
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode == 0:
@@ -173,9 +173,8 @@ def main():
     HEALTH["hashes"] = LAST_HASHES
     with open(os.path.join(data_dir, "SYSTEM_HEALTH.json"), "w") as f:
         json.dump(HEALTH, f)
-    # SYSTEM_HEALTH always goes to the catalogs release (legacy)
-    domain_tag = FILENAME_DOMAIN.get("SYSTEM_HEALTH.json", "catalogs")
-    FILENAME_DOMAIN["SYSTEM_HEALTH.json"] = "catalogs"
+    # SYSTEM_HEALTH goes to system release
+    FILENAME_DOMAIN["SYSTEM_HEALTH.json"] = "system"
     upload_asset("SYSTEM_HEALTH.json", os.path.join(data_dir, "SYSTEM_HEALTH.json"))
 
     print(f"\nChecked: {checked}  Skipped: {skipped}  Uploaded: {uploaded}  Corrupt: {len(HEALTH['corrupt'])}",

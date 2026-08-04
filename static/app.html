@@ -423,18 +423,7 @@ function queryField() {
     return packFieldData(ptr, recordCount);
 }
 
-async function cdningest() {
-    const cdnBase = 'https://github.com/omegaflow/catalogs/releases/download/catalogs';
-    const files = ['gaia_bright_vmag9.bin', 'gaia_nearby_plx10.bin'];
-    for (const name of files) {
-        try {
-            const resp = await fetch(`${cdnBase}/${name}`);
-            if (!resp.ok) continue;
-            const bytes = new Uint8Array(await resp.arrayBuffer());
-            if (wasmExports) wasmExports.omegaflow_load_buffer(bytes.byteOffset, bytes.length);
-            wasmStatus = 'WASM: ' + name + ' ingested';
-        } catch {}
-    }
+function cdningest() {
 }
 
 async function ω(ts) {

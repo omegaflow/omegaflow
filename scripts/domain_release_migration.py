@@ -9,8 +9,8 @@ from collections import defaultdict
 TOKEN = os.environ.get("CATALOGS_TOKEN", "")
 HEADERS = {"Authorization": f"Bearer {TOKEN}", "Accept": "application/vnd.github+json",
            "User-Agent": "omegaflow-bot/1.0"}
-RELEASES_URL = "https://api.github.com/repos/omegaflow/catalogs/releases"
-UPLOAD_URL = "https://uploads.github.com/repos/omegaflow/catalogs/releases/{release_id}/assets"
+RELEASES_URL = "https://api.github.com/repos/omegaflow/sources/releases"
+UPLOAD_URL = "https://uploads.github.com/repos/omegaflow/sources/releases/{release_id}/assets"
 
 SOURCE_PHI = "phi/sources.φ"
 DRY_RUN = "--dry-run" in sys.argv
@@ -137,7 +137,7 @@ def migrate_assets(cdn_sources, domain_map):
         domain = domain_map.get(name, "github.com/omegaflow")
         if DRY_RUN:
             rel_tag = f"catalogs-{domain.replace('/','-').replace('.','-')}"
-            new_urls[name] = f"https://github.com/omegaflow/catalogs/releases/download/{rel_tag}/{name}.json"
+            new_urls[name] = f"https://github.com/omegaflow/sources/releases/download/{rel_tag}/{name}.json"
             continue
         
         if domain not in releases_cache:
@@ -146,7 +146,7 @@ def migrate_assets(cdn_sources, domain_map):
         else:
             rid, tag = releases_cache[domain]
         
-        new_urls[name] = f"https://github.com/omegaflow/catalogs/releases/download/{tag}/{name}.json"
+        new_urls[name] = f"https://github.com/omegaflow/sources/releases/download/{tag}/{name}.json"
         
         # Download from old sphere release
         try:
@@ -222,7 +222,7 @@ def main():
     for name, (sphere, old_url) in sorted(cdn.items()):
         domain = domain_map.get(name, "github.com/omegaflow")
         tag = releases_cache.get(domain, f"catalogs-{domain.replace('.','-')}")
-        new_urls[name] = f"https://github.com/omegaflow/catalogs/releases/download/{tag}/{name}.json"
+        new_urls[name] = f"https://github.com/omegaflow/sources/releases/download/{tag}/{name}.json"
     
     log("Step 4: Rewrite sources.φ...")
     rewritten = rewrite_sources(new_urls)

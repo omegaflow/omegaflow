@@ -9,8 +9,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 TOKEN = os.environ.get("CATALOGS_TOKEN", "")
 HEADERS = {"Authorization": f"Bearer {TOKEN}", "Accept": "application/vnd.github+json",
            "User-Agent": "omegaflow-bot/1.0"}
-RELEASES_URL = "https://api.github.com/repos/omegaflow/catalogs/releases"
-UPLOAD_URL = "https://uploads.github.com/repos/omegaflow/catalogs/releases/{release_id}/assets"
+RELEASES_URL = "https://api.github.com/repos/omegaflow/sources/releases"
+UPLOAD_URL = "https://uploads.github.com/repos/omegaflow/sources/releases/{release_id}/assets"
 SOURCE_PHI = "phi/sources.φ"
 DRY_RUN = "--dry-run" in sys.argv
 CREATE_ONLY = "--create-only" in sys.argv
@@ -63,14 +63,14 @@ def get_old_asset_urls():
     old_urls = {}
     for tag in OLD_SPHERE_TAGS:
         for name in all_sources:
-            old_urls[name] = f"https://github.com/omegaflow/catalogs/releases/download/{tag}/{name}.json"
+            old_urls[name] = f"https://github.com/omegaflow/sources/releases/download/{tag}/{name}.json"
     
     # Also check older releases: catalogs, catalogs-v2, v1.0
     old_format_tags = ["catalogs-v2", "catalogs"]
     for tag in old_format_tags:
         for name in all_sources:
             # pre-rename names might differ
-            old_urls[name] = f"https://github.com/omegaflow/catalogs/releases/download/{tag}/{name}.json"
+            old_urls[name] = f"https://github.com/omegaflow/sources/releases/download/{tag}/{name}.json"
     
     return old_urls
 
@@ -126,7 +126,7 @@ def migrate_one(source_name, old_url, new_release_id):
     
     # Try old sphere tag URL first
     for old_tag in OLD_SPHERE_TAGS:
-        url = f"https://github.com/omegaflow/catalogs/releases/download/{old_tag}/{source_name}.json"
+        url = f"https://github.com/omegaflow/sources/releases/download/{old_tag}/{source_name}.json"
         try:
             req = urllib.request.Request(url, headers=HEADERS)
             with urllib.request.urlopen(req, timeout=120) as r:
@@ -139,7 +139,7 @@ def migrate_one(source_name, old_url, new_release_id):
     # Try older formats
     if data is None:
         for old_tag in ["catalogs-v2", "catalogs"]:
-            url = f"https://github.com/omegaflow/catalogs/releases/download/{old_tag}/{source_name}.json"
+            url = f"https://github.com/omegaflow/sources/releases/download/{old_tag}/{source_name}.json"
             try:
                 req = urllib.request.Request(url, headers=HEADERS)
                 with urllib.request.urlopen(req, timeout=120) as r:
