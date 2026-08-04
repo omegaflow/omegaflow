@@ -7766,7 +7766,7 @@ field eventDate observation_date
 source open_meteo_air_quality
 ttl 300
 force diffusion
-url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=pm2_5,ozone,nitrogen_dioxide,sulphur_dioxide,carbon_monoxide
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_air_quality.json
 pos latitude_deg longitude_deg
 field latitude latitude_deg
 field longitude longitude_deg
@@ -7965,7 +7965,7 @@ last_row AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
 source atmosphere_air_quality_full
 ttl 600
 force em
-url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_air_quality_full.json
 field current.pm2_5 atmosphere_pm25_ugm3
 field current.pm10 atmosphere_pm10_ugm3
 field current.nitrogen_dioxide atmosphere_no2_ugm3
@@ -7976,7 +7976,7 @@ field current.ozone atmosphere_o3_ugm3
 source atmosphere_air_quality_trace
 ttl 600
 force em
-url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=ammonia,dust,aerosol_optical_depth,formaldehyde
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_air_quality_trace.json
 field current.ammonia atmosphere_ammonia_ugm3
 field current.dust atmosphere_dust_ugm3
 field current.formaldehyde atmosphere_formaldehyde_ugm3
@@ -7985,7 +7985,7 @@ field current.aerosol_optical_depth atmosphere_aerosol_optical_depth
 source atmosphere_air_quality_us
 ttl 600
 force em
-url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_air_quality_us.json
 field current.us_aqi atmosphere_aqi_us
 
 source atmosphere_bom_observations
@@ -8799,7 +8799,7 @@ last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
 source hydrosphere_marine
 ttl 600
 force em
-url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_marine.json
 field current.wave_height hydrosphere_wave_height_m
 field current.wave_direction hydrosphere_wave_direction_deg
 field current.wave_period hydrosphere_wave_period_s
@@ -8807,7 +8807,7 @@ field current.wave_period hydrosphere_wave_period_s
 source hydrosphere_marine_ocean
 ttl 600
 force em
-url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,ocean_current_velocity,ocean_current_direction,sea_level_height_msl&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_marine_ocean.json
 path current.sea_surface_temperature hydrosphere_sst_c
 path current.ocean_current_velocity hydrosphere_current_velocity_kmh
 path current.ocean_current_direction hydrosphere_current_direction_deg
@@ -8816,7 +8816,7 @@ path current.sea_level_height_msl hydrosphere_sea_level_msl_m
 source hydrosphere_marine_waves
 ttl 600
 force em
-url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_marine_waves.json
 path current.wind_wave_height hydrosphere_wind_wave_m
 path current.wind_wave_direction hydrosphere_wind_wave_dir_deg
 path current.wind_wave_period hydrosphere_wind_wave_period_s
@@ -8963,7 +8963,7 @@ field properties.messageType message_type
 source open_meteo_airquality_full
 ttl 600
 force diffusion
-url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,aerosol_optical_depth&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_airquality_full.json
 path latitude atmosphere_lat
 path longitude atmosphere_lon
 path current.pm10 atmosphere_pm10_ugm3
@@ -9749,7 +9749,7 @@ field date observation_date
 source atmosphere_aerosol_optical_depth
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth,dust,pm2_5,pm10
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_aerosol_optical_depth.json
 path current.aerosol_optical_depth atmosphere_aod
 path current.dust atmosphere_dust_ugm3
 path current.pm2_5 atmosphere_pm25_ugm3
@@ -10073,7 +10073,7 @@ field daily.uv_index_max.0 atmosphere_bom_forecast_uv_index
 source atmosphere_co2_current
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_co2_current.json
 wgs84 19.5 -155.6
 path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm
 
@@ -10100,7 +10100,7 @@ path daily.windspeed_10m_max.0 atmosphere_daily_wind_max_kms
 source atmosphere_ensemble_forecast
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/ensemble/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_ensemble_forecast.json
 path daily.temperature_2m_max.0 atmosphere_ensemble_temp_max_c
 path daily.precipitation_sum.0 atmosphere_ensemble_precip_mm
 
@@ -10117,7 +10117,7 @@ field solarterrestrialdata.solarflux.MUF atmosphere_hf_muf_estimated
 source atmosphere_marine_daily
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&daily=wave_height_max,wave_period_max,swell_wave_height_max&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_marine_daily.json
 path daily.wave_height_max.0 atmosphere_marine_wave_height_max_m
 path daily.wave_period_max.0 atmosphere_marine_wave_period_max_s
 path daily.swell_wave_height_max.0 atmosphere_marine_swell_height_max_m
@@ -10125,7 +10125,7 @@ path daily.swell_wave_height_max.0 atmosphere_marine_swell_height_max_m
 source atmosphere_marine_sst
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,wave_height,swell_wave_height
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_marine_sst.json
 path current.sea_surface_temperature atmosphere_marine_sst_c
 path current.wave_height atmosphere_marine_wave_height_m
 path current.swell_wave_height atmosphere_marine_swell_height_m
@@ -10294,7 +10294,7 @@ field frequency atmosphere_superdarn_frequency_khz
 source atmosphere_uv_daily
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&daily=uv_index_max,uv_index_clear_sky_max&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_uv_daily.json
 path daily.uv_index_max.0 atmosphere_uv_index_max
 path daily.uv_index_clear_sky_max.0 atmosphere_uv_index_clear_sky_max
 
@@ -11551,7 +11551,7 @@ field stac_eo_cloud_cover lithosphere_cloud_cover_pct
 source hydrosphere_flood
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/flood/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_flood.json
 first river_discharge hydrosphere_river_discharge_m3s
 
 source hydrosphere_pegelonline_water_level
@@ -12515,7 +12515,7 @@ field hourly.uv_index uv_index
 source open_meteo_airquality_pm
 ttl 3600
 force diffusion
-url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&hourly=pm2_5,pm10,nitrogen_dioxide,ozone,european_aqi,us_aqi&forecast_days=5&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_airquality_pm.json
 map hourly.time
 field hourly.pm2_5 pm25_ugm3
 field hourly.pm10 pm10_ugm3
@@ -12590,7 +12590,7 @@ field daily.temperature_2m_max temp_max_c
 source open_meteo_flood_glofas
 ttl 3600
 force diffusion
-url https://api.open-meteo.com/v1/flood/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge,river_discharge_mean,river_discharge_max&forecast_days=16&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_flood_glofas.json
 map daily.time
 field daily.river_discharge discharge_m3s
 field daily.river_discharge_mean discharge_mean_m3s
@@ -12680,7 +12680,7 @@ field hourly.cape cape_jkg
 source open_meteo_marine_waves
 ttl 3600
 force acoustic
-url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,ocean_current_velocity&forecast_days=7&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_marine_waves.json
 map hourly.time
 field hourly.wave_height wave_height_m
 field hourly.wave_period wave_period_s
@@ -13408,7 +13408,7 @@ last_row ANOM atmosphere_enso_oni_c
 source atmosphere_historical_daily
 ttl 86400
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,et0_fao_evapotranspiration,shortwave_radiation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_historical_daily.json
 last temperature_2m_max atmosphere_hist_temp_max_c
 last temperature_2m_min atmosphere_hist_temp_min_c
 last precipitation_sum atmosphere_hist_precip_sum_mm
@@ -13417,7 +13417,7 @@ last sunshine_duration atmosphere_hist_sunshine_s
 source atmosphere_historical_weather
 ttl 86400
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=temperature_2m,relative_humidity_2m,precipitation,windspeed_10m,soil_temperature_0_to_7cm,soil_moisture_0_to_7cm&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_historical_weather.json
 last temperature_2m atmosphere_hist_temp_c
 last precipitation atmosphere_hist_precip_mm
 last windspeed_10m atmosphere_hist_wind_ms
@@ -13425,7 +13425,7 @@ last windspeed_10m atmosphere_hist_wind_ms
 source atmosphere_historical_wind
 ttl 86400
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=wind_speed_10m,wind_speed_100m,wind_direction_10m,wind_direction_100m,wind_gusts_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_historical_wind.json
 last wind_speed_10m atmosphere_hist_wind_speed_10m_ms
 last wind_speed_100m atmosphere_hist_wind_speed_100m_ms
 last wind_gusts_10m atmosphere_hist_wind_gusts_10m_ms
@@ -14745,7 +14745,7 @@ field properties.type geosphere_ga_sensor_type
 source geosphere_historical_soil
 ttl 86400
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_historical_soil.json
 last soil_temperature_0_to_7cm geosphere_hist_soil_temp_surface_c
 last soil_moisture_0_to_7cm geosphere_hist_soil_moisture_surface_m3m3
 
@@ -19649,7 +19649,7 @@ field precipitation_sum precip_mm
 source open_meteo_era5_reanalysis
 ttl 86400
 force thermal
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={today}&hourly=temperature_2m,precipitation,windspeed_10m,relative_humidity_2m,surface_pressure&models=era5&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_era5_reanalysis.json
 map hourly.time
 field hourly.temperature_2m temp_2m_c
 field hourly.precipitation precipitation_mm
@@ -20377,7 +20377,7 @@ field 7 definitive_flag
 source solar_historical_surface
 ttl 86400
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_historical_surface.json
 last shortwave_radiation atmosphere_hist_solar_radiation_wm2
 last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
 
@@ -23764,7 +23764,7 @@ field redshift_info_distance astro_xmm_sources_redshift_info_distance
 source atmosphere_biome_amazon_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-3.47&longitude=-62.22&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_amazon_archive.json
 wgs84 -3.47 -62.22
 path daily.temperature_2m_max.0 atmosphere_biome_amazon_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_amazon_temp_min_jan_2000_c
@@ -23776,7 +23776,7 @@ path daily.precipitation_sum.9131 atmosphere_biome_amazon_precip_dec_2024_mm
 source atmosphere_biome_antarctic_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-80.0&longitude=100.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_antarctic_archive.json
 wgs84 -80.0 100.0
 path daily.temperature_2m_max.0 atmosphere_biome_antarctic_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_antarctic_temp_min_jan_2000_c
@@ -23786,7 +23786,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_antarctic_temp_min_dec_2024_
 source atmosphere_biome_atacama_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-24.0&longitude=-69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_atacama_archive.json
 wgs84 -24.0 -69.5
 path daily.temperature_2m_max.0 atmosphere_biome_atacama_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_atacama_temp_min_jan_2000_c
@@ -23796,7 +23796,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_atacama_temp_min_dec_2024_c
 source atmosphere_biome_borneo_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=0.5&longitude=114.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_borneo_archive.json
 wgs84 0.5 114.0
 path daily.temperature_2m_max.0 atmosphere_biome_borneo_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_borneo_temp_min_jan_2000_c
@@ -23806,7 +23806,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_borneo_temp_min_dec_2024_c
 source atmosphere_biome_cairo_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=30.0&longitude=31.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_cairo_archive.json
 wgs84 30.0 31.0
 path daily.temperature_2m_max.0 atmosphere_biome_cairo_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_cairo_temp_min_jan_2000_c
@@ -23816,7 +23816,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_cairo_temp_min_dec_2024_c
 source atmosphere_biome_cape_town_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-34.0&longitude=18.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_cape_town_archive.json
 wgs84 -34.0 18.5
 path daily.temperature_2m_max.0 atmosphere_biome_cape_town_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_cape_town_temp_min_jan_2000_c
@@ -23826,7 +23826,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_cape_town_temp_min_dec_2024_
 source atmosphere_biome_congo_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=0.0&longitude=18.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_congo_archive.json
 wgs84 0.0 18.0
 path daily.temperature_2m_max.0 atmosphere_biome_congo_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_congo_temp_min_jan_2000_c
@@ -23836,7 +23836,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_congo_temp_min_dec_2024_c
 source atmosphere_biome_death_valley_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=36.5&longitude=-117.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_death_valley_archive.json
 wgs84 36.5 -117.0
 path daily.temperature_2m_max.0 atmosphere_biome_death_valley_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_death_valley_temp_min_jan_2000_c
@@ -23846,7 +23846,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_death_valley_temp_min_dec_20
 source atmosphere_biome_fiji_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-18.0&longitude=178.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_fiji_archive.json
 wgs84 -18.0 178.0
 path daily.temperature_2m_max.0 atmosphere_biome_fiji_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_fiji_temp_min_jan_2000_c
@@ -23856,7 +23856,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_fiji_temp_min_dec_2024_c
 source atmosphere_biome_gobi_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=44.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_gobi_archive.json
 wgs84 44.0 105.0
 path daily.temperature_2m_max.0 atmosphere_biome_gobi_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_gobi_temp_min_jan_2000_c
@@ -23866,7 +23866,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_gobi_temp_min_dec_2024_c
 source atmosphere_biome_greenland_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=72.0&longitude=-40.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_greenland_archive.json
 wgs84 72.0 -40.0
 path daily.temperature_2m_max.0 atmosphere_biome_greenland_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_greenland_temp_min_jan_2000_c
@@ -23876,7 +23876,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_greenland_temp_min_dec_2024_
 source atmosphere_biome_iceland_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=64.0&longitude=-19.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_iceland_archive.json
 wgs84 64.0 -19.0
 path daily.temperature_2m_max.0 atmosphere_biome_iceland_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_iceland_temp_min_jan_2000_c
@@ -23886,7 +23886,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_iceland_temp_min_dec_2024_c
 source atmosphere_biome_kerguelen_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-49.5&longitude=69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_kerguelen_archive.json
 wgs84 -49.5 69.5
 path daily.temperature_2m_max.0 atmosphere_biome_kerguelen_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_kerguelen_temp_min_jan_2000_c
@@ -23896,7 +23896,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_kerguelen_temp_min_dec_2024_
 source atmosphere_biome_maldives_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=3.0&longitude=73.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_maldives_archive.json
 wgs84 3.0 73.0
 path daily.temperature_2m_max.0 atmosphere_biome_maldives_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_maldives_temp_min_jan_2000_c
@@ -23906,7 +23906,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_maldives_temp_min_dec_2024_c
 source atmosphere_biome_okavango_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-19.5&longitude=23.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_okavango_archive.json
 wgs84 -19.5 23.5
 path daily.temperature_2m_max.0 atmosphere_biome_okavango_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_okavango_temp_min_jan_2000_c
@@ -23916,7 +23916,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_okavango_temp_min_dec_2024_c
 source atmosphere_biome_patagonia_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-50.0&longitude=-72.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_patagonia_archive.json
 wgs84 -50.0 -72.0
 path daily.temperature_2m_max.0 atmosphere_biome_patagonia_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_patagonia_temp_min_jan_2000_c
@@ -23926,7 +23926,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_patagonia_temp_min_dec_2024_
 source atmosphere_biome_sahara_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=23.0&longitude=5.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_sahara_archive.json
 wgs84 23.0 5.0
 path daily.temperature_2m_max.0 atmosphere_biome_sahara_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_sahara_temp_min_jan_2000_c
@@ -23936,7 +23936,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_sahara_temp_min_dec_2024_c
 source atmosphere_biome_siberia_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=62.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_siberia_archive.json
 wgs84 62.0 105.0
 path daily.temperature_2m_max.0 atmosphere_biome_siberia_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_siberia_temp_min_jan_2000_c
@@ -23946,7 +23946,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_siberia_temp_min_dec_2024_c
 source atmosphere_biome_tibet_archive
 ttl 604800
 force em
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=32.0&longitude=86.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_tibet_archive.json
 wgs84 32.0 86.0
 path daily.temperature_2m_max.0 atmosphere_biome_tibet_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_tibet_temp_min_jan_2000_c
@@ -25418,7 +25418,7 @@ lon_key 3
 source atmosphere_climate_projection
 ttl 2592000
 force em
-url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_climate_projection.json
 first temperature_2m_max atmosphere_climate_temp_max_c
 first temperature_2m_min atmosphere_climate_temp_min_c
 first precipitation_sum atmosphere_climate_precip_mm
