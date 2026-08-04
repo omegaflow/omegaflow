@@ -1,0 +1,57 @@
+name: Release Omegaflow Binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-native:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: omegaflow_linux
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: omegaflow_windows.exe
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact: omegaflow_macos_intel
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact: omegaflow_macos_arm64
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        toolchain: stable
+        target: ${{ matrix.target }}
+    - name: Build
+      run: cargo build --release --target ${{ matrix.target }}
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: target/${{ matrix.target }}/release/${{ matrix.artifact }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-wasm:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        toolchain: stable
+        target: wasm32-unknown-unknown
+    - name: Build
+      run: cargo build --release --target wasm32-unknown-unknown
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: target/wasm32-unknown-unknown/release/omegaflow.wasm
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
