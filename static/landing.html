@@ -26,15 +26,15 @@ if (isMobile) {
     link.textContent = 'Open';
 } else if (ua.includes('Win')) {
     link.href = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_windows.exe';
-    link.textContent = 'Download for Windows';
+    link.textContent = 'Download';
 } else if (ua.includes('Mac')) {
     link.href = ua.includes('Arm')
         ? 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_macos_arm64'
         : 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_macos_intel';
-    link.textContent = 'Download for macOS';
+    link.textContent = 'Download';
 } else if (ua.includes('Linux')) {
     link.href = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_linux';
-    link.textContent = 'Download for Linux';
+    link.textContent = 'Download';
 } else {
     link.href = 'https://github.com/omegaflow/omegaflow/releases';
     link.textContent = 'Releases';

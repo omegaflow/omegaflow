@@ -2143,6 +2143,7 @@ struct StationEntry {
 }
 
 struct SourceConfig {
+    #[allow(dead_code)]
     name: String,
     ttl: u64,
     url: String,
@@ -4415,7 +4416,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 epoch_key,
                 fields,
             } => {
-                let default_epoch = src.catalog_epoch.unwrap_or(now);
+                let _default_epoch = src.catalog_epoch.unwrap_or(now);
                 if let Some(ref j) = parsed_json {
                     if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
                         for (idx, v) in arr.iter().enumerate() {

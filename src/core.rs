@@ -2146,6 +2146,7 @@ pub struct StationEntry {
 }
 
 pub struct SourceConfig {
+    #[allow(dead_code)]
     pub name: String,
     pub ttl: u64,
     pub url: String,
