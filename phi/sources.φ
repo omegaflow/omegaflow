@@ -13486,6 +13486,7 @@ source atmosphere_met_norway_sun
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_met_norway_sun.json
+wgs84 47.3769 8.5417
 header User-Agent "omegaflow"
 field properties.sunrise.time atmosphere_sunrise_time
 field properties.solar_noon.elevation atmosphere_solar_elevation_max_deg
@@ -15993,6 +15994,7 @@ source irsa_dust_extinction_query
 ttl 86400
 force diffusion
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/irsa_dust_extinction_query.json
+wgs84 47.3769 8.5417
 field statistics.refPixelValueSandF ebv_sfd98_reference
 field statistics.meanValueSandF ebv_sfd98_mean
 field statistics.maxValueSandF ebv_sfd98_max
@@ -19402,6 +19404,7 @@ source noaa_ncei_gebco_bathymetry
 ttl 86400
 force gravity
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_ncei_gebco_bathymetry.json
+wgs84 47.3769 8.5417
 field value depth_m
 field objectId gebco_cell_id
 
@@ -24025,6 +24028,7 @@ source atmosphere_power_climatology
 ttl 604800
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_power_climatology.json
+wgs84 47.3769 8.5417
 path properties.parameter.T2M.01 atmosphere_power_temp_jan_clim_c
 path properties.parameter.T2M.07 atmosphere_power_temp_jul_clim_c
 path properties.parameter.PRECTOTCORR.01 atmosphere_power_precip_jan_clim_mm
@@ -27086,6 +27090,7 @@ source geosphere_geopages
 ttl 2592000
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_geopages.json
+wgs84 47.3769 8.5417
 count query.geosearch biosphere_geopages_nearby
 
 source geosphere_cci_datasets
@@ -27191,24 +27196,28 @@ source geosphere_soilgrids_clay
 ttl 2592000
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soilgrids_clay.json
+wgs84 47.3769 8.5417
 field properties.layers.0.depths.0.values.mean geosphere_soil_clay_pct
 
 source geosphere_soilgrids_ph
 ttl 2592000
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soilgrids_ph.json
+wgs84 47.3769 8.5417
 field properties.layers.0.depths.0.values.mean geosphere_soil_ph_x10
 
 source geosphere_soilgrids_sand
 ttl 2592000
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soilgrids_sand.json
+wgs84 47.3769 8.5417
 field properties.layers.0.depths.0.values.mean geosphere_soil_sand_pct
 
 source geosphere_soilgrids_soc
 ttl 2592000
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soilgrids_soc.json
+wgs84 47.3769 8.5417
 field properties.layers.0.depths.0.values.mean geosphere_soil_organic_carbon_x10
 
 source geosphere_usgs_epqs_elevation
