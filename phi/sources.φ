@@ -1792,14 +1792,14 @@ xml_count entry geosphere_tsunami_alert_count
 source geosphere_usgs_streamflow
 ttl 300
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000&parameterCd=00060&siteStatus=all
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_usgs_streamflow.json
 wgs84 38.94900000 -77.36500000
 path value.timeSeries.0.values.0.value.0.value hydrosphere_river_flow_cfs
 
 source geosphere_usgs_streamflow_bbox
 ttl 300
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_usgs_streamflow_bbox.json
 map value.timeSeries
 lat_key sourceInfo.geoLocation.geogLocation.latitude
 lon_key sourceInfo.geoLocation.geogLocation.longitude
@@ -7472,7 +7472,7 @@ field data.8.MUF_D__MHz ionosonde_muf3000_mhz
 source jpl_cad_neo_recent_approaches
 ttl 300
 force gravity
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=50
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_cad_neo_recent_approaches.json
 map data
 lat_key null
 lon_key null
@@ -9089,7 +9089,7 @@ field properties.site_status site_status
 source hydrosphere_usgs_arkansas_littlerock
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07263295&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_arkansas_littlerock.json
 wgs84 34.74 -92.27
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_arkansas_littlerock
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_arkansas_littlerock
@@ -9097,7 +9097,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_arkan
 source hydrosphere_usgs_colorado_leesferry
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09380000&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_colorado_leesferry.json
 wgs84 36.86 -111.59
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_colorado_leesferry
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_colorado_leesferry
@@ -9105,7 +9105,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_color
 source hydrosphere_usgs_columbia_thedalles
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=14105700&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_columbia_thedalles.json
 wgs84 45.61 -121.19
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_columbia_thedalles
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_columbia_thedalles
@@ -9113,7 +9113,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_colum
 source hydrosphere_usgs_grant_burton
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05413500&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_grant_burton.json
 wgs84 42.72 -90.82
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_grant_burton
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_grant_burton
@@ -9121,7 +9121,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_grant
 source hydrosphere_usgs_hudson_albany
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01358000&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_hudson_albany.json
 wgs84 42.66 -73.75
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_hudson_albany
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_hudson_albany
@@ -9129,7 +9129,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_hudso
 source hydrosphere_usgs_mississippi_stlouis
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07010000&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_mississippi_stlouis.json
 wgs84 38.87 -90.18
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_mississippi_stlouis
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_mississippi_stlouis
@@ -9137,7 +9137,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_missi
 source hydrosphere_usgs_mississippi_vicksburg
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07289000&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_mississippi_vicksburg.json
 wgs84 32.35 -90.89
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_mississippi_vicksburg
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_mississippi_vicksburg
@@ -9145,7 +9145,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_missi
 source hydrosphere_usgs_missouri_bismarck
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06342500&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_missouri_bismarck.json
 wgs84 46.85 -100.78
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_missouri_bismarck
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_missouri_bismarck
@@ -9153,7 +9153,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_misso
 source hydrosphere_usgs_missouri_hermann
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06934500&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_missouri_hermann.json
 wgs84 38.71 -91.44
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_missouri_hermann
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_missouri_hermann
@@ -9161,7 +9161,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_misso
 source hydrosphere_usgs_ohio_louisville
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03294500&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_ohio_louisville.json
 wgs84 38.26 -85.66
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_ohio_louisville
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_ohio_louisville
@@ -9169,7 +9169,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_ohio_
 source hydrosphere_usgs_potomac_washingtondc
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_potomac_washingtondc.json
 wgs84 38.95 -77.13
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_potomac_washingtondc
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_potomac_washingtondc
@@ -9177,7 +9177,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_potom
 source hydrosphere_usgs_riogrande_elpaso
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08371000&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_riogrande_elpaso.json
 wgs84 31.80 -106.53
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_riogrande_elpaso
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_riogrande_elpaso
@@ -9185,7 +9185,7 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_riogr
 source hydrosphere_usgs_tennessee_chattanooga
 ttl 900
 force seismic-surface
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03565500&parameterCd=00060,00065
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_usgs_tennessee_chattanooga.json
 wgs84 35.04 -85.31
 field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_tennessee_chattanooga
 field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_tennessee_chattanooga
@@ -9235,7 +9235,7 @@ field f flood_level_flag
 source usgs_streamflow_instantaneous
 ttl 900
 force diffusion
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065,00060&siteStatus=all
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/usgs_streamflow_instantaneous.json
 map value.timeSeries
 lat_key sourceInfo.geoLocation.geogLocation.latitude
 lon_key sourceInfo.geoLocation.geogLocation.longitude
@@ -9385,7 +9385,7 @@ field place_guess locality
 source jpl_cad_neo_recent
 ttl 1800
 force gravity
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_cad_neo_recent.json
 map data
 field_in 0 designation
 field_in 3 close_approach_date
@@ -10523,7 +10523,7 @@ field 4 rms_tecu
 source astro_cneos_fireballs
 ttl 3600
 force em
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_cneos_fireballs.json
 map data
 lat_key lat
 lon_key lon
@@ -10549,7 +10549,7 @@ source astro_neo_close_approaches
 ttl 3600
 force em
 ssb
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_neo_close_approaches.json
 field data.0.4 cosmos_neo_first_dist_au
 field data.0.7 cosmos_neo_first_v_kms
 field data.0.10 cosmos_neo_first_h_mag
@@ -11743,7 +11743,7 @@ field properties.date flood_date
 source jpl_cad_neo_30d
 ttl 3600
 force gravity
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&date-min={today}&date-max=%2B30&body=Earth&fullname=true&diameter=true&sort=date
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_cad_neo_30d.json
 map data
 field_in 0 designation
 field_in 3 close_approach_date
@@ -11754,7 +11754,7 @@ field_in 17 diameter_km
 source jpl_fireball_impact_events
 ttl 3600
 force gravity
-url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_fireball_impact_events.json
 map data
 lat_key lat
 lon_key lon
@@ -11769,7 +11769,7 @@ field lon longitude
 source jpl_fireball_impacts
 ttl 3600
 force gravity
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_fireball_impacts.json
 map data
 field_in 2 date
 field_in 3 radiated_energy_gj
@@ -12174,7 +12174,7 @@ field_in 7 sea_level_height_m
 source astro_neo_jpl_fireball_events
 ttl 3600
 force gravity
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&date-min=2020-01-01
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_neo_jpl_fireball_events.json
 map data
 lat_key lat
 lon_key lon
@@ -12761,14 +12761,14 @@ source orbital_cneos_asteroids_inside_lunar_orbit
 ttl 3600
 force em
 ecliptic 1
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_cneos_asteroids_inside_lunar_orbit.json
 field count orbital_asteroids_closer_than_moon
 
 source orbital_cneos_close_approaches
 ttl 3600
 force em
 ecliptic 1
-url https://ssd-api.jpl.nasa.gov/cad.api
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_cneos_close_approaches.json
 field count cneos_close_approach_count
 
 source orbital_dsn_status
@@ -12782,7 +12782,7 @@ source orbital_fireballs
 ttl 3600
 force em
 ecliptic 1
-url https://ssd-api.jpl.nasa.gov/fireball.api
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_fireballs.json
 field count biosphere_fireball_event_count
 
 source orbital_tle_mirror_full
@@ -13004,7 +13004,7 @@ field identifier universe_dscovr_identifier
 source astro_jpl_close_approaches
 ttl 3600
 force em
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD&date-min={today}&limit=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_jpl_close_approaches.json
 cmap data
 tau_key _dist_m
 field_in 0 designation
@@ -13016,7 +13016,7 @@ field_in 7 v_rel_kms
 source astro_jpl_fireballs
 ttl 3600
 force em
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_jpl_fireballs.json
 cmap data
 tau_key _dist_m
 field_in 0 peak_date
@@ -13070,7 +13070,7 @@ field values.0.value.0.dateTime measurement_datetime
 source usgs_nwis_streamflow_daily
 ttl 3600
 force acoustic
-url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT={year}-{month}-01&endDT={year}-{month}-{day}&parameterCd=00060&siteStatus=all
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/usgs_nwis_streamflow_daily.json
 map value.timeSeries
 lat_key sourceInfo.geoLocation.geogLocation.latitude
 lon_key sourceInfo.geoLocation.geogLocation.longitude
@@ -13082,7 +13082,7 @@ field values.0.value.0.dateTime streamflow_time_utc
 source usgs_streamflow_daily
 ttl 3600
 force diffusion
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065&siteStatus=all
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/usgs_streamflow_daily.json
 map value.timeSeries
 lat_key sourceInfo.geoLocation.geogLocation.latitude
 lon_key sourceInfo.geoLocation.geogLocation.longitude
@@ -14070,7 +14070,7 @@ field_in anom sst_anomaly_c
 source astro_cneos_fireballs_infrasound
 ttl 86400
 force acoustic
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_cneos_fireballs_infrasound.json
 map data
 lat_key 3
 lon_key 5
@@ -14085,13 +14085,13 @@ source astro_asteroids_numbered
 ttl 86400
 force em
 ssb
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_asteroids_numbered.json
 count data cosmos_asteroids_numbered_total
 
 source astro_asteroids_positions
 ttl 86400
 force em
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_asteroids_positions.json
 field H cosmic_asteroid_h_mag
 kepler_map data
 a_key a
@@ -16360,7 +16360,7 @@ field 3 domain
 source jpl_cad_lunar_distance
 ttl 86400
 force gravity
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&sort=date
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_cad_lunar_distance.json
 map data
 field_in 0 designation
 field_in 3 close_approach_date
@@ -16371,7 +16371,7 @@ field_in 17 diameter_km
 source jpl_cad_lunar_distance_objects
 ttl 86400
 force gravity
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&limit=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_cad_lunar_distance_objects.json
 map data
 lat_key null
 lon_key null
@@ -16484,7 +16484,7 @@ field 6 vz_au_day
 source jpl_sbdb
 ttl 86400
 force em
-url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr={target}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_sbdb.json
 verify false
 target Ceres
 map object
@@ -16506,7 +16506,7 @@ field H abs_magnitude
 source jpl_sbdb_ceres_ephemeris
 ttl 86400
 force gravity
-url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=ceres&phys-par=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_sbdb_ceres_ephemeris.json
 wgs84 0.0 0.0
 map .
 field object display_name
@@ -16524,7 +16524,7 @@ field diameter diameter_km
 source jpl_sbdb_eris_ephemeris
 ttl 86400
 force gravity
-url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=eris&phys-par=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_sbdb_eris_ephemeris.json
 wgs84 0.0 0.0
 map .
 field object display_name
@@ -16542,7 +16542,7 @@ field diameter diameter_km
 source jpl_sbdb_neo_asteroid_catalog
 ttl 86400
 force gravity
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-group=neo
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_sbdb_neo_asteroid_catalog.json
 wgs84 0.0 0.0
 map data
 field full_name asteroid_name
@@ -16556,7 +16556,7 @@ field neo neo_flag
 source jpl_sbdb_tno_distant_object_catalog
 ttl 86400
 force gravity
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-class=TNO
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_sbdb_tno_distant_object_catalog.json
 wgs84 0.0 0.0
 map data
 field full_name tno_name
@@ -18812,7 +18812,7 @@ field 2 soi_index soi_value
 source astro_neo_sentry_risk_list
 ttl 86400
 force gravity
-url https://ssd-api.jpl.nasa.gov/sentry.api?all=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_neo_sentry_risk_list.json
 map data
 lat_key null
 lon_key null
@@ -18912,126 +18912,126 @@ field 4 unit
 source technosphere_nlm_assembly_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=assembly&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_assembly_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_genome_assemblies_total
 
 source technosphere_nlm_bioproject_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=bioproject&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_bioproject_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_bioprojects_total
 
 source technosphere_nlm_biosample_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=biosample&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_biosample_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_biosamples_total
 
 source technosphere_nlm_books_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=books&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_books_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_nlm_books_total
 
 source technosphere_nlm_clinical_trials_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinicaltrials&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_clinical_trials_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_clinical_trials_total
 
 source technosphere_nlm_clinvar_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinvar&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_clinvar_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_clinic_variants_total
 
 source technosphere_nlm_gap_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gap&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_gap_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_dbgap_studies_total
 
 source technosphere_nlm_gene_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_gene_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_genbank_genes_total
 
 source technosphere_nlm_genome_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=genome&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_genome_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_genome_total
 
 source technosphere_nlm_mesh_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=mesh&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_mesh_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_mesh_terms_total
 
 source technosphere_nlm_nucleotide_total
 ttl 86400
 force gravity
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nucleotide&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_nucleotide_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_nucleotide_sequences_total
 
 source technosphere_nlm_omim_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=omim&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_omim_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_mendelian_disorders_total
 
 source technosphere_nlm_pmc_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_pmc_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_pmc_articles_total
 
 source technosphere_nlm_protein_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=protein&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_protein_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_protein_sequences_total
 
 source technosphere_nlm_pubmed_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_pubmed_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_pubmed_articles_total
 
 source technosphere_nlm_snp_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=snp&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_snp_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_snp_total
 
 source technosphere_nlm_sra_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_sra_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count molecular_sequencing_runs_total
 
 source technosphere_nlm_taxonomy_total
 ttl 86400
 force em
-url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&retmax=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_taxonomy_total.json
 wgs84 38.995 -77.101
 field eSearchResult.Count biosphere_taxonomy_total
 
@@ -20039,7 +20039,7 @@ regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
 source orbital_jpl_atmospheric_fireballs
 ttl 86400
 force em
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_jpl_atmospheric_fireballs.json
 wgs84 34.201 -118.171
 field count cosmic_fireball_count
 
@@ -20081,7 +20081,7 @@ regex \(kg\).\W*([0-9.]+) orbital_saturn_mass_x10_24_kg
 source orbital_sentry_objects
 ttl 86400
 force em
-url https://ssd-api.jpl.nasa.gov/sentry.api
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_sentry_objects.json
 wgs84 34.201 -118.171
 field count nasa_sentry_risk_object_count
 
