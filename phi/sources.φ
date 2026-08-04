@@ -13827,6 +13827,7 @@ source biosphere_obis_species
 ttl 86400
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_obis_species.json
+wgs84 47.3769 8.5417
 field total biosphere_ocean_occurrences_50km
 
 source biosphere_obis_statistics
