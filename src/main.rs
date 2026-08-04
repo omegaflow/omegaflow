@@ -5118,13 +5118,16 @@ fn warm_cache(archive: Arc<Archive>) {
                                 } else {
                                     origins.entry(origin).or_default().zero_yield = 0;
                                     origins.entry(origin).or_default().unchanged_count = 0;
-                                    refreshed.insert(origin);
+                                    let before = new_samples.len();
                                     for pend in pendings {
                                         for smp in
                                             materialize(src, origin, region, pend, &mut origins)
                                         {
                                             new_samples.push(smp);
                                         }
+                                    }
+                                    if new_samples.len() > before {
+                                        refreshed.insert(origin);
                                     }
                                 }
                             }
