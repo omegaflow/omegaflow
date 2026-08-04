@@ -308,11 +308,11 @@ jobs:
             fi
           done
 
-      - name: Mirror live sources -> CDN (health check)
+      - name: Mirror all sources -> CDN (health snapshot)
         env:
           OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
         run: |
-          python3 scripts/migrate_live_to_cdn.py --mode mirror-live --max-ttl 300 2>&1 | tail -5
+          python3 scripts/migrate_live_to_cdn.py --mode mirror-all 2>&1 | tail -10
 
       - name: Publish Release
         env:

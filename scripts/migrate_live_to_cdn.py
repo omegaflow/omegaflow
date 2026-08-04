@@ -166,8 +166,9 @@ def main():
         if MAX_TTL is not None:
             candidates = [s for s in candidates if s.get("ttl", 999999) <= MAX_TTL]
     elif MODE == "mirror-all":
-        # All non-CDN sources — update phi to CDN
+        # All non-CDN sources — update phi only for TTL >= 300 non-positional
         candidates = [s for s in sources if not s["is_cdn"]]
+        update_phi = False  # controlled per-source below
     else:
         print(f"Unknown mode: {MODE}", file=sys.stderr)
         sys.exit(1)
@@ -181,13 +182,16 @@ def main():
         print("Nothing to do.")
         return
     
-    update_phi = MODE in ("migrate", "mirror-all")
     health = {"timestamp": time.time(), "mode": MODE, "results": []}
     migrated = 0
     failed = 0
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as executor:
-        futures = {executor.submit(mirror_source, s, update_phi): s for s in candidates}
+        futures = {}
+        for s in candidates:
+            should_update = MODE in ("migrate", "mirror-all") and s.get("ttl", 0) >= 300 \
+                and not re.search(r'\{lat\}|\{lon\}|\{ra\}|\{dec\}|\{radius\}|\{alt\}', s["url"])
+            futures[executor.submit(mirror_source, s, should_update)] = s
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
             if result["ok"]:
@@ -205,26 +209,32 @@ def main():
     with open(HEALTH_FILE, 'w') as f:
         json.dump(health, f)
     
-    # Update sources.φ if migrating
-    if update_phi and migrated > 0 and not DRY_RUN:
-        for result in health["results"]:
-            if not result["ok"] or "cdn_url" not in result:
-                continue
-            for src in candidates:
-                if src["name"] == result["name"]:
-                    old_block = src["raw"]
-                    new_lines = []
-                    for line in old_block.split('\n'):
-                        if line.startswith('url ') and line.split(None, 1)[1].strip() == src["url"]:
-                            new_lines.append(f"url {result['cdn_url']}")
-                        else:
-                            new_lines.append(line)
-                    new_block = '\n'.join(new_lines)
-                    content = content.replace(old_block, new_block)
-                    break
+    # Update sources.φ for sources marked for CDN migration
+    phi_updated = 0
+    for result in health["results"]:
+        if not result["ok"] or "cdn_url" not in result:
+            continue
+        for src in candidates:
+            if src["name"] == result["name"]:
+                should_update = MODE in ("migrate", "mirror-all") and src.get("ttl", 0) >= 300 \
+                    and not re.search(r'\{lat\}|\{lon\}|\{ra\}|\{dec\}|\{radius\}|\{alt\}', src["url"])
+                if not should_update:
+                    continue
+                old_block = src["raw"]
+                new_lines = []
+                for line in old_block.split('\n'):
+                    if line.startswith('url ') and line.split(None, 1)[1].strip() == src["url"]:
+                        new_lines.append(f"url {result['cdn_url']}")
+                    else:
+                        new_lines.append(line)
+                new_block = '\n'.join(new_lines)
+                content = content.replace(old_block, new_block)
+                phi_updated += 1
+                break
+    if phi_updated > 0 and not DRY_RUN:
         with open(SOURCES_PHI, 'w') as f:
             f.write(content)
-        print(f"Updated {SOURCES_PHI}")
+        print(f"Updated {SOURCES_PHI} ({phi_updated} sources)")
     
     if failed > 0:
         sys.exit(1)
