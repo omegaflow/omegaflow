@@ -1149,7 +1149,6 @@ enum Frame {
     IAU2000 { lat: f64, lon: f64, alt: f64 },
     Data,
     Query,
-    CDN,
 }
 
 struct StationEntry {
@@ -1786,9 +1785,7 @@ fn load_sources() -> Vec<SourceConfig> {
                                     | Extract::Rows { .. }
                             )
                         });
-                    let frame = if cur_url.contains("omegaflow/sources") {
-                        Some(Frame::CDN)
-                    } else if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
+                    let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
                         if cur_mars_surface {
                             Some(Frame::IAU2000 {
                                 lat,
@@ -1817,7 +1814,7 @@ fn load_sources() -> Vec<SourceConfig> {
                     {
                         Some(Frame::Query)
                     } else {
-                        Some(Frame::CDN)
+                        Some(Frame::Data)
                     };
                     if let Some(frame) = frame {
                         let auto_tau_key = if cur_tau_key.is_none() && cur_tau.is_none() {
@@ -3261,7 +3258,6 @@ fn materialize(
                 };
                 Motion::WGS84 { lat, lon, alt }
             }
-            Frame::CDN => return vec![],
         },
     };
     let abs = motion.at(pend.epoch, pend.epoch);
@@ -3757,7 +3753,6 @@ fn warm_cache(archive: Arc<Archive>) {
                             ));
                         }
                     }
-                    Frame::CDN => {}
                 }
             }
         }
