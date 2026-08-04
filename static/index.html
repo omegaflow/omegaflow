@@ -512,11 +512,15 @@ fn presence_probe() {
             if (fieldCap > 0 && n <= fieldCap) return;
             if (!gpu) return;
             if (!vpBuf || !probeBuf) { initFieldGPU(); return; }
-            let c = 256;
+            let c = fieldCap > 0 ? fieldCap : 256;
             while (c < n) c <<= 1;
             const maxBuf = gpu.limits.maxBufferSize || 268435456;
             while (c * 32 > maxBuf) c >>= 1;
             if (c < 256) c = 256;
+            if (c < fieldCap >> 1 && stableTick > 0) {
+                const displayFreq = 60;
+                if (stableTick > 1000 / displayFreq) c = fieldCap >> 1;
+            }
             fieldCap = c;
             if (fieldBuf) fieldBuf.destroy();
             if (metaBuf) metaBuf.destroy();
@@ -1001,7 +1005,7 @@ fn presence_probe() {
             if (keysDown.has(',')) tThrustTarget = -64;
             else if (keysDown.has('.')) tThrustTarget = 64;
             else if (pointers.size < 3) tThrustTarget = 0;
-            tThrust += (tThrustTarget - tThrust) * (1 - Math.exp(-rawTick / 256));
+            tThrust += (tThrustTarget - tThrust) * (1 - Math.exp(-rawTick / Math.max(stableTick, rawTick)));
             tPresence += (1 + tThrust) * rawTick / 1000.0;
             let panNow = 0;
             if (keysDown.has('ArrowRight') || keysDown.has('ArrowLeft') || keysDown.has('ArrowUp') || keysDown.has('ArrowDown') || keysDown.has('PageUp') || keysDown.has('PageDown')) {
@@ -1181,8 +1185,8 @@ fn presence_probe() {
             const [fr, fu, ff] = orientationFrame();
             if (pointers.size === 1) {
                 if (p.button === 2) {
-                    if (dx !== 0) qOrientation = qNorm(qMul(qAxisAngle(fu, dx / 256), qOrientation));
-                    if (dy !== 0) qOrientation = qNorm(qMul(qAxisAngle(fr, dy / 256), qOrientation));
+                    if (dx !== 0) qOrientation = qNorm(qMul(qAxisAngle(fu, dx * gridStep / 4611686018427387904), qOrientation));
+                    if (dy !== 0) qOrientation = qNorm(qMul(qAxisAngle(fr, dy * gridStep / 4611686018427387904), qOrientation));
                 } else if (Math.abs(e.clientX - p.bx) > 10 || Math.abs(e.clientY - p.by) > 10) {
                     const totalDx = e.clientX - p.bx;
                     const totalDy = e.clientY - p.by;
