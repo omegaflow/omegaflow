@@ -2458,9 +2458,7 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                         emit(&mut s, "200 OK", "text/html", &page);
                     }
                     "/omegaflow.wasm" => {
-                        let wasm = std::fs::read("static/omegaflow.wasm").unwrap_or_else(|_| {
-                            include_bytes!("../static/omegaflow.wasm").to_vec()
-                        });
+                        let wasm = std::fs::read("static/omegaflow.wasm").unwrap_or_default();
                         emit(&mut s, "200 OK", "application/wasm", &wasm);
                     }
                     _ => {
