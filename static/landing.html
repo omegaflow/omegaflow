@@ -6,68 +6,42 @@
 <title>omegaflow</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: system-ui, monospace; background: #0a0908; color: #d4cfc4; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
-h1 { font-size: 2.5rem; font-weight: 200; letter-spacing: 0.15em; margin-bottom: 0.5rem; color: #f0e8d8; }
-p { font-size: 0.9rem; color: #8a8478; max-width: 36rem; line-height: 1.6; margin-bottom: 2rem; }
-.btn { display: inline-block; padding: 0.9rem 2rem; border: 1px solid #3a3630; border-radius: 0.25rem; background: #141210; color: #d4cfc4; font-size: 1rem; cursor: pointer; text-decoration: none; transition: background 0.2s, border-color 0.2s; }
-.btn:hover { background: #201c18; border-color: #5a5650; }
-.btn.primary { border-color: #6a5230; }
-.btn.primary:hover { border-color: #8a7240; background: #1e1810; }
-.actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
-.note { font-size: 0.75rem; color: #5a5650; margin-top: 1rem; }
-#unavailable { display: none; color: #8a4a3a; margin-top: 1rem; }
+html, body { height: 100%; background: #0a0908; color: #c4b9a8; font-family: system-ui, monospace; }
+body { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+h1 { font-size: 2.5rem; font-weight: 200; letter-spacing: 0.15em; color: #f0e8d8; margin-bottom: 2rem; }
+a { color: #a89878; text-decoration: none; font-size: 1rem; padding: 0.5rem 1.5rem; border: 1px solid #3a3630; }
+a:hover { background: #141210; }
 </style>
 </head>
 <body>
 <h1>&phi;(x,y,z,t)</h1>
-<p>Kybernetic field system. Navigate the block universe through raw presence on any device.</p>
-<div class="actions" id="actions">
-  <a id="download-btn" class="btn primary" href="#" style="display:none">Download</a>
-  <a id="launch-btn" class="btn primary" href="/app.html" style="display:none">Launch in Browser</a>
-</div>
-<div id="unavailable">No native binary available for your platform. Use the browser launch to run omegaflow via WebAssembly.</div>
-<p class="note">Downloads point to the latest GitHub Release. No telemetry, no accounts, no cloud. The Archivar runs on your machine.</p>
+<a id="link" href="#">Download</a>
 <script>
 const ua = navigator.userAgent;
-let downloadUrl = '';
-let osName = '';
+let url = '';
+let text = 'Launch in Browser';
 
 if (ua.includes('Win')) {
-    osName = 'Windows';
-    downloadUrl = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_windows.exe';
+    url = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_windows.exe';
+    text = 'Download for Windows';
 } else if (ua.includes('Mac')) {
-    osName = 'macOS';
-    downloadUrl = ua.includes('Arm')
+    url = ua.includes('Arm')
         ? 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_macos_arm64'
         : 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_macos_intel';
+    text = 'Download for macOS';
 } else if (ua.includes('Linux')) {
-    osName = 'Linux';
-    downloadUrl = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_linux';
+    url = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_linux';
+    text = 'Download for Linux';
 }
 
 const isMobile = ua.includes('Android') || ua.includes('iPhone') || ua.includes('iPad') || ua.includes('Mobi');
 
 if (isMobile) {
-    const launch = document.getElementById('launch-btn');
-    launch.style.display = 'inline-block';
-    launch.textContent = 'Open in Browser';
-    if (osName) {
-        const dl = document.getElementById('download-btn');
-        dl.style.display = 'inline-block';
-        dl.textContent = 'Download for ' + osName;
-        dl.href = downloadUrl;
-    }
-} else if (downloadUrl) {
-    const dl = document.getElementById('download-btn');
-    dl.style.display = 'inline-block';
-    dl.textContent = 'Download for ' + osName;
-    dl.href = downloadUrl;
-    document.getElementById('launch-btn').style.display = 'inline-block';
-    document.getElementById('launch-btn').textContent = 'or Launch in Browser';
+    document.getElementById('link').href = '/app.html';
+    document.getElementById('link').textContent = 'Open';
 } else {
-    document.getElementById('launch-btn').style.display = 'inline-block';
-    document.getElementById('launch-btn').textContent = 'Launch in Browser';
-    document.getElementById('unavailable').style.display = 'block';
+    document.getElementById('link').href = url || '/app.html';
+    document.getElementById('link').textContent = text;
 }
 </script>
 </body>
