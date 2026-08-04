@@ -1818,7 +1818,7 @@ source magnetosphere_gfz_kp_index
 ttl 300
 force gravity
 ssb
-url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_gfz_kp_index.json
 last kp_index magnetosphere_kp_index
 
 source astro_gfz_sunspot_number
@@ -1831,7 +1831,7 @@ last SN solar_sunspot_number
 source magnetosphere_goes_eps_protons
 ttl 300
 force em
-url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_goes_eps_protons.json
 map .
 lat_key satellite_lat
 lon_key satellite_lon
@@ -1843,7 +1843,7 @@ field flux proton_flux_pfu
 source magnetosphere_goes_xray_flares
 ttl 300
 force em
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_goes_xray_flares.json
 map .
 lat_key satellite_lat
 lon_key satellite_lon
@@ -7508,7 +7508,7 @@ source magnetosphere_noaa_imf_bz
 ttl 300
 force gravity
 ecliptic 0.99
-url https://services.swpc.noaa.gov/products/summary/solar-wind-mag-field.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_imf_bz.json
 path 0.bz_gsm magnetosphere_imf_bz_nt
 path 0.bt magnetosphere_imf_bt_nt
 
@@ -7516,7 +7516,7 @@ source magnetosphere_noaa_kp_index
 ttl 300
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_kp_index.json
 path -1.Kp magnetosphere_kp_index
 path -1.a_running magnetosphere_kp_a_running
 
@@ -7524,21 +7524,21 @@ source magnetosphere_noaa_swpc_electron_flux
 ttl 300
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_swpc_electron_flux.json
 last flux radiation_electron_flux_goes
 
 source magnetosphere_noaa_swpc_kp_index
 ttl 300
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_swpc_kp_index.json
 last Kp magnetosphere_kp_index_noaa
 
 source magnetosphere_noaa_swpc_proton_flux
 ttl 300
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_swpc_proton_flux.json
 last flux radiation_proton_flux_goes
 
 source magnetosphere_noaa_swpc_solar_wind
@@ -7546,7 +7546,7 @@ ttl 300
 force gravity
 
 ssb
-url https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_swpc_solar_wind.json
 last_row 1 magnetosphere_solar_wind_speed_noaa
 last_row 2 magnetosphere_solar_wind_density_noaa
 
@@ -7643,7 +7643,7 @@ field 6 bpr_anomaly_mm
 source noaa_planetary_k_index
 ttl 300
 force em
-url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_planetary_k_index.json
 map
 wgs84 55.0 0.0
 field time_tag observation_time
@@ -7653,7 +7653,7 @@ field estimated_kp estimated_kp
 source noaa_swpc_aurora_ovation_prime
 ttl 300
 force em
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_aurora_ovation_prime.json
 map coordinates
 lat_key 1
 lon_key 0
@@ -7663,7 +7663,7 @@ source noaa_swpc_dst_real_time
 ttl 300
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/products/kyoto-dst.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_dst_real_time.json
 map .
 field time_tag dst_time_utc
 field dst dst_index_nt
@@ -7672,7 +7672,7 @@ source noaa_swpc_goes_electron_1day
 ttl 300
 force diffusion
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_goes_electron_1day.json
 map .
 field time_tag observation_time_utc
 field energy_channel0 electron_40keV
@@ -7686,7 +7686,7 @@ source noaa_swpc_goes_integral_protons_1day
 ttl 300
 force diffusion
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_goes_integral_protons_1day.json
 map .
 field 0 datetime_utc
 field 1 p_gt10mev_pfu
@@ -7697,7 +7697,7 @@ source noaa_swpc_goes_sep_7day_proton_flux
 ttl 300
 force diffusion
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-7-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_goes_sep_7day_proton_flux.json
 map .
 field 0 time_tag
 field 1 p_gt10mev_pfu
@@ -7708,7 +7708,7 @@ source noaa_swpc_goes_sep_proton_flux
 ttl 300
 force diffusion
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_goes_sep_proton_flux.json
 map .
 field 0 datetime_utc
 field 1 p10_flux_pfu
@@ -7719,7 +7719,7 @@ source noaa_swpc_kp_index_realtime
 ttl 300
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_kp_index_realtime.json
 map .
 field 0 datetime_utc
 field 1 kp_index
@@ -7730,7 +7730,7 @@ source noaa_swpc_kp_planetary_index
 ttl 300
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_kp_planetary_index.json
 map .
 field time_tag observation_time_utc
 field kp_index planetary_kp
@@ -7740,7 +7740,7 @@ source noaa_swpc_solar_region_magnetic_classes
 ttl 300
 force em
 ssb
-url https://services.swpc.noaa.gov/json/solar_regions.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_solar_region_magnetic_classes.json
 map .
 field obsTime observation_time_utc
 field region ar_noaa_number
@@ -7801,7 +7801,7 @@ source solar_noaa_Integrated_irradiance
 ttl 300
 force em
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_noaa_Integrated_irradiance.json
 map .
 field begin_time solar_flare_begin_time
 field peak_time solar_flare_peak_time
@@ -7813,14 +7813,14 @@ source solar_noaa_swpc_xray_flux
 ttl 300
 force em
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_noaa_swpc_xray_flux.json
 last flux solar_xray_flux_goes
 
 source solar_wind_speed
 ttl 300
 force advective
 ssb
-url https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_wind_speed.json
 path 0.proton_speed solar_wind_speed_kms
 
 source usgs_aftershock_forecast_significant
@@ -8806,7 +8806,7 @@ source magnetosphere_ovation_aurora
 ttl 600
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_ovation_aurora.json
 map coordinates
 lat_key 1
 lon_key 0
@@ -8884,7 +8884,7 @@ source noaa_swpc_goes_flare_event_archive
 ttl 600
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_goes_flare_event_archive.json
 map .
 field_in 0 timestamp_utc
 field_in 1 flux_short_wm2
@@ -8894,7 +8894,7 @@ source noaa_swpc_goes_xrays_7day
 ttl 600
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_goes_xrays_7day.json
 map .
 field time_tag xray_time_utc
 field flux xray_flux_W_m2
@@ -8964,7 +8964,7 @@ source solar_euv
 ttl 600
 force em
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_euv.json
 last value solar_euv_flux_wm2
 
 source solar_surface_radiation
@@ -8988,7 +8988,7 @@ path current.weather_code atmosphere_wmo_code
 source magnetosphere_swpc_aurora_oval
 ttl 600
 force em
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_swpc_aurora_oval.json
 map coordinates
 lat_key 1
 lon_key 0
@@ -9148,7 +9148,7 @@ source magnetosphere_ionosphere_tec_global
 ttl 900
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_ionosphere_tec_global.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -9469,7 +9469,7 @@ field severity severity
 source noaa_swpc_aurora_oval_north
 ttl 1800
 force em
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_aurora_oval_north.json
 map coordinates
 lat_key 1
 lon_key 0
@@ -10697,7 +10697,7 @@ source exosphere_ace_magnetometer
 ttl 3600
 force gravity
 ecliptic 0.99
-url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_ace_magnetometer.json
 field 0.gsm_bx exosphere_ace_bx_gsm_nt
 field 0.gsm_by exosphere_ace_by_gsm_nt
 field 0.gsm_bz exosphere_ace_bz_gsm_nt
@@ -10707,7 +10707,7 @@ source exosphere_ace_solar_wind
 ttl 3600
 force advective
 ssb
-url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_ace_solar_wind.json
 field 0.speed exosphere_ace_speed_kms
 field 0.dens exosphere_ace_dens_ncc
 field 0.temperature exosphere_ace_temp_k
@@ -10715,7 +10715,7 @@ field 0.temperature exosphere_ace_temp_k
 source exosphere_aurora_oval
 ttl 3600
 force em
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_aurora_oval.json
 map coordinates
 lat_key 1
 lon_key 0
@@ -10726,7 +10726,7 @@ source exosphere_dst_index
 ttl 3600
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_dst_index.json
 last dst exosphere_dst_nt
 
 source exosphere_interstellar_object_tracking
@@ -10739,7 +10739,7 @@ source exosphere_kp_index
 ttl 3600
 force gravity
 ecliptic 1
-url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_kp_index.json
 last estimated_kp exosphere_kp_estimated
 
 source exosphere_satnogs_radio_observations
@@ -11791,21 +11791,21 @@ source magnetosphere_aurora_forecast
 ttl 3600
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_aurora_forecast.json
 count coordinates atmosphere_aurora_coord_count
 
 source magnetosphere_aurora_nowcast_north
 ttl 3600
 force em
 ecliptic 1
-url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_aurora_nowcast_north.json
 count coordinates atmosphere_aurora_coordinate_count
 
 source magnetosphere_solar_regions
 ttl 3600
 force gravity
 ssb
-url https://services.swpc.noaa.gov/json/solar_regions.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_solar_regions.json
 map .
 lat_key latitude
 lon_key longitude
@@ -12186,7 +12186,7 @@ field subregion subregion
 source noaa_estimated_kp
 ttl 3600
 force em
-url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_estimated_kp.json
 map
 wgs84 55.0 0.0
 field time_tag observation_time
@@ -12227,7 +12227,7 @@ field 7 co2_preindustrial_baseline
 source noaa_kp_index_historic
 ttl 3600
 force gravity
-url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_kp_index_historic.json
 map
 wgs84 55.0 0.0
 field time_tag observation_time
@@ -12258,7 +12258,7 @@ field 11 SSS_PSU
 source noaa_swpc_dst_index
 ttl 3600
 force gravity
-url https://services.swpc.noaa.gov/products/kyoto-dst.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_dst_index.json
 map .
 field time_tag timestamp_utc
 field dst dst_index_nT
@@ -12266,7 +12266,7 @@ field dst dst_index_nT
 source noaa_swpc_solar_regions
 ttl 3600
 force em
-url https://services.swpc.noaa.gov/json/solar_regions.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_solar_regions.json
 map .
 field region active_region_id
 field latitude helio_latitude
@@ -12805,7 +12805,7 @@ ttl 3600
 force em
 
 ssb
-url https://services.swpc.noaa.gov/json/solar_regions.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_noaa_srs.json
 map .
 lat_key latitude
 lon_key longitude
@@ -12820,14 +12820,14 @@ source solar_noaa_swpc_flare_count
 ttl 3600
 force em
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_noaa_swpc_flare_count.json
 count . solar_flare_count_noaa
 
 source solar_noaa_swpc_flares
 ttl 3600
 force em
 ssb
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_noaa_swpc_flares.json
 count . solar_flare_count_noaa
 
 source solar_orbiter_vectors
@@ -14353,56 +14353,56 @@ source exosphere_swpc_space_weather_alerts
 ttl 86400
 force advective
 ssb
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_swpc_space_weather_alerts.json
 count lines exosphere_swpc_alert_count
 
 source exosphere_donki_legacy_cme
 ttl 86400
 force advective
 ssb
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_donki_legacy_cme.json
 count lines exosphere_donki_cme_count_2024
 
 source exosphere_donki_legacy_flares
 ttl 86400
 force em
 ssb
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_donki_legacy_flares.json
 count lines exosphere_donki_flare_count_2024
 
 source exosphere_donki_legacy_gst
 ttl 86400
 force advective
 ssb
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_donki_legacy_gst.json
 count lines exosphere_donki_gst_count_2024
 
 source exosphere_donki_legacy_hss
 ttl 86400
 force advective
 ssb
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_donki_legacy_hss.json
 count lines exosphere_donki_hss_count_2024
 
 source exosphere_donki_legacy_ips
 ttl 86400
 force advective
 ssb
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_donki_legacy_ips.json
 count lines exosphere_donki_ips_count_2024
 
 source exosphere_donki_legacy_mpc
 ttl 86400
 force advective
 ssb
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_donki_legacy_mpc.json
 count lines exosphere_donki_mpc_count_2024
 
 source exosphere_donki_legacy_sep
 ttl 86400
 force advective
 ssb
-url https://services.swpc.noaa.gov/products/alerts.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_donki_legacy_sep.json
 count lines exosphere_donki_sep_count_2024
 
 source exosphere_exoplanet_count
@@ -14423,7 +14423,7 @@ source exosphere_f107_flux
 ttl 86400
 force em
 ssb
-url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_f107_flux.json
 field 0.flux exosphere_f107_sfu
 
 source exosphere_hot_jupiters
