@@ -2452,15 +2452,6 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                             .unwrap_or_else(|_| archive.constants_js.clone());
                         emit(&mut s, "200 OK", "application/javascript", &page);
                     }
-                    "/app.html" => {
-                        let page = std::fs::read("static/app.html")
-                            .unwrap_or_else(|_| include_bytes!("../static/app.html").to_vec());
-                        emit(&mut s, "200 OK", "text/html", &page);
-                    }
-                    "/omegaflow.wasm" => {
-                        let wasm = std::fs::read("static/omegaflow.wasm").unwrap_or_default();
-                        emit(&mut s, "200 OK", "application/wasm", &wasm);
-                    }
                     _ => {
                         emit_void(&mut s);
                         break;
@@ -2781,8 +2772,7 @@ fn load_env() {
 
 fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
-    let content = std::fs::read_to_string("phi/sources.φ")
-        .unwrap_or_else(|_| include_str!("../phi/sources.φ").to_string());
+    let content = std::fs::read_to_string("phi/sources.φ").unwrap_or_default();
     let mut cur_ttl: u64 = 0;
     let mut cur_force = String::new();
     let mut cur_tau: Option<f64> = None;
@@ -5778,10 +5768,8 @@ fn main() {
         .unwrap_or(1111);
     let archive = Arc::new(Archive {
         sources: loaded,
-        index_html: std::fs::read("static/index.html")
-            .unwrap_or_else(|_| include_bytes!("../static/index.html").to_vec()),
-        constants_js: std::fs::read("static/constants.js")
-            .unwrap_or_else(|_| include_bytes!("../static/constants.js").to_vec()),
+        index_html: std::fs::read("static/index.html").unwrap_or_default(),
+        constants_js: std::fs::read("static/constants.js").unwrap_or_default(),
         field: RwLock::new(Arc::new(build_buffer(Vec::new(), 1.0))),
         station: Mutex::new(StationState {
             sample: None,
