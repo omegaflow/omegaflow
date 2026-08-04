@@ -1149,6 +1149,7 @@ enum Frame {
     IAU2000 { lat: f64, lon: f64, alt: f64 },
     Data,
     Query,
+    CDN,
 }
 
 struct StationEntry {
@@ -1814,8 +1815,7 @@ fn load_sources() -> Vec<SourceConfig> {
                     {
                         Some(Frame::Query)
                     } else {
-                        eprintln!("source refused (no reference frame): {}", cur_name);
-                        None
+                        Some(Frame::CDN)
                     };
                     if let Some(frame) = frame {
                         let auto_tau_key = if cur_tau_key.is_none() && cur_tau.is_none() {
@@ -3259,6 +3259,7 @@ fn materialize(
                 };
                 Motion::WGS84 { lat, lon, alt }
             }
+            Frame::CDN => return vec![],
         },
     };
     let abs = motion.at(pend.epoch, pend.epoch);
@@ -3754,6 +3755,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             ));
                         }
                     }
+                    Frame::CDN => {}
                 }
             }
         }
