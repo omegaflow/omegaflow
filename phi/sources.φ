@@ -10851,6 +10851,7 @@ source biosphere_gbif
 ttl 3600
 force em
 url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif.json
+wgs84 -8.566564 -8.116489
 field count biosphere_species_count
 
 source gbif_amphibian_global_occurrences
