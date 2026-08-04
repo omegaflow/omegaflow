@@ -7991,7 +7991,7 @@ field current.us_aqi atmosphere_aqi_us
 source atmosphere_bom_observations
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_bom_observations.json
 wgs84 -25.0 135.0
 field current.temperature_2m atmosphere_bom_temp_c
 field current.apparent_temperature atmosphere_bom_feels_like_c
@@ -8013,13 +8013,13 @@ field message atmosphere_bom_warning_message
 source atmosphere_jetstream_250hpa
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_jetstream_250hpa.json
 last hourly.windspeed_250hPa atmosphere_jetstream_250hpa_ms
 
 source atmosphere_lightning
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_lightning.json
 field minutely_15.lightning_potential atmosphere_lightning_potential
 
 source atmosphere_metar_global
@@ -8038,7 +8038,7 @@ alt_key elev
 source atmosphere_open_meteo_vertical_profile
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_open_meteo_vertical_profile.json
 path hourly.temperature_1000hPa.0 atmosphere_temp_1000hpa_c
 path hourly.temperature_950hPa.0 atmosphere_temp_950hpa_c
 path hourly.temperature_925hPa.0 atmosphere_temp_925hpa_c
@@ -8082,7 +8082,7 @@ path hourly.wind_speed_50hPa.0 atmosphere_wind_50hpa_ms
 source atmosphere_pressure_levels
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_pressure_levels.json
 path current.temperature_500hPa atmosphere_temp_500hpa_c
 path current.temperature_850hPa atmosphere_temp_850hpa_c
 path current.geopotential_height_500hPa atmosphere_geopotential_500hpa_m
@@ -8101,14 +8101,14 @@ field movementSpd atmosphere_sigmet_movement_spd_kt
 source atmosphere_thunderstorm
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=cape_max,wind_gusts_10m_max
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_thunderstorm.json
 field daily.cape_max.0 atmosphere_convective_potential_jkg
 field daily.wind_gusts_10m_max.0 atmosphere_wind_gust_max_ms
 
 source atmosphere_visibility
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=visibility,sunshine_duration,is_day&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_visibility.json
 path current.visibility atmosphere_visibility_m
 path current.sunshine_duration atmosphere_sunshine_duration_today_s
 path current.is_day atmosphere_is_day
@@ -8116,7 +8116,7 @@ path current.is_day atmosphere_is_day
 source atmosphere_weather
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_weather.json
 field current.temperature_2m atmosphere_temp_c
 field current.relative_humidity_2m atmosphere_humidity_pct
 field current.pressure_msl atmosphere_pressure_hpa
@@ -8128,7 +8128,7 @@ field current.precipitation atmosphere_precipitation_mm
 source atmosphere_weather_alerts
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=weather_code&alerts=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_weather_alerts.json
 path current.weather_code atmosphere_weather_code
 
 source atmosphere_weather_alerts_us
@@ -8147,7 +8147,7 @@ field properties.areaDesc atmosphere_alert_area
 source atmosphere_weather_current
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,wind_speed_10m,wind_direction_10m
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_weather_current.json
 path current.temperature_2m atmosphere_temp_c
 path current.relative_humidity_2m atmosphere_humidity_pct
 path current.precipitation atmosphere_precipitation_mm
@@ -8157,7 +8157,7 @@ path current.wind_speed_10m atmosphere_wind_speed_ms
 source atmosphere_weather_evapotranspiration
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=et0_fao_evapotranspiration,vapor_pressure_deficit,dew_point_2m,weather_code,is_day,rain,showers&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_weather_evapotranspiration.json
 path current.et0_fao_evapotranspiration atmosphere_et0_evapotranspiration_mm
 path current.vapor_pressure_deficit atmosphere_vapor_pressure_deficit_kpa
 path current.dew_point_2m atmosphere_dewpoint_2m_c
@@ -8168,7 +8168,7 @@ path current.showers atmosphere_showers_mm
 source atmosphere_wind_heights
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_speed_180m,wind_direction_10m,wind_direction_80m,wind_direction_120m,wind_direction_180m,wind_gusts_10m,temperature_80m,temperature_120m,temperature_180m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,uv_index,uv_index_clear_sky,dew_point_2m,pressure_msl,surface_pressure&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_wind_heights.json
 path current.wind_speed_80m atmosphere_wind_80m_kmh
 path current.wind_speed_120m atmosphere_wind_120m_kmh
 path current.wind_speed_180m atmosphere_wind_180m_kmh
@@ -8288,13 +8288,13 @@ field number orbital_humans_in_space_count
 source cryosphere_snow_depth
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snow_depth&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_snow_depth.json
 field current.snow_depth cryosphere_snow_depth_m
 
 source cryosphere_snowfall
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth,temperature_2m,precipitation,cloud_cover,wind_speed_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_snowfall.json
 path current.snowfall cryosphere_snowfall_cm
 path current.snow_depth cryosphere_snow_depth_m
 
@@ -8738,7 +8738,7 @@ alt_key geometry.coordinates.2
 source geosphere_soil_current
 ttl 600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soil_current.json
 path current.soil_temperature_0cm geosphere_soil_temp_0cm_c
 path current.soil_temperature_6cm geosphere_soil_temp_6cm_c
 path current.soil_temperature_18cm geosphere_soil_temp_18cm_c
@@ -8751,7 +8751,7 @@ source hydrosphere_global_evapotranspiration_mm
 ttl 600
 force em
 ecliptic 1
-url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_global_evapotranspiration_mm.json
 last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
 
 source hydrosphere_marine
@@ -8799,7 +8799,7 @@ field_in 7 vz_au_d
 source geosphere_lidar_openmeteo_elevation
 ttl 600
 force em
-url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_lidar_openmeteo_elevation.json
 path elevation.0 lidar_terrain_elevation_m
 
 source magnetosphere_ovation_aurora
@@ -8970,7 +8970,7 @@ last value solar_euv_flux_wm2
 source solar_surface_radiation
 ttl 600
 force thermal
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_surface_radiation.json
 path current.shortwave_radiation atmosphere_sw_radiation_wm2
 path current.direct_radiation atmosphere_direct_rad_wm2
 path current.diffuse_radiation atmosphere_diffuse_rad_wm2
@@ -9494,7 +9494,7 @@ field textDescription weather_description
 source open_meteo_forecast
 ttl 1800
 force diffusion
-url https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,pressure_msl,surface_pressure&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_forecast.json
 map current
 lat_key 52.52
 lon_key 13.41
@@ -9888,7 +9888,7 @@ path daily.sunshine_duration.0 atmosphere_biome_greenland_sunshine_yesterday_s
 source atmosphere_biome_iceland
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=64.0&longitude=-19.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_iceland.json
 wgs84 64.0 -19.0
 path current.temperature_2m atmosphere_biome_iceland_temp_c
 path current.precipitation atmosphere_biome_iceland_precip_mm
@@ -9904,7 +9904,7 @@ path daily.sunshine_duration.0 atmosphere_biome_iceland_sunshine_yesterday_s
 source atmosphere_biome_kerguelen
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=-49.5&longitude=69.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_kerguelen.json
 wgs84 -49.5 69.5
 path current.temperature_2m atmosphere_biome_kerguelen_temp_c
 path current.precipitation atmosphere_biome_kerguelen_precip_mm
@@ -9920,7 +9920,7 @@ path daily.sunshine_duration.0 atmosphere_biome_kerguelen_sunshine_yesterday_s
 source atmosphere_biome_maldives
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=3.0&longitude=73.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_maldives.json
 wgs84 3.0 73.0
 path current.temperature_2m atmosphere_biome_maldives_temp_c
 path current.precipitation atmosphere_biome_maldives_precip_mm
@@ -9936,7 +9936,7 @@ path daily.sunshine_duration.0 atmosphere_biome_maldives_sunshine_yesterday_s
 source atmosphere_biome_okavango
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=-19.5&longitude=23.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_okavango.json
 wgs84 -19.5 23.5
 path current.temperature_2m atmosphere_biome_okavango_temp_c
 path current.precipitation atmosphere_biome_okavango_precip_mm
@@ -9952,7 +9952,7 @@ path daily.sunshine_duration.0 atmosphere_biome_okavango_sunshine_yesterday_s
 source atmosphere_biome_patagonia
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=-50.0&longitude=-72.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_patagonia.json
 wgs84 -50.0 -72.0
 path current.temperature_2m atmosphere_biome_patagonia_temp_c
 path current.precipitation atmosphere_biome_patagonia_precip_mm
@@ -9968,7 +9968,7 @@ path daily.sunshine_duration.0 atmosphere_biome_patagonia_sunshine_yesterday_s
 source atmosphere_biome_sahara
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=23.0&longitude=5.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_sahara.json
 wgs84 23.0 5.0
 path current.temperature_2m atmosphere_biome_sahara_temp_c
 path current.precipitation atmosphere_biome_sahara_precip_mm
@@ -9984,7 +9984,7 @@ path daily.sunshine_duration.0 atmosphere_biome_sahara_sunshine_yesterday_s
 source atmosphere_biome_siberia
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=62.0&longitude=105.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_siberia.json
 wgs84 62.0 105.0
 path current.temperature_2m atmosphere_biome_siberia_temp_c
 path current.precipitation atmosphere_biome_siberia_precip_mm
@@ -10000,7 +10000,7 @@ path daily.sunshine_duration.0 atmosphere_biome_siberia_sunshine_yesterday_s
 source atmosphere_biome_tibet
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude=32.0&longitude=86.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_tibet.json
 wgs84 32.0 86.0
 path current.temperature_2m atmosphere_biome_tibet_temp_c
 path current.precipitation atmosphere_biome_tibet_precip_mm
@@ -10016,7 +10016,7 @@ path daily.sunshine_duration.0 atmosphere_biome_tibet_sunshine_yesterday_s
 source atmosphere_bom_forecast_daily
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,uv_index_max&forecast_days=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_bom_forecast_daily.json
 wgs84 -25.0 135.0
 path daily.0 atmosphere_bom_forecast_data
 field daily.temperature_2m_max.0 atmosphere_bom_forecast_max_temp
@@ -10042,7 +10042,7 @@ last_row (ppm) atmosphere_co2_weekly_ppm
 source atmosphere_daily_forecast
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_daily_forecast.json
 path daily.temperature_2m_max.0 atmosphere_daily_temp_max_c
 path daily.temperature_2m_min.0 atmosphere_daily_temp_min_c
 path daily.precipitation_probability_max.0 atmosphere_daily_precip_prob_pct
@@ -10100,7 +10100,7 @@ last_row average atmosphere_n2o_global_ppb
 source atmosphere_openmeteo_bom
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=bom_access_global&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_bom.json
 path hourly.temperature_2m.0 atmosphere_bom_om_temp_c
 path hourly.relative_humidity_2m.0 atmosphere_bom_om_humidity_pct
 path hourly.precipitation.0 atmosphere_bom_om_precip_mm
@@ -10109,7 +10109,7 @@ path hourly.wind_speed_10m.0 atmosphere_bom_om_wind_ms
 source atmosphere_openmeteo_cma
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=cma_grapes_global&hourly=temperature_2m,relative_humidity_2m,precipitation,pressure_msl,wind_speed_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_cma.json
 path hourly.temperature_2m.0 atmosphere_cma_om_temp_c
 path hourly.relative_humidity_2m.0 atmosphere_cma_om_humidity_pct
 path hourly.precipitation.0 atmosphere_cma_om_precip_mm
@@ -10119,7 +10119,7 @@ path hourly.wind_speed_10m.0 atmosphere_cma_om_wind_ms
 source atmosphere_openmeteo_dwd
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=dwd_icon&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_dwd.json
 path hourly.temperature_2m.0 atmosphere_dwd_om_temp_c
 path hourly.relative_humidity_2m.0 atmosphere_dwd_om_humidity_pct
 path hourly.precipitation.0 atmosphere_dwd_om_precip_mm
@@ -10128,7 +10128,7 @@ path hourly.wind_speed_10m.0 atmosphere_dwd_om_wind_ms
 source atmosphere_openmeteo_ecmwf
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=ecmwf_ifs025&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_ecmwf.json
 path hourly.temperature_2m.0 atmosphere_ecmwf_om_temp_c
 path hourly.relative_humidity_2m.0 atmosphere_ecmwf_om_humidity_pct
 path hourly.precipitation.0 atmosphere_ecmwf_om_precip_mm
@@ -10137,7 +10137,7 @@ path hourly.wind_speed_10m.0 atmosphere_ecmwf_om_wind_ms
 source atmosphere_openmeteo_gem
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=gem_global&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_gem.json
 path hourly.temperature_2m.0 atmosphere_gem_om_temp_c
 path hourly.relative_humidity_2m.0 atmosphere_gem_om_humidity_pct
 path hourly.precipitation.0 atmosphere_gem_om_precip_mm
@@ -10146,7 +10146,7 @@ path hourly.wind_speed_10m.0 atmosphere_gem_om_wind_ms
 source atmosphere_openmeteo_jma
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=jma_gsm&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_jma.json
 path hourly.temperature_2m.0 atmosphere_jma_om_temp_c
 path hourly.relative_humidity_2m.0 atmosphere_jma_om_humidity_pct
 path hourly.precipitation.0 atmosphere_jma_om_precip_mm
@@ -10155,7 +10155,7 @@ path hourly.wind_speed_10m.0 atmosphere_jma_om_wind_ms
 source atmosphere_openmeteo_kma
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=kma_gdps&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_kma.json
 path hourly.temperature_2m.0 atmosphere_kma_om_temp_c
 path hourly.relative_humidity_2m.0 atmosphere_kma_om_humidity_pct
 path hourly.precipitation.0 atmosphere_kma_om_precip_mm
@@ -10164,7 +10164,7 @@ path hourly.wind_speed_10m.0 atmosphere_kma_om_wind_ms
 source atmosphere_openmeteo_meteofrance
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=meteofrance_arpege_world&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_meteofrance.json
 path hourly.temperature_2m.0 atmosphere_meteofrance_om_temp_c
 path hourly.relative_humidity_2m.0 atmosphere_meteofrance_om_humidity_pct
 path hourly.precipitation.0 atmosphere_meteofrance_om_precip_mm
@@ -10173,7 +10173,7 @@ path hourly.wind_speed_10m.0 atmosphere_meteofrance_om_wind_ms
 source atmosphere_openmeteo_metno
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=metno_seamless&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_metno.json
 path hourly.temperature_2m.0 atmosphere_metno_om_temp_c
 path hourly.relative_humidity_2m.0 atmosphere_metno_om_humidity_pct
 path hourly.precipitation.0 atmosphere_metno_om_precip_mm
@@ -10225,7 +10225,7 @@ path daily.uv_index_clear_sky_max.0 atmosphere_uv_index_clear_sky_max
 source atmosphere_uv_index
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=uv_index,uv_index_clear_sky
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_uv_index.json
 path current.uv_index atmosphere_uv_index
 path current.uv_index_clear_sky atmosphere_uv_index_clear_sky
 
@@ -11069,7 +11069,7 @@ field attributes.PolygonAcres fire_acres
 source geosphere_soil_moisture_profile
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm,soil_moisture_100_to_255cm&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soil_moisture_profile.json
 path current.soil_moisture_0_to_7cm geosphere_soil_moisture_surface_m3m3
 path current.soil_moisture_7_to_28cm geosphere_soil_moisture_shallow_m3m3
 path current.soil_moisture_28_to_100cm geosphere_soil_moisture_deep_m3m3
@@ -11078,7 +11078,7 @@ path current.soil_moisture_100_to_255cm geosphere_soil_moisture_bedrock_m3m3
 source geosphere_soil_temperature_profile
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soil_temperature_profile.json
 path current.soil_temperature_0cm geosphere_soil_temp_surface_c
 path current.soil_temperature_6cm geosphere_soil_temp_6cm_c
 path current.soil_temperature_18cm geosphere_soil_temp_18cm_c
@@ -12419,7 +12419,7 @@ field country country_code
 source open_meteo_access_g_australia
 ttl 3600
 force thermal
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m,uv_index&models=bom_access_global&forecast_days=7&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_access_g_australia.json
 map hourly.time
 field hourly.temperature_2m temp_2m_c
 field hourly.precipitation precipitation_mm
@@ -12441,7 +12441,7 @@ field hourly.us_aqi aqi_us
 source open_meteo_arctic_surface
 ttl 3600
 force thermal
-url https://api.open-meteo.com/v1/forecast?latitude=80.0&longitude=0.0&hourly=temperature_2m,snowfall,snow_depth,precipitation,wind_speed_10m&models=icon_seamless&forecast_days=3&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_arctic_surface.json
 map hourly.time
 field hourly.temperature_2m temp_2m_c
 field hourly.snowfall snowfall_cm
@@ -12472,7 +12472,7 @@ field hourly.windspeed_10m wind_speed_ms
 source open_meteo_ecmwf_ifs_clouds
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=cloudcover,shortwave_radiation,direct_radiation,diffuse_radiation,cloud_cover_low,cloud_cover_mid,cloud_cover_high&models=ecmwf_ifs025&forecast_days=10&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_ecmwf_ifs_clouds.json
 map hourly.time
 field hourly.cloudcover cloud_cover_pct
 field hourly.shortwave_radiation sw_radiation_wm2
@@ -12513,7 +12513,7 @@ field daily.river_discharge_max discharge_max_m3s
 source open_meteo_gem_canada
 ttl 3600
 force thermal
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,snow_depth,freezinglevel_height,precipitation&models=gem_global&forecast_days=7&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_gem_canada.json
 map hourly.time
 field hourly.temperature_2m temp_2m_c
 field hourly.snow_depth snow_depth_m
@@ -12523,7 +12523,7 @@ field hourly.precipitation precipitation_mm
 source open_meteo_gfs_pressure_levels
 ttl 3600
 force thermal
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_500hPa,temperature_700hPa,temperature_850hPa,geopotential_height_500hPa&models=gfs_seamless&forecast_days=5&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_gfs_pressure_levels.json
 map hourly.time
 field hourly.temperature_500hPa temp_500hpa_c
 field hourly.temperature_700hPa temp_700hpa_c
@@ -12533,7 +12533,7 @@ field hourly.geopotential_height_500hPa z500_mgp
 source open_meteo_hourly_forecast
 ttl 3600
 force diffusion
-url https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,apparent_temperature,precipitation_probability,precipitation,rain,weather_code,pressure_msl,surface_pressure,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_temperature_0cm,soil_moisture_0_1cm&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_hourly_forecast.json
 map hourly
 lat_key 52.52
 lon_key 13.41
@@ -12553,7 +12553,7 @@ field soil_moisture_0_1cm soil_moisture_m3m3
 source open_meteo_hydro_evapotranspiration
 ttl 3600
 force diffusion
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=et0_fao_evapotranspiration,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm&forecast_days=7&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_hydro_evapotranspiration.json
 map hourly.time
 field hourly.et0_fao_evapotranspiration et0_mm
 field hourly.soil_moisture_0_to_1cm sm_0_1cm_m3m3
@@ -12574,7 +12574,7 @@ field hourly.precipitation_probability precip_prob_pct
 source open_meteo_icon_seamless_wind
 ttl 3600
 force acoustic
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=windspeed_10m,windgusts_10m,winddirection_10m,snowfall&models=icon_seamless&forecast_days=3&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_icon_seamless_wind.json
 map hourly.time
 field hourly.windspeed_10m wind_speed_ms
 field hourly.windgusts_10m wind_gust_ms
@@ -12605,7 +12605,7 @@ field hourly.ocean_current_velocity current_ms
 source open_meteo_snow_permafrost_proxy
 ttl 3600
 force thermal
-url https://api.open-meteo.com/v1/forecast?latitude=50.0&longitude=10.0&hourly=snow_depth,soil_temperature_0cm,soil_temperature_6cm&forecast_days=7&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_snow_permafrost_proxy.json
 map hourly.time
 field hourly.snow_depth snow_depth_m
 field hourly.frozen_soil_0_to_7cm frozen_0_7cm
@@ -12616,7 +12616,7 @@ field hourly.soil_temperature_6cm soil_temp_6cm_c
 source open_meteo_solar_dni
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=direct_normal_irradiance,global_tilted_irradiance,diffuse_radiation,sunshine_duration&forecast_days=7&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_solar_dni.json
 map hourly.time
 field hourly.direct_normal_irradiance dni_wm2
 field hourly.global_tilted_irradiance gti_wm2
@@ -12627,7 +12627,7 @@ source open_meteo_uv_southern_africa
 ttl 3600
 force em
 ecliptic 1
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=uv_index,uv_index_clear_sky,direct_radiation&models=best_match&forecast_days=3&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_uv_southern_africa.json
 map hourly.time
 field hourly.uv_index uv_index
 field hourly.uv_index_clear_sky uv_index_clear_sky
@@ -12721,7 +12721,7 @@ extent 1.76e-6
 source biosphere_paleoclimate_recent
 ttl 3600
 force em
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,shortwave_radiation_sum&past_days=1&forecast_days=0&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_paleoclimate_recent.json
 path daily.temperature_2m_max.0 paleoclimate_temp_max_yesterday_c
 path daily.temperature_2m_min.0 paleoclimate_temp_min_yesterday_c
 path daily.precipitation_sum.0 paleoclimate_precip_yesterday_mm
@@ -12754,14 +12754,14 @@ source radiation_solar_shortwave
 ttl 3600
 force em
 ssb
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/radiation_solar_shortwave.json
 field current.shortwave_radiation radiation_shortwave_openmeteo
 
 source radiation_solar_uv_index
 ttl 3600
 force em
 ssb
-url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=uv_index
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/radiation_solar_uv_index.json
 field current.uv_index radiation_uv_index_openmeteo
 
 source geosphere_reliefweb_active_humanitarian_disasters
@@ -13109,7 +13109,7 @@ field_in 4 argo_temp_c
 source open_meteo_daily_forecast
 ttl 43200
 force diffusion
-url https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration&timezone=auto
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_daily_forecast.json
 map daily
 lat_key 52.52
 lon_key 13.41
@@ -19551,7 +19551,7 @@ field name oceanography_cmems_service_name
 source open_meteo_cmip6_climate
 ttl 86400
 force thermal
-url https://climate-api.open-meteo.com/v1/climate?latitude=0.0&longitude=0.0&start_year=2020&end_year=2030&models=CMCC_CM2_VHR4,FGOALS_f3_H&daily=temperature_2m_mean,temperature_2m_max,precipitation_sum
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_cmip6_climate.json
 wgs84 0.0 0.0
 map daily
 field temperature_2m_mean temp_mean_c
@@ -26947,7 +26947,7 @@ path response.numFound climate_esa_cci_datasets
 source geosphere_elevation
 ttl 2592000
 force em
-url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_elevation.json
 first elevation geosphere_elevation_m
 
 source geosphere_eoapi_collections
