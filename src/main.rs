@@ -3884,7 +3884,26 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
     } else if src.format == "stac" {
         stac_to_json(body).and_then(|j| parse_json(&j))
     } else if src.format == "universal" {
-        parse_json(body)
+        let trimmed = body.trim_start();
+        if trimmed.starts_with('{') || trimmed.starts_with('[') {
+            parse_json(body)
+        } else if trimmed.starts_with("<?xml")
+            || trimmed.contains("<VOTABLE")
+            || trimmed.contains("<votable")
+        {
+            votable_to_json(body).and_then(|j| parse_json(&j))
+        } else if trimmed.contains("<table") {
+            html_table_to_json(body, 0).and_then(|j| parse_json(&j))
+        } else if trimmed.contains("\"stac_version\"")
+            || trimmed.contains("\"type\":\"FeatureCollection\"")
+        {
+            stac_to_json(body).and_then(|j| parse_json(&j))
+        } else {
+            csv_to_json(body)
+                .and_then(|j| parse_json(&j))
+                .or_else(|| erddap_csv_to_json(body).and_then(|j| parse_json(&j)))
+                .or_else(|| parse_json(body))
+        }
     } else {
         None
     };

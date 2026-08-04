@@ -297,7 +297,7 @@ jobs:
           for fn in "${!MIRRORS[@]}"; do
             url="${MIRRORS[$fn]}"
             domain="${MIRROR_DOMAINS[$fn]}"
-            release_tag="catalogs-${domain}"
+            release_tag="${domain}"
             echo "  mirror: $fn -> $release_tag <- $url"
             gh release create "$release_tag" --repo "$CATALOGS_REPO" --title "$release_tag" --notes "" 2>/dev/null || true
             if curl -sS --retry 2 --fail -o "data/mirror_$fn" "$url"; then
