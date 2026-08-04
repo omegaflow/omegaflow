@@ -10315,7 +10315,7 @@ source biosphere_gbif_occurrence_count
 ttl 3600
 force em
 ecliptic 1
-url https://api.gbif.org/v1/occurrence/search?limit=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_occurrence_count.json
 field count biosphere_gbif_occurrence_count
 
 source biosphere_gbif_occurrences
@@ -13603,7 +13603,7 @@ field coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
 source biosphere_gbif_plants
 ttl 86400
 force em
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_plants.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -14468,7 +14468,7 @@ field z_phot photometric_redshift
 source gbif_invasive_occurrences
 ttl 86400
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gbif_invasive_occurrences.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -14493,7 +14493,7 @@ field country country_code
 source gbif_occurrence_invasive
 ttl 86400
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gbif_occurrence_invasive.json
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -27344,7 +27344,7 @@ field Station geosphere_iris_station
 source biosphere_gbif_invasive_species
 ttl 86400
 force diffusion
-url https://api.gbif.org/v1/occurrence/search?country=DE&hasCoordinate=true&isInvasive=true&limit=300&offset=0
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_invasive_species.json
 format json
 map results
 lat_key decimalLatitude
