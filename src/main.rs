@@ -582,6 +582,7 @@ struct OriginState {
     has_prev: bool,
     zero_yield: u32,
     last_body_hash: [u8; 20],
+    unchanged_count: u32,
 }
 
 struct StationState {
@@ -5242,6 +5243,85 @@ fn per_origin_sleep(archive: &Archive, fallback: f64) -> f64 {
         .max(0.1)
 }
 
+fn write_health_report(archive: &Archive) {
+    let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+    let ttl_eff = archive
+        .ttl_eff
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .clone();
+    let sources = &archive.sources;
+    let mut out = String::from("{\n  \"updated\": \"");
+    if let Ok(now_unix) = SystemTime::now().duration_since(UNIX_EPOCH) {
+        let secs = now_unix.as_secs();
+        let days_since_epoch = secs / 86400;
+        let (y, mo, d) = days_to_ymd(days_since_epoch + 719528);
+        let rem = secs % 86400;
+        let h = rem / 3600;
+        let mi = (rem % 3600) / 60;
+        let s = rem % 60;
+        use std::fmt::Write;
+        let _ = write!(
+            out,
+            "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z",
+            y, mo, d, h, mi, s
+        );
+    }
+    out.push('"');
+    let _ = write!(out, ",\n  \"total_sources\": {}", sources.len());
+    let _ = write!(out, ",\n  \"active_origins\": {}", origins.len());
+    let mut zero_lines: Vec<String> = Vec::new();
+    let mut unch_lines: Vec<String> = Vec::new();
+    for (origin, state) in origins.iter() {
+        if state.zero_yield >= 1 {
+            let si = origin.0 as usize;
+            let name = sources.get(si).map(|s| s.name.as_str()).unwrap_or("?");
+            let host = sources
+                .get(si)
+                .and_then(|s| s.url.split('/').nth(2))
+                .unwrap_or("?");
+            zero_lines.push(format!(
+                "    {{\"source\":\"{}\",\"host\":\"{}\",\"zero_yield\":{}}}",
+                name.replace('\\', "\\\\").replace('\"', "\\\""),
+                host,
+                state.zero_yield
+            ));
+        }
+        if state.unchanged_count >= 1 {
+            let si = origin.0 as usize;
+            let name = sources.get(si).map(|s| s.name.as_str()).unwrap_or("?");
+            let host = sources
+                .get(si)
+                .and_then(|s| s.url.split('/').nth(2))
+                .unwrap_or("?");
+            unch_lines.push(format!(
+                "    {{\"source\":\"{}\",\"host\":\"{}\",\"unchanged\":{}}}",
+                name.replace('\\', "\\\\").replace('\"', "\\\""),
+                host,
+                state.unchanged_count
+            ));
+        }
+    }
+    out.push_str(",\n  \"zero_yield_sources\": [\n");
+    out.push_str(&zero_lines.join(",\n"));
+    out.push_str("\n  ]");
+    out.push_str(",\n  \"unchanged_sources\": [\n");
+    out.push_str(&unch_lines.join(",\n"));
+    out.push_str("\n  ]");
+    out.push_str(",\n  \"ttl_eff\": {\n");
+    let mut first = true;
+    for (host, ttl) in ttl_eff.iter() {
+        if !first {
+            out.push_str(",\n");
+        }
+        first = false;
+        let _ = write!(out, "    \"{}\": {}", host, ttl);
+    }
+    out.push_str("\n  }\n}\n");
+    drop(origins);
+    let _ = std::fs::write("phi/health.json", out);
+}
+
 fn warm_cache(archive: Arc<Archive>) {
     loop {
         let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
@@ -5665,6 +5745,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                 if entry.last_body_hash != [0u8; 20]
                                     && entry.last_body_hash == body_hash
                                 {
+                                    entry.unchanged_count += 1;
                                 } else {
                                     entry.last_body_hash = body_hash;
                                     pendings = Some(extract_pending(src, &body, now));
