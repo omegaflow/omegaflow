@@ -9178,7 +9178,7 @@ field pressure central_pressure_mb
 source noaa_tides_water_levels
 ttl 900
 force diffusion
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=water_level&datum=MSL&units=metric&time_zone=gmt&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_tides_water_levels.json
 map data
 lat_key 32.757
 lon_key -117.226
@@ -12279,7 +12279,7 @@ field first_date first_observed_date
 source noaa_tides_air_pressure
 ttl 3600
 force diffusion
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=air_pressure&units=metric&time_zone=gmt&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_tides_air_pressure.json
 map data
 lat_key 32.757
 lon_key -117.226
@@ -12310,7 +12310,7 @@ field v water_temperature_celsius
 source noaa_tides_wind
 ttl 3600
 force diffusion
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=wind&units=metric&time_zone=gmt&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_tides_wind.json
 map data
 lat_key 32.757
 lon_key -117.226
@@ -19263,7 +19263,7 @@ field objectId gebco_cell_id
 source noaa_ncei_gsom_climate_monthly
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ncei_gsom_climate_monthly.json
 wgs84 0 0
 map
 lat_key LATITUDE
@@ -19279,7 +19279,7 @@ field PRCP precipitation_mm
 source noaa_ncei_gsom_climate_normals
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={today}&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ncei_gsom_climate_normals.json
 map .
 lat_key latitude
 lon_key longitude
@@ -19291,10 +19291,12 @@ field PRCP precip_mm
 source noaa_ncei_ohc_0_700m
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/yearly/h22-w0-700m.dat
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ncei_ohc_0_700m.json
 wgs84 0.0 0.0
-format text
-rows
+format json
+map data
+lat_key lat
+lon_key lon
 field_in 0 year
 field_in 1 ohc_world_zj
 field_in 2 ohc_nh_zj
@@ -19349,7 +19351,7 @@ field country country
 source noaa_paleo_coral_records
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Coral&headersOnly=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_paleo_coral_records.json
 map study
 lat_key site.0.geo.geometry.coordinates.1
 lon_key site.0.geo.geometry.coordinates.0
@@ -19361,7 +19363,7 @@ field investigator investigator
 source noaa_paleo_coral_studies_global
 ttl 86400
 force diffusion
-url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=coral&access=public&format=json&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_paleo_coral_studies_global.json
 map studyList
 lat_key site.geo.geometry.coordinates.1
 lon_key site.geo.geometry.coordinates.0
@@ -19374,7 +19376,7 @@ field site.siteName coral_site_name
 source noaa_paleo_ice_cores
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Ice+Core&headersOnly=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_paleo_ice_cores.json
 map study
 lat_key site.0.geo.geometry.coordinates.1
 lon_key site.0.geo.geometry.coordinates.0
@@ -19387,7 +19389,7 @@ field investigator investigator
 source noaa_paleo_pollen_records
 ttl 86400
 force diffusion
-url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Pollen&headersOnly=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_paleo_pollen_records.json
 map study
 lat_key site.0.geo.geometry.coordinates.1
 lon_key site.0.geo.geometry.coordinates.0
@@ -19399,7 +19401,7 @@ field mostRecentYearBP most_recent_year_bp
 source noaa_paleo_speleothem
 ttl 86400
 force thermal
-url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Speleothem&headersOnly=true
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_paleo_speleothem.json
 map study
 lat_key site.0.geo.geometry.coordinates.1
 lon_key site.0.geo.geometry.coordinates.0
@@ -19411,7 +19413,7 @@ field mostRecentYearBP most_recent_year_bp
 source noaa_storm_events_hail
 ttl 86400
 force acoustic
-url https://www.ncei.noaa.gov/swdiws/json/nx3hail/{today}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_storm_events_hail.json
 map .
 field swdiJsonResponse.status query_status
 field summary.count event_count
@@ -19420,7 +19422,7 @@ field summary.totalTimeInSeconds query_time
 source noaa_storm_events_significant_monthly
 ttl 86400
 force acoustic
-url https://www.ncei.noaa.gov/swdiws/json/nx3meso/{today}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_storm_events_significant_monthly.json
 map .
 field swdiJsonResponse.status query_status
 field summary.count event_count
@@ -19429,7 +19431,7 @@ field summary.totalTimeInSeconds query_time
 source noaa_storm_events_tornadoes
 ttl 86400
 force acoustic
-url https://www.ncei.noaa.gov/swdiws/json/nx3structure/{today}
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_storm_events_tornadoes.json
 map .
 field swdiJsonResponse.status query_status
 field summary.count event_count
@@ -19438,7 +19440,7 @@ field summary.totalTimeInSeconds query_time
 source noaa_tide_predictions
 ttl 86400
 force acoustic
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_tide_predictions.json
 wgs84 40.7 -74.01
 map predictions
 field t prediction_time_utc
@@ -19447,7 +19449,7 @@ field v predicted_tide_m
 source noaa_tides_predictions
 ttl 86400
 force diffusion
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=predictions&datum=MSL&units=metric&time_zone=gmt&format=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_tides_predictions.json
 map predictions
 lat_key 32.757
 lon_key -117.226
@@ -27123,25 +27125,29 @@ field_in 2 ch4_ppbv
 source noaa_vostok_deuterium
 ttl 2592000
 force diffusion
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_vostok_deuterium.json
 wgs84 -78.464 106.837
-format text
-rows
-field 0 depth_m
-field 1 age_yr_bp
-field 2 deuterium_delta
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 depth_m
+field_in 1 age_yr_bp
+field_in 2 deuterium_delta
 
 source noaa_wais_divide_co2
 ttl 2592000
 force diffusion
-url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/antarctica2015co2wais-noaa.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_wais_divide_co2.json
 wgs84 -79.467 -112.085
-format text
-rows
-field 0 depth_m
-field 1 age_yr_bp
-field 2 co2_ppmv
-field 3 co2_sigma_ppmv
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 depth_m
+field_in 1 age_yr_bp
+field_in 2 co2_ppmv
+field_in 3 co2_sigma_ppmv
 
 source cryosphere_paleoclimate_dome_fuji_co2
 ttl 2592000
