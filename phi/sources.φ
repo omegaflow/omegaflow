@@ -2,7 +2,7 @@ source exosphere_iss_position
 ttl 10
 force em
 pos orbital_iss_lat orbital_iss_lon orbital_iss_alt_km 1000.0
-url https://api.wheretheiss.at/v1/satellites/25544
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_iss_position.json
 field latitude orbital_iss_lat
 field longitude orbital_iss_lon
 field altitude orbital_iss_alt_km
@@ -26,7 +26,7 @@ source astro_iss_history
 ttl 10
 force em
 pos universe_iss_history_lat universe_iss_history_lon universe_iss_history_alt 1000
-url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_iss_history.json
 field 0.latitude universe_iss_history_lat
 field 0.longitude universe_iss_history_lon
 field 0.altitude universe_iss_history_alt
@@ -377,7 +377,7 @@ source biosphere_github_public_events
 ttl 60
 force em
 ecliptic 1
-url https://api.github.com/events?per_page=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_github_public_events.json
 header User-Agent "omegaflow"
 count . biosphere_github_events_per_minute
 
@@ -544,7 +544,7 @@ source geosphere_jma_eew
 ttl 60
 force em
 ecliptic 1
-url https://api.wolfx.jp/jma_eew.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_jma_eew.json
 field Latitude geosphere_jma_eew_lat
 field Longitude geosphere_jma_eew_lon
 field Magnitude geosphere_jma_eew_mag
@@ -591,7 +591,7 @@ path features.0.properties.rms geosphere_earth_hum_rms
 source geosphere_ingv_italy_earthquakes
 ttl 60
 force seismic-body
-url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_ingv_italy_earthquakes.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1699,7 +1699,7 @@ source geosphere_cenc_earthquakes
 ttl 300
 force em
 ecliptic 1
-url https://api.wolfx.jp/cenc_eqlist.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_cenc_earthquakes.json
 field 1.latitude geosphere_cenc_eq_lat
 field 1.longitude geosphere_cenc_eq_lon
 field 1.magnitude geosphere_cenc_eq_mag
@@ -1741,7 +1741,7 @@ source geosphere_jma_earthquakes
 ttl 300
 force em
 ecliptic 1
-url https://api.wolfx.jp/jma_eqlist.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_jma_earthquakes.json
 field 1.latitude geosphere_jma_eq_lat
 field 1.longitude geosphere_jma_eq_lon
 field 1.magnitude geosphere_jma_eq_mag
@@ -8573,7 +8573,7 @@ lon_key geometry.x
 source astro_gcn_circular_latest
 ttl 600
 force em
-url https://gcn.nasa.gov/circulars/44806.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gcn_circular_latest.json
 map .
 path circularId circular_id
 path subject circular_subject
@@ -8773,7 +8773,7 @@ field_in 12 geosphere_gfz_location
 source geosphere_ingv_earthquakes
 ttl 600
 force seismic-body
-url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2&limit=100
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_ingv_earthquakes.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8876,7 +8876,7 @@ field_in 2 magnetosphere_aurora_power_gw
 source astro_mpc_neocp_observations_list
 ttl 600
 force gravity
-url https://www.minorplanetcenter.net/iau/NEO/neocp.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_mpc_neocp_observations_list.json
 wgs84 0.0 0.0
 format text
 rows
@@ -9232,7 +9232,7 @@ field data.grid.features.0.properties.vtec_rms_tecu ionosphere_tec_rms_tecu
 source atmosphere_nhc_current_storms
 ttl 900
 force em
-url https://www.nhc.noaa.gov/CurrentStorms.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_nhc_current_storms.json
 map activeStorms
 lat_key latitude
 lon_key longitude
@@ -9502,7 +9502,7 @@ path data.0.intensity.actual ngeso_carbon_intensity_gco2_kwh
 source atmosphere_nhc_active_atlantic_hurricanes
 ttl 1800
 force thermal
-url https://www.nhc.noaa.gov/CurrentStorms.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_nhc_active_atlantic_hurricanes.json
 map activeStorms
 lat_key latitude
 lon_key longitude
@@ -9515,7 +9515,7 @@ field movementSpeed movement_speed_kt
 source atmosphere_nhc_active_epac_storms
 ttl 1800
 force thermal
-url https://www.nhc.noaa.gov/CurrentStorms.json?basin=epac
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_nhc_active_epac_storms.json
 map activeStorms
 lat_key latitude
 lon_key longitude
@@ -11079,7 +11079,7 @@ path @odata.count technosphere_copernicus_s2_products_total
 source geosphere_earthquakes_ingv
 ttl 3600
 force seismic-surface
-url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_earthquakes_ingv.json
 wgs84 40.0 15.0
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
@@ -11578,7 +11578,7 @@ field stac_eo_cloud_cover lithosphere_cloud_cover_pct
 source lithosphere_stac_sentinel2_aws
 ttl 86400
 force em
-url https://earth-search.aws.element84.com/v1/search?collections=sentinel-2-l2a&limit=200&bbox=-125,30,-115,40&datetime={today}T00:00:00Z/{today}T23:59:59Z
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/lithosphere_stac_sentinel2_aws.json
 wgs84 37.0 -120.0
 format stac
 map data
@@ -12913,7 +12913,7 @@ extent 3.89e-4
 source astro_sentinel2_l2a
 ttl 3600
 force em
-url https://earth-search.aws.element84.com/v1/search
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_sentinel2_l2a.json
 method post
 body {"collections":["sentinel-2-l2a"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
 header Content-Type application/json
@@ -13206,7 +13206,7 @@ field_in 4 coastwatch_ascat_x_wind_ms
 source cryosphere_coastwatch_oisst_sea_ice
 ttl 43200
 force thermal
-url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?ice%5B(last)%5D%5B(0)%5D%5B(-79.875)%3A20%3A(79.875)%5D%5B(-179.875)%3A20%3A(179.875)%5D
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/cryosphere_coastwatch_oisst_sea_ice.json
 map table.rows
 lat_key 2
 lon_key 3
@@ -13216,7 +13216,7 @@ field_in 4 cryosphere_oisst_sea_ice_fraction
 source astro_iers_eop_bulletinb
 ttl 43200
 force em
-url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_iers_eop_bulletinb.json
 format text
 pos 0 0
 field col2 mjd
@@ -13494,7 +13494,7 @@ source atmosphere_woudc_ozone_stations
 ttl 86400
 force em
 ecliptic 1
-url https://api.woudc.org/collections/stations/items?f=json&limit=500
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_woudc_ozone_stations.json
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -13508,7 +13508,7 @@ field properties.active atmosphere_woudc_active
 source atmosphere_woudc_total_ozone
 ttl 86400
 force em
-url https://api.woudc.org/collections/totalozone/items?limit=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_woudc_total_ozone.json
 wgs84 43.780 -79.470
 path numberMatched biosphere_ozone_measurement_total_count
 
@@ -14917,14 +14917,14 @@ field SiteDescription station_name
 source technosphere_github_repos_total
 ttl 86400
 force em
-url https://api.github.com/search/repositories?q=stars:>0&per_page=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_github_repos_total.json
 wgs84 37.774 -122.419
 field total_count biosphere_github_repos_total
 
 source technosphere_github_users_total
 ttl 86400
 force em
-url https://api.github.com/search/users?q=type:user&per_page=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_github_users_total.json
 wgs84 37.774 -122.419
 field total_count biosphere_github_users_total
 
@@ -15745,7 +15745,7 @@ count features biosphere_vessel_density_feature_count
 source hydrosphere_oisst_sst
 ttl 86400
 force thermal
-url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?sst%5B(last)%5D%5B(0.0)%5D%5B(-89.875):20:(89.875)%5D%5B(-179.875):20:(179.875)%5D
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_oisst_sst.json
 map table.rows
 lat_key 2
 lon_key 3
@@ -15792,7 +15792,7 @@ field ecosys.value ecosystem_type
 source astro_iers_eop_bulletinb_daily
 ttl 86400
 force em
-url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_iers_eop_bulletinb_daily.json
 format text
 pos 0 0
 field col2 mjd
@@ -16638,7 +16638,7 @@ field S/N kodiaq_sn
 source astro_landsat_c2_l2
 ttl 86400
 force em
-url https://earth-search.aws.element84.com/v1/search
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_landsat_c2_l2.json
 method post
 body {"collections":["landsat-c2-l2"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
 map features
@@ -17973,7 +17973,7 @@ source magnetosphere_schumann_resonance
 ttl 86400
 force gravity
 ecliptic 1
-url https://zenodo.org/records/15225820/files/NiNo_SR_params_2024.csv
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_schumann_resonance.json
 format csv
 last_line atmos_schumann_last_val
 
@@ -18445,7 +18445,7 @@ path properties.data.fracillum cosmic_moon_illumination_pct
 source astro_mpc_tno_orbital_elements_database
 ttl 86400
 force gravity
-url https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_mpc_tno_orbital_elements_database.json
 format text
 rows
 ra_key RA
@@ -18457,21 +18457,21 @@ field G slope_param
 source technosphere_musicbrainz_artists_total
 ttl 86400
 force em
-url https://musicbrainz.org/ws/2/artist?query=*&limit=1&fmt=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_musicbrainz_artists_total.json
 wgs84 51.507 -0.127
 field artists.0.id biosphere_music_artists_total
 
 source technosphere_musicbrainz_recordings_total
 ttl 86400
 force em
-url https://musicbrainz.org/ws/2/recording?query=*&limit=1&fmt=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_musicbrainz_recordings_total.json
 wgs84 51.507 -0.127
 field recordings.0.id biosphere_music_recordings_total
 
 source technosphere_musicbrainz_releases_total
 ttl 86400
 force em
-url https://musicbrainz.org/ws/2/release?query=*&limit=1&fmt=json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_musicbrainz_releases_total.json
 wgs84 51.507 -0.127
 field releases.0.id biosphere_music_releases_total
 
@@ -18945,7 +18945,7 @@ field neo_flag near_earth_flag
 source geosphere_ngdc_volcanoes_significant
 ttl 86400
 force seismic-body
-url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_ngdc_volcanoes_significant.json
 map items
 lat_key latitude
 lon_key longitude
@@ -19481,7 +19481,7 @@ field currents has_current_sensor
 source noaa_ngdc_significant_earthquakes
 ttl 86400
 force seismic-body
-url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?maxRows=2000&startRow=1&orderBy=year&ascending=false
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_ngdc_significant_earthquakes.json
 map items
 lat_key latitude
 lon_key longitude
@@ -20073,7 +20073,7 @@ ttl 86400
 wgs84 40.034 0.0
 86400
 force em
-url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_celestrak_earth_orientation.json
 format csv
 header User-Agent "omegaflow"
 last line geosphere_earth_orientation_raw
