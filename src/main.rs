@@ -582,7 +582,6 @@ struct OriginState {
     has_prev: bool,
     zero_yield: u32,
     last_body_hash: [u8; 20],
-    unchanged_count: u32,
 }
 
 struct StationState {
@@ -4549,100 +4548,7 @@ fn per_origin_sleep(archive: &Archive, fallback: f64) -> f64 {
         .max(0.1)
 }
 
-fn auto_defect(name: &str, host: &str, zero_yield: u32) {
-    if zero_yield < 4 || zero_yield & (zero_yield - 1) != 0 {
-        return;
-    }
-    let title = format!("[AUTO-DEFECT] {} — zero_yield x{}", name, zero_yield);
-    let body = format!(
-        "`{}` returned no data for {} consecutive fetch cycles.\n\nHost: `{}`\n\nCheck `phi/sources.φ`.",
-        name, zero_yield, host
-    );
-    let _ = Command::new("gh")
-        .args([
-            "issue",
-            "create",
-            "--title",
-            &title,
-            "--body",
-            &body,
-            "--label",
-            "auto-defect",
-        ])
-        .spawn();
-}
-
-fn write_health_report(archive: &Archive) {
-    let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
-    let ttl_eff = archive
-        .ttl_eff
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .clone();
-    let sources = &archive.sources;
-    let mut out = String::from("{\n  \"updated\": ");
-    if let Ok(now_unix) = SystemTime::now().duration_since(UNIX_EPOCH) {
-        out.push_str(&format!("{:.3}", now_unix.as_secs_f64()));
-    } else {
-        out.push_str("0.0");
-    }
-    out.push_str(&format!(",\n  \"total_sources\": {}", sources.len()));
-    out.push_str(&format!(",\n  \"active_origins\": {}", origins.len()));
-    let mut zero_lines: Vec<String> = Vec::new();
-    let mut unch_lines: Vec<String> = Vec::new();
-    for (origin, state) in origins.iter() {
-        if state.zero_yield >= 1 {
-            let si = origin.0 as usize;
-            let name = sources.get(si).map(|s| s.name.as_str()).unwrap_or("?");
-            let host = sources
-                .get(si)
-                .and_then(|s| s.url.split('/').nth(2))
-                .unwrap_or("?");
-            zero_lines.push(format!(
-                "    {{\"source\":\"{}\",\"host\":\"{}\",\"zero_yield\":{}}}",
-                name.replace('\\', "\\\\").replace('\"', "\\\""),
-                host,
-                state.zero_yield
-            ));
-            auto_defect(name, host, state.zero_yield);
-        }
-        if state.unchanged_count >= 1 {
-            let si = origin.0 as usize;
-            let name = sources.get(si).map(|s| s.name.as_str()).unwrap_or("?");
-            let host = sources
-                .get(si)
-                .and_then(|s| s.url.split('/').nth(2))
-                .unwrap_or("?");
-            unch_lines.push(format!(
-                "    {{\"source\":\"{}\",\"host\":\"{}\",\"unchanged\":{}}}",
-                name.replace('\\', "\\\\").replace('\"', "\\\""),
-                host,
-                state.unchanged_count
-            ));
-        }
-    }
-    out.push_str(",\n  \"zero_yield_sources\": [\n");
-    out.push_str(&zero_lines.join(",\n"));
-    out.push_str("\n  ]");
-    out.push_str(",\n  \"unchanged_sources\": [\n");
-    out.push_str(&unch_lines.join(",\n"));
-    out.push_str("\n  ]");
-    out.push_str(",\n  \"ttl_eff\": {\n");
-    let mut first = true;
-    for (host, ttl) in ttl_eff.iter() {
-        if !first {
-            out.push_str(",\n");
-        }
-        first = false;
-        out.push_str(&format!("    \"{}\": {}", host, ttl));
-    }
-    out.push_str("\n  }\n}\n");
-    drop(origins);
-    let _ = std::fs::write("phi/health.json", out);
-}
-
 fn warm_cache(archive: Arc<Archive>) {
-    let mut health_counter: u32 = 0;
     loop {
         let min_ttl = archive.sources.iter().map(|s| s.ttl).min().unwrap_or(60);
         let cadence = ((min_ttl as f64) / Φ).max(1.0);
@@ -5065,10 +4971,8 @@ fn warm_cache(archive: Arc<Archive>) {
                                 if entry.last_body_hash != [0u8; 20]
                                     && entry.last_body_hash == body_hash
                                 {
-                                    entry.unchanged_count += 1;
                                 } else {
                                     entry.last_body_hash = body_hash;
-                                    entry.unchanged_count = 0;
                                     pendings = Some(extract_pending(src, &body, now));
                                 }
                             }
@@ -5104,7 +5008,6 @@ fn warm_cache(archive: Arc<Archive>) {
                                     }
                                 } else {
                                     origins.entry(origin).or_default().zero_yield = 0;
-                                    origins.entry(origin).or_default().unchanged_count = 0;
                                     let before = new_samples.len();
                                     for pend in pendings {
                                         for smp in
@@ -5204,11 +5107,6 @@ fn warm_cache(archive: Arc<Archive>) {
             .lock()
             .unwrap_or_else(|e| e.into_inner())
             .retain(|_, o| (now - o.fetched).abs() < o.ttl.max(1.0) * 64.0);
-        health_counter += 1;
-        if health_counter == 1 || health_counter % 5 == 0 {
-            write_health_report(&archive);
-            eprintln!("health report written (cycle {})", health_counter);
-        }
         let sleep_secs = per_origin_sleep(&archive, cadence);
         let lock = archive
             .warm_cache_mutex
@@ -5251,7 +5149,7 @@ fn main() {
             .presence
             .lock()
             .unwrap_or_else(|e| e.into_inner())
-            .insert("0_0_0".to_string(), (tdb_now(), 0.0, 0.0, 0.0, 1e11));
+            .insert("0_0_0".to_string(), (tdb_now(), 0.0, 0.0, 0.0, 1e13));
         let ar = Arc::clone(&archive);
         thread::spawn(move || warm_cache(ar));
     }
