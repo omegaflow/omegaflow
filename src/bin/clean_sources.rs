@@ -116,41 +116,55 @@ fn main() {
 
     let source_count_before_new = source_blocks.len();
 
-    let mut new_block = build_source_block(
-        "lmsal_solar_flares",
-        86400,
-        "force em",
-        &[
-            "at sun 1.0",
-            "url https://github.com/omegaflow/sources/releases/download/lmsal.com/astro_solar_hek_flares.json",
-            "map result",
-            "lat_key hgs_y",
-            "lon_key hgs_x",
-            "field event_starttime solar_flare_start",
-            "field event_peaktime solar_flare_peak",
-            "field fl_goescls solar_flare_goes_class",
-            "field ar_noaanum solar_flare_active_region",
-        ],
-    );
-    source_blocks.push(("lmsal_solar_flares".to_string(), 86400, new_block));
+    let existing_names: HashSet<&str> = source_blocks.iter().map(|(n, _, _)| n.as_str()).collect();
 
-    let mut new_block2 = build_source_block(
-        "satnogs_stations",
-        86400,
-        "force em",
-        &[
-            "url https://github.com/omegaflow/sources/releases/download/network.satnogs.org/technosphere_satnogs_stations.json",
-            "map .",
-            "lat_key lat",
-            "lon_key lng",
-            "field altitude satnogs_station_alt_m",
-            "field name satnogs_station_name",
-            "field observations satnogs_station_observations",
-            "field status satnogs_station_status",
-            "field success_rate satnogs_station_success_rate_pct",
-        ],
-    );
-    source_blocks.push(("satnogs_stations".to_string(), 86400, new_block2));
+    if !existing_names.contains("lmsal_solar_flares") {
+        println!("Adding lmsal_solar_flares");
+        source_blocks.push((
+            "lmsal_solar_flares".to_string(),
+            86400,
+            build_source_block(
+                "lmsal_solar_flares",
+                86400,
+                "force em",
+                &[
+                    "at sun 1.0",
+                    "url https://github.com/omegaflow/sources/releases/download/lmsal.com/lmsal_solar_flares.json",
+                    "map result",
+                    "lat_key hgs_y",
+                    "lon_key hgs_x",
+                    "field event_starttime solar_flare_start",
+                    "field event_peaktime solar_flare_peak",
+                    "field fl_goescls solar_flare_goes_class",
+                    "field ar_noaanum solar_flare_active_region",
+                ],
+            ),
+        ));
+    }
+
+    if !existing_names.contains("satnogs_stations") {
+        println!("Adding satnogs_stations");
+        source_blocks.push((
+            "satnogs_stations".to_string(),
+            86400,
+            build_source_block(
+                "satnogs_stations",
+                86400,
+                "force em",
+                &[
+                    "url https://github.com/omegaflow/sources/releases/download/network.satnogs.org/satnogs_stations.json",
+                    "map .",
+                    "lat_key lat",
+                    "lon_key lng",
+                    "field altitude satnogs_station_alt_m",
+                    "field name satnogs_station_name",
+                    "field observations satnogs_station_observations",
+                    "field status satnogs_station_status",
+                    "field success_rate satnogs_station_success_rate_pct",
+                ],
+            ),
+        ));
+    }
 
     source_blocks.sort_by(|a, b| a.1.cmp(&b.1).then_with(|| a.0.cmp(&b.0)));
 
