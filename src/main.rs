@@ -106,7 +106,7 @@ fn geodetic_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f
     (x_ecl + ex, y_ecl + ey, z_ecl + ez)
 }
 
-fn iau2000_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f64) {
+fn mars_surface_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f64) {
     let lat_rad = lat.to_radians();
     let lon_rad = lon.to_radians();
     let r = MARS_RADIUS + alt;
@@ -156,7 +156,7 @@ enum Motion {
     Ecliptic { scale: f64 },
     Areocentric { scale: f64 },
     WGS84 { lat: f64, lon: f64, alt: f64 },
-    IAU2000 { lat: f64, lon: f64, alt: f64 },
+    Mars { lat: f64, lon: f64, alt: f64 },
     Linear { p: [f64; 3], v: [f64; 3] },
 }
 
@@ -167,8 +167,8 @@ impl Motion {
                 let (x, y, z) = geodetic_to_icrs(*lat, *lon, *alt, t);
                 [x, y, z]
             }
-            Motion::IAU2000 { lat, lon, alt } => {
-                let (x, y, z) = iau2000_to_icrs(*lat, *lon, *alt, t);
+            Motion::Mars { lat, lon, alt } => {
+                let (x, y, z) = mars_surface_to_icrs(*lat, *lon, *alt, t);
                 [x, y, z]
             }
             Motion::Linear { p, v } => {
@@ -189,7 +189,7 @@ impl Motion {
         matches!(
             self,
             Motion::WGS84 { .. }
-                | Motion::IAU2000 { .. }
+                | Motion::Mars { .. }
                 | Motion::Ecliptic { .. }
                 | Motion::Areocentric { .. }
         )
@@ -1505,7 +1505,7 @@ enum Frame {
     WGS84 { lat: f64, lon: f64, alt: f64 },
     Ecliptic { scale: f64 },
     Areocentric { scale: f64 },
-    IAU2000 { lat: f64, lon: f64, alt: f64 },
+    Mars { lat: f64, lon: f64, alt: f64 },
     Data,
     Query,
 }
@@ -2244,7 +2244,7 @@ fn load_sources() -> Vec<SourceConfig> {
                         });
                     let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
                         if cur_mars_surface {
-                            Some(Frame::IAU2000 {
+                            Some(Frame::Mars {
                                 lat,
                                 lon,
                                 alt: cur_alt,
@@ -2395,7 +2395,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_lon = parts.get(2).and_then(|s| s.parse().ok());
                 cur_alt = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0);
             }
-            "iau2000" => {
+            "mars_surface" => {
                 cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
                 cur_lat = cur_lat_str.parse().ok();
                 cur_lon = parts.get(2).and_then(|s| s.parse().ok());
@@ -3945,7 +3945,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 }
             }
             Extract::Rows { last_line, fields } => {
-                if let Frame::WGS84 { lat, lon, alt } | Frame::IAU2000 { lat, lon, alt } = src.frame
+                if let Frame::WGS84 { lat, lon, alt } | Frame::Mars { lat, lon, alt } = src.frame
                 {
                     let col_indices: Vec<(usize, &String)> = fields
                         .iter()
@@ -4389,7 +4389,7 @@ fn materialize(
                 lon: *lon,
                 alt: *alt,
             },
-            Frame::IAU2000 { lat, lon, alt } => Motion::IAU2000 {
+            Frame::Mars { lat, lon, alt } => Motion::Mars {
                 lat: *lat,
                 lon: *lon,
                 alt: *alt,
@@ -4676,7 +4676,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     continue;
                 }
                 match &src.frame {
-                    Frame::WGS84 { lat, lon, alt } | Frame::IAU2000 { lat, lon, alt } => {
+                    Frame::WGS84 { lat, lon, alt } | Frame::Mars { lat, lon, alt } => {
                         let origin = (i as u32, 0, 0);
                         let eff_ttl = ttl_snapshot
                             .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
