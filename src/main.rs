@@ -5070,9 +5070,20 @@ fn warm_cache(archive: Arc<Archive>) {
         });
         let _ = tx.send(tasks);
         drop(tx);
-        let (new_samples, refreshed) = consumer
-            .join()
-            .unwrap_or_else(|e| std::panic::resume_unwind(e));
+        let (new_samples, refreshed) = match consumer.join() {
+            Ok(v) => v,
+            Err(e) => {
+                let msg = if let Some(s) = e.downcast_ref::<&str>() {
+                    s.to_string()
+                } else if let Some(s) = e.downcast_ref::<String>() {
+                    s.clone()
+                } else {
+                    "unknown panic".to_string()
+                };
+                eprintln!("warm_cache consumer panicked: {}", msg);
+                (Vec::new(), std::collections::HashSet::new())
+            }
+        };
 
         let station_sample = archive
             .station
