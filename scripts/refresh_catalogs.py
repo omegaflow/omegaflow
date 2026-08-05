@@ -91,9 +91,17 @@ def validate_asset(fname, data):
         return False
     if fname.endswith(".json"):
         try:
-            json.loads(data)
+            j = json.loads(data)
         except Exception:
             print(f"  STRUCTURE FAIL: invalid JSON", file=sys.stderr)
+            HEALTH["corrupt"].append(fname)
+            return False
+        if isinstance(j, dict) and "node_id" in j and "uploader" in j:
+            print(f"  STRUCTURE FAIL: GitHub API metadata instead of data", file=sys.stderr)
+            HEALTH["corrupt"].append(fname)
+            return False
+        if isinstance(j, dict) and "message" in j and "documentation_url" in j:
+            print(f"  STRUCTURE FAIL: GitHub error response", file=sys.stderr)
             HEALTH["corrupt"].append(fname)
             return False
     elif fname.endswith(".csv"):
