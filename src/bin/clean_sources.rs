@@ -1,9 +1,14 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
+use std::env;
 use std::fs;
 
 const SOURCES_PATH: &str = "phi/sources.φ";
+const NETLOC_MAP: &str = "/tmp/live_netlocs.txt";
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    let do_normalize = args.contains(&"--normalize".to_string());
+
     let content = fs::read_to_string(SOURCES_PATH).expect("read failed");
 
     let mut blocks: Vec<Vec<String>> = Vec::new();
@@ -85,6 +90,26 @@ fn main() {
 
         let ttl = extract_ttl(&block).unwrap_or(999999);
         source_blocks.push((name, ttl, block));
+    }
+
+    if do_normalize {
+        let netlocs = load_netloc_map();
+        let mut fixed = 0usize;
+        for (_name, _ttl, block) in &mut source_blocks {
+            let url_line = block
+                .iter()
+                .position(|l| l.starts_with("url ") && l.contains("releases/download"));
+            if let Some(pos) = url_line {
+                let old = block[pos].clone();
+                if let Some(new_url) = fix_cdn_tag(&old, &netlocs) {
+                    if new_url != old {
+                        block[pos] = new_url;
+                        fixed += 1;
+                    }
+                }
+            }
+        }
+        eprintln!("tag-normalize: {} CDN URLs fixed", fixed);
     }
 
     source_blocks.sort_by(|a, b| a.1.cmp(&b.1).then_with(|| a.0.cmp(&b.0)));
@@ -173,6 +198,41 @@ fn build_source_block(name: &str, ttl: u64, force: &str, fields: &[&str]) -> Vec
         block.push(f.to_string());
     }
     block
+}
+
+fn load_netloc_map() -> HashMap<String, String> {
+    let mut map = HashMap::new();
+    if let Ok(data) = fs::read_to_string(NETLOC_MAP) {
+        for line in data.lines() {
+            let trimmed = line.trim();
+            if let Some(space) = trimmed.find(' ') {
+                let name = &trimmed[..space];
+                let netloc = &trimmed[space + 1..];
+                map.insert(name.to_string(), netloc.to_string());
+            }
+        }
+    }
+    map
+}
+
+fn fix_cdn_tag(url_line: &str, netlocs: &HashMap<String, String>) -> Option<String> {
+    let path = &url_line["url ".len()..];
+    let prefix = "https://github.com/omegaflow/sources/releases/download/";
+    let rest = path.strip_prefix(prefix)?;
+    let mut parts = rest.splitn(2, '/');
+    let old_tag = parts.next()?;
+    let filename = parts.next()?;
+    let source_name = filename
+        .strip_suffix(".json")
+        .or_else(|| filename.strip_suffix(".bin"))?;
+    let new_tag = netlocs.get(source_name)?;
+    if old_tag != new_tag {
+        return Some(format!(
+            "url https://github.com/omegaflow/sources/releases/download/{}/{}",
+            new_tag, filename
+        ));
+    }
+    None
 }
 
 static DELETE_NAMES: &[&str] = &[
