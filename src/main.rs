@@ -405,7 +405,7 @@ struct Family {
 }
 
 struct Buffer {
-    planet: Family,
+    bodies: HashMap<String, Family>,
     inertial: Family,
 }
 
@@ -421,20 +421,31 @@ fn cell_of(p: [f64; 3], s: f64) -> CellKey {
     )
 }
 
-fn relative_frame_position(motion: &Motion, t: f64, epoch: f64) -> [f64; 3] {
-    let p = motion.at(t, epoch, &HashMap::new());
-    if motion.anchor_body().is_some() {
-        let (ex, ey, ez) = earth_position_icrs(t);
-        [p[0] - ex, p[1] - ey, p[2] - ez]
-    } else {
-        p
+fn relative_frame_position(
+    motion: &Motion,
+    t: f64,
+    epoch: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> [f64; 3] {
+    let p = motion.at(t, epoch, eph);
+    match motion.anchor_body() {
+        Some(body) => {
+            let b = body_barycenter_position(body, t, eph).unwrap_or([0.0; 3]);
+            [p[0] - b[0], p[1] - b[1], p[2] - b[2]]
+        }
+        None => p,
     }
 }
 
-fn law_bounds(motion: &Motion, epoch: f64, resid_ema: f64) -> (f64, f64, [f64; 3]) {
-    let p0 = relative_frame_position(motion, epoch, epoch);
-    let p1 = relative_frame_position(motion, epoch + 1.0, epoch);
-    let p2 = relative_frame_position(motion, epoch + 2.0, epoch);
+fn law_bounds(
+    motion: &Motion,
+    epoch: f64,
+    resid_ema: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> (f64, f64, [f64; 3]) {
+    let p0 = relative_frame_position(motion, epoch, epoch, eph);
+    let p1 = relative_frame_position(motion, epoch + 1.0, epoch, eph);
+    let p2 = relative_frame_position(motion, epoch + 2.0, epoch, eph);
     let v = ((p1[0] - p0[0]).powi(2) + (p1[1] - p0[1]).powi(2) + (p1[2] - p0[2]).powi(2)).sqrt();
     let a = ((p2[0] - 2.0 * p1[0] + p0[0]).powi(2)
         + (p2[1] - 2.0 * p1[1] + p0[1]).powi(2)
@@ -487,12 +498,22 @@ fn build_family(samples: Vec<Sample>, cadence: f64) -> Family {
 }
 
 fn build_buffer(samples: Vec<Sample>, cadence: f64) -> Buffer {
-    let (planet_samples, inertial): (Vec<Sample>, Vec<Sample>) = samples
-        .into_iter()
-        .partition(|s| s.motion.anchor_body().is_some());
+    let mut body_samps: HashMap<String, Vec<Sample>> = HashMap::new();
+    let mut inertial_samps = Vec::new();
+    for s in samples {
+        if let Some(body) = s.motion.anchor_body() {
+            body_samps.entry(body.to_string()).or_default().push(s);
+        } else {
+            inertial_samps.push(s);
+        }
+    }
+    let mut bodies = HashMap::new();
+    for (name, smps) in body_samps {
+        bodies.insert(name, build_family(smps, cadence));
+    }
     Buffer {
-        planet: build_family(planet_samples, cadence),
-        inertial: build_family(inertial, cadence),
+        bodies,
+        inertial: build_family(inertial_samps, cadence),
     }
 }
 
@@ -635,17 +656,12 @@ fn sense_buffer(
     pad: f64,
     records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     _frustum: Option<([f64; 3], [f64; 3], [f64; 3], f64, f64)>,
+    eph: &HashMap<String, BodyEphemeris>,
 ) {
-    let (ex, ey, ez) = earth_position_icrs(t2);
-    enclose_family(
-        &buf.planet,
-        [ex, ey, ez],
-        center,
-        t2,
-        pad,
-        records,
-        _frustum,
-    );
+    for (body_name, fam) in &buf.bodies {
+        let anchor = body_barycenter_position(body_name, t2, eph).unwrap_or([0.0, 0.0, 0.0]);
+        enclose_family(fam, anchor, center, t2, pad, records, _frustum);
+    }
     enclose_family(
         &buf.inertial,
         [0.0, 0.0, 0.0],
@@ -1980,7 +1996,10 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                             .unwrap_or_else(|e| e.into_inner())
                             .clone();
                         let mut report = String::new();
-                        for (fname, fam) in [("terra", &buf.planet), ("inertial", &buf.inertial)] {
+                        let mut families: Vec<(&str, &Family)> =
+                            buf.bodies.iter().map(|(k, v)| (k.as_str(), v)).collect();
+                        families.push(("inertial", &buf.inertial));
+                        for (fname, fam) in families {
                             let mut n = 0usize;
                             let mut field_names: std::collections::HashSet<&str> =
                                 std::collections::HashSet::new();
@@ -2169,7 +2188,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                                 alt,
                             },
                         };
-                        let (vmax, amax, p0f) = law_bounds(&motion, now, 0.0);
+                        let (vmax, amax, p0f) = law_bounds(&motion, now, 0.0, &HashMap::new());
                         let sample = Sample {
                             origin: (u32::MAX, 0, 0),
                             epoch: now,
@@ -2237,8 +2256,24 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                     );
                 archive.warm_cache_cv.notify_one();
                 let center = [x0, y0, z0];
-                sense_buffer(&field, center, t0, extent, &mut records, None);
-                sense_buffer(&station_buf, center, t0, extent, &mut records, None);
+                sense_buffer(
+                    &field,
+                    center,
+                    t0,
+                    extent,
+                    &mut records,
+                    None,
+                    &HashMap::new(),
+                );
+                sense_buffer(
+                    &station_buf,
+                    center,
+                    t0,
+                    extent,
+                    &mut records,
+                    None,
+                    &HashMap::new(),
+                );
             }
 
             let mut out = Vec::with_capacity(11 + records.len() * 72);
@@ -4616,7 +4651,7 @@ fn materialize(
         entry.prev_motion = Some(motion.clone());
         entry.has_prev = true;
     }
-    let (mut vmax, amax, p0f) = law_bounds(&motion, pend.epoch, resid_ema);
+    let (mut vmax, amax, p0f) = law_bounds(&motion, pend.epoch, resid_ema, &HashMap::new());
     if p0f[0].is_nan() || p0f[1].is_nan() || p0f[2].is_nan() || vmax.is_nan() || amax.is_nan() {
         return vec![];
     }
@@ -5222,7 +5257,9 @@ fn warm_cache(archive: Arc<Archive>) {
                             {
                                 let old =
                                     ar.field.read().unwrap_or_else(|e| e.into_inner()).clone();
-                                for fam in [&old.planet, &old.inertial] {
+                                let mut families: Vec<&Family> = old.bodies.values().collect();
+                                families.push(&old.inertial);
+                                for fam in families {
                                     for v in fam.cells.values() {
                                         for s in v {
                                             if (now - s.epoch).abs() <= s.ttl * 64.0
@@ -5280,7 +5317,9 @@ fn warm_cache(archive: Arc<Archive>) {
                 .read()
                 .unwrap_or_else(|e| e.into_inner())
                 .clone();
-            for fam in [&old.planet, &old.inertial] {
+            let mut families: Vec<&Family> = old.bodies.values().collect();
+            families.push(&old.inertial);
+            for fam in families {
                 for v in fam.cells.values() {
                     for s in v {
                         if (now - s.epoch).abs() <= s.ttl * 64.0 && !refreshed.contains(&s.origin) {
