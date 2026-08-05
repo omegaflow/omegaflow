@@ -4875,10 +4875,6 @@ fn warm_cache(archive: Arc<Archive>) {
             }
         }
 
-        let mut indexed: Vec<_> = tasks.into_iter().zip(task_prios.into_iter()).collect();
-        indexed.sort_by_key(|&(_, p)| p);
-        let tasks: Vec<_> = indexed.into_iter().map(|(t, _)| t).collect();
-
         let (tx, rx) = std::sync::mpsc::sync_channel::<
             Vec<(
                 usize,
