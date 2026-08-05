@@ -2146,7 +2146,14 @@ fn load_env() {
 
 fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
-    let content = std::fs::read_to_string("phi/sources.φ").unwrap_or_default();
+    let content = std::fs::read_to_string("phi/sources.φ").unwrap_or_else(|e| {
+        eprintln!(
+            "cannot read phi/sources.φ: {}. cwd={:?}",
+            e,
+            std::env::current_dir()
+        );
+        String::new()
+    });
     let mut cur_ttl: u64 = 0;
     let mut cur_force = String::new();
     let mut cur_tau: Option<f64> = None;
@@ -5118,14 +5125,22 @@ fn main() {
     load_env();
     let loaded = load_sources();
     eprintln!("loaded {} sources from phi/sources.φ", loaded.len());
+    if loaded.is_empty() {
+        eprintln!(
+            "FATAL: zero sources loaded. Is phi/sources.φ present? cwd={:?}",
+            std::env::current_dir()
+        );
+    }
     let port: u16 = std::env::var("PORT")
         .ok()
         .and_then(|s| s.parse().ok())
         .unwrap_or(1111);
     let archive = Arc::new(Archive {
         sources: loaded,
-        index_html: std::fs::read("static/index.html").unwrap_or_default(),
-        constants_js: std::fs::read("static/constants.js").unwrap_or_default(),
+        index_html: std::fs::read("static/index.html")
+            .unwrap_or_else(|_| include_bytes!("../static/index.html").to_vec()),
+        constants_js: std::fs::read("static/constants.js")
+            .unwrap_or_else(|_| include_bytes!("../static/constants.js").to_vec()),
         field: RwLock::new(Arc::new(build_buffer(Vec::new(), 1.0))),
         station: Mutex::new(StationState {
             sample: None,
