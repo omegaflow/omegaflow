@@ -13725,7 +13725,7 @@ field meta.pagination.count biosphere_metagenomic_studies_count
 source biosphere_modis_ndvi_local
 ttl 86400
 force em
-url https://github.com/omegaflow/sources/releases/download/modis.ornl.gov/biosphere_modis_ndvi_local.json
+url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
 field subset.0.1 biosphere_ndvi_local
 
 source biosphere_obis_cetaceans
