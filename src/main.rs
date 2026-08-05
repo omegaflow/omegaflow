@@ -3500,7 +3500,23 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
     let _ = stream.write_all(data);
 }
 
-fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSample> {
+enum ExtractResult {
+    Samples(Vec<PendingSample>),
+    WithEphemeris(Vec<PendingSample>, BodyEphemeris),
+}
+
+fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
+    if src.format == "ephemeris_binary" {
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        if let Some(eph) = parse_ephemeris_binary(&buf) {
+            return ExtractResult::WithEphemeris(vec![], eph);
+        }
+        return ExtractResult::Samples(vec![]);
+    }
     let mut pending: Vec<PendingSample> = Vec::new();
     let mut extracted: HashMap<String, f64> = HashMap::new();
     let parsed_json = if src.format == "json" || src.format.is_empty() || src.format == "universal"
@@ -4581,7 +4597,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
         }
     }
     pending.retain(|p| !p.fields.is_empty());
-    pending
+    ExtractResult::Samples(pending)
 }
 
 fn materialize(
@@ -5212,7 +5228,21 @@ fn warm_cache(archive: Arc<Archive>) {
                                 {
                                 } else {
                                     entry.last_body_hash = body_hash;
-                                    pendings = Some(extract_pending(src, &body, now));
+                                    let result = extract_pending(src, &body, now);
+                                    match result {
+                                        ExtractResult::WithEphemeris(samples, eph) => {
+                                            if let Some(ref bname) = src.body {
+                                                ar.body_ephemerides
+                                                    .write()
+                                                    .unwrap()
+                                                    .insert(bname.clone(), eph);
+                                            }
+                                            pendings = Some(samples);
+                                        }
+                                        ExtractResult::Samples(samples) => {
+                                            pendings = Some(samples);
+                                        }
+                                    }
                                 }
                             }
                             if let Some(pendings) = pendings {
@@ -5561,7 +5591,13 @@ mod tests {
         let now = super::tdb_now();
         let expected_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
         eprintln!("now={} expected_epoch={}", now, expected_epoch);
-        let pending = super::extract_pending(&src, body, now);
+        let result = super::extract_pending(&src, body, now);
+        let pending = match result {
+            super::ExtractResult::Samples(v) => v,
+            _ => {
+                panic!("expected Samples");
+            }
+        };
         assert_eq!(pending.len(), 2);
         let p0 = &pending[0];
         assert!(p0.epoch < now);
