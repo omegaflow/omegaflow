@@ -27,6 +27,207 @@ const V_S_GRANITE: f64 = 2930.0;
 const D_AIR: f64 = 2.0e-5;
 const ALPHA_AIR: f64 = 2.18e-5;
 
+fn resolve_asset(rel: &str) -> std::path::PathBuf {
+    let cwd_candidate = std::path::PathBuf::from(rel);
+    if cwd_candidate.exists() {
+        return cwd_candidate;
+    }
+    if let Ok(exe) = std::env::current_exe() {
+        if let Some(dir) = exe.parent() {
+            let exe_candidate = dir.join(rel);
+            if exe_candidate.exists() {
+                return exe_candidate;
+            }
+        }
+    }
+    eprintln!(
+        "asset '{}' not found (CWD={:?})",
+        rel,
+        std::env::current_dir()
+    );
+    cwd_candidate
+}
+
+const CHEBYSHEV_N: usize = 18;
+
+#[derive(Clone)]
+struct BodyProperties {
+    α0_deg: f64,
+    dα0_dt_deg_per_century: f64,
+    δ0_deg: f64,
+    dδ0_dt_deg_per_century: f64,
+    w0_deg: f64,
+    dw_dt_deg_per_day: f64,
+    radius_m: f64,
+    flattening: f64,
+}
+
+#[derive(Clone, Default)]
+struct ChebyshevGranule {
+    t0_jd: f64,
+    dt_jd: f64,
+    cx: [f64; CHEBYSHEV_N],
+    cy: [f64; CHEBYSHEV_N],
+    cz: [f64; CHEBYSHEV_N],
+}
+
+#[derive(Clone, Default)]
+struct BodyEphemeris {
+    granules: Vec<ChebyshevGranule>,
+    props: Option<BodyProperties>,
+}
+
+fn chebyshev_evaluate(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
+    let mut b0 = 0.0;
+    let mut b1 = 0.0;
+    for i in (0..CHEBYSHEV_N).rev() {
+        let b2 = b1;
+        b1 = b0;
+        b0 = 2.0 * tau * b1 - b2 + coeffs[i];
+    }
+    b0 - tau * b1
+}
+
+fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
+    if data.len() < 24 || data[0] != 0xCF || data[1] != 0x86 || data[2] != 0x01 {
+        return None;
+    }
+    let section_count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
+    let mut pos = 8usize;
+    let mut granules = Vec::new();
+    let mut props = None;
+    for _ in 0..section_count {
+        if pos + 24 > data.len() {
+            break;
+        }
+        let stype = u32::from_le_bytes(data[pos..pos + 4].try_into().ok()?);
+        pos += 4;
+        let gcount = u32::from_le_bytes(data[pos..pos + 4].try_into().ok()?) as usize;
+        pos += 4;
+        let degree = u32::from_le_bytes(data[pos..pos + 4].try_into().ok()?) as usize;
+        pos += 4;
+        pos += 4;
+        if stype == 1 {
+            let f = |i: usize| -> f64 {
+                f64::from_le_bytes(
+                    data[pos + i * 8..pos + (i + 1) * 8]
+                        .try_into()
+                        .unwrap_or([0; 8]),
+                )
+            };
+            props = Some(BodyProperties {
+                α0_deg: f(0),
+                dα0_dt_deg_per_century: f(1),
+                δ0_deg: f(2),
+                dδ0_dt_deg_per_century: f(3),
+                w0_deg: f(4),
+                dw_dt_deg_per_day: f(5),
+                radius_m: f(6),
+                flattening: f(7),
+            });
+            pos += 64;
+            continue;
+        }
+        if stype != 0 {
+            pos += gcount * (2 + 3 * (degree + 1)) * 8;
+            continue;
+        }
+        let n = degree + 1;
+        let gs = 2 + 3 * n;
+        for _ in 0..gcount {
+            if pos + gs * 8 > data.len() {
+                break;
+            }
+            let f = |i: usize| -> f64 {
+                f64::from_le_bytes(
+                    data[pos + i * 8..pos + (i + 1) * 8]
+                        .try_into()
+                        .unwrap_or([0; 8]),
+                )
+            };
+            let mut cx = [0f64; CHEBYSHEV_N];
+            let mut cy = [0f64; CHEBYSHEV_N];
+            let mut cz = [0f64; CHEBYSHEV_N];
+            for k in 0..n.min(CHEBYSHEV_N) {
+                cx[k] = f(2 + k);
+                cy[k] = f(2 + n + k);
+                cz[k] = f(2 + 2 * n + k);
+            }
+            granules.push(ChebyshevGranule {
+                t0_jd: f(0),
+                dt_jd: f(1),
+                cx,
+                cy,
+                cz,
+            });
+            pos += gs * 8;
+        }
+    }
+    if granules.is_empty() {
+        None
+    } else {
+        Some(BodyEphemeris { granules, props })
+    }
+}
+
+fn body_barycenter_position(
+    name: &str,
+    tdb: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    let e = eph.get(name)?;
+    let jd = tdb / 86400.0 + J2000_EPOCH;
+    for g in &e.granules {
+        let tau = (jd - g.t0_jd) / g.dt_jd;
+        if tau >= -1.0 && tau <= 1.0 {
+            return Some([
+                chebyshev_evaluate(&g.cx, tau),
+                chebyshev_evaluate(&g.cy, tau),
+                chebyshev_evaluate(&g.cz, tau),
+            ]);
+        }
+    }
+    None
+}
+
+fn body_fixed_to_icrs(
+    name: &str,
+    lat: f64,
+    lon: f64,
+    alt: f64,
+    tdb: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    let e = eph.get(name)?;
+    let bp = e.props.as_ref()?;
+    let [bx, by, bz] = body_barycenter_position(name, tdb, eph)?;
+    let jd = tdb / 86400.0 + J2000_EPOCH;
+    let tc = (jd - J2000_EPOCH) / 36525.0;
+    let a = (bp.α0_deg + bp.dα0_dt_deg_per_century * tc).to_radians();
+    let d = (bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc).to_radians();
+    let w = ((bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH))
+        - (bp.α0_deg + bp.dα0_dt_deg_per_century * tc))
+        .to_radians();
+    let lr = lat.to_radians();
+    let nr = lon.to_radians();
+    let f = bp.flattening;
+    let e2 = f * (2.0 - f);
+    let sl = lr.sin();
+    let n = bp.radius_m / (1.0 - e2 * sl * sl).sqrt();
+    let xb = (n + alt) * lr.cos() * nr.cos();
+    let yb = (n + alt) * lr.cos() * nr.sin();
+    let zb = (n * (1.0 - e2) + alt) * sl;
+    let xt = xb * w.cos() + yb * w.sin();
+    let yt = -xb * w.sin() + yb * w.cos();
+    let zt = zb;
+    let (sa, ca) = a.sin_cos();
+    let (sd, cd) = d.sin_cos();
+    let xi = xt * cd * ca - yt * sa - zt * sd * ca;
+    let yi = xt * cd * sa + yt * ca - zt * sd * sa;
+    let zi = xt * sd + zt * cd;
+    Some([xi + bx, yi + by, zi + bz])
+}
+
 fn compute_gmst(tdb_secs: f64) -> f64 {
     let jd = tdb_secs / 86400.0 + J2000_EPOCH;
     let t = (jd - J2000_EPOCH) / 36525.0;
@@ -1502,12 +1703,16 @@ fn force_type_of(force: &str) -> f64 {
 }
 
 enum Frame {
-    WGS84 { lat: f64, lon: f64, alt: f64 },
-    Ecliptic { scale: f64 },
-    Areocentric { scale: f64 },
-    Mars { lat: f64, lon: f64, alt: f64 },
-    Data,
-    Query,
+    Surface {
+        body_name: String,
+        lat: f64,
+        lon: f64,
+        alt: f64,
+    },
+    Barycenter {
+        body_name: String,
+        scale: f64,
+    },
 }
 
 struct StationEntry {
@@ -1550,6 +1755,7 @@ struct Archive {
     sources: Vec<SourceConfig>,
     index_html: Vec<u8>,
     constants_js: Vec<u8>,
+    body_ephemerides: RwLock<HashMap<String, BodyEphemeris>>,
     field: RwLock<Arc<Buffer>>,
     station: Mutex<StationState>,
     presence: Mutex<HashMap<String, (f64, f64, f64, f64, f64)>>,
@@ -1738,7 +1944,7 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
             } else {
                 match path.as_str() {
                     "/" => {
-                        let page = std::fs::read("static/index.html")
+                        let page = std::fs::read(resolve_asset("static/index.html"))
                             .unwrap_or_else(|_| archive.index_html.clone());
                         emit(&mut s, "200 OK", "text/html", &page);
                     }
@@ -1844,7 +2050,7 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                         emit(&mut s, "200 OK", "text/plain", report.as_bytes());
                     }
                     "/constants.js" => {
-                        let page = std::fs::read("static/constants.js")
+                        let page = std::fs::read(resolve_asset("static/constants.js"))
                             .unwrap_or_else(|_| archive.constants_js.clone());
                         emit(&mut s, "200 OK", "application/javascript", &page);
                     }
@@ -2147,7 +2353,7 @@ fn text_last_col(data: &str, col: &str) -> Option<f64> {
 }
 
 fn load_env() {
-    if let Ok(content) = std::fs::read_to_string(".env") {
+    if let Ok(content) = std::fs::read_to_string(resolve_asset(".env")) {
         for line in content.lines() {
             let line = line.trim();
             if line.is_empty() || line.starts_with('#') {
@@ -2244,24 +2450,37 @@ fn load_sources() -> Vec<SourceConfig> {
                         });
                     let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
                         if cur_mars_surface {
-                            Some(Frame::Mars {
+                            Some(Frame::Surface {
+                                body_name: "mars".to_string(),
                                 lat,
                                 lon,
                                 alt: cur_alt,
                             })
                         } else {
-                            Some(Frame::WGS84 {
+                            Some(Frame::Surface {
+                                body_name: "earth".to_string(),
                                 lat,
                                 lon,
                                 alt: cur_alt,
                             })
                         }
                     } else if let Some(scale) = cur_terra {
-                        Some(Frame::Ecliptic { scale })
+                        Some(Frame::Barycenter {
+                            body_name: "earth".to_string(),
+                            scale,
+                        })
                     } else if let Some(scale) = cur_mars {
-                        Some(Frame::Areocentric { scale })
+                        Some(Frame::Barycenter {
+                            body_name: "mars".to_string(),
+                            scale,
+                        })
                     } else if has_data_position {
-                        Some(Frame::Data)
+                        Some(Frame::Surface {
+                            body_name: "earth".to_string(),
+                            lat: 0.0,
+                            lon: 0.0,
+                            alt: 0.0,
+                        })
                     } else if cur_url.contains("{lat}")
                         || cur_url.contains("{lon}")
                         || cur_url.contains("{x}")
@@ -2269,7 +2488,7 @@ fn load_sources() -> Vec<SourceConfig> {
                         || cur_url.contains("{z}")
                         || cur_url.contains("{grid")
                     {
-                        Some(Frame::Query)
+                        Some(Frame::Surface { body_name: "earth".to_string(), lat: 0.0, lon: 0.0, alt: 0.0 })
                     } else {
                         eprintln!("source refused (no reference frame): {}", cur_name);
                         None
@@ -3945,7 +4164,8 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> Vec<PendingSampl
                 }
             }
             Extract::Rows { last_line, fields } => {
-                if let Frame::WGS84 { lat, lon, alt } | Frame::Mars { lat, lon, alt } = src.frame
+                if let Frame::Surface { lat, lon, alt, .. } | Frame::Surface { lat, lon, alt, .. } =
+                    src.frame
                 {
                     let col_indices: Vec<(usize, &String)> = fields
                         .iter()
@@ -4384,25 +4604,35 @@ fn materialize(
             vrate,
         } => flow_motion(*lat, *lon, *alt, *speed, *track, *vrate, pend.epoch),
         PendingPosition::Source => match &src.frame {
-            Frame::WGS84 { lat, lon, alt } => Motion::WGS84 {
+            Frame::Surface { lat, lon, alt, .. } => Motion::WGS84 {
                 lat: *lat,
                 lon: *lon,
                 alt: *alt,
             },
-            Frame::Mars { lat, lon, alt } => Motion::Mars {
+            Frame::Surface { lat, lon, alt, .. } => Motion::Mars {
                 lat: *lat,
                 lon: *lon,
                 alt: *alt,
             },
-            Frame::Ecliptic { scale } => Motion::Ecliptic { scale: *scale },
-            Frame::Areocentric { scale } => Motion::Areocentric { scale: *scale },
-            Frame::Query => {
+            Frame::Barycenter { scale, .. } => Motion::Ecliptic { scale: *scale },
+            Frame::Barycenter { scale, .. } => Motion::Areocentric { scale: *scale },
+            Frame::Surface {
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+                ..
+            } => {
                 let Some((lat, lon)) = region else {
                     return vec![];
                 };
                 Motion::WGS84 { lat, lon, alt: 0.0 }
             }
-            Frame::Data => {
+            Frame::Surface {
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+                ..
+            } => {
                 let Some((latf, lonf, altf, alt_scale)) = src.pos_fields.as_ref() else {
                     return vec![];
                 };
@@ -4676,7 +4906,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     continue;
                 }
                 match &src.frame {
-                    Frame::WGS84 { lat, lon, alt } | Frame::Mars { lat, lon, alt } => {
+                    Frame::Surface { lat, lon, alt, .. } | Frame::Surface { lat, lon, alt, .. } => {
                         let origin = (i as u32, 0, 0);
                         let eff_ttl = ttl_snapshot
                             .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -4704,7 +4934,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             src.ttl,
                         ));
                     }
-                    Frame::Ecliptic { scale } => {
+                    Frame::Barycenter { scale, .. } => {
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
                             &origins_snap,
@@ -4736,7 +4966,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             src.ttl,
                         ));
                     }
-                    Frame::Areocentric { scale } => {
+                    Frame::Barycenter { scale, .. } => {
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
                             &origins_snap,
@@ -4768,7 +4998,12 @@ fn warm_cache(archive: Arc<Archive>) {
                             src.ttl,
                         ));
                     }
-                    Frame::Data => {
+                    Frame::Surface {
+                        lat: 0.0,
+                        lon: 0.0,
+                        alt: 0.0,
+                        ..
+                    } => {
                         let has_template = src.url.contains("{lat}")
                             || src.url.contains("{lon}")
                             || src.url.contains("{x}")
@@ -4860,7 +5095,12 @@ fn warm_cache(archive: Arc<Archive>) {
                             src.ttl,
                         ));
                     }
-                    Frame::Query => {
+                    Frame::Surface {
+                        lat: 0.0,
+                        lon: 0.0,
+                        alt: 0.0,
+                        ..
+                    } => {
                         for &(_, px, py, pz, _) in &presences {
                             if !presence_gate(&presences, (px, py, pz), r) {
                                 continue;
@@ -5170,10 +5410,9 @@ fn main() {
         .unwrap_or(1111);
     let archive = Arc::new(Archive {
         sources: loaded,
-        index_html: std::fs::read("static/index.html")
-            .unwrap_or_else(|_| include_bytes!("../static/index.html").to_vec()),
-        constants_js: std::fs::read("static/constants.js")
-            .unwrap_or_else(|_| include_bytes!("../static/constants.js").to_vec()),
+        index_html: std::fs::read(resolve_asset("static/index.html")).unwrap_or_default(),
+        constants_js: std::fs::read(resolve_asset("static/constants.js")).unwrap_or_default(),
+        body_ephemerides: RwLock::new(HashMap::new()),
         field: RwLock::new(Arc::new(build_buffer(Vec::new(), 1.0))),
         station: Mutex::new(StationState {
             sample: None,
@@ -5222,7 +5461,12 @@ mod tests {
             name: "test".into(),
             ttl: 100,
             url: "https://example.com?sstr={target}&from={catalog}".into(),
-            frame: super::Frame::Query,
+            frame: super::Frame::Surface {
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+                ..
+            },
             force: "em".into(),
             tau: None,
             tau_key: None,
@@ -5259,7 +5503,7 @@ mod tests {
             name: "test_post".into(),
             ttl: 100,
             url: "https://earth-search.aws.element84.com/v0/search".into(),
-            frame: super::Frame::Query,
+            frame: super::Frame::Surface { lat: 0.0, lon: 0.0, alt: 0.0, .. },
             force: "em".into(),
             tau: None,
             tau_key: None,
@@ -5297,7 +5541,12 @@ mod tests {
             name: "argo".into(),
             ttl: 43200,
             url: "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json".into(),
-            frame: super::Frame::Data,
+            frame: super::Frame::Surface {
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+                ..
+            },
             force: "thermal".into(),
             tau: None,
             tau_key: None,
