@@ -1226,17 +1226,24 @@ fn presence_probe() {
             if (e.key === 'e') { exposureBoost = Math.min(exposureBoost + 1.0 / Φ, 16); e.preventDefault(); }
             else if (e.key === 'E') { exposureBoost = Math.max(exposureBoost - 1.0 / Φ, -8); e.preventDefault(); }
         });
-        const stationJumps = { '1': 'ssb', '2': 'earth', '3': 'mars', '4': 'sun' };
+        const stationJumps = {
+            '1': { target: 'ssb',   grid: Math.pow(2, 54) },
+            '2': { target: 'earth', grid: Math.pow(2, 33) },
+            '3': { target: 'mars',  grid: Math.pow(2, 33) },
+            '4': { target: 'sun',   grid: Math.pow(2, 54) },
+            '5': { target: 'ssb',   grid: Math.pow(2, 60) },
+        };
         window.addEventListener('keydown', (e) => {
-            const target = stationJumps[e.key];
-            if (!target) return;
+            const cfg = stationJumps[e.key];
+            if (!cfg) return;
             e.preventDefault();
-            fetch(`/jump/${target}`).then(r => r.text()).then(body => {
+            fetch(`/jump/${cfg.target}`).then(r => r.text()).then(body => {
                 const parts = body.trim().split(/\s+/);
                 if (parts.length >= 3) {
                     pPresence = [parseFloat(parts[0]), parseFloat(parts[1]), parseFloat(parts[2])];
                     vPresence = [0, 0, 0];
                     t0P = tPresence;
+                    gridStep = cfg.grid;
                 }
             }).catch(() => {});
         });
