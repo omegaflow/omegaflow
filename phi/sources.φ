@@ -10590,7 +10590,7 @@ extent 4.26e-5
 source astro_enceladus_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_enceladus_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_enceladus_vectors.json
 ephemeris orbital_enceladus_distance
 extent 1.68e-6
 
@@ -10755,7 +10755,7 @@ field year year
 source astro_europa_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_europa_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_europa_vectors.json
 ephemeris orbital_europa_distance
 extent 1.04e-5
 
@@ -10830,7 +10830,7 @@ field duration duration_s
 source astro_ganymede_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_ganymede_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_ganymede_vectors.json
 ephemeris orbital_ganymede_distance
 extent 1.76e-5
 
@@ -11693,7 +11693,7 @@ field place_guess locality
 source astro_io_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_io_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_io_vectors.json
 ephemeris orbital_io_distance
 extent 1.22e-5
 
@@ -11809,7 +11809,7 @@ ephemeris orbital_juno_distance
 source astro_jupiter_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_jupiter_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_jupiter_vectors.json
 ephemeris orbital_jupiter_distance
 extent 4.67e-4
 
@@ -12003,7 +12003,7 @@ field em_max wavelength_max_m
 source astro_mercury_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_mercury_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_mercury_vectors.json
 ephemeris orbital_mercury_distance
 extent 1.63e-5
 
@@ -12183,7 +12183,7 @@ field imp impact_flag
 source astro_neptune_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_neptune_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_neptune_vectors.json
 ephemeris orbital_neptune_distance
 extent 1.65e-4
 
@@ -12805,7 +12805,7 @@ ephemeris orbital_parker_solar_probe_distance
 source astro_pluto_vectors
 ttl 3600
 force em
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_pluto_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_pluto_vectors.json
 ephemeris orbital_pluto_distance
 extent 7.94e-6
 
@@ -12842,7 +12842,7 @@ xml_count item disaster_count
 source astro_saturn_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_saturn_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_saturn_vectors.json
 ephemeris orbital_saturn_distance
 extent 3.89e-4
 
@@ -12907,7 +12907,7 @@ ephemeris orbital_solar_orbiter_distance
 source astro_sun_vectors
 ttl 3600
 force em gravity thermal
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_sun_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_sun_vectors.json
 ephemeris orbital_sun_distance
 extent 0.004650
 
@@ -12960,14 +12960,14 @@ field properties.uf state
 source astro_titan_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_titan_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_titan_vectors.json
 ephemeris orbital_titan_distance
 extent 1.72e-5
 
 source astro_triton_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_triton_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_triton_vectors.json
 ephemeris orbital_triton_distance
 extent 9.04e-6
 
@@ -13011,7 +13011,7 @@ field_in 8 velocity_kms
 source astro_uranus_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_uranus_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_uranus_vectors.json
 ephemeris orbital_uranus_distance
 extent 1.70e-4
 
@@ -13085,7 +13085,7 @@ field EndDate activity_end_date
 source astro_venus_vectors
 ttl 3600
 force em gravity
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/astro_venus_vectors.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_venus_vectors.json
 ephemeris orbital_venus_distance
 extent 4.05e-5
 
@@ -19946,7 +19946,7 @@ vectors orbital_saturn_rg
 source astro_saturn_rings
 ttl 86400
 force em
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-omegaflow/astro_saturn_rings.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_saturn_rings.json
 format universal
 cmap data
 tau_key _dist_m
@@ -21985,7 +21985,7 @@ field country.iso2Code country_code
 source biosphere_worldpop_population_density_global
 ttl 86400
 force diffusion
-url https://github.com/omegaflow/sources/releases/download/github.com-omegaflow-catalogs/biosphere_worldpop_population_density_global.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/biosphere_worldpop_population_density_global.json
 map data
 lat_key latitude
 lon_key longitude
