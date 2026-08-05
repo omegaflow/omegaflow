@@ -15588,20 +15588,6 @@ field redshift redshift
 field time_trigger trigger_time_utc
 field host_galaxy host_galaxy_name
 
-source astro_heasarc_main_tevcat_ground_based
-ttl 86400
-force em
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,energy_range,flux>100_mev,redshift,type,association+FROM+tevcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+name+ASC
-format text
-rows
-ra_key ra
-dec_key dec
-z_key redshift
-field energy_range energy_range_tev
-field flux>100_mev gamma_flux
-field type source_type
-field association association
-
 source astro_heasarc_main_threefhl
 ttl 86400
 force em
@@ -22816,26 +22802,9 @@ source astro_tevcat_main
 ttl 604800
 force em
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/astro_tevcat_main.json
-cmap data
+ssb
+format universal
 tau_key _dist_m
-ra_key ra
-dec_key dec
-z_key redshift
-field source_number astro_tevcat_main_source_number
-field source_sample astro_tevcat_main_source_sample
-field name astro_tevcat_main_name
-field alt_name astro_tevcat_main_alt_name
-field lii astro_tevcat_main_lii
-field bii astro_tevcat_main_bii
-field source_type astro_tevcat_main_source_type
-field flux astro_tevcat_main_flux
-field spectral_index astro_tevcat_main_spectral_index
-field distance astro_tevcat_main_distance
-field discovery_date astro_tevcat_main_discovery_date
-field extended_flag astro_tevcat_main_extended_flag
-field x_size astro_tevcat_main_x_size
-field y_size astro_tevcat_main_y_size
-field tevcat_url astro_tevcat_main_tevcat_url
 
 source astro_twomass_psc
 ttl 604800

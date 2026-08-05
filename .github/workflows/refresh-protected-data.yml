@@ -309,6 +309,92 @@ jobs:
             fi
           done
 
+      - name: TeVCat -> CDN (HEASARC TAP → JSON)
+        env:
+          OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+        run: |
+          pip install -q astropy
+          python3 << 'PYEOF'
+          import urllib.request, json, io, sys, os, ssl
+          TOKEN = os.environ["OMEGAFLOW_TOKEN"]
+          ctx = ssl.create_default_context()
+          ctx.check_hostname = False
+          ctx.verify_mode = ssl.CERT_NONE
+
+          url = "https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+*+FROM+tevcat"
+          req = urllib.request.Request(url, headers={"User-Agent": "omegaflow-ci/1.0"})
+          with urllib.request.urlopen(req, timeout=120, context=ctx) as r:
+              text = r.read().decode(errors='replace')
+
+          rows = []
+          try:
+              from astropy.io.votable import parse_single_table
+              table = parse_single_table(io.BytesIO(text.encode()))
+              cols = table.array.dtype.names or []
+              for rec in table.array:
+                  row = {}
+                  for c in cols:
+                      val = rec[c]
+                      if hasattr(val, 'tolist'): val = val.tolist()
+                      row[c] = val
+                  rows.append(row)
+              print(f"TeVCat: {len(rows)} sources (astropy)")
+          except Exception as e:
+              print(f"astropy failed: {e}, falling back to xml")
+              import xml.etree.ElementTree as ET
+              ns = 'http://www.ivoa.net/xml/VOTable/v1.3'
+              root = ET.fromstring(text)
+              for table_elem in root.iter(f'{{{ns}}}TABLE'):
+                  fields = []
+                  for f in table_elem.findall(f'{{{ns}}}FIELD'):
+                      fields.append(f.get('name', ''))
+                  for tr in table_elem.findall(f'.//{{{ns}}}TR'):
+                      tds = tr.findall(f'{{{ns}}}TD')
+                      if len(tds) == len(fields):
+                          row = {}
+                          for i, td in enumerate(tds):
+                              row[fields[i]] = td.text
+                          rows.append(row)
+              print(f"TeVCat: {len(rows)} sources (xml fallback)")
+
+          def api(method, path, data=None):
+              url = f"https://api.github.com{path}"
+              h = {"Authorization": f"Bearer {TOKEN}", "User-Agent": "omegaflow-ci/1.0", "Accept": "application/vnd.github+json"}
+              if data:
+                  h["Content-Type"] = "application/json"
+                  req = urllib.request.Request(url, data=data.encode(), headers=h, method=method)
+              else:
+                  req = urllib.request.Request(url, headers=h, method=method)
+              try:
+                  with urllib.request.urlopen(req, timeout=30, context=ctx) as r:
+                      return r.status, json.loads(r.read()) if r.status != 204 else None
+              except urllib.error.HTTPError as e:
+                  return e.code, json.loads(e.read()) if e.fp else {"message": str(e)}
+
+          domain = "heasarc.gsfc.nasa.gov"
+          status, release = api("GET", f"/repos/omegaflow/sources/releases/tags/{domain}")
+          if status != 200 or release is None:
+              status, release = api("POST", "/repos/omegaflow/sources/releases", json.dumps({"tag_name": domain, "name": domain, "body": ""}))
+              if release is None:
+                  print("Failed to get/create release")
+                  sys.exit(1)
+
+          for a in release.get("assets", []):
+              if a["name"] == "astro_tevcat_main.json":
+                  api("DELETE", f"/repos/omegaflow/sources/releases/assets/{a['id']}")
+                  break
+
+          flat = json.dumps({"data": rows}).encode()
+          upload_url = release["upload_url"].split("{")[0]
+          import urllib.parse
+          url = f"{upload_url}?name={urllib.parse.quote('astro_tevcat_main.json')}"
+          req = urllib.request.Request(url, data=flat,
+              headers={"Authorization": f"Bearer {TOKEN}", "User-Agent": "omegaflow-ci/1.0",
+                       "Content-Type": "application/octet-stream"}, method="POST")
+          with urllib.request.urlopen(req, timeout=60, context=ctx) as r:
+              print(f"Upload: HTTP {r.status}, {len(flat)/1024:.0f} KB")
+          PYEOF
+
       - name: Mirror all sources -> CDN (health snapshot)
         env:
           OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
