@@ -2397,11 +2397,9 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_lat: Option<f64> = None;
     let mut cur_lon: Option<f64> = None;
     let mut cur_alt: f64 = 0.0;
-    let mut cur_terra: Option<f64> = None;
-    let mut cur_mars: Option<f64> = None;
-    let mut cur_mars_surface = false;
+    let mut cur_body: Option<String> = None;
+    let mut cur_scale: Option<f64> = None;
     let mut cur_pos: Option<(String, String, Option<String>, f64)> = None;
-    let mut cur_lat_str = String::new();
     let mut cur_format = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
     let mut cur_headers: Vec<(String, String)> = Vec::new();
@@ -2456,29 +2454,15 @@ fn load_sources() -> Vec<SourceConfig> {
                             )
                         });
                     let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
-                        if cur_mars_surface {
-                            Some(Frame::Surface {
-                                body_name: "mars".to_string(),
-                                lat,
-                                lon,
-                                alt: cur_alt,
-                            })
-                        } else {
-                            Some(Frame::Surface {
-                                body_name: "earth".to_string(),
-                                lat,
-                                lon,
-                                alt: cur_alt,
-                            })
-                        }
-                    } else if let Some(scale) = cur_terra {
-                        Some(Frame::Barycenter {
-                            body_name: "earth".to_string(),
-                            scale,
+                        Some(Frame::Surface {
+                            body_name: cur_body.clone().unwrap_or_else(|| "earth".to_string()),
+                            lat,
+                            lon,
+                            alt: cur_alt,
                         })
-                    } else if let Some(scale) = cur_mars {
+                    } else if let Some(scale) = cur_scale {
                         Some(Frame::Barycenter {
-                            body_name: "mars".to_string(),
+                            body_name: cur_body.clone().unwrap_or_else(|| "earth".to_string()),
                             scale,
                         })
                     } else if has_data_position {
@@ -2563,11 +2547,8 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_lat = None;
                 cur_lon = None;
                 cur_alt = 0.0;
-                cur_terra = None;
-                cur_mars = None;
-                cur_mars_surface = false;
-                cur_pos = None;
-                cur_lat_str.clear();
+                cur_body = None;
+                cur_scale = None;
                 cur_format.clear();
                 cur_target = None;
                 cur_catalog = None;
@@ -2615,22 +2596,16 @@ fn load_sources() -> Vec<SourceConfig> {
             "min_freq" => cur_min_freq = parts.get(1).and_then(|s| s.parse().ok()),
             "body" => cur_body = Some(line.get(5..).unwrap_or("").trim().to_string()),
             "verify" => {}
-            "wgs84" => {
-                cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
-                cur_lat = cur_lat_str.parse().ok();
-                cur_lon = parts.get(2).and_then(|s| s.parse().ok());
-                cur_alt = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+            "on" => {
+                cur_body = Some(parts.get(1).unwrap_or(&"").to_string());
+                cur_lat = parts.get(2).and_then(|s| s.parse().ok());
+                cur_lon = parts.get(3).and_then(|s| s.parse().ok());
+                cur_alt = parts.get(4).and_then(|s| s.parse().ok()).unwrap_or(0.0);
             }
-            "mars_surface" => {
-                cur_lat_str = parts.get(1).unwrap_or(&"").to_string();
-                cur_lat = cur_lat_str.parse().ok();
-                cur_lon = parts.get(2).and_then(|s| s.parse().ok());
-                cur_alt = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0);
-                cur_mars_surface = true;
+            "at" => {
+                cur_body = Some(parts.get(1).unwrap_or(&"").to_string());
+                cur_scale = parts.get(2).and_then(|s| s.parse().ok());
             }
-            "ecliptic" => cur_terra = parts.get(1).and_then(|s| s.parse().ok()),
-            "ssb" => cur_terra = Some(0.0),
-            "areocentric" => cur_mars = parts.get(1).and_then(|s| s.parse().ok()),
             "pos" => {
                 if parts.len() >= 3 {
                     cur_pos = Some((
