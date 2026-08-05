@@ -231,6 +231,13 @@ jobs:
             touch /tmp/reload_done
           fi
 
+      - name: Repair Gaia catalogs
+        env:
+          OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+        run: |
+          python3 scripts/repair_gaia.py 2>&1 | tail -5 || \
+            echo "::warning::gaia repair had failures"
+
       - name: Mirror static files -> catalogs
         run: |
           echo "Mirroring third-party static files to domain releases"
