@@ -17,6 +17,7 @@ import urllib.request
 import urllib.error
 import urllib.parse
 import concurrent.futures
+import ssl
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from flatten_cdn import flatten_to_universal
@@ -50,8 +51,11 @@ HEALTH_FILE = Path(__file__).parent.parent / "phi" / "health.json"
 
 def fetch_url(url, timeout=30):
     try:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
         req = urllib.request.Request(url, headers={"User-Agent": UA})
-        with urllib.request.urlopen(req, timeout=timeout) as r:
+        with urllib.request.urlopen(req, timeout=timeout, context=ctx) as r:
             return r.status, r.read()
     except Exception as e:
         return 0, str(e).encode()
@@ -133,6 +137,22 @@ def get_domain_tag(url):
 def mirror_source(src, update_phi=False):
     name = src["name"]
     url = src["url"]
+    
+    # Substitute template parameters with defaults for mirroring
+    import re
+    from datetime import date
+    today = date.today().isoformat()
+    url = url.replace('{today}', today)
+    url = url.replace('{year}', str(date.today().year))
+    url = url.replace('{month}', f'{date.today().month:02d}')
+    url = url.replace('{day}', f'{date.today().day:02d}')
+    
+    # Default position for position-dependent sources
+    if '{lat}' in url or '{lon}' in url:
+        url = url.replace('{lat}', '35.0').replace('{lon}', '139.0')
+    if '{ra}' in url or '{dec}' in url:
+        url = url.replace('{ra}', '83.63').replace('{dec}', '22.01').replace('{radius}', '1.0')
+    
     domain = get_domain_tag(url)
     
     status, data = fetch_url(url)
