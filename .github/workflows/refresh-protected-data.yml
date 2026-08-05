@@ -401,6 +401,12 @@ jobs:
         run: |
           python3 scripts/migrate_live_to_cdn.py --mode mirror-all 2>&1 | tail -10
 
+      - name: Regenerate CDN assets from APIs (TTL>=300)
+        env:
+          OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+        run: |
+          python3 scripts/migrate_live_to_cdn.py --mode regen-cdn 2>&1 | tail -10
+
       - name: Publish Release
         env:
           GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN || secrets.GITHUB_TOKEN }}

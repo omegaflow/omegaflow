@@ -200,6 +200,21 @@ def main():
 
         candidates = [s for s in sources if not s["is_cdn"]]
         update_phi = False
+    elif MODE == "regen-cdn":
+        # Regenerate CDN assets for TTL>=300 sources from their original API URLs.
+        # Original URLs are recovered from git history via restore_all_live.py logic.
+        candidates = [s for s in sources if s["is_cdn"] and s.get("ttl", 0) >= 300]
+        update_phi = False
+        # Load original live URLs from git history
+        sys.path.insert(0, str(Path(__file__).parent))
+        from restore_all_live import build_live_url_map
+        _ORIGINAL_URLS = build_live_url_map()
+        # Replace CDN URLs with original API URLs for fetching
+        import copy
+        for s in candidates:
+            orig = _ORIGINAL_URLS.get(s["name"])
+            if orig:
+                s["url"] = orig
     else:
         print(f"Unknown mode: {MODE}", file=sys.stderr)
         sys.exit(1)
