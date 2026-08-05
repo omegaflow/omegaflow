@@ -10,7 +10,6 @@ use std::time::{Instant, SystemTime, UNIX_EPOCH};
 const Φ: f64 = 1.618033988749895;
 const AU: f64 = 1.495978707e11;
 const EARTH_RADIUS: f64 = 6378137.0;
-const MARS_RADIUS: f64 = 3396190.0;
 const EARTH_ECC: f64 = 0.0167086;
 const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const J2000_EPOCH: f64 = 2451545.0;
@@ -305,25 +304,6 @@ fn geodetic_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f
     let z_ecl = -y_eci * ECLIPTIC_OBLIQUITY.sin() + z_eci * ECLIPTIC_OBLIQUITY.cos();
     let (ex, ey, ez) = earth_position_icrs(tdb_secs);
     (x_ecl + ex, y_ecl + ey, z_ecl + ez)
-}
-
-fn mars_surface_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f64) {
-    let lat_rad = lat.to_radians();
-    let lon_rad = lon.to_radians();
-    let r = MARS_RADIUS + alt;
-    let x_body = r * lat_rad.cos() * lon_rad.cos();
-    let y_body = r * lat_rad.cos() * lon_rad.sin();
-    let z_body = r * lat_rad.sin();
-    let mars_day = 88642.66;
-    let rot = (tdb_secs / mars_day).fract() * std::f64::consts::TAU;
-    let x_eci = x_body * rot.cos() + y_body * rot.sin();
-    let y_eci = -x_body * rot.sin() + y_body * rot.cos();
-    let z_eci = z_body;
-    let x_ecl = x_eci;
-    let y_ecl = y_eci * ECLIPTIC_OBLIQUITY.cos() + z_eci * ECLIPTIC_OBLIQUITY.sin();
-    let z_ecl = -y_eci * ECLIPTIC_OBLIQUITY.sin() + z_eci * ECLIPTIC_OBLIQUITY.cos();
-    let (mx, my, mz) = mars_position_icrs(tdb_secs);
-    (x_ecl + mx, y_ecl + my, z_ecl + mz)
 }
 
 fn icrs_to_geodetic(x: f64, y: f64, z: f64, tdb_secs: f64) -> (f64, f64) {
@@ -1982,19 +1962,10 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                     }
                     _ if path.starts_with("/jump/") => {
                         let body: &str = &path[6..];
-                        let (x, y, z) = match body {
-                            "earth" => {
-                                let (ex, ey, ez) = earth_position_icrs(tdb_now());
-                                (ex, ey, ez)
-                            }
-                            "mars" => {
-                                let (mx, my, mz) = mars_position_icrs(tdb_now());
-                                (mx, my, mz)
-                            }
-                            "sun" => (0.0, 0.0, 0.0),
-                            "ssb" => (0.0, 0.0, 0.0),
-                            _ => (0.0, 0.0, 0.0),
-                        };
+                        let eph = archive.body_ephemerides.read().unwrap();
+                        let (x, y, z) = body_barycenter_position(body, tdb_now(), &eph)
+                            .map(|[x, y, z]| (x, y, z))
+                            .unwrap_or((0.0, 0.0, 0.0));
                         emit(
                             &mut s,
                             "200 OK",
@@ -4829,8 +4800,6 @@ fn warm_cache(archive: Arc<Archive>) {
                 .lock()
                 .unwrap_or_else(|e| e.into_inner())
                 .clone();
-            let (ex, ey, ez) = earth_position_icrs(now);
-            let (mx, my, mz) = mars_position_icrs(now);
             let mut src_order: Vec<(usize, f64, u8)> = archive
                 .sources
                 .iter()
@@ -4899,7 +4868,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             src.ttl,
                         ));
                     }
-                    Frame::Barycenter { scale, .. } => {
+                    Frame::Barycenter { body_name, scale } => {
                         let origin = (i as u32, 0, 0);
                         if !origin_stale(
                             &origins_snap,
@@ -4913,39 +4882,10 @@ fn warm_cache(archive: Arc<Archive>) {
                         ) {
                             continue;
                         }
-                        let pos = (ex * scale, ey * scale, ez * scale);
-                        if !presence_gate(&presences, pos, r) {
-                            continue;
-                        }
-                        let is_new = origins_snap.get(&origin).is_none();
-                        task_prios.push(fetch_priority(
-                            &src.url, pos, r, is_new, src.ttl, &presences,
-                        ));
-                        tasks.push((
-                            i,
-                            origin,
-                            None,
-                            render_source_url(src, pos.0, pos.1, pos.2, now, r, Some(&*archive)),
-                            render_source_body(src, pos.0, pos.1, pos.2, now, r),
-                            render_headers(src, pos.0, pos.1, pos.2, now, r),
-                            src.ttl,
-                        ));
-                    }
-                    Frame::Barycenter { scale, .. } => {
-                        let origin = (i as u32, 0, 0);
-                        if !origin_stale(
-                            &origins_snap,
-                            origin,
-                            ttl_snapshot
-                                .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
-                                .copied()
-                                .map(|t| t as u64)
-                                .unwrap_or(src.ttl),
-                            now,
-                        ) {
-                            continue;
-                        }
-                        let pos = (mx * scale, my * scale, mz * scale);
+                        let eph_map = archive.body_ephemerides.read().unwrap();
+                        let bp = body_barycenter_position(body_name, now, &eph_map)
+                            .unwrap_or([0.0, 0.0, 0.0]);
+                        let pos = (bp[0] * scale, bp[1] * scale, bp[2] * scale);
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
