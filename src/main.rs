@@ -10,11 +10,8 @@ use std::time::{Instant, SystemTime, UNIX_EPOCH};
 const Φ: f64 = 1.618033988749895;
 const AU: f64 = 1.495978707e11;
 const EARTH_RADIUS: f64 = 6378137.0;
-const EARTH_ECC: f64 = 0.0167086;
-const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
-const GAUSS_K: f64 = 0.01720209895;
 const PARSEC_M: f64 = 3.085677581e16;
 const C_LIGHT: f64 = 299792458.0;
 const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
@@ -227,94 +224,20 @@ fn body_fixed_to_icrs(
     Some([xi + bx, yi + by, zi + bz])
 }
 
-fn compute_gmst(tdb_secs: f64) -> f64 {
+fn icrs_to_geodetic(
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb_secs: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> (f64, f64) {
+    let b = body_barycenter_position("earth", tdb_secs, eph).unwrap_or([0.0; 3]);
+    let obl: f64 = 0.409092804;
+    let (c, s) = (obl.cos(), obl.sin());
+    let x_eci = x - b[0];
+    let y_eci = (y - b[1]) * c - (z - b[2]) * s;
+    let z_eci = (y - b[1]) * s + (z - b[2]) * c;
     let jd = tdb_secs / 86400.0 + J2000_EPOCH;
-    let t = (jd - J2000_EPOCH) / 36525.0;
-    let gmst = 280.46061837 + 360.98564736629 * (jd - J2000_EPOCH) + 0.000387933 * t * t
-        - t * t * t / 38710000.0;
-    (gmst % 360.0) * std::f64::consts::PI / 180.0
-}
-
-fn geodetic_to_ecef(lat: f64, lon: f64, alt: f64) -> (f64, f64, f64) {
-    let lat_r = lat * std::f64::consts::PI / 180.0;
-    let lon_r = lon * std::f64::consts::PI / 180.0;
-    const WGS84_F: f64 = 1.0 / 298.257223563;
-    let e2 = WGS84_F * (2.0 - WGS84_F);
-    let sin_lat = lat_r.sin();
-    let n = EARTH_RADIUS / (1.0 - e2 * sin_lat * sin_lat).sqrt();
-    (
-        (n + alt) * lat_r.cos() * lon_r.cos(),
-        (n + alt) * lat_r.cos() * lon_r.sin(),
-        (n * (1.0 - e2) + alt) * sin_lat,
-    )
-}
-
-fn tdb_to_jd(tdb_secs: f64) -> f64 {
-    tdb_secs / 86400.0 + J2000_EPOCH
-}
-
-fn earth_position_icrs(tdb_secs: f64) -> (f64, f64, f64) {
-    let jd = tdb_to_jd(tdb_secs);
-    let t = (jd - J2000_EPOCH) / 36525.0;
-    let m = 6.239996 + 0.017201969 * t * 36525.0;
-    let e = EARTH_ECC;
-    let mut e_anom = m;
-    for _ in 0..5 {
-        e_anom = e_anom - (e_anom - e * e_anom.sin() - m) / (1.0 - e * e_anom.cos());
-    }
-    let x_orb = AU * (e_anom.cos() - e);
-    let y_orb = AU * (1.0 - e * e).sqrt() * e_anom.sin();
-    let omega: f64 = -0.113;
-    let x_ecl = x_orb * omega.cos() - y_orb * omega.sin();
-    let y_ecl = x_orb * omega.sin() + y_orb * omega.cos();
-    let x_icrs = x_ecl;
-    let y_icrs = y_ecl * ECLIPTIC_OBLIQUITY.cos();
-    let z_icrs = y_ecl * ECLIPTIC_OBLIQUITY.sin();
-    (x_icrs, y_icrs, z_icrs)
-}
-
-fn mars_position_icrs(tdb_secs: f64) -> (f64, f64, f64) {
-    let jd = tdb_to_jd(tdb_secs);
-    let m = 0.338403 + 0.00914587 * (jd - J2000_EPOCH);
-    let e = 0.09340062;
-    let mut e_anom = m;
-    for _ in 0..5 {
-        e_anom = e_anom - (e_anom - e * e_anom.sin() - m) / (1.0 - e * e_anom.cos());
-    }
-    let a = AU * 1.523679;
-    let x_orb = a * (e_anom.cos() - e);
-    let y_orb = a * (1.0 - e * e).sqrt() * e_anom.sin();
-    let omega: f64 = 5.0019;
-    let x_ecl = x_orb * omega.cos() - y_orb * omega.sin();
-    let y_ecl = x_orb * omega.sin() + y_orb * omega.cos();
-    let x_icrs = x_ecl;
-    let y_icrs = y_ecl * ECLIPTIC_OBLIQUITY.cos();
-    let z_icrs = y_ecl * ECLIPTIC_OBLIQUITY.sin();
-    (x_icrs, y_icrs, z_icrs)
-}
-
-fn geodetic_to_icrs(lat: f64, lon: f64, alt: f64, tdb_secs: f64) -> (f64, f64, f64) {
-    let (x_ecef, y_ecef, z_ecef) = geodetic_to_ecef(lat, lon, alt);
-    let gmst_rad = compute_gmst(tdb_secs);
-    let x_eci = x_ecef * gmst_rad.cos() + y_ecef * gmst_rad.sin();
-    let y_eci = -x_ecef * gmst_rad.sin() + y_ecef * gmst_rad.cos();
-    let z_eci = z_ecef;
-    let x_ecl = x_eci;
-    let y_ecl = y_eci * ECLIPTIC_OBLIQUITY.cos() + z_eci * ECLIPTIC_OBLIQUITY.sin();
-    let z_ecl = -y_eci * ECLIPTIC_OBLIQUITY.sin() + z_eci * ECLIPTIC_OBLIQUITY.cos();
-    let (ex, ey, ez) = earth_position_icrs(tdb_secs);
-    (x_ecl + ex, y_ecl + ey, z_ecl + ez)
-}
-
-fn icrs_to_geodetic(x: f64, y: f64, z: f64, tdb_secs: f64) -> (f64, f64) {
-    let (ex, ey, ez) = earth_position_icrs(tdb_secs);
-    let x_ecl = x - ex;
-    let y_ecl = y - ey;
-    let z_ecl = z - ez;
-    let x_eci = x_ecl;
-    let y_eci = y_ecl * ECLIPTIC_OBLIQUITY.cos() - z_ecl * ECLIPTIC_OBLIQUITY.sin();
-    let z_eci = y_ecl * ECLIPTIC_OBLIQUITY.sin() + z_ecl * ECLIPTIC_OBLIQUITY.cos();
-    let jd = tdb_to_jd(tdb_secs);
     let t = (jd - J2000_EPOCH) / 36525.0;
     let gmst = 280.46061837 + 360.98564736629 * (jd - J2000_EPOCH) + 0.000387933 * t * t
         - t * t * t / 38710000.0;
@@ -673,24 +596,19 @@ fn sense_buffer(
     );
 }
 
-fn ecliptic_to_field(v: [f64; 3]) -> [f64; 3] {
-    let (c, s) = (ECLIPTIC_OBLIQUITY.cos(), ECLIPTIC_OBLIQUITY.sin());
-    [v[0], v[1] * c - v[2] * s, v[1] * s + v[2] * c]
-}
-
-fn ecef_vec_to_field(v: [f64; 3], t: f64) -> [f64; 3] {
-    let g = compute_gmst(t);
-    let (cg, sg) = (g.cos(), g.sin());
-    let x = v[0] * cg + v[1] * sg;
-    let y = -v[0] * sg + v[1] * cg;
-    let (c, s) = (ECLIPTIC_OBLIQUITY.cos(), ECLIPTIC_OBLIQUITY.sin());
-    [x, y * c + v[2] * s, -y * s + v[2] * c]
-}
-
-fn flow_motion(lat: f64, lon: f64, alt: f64, speed: f64, track: f64, vrate: f64, t: f64) -> Motion {
-    let p = geodetic_to_icrs(lat, lon, alt, t);
-    let pn = geodetic_to_icrs(lat, lon, alt, t + 1.0);
-    let v_frame = [pn.0 - p.0, pn.1 - p.1, pn.2 - p.2];
+fn flow_motion(
+    lat: f64,
+    lon: f64,
+    alt: f64,
+    speed: f64,
+    track: f64,
+    vrate: f64,
+    t: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Motion {
+    let p0 = body_fixed_to_icrs("earth", lat, lon, alt, t, eph).unwrap_or([0.0; 3]);
+    let p1 = body_fixed_to_icrs("earth", lat, lon, alt, t + 1.0, eph).unwrap_or([0.0; 3]);
+    let v_frame = [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]];
     let latr = lat.to_radians();
     let lonr = lon.to_radians();
     let trk = track.to_radians();
@@ -701,26 +619,31 @@ fn flow_motion(lat: f64, lon: f64, alt: f64, speed: f64, track: f64, vrate: f64,
         v_e * lonr.cos() - v_n * latr.sin() * lonr.sin() + vrate * latr.cos() * lonr.sin(),
         v_n * latr.cos() + vrate * latr.sin(),
     ];
-    let v_rot = ecef_vec_to_field(v_ecef, t);
+    let r = 6378136.6;
+    let cl = latr.cos();
+    let dt = 0.01;
+    let pp = body_fixed_to_icrs(
+        "earth",
+        lat + v_ecef[1] * dt / r,
+        lon + v_ecef[0] * dt / (r * cl),
+        alt + v_ecef[2] * dt,
+        t,
+        eph,
+    )
+    .unwrap_or([0.0; 3]);
+    let v_rot = [
+        (pp[0] - p0[0]) / dt,
+        (pp[1] - p0[1]) / dt,
+        (pp[2] - p0[2]) / dt,
+    ];
     Motion::Linear {
-        p: [p.0, p.1, p.2],
+        p: p0,
         v: [
             v_frame[0] + v_rot[0],
             v_frame[1] + v_rot[1],
             v_frame[2] + v_rot[2],
         ],
     }
-}
-
-fn horizons_nums(line: &str, keys: [&str; 3]) -> Option<[f64; 3]> {
-    let mut out = [0.0; 3];
-    for (i, k) in keys.iter().enumerate() {
-        let p = line.find(k)?;
-        let r = line[p + k.len()..].trim_start_matches(|c: char| c == '=' || c == ' ' || c == '\t');
-        let end = r.find(|c: char| c.is_whitespace()).unwrap_or(r.len());
-        out[i] = r[..end].parse().ok()?;
-    }
-    Some(out)
 }
 
 fn tdb_now() -> f64 {
@@ -1193,51 +1116,6 @@ fn jpath(json: &JsonVal, path: &str) -> Option<f64> {
     jpath_val(json, path).and_then(scalar_of)
 }
 
-fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64)> {
-    if let Some(JsonVal::Num(_)) = val.first() {
-        if val.len() >= 2 {
-            if let (Some(lon), Some(lat)) = (scalar_of(&val[0]), scalar_of(&val[1])) {
-                return vec![(lon, lat)];
-            }
-        }
-        return Vec::new();
-    }
-    let mut result = Vec::new();
-    for v in val {
-        if let JsonVal::Arr(inner) = v {
-            result.extend(flatten_geojson_coords(inner));
-        }
-    }
-    result
-}
-
-fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
-    match json {
-        JsonVal::Obj(map) => {
-            if let Some(v) = map.get(key) {
-                if let Some(n) = scalar_of(v) {
-                    return Some(n);
-                }
-            }
-            for v in map.values() {
-                if let Some(n) = jdeep_find_num(v, key) {
-                    return Some(n);
-                }
-            }
-            None
-        }
-        JsonVal::Arr(arr) => {
-            for v in arr {
-                if let Some(n) = jdeep_find_num(v, key) {
-                    return Some(n);
-                }
-            }
-            None
-        }
-        _ => None,
-    }
-}
-
 fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
     if path == "." || path.is_empty() {
         if let JsonVal::Arr(arr) = json {
@@ -1260,42 +1138,6 @@ fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
                 None
             }
         }
-        _ => None,
-    }
-}
-
-fn jfirst(json: &JsonVal, key: &str) -> Option<f64> {
-    if key.contains('.') {
-        let target_path = key.rsplit_once('.').map(|(p, _)| p).unwrap_or("");
-        let final_key = key.rsplit_once('.').map(|(_, k)| k).unwrap_or(key);
-        let parent = if target_path.is_empty() {
-            json
-        } else {
-            jpath_val(json, target_path)?
-        };
-        if let JsonVal::Arr(arr) = parent {
-            return arr.first().and_then(|v| {
-                if let JsonVal::Obj(o) = v {
-                    o.get(final_key).and_then(scalar_of)
-                } else {
-                    scalar_of(v)
-                }
-            });
-        }
-        return None;
-    }
-    match json {
-        JsonVal::Arr(arr) => arr.first().and_then(|v| match v {
-            JsonVal::Obj(o) => o.get(key).and_then(scalar_of),
-            other => scalar_of(other),
-        }),
-        JsonVal::Obj(map) => map.get(key).and_then(|v| {
-            if let JsonVal::Arr(a) = v {
-                a.first().and_then(scalar_of)
-            } else {
-                None
-            }
-        }),
         _ => None,
     }
 }
@@ -1336,267 +1178,18 @@ fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
     }
 }
 
-fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
-    let pat_bytes = pat.as_bytes();
-    let body_bytes = body.as_bytes();
-
-    let first = pat.find('(')?;
-    let last = pat.rfind(')')?;
-    if first >= last {
-        return None;
-    }
-    let inner = &pat[first + 1..last];
-
-    if inner.contains("...") {
-        let (prefix, suffix) = inner.split_once("...")?;
-        let p = body.find(prefix)?;
-        let r = &body[p + prefix.len()..];
-        let e = if suffix.is_empty() {
-            r.find(|c: char| c.is_whitespace() || c == '<' || c == '"')
-                .unwrap_or(r.len())
-        } else {
-            r.find(suffix).unwrap_or(r.len())
-        };
-        return r[..e].trim().parse::<f64>().ok();
-    }
-
-    let mut capture: Option<f64> = None;
-
-    fn match_re(
-        mut pi: usize,
-        p: &[u8],
-        mut bi: usize,
-        b: &[u8],
-        cap: &mut Option<f64>,
-    ) -> Option<usize> {
-        while pi < p.len() {
-            let bc = || b.get(bi).copied();
-            match p[pi] {
-                b'\\' => {
-                    pi += 1;
-                    let esc = p.get(pi).copied()?;
-                    let ok = match esc {
-                        b'd' => bc().map_or(false, |c| c.is_ascii_digit()),
-                        b's' => bc().map_or(false, |c| c.is_ascii_whitespace()),
-                        b'w' => bc().map_or(false, |c| c.is_ascii_alphanumeric() || c == b'_'),
-                        b'D' => bc().map_or(true, |c| !c.is_ascii_digit()),
-                        b'S' => bc().map_or(true, |c| !c.is_ascii_whitespace()),
-                        b'W' => bc().map_or(true, |c| !(c.is_ascii_alphanumeric() || c == b'_')),
-                        _ => bc() == Some(esc),
-                    };
-                    if !ok {
-                        return None;
-                    }
-                    bi += 1;
-                    pi += 1;
-                    let check = |c: u8| -> bool {
-                        match esc {
-                            b'd' => c.is_ascii_digit(),
-                            b's' => c.is_ascii_whitespace(),
-                            b'w' => c.is_ascii_alphanumeric() || c == b'_',
-                            b'D' => !c.is_ascii_digit(),
-                            b'S' => !c.is_ascii_whitespace(),
-                            b'W' => !(c.is_ascii_alphanumeric() || c == b'_'),
-                            _ => c == esc,
-                        }
-                    };
-                    if pi < p.len() {
-                        match p[pi] {
-                            b'+' => {
-                                pi += 1;
-                                while b.get(bi).map_or(false, |&c| check(c)) {
-                                    bi += 1;
-                                }
-                            }
-                            b'*' => {
-                                pi += 1;
-                                while b.get(bi).map_or(false, |&c| check(c)) {
-                                    bi += 1;
-                                }
-                            }
-                            b'?' => {
-                                pi += 1;
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-                b'.' => {
-                    pi += 1;
-                    if bc().is_none() || bc() == Some(b'\n') {
-                        return None;
-                    }
-                    let (min, max, greedy) = if pi < p.len() {
-                        match p[pi] {
-                            b'+' => {
-                                pi += 1;
-                                (1, usize::MAX, true)
-                            }
-                            b'*' => {
-                                pi += 1;
-                                (0, usize::MAX, true)
-                            }
-                            b'?' => {
-                                pi += 1;
-                                (0, 1, true)
-                            }
-                            _ => (1, 1, true),
-                        }
-                    } else {
-                        (1, 1, true)
-                    };
-
-                    if greedy {
-                        let mut best: Option<usize> = None;
-                        for len in (min..=max).rev() {
-                            let end = bi + len;
-                            if end > b.len() {
-                                continue;
-                            }
-                            if b[bi..end].iter().any(|&c| c == b'\n') {
-                                continue;
-                            }
-                            if let Some(res) = match_re(pi, p, end, b, cap) {
-                                best = Some(res);
-                                break;
-                            }
-                        }
-                        if let Some(res) = best {
-                            bi = res;
-                        } else {
-                            return None;
-                        }
-                    } else {
-                        if let Some(res) = match_re(pi, p, bi + 1, b, cap) {
-                            bi = res;
-                        } else {
-                            return None;
-                        }
-                    }
-                }
-                b'(' => {
-                    let mut depth = 1;
-                    let mut end = pi + 1;
-                    while end < p.len() && depth > 0 {
-                        if p[end] == b'\\' {
-                            end += 2;
-                            continue;
-                        }
-                        if p[end] == b'(' {
-                            depth += 1;
-                        }
-                        if p[end] == b')' {
-                            depth -= 1;
-                            if depth == 0 {
-                                break;
-                            }
-                        }
-                        end += 1;
-                    }
-                    if depth != 0 {
-                        return None;
-                    }
-                    let save = bi;
-                    if let Some(new_bi) = match_re(pi + 1, &p[pi + 1..end], bi, b, cap) {
-                        if cap.is_none() {
-                            if let Ok(s) = std::str::from_utf8(&b[save..new_bi]) {
-                                if let Ok(v) = s.parse::<f64>() {
-                                    *cap = Some(v);
-                                }
-                            }
-                        }
-                        bi = new_bi;
-                        pi = end + 1;
-                    } else {
-                        return None;
-                    }
-                }
-                b'[' => {
-                    pi += 1;
-                    let neg = pi < p.len() && p[pi] == b'^';
-                    if neg {
-                        pi += 1;
-                    }
-                    let mut cls = Vec::new();
-                    while pi < p.len() && p[pi] != b']' {
-                        if p[pi] == b'\\' {
-                            cls.push(p[pi + 1]);
-                            pi += 2;
-                        } else {
-                            cls.push(p[pi]);
-                            pi += 1;
-                        }
-                    }
-                    pi += 1;
-                    let in_cls = bc().map_or(false, |c| cls.contains(&c));
-                    if neg == in_cls {
-                        return None;
-                    }
-                    let (min, max) = if pi < p.len() {
-                        match p[pi] {
-                            b'+' => {
-                                pi += 1;
-                                (1, usize::MAX)
-                            }
-                            b'*' => {
-                                pi += 1;
-                                (0, usize::MAX)
-                            }
-                            b'?' => {
-                                pi += 1;
-                                (0, 1)
-                            }
-                            _ => (1, 1),
-                        }
-                    } else {
-                        (1, 1)
-                    };
-                    if min > 0 {
-                        bi += 1;
-                    }
-                    if max == usize::MAX {
-                        while b.get(bi).map_or(false, |c| cls.contains(c) != neg) {
-                            bi += 1;
-                        }
-                    }
-                }
-                c => {
-                    if bc().map_or(false, |bc| bc == c) {
-                        bi += 1;
-                        pi += 1;
-                    } else {
-                        return None;
-                    }
-                }
-            }
-        }
-        Some(bi)
-    }
-
-    if let Some(_) = match_re(0, pat_bytes, 0, body_bytes, &mut capture) {
-        capture
-    } else {
-        None
-    }
-}
-
 #[derive(Clone)]
 enum Extract {
     Field(String, String),
-    First(String, String),
     Last(String, String),
     Count(String, String),
-    LastRow(String, String),
-    LastObj(String, String, String, String),
-    LastLine(String),
-    ObjLast(String, String),
     GeojsonEvents {
         mag_key: String,
         min_mag: f64,
         outputs: Vec<String>,
     },
     Path(String, String),
-    Deep(String, String),
+
     Map {
         arr_path: String,
         lat_key: String,
@@ -1611,10 +1204,6 @@ enum Extract {
         fields: Vec<(String, String)>,
         lon_sign: Option<String>,
     },
-    Regex(String, String),
-    XmlCount(String, String),
-    Ephemeris(String),
-    Vectors(String),
     CelestialMap {
         arr_path: String,
         ra_key: String,
@@ -1630,42 +1219,10 @@ enum Extract {
         epoch_key: String,
         fields: Vec<(String, String)>,
     },
-    Flatten {
-        arr_path: String,
-        geom_path: String,
-        epoch_key: String,
-        fields: Vec<(String, String)>,
-    },
-    CmrPolygon {
-        arr_path: String,
-        fields: Vec<(String, String)>,
-        epoch_key: String,
-        alt_key: String,
-        val_key: String,
-    },
-    CelestialPolygon {
-        arr_path: String,
-        radius: f64,
-        fields: Vec<(String, String)>,
-        epoch_key: String,
-        val_key: String,
-    },
     Rows {
         last_line: bool,
         fields: Vec<(String, String)>,
     },
-    KeplerMap {
-        arr_path: String,
-        a_key: String,
-        e_key: String,
-        i_key: String,
-        om_key: String,
-        w_key: String,
-        ma_key: String,
-        epoch_key: String,
-        fields: Vec<(String, String)>,
-    },
-    Hapi(Vec<(String, String)>),
 }
 
 fn force_constants(force: &str) -> Option<(f64, f64, bool, u8)> {
@@ -2177,9 +1734,10 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                             1.0
                         };
                         let alt = st_alt.unwrap_or(0.0);
+                        let eph_map = archive.body_ephemerides.read().unwrap();
                         let motion = match (st_spd, st_hdg) {
                             (Some(spd), Some(hdg)) if spd > 0.0 => {
-                                flow_motion(lat, lon, alt, spd, hdg, 0.0, now)
+                                flow_motion(lat, lon, alt, spd, hdg, 0.0, now, &eph_map)
                             }
                             _ => Motion::Surface {
                                 body_name: "earth".to_string(),
@@ -2188,7 +1746,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                                 alt,
                             },
                         };
-                        let (vmax, amax, p0f) = law_bounds(&motion, now, 0.0, &HashMap::new());
+                        let (vmax, amax, p0f) = law_bounds(&motion, now, 0.0, &eph_map);
                         let sample = Sample {
                             origin: (u32::MAX, 0, 0),
                             epoch: now,
@@ -2301,70 +1859,6 @@ fn is_leap(y: u32) -> bool {
     (y % 4 == 0 && y % 100 != 0) || y % 400 == 0
 }
 
-fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
-    if let JsonVal::Arr(arr) = json {
-        if arr.len() < 2 {
-            return None;
-        }
-        if let JsonVal::Arr(headers) = &arr[0] {
-            let col_idx = headers.iter().position(|h| {
-                if let JsonVal::Str(s) = h {
-                    s.eq_ignore_ascii_case(col) || s.starts_with(col)
-                } else {
-                    false
-                }
-            })?;
-            if let Some(JsonVal::Arr(last_row)) = arr.last() {
-                return last_row.get(col_idx).and_then(scalar_of);
-            }
-        }
-    }
-    None
-}
-
-fn text_last_col(data: &str, col: &str) -> Option<f64> {
-    let mut header_idx: Option<usize> = None;
-    for line in data.lines() {
-        let trimmed = line.trim();
-        if trimmed.is_empty() {
-            continue;
-        }
-        let stripped = trimmed.strip_prefix('#').unwrap_or(trimmed).trim();
-        let cols = split_data_line(stripped);
-        if header_idx.is_none() {
-            if let Some(idx) = cols
-                .iter()
-                .position(|c| c.eq_ignore_ascii_case(col) || c.starts_with(col))
-            {
-                header_idx = Some(idx);
-                break;
-            }
-            continue;
-        }
-    }
-    let idx = header_idx?;
-    for line in data.lines().rev() {
-        let trimmed = line.trim();
-        if trimmed.is_empty()
-            || trimmed.starts_with('#')
-            || trimmed
-                .chars()
-                .next()
-                .map(|c| c.is_alphabetic())
-                .unwrap_or(false)
-        {
-            continue;
-        }
-        let cols = split_data_line(trimmed);
-        if let Some(v) = cols.get(idx) {
-            if let Ok(f) = v.trim_matches('"').parse::<f64>() {
-                return Some(f);
-            }
-        }
-    }
-    None
-}
-
 fn load_env() {
     if let Ok(content) = std::fs::read_to_string(resolve_asset(".env")) {
         for line in content.lines() {
@@ -2403,7 +1897,6 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_lat: Option<f64> = None;
     let mut cur_lon: Option<f64> = None;
     let mut cur_alt: f64 = 0.0;
-    let mut cur_body: Option<String> = None;
     let mut cur_scale: Option<f64> = None;
     let mut cur_pos: Option<(String, String, Option<String>, f64)> = None;
     let mut cur_format = String::new();
@@ -2449,14 +1942,8 @@ fn load_sources() -> Vec<SourceConfig> {
                                 e,
                                 Extract::Map { .. }
                                     | Extract::GeojsonEvents { .. }
-                                    | Extract::Ephemeris(_)
-                                    | Extract::Vectors(_)
                                     | Extract::CelestialMap { .. }
-                                    | Extract::Flatten { .. }
-                                    | Extract::CmrPolygon { .. }
-                                    | Extract::CelestialPolygon { .. }
                                     | Extract::Rows { .. }
-                                    | Extract::KeplerMap { .. }
                             )
                         });
                     let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
@@ -2491,14 +1978,6 @@ fn load_sources() -> Vec<SourceConfig> {
                         None
                     };
                     if let Some(frame) = frame {
-                        let auto_tau_key = if cur_tau_key.is_none() && cur_tau.is_none() {
-                            cur_extracts.iter().find_map(|e| match e {
-                                Extract::Ephemeris(n) | Extract::Vectors(n) => Some(n.clone()),
-                                _ => None,
-                            })
-                        } else {
-                            cur_tau_key.clone()
-                        };
                         sources.push(SourceConfig {
                             name: cur_name.clone(),
                             ttl: cur_ttl,
@@ -2506,7 +1985,7 @@ fn load_sources() -> Vec<SourceConfig> {
                             frame,
                             force: cur_force.clone(),
                             tau: cur_tau,
-                            tau_key: auto_tau_key,
+                            tau_key: cur_tau_key.clone(),
                             format: cur_format.clone(),
                             extracts: cur_extracts.clone(),
                             headers: cur_headers.clone(),
@@ -2553,7 +2032,6 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_lat = None;
                 cur_lon = None;
                 cur_alt = 0.0;
-                cur_body = None;
                 cur_scale = None;
                 cur_format.clear();
                 cur_target = None;
@@ -2567,6 +2045,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_stations_lon = String::from("lng");
                 cur_stations_id = String::from("id");
                 cur_extracts.clear();
+                cur_pos = None;
                 cur_headers.clear();
                 cur_flux_from_mag = None;
                 cur_abs_mag_from = None;
@@ -2636,11 +2115,6 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::Field(parts[1].to_string(), parts[2].to_string()));
                 }
             }
-            "first" => {
-                if parts.len() >= 3 {
-                    cur_extracts.push(Extract::First(parts[1].to_string(), parts[2].to_string()));
-                }
-            }
             "last" => {
                 if parts.len() >= 3 {
                     cur_extracts.push(Extract::Last(parts[1].to_string(), parts[2].to_string()));
@@ -2651,74 +2125,9 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::Count(parts[1].to_string(), parts[2].to_string()));
                 }
             }
-            "last_row" => {
-                if parts.len() >= 3 {
-                    cur_extracts.push(Extract::LastRow(parts[1].to_string(), parts[2].to_string()));
-                }
-            }
             "path" => {
                 if parts.len() >= 3 {
                     cur_extracts.push(Extract::Path(parts[1].to_string(), parts[2].to_string()));
-                }
-            }
-            "deep" => {
-                if parts.len() >= 3 {
-                    cur_extracts.push(Extract::Deep(parts[1].to_string(), parts[2].to_string()));
-                }
-            }
-            "regex" => {
-                if parts.len() >= 3 {
-                    cur_extracts.push(Extract::Regex(parts[1].to_string(), parts[2].to_string()));
-                }
-            }
-            "xml_count" => {
-                if parts.len() >= 3 {
-                    cur_extracts.push(Extract::XmlCount(
-                        parts[1].to_string(),
-                        parts[2].to_string(),
-                    ));
-                }
-            }
-            "ephemeris" => {
-                if parts.len() >= 2 {
-                    cur_extracts.push(Extract::Ephemeris(parts[1].to_string()));
-                }
-            }
-            "vectors" => {
-                if parts.len() >= 2 {
-                    cur_extracts.push(Extract::Vectors(parts[1].to_string()));
-                }
-            }
-            "last_line" => {
-                if parts.len() >= 2 {
-                    cur_extracts.push(Extract::LastLine(parts[1].to_string()));
-                }
-            }
-            "obj_last" => {
-                if parts.len() >= 3 {
-                    cur_extracts.push(Extract::ObjLast(parts[1].to_string(), parts[2].to_string()));
-                }
-            }
-            "hapi" => {
-                if parts.len() >= 3 {
-                    let param = parts[1].to_string();
-                    let name = parts[2].to_string();
-                    if let Some(Extract::Hapi(fields)) = cur_extracts.last_mut() {
-                        fields.push((param, name));
-                    } else {
-                        cur_extracts.push(Extract::Hapi(vec![(param, name)]));
-                    }
-                }
-            }
-            "last_obj" => {
-                let quoted = parse_quoted_args(line.get(9..).unwrap_or(""));
-                if quoted.len() >= 4 {
-                    cur_extracts.push(Extract::LastObj(
-                        quoted[0].clone(),
-                        quoted[1].clone(),
-                        quoted[2].clone(),
-                        quoted[3].clone(),
-                    ));
                 }
             }
             "geojson" => {
@@ -2761,7 +2170,7 @@ fn load_sources() -> Vec<SourceConfig> {
             "alt_key" => {
                 if let Some(e) = cur_extracts.last_mut() {
                     match e {
-                        Extract::Map { alt_key, .. } | Extract::CmrPolygon { alt_key, .. } => {
+                        Extract::Map { alt_key, .. } => {
                             *alt_key = parts.get(1).unwrap_or(&"").to_string();
                         }
                         _ => {}
@@ -2793,52 +2202,11 @@ fn load_sources() -> Vec<SourceConfig> {
                     *lon_sign = parts.get(1).map(|s| s.to_string());
                 }
             }
-            "flatten" => {
-                if parts.len() >= 2 {
-                    cur_extracts.push(Extract::Flatten {
-                        arr_path: parts[1].to_string(),
-                        geom_path: "geometry".to_string(),
-                        epoch_key: String::new(),
-                        fields: Vec::new(),
-                    });
-                }
-            }
-            "cmr_polygon" => {
-                if parts.len() >= 2 {
-                    cur_extracts.push(Extract::CmrPolygon {
-                        arr_path: parts[1].to_string(),
-                        fields: Vec::new(),
-                        epoch_key: String::new(),
-                        alt_key: String::new(),
-                        val_key: String::new(),
-                    });
-                }
-            }
-            "celestial_polygon" => {
-                if parts.len() >= 2 {
-                    cur_extracts.push(Extract::CelestialPolygon {
-                        arr_path: parts[1].to_string(),
-                        radius: 0.0,
-                        fields: Vec::new(),
-                        epoch_key: String::new(),
-                        val_key: String::new(),
-                    });
-                }
-            }
-            "radius" => {
-                if let Some(Extract::CelestialPolygon { radius, .. }) = cur_extracts.last_mut() {
-                    *radius = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0.0);
-                }
-            }
             "epoch_key" => {
                 if let Some(e) = cur_extracts.last_mut() {
                     match e {
-                        Extract::CmrPolygon { epoch_key, .. }
-                        | Extract::CelestialPolygon { epoch_key, .. }
-                        | Extract::KeplerMap { epoch_key, .. }
-                        | Extract::CelestialMap { epoch_key, .. }
-                        | Extract::Flatten { epoch_key, .. }
-                        | Extract::Map { epoch_key, .. } => {
+                        Extract::Map { epoch_key, .. }
+                        | Extract::CelestialMap { epoch_key, .. } => {
                             *epoch_key = parts.get(1).unwrap_or(&"").to_string();
                         }
                         _ => {}
@@ -2848,18 +2216,11 @@ fn load_sources() -> Vec<SourceConfig> {
             "val_key" => {
                 if let Some(e) = cur_extracts.last_mut() {
                     match e {
-                        Extract::CmrPolygon { val_key, .. }
-                        | Extract::CelestialPolygon { val_key, .. }
-                        | Extract::Map { val_key, .. } => {
+                        Extract::Map { val_key, .. } => {
                             *val_key = parts.get(1).unwrap_or(&"").to_string();
                         }
                         _ => {}
                     }
-                }
-            }
-            "geom_path" => {
-                if let Some(Extract::Flatten { geom_path, .. }) = cur_extracts.last_mut() {
-                    *geom_path = parts.get(1).unwrap_or(&"").to_string();
                 }
             }
             "tail" => {
@@ -2874,31 +2235,12 @@ fn load_sources() -> Vec<SourceConfig> {
                     fields: Vec::new(),
                 });
             }
-            "kepler_map" => {
-                if parts.len() >= 2 {
-                    cur_extracts.push(Extract::KeplerMap {
-                        arr_path: parts[1].to_string(),
-                        a_key: String::new(),
-                        e_key: String::new(),
-                        i_key: String::new(),
-                        om_key: String::new(),
-                        w_key: String::new(),
-                        ma_key: String::new(),
-                        epoch_key: String::new(),
-                        fields: Vec::new(),
-                    });
-                }
-            }
             "field_in" => {
                 if parts.len() >= 3 {
                     match cur_extracts.last_mut() {
                         Some(Extract::Map { fields, .. })
                         | Some(Extract::CelestialMap { fields, .. })
-                        | Some(Extract::Flatten { fields, .. })
-                        | Some(Extract::CmrPolygon { fields, .. })
-                        | Some(Extract::CelestialPolygon { fields, .. })
-                        | Some(Extract::Rows { fields, .. })
-                        | Some(Extract::KeplerMap { fields, .. }) => {
+                        | Some(Extract::Rows { fields, .. }) => {
                             fields.push((parts[1].to_string(), parts[2].to_string()));
                         }
                         _ => {}
@@ -2974,36 +2316,6 @@ fn load_sources() -> Vec<SourceConfig> {
                     *rv_scale = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(1.0);
                 }
             }
-            "a_key" => {
-                if let Some(Extract::KeplerMap { a_key, .. }) = cur_extracts.last_mut() {
-                    *a_key = parts.get(1).unwrap_or(&"").to_string();
-                }
-            }
-            "e_key" => {
-                if let Some(Extract::KeplerMap { e_key, .. }) = cur_extracts.last_mut() {
-                    *e_key = parts.get(1).unwrap_or(&"").to_string();
-                }
-            }
-            "i_key" => {
-                if let Some(Extract::KeplerMap { i_key, .. }) = cur_extracts.last_mut() {
-                    *i_key = parts.get(1).unwrap_or(&"").to_string();
-                }
-            }
-            "om_key" => {
-                if let Some(Extract::KeplerMap { om_key, .. }) = cur_extracts.last_mut() {
-                    *om_key = parts.get(1).unwrap_or(&"").to_string();
-                }
-            }
-            "w_key" => {
-                if let Some(Extract::KeplerMap { w_key, .. }) = cur_extracts.last_mut() {
-                    *w_key = parts.get(1).unwrap_or(&"").to_string();
-                }
-            }
-            "ma_key" => {
-                if let Some(Extract::KeplerMap { ma_key, .. }) = cur_extracts.last_mut() {
-                    *ma_key = parts.get(1).unwrap_or(&"").to_string();
-                }
-            }
             _ => {}
         }
     }
@@ -3019,42 +2331,6 @@ fn parse_path(s: &str) -> String {
     } else {
         "/".to_string()
     }
-}
-fn parse_quoted_args(s: &str) -> Vec<String> {
-    let mut result = Vec::new();
-    let mut chars = s.chars().peekable();
-    while chars.peek().is_some() {
-        while chars.peek().map(|c| c.is_whitespace()).unwrap_or(false) {
-            chars.next();
-        }
-        if chars.peek().is_none() {
-            break;
-        }
-        if *chars.peek().unwrap() == '"' {
-            chars.next();
-            let mut val = String::new();
-            while let Some(&c) = chars.peek() {
-                if c == '"' {
-                    chars.next();
-                    break;
-                }
-                val.push(c);
-                chars.next();
-            }
-            result.push(val);
-        } else {
-            let mut val = String::new();
-            while let Some(&c) = chars.peek() {
-                if c.is_whitespace() {
-                    break;
-                }
-                val.push(c);
-                chars.next();
-            }
-            result.push(val);
-        }
-    }
-    result
 }
 
 fn read_signal(s: &mut TcpStream) -> Option<String> {
@@ -3106,7 +2382,15 @@ fn read_ws_frame_raw(stream: &mut TcpStream) -> Option<WsFrame> {
     Some(WsFrame { opcode, payload })
 }
 
-fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, extent: f64) -> String {
+fn render_url(
+    template: &str,
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb_secs: f64,
+    extent: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> String {
     let unix = tdb_secs + UNIX_J2000_OFFSET;
     let secs = unix as u64;
     let days = secs / 86400;
@@ -3174,7 +2458,7 @@ fn render_url(template: &str, x: f64, y: f64, z: f64, tdb_secs: f64, extent: f64
     let unix_now = secs.to_string();
     let unix_now_plus_3600 = (secs + 3600).to_string();
 
-    let (lat, lon) = icrs_to_geodetic(x, y, z, tdb_secs);
+    let (lat, lon) = icrs_to_geodetic(x, y, z, tdb_secs, eph);
     let res_usize = 6usize;
     let lat_str = format!("{:.6}", lat);
     let lon_str = format!("{:.6}", lon);
@@ -3259,8 +2543,9 @@ fn render_source_url(
     tdb: f64,
     r: f64,
     archive: Option<&Archive>,
+    eph: &HashMap<String, BodyEphemeris>,
 ) -> String {
-    let mut url = render_url(&src.url, x, y, z, tdb, r);
+    let mut url = render_url(&src.url, x, y, z, tdb, r, eph);
     if let Some(ref t) = src.target {
         url = url.replace("{target}", t);
     }
@@ -3337,7 +2622,7 @@ fn render_source_url(
                 }
             });
             if !stations.is_empty() {
-                let (lat, lon) = icrs_to_geodetic(x, y, z, tdb);
+                let (lat, lon) = icrs_to_geodetic(x, y, z, tdb, eph);
                 let mut best = 0usize;
                 let mut best_d = f64::MAX;
                 for (i, st) in stations.iter().enumerate() {
@@ -3361,9 +2646,10 @@ fn render_source_body(
     z: f64,
     tdb: f64,
     r: f64,
+    eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<String> {
     let tmpl = src.body.as_ref()?;
-    let mut body = render_url(tmpl, x, y, z, tdb, r);
+    let mut body = render_url(tmpl, x, y, z, tdb, r, eph);
     if let Some(ref t) = src.target {
         body = body.replace("{target}", t);
     }
@@ -3486,12 +2772,14 @@ enum ExtractResult {
     WithEphemeris(Vec<PendingSample>, BodyEphemeris),
 }
 
-fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
+fn extract_pending(src: &SourceConfig, body: &str, body_bytes: &[u8], now: f64) -> ExtractResult {
     if src.format == "ephemeris_binary" {
-        let mut buf = Vec::new();
-        if let Ok(mut f) = std::fs::File::open(body) {
-            use std::io::Read;
-            f.read_to_end(&mut buf).ok();
+        let mut buf = body_bytes.to_vec();
+        if buf.is_empty() {
+            if let Ok(mut f) = std::fs::File::open(&src.url) {
+                use std::io::Read;
+                f.read_to_end(&mut buf).ok();
+            }
         }
         if let Some(eph) = parse_ephemeris_binary(&buf) {
             return ExtractResult::WithEphemeris(vec![], eph);
@@ -3526,13 +2814,6 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                     }
                 }
             }
-            Extract::First(k, n) => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(v) = jfirst(j, k) {
-                        extracted.insert(n.clone(), v);
-                    }
-                }
-            }
             Extract::Last(k, n) => {
                 if let Some(ref j) = parsed_json {
                     if let Some(v) = jlast(j, k) {
@@ -3557,7 +2838,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 }
             }
             Extract::Count(k, n) => {
-                let v = if src.format == "csv" || k == "lines" {
+                let v = if k == "lines" {
                     Some(
                         body.lines()
                             .filter(|l| !l.trim().is_empty() && !l.trim().starts_with('#'))
@@ -3570,303 +2851,10 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                     extracted.insert(n.clone(), v);
                 }
             }
-            Extract::LastRow(k, n) => {
-                if src.format == "csv" {
-                    if let Some(v) = text_last_col(body, k) {
-                        extracted.insert(n.clone(), v);
-                    }
-                } else if let Some(ref j) = parsed_json {
-                    if let Some(v) = j2d_last_row(j, k) {
-                        extracted.insert(n.clone(), v);
-                    }
-                } else if let Some(v) = text_last_col(body, k) {
-                    extracted.insert(n.clone(), v);
-                }
-            }
             Extract::Path(k, n) => {
                 if let Some(ref j) = parsed_json {
                     if let Some(v) = jpath(j, k) {
                         extracted.insert(n.clone(), v);
-                    }
-                }
-            }
-            Extract::Deep(k, n) => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(v) = jdeep_find_num(j, k) {
-                        extracted.insert(n.clone(), v);
-                    }
-                }
-            }
-            Extract::LastLine(n) => {
-                if let Some(v) = body
-                    .lines()
-                    .filter(|l| {
-                        let t = l.trim();
-                        !t.is_empty() && !t.starts_with('#')
-                    })
-                    .last()
-                    .and_then(|line| {
-                        split_data_line(line)
-                            .into_iter()
-                            .filter_map(|t| t.parse::<f64>().ok())
-                            .last()
-                    })
-                {
-                    extracted.insert(n.clone(), v);
-                }
-            }
-            Extract::ObjLast(k, n) => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(obj) = jpath_val(j, k) {
-                        if let JsonVal::Obj(m) = obj {
-                            if let Some(last_key) = m.keys().max_by(|a, b| {
-                                let ka = a.parse::<i64>().unwrap_or(0);
-                                let kb = b.parse::<i64>().unwrap_or(0);
-                                ka.cmp(&kb)
-                            }) {
-                                if let Some(val) = m.get(last_key).and_then(scalar_of) {
-                                    extracted.insert(n.clone(), val);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            Extract::Regex(pat, n) => {
-                if let Some(v) = extract_regex_val(body, pat) {
-                    extracted.insert(n.clone(), v);
-                }
-            }
-            Extract::XmlCount(tag, n) => {
-                let count = body.matches(&format!("<{}>", tag)).count() as f64;
-                extracted.insert(n.clone(), count);
-            }
-            Extract::Ephemeris(n) => {
-                let ht = if let Some(ref j) = parsed_json {
-                    if let JsonVal::Obj(m) = j {
-                        if let Some(JsonVal::Str(s)) = m.get("result") {
-                            s.clone()
-                        } else {
-                            eprintln!("EPH no result key fmt={}", src.format);
-                            body.to_string()
-                        }
-                    } else {
-                        eprintln!("EPH not obj fmt={}", src.format);
-                        body.to_string()
-                    }
-                } else {
-                    eprintln!(
-                        "EPH parse_json failed fmt={} len={} head={:?}",
-                        src.format,
-                        body.len(),
-                        body.get(..40.min(body.len()))
-                    );
-                    body.to_string()
-                };
-                if let Some(soe) = ht.find("$$SOE") {
-                    let a = &ht[soe + 5..];
-                    let e = a.find("$$EOE").unwrap_or(a.len());
-                    let blk = &a[..e];
-                    let mut rows: Vec<(f64, [f64; 3], [f64; 3], Option<f64>)> = Vec::new();
-                    let mut cur_jd: Option<f64> = None;
-                    let mut cur_p: Option<[f64; 3]> = None;
-                    let mut cur_v: Option<[f64; 3]> = None;
-                    let mut cur_rg: Option<f64> = None;
-                    for line in blk.lines() {
-                        let t = line.trim();
-                        if t.is_empty() {
-                            continue;
-                        }
-                        let c0 = t.chars().next().unwrap_or(' ');
-                        if c0.is_ascii_digit() {
-                            if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
-                                rows.push((jd, p, v, cur_rg));
-                            }
-                            cur_jd = t
-                                .split('=')
-                                .next()
-                                .and_then(|s| s.trim().parse::<f64>().ok());
-                            cur_p = None;
-                            cur_v = None;
-                            cur_rg = None;
-                        } else if t.starts_with("VX") {
-                            cur_v = horizons_nums(t, ["VX", "VY", "VZ"]);
-                        } else if t.starts_with('X') {
-                            cur_p = horizons_nums(t, ["X", "Y", "Z"]);
-                        } else if t.starts_with("LT") {
-                            if let Some(r) = horizons_nums(t, ["RG", "LT", "RR"]) {
-                                cur_rg = Some(r[0]);
-                            }
-                        }
-                    }
-                    if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
-                        rows.push((jd, p, v, cur_rg));
-                    }
-                    if let Some(&(jd0, p0k, v0k, rg0)) = rows.first() {
-                        let p0 =
-                            ecliptic_to_field([p0k[0] * 1000.0, p0k[1] * 1000.0, p0k[2] * 1000.0]);
-                        let row_epoch = (jd0 - J2000_EPOCH) * 86400.0;
-                        let v = if rows.len() > 1 {
-                            let &(jd1, p1k, _, _) = rows.last().unwrap_or(&rows[0]);
-                            let p1 = ecliptic_to_field([
-                                p1k[0] * 1000.0,
-                                p1k[1] * 1000.0,
-                                p1k[2] * 1000.0,
-                            ]);
-                            let dt = (jd1 - jd0) * 86400.0;
-                            if dt > 0.0 {
-                                [
-                                    (p1[0] - p0[0]) / dt,
-                                    (p1[1] - p0[1]) / dt,
-                                    (p1[2] - p0[2]) / dt,
-                                ]
-                            } else {
-                                ecliptic_to_field([
-                                    v0k[0] * 1000.0,
-                                    v0k[1] * 1000.0,
-                                    v0k[2] * 1000.0,
-                                ])
-                            }
-                        } else {
-                            ecliptic_to_field([v0k[0] * 1000.0, v0k[1] * 1000.0, v0k[2] * 1000.0])
-                        };
-                        let shift = now - row_epoch;
-                        let p_now = [
-                            p0[0] + v[0] * shift,
-                            p0[1] + v[1] * shift,
-                            p0[2] + v[2] * shift,
-                        ];
-                        let mut fields = Vec::new();
-                        if let Some(rg) = rg0 {
-                            fields.push((n.clone(), rg * 1000.0));
-                        }
-                        pending.push(PendingSample {
-                            epoch: now,
-                            position: PendingPosition::StateVector {
-                                p: p_now,
-                                v,
-                                track: true,
-                            },
-                            fields,
-                        });
-                    }
-                }
-            }
-            Extract::Vectors(n) => {
-                let ht = if let Some(ref j) = parsed_json {
-                    if let JsonVal::Obj(m) = j {
-                        if let Some(JsonVal::Str(s)) = m.get("result") {
-                            s.clone()
-                        } else {
-                            eprintln!("VEC no result key fmt={}", src.format);
-                            body.to_string()
-                        }
-                    } else {
-                        eprintln!("VEC not obj fmt={}", src.format);
-                        body.to_string()
-                    }
-                } else {
-                    eprintln!(
-                        "VEC parse_json failed fmt={} len={} head={:?}",
-                        src.format,
-                        body.len(),
-                        body.get(..40.min(body.len()))
-                    );
-                    body.to_string()
-                };
-                if let Some(soe) = ht.find("$$SOE") {
-                    let a = &ht[soe + 5..];
-                    let e = a.find("$$EOE").unwrap_or(a.len());
-                    let blk = &a[..e];
-                    let mut cur_jd: Option<f64> = None;
-                    let mut cur_p: Option<[f64; 3]> = None;
-                    let mut cur_v: Option<[f64; 3]> = None;
-                    let mut cur_rg: Option<f64> = None;
-                    for line in blk.lines() {
-                        let t = line.trim();
-                        if t.is_empty() {
-                            continue;
-                        }
-                        let c0 = t.chars().next().unwrap_or(' ');
-                        if c0.is_ascii_digit() {
-                            if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
-                                let p_f = ecliptic_to_field([
-                                    p[0] * 1000.0,
-                                    p[1] * 1000.0,
-                                    p[2] * 1000.0,
-                                ]);
-                                let v_f = ecliptic_to_field([
-                                    v[0] * 1000.0,
-                                    v[1] * 1000.0,
-                                    v[2] * 1000.0,
-                                ]);
-                                let row_epoch = (jd - J2000_EPOCH) * 86400.0;
-                                let mut fields = Vec::new();
-                                if let Some(rg) = cur_rg {
-                                    fields.push((n.clone(), rg * 1000.0));
-                                }
-                                pending.push(PendingSample {
-                                    epoch: row_epoch,
-                                    position: PendingPosition::StateVector {
-                                        p: p_f,
-                                        v: v_f,
-                                        track: true,
-                                    },
-                                    fields,
-                                });
-                            }
-                            cur_jd = t
-                                .split('=')
-                                .next()
-                                .and_then(|s| s.trim().parse::<f64>().ok());
-                            cur_p = None;
-                            cur_v = None;
-                            cur_rg = None;
-                        } else if t.starts_with("VX") {
-                            cur_v = horizons_nums(t, ["VX", "VY", "VZ"]);
-                        } else if t.starts_with('X') {
-                            cur_p = horizons_nums(t, ["X", "Y", "Z"]);
-                        } else if t.starts_with("LT") {
-                            if let Some(r) = horizons_nums(t, ["RG", "LT", "RR"]) {
-                                cur_rg = Some(r[0]);
-                            }
-                        }
-                    }
-                    if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
-                        let p_f = ecliptic_to_field([p[0] * 1000.0, p[1] * 1000.0, p[2] * 1000.0]);
-                        let v_f = ecliptic_to_field([v[0] * 1000.0, v[1] * 1000.0, v[2] * 1000.0]);
-                        let row_epoch = (jd - J2000_EPOCH) * 86400.0;
-                        let mut fields = Vec::new();
-                        if let Some(rg) = cur_rg {
-                            fields.push((n.clone(), rg * 1000.0));
-                        }
-                        pending.push(PendingSample {
-                            epoch: row_epoch,
-                            position: PendingPosition::StateVector {
-                                p: p_f,
-                                v: v_f,
-                                track: true,
-                            },
-                            fields,
-                        });
-                    }
-                }
-            }
-            Extract::LastObj(fk, fv, ek, n) => {
-                if let Some(ref j) = parsed_json {
-                    if let JsonVal::Arr(arr) = j {
-                        for v in arr.iter().rev() {
-                            if let JsonVal::Obj(o) = v {
-                                if let Some(JsonVal::Str(s)) = o.get(fk) {
-                                    if s == fv {
-                                        if let Some(val) = jnum(v, ek) {
-                                            extracted.insert(n.clone(), val);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -3980,193 +2968,6 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                     }
                 }
             }
-            Extract::Flatten {
-                arr_path,
-                geom_path,
-                epoch_key,
-                fields,
-            } => {
-                let _default_epoch = src.catalog_epoch.unwrap_or(now);
-                if let Some(ref j) = parsed_json {
-                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                        for (idx, v) in arr.iter().enumerate() {
-                            let geom = match jpath_val(v, geom_path) {
-                                Some(g) => g,
-                                None => continue,
-                            };
-                            let coords = match jpath_val(geom, "coordinates") {
-                                Some(JsonVal::Arr(c)) => c,
-                                _ => continue,
-                            };
-                            let vertices = flatten_geojson_coords(coords);
-                            if vertices.is_empty() {
-                                continue;
-                            }
-                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (fk, fn_) in fields {
-                                if let Some(val) = jpath(v, fk) {
-                                    ev_fields.push((fn_.clone(), val));
-                                }
-                            }
-                            ev_fields.push(("_flatten_id".to_string(), idx as f64));
-                            for (lon, lat) in vertices {
-                                let row_epoch = if !epoch_key.is_empty() {
-                                    jpath(v, &epoch_key).unwrap_or(now)
-                                } else {
-                                    now
-                                };
-                                pending.push(PendingSample {
-                                    epoch: row_epoch,
-                                    position: PendingPosition::Geodetic { lat, lon, alt: 0.0 },
-                                    fields: ev_fields.clone(),
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-            Extract::CmrPolygon {
-                arr_path,
-                fields,
-                epoch_key,
-                alt_key,
-                val_key,
-            } => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                        for (idx, v) in arr.iter().enumerate() {
-                            let polys = match jpath_val(v, "polygons") {
-                                Some(JsonVal::Arr(p)) => p,
-                                _ => continue,
-                            };
-                            let mut vertices: Vec<(f64, f64)> = Vec::new();
-                            for ring_list in polys {
-                                if let JsonVal::Arr(rings) = ring_list {
-                                    for ring_str_val in rings {
-                                        if let JsonVal::Str(s) = ring_str_val {
-                                            let nums: Vec<f64> = s
-                                                .split_whitespace()
-                                                .filter_map(|n| n.parse().ok())
-                                                .collect();
-                                            for pair in nums.chunks(2) {
-                                                if pair.len() == 2 {
-                                                    vertices.push((pair[1], pair[0]));
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            if vertices.is_empty() {
-                                continue;
-                            }
-                            let epoch = if epoch_key.is_empty() {
-                                now
-                            } else {
-                                jpath_val(v, epoch_key)
-                                    .and_then(|ev| match ev {
-                                        JsonVal::Str(s) => parse_iso_tdb(s),
-                                        JsonVal::Num(n) => Some(*n - UNIX_J2000_OFFSET),
-                                        _ => None,
-                                    })
-                                    .unwrap_or(now)
-                            };
-                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (fk, fn_) in fields {
-                                if let Some(val) = jpath(v, fk) {
-                                    if val_key.is_empty() || fk == val_key {
-                                        ev_fields.push((fn_.clone(), val));
-                                    }
-                                }
-                            }
-                            if ev_fields.is_empty() {
-                                ev_fields.push(("_cmr_id".to_string(), idx as f64));
-                            }
-                            let alt = if alt_key.is_empty() {
-                                0.0
-                            } else {
-                                jpath(v, alt_key).unwrap_or(0.0)
-                            };
-                            for (lon, lat) in vertices {
-                                pending.push(PendingSample {
-                                    epoch,
-                                    position: PendingPosition::Geodetic { lat, lon, alt },
-                                    fields: ev_fields.clone(),
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-            Extract::CelestialPolygon {
-                arr_path,
-                radius,
-                fields,
-                epoch_key,
-                val_key,
-            } => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                        for (idx, v) in arr.iter().enumerate() {
-                            let geom = match jpath_val(v, "geometry") {
-                                Some(g) => g,
-                                None => continue,
-                            };
-                            let coords = match jpath_val(geom, "coordinates") {
-                                Some(JsonVal::Arr(c)) => c,
-                                _ => continue,
-                            };
-                            let vertices = flatten_geojson_coords(coords);
-                            if vertices.is_empty() || *radius <= 0.0 {
-                                continue;
-                            }
-                            let _epoch = if epoch_key.is_empty() {
-                                now
-                            } else {
-                                jpath_val(v, epoch_key)
-                                    .and_then(|ev| match ev {
-                                        JsonVal::Str(s) => parse_iso_tdb(s),
-                                        JsonVal::Num(n) => Some(*n - UNIX_J2000_OFFSET),
-                                        _ => None,
-                                    })
-                                    .unwrap_or(now)
-                            };
-                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (fk, fn_) in fields {
-                                if let Some(val) = jpath(v, fk) {
-                                    if val_key.is_empty() || fk == val_key {
-                                        ev_fields.push((fn_.clone(), val));
-                                    }
-                                }
-                            }
-                            if ev_fields.is_empty() {
-                                ev_fields.push(("_cpoly_id".to_string(), idx as f64));
-                            }
-                            for (ra_deg, dec_deg) in vertices {
-                                let ra = ra_deg.to_radians();
-                                let dec = dec_deg.to_radians();
-                                let (sa, ca) = ra.sin_cos();
-                                let (sd, cd) = dec.sin_cos();
-                                let p = [cd * ca * radius, cd * sa * radius, sd * radius];
-                                let row_epoch = if !epoch_key.is_empty() {
-                                    jpath(v, &epoch_key).unwrap_or(now)
-                                } else {
-                                    now
-                                };
-                                pending.push(PendingSample {
-                                    epoch: row_epoch,
-                                    position: PendingPosition::StateVector {
-                                        p,
-                                        v: [0.0, 0.0, 0.0],
-                                        track: false,
-                                    },
-                                    fields: ev_fields.clone(),
-                                });
-                            }
-                        }
-                    }
-                }
-            }
             Extract::Rows { last_line, fields } => {
                 if let Frame::Surface { lat, lon, alt, .. } | Frame::Surface { lat, lon, alt, .. } =
                     src.frame
@@ -4239,94 +3040,6 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             pending.push(PendingSample {
                                 epoch: now,
                                 position: PendingPosition::Geodetic { lat, lon, alt },
-                                fields: ev_fields,
-                            });
-                        }
-                    }
-                }
-            }
-            Extract::KeplerMap {
-                arr_path,
-                a_key,
-                e_key,
-                i_key,
-                om_key,
-                w_key,
-                ma_key,
-                epoch_key,
-                fields,
-            } => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                        let jd_now = tdb_to_jd(now);
-                        for v in arr.iter() {
-                            let (
-                                Some(a_val),
-                                Some(e_val),
-                                Some(i_val),
-                                Some(om_val),
-                                Some(w_val),
-                                Some(ma_val),
-                                Some(epoch_val),
-                            ) = (
-                                jpath(v, a_key),
-                                jpath(v, e_key),
-                                jpath(v, i_key),
-                                jpath(v, om_key),
-                                jpath(v, w_key),
-                                jpath(v, ma_key),
-                                jpath(v, epoch_key),
-                            )
-                            else {
-                                continue;
-                            };
-                            let a_au = a_val.max(1e-10);
-                            let n = GAUSS_K * (1.0 / (a_au * a_au * a_au)).sqrt();
-                            let m = ma_val.to_radians() + n * (jd_now - epoch_val);
-                            let e = e_val.clamp(0.0, 0.999);
-                            let mut e_anom = m;
-                            for _ in 0..5 {
-                                e_anom = e_anom
-                                    - (e_anom - e * e_anom.sin() - m) / (1.0 - e * e_anom.cos());
-                            }
-                            let (cos_e, sin_e) = (e_anom.cos(), e_anom.sin());
-                            let sqrt_1me2 = (1.0 - e * e).sqrt();
-                            let x_orb = a_au * (cos_e - e);
-                            let y_orb = a_au * sqrt_1me2 * sin_e;
-                            let r = a_au * (1.0 - e * cos_e);
-                            let n_rad_s = n / 86400.0;
-                            let vx_orb = -a_au * sin_e * n_rad_s / r;
-                            let vy_orb = a_au * sqrt_1me2 * cos_e * n_rad_s / r;
-                            let (sin_om, cos_om) = om_val.to_radians().sin_cos();
-                            let (sin_i, cos_i) = i_val.to_radians().sin_cos();
-                            let (sin_w, cos_w) = w_val.to_radians().sin_cos();
-                            let x1 = cos_w * x_orb - sin_w * y_orb;
-                            let y1 = sin_w * x_orb + cos_w * y_orb;
-                            let vx1 = cos_w * vx_orb - sin_w * vy_orb;
-                            let vy1 = sin_w * vx_orb + cos_w * vy_orb;
-                            let p = [
-                                (cos_om * x1 - sin_om * cos_i * y1) * AU,
-                                (sin_om * x1 + cos_om * cos_i * y1) * AU,
-                                sin_i * y1 * AU,
-                            ];
-                            let vel = [
-                                (cos_om * vx1 - sin_om * cos_i * vy1) * AU,
-                                (sin_om * vx1 + cos_om * cos_i * vy1) * AU,
-                                sin_i * vy1 * AU,
-                            ];
-                            let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (fk, fn_) in fields {
-                                if let Some(val) = jpath(v, fk) {
-                                    ev_fields.push((fn_.clone(), val));
-                                }
-                            }
-                            pending.push(PendingSample {
-                                epoch: now,
-                                position: PendingPosition::StateVector {
-                                    p,
-                                    v: vel,
-                                    track: false,
-                                },
                                 fields: ev_fields,
                             });
                         }
@@ -4524,35 +3237,6 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                     }
                 }
             }
-            Extract::Hapi(pairs) => {
-                if let Some(ref j) = parsed_json {
-                    if let JsonVal::Obj(root) = j {
-                        if let (Some(JsonVal::Arr(data)), Some(JsonVal::Arr(params))) =
-                            (root.get("data"), root.get("parameters"))
-                        {
-                            let mut col: HashMap<String, usize> = HashMap::new();
-                            for (i, p) in params.iter().enumerate() {
-                                if let JsonVal::Obj(po) = p {
-                                    if let Some(JsonVal::Str(nn)) = po.get("name") {
-                                        col.insert(nn.clone(), i);
-                                    }
-                                }
-                            }
-                            if let Some(last_row) = data.last() {
-                                if let JsonVal::Arr(row) = last_row {
-                                    for (param, name) in pairs {
-                                        if let Some(&idx) = col.get(param) {
-                                            if let Some(val) = row.get(idx).and_then(scalar_of) {
-                                                extracted.insert(name.clone(), val);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
     if !extracted.is_empty() {
@@ -4587,6 +3271,7 @@ fn materialize(
     region: Option<(f64, f64)>,
     pend: PendingSample,
     origins: &mut HashMap<Origin, OriginState>,
+    eph: &HashMap<String, BodyEphemeris>,
 ) -> Vec<Sample> {
     if pend.fields.is_empty() {
         return vec![];
@@ -4607,7 +3292,7 @@ fn materialize(
             speed,
             track,
             vrate,
-        } => flow_motion(*lat, *lon, *alt, *speed, *track, *vrate, pend.epoch),
+        } => flow_motion(*lat, *lon, *alt, *speed, *track, *vrate, pend.epoch, eph),
         PendingPosition::Source => match &src.frame {
             Frame::Surface { lat, lon, alt, .. } => Motion::Surface {
                 body_name: "earth".to_string(),
@@ -4621,7 +3306,7 @@ fn materialize(
             },
         },
     };
-    let abs = motion.at(pend.epoch, pend.epoch, &HashMap::new());
+    let abs = motion.at(pend.epoch, pend.epoch, eph);
     if abs[0].is_nan() || abs[1].is_nan() || abs[2].is_nan() || pend.epoch.is_nan() {
         return vec![];
     }
@@ -4723,10 +3408,11 @@ fn render_headers(
     z: f64,
     now: f64,
     extent: f64,
+    eph: &HashMap<String, BodyEphemeris>,
 ) -> Vec<(String, String)> {
     src.headers
         .iter()
-        .map(|(k, v)| (k.clone(), render_url(v, x, y, z, now, extent)))
+        .map(|(k, v)| (k.clone(), render_url(v, x, y, z, now, extent, eph)))
         .collect()
 }
 
@@ -4875,7 +3561,64 @@ fn warm_cache(archive: Arc<Archive>) {
                     continue;
                 }
                 match &src.frame {
-                    Frame::Surface { lat, lon, alt, .. } | Frame::Surface { lat, lon, alt, .. } => {
+                    Frame::Surface { lat, lon, alt, .. } => {
+                        let has_template = src.url.contains("{lat}")
+                            || src.url.contains("{lon}")
+                            || src.url.contains("{x}")
+                            || src.url.contains("{y}")
+                            || src.url.contains("{z}")
+                            || src.url.contains("{grid");
+                        let eph_map = archive.body_ephemerides.read().unwrap();
+                        if has_template {
+                            for &(_, px, py, pz, _) in &presences {
+                                if !presence_gate(&presences, (px, py, pz), r) {
+                                    continue;
+                                }
+                                let (tlat, tlon) = icrs_to_geodetic(px, py, pz, now, &eph_map);
+                                let origin =
+                                    (i as u32, region_quantize(tlat, r), region_quantize(tlon, r));
+                                if !origin_stale(
+                                    &origins_snap,
+                                    origin,
+                                    ttl_snapshot
+                                        .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
+                                        .copied()
+                                        .map(|t| t as u64)
+                                        .unwrap_or(src.ttl),
+                                    now,
+                                ) {
+                                    continue;
+                                }
+                                let is_new = origins_snap.get(&origin).is_none();
+                                task_prios.push(fetch_priority(
+                                    &src.url,
+                                    (px, py, pz),
+                                    r,
+                                    is_new,
+                                    src.ttl,
+                                    &presences,
+                                ));
+                                tasks.push((
+                                    i,
+                                    origin,
+                                    Some((tlat, tlon)),
+                                    render_source_url(
+                                        src,
+                                        px,
+                                        py,
+                                        pz,
+                                        now,
+                                        r,
+                                        Some(&*archive),
+                                        &eph_map,
+                                    ),
+                                    render_source_body(src, px, py, pz, now, r, &eph_map),
+                                    render_headers(src, px, py, pz, now, r, &eph_map),
+                                    src.ttl,
+                                ));
+                            }
+                            continue;
+                        }
                         let origin = (i as u32, 0, 0);
                         let eff_ttl = ttl_snapshot
                             .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
@@ -4885,7 +3628,9 @@ fn warm_cache(archive: Arc<Archive>) {
                         if !origin_stale(&origins_snap, origin, eff_ttl, now) {
                             continue;
                         }
-                        let pos = geodetic_to_icrs(*lat, *lon, *alt, now);
+                        let pa = body_fixed_to_icrs("earth", *lat, *lon, *alt, now, &eph_map)
+                            .unwrap_or([0.0; 3]);
+                        let pos = (pa[0], pa[1], pa[2]);
                         if !presence_gate(&presences, pos, r) {
                             continue;
                         }
@@ -4897,9 +3642,18 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_source_url(src, pos.0, pos.1, pos.2, now, r, Some(&*archive)),
-                            render_source_body(src, pos.0, pos.1, pos.2, now, r),
-                            render_headers(src, pos.0, pos.1, pos.2, now, r),
+                            render_source_url(
+                                src,
+                                pos.0,
+                                pos.1,
+                                pos.2,
+                                now,
+                                r,
+                                Some(&*archive),
+                                &eph_map,
+                            ),
+                            render_source_body(src, pos.0, pos.1, pos.2, now, r, &eph_map),
+                            render_headers(src, pos.0, pos.1, pos.2, now, r, &eph_map),
                             src.ttl,
                         ));
                     }
@@ -4932,153 +3686,20 @@ fn warm_cache(archive: Arc<Archive>) {
                             i,
                             origin,
                             None,
-                            render_source_url(src, pos.0, pos.1, pos.2, now, r, Some(&*archive)),
-                            render_source_body(src, pos.0, pos.1, pos.2, now, r),
-                            render_headers(src, pos.0, pos.1, pos.2, now, r),
-                            src.ttl,
-                        ));
-                    }
-                    Frame::Surface {
-                        lat: 0.0,
-                        lon: 0.0,
-                        alt: 0.0,
-                        ..
-                    } => {
-                        let has_template = src.url.contains("{lat}")
-                            || src.url.contains("{lon}")
-                            || src.url.contains("{x}")
-                            || src.url.contains("{y}")
-                            || src.url.contains("{z}")
-                            || src.url.contains("{grid");
-                        if has_template {
-                            for &(_, px, py, pz, _) in &presences {
-                                if !presence_gate(&presences, (px, py, pz), r) {
-                                    continue;
-                                }
-                                let (lat, lon) = icrs_to_geodetic(px, py, pz, now);
-                                let origin =
-                                    (i as u32, region_quantize(lat, r), region_quantize(lon, r));
-                                if !origin_stale(
-                                    &origins_snap,
-                                    origin,
-                                    ttl_snapshot
-                                        .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
-                                        .copied()
-                                        .map(|t| t as u64)
-                                        .unwrap_or(src.ttl),
-                                    now,
-                                ) {
-                                    continue;
-                                }
-                                let is_new = origins_snap.get(&origin).is_none();
-                                task_prios.push(fetch_priority(
-                                    &src.url,
-                                    (px, py, pz),
-                                    r,
-                                    is_new,
-                                    src.ttl,
-                                    &presences,
-                                ));
-                                tasks.push((
-                                    i,
-                                    origin,
-                                    None,
-                                    render_source_url(src, px, py, pz, now, r, Some(&*archive)),
-                                    render_source_body(src, px, py, pz, now, r),
-                                    render_headers(src, px, py, pz, now, r),
-                                    src.ttl,
-                                ));
-                            }
-                            continue;
-                        }
-                        let origin = (i as u32, 0, 0);
-                        if !origin_stale(
-                            &origins_snap,
-                            origin,
-                            ttl_snapshot
-                                .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
-                                .copied()
-                                .map(|t| t as u64)
-                                .unwrap_or(src.ttl),
-                            now,
-                        ) {
-                            continue;
-                        }
-                        let prev = origins_snap
-                            .get(&origin)
-                            .filter(|o| o.has_prev)
-                            .map(|o| o.prev_abs);
-                        if let Some(pa) = prev {
-                            if !presence_gate(&presences, (pa[0], pa[1], pa[2]), r) {
-                                continue;
-                            }
-                        }
-                        let (_, px, py, pz, _) = presences[0];
-                        let (rx, ry, rz) =
-                            prev.map(|pa| (pa[0], pa[1], pa[2])).unwrap_or((px, py, pz));
-                        let is_new = origins_snap.get(&origin).is_none();
-                        task_prios.push(fetch_priority(
-                            &src.url,
-                            (rx, ry, rz),
-                            r,
-                            is_new,
-                            src.ttl,
-                            &presences,
-                        ));
-                        tasks.push((
-                            i,
-                            origin,
-                            None,
-                            render_source_url(src, rx, ry, rz, now, r, Some(&*archive)),
-                            render_source_body(src, rx, ry, rz, now, r),
-                            render_headers(src, rx, ry, rz, now, r),
-                            src.ttl,
-                        ));
-                    }
-                    Frame::Surface {
-                        lat: 0.0,
-                        lon: 0.0,
-                        alt: 0.0,
-                        ..
-                    } => {
-                        for &(_, px, py, pz, _) in &presences {
-                            if !presence_gate(&presences, (px, py, pz), r) {
-                                continue;
-                            }
-                            let (lat, lon) = icrs_to_geodetic(px, py, pz, now);
-                            let origin =
-                                (i as u32, region_quantize(lat, r), region_quantize(lon, r));
-                            if !origin_stale(
-                                &origins_snap,
-                                origin,
-                                ttl_snapshot
-                                    .get(&src.url.split('/').nth(2).unwrap_or("").to_string())
-                                    .copied()
-                                    .map(|t| t as u64)
-                                    .unwrap_or(src.ttl),
+                            render_source_url(
+                                src,
+                                pos.0,
+                                pos.1,
+                                pos.2,
                                 now,
-                            ) {
-                                continue;
-                            }
-                            let is_new = origins_snap.get(&origin).is_none();
-                            task_prios.push(fetch_priority(
-                                &src.url,
-                                (px, py, pz),
                                 r,
-                                is_new,
-                                src.ttl,
-                                &presences,
-                            ));
-                            tasks.push((
-                                i,
-                                origin,
-                                Some((lat, lon)),
-                                render_source_url(src, px, py, pz, now, r, Some(&*archive)),
-                                render_source_body(src, px, py, pz, now, r),
-                                render_headers(src, px, py, pz, now, r),
-                                src.ttl,
-                            ));
-                        }
+                                Some(&*archive),
+                                &eph_map,
+                            ),
+                            render_source_body(src, pos.0, pos.1, pos.2, now, r, &eph_map),
+                            render_headers(src, pos.0, pos.1, pos.2, now, r, &eph_map),
+                            src.ttl,
+                        ));
                     }
                 }
             }
@@ -5129,6 +3750,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         let body_file = batch_dir.join(format!("b_{}", n));
                         let hdr_file = batch_dir.join(format!("h_{}", n));
                         let body_raw = std::fs::read_to_string(&body_file).ok();
+                        let body_bytes_raw = std::fs::read(&body_file).ok();
                         if let Some(ref hdr) = std::fs::read_to_string(&hdr_file).ok() {
                             for line in hdr.lines() {
                                 let line_lower = line.to_lowercase();
@@ -5163,13 +3785,14 @@ fn warm_cache(archive: Arc<Archive>) {
                         let _ = std::fs::remove_file(&hdr_file);
                         let src = &ar.sources[src_idx];
                         let mut origins = ar.origins.lock().unwrap_or_else(|e| e.into_inner());
-                        if let Some(body) = body_raw {
+                        if body_raw.is_some() || src.format == "ephemeris_binary" {
+                            let body = body_raw.as_deref().unwrap_or("");
                             let entry = origins.entry(origin).or_default();
                             entry.fetched = now;
                             entry.ttl = src.ttl as f64;
                             let body_bytes = body.as_bytes();
                             let mut pendings: Option<Vec<PendingSample>> = None;
-                            if body_bytes.len() < 50 {
+                            if body_bytes.len() < 50 && src.format != "ephemeris_binary" {
                                 entry.zero_yield += 1;
                             } else {
                                 let body_hash = sha1(body_bytes);
@@ -5178,7 +3801,12 @@ fn warm_cache(archive: Arc<Archive>) {
                                 {
                                 } else {
                                     entry.last_body_hash = body_hash;
-                                    let result = extract_pending(src, &body, now);
+                                    let result = extract_pending(
+                                        src,
+                                        body,
+                                        body_bytes_raw.as_deref().unwrap_or(b""),
+                                        now,
+                                    );
                                     match result {
                                         ExtractResult::WithEphemeris(samples, eph) => {
                                             if let Some(ref bname) = src.body {
@@ -5201,14 +3829,8 @@ fn warm_cache(archive: Arc<Archive>) {
                                         e,
                                         Extract::Map { .. }
                                             | Extract::GeojsonEvents { .. }
-                                            | Extract::LastObj { .. }
-                                            | Extract::Vectors(_)
                                             | Extract::CelestialMap { .. }
-                                            | Extract::Flatten { .. }
-                                            | Extract::CmrPolygon { .. }
-                                            | Extract::CelestialPolygon { .. }
                                             | Extract::Rows { .. }
-                                            | Extract::KeplerMap { .. }
                                     )
                                 });
                                 if pendings.is_empty() {
@@ -5228,10 +3850,16 @@ fn warm_cache(archive: Arc<Archive>) {
                                 } else {
                                     origins.entry(origin).or_default().zero_yield = 0;
                                     let before = new_samples.len();
+                                    let eph_map = ar.body_ephemerides.read().unwrap();
                                     for pend in pendings {
-                                        for smp in
-                                            materialize(src, origin, region, pend, &mut origins)
-                                        {
+                                        for smp in materialize(
+                                            src,
+                                            origin,
+                                            region,
+                                            pend,
+                                            &mut origins,
+                                            &eph_map,
+                                        ) {
                                             new_samples.push(smp);
                                         }
                                     }
@@ -5545,7 +4173,7 @@ mod tests {
         let now = super::tdb_now();
         let expected_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
         eprintln!("now={} expected_epoch={}", now, expected_epoch);
-        let result = super::extract_pending(&src, body, now);
+        let result = super::extract_pending(&src, body, b"", now);
         let pending = match result {
             super::ExtractResult::Samples(v) => v,
             _ => {
