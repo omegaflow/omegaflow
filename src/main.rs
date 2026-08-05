@@ -352,48 +352,49 @@ fn icrs_to_geodetic(x: f64, y: f64, z: f64, tdb_secs: f64) -> (f64, f64) {
 type CellKey = (i64, i64, i64);
 type Origin = (u32, i32, i32);
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 enum Motion {
-    Ecliptic { scale: f64 },
-    Areocentric { scale: f64 },
-    WGS84 { lat: f64, lon: f64, alt: f64 },
-    Mars { lat: f64, lon: f64, alt: f64 },
-    Linear { p: [f64; 3], v: [f64; 3] },
+    Surface {
+        body_name: String,
+        lat: f64,
+        lon: f64,
+        alt: f64,
+    },
+    Barycenter {
+        body_name: String,
+        scale: f64,
+    },
+    Linear {
+        p: [f64; 3],
+        v: [f64; 3],
+    },
 }
 
 impl Motion {
-    fn at(&self, t: f64, epoch: f64) -> [f64; 3] {
+    fn at(&self, t: f64, epoch: f64, eph: &HashMap<String, BodyEphemeris>) -> [f64; 3] {
         match self {
-            Motion::WGS84 { lat, lon, alt } => {
-                let (x, y, z) = geodetic_to_icrs(*lat, *lon, *alt, t);
-                [x, y, z]
-            }
-            Motion::Mars { lat, lon, alt } => {
-                let (x, y, z) = mars_surface_to_icrs(*lat, *lon, *alt, t);
-                [x, y, z]
-            }
+            Motion::Surface {
+                body_name,
+                lat,
+                lon,
+                alt,
+            } => body_fixed_to_icrs(body_name, *lat, *lon, *alt, t, eph).unwrap_or([0.0, 0.0, 0.0]),
+            Motion::Barycenter { body_name, scale } => body_barycenter_position(body_name, t, eph)
+                .map(|[x, y, z]| [x * scale, y * scale, z * scale])
+                .unwrap_or([0.0, 0.0, 0.0]),
             Motion::Linear { p, v } => {
                 let dt = t - epoch;
                 [p[0] + v[0] * dt, p[1] + v[1] * dt, p[2] + v[2] * dt]
             }
-            Motion::Ecliptic { scale } => {
-                let (x, y, z) = earth_position_icrs(t);
-                [x * scale, y * scale, z * scale]
-            }
-            Motion::Areocentric { scale } => {
-                let (x, y, z) = mars_position_icrs(t);
-                [x * scale, y * scale, z * scale]
-            }
         }
     }
-    fn planet_bound(&self) -> bool {
-        matches!(
-            self,
-            Motion::WGS84 { .. }
-                | Motion::Mars { .. }
-                | Motion::Ecliptic { .. }
-                | Motion::Areocentric { .. }
-        )
+    fn anchor_body(&self) -> Option<&str> {
+        match self {
+            Motion::Surface { body_name, .. } | Motion::Barycenter { body_name, .. } => {
+                Some(body_name)
+            }
+            Motion::Linear { .. } => None,
+        }
     }
 }
 
@@ -441,8 +442,8 @@ fn cell_of(p: [f64; 3], s: f64) -> CellKey {
 }
 
 fn relative_frame_position(motion: &Motion, t: f64, epoch: f64) -> [f64; 3] {
-    let p = motion.at(t, epoch);
-    if motion.planet_bound() {
+    let p = motion.at(t, epoch, &HashMap::new());
+    if motion.anchor_body().is_some() {
         let (ex, ey, ez) = earth_position_icrs(t);
         [p[0] - ex, p[1] - ey, p[2] - ez]
     } else {
@@ -506,8 +507,9 @@ fn build_family(samples: Vec<Sample>, cadence: f64) -> Family {
 }
 
 fn build_buffer(samples: Vec<Sample>, cadence: f64) -> Buffer {
-    let (planet_samples, inertial): (Vec<Sample>, Vec<Sample>) =
-        samples.into_iter().partition(|s| s.motion.planet_bound());
+    let (planet_samples, inertial): (Vec<Sample>, Vec<Sample>) = samples
+        .into_iter()
+        .partition(|s| s.motion.anchor_body().is_some());
     Buffer {
         planet: build_family(planet_samples, cadence),
         inertial: build_family(inertial, cadence),
@@ -620,7 +622,7 @@ fn enclose_family(
                     continue;
                 }
             }
-            let p = smp.motion.at(t2, smp.epoch);
+            let p = smp.motion.at(t2, smp.epoch, &HashMap::new());
             let ddx = p[0] - center[0];
             let ddy = p[1] - center[1];
             let ddz = p[2] - center[2];
@@ -772,7 +774,7 @@ fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
     }
 }
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Default)]
 struct OriginState {
     fetched: f64,
     ttl: f64,
@@ -1965,8 +1967,8 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                             .sample
                             .as_ref()
                             .map(|smp| {
-                                let p0 = smp.motion.at(now, smp.epoch);
-                                let p1 = smp.motion.at(now + 1.0, smp.epoch);
+                                let p0 = smp.motion.at(now, smp.epoch, &HashMap::new());
+                                let p1 = smp.motion.at(now + 1.0, smp.epoch, &HashMap::new());
                                 (p0, [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]])
                             })
                             .unwrap_or(([0.0, 0.0, 0.0], [0.0, 0.0, 0.0]));
@@ -2189,7 +2191,12 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                             (Some(spd), Some(hdg)) if spd > 0.0 => {
                                 flow_motion(lat, lon, alt, spd, hdg, 0.0, now)
                             }
-                            _ => Motion::WGS84 { lat, lon, alt },
+                            _ => Motion::Surface {
+                                body_name: "earth".to_string(),
+                                lat,
+                                lon,
+                                alt,
+                            },
                         };
                         let (vmax, amax, p0f) = law_bounds(&motion, now, 0.0);
                         let sample = Sample {
@@ -2202,7 +2209,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                             vmax,
                             amax,
                             p0f,
-                            motion,
+                            motion: motion.clone(),
                             fields: station_fields,
                         };
                         station.buffer =
@@ -4590,7 +4597,8 @@ fn materialize(
     let vmax_floor = 0.0f64;
     let motion = match &pend.position {
         PendingPosition::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
-        PendingPosition::Geodetic { lat, lon, alt } => Motion::WGS84 {
+        PendingPosition::Geodetic { lat, lon, alt } => Motion::Surface {
+            body_name: "earth".to_string(),
             lat: *lat,
             lon: *lon,
             alt: *alt,
@@ -4604,53 +4612,19 @@ fn materialize(
             vrate,
         } => flow_motion(*lat, *lon, *alt, *speed, *track, *vrate, pend.epoch),
         PendingPosition::Source => match &src.frame {
-            Frame::Surface { lat, lon, alt, .. } => Motion::WGS84 {
+            Frame::Surface { lat, lon, alt, .. } => Motion::Surface {
+                body_name: "earth".to_string(),
                 lat: *lat,
                 lon: *lon,
                 alt: *alt,
             },
-            Frame::Surface { lat, lon, alt, .. } => Motion::Mars {
-                lat: *lat,
-                lon: *lon,
-                alt: *alt,
+            Frame::Barycenter { scale, .. } => Motion::Barycenter {
+                body_name: "earth".to_string(),
+                scale: *scale,
             },
-            Frame::Barycenter { scale, .. } => Motion::Ecliptic { scale: *scale },
-            Frame::Barycenter { scale, .. } => Motion::Areocentric { scale: *scale },
-            Frame::Surface {
-                lat: 0.0,
-                lon: 0.0,
-                alt: 0.0,
-                ..
-            } => {
-                let Some((lat, lon)) = region else {
-                    return vec![];
-                };
-                Motion::WGS84 { lat, lon, alt: 0.0 }
-            }
-            Frame::Surface {
-                lat: 0.0,
-                lon: 0.0,
-                alt: 0.0,
-                ..
-            } => {
-                let Some((latf, lonf, altf, alt_scale)) = src.pos_fields.as_ref() else {
-                    return vec![];
-                };
-                let find = |k: &str| pend.fields.iter().find(|(n, _)| n == k).map(|(_, v)| *v);
-                let Some(lat) = find(latf) else { return vec![] };
-                let Some(lon) = find(lonf) else { return vec![] };
-                let alt = match altf {
-                    Some(k) => {
-                        let Some(v) = find(k) else { return vec![] };
-                        v * alt_scale
-                    }
-                    None => 0.0,
-                };
-                Motion::WGS84 { lat, lon, alt }
-            }
         },
     };
-    let abs = motion.at(pend.epoch, pend.epoch);
+    let abs = motion.at(pend.epoch, pend.epoch, &HashMap::new());
     if abs[0].is_nan() || abs[1].is_nan() || abs[2].is_nan() || pend.epoch.is_nan() {
         return vec![];
     }
@@ -4665,7 +4639,7 @@ fn materialize(
         if entry.has_prev {
             let dt = (pend.epoch - entry.prev_epoch).abs().max(1.0);
             if let Some(pm) = &entry.prev_motion {
-                let pred = pm.at(pend.epoch, entry.prev_epoch);
+                let pred = pm.at(pend.epoch, entry.prev_epoch, &HashMap::new());
                 let resid = ((pred[0] - abs[0]).powi(2)
                     + (pred[1] - abs[1]).powi(2)
                     + (pred[2] - abs[2]).powi(2))
@@ -4677,7 +4651,7 @@ fn materialize(
         resid_ema = entry.resid_ema;
         entry.prev_epoch = pend.epoch;
         entry.prev_abs = abs;
-        entry.prev_motion = Some(motion);
+        entry.prev_motion = Some(motion.clone());
         entry.has_prev = true;
     }
     let (mut vmax, amax, p0f) = law_bounds(&motion, pend.epoch, resid_ema);
@@ -4738,7 +4712,7 @@ fn materialize(
                 vmax,
                 amax,
                 p0f,
-                motion,
+                motion: motion.clone(),
                 fields: clean_fields.clone(),
             })
         })
