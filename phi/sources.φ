@@ -27589,3 +27589,22 @@ lon_key lon
 field tmax_c geosphere_daily_tmax_c
 field tmin_c geosphere_daily_tmin_c
 field prcp_mm geosphere_daily_prcp_mm
+
+source technosphere_economy_eia_grid_demand
+ttl 3600
+force diffusion
+url https://api.eia.gov/v2/electricity/rto/region-data/data/?api_key=EIA_API_KEY&frequency=hourly&data[]=value&facets[type][]=D&sort[0][column]=period&sort[0][direction]=desc&length=500
+map data
+lat_key lat
+lon_key lon
+field_in respondent-name eia_grid_respondent
+field_in value eia_grid_demand_mw
+field_in period eia_grid_period
+
+source hydrosphere_oceannetworks_sites
+ttl 86400
+force diffusion
+url https://data.oceannetworks.ca/api/locations?token=OCEANNETWORKS_TOKEN&method=getLocations
+map .
+lat_key bbox.maxLat
+lon_key bbox.maxLon
