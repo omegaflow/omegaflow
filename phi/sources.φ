@@ -26,7 +26,7 @@ source astro_iss_history
 ttl 10
 force em
 pos universe_iss_history_lat universe_iss_history_lon universe_iss_history_alt 1000
-url https://github.com/omegaflow/sources/releases/download/wheretheiss.at/astro_iss_history.json
+url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
 field 0.latitude universe_iss_history_lat
 field 0.longitude universe_iss_history_lon
 field 0.altitude universe_iss_history_alt
@@ -485,7 +485,7 @@ source exosphere_emsc_magnetometer
 ttl 60
 force gravity
 ssb
-url https://github.com/omegaflow/sources/releases/download/seismicportal.eu/exosphere_emsc_magnetometer.json
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 field 0.bt exosphere_mag_bt_nt
 field 0.bz_gsm exosphere_mag_bz_gsm_nt
 
@@ -536,7 +536,7 @@ source geosphere_jma_eew
 ttl 60
 force em
 ecliptic 1
-url https://github.com/omegaflow/sources/releases/download/data.raspberryshake.org/geosphere_jma_eew.json
+url https://api.wolfx.jp/jma_eew.json
 field Latitude geosphere_jma_eew_lat
 field Longitude geosphere_jma_eew_lon
 field Magnitude geosphere_jma_eew_mag
@@ -639,7 +639,7 @@ source magnetosphere_swpc_goes
 ttl 60
 force gravity
 ecliptic 1
-url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/magnetosphere_swpc_goes.json
+url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 last Hp magnetosphere_hp_nt
 last He magnetosphere_he_nt
 last total magnetosphere_bt_nt
@@ -664,7 +664,7 @@ source geosphere_noaa_goes18_electron_flux
 ttl 60
 force em
 ecliptic 1
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/geosphere_noaa_goes18_electron_flux.json
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 map .
 field_in 0 timestamp_utc
 field_in 1 electron_2mev_flux
@@ -674,7 +674,7 @@ source geosphere_noaa_goes18_eps_energetic_particles
 ttl 60
 force em
 ecliptic 1
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/geosphere_noaa_goes18_eps_energetic_particles.json
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 map .
 field_in 0 timestamp_utc
 field_in 1 flux_10mev_p_cm2s
@@ -685,7 +685,7 @@ source geosphere_noaa_goes_exis_xrays
 ttl 60
 force em
 ecliptic 1
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/geosphere_noaa_goes_exis_xrays.json
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
 map
 field time_tag observation_time
 field flux_long_1_8A flux_1_8A_W_m2
@@ -695,7 +695,7 @@ source geosphere_noaa_goes_r_exis_euv_realtime
 ttl 60
 force em
 ecliptic 1
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/geosphere_noaa_goes_r_exis_euv_realtime.json
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
 map .
 field_in 0 timestamp_utc
 field_in 1 flux_short_wm2
@@ -705,7 +705,7 @@ source geosphere_noaa_swpc_alerts_current
 ttl 60
 force em
 ssb
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/geosphere_noaa_swpc_alerts_current.json
+url https://services.swpc.noaa.gov/products/alerts.json
 map .
 field time_tag alert_time_utc
 field message alert_message
@@ -715,7 +715,7 @@ source geosphere_noaa_swpc_geomagnetic_alerts
 ttl 60
 force gravity
 ecliptic 1
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/geosphere_noaa_swpc_geomagnetic_alerts.json
+url https://services.swpc.noaa.gov/products/alerts.json
 map
 field issue_time alert_time
 field message alert_text
@@ -724,7 +724,7 @@ source geosphere_noaa_swpc_geomagnetic_storm_alerts
 ttl 60
 force gravity
 ecliptic 1
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/geosphere_noaa_swpc_geomagnetic_storm_alerts.json
+url https://services.swpc.noaa.gov/products/alerts.json
 map .
 field_in 0 timestamp_utc
 field_in 1 alert_type
@@ -744,7 +744,7 @@ source geosphere_noaa_swpc_goes_xray_flux
 ttl 60
 force em
 ecliptic 1
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/geosphere_noaa_swpc_goes_xray_flux.json
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 map .
 field 0 datetime_utc
 field 1 flux_short_0_5_4A
@@ -764,7 +764,7 @@ source geosphere_noaa_swpc_solar_events
 ttl 60
 force em
 ssb
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/geosphere_noaa_swpc_solar_events.json
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 map
 field time_tag observation_time
 field flux_long_1_8A xray_1_8A_W_m2
@@ -774,7 +774,7 @@ source geosphere_noaa_swpc_xray_flares_latest
 ttl 60
 force em
 ssb
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/geosphere_noaa_swpc_xray_flares_latest.json
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
 map .
 field time_tag flare_time_utc
 field class flare_classification
