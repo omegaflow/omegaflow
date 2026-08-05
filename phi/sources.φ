@@ -9047,16 +9047,10 @@ field_in 2 aurora_intensity
 source geosphere_usgs_nwis_water_data
 ttl 600
 force advective
-url https://github.com/omegaflow/sources/releases/download/waterdata.usgs.gov/geosphere_usgs_nwis_water_data.json
-map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-field monitoring_location_id site_id
-field parameter_code param_code
-field value value
-field unit_of_measure unit
-field time observation_time
-field statistic_id statistic_id
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500,09380000,11447650,02177000,03036500,05064500,07010000,08330000,09421500,12144500&parameterCd=00060&period=PT1H
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
 
 source geosphere_usgs_volcano_observatory_status
 ttl 600
@@ -20425,19 +20419,6 @@ url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FRO
 wgs84 42.365 -71.105
 last_line exosphere_tess_candidates_total
 
-source astro_tevcat_main2_sources
-ttl 86400
-force em
-url https://github.com/omegaflow/sources/releases/download/tevcat2.tevcat.org/astro_tevcat_main2_sources.json
-map .
-ra_key ra
-dec_key dec
-field name source_name
-field type source_type
-field distance distance_kpc
-field flux flux_tev_crab
-field index spectral_index
-
 source astro_tns_transient_supernovae
 ttl 86400
 force em
@@ -27547,22 +27528,20 @@ field obsDt ebird_obs_time
 source atmosphere_openaq_pm25
 ttl 3600
 force diffusion
-url https://github.com/omegaflow/sources/releases/download/openaq.org/atmosphere_openaq_pm25.json
-map .
-lat_key lat
-lon_key lon
-field value openaq_pm25_ugm3
-field lastUpdated openaq_measurement_time
+url https://api.openaq.org/v3/locations?limit=500&has_geo=true&parameter_id=2&is_monitor=true
+header X-API-Key OPENAQ_API_KEY
+map results
+lat_key coordinates.latitude
+lon_key coordinates.longitude
 
 source atmosphere_openaq_pm10
 ttl 3600
 force diffusion
-url https://github.com/omegaflow/sources/releases/download/openaq.org/atmosphere_openaq_pm10.json
-map .
-lat_key lat
-lon_key lon
-field value openaq_pm10_ugm3
-field lastUpdated openaq_measurement_time
+url https://api.openaq.org/v3/locations?limit=500&has_geo=true&parameter_id=1&is_monitor=true
+header X-API-Key OPENAQ_API_KEY
+map results
+lat_key coordinates.latitude
+lon_key coordinates.longitude
 
 source geosphere_firms_viirs_global_nrt
 ttl 3600
@@ -27599,24 +27578,6 @@ lat_key lat
 lon_key lon
 field elevation geosphere_station_elevation_m
 field datacoverage geosphere_station_coverage
-
-source hydrosphere_oceannetworks_sites
-ttl 86400
-force diffusion
-url https://github.com/omegaflow/sources/releases/download/data.oceannetworks.ca/hydrosphere_oceannetworks_sites.json
-map .
-lat_key lat
-lon_key lon
-field deployments ocean_site_deployments
-field depth ocean_site_depth_m
-
-source technosphere_economy_eia_grid_demand
-ttl 3600
-force advective
-url https://github.com/omegaflow/sources/releases/download/eia.gov/technosphere_economy_eia_grid_demand.json
-wgs84 38.907 -77.037
-field total_demand_mw economy_us_grid_demand_mw
-field rto_count economy_us_rto_count
 
 source geosphere_noaa_cdo_daily
 ttl 86400

@@ -1772,6 +1772,28 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                                 .as_bytes(),
                         );
                     }
+                    _ if path.starts_with("/jump/") => {
+                        let body: &str = &path[6..];
+                        let (x, y, z) = match body {
+                            "earth" => {
+                                let (ex, ey, ez) = earth_position_icrs(tdb_now());
+                                (ex, ey, ez)
+                            }
+                            "mars" => {
+                                let (mx, my, mz) = mars_position_icrs(tdb_now());
+                                (mx, my, mz)
+                            }
+                            "sun" => (0.0, 0.0, 0.0),
+                            "ssb" => (0.0, 0.0, 0.0),
+                            _ => (0.0, 0.0, 0.0),
+                        };
+                        emit(
+                            &mut s,
+                            "200 OK",
+                            "text/plain",
+                            format!("{} {} {}", x, y, z).as_bytes(),
+                        );
+                    }
                     "/field" => {
                         let buf = archive
                             .field
