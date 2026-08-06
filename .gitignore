@@ -11,6 +11,7 @@ opencode.json
 phi/health.json
 phi/kernels/
 *.py
+!scripts/verify_sources.py
 reference/
 scripts/__pycache__/
 .secrets.local
