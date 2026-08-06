@@ -2064,5 +2064,11 @@
  "nws_sigmet": "https://aviationweather.gov/api/data",
  "satnogs_wildfires": "https://eonet.gsfc.nasa.gov/",
  "satnogs_stations": "https://network.satnogs.org/api",
- "pdg_particles": "https://github.com-scikit-hep-particle/"
+ "pdg_particles": "https://github.com-scikit-hep-particle/",
+ "ephemeris_rhea": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp",
+ "ephemeris_dione": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp",
+ "ephemeris_tethys": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp",
+ "ephemeris_phobos": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/mar099s.bsp",
+ "ephemeris_deimos": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/mar099s.bsp",
+ "openmeteo_snowfall_swe": "https://api.open-meteo.com/v1/forecast?daily=snowfall_sum,snow_depth"
 }
