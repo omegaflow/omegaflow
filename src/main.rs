@@ -56,6 +56,12 @@ struct BodyProperties {
     dw_dt_deg_per_day: f64,
     radius_m: f64,
     flattening: f64,
+    v_sound: Option<f64>,
+    v_seismic_p: Option<f64>,
+    v_seismic_s: Option<f64>,
+    alpha_thermal: Option<f64>,
+    d_diffusion: Option<f64>,
+    v_advective: Option<f64>,
 }
 
 #[derive(Clone, Default)]
@@ -120,8 +126,70 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 dw_dt_deg_per_day: f(5),
                 radius_m: f(6),
                 flattening: f(7),
+                v_sound: None,
+                v_seismic_p: None,
+                v_seismic_s: None,
+                alpha_thermal: None,
+                d_diffusion: None,
+                v_advective: None,
             });
             pos += 64;
+            continue;
+        }
+        if stype == 2 {
+            let f = |i: usize| -> f64 {
+                f64::from_le_bytes(
+                    data[pos + i * 8..pos + (i + 1) * 8]
+                        .try_into()
+                        .unwrap_or([0; 8]),
+                )
+            };
+            let vs = f(0);
+            let vp = f(1);
+            let vss = f(2);
+            let ath = f(3);
+            let dd = f(4);
+            let vad = f(5);
+            props = Some(match props {
+                Some(mut p) => {
+                    if vs > 0.0 {
+                        p.v_sound = Some(vs);
+                    }
+                    if vp > 0.0 {
+                        p.v_seismic_p = Some(vp);
+                    }
+                    if vss > 0.0 {
+                        p.v_seismic_s = Some(vss);
+                    }
+                    if ath > 0.0 {
+                        p.alpha_thermal = Some(ath);
+                    }
+                    if dd > 0.0 {
+                        p.d_diffusion = Some(dd);
+                    }
+                    if vad > 0.0 {
+                        p.v_advective = Some(vad);
+                    }
+                    p
+                }
+                None => BodyProperties {
+                    α0_deg: 0.0,
+                    dα0_dt_deg_per_century: 0.0,
+                    δ0_deg: 0.0,
+                    dδ0_dt_deg_per_century: 0.0,
+                    w0_deg: 0.0,
+                    dw_dt_deg_per_day: 0.0,
+                    radius_m: 0.0,
+                    flattening: 0.0,
+                    v_sound: if vs > 0.0 { Some(vs) } else { None },
+                    v_seismic_p: if vp > 0.0 { Some(vp) } else { None },
+                    v_seismic_s: if vss > 0.0 { Some(vss) } else { None },
+                    alpha_thermal: if ath > 0.0 { Some(ath) } else { None },
+                    d_diffusion: if dd > 0.0 { Some(dd) } else { None },
+                    v_advective: if vad > 0.0 { Some(vad) } else { None },
+                },
+            });
+            pos += 48;
             continue;
         }
         if stype != 0 {
@@ -2023,11 +2091,11 @@ fn load_sources() -> Vec<SourceConfig> {
         match parts[0] {
             "url" => {
                 flush!();
+                cur_url = line.get(4..).unwrap_or("").trim().to_string();
                 cur_ttl = 0;
                 cur_force.clear();
                 cur_tau = None;
                 cur_tau_key = None;
-                cur_url = line.get(4..).unwrap_or("").trim().to_string();
                 cur_lat = None;
                 cur_lon = None;
                 cur_alt = 0.0;
