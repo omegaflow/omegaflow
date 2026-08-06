@@ -72,7 +72,8 @@ def _load_rename_map():
 
 def _current_names_from_urls():
     """Derive current source names from the CDN asset URLs in sources.φ.
-    The asset filename (last path segment without .json) is the source identity."""
+    The asset filename (last path segment) is the source identity.
+    Strips the {latest} suffix and optional {timestamp} if present."""
     names = set()
     try:
         for line in open("phi/sources.φ"):
@@ -87,6 +88,9 @@ def _current_names_from_urls():
                 asset = asset[:-5]
             elif asset.endswith(".bin"):
                 asset = asset[:-4]
+            # Strip {latest} placeholder and any _ISO timestamp suffix
+            asset = re.sub(r"_\{latest\}$", "", asset)
+            asset = re.sub(r"_\d{8}T\d{6}Z$", "", asset)
             if asset:
                 names.add(asset)
     except Exception:
