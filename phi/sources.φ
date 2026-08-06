@@ -6897,17 +6897,6 @@ ttl 600
 force thermal
 body earth
 
-url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/noaa_coops_water_levels_usa.json
-force em
-body earth
-map fires
-lat_key lat
-lon_key lon
-field frp fire_radiative_power_mw
-field confidence confidence_pct
-field acq_date acquisition_date
-field satellite satellite
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_jpl_horizons_parker_solar_probe.json
 ttl 600
 force gravity
@@ -13983,32 +13972,11 @@ force em
 at sun 1.0
 format ephemeris_binary
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_enceladus.bin
-ttl 86400
-body enceladus
-force em
-at sun 1.0
-format ephemeris_binary
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_orbit_trace_eris.json
 ttl 86400
 at sun 1.0
 force em
 format universal
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_europa.bin
-ttl 86400
-body europa
-force em
-at sun 1.0
-format ephemeris_binary
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ganymede.bin
-ttl 86400
-body ganymede
-force em
-at sun 1.0
-format ephemeris_binary
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_orbit_trace_haumea.json
 ttl 86400
@@ -14016,53 +13984,11 @@ at sun 1.0
 force em
 format universal
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_io.bin
-ttl 86400
-body io
-force em
-at sun 1.0
-format ephemeris_binary
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_jupiter.bin
-ttl 86400
-body jupiter
-force em
-at sun 1.0
-format ephemeris_binary
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_orbit_trace_makemake.json
 ttl 86400
 at sun 1.0
 force em
 format universal
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mars.bin
-ttl 86400
-body mars
-force em
-at sun 1.0
-format ephemeris_binary
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mercury.bin
-ttl 86400
-body mercury
-force em
-at sun 1.0
-format ephemeris_binary
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_moon.bin
-ttl 86400
-body moon
-force em
-at sun 1.0
-format ephemeris_binary
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_neptune.bin
-ttl 86400
-body neptune
-force em
-at sun 1.0
-format ephemeris_binary
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pluto.bin
 ttl 86400
@@ -14218,13 +14144,6 @@ dec_key _DE
 z_key zCMB
 field mBcorr pantheon_mBcorr
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pluto.bin
-ttl 86400
-body pluto
-force em
-at sun 1.0
-format ephemeris_binary
-
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/astro_saturn_rings.json
 ttl 86400
 force em
@@ -14239,13 +14158,6 @@ pmra_key pmra
 pmdec_key pmdec
 field optical_depth ring_optical_depth
 field zone ring_zone
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_saturn.bin
-ttl 86400
-body saturn
-force em
-at sun 1.0
-format ephemeris_binary
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra={ra}&dec={dec}&sr=6&format=json
 ttl 86400
@@ -14339,13 +14251,6 @@ field 5 std_dev
 field 6 num_observations
 field 7 definitive_flag
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_callisto.bin
-ttl 86400
-body callisto
-force em
-at sun 1.0
-format ephemeris_binary
-
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/astro_solar_historical_surface.json
 ttl 86400
 force em
@@ -14355,13 +14260,6 @@ path latitude atmosphere_lat
 path longitude atmosphere_lon
 last shortwave_radiation atmosphere_hist_solar_radiation_wm2
 last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_sun.bin
-ttl 86400
-body sun
-force em
-at sun 1.0
-format ephemeris_binary
 
 url https://github.com/omegaflow/sources/releases/download/sidc.be/astro_sunspot_number_global.json
 ttl 86400
@@ -14381,13 +14279,6 @@ force em
 on earth 42.365 -71.105
 last_line exosphere_tess_candidates_total
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_titan.bin
-ttl 86400
-body titan
-force em
-at sun 1.0
-format ephemeris_binary
-
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/astro_tns_transient_supernovae.json
 ttl 86400
 force em
@@ -14399,13 +14290,6 @@ dec_key DEJ2000
 z_key z
 field MaxMag tns_max_mag
 field Type tns_sn_type
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_triton.bin
-ttl 86400
-body triton
-force em
-at sun 1.0
-format ephemeris_binary
 
 url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv&limit=5000
 ttl 86400
@@ -14430,20 +14314,6 @@ ra_key RAJ2000
 dec_key DEJ2000
 dist_key DLum 3.0857e22
 field Kmag uhecr_host_kmag
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_uranus.bin
-ttl 86400
-body uranus
-force em
-at sun 1.0
-format ephemeris_binary
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_venus.bin
-ttl 86400
-body venus
-force em
-at sun 1.0
-format ephemeris_binary
 
 url https://github.com/omegaflow/sources/releases/download/firms.modaps.eosdis.nasa.gov/astro_viirs_lst_global.json
 ttl 86400
@@ -16611,12 +16481,6 @@ lat_key lat
 lon_key lon
 field properties.name boundary_name
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_earth.bin
-ttl 86400
-force em
-at sun 1.0
-format ephemeris_binary
-
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/geosphere_earthscope_fdsn_stations.json
 ttl 86400
 force acoustic
@@ -16658,16 +16522,6 @@ at sun 1.0
 ttl 86400
 force thermal
 body earth
-
-url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/geosphere_esa_cci_soil_moisture_erddap.json
-force em
-body earth
-map .
-lat_key lat
-lon_key lon
-field_in sst_analysed sea_surface_temp_c
-field_in sst_uncertainty sst_uncertainty_k
-field_in time observation_time
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_alternate_fuel.json
 ttl 86400
