@@ -175,11 +175,6 @@ lon_key geometry.coordinates.0
 lat_key lat
 lon_key lon
   field properties.publicID publicID
-  field properties.magnitude magnitude
-  field properties.depth depth
-  field properties.time time
-  field properties.locality locality
-  field properties.mmi mmi
 
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
 ttl 60
@@ -241,13 +236,6 @@ field_in 3 flux_100mev_p_cm2s
   field satellite satellite
   field flux flux
   field energy energy
-  field 0 0
-  field 1 1
-  field 2 2
-  field 3 3
-  field 1 1
-  field 2 2
-  field 3 3
 last flux radiation_proton_flux_goes
 
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
@@ -267,9 +255,7 @@ map .
   field time_tag time_tag
   field message message
   field issue_utc issue_utc
-map
   field issue_time issue_time
-  field message message
 field_in 0 timestamp_utc
 field_in 1 alert_type
 field_in 2 alert_message
@@ -279,10 +265,6 @@ ttl 60
 force em
 at sun 1
 map .
-  field 0 0
-  field 1 1
-  field 2 2
-map
   field time_tag time_tag
   field flux_long_1_8A flux_long_1_8A
   field flux_short_0_5_4A flux_short_0_5_4A
@@ -295,7 +277,6 @@ lon_key satellite_lon
 field_in 0 timestamp_utc
 field_in 1 flux_short_wm2
 field_in 2 flux_long_wm2
-  field time_tag time_tag
   field flux flux
 
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
@@ -446,8 +427,6 @@ map .
   field time_tag time_tag
   field dst dst
 last dst exosphere_dst_nt
-  field time_tag time_tag
-  field dst dst
 
 url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
 ttl 60
@@ -482,7 +461,6 @@ map
 field kp_index kp_index
 field estimated_kp estimated_kp
 last estimated_kp exosphere_kp_estimated
-  field estimated_kp estimated_kp
   field kp kp
 
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
@@ -523,18 +501,11 @@ map .
   field Kp Kp
   field a_running a_running
   field station_count station_count
-  field 0 0
-  field 1 1
-  field 2 2
-  field 3 3
-  field time_tag time_tag
   field kp_index kp_index
   field kp_estimated kp_estimated
   path -1.Kp Kp
   path -1.a_running a_running
 last Kp magnetosphere_kp_index_noaa
-map
-  field time_tag time_tag
   field kp kp
   field running_avg_kp running_avg_kp
 
@@ -1358,8 +1329,6 @@ ttl 300
 force em
 at sun 1.0
 map coordinates
-lat_key 1
-lon_key 0
 field_in 2 aurora_probability
 field_in 2 magnetosphere_aurora_power_gw
 field_in 2 aurora_intensity
@@ -1411,21 +1380,12 @@ lon_key lon
   field hale_class hale_class
   field mclass_flare_prob mclass_flare_prob
   field xclass_flare_prob xclass_flare_prob
-  field area area
   field spots spots
-  field region region
-  field latitude latitude
-  field longitude longitude
-  field area area
   field spot_class spot_class
   field mag_class mag_class
   field first_date first_date
-  field region region
-  field area area
   field number_spots number_spots
   field extent extent
-  field spot_class spot_class
-  field mag_class mag_class
 
 url https://api.weather.gov/alerts/active
 ttl 300
@@ -1443,16 +1403,9 @@ lon_key geometry.coordinates.0
   path current.weather_code weather_code
 lat_key lat
 lon_key lon
-  field properties.event event
-  field properties.severity severity
   field properties.urgency urgency
-  field properties.areaDesc areaDesc
-lat_key 38.9
-lon_key -77.0
   field properties.id id
-  field properties.event event
   field properties.certainty certainty
-  field properties.urgency urgency
   field properties.effective effective
   field properties.expires expires
   field properties.messageType messageType
@@ -7010,8 +6963,6 @@ at sun 1.0
 pos atmosphere_lat atmosphere_lon
   path latitude lat
   path longitude lon
-  path latitude lat
-  path longitude lon
   path current.pm10 pm10_ugm3
   path current.pm2_5 pm25_ugm3
   path current.carbon_monoxide co_ugm3
@@ -7463,8 +7414,6 @@ force seismic-body
 at sun 1.0
 format universal
 rows
-lat_key 2
-lon_key 3
 field_in 0 geosphere_gfz_event_id
 field_in 1 geosphere_gfz_time
 field_in 4 geosphere_gfz_depth_km
@@ -7553,7 +7502,6 @@ lon_key lon
   field properties.mag mag
   field properties.sig sig
   field geometry.coordinates.2 2
-  field properties.mag mag
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
 ttl 600
@@ -7562,7 +7510,6 @@ on earth 0 0
 map features
 lat_key lat
 lon_key lon
-  field properties.mag mag
   field properties.mag mag
   field properties.place place
   field properties.time time
@@ -7611,8 +7558,6 @@ force acoustic
 at sun 1.0
 format text
 rows
-lat_key 5
-lon_key 6
 field_in 0 station_id
 field_in 8 wind_dir_deg
 field_in 9 wind_speed_ms
@@ -7672,18 +7617,12 @@ lon_key longitude
   field movementSpeed movementSpeed
   field pressure pressure
   field stormName stormName
-  field windSpeed windSpeed
-  field pressure pressure
-  field movementDir movementDir
-  field movementSpeed movementSpeed
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=water_level&datum=MSL&units=metric&time_zone=gmt&format=json
 ttl 900
 force diffusion
 at sun 1.0
 map data
-lat_key 32.757
-lon_key -117.226
   field t t
   field s s
   field f f
@@ -7986,8 +7925,6 @@ ttl 1800
 force diffusion
 at sun 1.0
 map current
-lat_key 52.52
-lon_key 13.41
   field temperature_2m temperature_2m
   field relative_humidity_2m relative_humidity_2m
   field apparent_temperature apparent_temperature
@@ -8028,8 +7965,6 @@ ttl 1800
 force diffusion
 at sun 1.0
 map properties
-lat_key 39.073
-lon_key -95.626
   field temperature temperature
   field dewpoint dewpoint
   field windDirection windDirection
@@ -8050,8 +7985,6 @@ lon_key lon
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
   field geometry.coordinates.2 2
-  field properties.mag mag
-  field properties.mag mag
   field properties.place place
   field properties.time time
   field properties.depth depth
@@ -8063,8 +7996,6 @@ force acoustic
 at sun 1.0
 format universal
 rows
-lat_key 1
-lon_key 2
 field_in 0 station_id
 field_in 8 wind_dir_deg
 field_in 9 wind_speed_ms
@@ -8115,8 +8046,6 @@ field_in 5 longitude_deg
 field_in 6 lon_dir
 field_in 7 altitude_km
 field_in 8 velocity_kms
-lat_key 3
-lon_key 5
 field_in 0 event_date
 field_in 1 energy
 field_in 2 impact_energy_kt
@@ -9200,8 +9129,6 @@ ttl 3600
 on earth 0.0 0.0
 force diffusion
 map
-lat_key 40.74
-lon_key -73.98
 lat 40.74
 lon -73.98
   field station station
@@ -9217,8 +9144,6 @@ ttl 3600
 on earth 0.0 0.0
 force diffusion
 map
-lat_key 40.74
-lon_key -73.98
 lat 40.74
 lon -73.98
   field station station
@@ -9349,8 +9274,6 @@ ttl 3600
 force diffusion
 at sun 1.0
 map hourly
-lat_key 52.52
-lon_key 13.41
   field temperature_2m temperature_2m
   field relative_humidity_2m relative_humidity_2m
   field precipitation_probability precipitation_probability
@@ -9913,15 +9836,6 @@ at sun 1.0
 format text
 rows
 pos 0 0
-  field 0 0
-  field 1 1
-  field 2 2
-  field 3 3
-  field 4 4
-  field 5 5
-  field 6 6
-  field 7 7
-  field 8 8
 
 url https://api.geonet.org.nz/volcano/val
 ttl 3600
@@ -10091,8 +10005,6 @@ ttl 3600
 force diffusion
 at sun 1.0
 map data
-lat_key 32.757
-lon_key -117.226
   field t t
   field v v
 
@@ -10101,8 +10013,6 @@ ttl 3600
 force diffusion
 at sun 1.0
 map data
-lat_key 32.757
-lon_key -117.226
   field t t
   field v v
   field d d
@@ -10112,8 +10022,6 @@ ttl 3600
 force diffusion
 at sun 1.0
 map data
-lat_key 32.757
-lon_key -117.226
   field t t
   field v v
 
@@ -10122,8 +10030,6 @@ ttl 3600
 force diffusion
 at sun 1.0
 map data
-lat_key 32.757
-lon_key -117.226
   field t t
   field s s
   field d d
@@ -10134,8 +10040,6 @@ ttl 3600
 force diffusion
 at sun 1.0
 map properties
-lat_key 39.7456
-lon_key -97.0892
   field cwa cwa
   field forecastOffice forecastOffice
   field forecastHourly forecastHourly
@@ -10150,8 +10054,6 @@ ttl 3600
 force diffusion
 at sun 1.0
 map properties
-lat_key 39.7456
-lon_key -97.0892
   field updated updated
   field units units
   field generatedAt generatedAt
@@ -10289,8 +10191,6 @@ ttl 3600
 force em
 at sun 1.0
 map table.rows
-lat_key 0
-lon_key 1
 field_in 2 hydrosphere_drifter_sst_k
 
 url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
@@ -10623,8 +10523,6 @@ force thermal
 at sun 1.0
 format text
 rows
-lat_key 1
-lon_key 2
 field_in 7 atmosphere_aeronet_aod_500nm
 
 url https://db.satnogs.org/api/tle/?format=json
@@ -10685,8 +10583,6 @@ ttl 43200
 force em
 at sun 1.0
 map table.rows
-lat_key 2
-lon_key 3
 alt_key 1
 epoch_key 0
 field_in 4 coastwatch_ascat_x_wind_ms
@@ -10696,8 +10592,6 @@ ttl 43200
 force diffusion
 at sun 1.0
 map daily
-lat_key 52.52
-lon_key 13.41
   field temperature_2m_max temperature_2m_max
   field temperature_2m_min temperature_2m_min
   field precipitation_sum precipitation_sum
@@ -10723,8 +10617,6 @@ ttl 43200
 force thermal
 at sun 1.0
 map table.rows
-lat_key 2
-lon_key 3
 epoch_key 0
 field_in 4 cryosphere_oisst_sea_ice_fraction
 
@@ -10744,8 +10636,6 @@ ttl 43200
 force thermal
 at sun 1.0
 map table.rows
-lat_key 2
-lon_key 1
 alt_key 3
 alt_sign -1
 epoch_key 0
@@ -10756,8 +10646,6 @@ ttl 43200
 force diffusion
 at sun 1.0
 map table.rows
-lat_key 1
-lon_key 2
 epoch_key 0
 field_in 3 socat_xco2_water_dry_ppm
 
@@ -10785,10 +10673,6 @@ rows
 ra_key ra
 dec_key dec
   field designation designation
-  field w1mpro w1mpro
-  field w2mpro w2mpro
-  field w3mpro w3mpro
-  field w4mpro w4mpro
   field w1mpro w1mpro
   field w2mpro w2mpro
   field w3mpro w3mpro
@@ -10959,7 +10843,7 @@ field_in 23 dm
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -10972,7 +10856,7 @@ field_in 4 ruwe
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.1%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%3E2
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -10983,7 +10867,7 @@ field_in 2 bp_rp
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20%3C%208%20AND%20parallax%20%3E%205
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -10994,7 +10878,7 @@ field_in 2 par
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20SQRT%28POWER%28ra-266.4%2C2%29%2BPOWER%28dec%2B29%2C2%29%29%3C5%20AND%20parallax%20IS%20NOT%20NULL
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11005,7 +10889,7 @@ field_in 2 mag_g
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E2%20AND%20bp_rp%3C4%20AND%20parallax%3E20
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11016,7 +10900,7 @@ field_in 2 mag_g
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20BETWEEN%2015%20AND%2018%20AND%20parallax%20IS%20NOT%20NULL
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11028,7 +10912,7 @@ field_in 3 par
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%20-0.3%20AND%20phot_g_mean_mag%20%3C%2013
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11041,7 +10925,7 @@ field_in 4 bp_rp
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3E%203.5%20AND%20phot_g_mean_mag%20%3C%2014
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11054,7 +10938,7 @@ field_in 4 bp_rp
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ABS%28b%29%3C10%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%20IS%20NOT%20NULL
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11065,7 +10949,7 @@ field_in 2 mag_g
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E1.5%20AND%20bp_rp%3C3%20AND%20phot_g_mean_mag%3C12%20AND%20parallax%3E2
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11076,7 +10960,7 @@ field_in 2 mag_g
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20radial_velocity%20IS%20NOT%20NULL%20AND%20ABS%28radial_velocity%29%20%3E%20200
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11088,7 +10972,7 @@ field_in 3 par
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.3%20AND%20phot_g_mean_mag%3C15%20AND%20parallax%3E1
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11099,7 +10983,7 @@ field_in 2 mag_g
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11110,7 +10994,7 @@ field_in 2 par
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E-0.2%20AND%20bp_rp%3C1%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E5
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11121,7 +11005,7 @@ field_in 2 mag_g
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cmh_gspphot%20FROM%20gaiadr3.gaia_source%20WHERE%20mh_gspphot%20IS%20NOT%20NULL%20AND%20parallax%20%3E%202
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11134,7 +11018,7 @@ field_in 4 metallicity_dex
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E0.8%20AND%20bp_rp%3C1.2%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E3
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11145,7 +11029,7 @@ field_in 2 bp_rp
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11290,8 +11174,6 @@ force em
 at sun 1.0
 format universal
 map .
-lat_key 0
-lon_key 1
 field_in 2 chandra_exposure_sec
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,instrument,obs_date+FROM+chanmaster+WHERE+status%3D'archived'+AND+exposure%3E10000+ORDER+BY+obs_date+DESC
@@ -11749,10 +11631,6 @@ dec_key dec
   field k_m k_m
   field ph_qual ph_qual
   field gal_contam gal_contam
-  field j_m j_m
-  field h_m h_m
-  field k_m k_m
-  field designation designation
   field mag3_6 mag3_6
   field mag4_5 mag4_5
   field mag5_8 mag5_8
@@ -11764,7 +11642,6 @@ ra_key 0
 dec_key 1
 field_in 3 universe_2mass_gaia_g_mag
 map data
-  field designation designation
 lat_key ra
 lon_key dec
 
@@ -12067,7 +11944,6 @@ dec_key dec
   field imag imag
   field classtar classtar
   field sharp sharp
-  field oid oid
   field filterid filterid
   field medianmag medianmag
   field magrms magrms
@@ -12436,9 +12312,6 @@ dec_key Dec_J2000
   field Type Type
   field LX LX
   field Pdot Pdot
-  field B_surf B_surf
-  field Type Type
-  field LX LX
   field LastBurst LastBurst
 
 url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
@@ -12623,8 +12496,6 @@ force gravity
 at sun 1.0
 format universal
 rows
-lat_key 7
-lon_key 8
   field 0 name meteorite_name
   field 1 id meteorite_id
   field 2 name_type classification_status
@@ -13241,11 +13112,9 @@ ra_key _RA
 dec_key _DE
   field zabs zabs
   field NHI NHI
-  field recno recno
   field FIRST FIRST
   field p(S) p(S)
   field Fpeak Fpeak
-  field recno recno
   field PGC PGC
   field GWGC GWGC
   field HyperLEDA HyperLEDA
@@ -13253,8 +13122,6 @@ dec_key _DE
   field SDSS-DR12 SDSS-DR12
   field Flag1 Flag1
   field e_Dist e_Dist
-  field Bmag Bmag
-  field e_Bmag e_Bmag
   field BMAG BMAG
   field Jmag Jmag
   field e_Jmag e_Jmag
@@ -13264,25 +13131,14 @@ dec_key _DE
   field e_Kmag e_Kmag
   field Flag2 Flag2
   field Flag3 Flag3
-  field recno recno
-  field PGC PGC
-  field GWGC GWGC
-  field HyperLEDA HyperLEDA
-  field recno recno
-  field PGC PGC
-  field HyperLEDA HyperLEDA
   field NED NED
-  field recno recno
-  field Field Field
   field Xpos Xpos
   field Ypos Ypos
-  field recno recno
   field SNR SNR
   field MajDiam MajDiam
   field MinDiam MinDiam
 ra_key RAmdeg
 dec_key DEmdeg
-  field recno recno
   field TYC1 TYC1
   field TYC2 TYC2
   field TYC3 TYC3
@@ -13326,16 +13182,9 @@ dec_key DEmdeg
   field Org Org
   field Nu Nu
   field EPucac EPucac
-  field pmRA pmRA
-  field e_pmRA e_pmRA
-  field pmDE pmDE
-  field e_pmDE e_pmDE
   field Gmag Gmag
   field f_mag f_mag
   field Rmag Rmag
-  field Jmag Jmag
-  field Hmag Hmag
-  field Kmag Kmag
 ra_key RA_ICRS
 dec_key DE_ICRS
   field Flux1 Flux1
@@ -13784,7 +13633,6 @@ rows
 ra_key RAJ2000
 dec_key DEJ2000
   field ID ID
-  field [Fe/H] 
   field VHB VHB
   field sigv sigv
   field MVt MVt
@@ -13890,8 +13738,6 @@ dec_key DEJ2000
   field SpeakTot SpeakTot
   field Maj Maj
   field Source Source
-  field Speak Speak
-  field SpeakTot SpeakTot
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3006+Name,RAJ2000,DEJ2000,d,logt,FeH,r2,Type+FROM+"J/A+A/558/A53/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+d+ASC
 ttl 86400
@@ -13903,7 +13749,6 @@ lat_key RAJ2000
 lon_key DEJ2000
   field Name Name
   field logt logt
-  field [Fe/H] 
   field r2 r2
   field Type Type
 dist_key d
@@ -14222,7 +14067,6 @@ dec_key DEJ2000
 cmap data
   field recno recno
   field OID OID
-  field Name Name
   field V V
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+1%3DCONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
@@ -14359,8 +14203,6 @@ ttl 86400
 on earth 0.0 0.0
 force diffusion
 map
-lat_key 40.74
-lon_key -73.98
 lat 40.74
 lon -73.98
   field station station
@@ -15008,8 +14850,6 @@ at sun 1
 map catalog
   field id id
   field title title
-  field id id
-  field title title
 
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=IC,AU
 ttl 86400
@@ -15324,8 +15164,6 @@ force diffusion
 at sun 1.0
 format universal
 map data
-lat_key 1
-lon_key 2
 field_in 0 station_id
 field_in 3 elevation_m
 field_in 4 state
@@ -15653,8 +15491,6 @@ ttl 86400
 force diffusion
 at sun 1.0
 map predictions
-lat_key 32.757
-lon_key -117.226
   field t t
   field v v
 
@@ -15699,8 +15535,6 @@ force seismic-body
 at sun 1.0
 format universal
 rows
-lat_key 2
-lon_key 3
 field_in 0 geosphere_orfeus_network
 field_in 1 geosphere_orfeus_station
 field_in 4 geosphere_orfeus_elevation_m
@@ -15766,7 +15600,6 @@ lon_key longitude
   field icao_coordinates icao_coordinates
 lat_key lat
 lon_key lon
-  field elevation_meters elevation_meters
   field vnum vnum
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
@@ -15821,7 +15654,6 @@ rows
 lat_key latitude
 lon_key longitude
   field sla sla
-  field sla sla
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 ttl 86400
@@ -15833,7 +15665,6 @@ lat_key latitude
 lon_key longitude
   field Potential_temperature Potential_temperature
   field so so
-  field Potential_temperature Potential_temperature
 
 url https://erddap.marine.ie/erddap/griddap/IMI_IRISH_SHELF_SWAN_WAVE.csv?significant_wave_height%5B(last)%5D%5B(-60.0):4:(60.0)%5D%5B(-20.0):4:(-5.0)%5D
 ttl 86400
@@ -15914,8 +15745,6 @@ ttl 86400
 force thermal
 at sun 1.0
 map table.rows
-lat_key 2
-lon_key 3
 field_in 4 hydrosphere_sst_c
 
 url https://dap.oceannetworks.ca/erddap/tabledap/scalar_1202591.csv?time,latitude,longitude,salinity&time>=max(time)-7day
@@ -16028,7 +15857,6 @@ on earth 68.358 18.823
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16056,7 +15884,6 @@ on earth -23.762 133.883
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16065,7 +15892,6 @@ on earth 49.08 14.02
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16076,7 +15902,6 @@ on earth 51.836 20.789
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16085,7 +15910,6 @@ on earth 48.331 8.325
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16096,7 +15920,6 @@ on earth 40.14 -105.233
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16105,7 +15928,6 @@ on earth 71.32 -156.62
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16116,7 +15938,6 @@ on earth 30.35 -89.63999999999999
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16125,7 +15946,6 @@ on earth -12.188 96.834
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
@@ -16136,7 +15956,6 @@ on earth 48.025 2.26
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16146,7 +15965,6 @@ on earth 64.87 -147.86
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16155,7 +15973,6 @@ on earth -35.32 149.36
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16174,7 +15991,6 @@ on earth -66.283 110.533
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16183,7 +15999,6 @@ on earth -20.09 146.264
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16194,7 +16009,6 @@ on earth 36.37 126.854
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16203,7 +16017,6 @@ on earth 70.36 -148.79
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
@@ -16214,7 +16027,6 @@ on earth 11.95 108.48
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16223,7 +16035,6 @@ on earth 50.1 4.6
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
@@ -16234,7 +16045,6 @@ on earth 41.65 14.47
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
@@ -16243,7 +16053,6 @@ on earth 40.957 0.333
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16254,7 +16063,6 @@ on earth -43.474 172.393
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16263,7 +16071,6 @@ on earth 38.21 -77.36700000000002
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16274,7 +16081,6 @@ on earth 37.09 -119.72
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16284,7 +16090,6 @@ on earth 48.17 11.28
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16293,7 +16098,6 @@ on earth -0.695 73.154
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16321,7 +16125,6 @@ on earth -31.356 115.715
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16331,7 +16134,6 @@ on earth 13.59 144.87
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
@@ -16340,7 +16142,6 @@ on earth 28.321 -16.440999999999974
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16369,7 +16170,6 @@ on earth 54.603 18.811
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16378,7 +16178,6 @@ on earth 21.32 -158.0
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
@@ -16389,7 +16188,6 @@ on earth 47.873 18.19
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16398,7 +16196,6 @@ on earth 77.0 15.55
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16418,7 +16215,6 @@ on earth 17.42 78.55
   path 1.2 z_nt
   path 2 s_nt
   path 1.1 y_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
@@ -16427,7 +16223,6 @@ on earth -27.171 -109.41999999999999
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16447,7 +16242,6 @@ on earth 40.5 29.72
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16466,7 +16260,6 @@ on earth 36.232 140.186
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16477,7 +16270,6 @@ on earth -12.69 132.47
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16486,7 +16278,6 @@ on earth 67.843 20.42
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16506,7 +16297,6 @@ on earth 31.42 130.88
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
@@ -16515,7 +16305,6 @@ on earth 5.21 -52.73000000000002
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16536,7 +16325,6 @@ on earth 64.612 18.748
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16545,7 +16333,6 @@ on earth 50.298 5.682
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16601,7 +16388,6 @@ on earth 48.27 -117.12
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16610,7 +16396,6 @@ on earth 52.07 12.68
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16648,7 +16433,6 @@ on earth 42.515 24.177
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16666,7 +16450,6 @@ on earth 21.03 105.96
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16686,7 +16469,6 @@ on earth -17.567 -149.574
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
@@ -16695,7 +16477,6 @@ on earth -21.206 55.576
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ESK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
@@ -16724,8 +16505,6 @@ on earth 36.667 -5.944999999999993
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 1.2 z_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16744,7 +16523,6 @@ on earth 55.35 -160.46
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16752,8 +16530,6 @@ force gravity
 on earth 57.06 -135.33
   path 1.0 x_nt
   path 1.1 y_nt
-  path 1.2 z_nt
-  path 2 s_nt
   path 1.2 z_nt
   path 2 s_nt
 
@@ -16764,7 +16540,6 @@ on earth 18.11 -66.14999999999998
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16783,7 +16558,6 @@ on earth 39.55 -4.350000000000023
   path 1.1 y_nt
   path 2 s_nt
   path 1.2 z_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
@@ -16792,7 +16566,6 @@ on earth 44.68 26.25
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16847,7 +16620,6 @@ on earth -1.205 -48.51299999999998
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16856,7 +16628,6 @@ on earth 32.17 -110.72999999999999
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
@@ -16883,10 +16654,6 @@ force gravity
 on earth -70.683 -8.281999999999982
   path 1.0 x_nt
   path 1.1 y_nt
-  path 1.2 z_nt
-  path 2 s_nt
-  path 2 s_nt
-  path 1.0 x_nt
   path 1.2 z_nt
   path 2 s_nt
 
@@ -16916,7 +16683,6 @@ on earth 47.931 15.866
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-  path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z
 ttl 86400
@@ -16925,7 +16691,6 @@ on earth 53.725 9.053
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-  path 2 s_nt
   path 2 s_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
@@ -17184,7 +16949,7 @@ plx_key default_plx
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag%2Cperiod+FROM+gaiadr3.nss_two_body_orbit+WHERE+parallax%3E0
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17195,7 +16960,7 @@ plx_key parallax
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag%2Cbp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp%3C-0.2+AND+phot_g_mean_mag%3C14+AND+parallax%3E0
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17207,7 +16972,7 @@ plx_key parallax
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag%3C7+AND+parallax%3E0
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17226,7 +16991,7 @@ plx_key parallax
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag%3C9+AND+parallax%3E0
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17234,11 +16999,10 @@ ra_key ra
 dec_key dec
 plx_key parallax
   field phot_g_mean_mag phot_g_mean_mag
-  field phot_g_mean_mag phot_g_mean_mag
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag%2Cbp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp%3E1.0+AND+phot_g_mean_mag%3C12+AND+parallax%3E0
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17251,7 +17015,7 @@ plx_key parallax
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cpmra%2Cpmdec%2Cphot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+SQRT%28POWER%28pmra%2C2%29%2BPOWER%28pmdec%2C2%29%29%3E1000+AND+parallax%3E0
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17261,11 +17025,10 @@ plx_key parallax
   field phot_g_mean_mag phot_g_mean_mag
   field pmra pmra
   field pmdec pmdec
-  field phot_g_mean_mag phot_g_mean_mag
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cpmra%2Cpmdec%2Cphot_g_mean_mag%2Cradial_velocity+FROM+gaiadr3.gaia_source+WHERE+SQRT%28POWER%28pmra%2C2%29%2BPOWER%28pmdec%2C2%29%29%3E500+AND+parallax%3E0
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17277,7 +17040,7 @@ plx_key parallax
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag%2Cmh_gspphot+FROM+gaiadr3.gaia_source+WHERE+mh_gspphot%3C-2.0+AND+parallax%3E0
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17289,7 +17052,7 @@ plx_key parallax
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax%3E10
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17301,11 +17064,10 @@ plx_key parallax
   field phot_g_mean_mag phot_g_mean_mag
   field bp_rp bp_rp
   field radial_velocity radial_velocity
-  field phot_g_mean_mag phot_g_mean_mag
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax%3E50
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17317,11 +17079,10 @@ plx_key parallax
   field phot_g_mean_mag phot_g_mean_mag
   field bp_rp bp_rp
   field radial_velocity radial_velocity
-  field phot_g_mean_mag phot_g_mean_mag
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag%2Bbp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp%3C0.2+AND+phot_g_mean_mag%3C18+AND+parallax%3E0
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17333,7 +17094,7 @@ plx_key parallax
 
 url https://raw.githubusercontent.com/omegaflow/sources/main/gaia_wide_parallax4_mag11.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -17919,7 +17680,7 @@ plx_key default_plx
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmssc
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -18538,7 +18299,7 @@ epoch_key properties.src_date
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -18552,7 +18313,7 @@ radvel_key 5 1000
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+6+AND+parallax+>+0+ORDER+BY+phot_g_mean_mag
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -18566,7 +18327,7 @@ radvel_key 5 1000
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+128+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,ap.age_flame,ap.teff_gspphot+FROM+gaiadr3.astrophysical_parameters+AS+ap+JOIN+gaiadr3.gaia_source+AS+g+ON+ap.source_id=g.source_id+WHERE+ap.age_flame+IS+NOT+NULL+AND+g.parallax+>+0+ORDER+BY+ap.age_flame+DESC
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -18581,7 +18342,7 @@ radvel_key 5 1000
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.vari_classifier_result
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -18606,7 +18367,7 @@ z_key z
 
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27BD*%27
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -18617,7 +18378,7 @@ plx_key parallax
 
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27C*%27
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -18729,7 +18490,7 @@ dec_key DEJ2000
 
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WD*'
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -18740,7 +18501,7 @@ plx_key parallax
 
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27WR*%27
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -18751,7 +18512,7 @@ plx_key parallax
 
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27S*Y%27
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -18908,8 +18669,6 @@ field_in 11 snr
 field_in 12 rms
 field_in 13 dist_mpc
 field_in 14 log_m_sun
-lat_key 2
-lon_key 3
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+"{catalog}"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 ttl 2592000
@@ -18919,7 +18678,6 @@ verify false
 format universal
 map data
 catalog I/355/gaiadr3
-map data
 lat_key RAJ2000
 lon_key DEJ2000
 
@@ -19130,7 +18888,7 @@ at sun 1.0
 reach_ttl 86400
 catalog_epoch 504921600.0
 abs_mag_from mag_g
-force em gravity
+force em
 cmap data
 tau_key _dist_m
 ra_key 0
