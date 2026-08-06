@@ -9891,6 +9891,7 @@ force em
 at sun 1.0
 
 url https://api.superdarn.ca/v1/convection/map/latest
+ttl 86400
 force em
 on earth 65.0 -147.0
 field map ocean_polar_convection_velocity_ms
@@ -9902,7 +9903,9 @@ force em
 at sun 1
 
 url https://api.superdarn.ca/v1/radars/status
+ttl 86400
 force em
+at sun 1.0
 body earth
 map .
 lat_key latitude
@@ -10583,7 +10586,9 @@ body earth
 at sun 1.0
 
 url https://api.obis.org/v3/occurrence/grid/100?taxon=*https://api.eurobis.org/year=2026https://api.eurobis.org/geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year}
+ttl 86400
 force em
+at sun 1.0
 body earth
 map results
 lat_key decimalLatitude
@@ -11827,7 +11832,7 @@ field_in 23 dm
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_astrometric_binaries_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11840,7 +11845,7 @@ field_in 4 ruwe
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_blue_stragglers_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11851,7 +11856,7 @@ field_in 2 bp_rp
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_bright_giants_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11862,7 +11867,7 @@ field_in 2 par
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_bulge_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11873,7 +11878,7 @@ field_in 2 mag_g
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_cool_dwarfs_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11884,7 +11889,7 @@ field_in 2 mag_g
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_deep_mag_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11896,7 +11901,7 @@ field_in 3 par
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_extreme_blue_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11909,7 +11914,7 @@ field_in 4 bp_rp
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_extreme_red_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11922,7 +11927,7 @@ field_in 4 bp_rp
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_galactic_plane_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11933,7 +11938,7 @@ field_in 2 mag_g
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_giant_branch_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11944,7 +11949,7 @@ field_in 2 mag_g
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_high_velocity_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11956,7 +11961,7 @@ field_in 3 par
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_hot_subdwarfs_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11967,7 +11972,7 @@ field_in 2 mag_g
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_lmc_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11978,7 +11983,7 @@ field_in 2 par
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_main_sequence_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -11989,7 +11994,7 @@ field_in 2 mag_g
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_metallicity_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -12002,7 +12007,7 @@ field_in 4 metallicity_dex
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_red_clump_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -12013,7 +12018,7 @@ field_in 2 bp_rp
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_smc_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -14349,7 +14354,7 @@ field z redshift
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/vizier_main_2mass_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -15087,7 +15092,7 @@ field F100um flux_100um_jy
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/vizier_main_panstarrs_{latest}.json
 ttl 86400
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -16123,6 +16128,7 @@ field year data_year
 url https://github.com/omegaflow/sources/releases/download/api.marinespecies.org/worldpop_population_density_global_{latest}.json
 ttl 86400
 force diffusion
+at sun 1.0
 body earth
 map data
 lat_key latitude
@@ -16138,6 +16144,7 @@ force diffusion
 at sun 1.0
 
 url https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames[]=Mola+mola&marine_only=true
+ttl 86400
 force em
 on earth 0.0 0.0
 map .
@@ -16927,6 +16934,7 @@ ttl 86400
 force gravity
 
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
+ttl 86400
 force em
 body earth
 on earth 0 0
@@ -16945,7 +16953,9 @@ ttl 86400
 force gravity
 
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=GRE&limit=500&format=json
+ttl 86400
 force em
+at sun 1.0
 body earth
 map features
 lat_key geometry.coordinates.1
@@ -19455,7 +19465,9 @@ force em
 at sun 1.0
 
 url https://api.openinframap.org/stats/country
+ttl 86400
 force em
+at sun 1.0
 body earth
 map .
 lat_key centroid.lat
@@ -19706,7 +19718,7 @@ field SpInd frb_spectral_index
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_binaries_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19717,7 +19729,7 @@ field phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_blue_supergiants_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19729,7 +19741,7 @@ field bp_rp astro_gaia_blue_supergiants_bp_rp
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_bright_vmag7_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19748,7 +19760,7 @@ field bp_rp astro_gaia_bright_vmag7_bp_rp
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_bright_vmag9_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19759,7 +19771,7 @@ field phot_g_mean_mag astro_gaia_bright_vmag9_phot_g_mean_mag
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_giants_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19772,7 +19784,7 @@ field teff_gspphot astro_gaia_giants_teff_gspphot
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_high_pm_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19785,7 +19797,7 @@ field pmdec astro_gaia_high_pm_pmdec
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_hypervelocity_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19797,7 +19809,7 @@ field radial_velocity astro_gaia_hypervelocity_radial_velocity
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_metal_poor_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19809,7 +19821,7 @@ field mh_gspphot astro_gaia_metal_poor_mh_gspphot
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_nearby_plx10_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19824,7 +19836,7 @@ field radial_velocity astro_gaia_nearby_plx10_radial_velocity
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_nearby_plx50_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19839,7 +19851,7 @@ field radial_velocity astro_gaia_nearby_plx50_radial_velocity
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_white_dwarfs_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -19851,7 +19863,7 @@ field bp_rp astro_gaia_white_dwarfs_bp_rp
 
 url https://raw.githubusercontent.com/omegaflow/sources/main/gaia_wide_parallax4_mag11.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20089,7 +20101,7 @@ field psfMag_r astro_sdss_stars_psfMag_r
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20109,7 +20121,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_barium_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20139,7 +20151,7 @@ z_key z
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_blue_giants_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20150,7 +20162,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_blue_supergiants_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20161,7 +20173,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_bright_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20172,7 +20184,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_brown_dwarfs_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20183,7 +20195,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_carbon_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20194,7 +20206,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_carbon_stars_var_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20214,7 +20226,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_ch_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20262,7 +20274,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_emission_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20320,7 +20332,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_giant_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20349,7 +20361,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_herbig_haro_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20470,7 +20482,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_nearby_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20535,7 +20547,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_pre_ms_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20546,7 +20558,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_proper_motion_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20566,7 +20578,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_pulsating_white_dwarfs_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20595,7 +20607,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_red_giants_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20606,7 +20618,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_red_supergiants_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20635,7 +20647,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_s_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20646,7 +20658,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_stellar_associations_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20684,7 +20696,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_ttauri_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20704,7 +20716,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_white_dwarfs_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20715,7 +20727,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_wolf_rayet_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20735,7 +20747,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_yellow_supergiants_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20746,7 +20758,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_young_stellar_objects_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -20757,7 +20769,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/simbad_main_yso_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -21348,7 +21360,7 @@ field corr astro_vizier_main_tycho2_corr
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/vizier_main_ucac5_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -21451,7 +21463,7 @@ field flux_b8 xmm_slew_flux_b8
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/xmm_sources_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -22078,7 +22090,7 @@ field properties.db_area cryosphere_glims_glacier_area_km2
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_nearby_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -22092,7 +22104,7 @@ radvel_key 5 1000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -22106,7 +22118,7 @@ radvel_key 5 1000
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+128+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,ap.age_flame,ap.teff_gspphot+FROM+gaiadr3.astrophysical_parameters+AS+ap+JOIN+gaiadr3.gaia_source+AS+g+ON+ap.source_id=g.source_id+WHERE+ap.age_flame+IS+NOT+NULL+AND+g.parallax+>+0+ORDER+BY+ap.age_flame+DESC
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -22121,7 +22133,7 @@ radvel_key 5 1000
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_variable_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -22146,7 +22158,7 @@ field petroMag_g sdss_galaxy_mag_g
 
 url https://github.com/omegaflow/sources/releases/download/simbad.u-strasbg.fr/simbad_brown_dwarfs_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -22157,7 +22169,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/simbad.u-strasbg.fr/simbad_carbon_stars_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -22269,7 +22281,7 @@ dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/simbad.u-strasbg.fr/simbad_white_dwarfs_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -22280,7 +22292,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/simbad.u-strasbg.fr/simbad_wolf_rayet_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -22291,7 +22303,7 @@ field phot_g_mean_mag star_g_mag
 
 url https://github.com/omegaflow/sources/releases/download/simbad.u-strasbg.fr/simbad_young_stellar_objects_{latest}.json
 ttl 604800
-force em gravity
+force em
 at sun 1.0
 cmap data
 tau_key _dist_m
@@ -22854,6 +22866,7 @@ field_in 3 co2_sigma_ppmv
 url https://api.open-elevation.com/api/v1/lookup?locations={grid}
 ttl 2592000
 force em
+at sun 1.0
 body earth
 map results
 lat_key latitude
@@ -22967,7 +22980,7 @@ at sun 1.0
 reach_ttl 86400
 catalog_epoch 504921600.0
 abs_mag_from mag_g
-force em gravity
+force em
 cmap data
 tau_key _dist_m
 ra_key 0
