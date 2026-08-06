@@ -1415,7 +1415,7 @@ field estimated_kp estimated_kp
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/geosphere_noaa_swpc_aurora_ovation_prime.json
 ttl 300
 force em
-on earth 0 0
+at sun 1.0
 map coordinates
 lat_key 1
 lon_key 0
@@ -7725,7 +7725,7 @@ field flux xray_flux_W_m2
 url https://github.com/omegaflow/sources/releases/download/api.weather.gov/geosphere_noaa_weather_alerts.json
 ttl 600
 force em
-on earth 0 0
+at sun 1.0
 map features
 lat_key 38.9
 lon_key -77.0
@@ -7945,7 +7945,7 @@ path current.swell_wave_period hydrosphere_swell_period_s
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/magnetosphere_ovation_aurora.json
 ttl 600
 force em
-on earth 0 0
+at sun 1.0
 map coordinates
 lat_key 1
 lon_key 0
@@ -7954,7 +7954,7 @@ field_in 2 magnetosphere_aurora_power_gw
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/magnetosphere_swpc_aurora_oval.json
 ttl 600
 force em
-on earth 0 0
+at sun 1.0
 map coordinates
 lat_key 1
 lon_key 0
@@ -7976,7 +7976,7 @@ field pressure central_pressure_mb
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/geosphere_noaa_tides_water_levels.json
 ttl 900
 force diffusion
-on earth 0 0
+at sun 1.0
 map data
 lat_key 32.757
 lon_key -117.226
@@ -8293,7 +8293,7 @@ field pressure pressure_mb
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/atmosphere_open_meteo_forecast.json
 ttl 1800
 force diffusion
-on earth 0 0
+at sun 1.0
 map current
 lat_key 52.52
 lon_key 13.41
@@ -8347,7 +8347,7 @@ field severity severity
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/geosphere_noaa_swpc_aurora_oval_north.json
 ttl 1800
 force em
-on earth 0 0
+at sun 1.0
 map coordinates
 lat_key 1
 lon_key 0
@@ -8356,7 +8356,7 @@ field_in 2 aurora_probability_pct
 url https://github.com/omegaflow/sources/releases/download/api.weather.gov/geosphere_noaa_weather_observations.json
 ttl 1800
 force diffusion
-on earth 0 0
+at sun 1.0
 map properties
 lat_key 39.073
 lon_key -95.626
@@ -9671,7 +9671,7 @@ field hourly.geopotential_height_500hPa z500_mgp
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/atmosphere_open_meteo_hourly_forecast.json
 ttl 3600
 force diffusion
-on earth 0 0
+at sun 1.0
 map hourly
 lat_key 52.52
 lon_key 13.41
@@ -10424,7 +10424,7 @@ field 0.temperature exosphere_ace_temp_k
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/exosphere_aurora_oval.json
 ttl 3600
 force em
-on earth 0 0
+at sun 1.0
 map coordinates
 lat_key 1
 lon_key 0
@@ -10858,7 +10858,7 @@ field first_date first_observed_date
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/geosphere_noaa_tides_air_pressure.json
 ttl 3600
 force diffusion
-on earth 0 0
+at sun 1.0
 map data
 lat_key 32.757
 lon_key -117.226
@@ -10868,7 +10868,7 @@ field v air_pressure_hpa
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=currents&units=metric&time_zone=gmt&format=json
 ttl 3600
 force diffusion
-on earth 0 0
+at sun 1.0
 map data
 lat_key 32.757
 lon_key -117.226
@@ -10879,7 +10879,7 @@ field d current_direction
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/geosphere_noaa_tides_water_temperature.json
 ttl 3600
 force diffusion
-on earth 0 0
+at sun 1.0
 map data
 lat_key 32.757
 lon_key -117.226
@@ -10889,7 +10889,7 @@ field v water_temperature_celsius
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/geosphere_noaa_tides_wind.json
 ttl 3600
 force diffusion
-on earth 0 0
+at sun 1.0
 map data
 lat_key 32.757
 lon_key -117.226
@@ -10901,7 +10901,7 @@ field g wind_gust_ms
 url https://github.com/omegaflow/sources/releases/download/api.weather.gov/geosphere_noaa_weather_api_points.json
 ttl 3600
 force diffusion
-on earth 0 0
+at sun 1.0
 map properties
 lat_key 39.7456
 lon_key -97.0892
@@ -10917,7 +10917,7 @@ field radarStation radar_station
 url https://github.com/omegaflow/sources/releases/download/api.weather.gov/geosphere_noaa_weather_forecast_hourly.json
 ttl 3600
 force diffusion
-on earth 0 0
+at sun 1.0
 map properties
 lat_key 39.7456
 lon_key -97.0892
@@ -11105,7 +11105,7 @@ field properties.Area area_km2
 url https://github.com/omegaflow/sources/releases/download/erddap.aoml.noaa.gov/hydrosphere_drifters_hourly.json
 ttl 3600
 force em
-on earth 0 0
+at sun 1.0
 map table.rows
 lat_key 0
 lon_key 1
@@ -11575,7 +11575,7 @@ field col7 dy_celestial_pole_mas
 url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdQMwind1day_LonPM180.json?x_wind%5B(2022-12-01T12%3A00%3A00Z)%5D%5B(10.0)%5D%5B(-75.0)%3A4%3A(75.0)%5D%5B(-180.0)%3A4%3A(180.0)%5D
 ttl 43200
 force em
-on earth 0 0
+at sun 1.0
 map table.rows
 lat_key 2
 lon_key 3
@@ -11586,7 +11586,7 @@ field_in 4 coastwatch_ascat_x_wind_ms
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/atmosphere_open_meteo_daily_forecast.json
 ttl 43200
 force diffusion
-on earth 0 0
+at sun 1.0
 map daily
 lat_key 52.52
 lon_key 13.41
@@ -11613,7 +11613,7 @@ field pressure_hPa atmosphere_radiosonde_pressure_hpa
 url https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.gov/cryosphere_coastwatch_oisst_sea_ice.json
 ttl 43200
 force thermal
-on earth 0 0
+at sun 1.0
 map table.rows
 lat_key 2
 lon_key 3
@@ -11634,7 +11634,7 @@ field elevation geosphere_raspberry_shake_elevation_m
 url https://github.com/omegaflow/sources/releases/download/erddap.ifremer.fr/hydrosphere_ocean_argo_floats_profiles.json
 ttl 43200
 force thermal
-on earth 0 0
+at sun 1.0
 map table.rows
 lat_key 2
 lon_key 1
@@ -11646,7 +11646,7 @@ field_in 4 argo_temp_c
 url https://data.pmel.noaa.gov/socat/erddap/tabledap/socat_v2026_fulldata.json?time,latitude,longitude,xCO2_water_sst_dry_ppm&time%3E={yesterday}&distinct()
 ttl 43200
 force diffusion
-on earth 0 0
+at sun 1.0
 map table.rows
 lat_key 1
 lon_key 2
@@ -11730,7 +11730,7 @@ last_line exosphere_chime_frb_count
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/astro_cneos_fireballs_infrasound.json
 ttl 86400
 force acoustic
-on earth 0 0
+at sun 1.0
 map data
 lat_key 3
 lon_key 5
@@ -12203,7 +12203,7 @@ field exposure exposure_s
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/astro_heasarc_main_chandra_master.json
 ttl 86400
 force em
-on earth 0 0
+at sun 1.0
 format universal
 map .
 lat_key 0
@@ -17330,7 +17330,7 @@ field SNWD snow_depth_mm
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/geosphere_noaa_ghcnd_global_station_inventory.json
 ttl 86400
 force diffusion
-on earth 0 0
+at sun 1.0
 format universal
 map data
 lat_key 1
@@ -17343,7 +17343,7 @@ field_in 5 station_name
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/geosphere_noaa_ghcnd_station_inventory.json
 ttl 86400
 force thermal
-on earth 0 0
+at sun 1.0
 format universal
 map data
 lat_key 1
@@ -17788,7 +17788,7 @@ field v predicted_tide_m
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/geosphere_noaa_tides_predictions.json
 ttl 86400
 force diffusion
-on earth 0 0
+at sun 1.0
 map predictions
 lat_key 32.757
 lon_key -117.226
@@ -18208,7 +18208,7 @@ field name oceanography_cmems_service_name
 url https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.gov/hydrosphere_oisst_sst.json
 ttl 86400
 force thermal
-on earth 0 0
+at sun 1.0
 map table.rows
 lat_key 2
 lon_key 3
@@ -23417,7 +23417,7 @@ field primary_fuel wri_primary_fuel
 url https://github.com/omegaflow/sources/releases/download/egg.astro.cornell.edu/astro_alfalfa_catalog.json
 ttl 2592000
 force em
-on earth 0 0
+at sun 1.0
 verify false
 format universal
 map data

@@ -32,7 +32,6 @@ fn main() {
     let mut deleted = 0usize;
     let mut converted = 0usize;
     let mut stripped = 0usize;
-    let mut sphere_stripped = 0usize;
 
     let mut source_blocks: Vec<(String, u64, Vec<String>)> = Vec::new();
 
@@ -102,7 +101,7 @@ fn main() {
             }
         }
 
-        sphere_stripped += strip_sphere_prefixes(&mut block);
+        strip_sphere_prefixes(&mut block);
 
         let ttl = extract_ttl(&block).unwrap_or(999999);
         source_blocks.push((name, ttl, block));
@@ -142,7 +141,6 @@ fn main() {
             "lmsal_solar_flares".to_string(),
             86400,
             build_source_block(
-                "lmsal_solar_flares",
                 86400,
                 "force em",
                 &[
@@ -166,7 +164,6 @@ fn main() {
             "satnogs_stations".to_string(),
             86400,
             build_source_block(
-                "satnogs_stations",
                 86400,
                 "force em",
                 &[
@@ -329,7 +326,7 @@ fn strip_sphere_prefixes(block: &mut Vec<String>) -> usize {
     count
 }
 
-fn build_source_block(name: &str, ttl: u64, force: &str, fields: &[&str]) -> Vec<String> {
+fn build_source_block(ttl: u64, force: &str, fields: &[&str]) -> Vec<String> {
     let mut block: Vec<String> = Vec::new();
     // url must be first line (new delimiter convention)
     for f in fields {
