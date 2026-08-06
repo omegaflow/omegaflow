@@ -12878,11 +12878,6 @@ dist_key 2 3.0857e19
 field_in 3 local_group_dsph_mass
 radvel_key 4 1000
 
-url https://gist.githubusercontent.com/burritojustice/2d967b31c3bd11165b4439ebe98ecb01/raw/8594b09096f93f723c929c397de49ed7ac8ecc64/mars_landers.geojson
-ttl 86400
-force em
-at mars 1
-
 url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
 ttl 86400
 force em
@@ -15015,83 +15010,6 @@ lon_key station.longitude
   field station.name name
   field station.country country
 
-url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Animalia&geo=&format=json&limit=500
-ttl 86400
-force diffusion
-at sun 1.0
-map .
-lat_key lat
-lon_key lon
-  field processid processid
-  field bin bin
-  field species_name species_name
-field country country
-  field region region
-field collection_date collection_date
-
-url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Echinodermata&geo=&format=json&limit=300
-ttl 86400
-force diffusion
-at sun 1.0
-map .
-lat_key lat
-lon_key lon
-  field processid processid
-  field bin bin
-  field species_name species_name
-field country country
-  field region region
-
-url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Plantae&geo=&format=json&limit=500
-ttl 86400
-force diffusion
-at sun 1.0
-map .
-lat_key lat
-lon_key lon
-  field processid processid
-  field bin bin
-  field species_name species_name
-field country country
-  field region region
-
-url https://clinicaltrials.gov/api/v2/studies?query.term=CRISPR&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
-ttl 86400
-force em
-on earth 37.872 -122.258
-  field totalCount totalCount
-
-url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update&biome_name=root:Environmental:Aquatic:Marine
-ttl 86400
-force diffusion
-at sun 1.0
-map data
-lat_key latitude
-lon_key longitude
-  field attributes.study-name study-name
-  field attributes.biome biome
-
-url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update
-ttl 86400
-force diffusion
-at sun 1.0
-map data
-lat_key latitude
-lon_key longitude
-  field attributes.study-name study-name
-  field attributes.biome biome
-  field attributes.last-update last-update
-
-url https://www.ebi.ac.uk/ena/portal/api/search?result=sample&query=tax_tree(2)&format=tsv&limit=500
-ttl 86400
-force diffusion
-on earth 0.0 0.0
-format universal
-rows
-  field 0 year
-  field 1 co2_annual_mean_ppm
-  field 2 co2_uncertainty_ppm
-
 url https://epoch.ai/data/notable_ai_models.csv
 ttl 86400
 force em
@@ -15193,64 +15111,11 @@ lon_key lon.value
   field alt.value value
   field ecosys.value value
 
-url https://www.ebi.ac.uk/metagenomics/api/v1/studies?page_size=1
-ttl 86400
-force em
-on earth 52.079 0.187
-  field meta.pagination.count count
-
 url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
 ttl 86400
 force em
 body earth
   field subset.0.1 1
-
-url https://api.neotomadb.org/v2/data/datasets?limit=500
-ttl 86400
-force diffusion
-at sun 1.0
-map data
-lat_key site.geography.lat
-lon_key site.geography.lng
-  field datasetid datasetid
-  field dataset.type type
-  field dataset.name name
-  field site.sitename sitename
-  field dataset.units units
-  field dataset.pi.name name
-
-url https://api.neotomadb.org/v2/data/datasets?datasettype=ostracode&limit=500&offset=0
-ttl 86400
-force diffusion
-at sun 1.0
-map data
-lat_key site.geography.latitude
-lon_key site.geography.longitude
-  field site.sitename sitename
-  field datasettype datasettype
-
-url https://api.neotomadb.org/v2/data/datasets?datasettype=plant+macrofossil&limit=500&offset=0
-ttl 86400
-force diffusion
-at sun 1.0
-map data
-lat_key site.geography.latitude
-lon_key site.geography.longitude
-  field site.sitename sitename
-
-url https://api.neotomadb.org/v2/data/sites?limit=500
-ttl 86400
-force diffusion
-at sun 1.0
-map data
-lat_key site.geography.lat
-lon_key site.geography.lng
-  field siteid siteid
-  field sitename sitename
-  field site.description description
-  field site.altitude altitude
-  field site.geography.country country
-  field site.geography.state state
 
 url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
 ttl 86400
@@ -15319,18 +15184,6 @@ lon_key decimalLongitude
   field iucnRedListCategory iucnRedListCategory
   field date_year date_year
 
-url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
-ttl 86400
-force em
-on earth 43.073 -89.401
-  field records_returned records_returned
-
-url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
-ttl 86400
-force em
-on earth 43.073 -89.401
-  field total total
-
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
 ttl 86400
 force em
@@ -15342,18 +15195,6 @@ ttl 86400
 force em
 at sun 1
   field scalerank scalerank
-
-url https://restcountries.com/v3.1/all?fields=name,population,latlng
-ttl 86400
-force em
-on earth 38.899 -77.043
-  field 0.population population
-
-url https://rest.uniprot.org/uniprotkb/statistics
-ttl 86400
-force em
-on earth 46.233 6.056
-  field statistics.0.value value
 
 url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
 ttl 86400
@@ -15367,57 +15208,6 @@ ttl 86400
 force em
 on earth 46.2276 6.1432
 last_line biosphere_who_life_expectancy_global
-
-url https://api.worldbank.org/v2/country/all/indicator/AG.LND.FRST.ZS?format=json&per_page=500
-ttl 86400
-force diffusion
-at sun 1.0
-map 1
-lat_key country.latitude
-lon_key country.longitude
-  field value value
-  field country.iso2Code iso2Code
-
-url https://api.worldbank.org/v2/country/all/indicator/EN.ATM.PM25.MC.M3?format=json&per_page=20000
-ttl 86400
-force diffusion
-at sun 1.0
-map data
-lat_key latitude
-lon_key longitude
-  field country country
-  field iso3 iso3
-field pm25_ugm3 pm25_ugm3
-  field year year
-
-url https://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?format=json&per_page=20000
-ttl 86400
-force diffusion
-body earth
-map data
-lat_key latitude
-lon_key longitude
-  field country country
-  field iso3 iso3
-  field population population
-  field year year
-
-url https://www.marinespecies.org/rest/AphiaRecordsByName/Solea%20solea?like=false&marine_only=true
-ttl 86400
-force diffusion
-at sun 1.0
-
-url https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames[]=Mola+mola&marine_only=true
-ttl 86400
-force em
-on earth 0.0 0.0
-map .
-  field scientificName scientificName
-  field aphiaID aphiaID
-field kingdom kingdom
-field phylum phylum
-  field class class
-  field order order
 
 url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
 ttl 86400
@@ -15935,15 +15725,6 @@ lon_key geometry.coordinates.0
   field properties.Region Region
   field properties.Elevation Elevation
   field properties.Geologic_Epoch Geologic_Epoch
-
-url https://data.humdata.org/api/3/action/package_search?q=type:administrative-boundary&rows=500
-ttl 86400
-force diffusion
-at sun 1
-map result.results
-  field title title
-  field notes notes
-  field organization.title title
 
 url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto
 ttl 86400
@@ -17988,12 +17769,6 @@ lon_key lng
   field status status
   field success_rate success_rate
 
-url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
-ttl 86400
-force em
-on earth 54.683 25.287
-  field a a
-
 url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
 ttl 86400
 force em
@@ -18023,18 +17798,6 @@ body earth
   path properties.parameter.RH2M.0 RH2M
   path properties.parameter.WS10M.0 WS10M
   path properties.parameter.PRECTOTCORR.0 PRECTOTCORR
-
-url https://registry.npmjs.org/-/v1/search?text=*&size=1
-ttl 86400
-force em
-on earth 37.774 -122.419
-  field total total
-
-url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
-ttl 86400
-force em
-on earth 48.8566 2.3522
-  field count count
 
 url https://overpass-api.de/api/interpreter?data=[out:json];node[power=plant](global);out;
 ttl 86400
@@ -18070,32 +17833,6 @@ field_in 10 municipality
 field_in 11 scheduled_service
 field_in 12 icao_code
 field_in 13 iata_code
-
-url https://atlas.ripe.net/api/v2/probes/?status=1&page_size=500&format=json
-ttl 86400
-force em
-at sun 1.0
-map results
-  field id id
-field description description
-  field country_code country_code
-  field asn_v4 asn_v4
-  field firmware_version firmware_version
-  field type type
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-
-url https://developer.uspto.gov/ptab-api/v2/patents?limit=1
-ttl 86400
-force em
-on earth 38.995 -77.101
-  field totalResults totalResults
-
-url https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
-ttl 86400
-force em
-on earth 37.774 -122.419
-  field query.statistics.articles articles
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+batsegrb
 ttl 604800
@@ -19947,35 +19684,6 @@ lon_key geometry.coordinates.0
   field properties.name name
   field properties.scalerank scalerank
 
-url https://gist.githubusercontent.com/rsicarelli/ba4b383a7b56c2f4292597e8c0965cc7/raw/a421c3ba23938f6963b120c6372ac74ca3186052/real.planet.world-heritage.json
-ttl 604800
-force em
-at sun 1.0
-map .
-lat_key lat
-lon_key lng
-  field year year
-
-url https://data.humdata.org/dataset/a60ac839-920d-435a-bf7d-25855602699d/resource/7234d067-2d74-449a-9c61-22ae6d98d928/download/volcano.json
-ttl 604800
-force em
-at sun 1.0
-map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field properties.V_Name V_Name
-  field properties.Country Country
-  field properties.PEI PEI
-
-url https://gist.githubusercontent.com/vasturiano/3c27138769a04d1780562ce04afbedf2/raw/83dde896972fad0f1f823191ea90e3d451d3977a/world_volcanoes.json
-ttl 604800
-force em
-on earth 0 0
-map .
-lat_key lat
-lon_key lon
-  field elevation elevation
-
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_lake_centerlines.geojson
 ttl 604800
 force em
@@ -20316,12 +20024,6 @@ ttl 2592000
 force em
 on earth 38.907 -77.036
   field data.0.areaHa areaHa
-
-url https://api.worldbank.org/v2/country/all/indicator/EN.ATM.CO2E.KT?format=json&per_page=20000
-ttl 2592000
-force em
-on earth 38.899 -77.043
-  field 1.0.value value
 
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
 ttl 2592000
