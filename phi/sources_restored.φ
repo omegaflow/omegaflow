@@ -9703,6 +9703,7 @@ force em
 at sun 1.0
 
 url https://api.superdarn.ca/v1/convection/map/latest
+ttl 3600
 force em
 on earth 65.0 -147.0
 field map ocean_polar_convection_velocity_ms
@@ -9714,6 +9715,7 @@ force em
 at sun 1
 
 url https://api.superdarn.ca/v1/radars/status
+ttl 86400
 force em
 body earth
 map .
@@ -10314,7 +10316,8 @@ force diffusion
 body earth
 at sun 1.0
 
-url https://api.obis.org/v3/occurrence/grid/100?taxon=*https://api.eurobis.org/year=2026https://api.eurobis.org/geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year}
+url https://api.obis.org/v3/occurrence/grid/100?scientificname=&year={year}&hascoordinates=true
+ttl 300
 force em
 body earth
 map results
@@ -15399,6 +15402,7 @@ force diffusion
 at sun 1.0
 
 url https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames[]=Mola+mola&marine_only=true
+ttl 86400
 force em
 on earth 0.0 0.0
 map .
@@ -16120,6 +16124,7 @@ ttl 86400
 force gravity
 
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
+ttl 86400
 force em
 body earth
 at sun 1.0
@@ -16138,6 +16143,7 @@ ttl 86400
 force gravity
 
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=GRE&limit=500&format=json
+ttl 86400
 force em
 body earth
 map features
@@ -18030,6 +18036,7 @@ force em
 at sun 1.0
 
 url https://api.openinframap.org/stats/country
+ttl 86400
 force em
 body earth
 map .
