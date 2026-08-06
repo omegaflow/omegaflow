@@ -112,14 +112,6 @@ at sun 1.0
 field 0.current_int_xrlong exosphere_solar_flare_intensity
 field 0.current_class exosphere_solar_flare_class
 
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
-ttl 60
-force advective
-at sun 1.0
-field 0.proton_speed exosphere_proton_speed_kms
-field 0.proton_density exosphere_proton_density_ncc
-field 0.proton_temperature exosphere_proton_temp_k
-
 url https://api.adsb.lol/v2/point/{lat}/{lon}/500
 ttl 60
 force em
@@ -145,19 +137,6 @@ field properties.time event_time_utc
 field properties.mag magnitude
 field properties.depth depth_km
 field properties.region geographic_region
-
-url https://api.geonet.org.nz/quake?MMI=3
-ttl 60
-force seismic-body
-at sun 1.0
-map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-field properties.magnitude magnitude
-field properties.locality locality
-field properties.time event_time
-field properties.depth depth_km
-field properties.mmi mmi_value
 
 url https://api.geonet.org.nz/quake?MMI=3
 ttl 60
@@ -237,15 +216,6 @@ field time_tag observation_time
 field flux_long_1_8A flux_1_8A_W_m2
 field flux_short_0_5_4A flux_0_5_4A_W_m2
 
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
-ttl 60
-force em
-at sun 1
-map .
-field_in 0 timestamp_utc
-field_in 1 flux_short_wm2
-field_in 2 flux_long_wm2
-
 url https://services.swpc.noaa.gov/products/alerts.json
 ttl 60
 force em
@@ -255,33 +225,6 @@ field time_tag alert_time_utc
 field message alert_message
 field issue_utc issue_time_utc
 
-url https://services.swpc.noaa.gov/products/alerts.json
-ttl 60
-force gravity
-at sun 1
-map
-field issue_time alert_time
-field message alert_text
-
-url https://services.swpc.noaa.gov/products/alerts.json
-ttl 60
-force gravity
-at sun 1
-map .
-field_in 0 timestamp_utc
-field_in 1 alert_type
-field_in 2 alert_message
-
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
-ttl 60
-force diffusion
-at sun 1.0
-map .
-field time_tag timestamp_utc
-field satellite satellite_id
-field flux proton_flux_p_cm2s
-field energy proton_energy_band
-
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 ttl 60
 force em
@@ -290,25 +233,6 @@ map .
 field 0 datetime_utc
 field 1 flux_short_0_5_4A
 field 2 flux_long_1_8A
-
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
-ttl 60
-force em
-at sun 1.0
-map .
-field time_tag timestamp_utc
-field satellite satellite_id
-field flux xray_flux_wm2
-field energy xray_energy_channel
-
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
-ttl 60
-force em
-at sun 1.0
-map
-field time_tag observation_time
-field flux_long_1_8A xray_1_8A_W_m2
-field flux_short_0_5_4A xray_0_5_4A_W_m2
 
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
 ttl 60
@@ -468,32 +392,12 @@ force gravity
 at sun 1
 last kp_index magnetosphere_kp_index
 
-url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
-ttl 60
-force diffusion
-at sun 1.0
-last_obj energy ">=2 MeV" flux radiation_electron_flux_2mev
-
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 ttl 60
 force diffusion
 at sun 1.0
 last_obj energy "40300-73400 keV" flux radiation_proton_flux_40mev
 last_obj energy "83700-98500 keV" flux radiation_proton_flux_80mev
-
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
-ttl 60
-force diffusion
-at sun 1.0
-last_obj energy ">=100 MeV" flux radiation_proton_flux_100mev
-
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
-ttl 60
-force gravity
-at sun 1.0
-last bz_gsm magnetosphere_imf_bz_nt
-last bt magnetosphere_imf_bt_nt
-last by_gsm magnetosphere_imf_by_nt
 
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 ttl 60
@@ -6882,7 +6786,7 @@ field p_astro physics_ligo_p_astro
 field group physics_ligo_event_group
 field pipeline physics_ligo_pipeline
 
-url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/noaa_coops_water_levels_usa_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/8518750_{latest}.json
 ttl 360
 force acoustic
 at sun 1.0
@@ -15351,19 +15255,6 @@ field AOD_440nm aod_440_l2
 field AOD_500nm aod_500_l2
 field Precipitable_Water(cm) precip_water_l2
 
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1
-ttl 86400
-force diffusion
-at sun 1.0
-format text
-rows
-lat_key Site_Latitude(Degrees)
-lon_key Site_Longitude(Degrees)
-field SSA_440nm ssa_440
-field SSA_675nm ssa_675
-field SSA_870nm ssa_870
-field SSA_1020nm ssa_1020
-
 url https://github.com/omegaflow/sources/releases/download/aeronet.gsfc.nasa.gov/aeronet_site_list_{latest}.json
 ttl 86400
 force diffusion
@@ -16516,12 +16407,6 @@ map data
 lat_key latitude
 lon_key longitude
 field_in err sea_level_anomaly_m
-
-url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/esa_cci_soil_moisture_erddap_{latest}.json
-at sun 1.0
-ttl 86400
-force thermal
-body earth
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_alternate_fuel_{latest}.json
 ttl 86400
@@ -17855,16 +17740,6 @@ lon_key longitude
 field Potential_temperature ocean_temp_k
 field so salinity_psu
 
-url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
-ttl 86400
-force thermal
-at sun 1.0
-format text
-rows
-lat_key latitude
-lon_key longitude
-field Potential_temperature temperature_k
-
 url https://erddap.marine.ie/erddap/griddap/IMI_IRISH_SHELF_SWAN_WAVE.csv?significant_wave_height%5B(last)%5D%5B(-60.0):4:(60.0)%5D%5B(-20.0):4:(-5.0)%5D
 ttl 86400
 force acoustic
@@ -18279,15 +18154,6 @@ path 1.1 magnetosphere_intermagnet_clf_y_nt
 path 1.2 magnetosphere_intermagnet_clf_z_nt
 path 2 magnetosphere_intermagnet_clf_s_nt
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 48.025 2.26
-path 1.0 magnetosphere_intermagnet_clf_x_nt
-path 1.1 magnetosphere_intermagnet_clf_y_nt
-path 1.2 magnetosphere_intermagnet_clf_z_nt
-path 2 magnetosphere_intermagnet_clf_f_nt
-
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_cmo_{latest}.json
 ttl 86400
 force gravity
@@ -18413,15 +18279,6 @@ path 1.1 magnetosphere_intermagnet_dlt_y_nt
 path 1.2 magnetosphere_intermagnet_dlt_z_nt
 path 2 magnetosphere_intermagnet_dlt_s_nt
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 11.95 108.48
-path 1.0 magnetosphere_intermagnet_dlt_x_nt
-path 1.1 magnetosphere_intermagnet_dlt_y_nt
-path 1.2 magnetosphere_intermagnet_dlt_z_nt
-path 2 magnetosphere_intermagnet_dlt_f_nt
-
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_dou_{latest}.json
 ttl 86400
 force gravity
@@ -18449,15 +18306,6 @@ path 1.1 magnetosphere_intermagnet_dur_y_nt
 path 1.2 magnetosphere_intermagnet_dur_z_nt
 path 2 magnetosphere_intermagnet_dur_s_nt
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 41.65 14.47
-path 1.0 magnetosphere_intermagnet_dur_x_nt
-path 1.1 magnetosphere_intermagnet_dur_y_nt
-path 1.2 magnetosphere_intermagnet_dur_z_nt
-path 2 magnetosphere_intermagnet_dur_f_nt
-
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
@@ -18466,15 +18314,6 @@ path 1.0 magnetosphere_intermagnet_ebr_x_nt
 path 1.1 magnetosphere_intermagnet_ebr_y_nt
 path 1.2 magnetosphere_intermagnet_ebr_z_nt
 path 2 magnetosphere_intermagnet_ebr_s_nt
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 40.957 0.333
-path 1.0 magnetosphere_intermagnet_ebr_x_nt
-path 1.1 magnetosphere_intermagnet_ebr_y_nt
-path 1.2 magnetosphere_intermagnet_ebr_z_nt
-path 2 magnetosphere_intermagnet_ebr_f_nt
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_eyr_{latest}.json
 ttl 86400
@@ -18637,15 +18476,6 @@ path 1.1 magnetosphere_intermagnet_gui_y_nt
 path 1.2 magnetosphere_intermagnet_gui_z_nt
 path 2 magnetosphere_intermagnet_gui_s_nt
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 28.321 -16.440999999999974
-path 1.0 magnetosphere_intermagnet_gui_x_nt
-path 1.1 magnetosphere_intermagnet_gui_y_nt
-path 1.2 magnetosphere_intermagnet_gui_z_nt
-path 2 magnetosphere_intermagnet_gui_f_nt
-
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_hbk_{latest}.json
 ttl 86400
 force gravity
@@ -18709,15 +18539,6 @@ path 1.1 magnetosphere_intermagnet_hrb_y_nt
 path 1.2 magnetosphere_intermagnet_hrb_z_nt
 path 2 magnetosphere_intermagnet_hrb_s_nt
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 47.873 18.19
-path 1.0 magnetosphere_intermagnet_hrb_x_nt
-path 1.1 magnetosphere_intermagnet_hrb_y_nt
-path 1.2 magnetosphere_intermagnet_hrb_z_nt
-path 2 magnetosphere_intermagnet_hrb_f_nt
-
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_hrn_{latest}.json
 ttl 86400
 force gravity
@@ -18770,15 +18591,6 @@ path 1.0 magnetosphere_intermagnet_ipm_x_nt
 path 1.1 magnetosphere_intermagnet_ipm_y_nt
 path 1.2 magnetosphere_intermagnet_ipm_z_nt
 path 2 magnetosphere_intermagnet_ipm_s_nt
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth -27.171 -109.41999999999999
-path 1.0 magnetosphere_intermagnet_ipm_x_nt
-path 1.1 magnetosphere_intermagnet_ipm_y_nt
-path 1.2 magnetosphere_intermagnet_ipm_z_nt
-path 2 magnetosphere_intermagnet_ipm_f_nt
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_irt_{latest}.json
 ttl 86400
@@ -18907,15 +18719,6 @@ path 1.0 magnetosphere_intermagnet_kou_x_nt
 path 1.1 magnetosphere_intermagnet_kou_y_nt
 path 1.2 magnetosphere_intermagnet_kou_z_nt
 path 2 magnetosphere_intermagnet_kou_s_nt
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 5.21 -52.73000000000002
-path 1.0 magnetosphere_intermagnet_kou_x_nt
-path 1.1 magnetosphere_intermagnet_kou_y_nt
-path 1.2 magnetosphere_intermagnet_kou_z_nt
-path 2 magnetosphere_intermagnet_kou_f_nt
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_lvv_{latest}.json
 ttl 86400
@@ -19115,15 +18918,6 @@ path 1.1 magnetosphere_intermagnet_phu_y_nt
 path 1.2 magnetosphere_intermagnet_phu_z_nt
 path 2 magnetosphere_intermagnet_phu_s_nt
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 21.03 105.96
-path 1.0 magnetosphere_intermagnet_phu_x_nt
-path 1.1 magnetosphere_intermagnet_phu_y_nt
-path 1.2 magnetosphere_intermagnet_phu_z_nt
-path 2 magnetosphere_intermagnet_phu_f_nt
-
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_pil_{latest}.json
 ttl 86400
 force gravity
@@ -19142,15 +18936,6 @@ path 1.1 magnetosphere_intermagnet_ppt_y_nt
 path 1.2 magnetosphere_intermagnet_ppt_z_nt
 path 2 magnetosphere_intermagnet_ppt_s_nt
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth -17.567 -149.574
-path 1.0 magnetosphere_intermagnet_ppt_x_nt
-path 1.1 magnetosphere_intermagnet_ppt_y_nt
-path 1.2 magnetosphere_intermagnet_ppt_z_nt
-path 2 magnetosphere_intermagnet_ppt_f_nt
-
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
@@ -19159,15 +18944,6 @@ path 1.0 magnetosphere_intermagnet_reu_x_nt
 path 1.1 magnetosphere_intermagnet_reu_y_nt
 path 1.2 magnetosphere_intermagnet_reu_z_nt
 path 2 magnetosphere_intermagnet_reu_s_nt
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth -21.206 55.576
-path 1.0 magnetosphere_intermagnet_reu_x_nt
-path 1.1 magnetosphere_intermagnet_reu_y_nt
-path 1.2 magnetosphere_intermagnet_reu_z_nt
-path 2 magnetosphere_intermagnet_reu_f_nt
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ESK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
@@ -19195,15 +18971,6 @@ path 1.0 magnetosphere_intermagnet_sfs_x_nt
 path 1.1 magnetosphere_intermagnet_sfs_y_nt
 path 1.2 magnetosphere_intermagnet_sfs_z_nt
 path 2 magnetosphere_intermagnet_sfs_s_nt
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 36.667 -5.944999999999993
-path 1.0 magnetosphere_intermagnet_sfs_x_nt
-path 1.1 magnetosphere_intermagnet_sfs_y_nt
-path 1.2 magnetosphere_intermagnet_sfs_z
-path 2 magnetosphere_intermagnet_sfs_f_nt
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_she_{latest}.json
 ttl 86400
@@ -19284,15 +19051,6 @@ path 1.0 magnetosphere_intermagnet_spt_x_nt
 path 1.1 magnetosphere_intermagnet_spt_y_nt
 path 2 magnetosphere_intermagnet_spt_s_nt
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 39.55 -4.350000000000023
-path 1.0 magnetosphere_intermagnet_spt_x_nt
-path 1.1 magnetosphere_intermagnet_spt_y_nt
-path 1.2 magnetosphere_intermagnet_spt_z_nt
-path 2 magnetosphere_intermagnet_spt_f_nt
-
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
@@ -19301,15 +19059,6 @@ path 1.0 magnetosphere_intermagnet_sua_x_nt
 path 1.1 magnetosphere_intermagnet_sua_y_nt
 path 1.2 magnetosphere_intermagnet_sua_z_nt
 path 2 magnetosphere_intermagnet_sua_s_nt
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 44.68 26.25
-path 1.0 magnetosphere_intermagnet_sua_x_nt
-path 1.1 magnetosphere_intermagnet_sua_y_nt
-path 1.2 magnetosphere_intermagnet_sua_z_nt
-path 2 magnetosphere_intermagnet_sua_f_nt
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_thL_{latest}.json
 ttl 86400
@@ -19456,15 +19205,6 @@ path 1.0 magnetosphere_intermagnet_wic_x_nt
 path 1.1 magnetosphere_intermagnet_wic_y_nt
 path 1.2 magnetosphere_intermagnet_wic_z_nt
 path 2 magnetosphere_intermagnet_wic_s_
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-force gravity
-on earth 47.931 15.866
-path 1.0 magnetosphere_intermagnet_wic_x_nt
-path 1.1 magnetosphere_intermagnet_wic_y_nt
-path 1.2 magnetosphere_intermagnet_wic_z_nt
-path 2 magnetosphere_intermagnet_wic_f_nt
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_wng_{latest}.json
 ttl 86400
