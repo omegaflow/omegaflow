@@ -52,7 +52,6 @@ url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
 ttl 60
 force advective
 at sun 1.0
-at sun 1.0
 last proton_speed solar_wind_speed_km_s
 last proton_density solar_wind_density_cm3
 last proton_temperature solar_wind_temp_k
@@ -60,7 +59,6 @@ last proton_temperature solar_wind_temp_k
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
 ttl 60
 force em
-at sun 1.0
 at sun 1.0
 last flux solar_xray_flux_wm2
 
@@ -89,7 +87,6 @@ field peak atmosphere_openmeteo_lightning_peak_current_ka
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 ttl 60
 force gravity
-at sun 1.0
 at sun 1.0
 field 0.bt exosphere_mag_bt_nt
 field 0.bz_gsm exosphere_mag_bz_gsm_nt
@@ -500,7 +497,6 @@ url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 ttl 60
 force gravity
 at sun 1
-at sun 1.0
 last Hp magnetosphere_hp_nt
 last He magnetosphere_he_nt
 last total magnetosphere_bt_nt
@@ -515,7 +511,6 @@ url https://api.drand.sh/public/latest
 ttl 60
 force em
 at sun 1
-at sun 1.0
 field round quantum_entropy_generation_round
 
 url https://beacon.nist.gov/beacon/2.0/pulse/last
@@ -631,7 +626,6 @@ url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.go
 ttl 300
 force advective
 at sun 1.0
-at sun 1.0
 path 0.proton_speed solar_wind_speed_kms
 
 url https://github.com/omegaflow/sources/releases/download/reg.bom.gov.au/atmosphere_bom_nsw_weather_observations.json
@@ -695,7 +689,6 @@ url https://github.com/omegaflow/sources/releases/download/api.rainviewer.com/at
 ttl 300
 force acoustic
 at sun 1
-at sun 1.0
 field generated hydrosphere_rain_radar_generated_time
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/biosphere_gbif_occurrences_global_occurrence_search.json
@@ -851,7 +844,6 @@ field properties.norad_cat_id satellite_norad_id
 url https://github.com/omegaflow/sources/releases/download/services3.arcgis.com/geosphere_arcgis_space_weather_scales.json
 ttl 300
 force gravity
-at sun 1.0
 at sun 1.0
 path features.0.attributes.Geomagnetic space_weather_geomagnetic_scale
 path features.0.attributes.RadioBlackouts space_weather_radio_blackout_scale
@@ -1319,7 +1311,6 @@ url https://github.com/omegaflow/sources/releases/download/api.wolfx.jp/geospher
 ttl 300
 force em
 at sun 1
-at sun 1.0
 field 1.latitude geosphere_jma_eq_lat
 field 1.longitude geosphere_jma_eq_lon
 field 1.magnitude geosphere_jma_eq_mag
@@ -6777,7 +6768,6 @@ url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.go
 ttl 300
 force gravity
 at sun 1.0
-at sun 1.0
 last kp_index magnetosphere_kp_index
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/magnetosphere_intermagnet_niemegk_realtime.json
@@ -6843,7 +6833,6 @@ last flux radiation_proton_flux_goes
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/magnetosphere_noaa_swpc_solar_wind.json
 ttl 300
 force gravity
-at sun 1.0
 at sun 1.0
 last_row 1 magnetosphere_solar_wind_speed_noaa
 last_row 2 magnetosphere_solar_wind_density_noaa
@@ -6996,7 +6985,6 @@ field centroid_coordinates.lon solar_epic_centroid_lon
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/astro_solar_euv.json
 ttl 600
 force em
-at sun 1.0
 at sun 1.0
 last value solar_euv_flux_wm2
 
@@ -7900,7 +7888,6 @@ url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/hy
 ttl 600
 force em
 at sun 1
-at sun 1.0
 last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
 
 url https://www.ndbc.noaa.gov/data/latest_obs/all_stations.txt
@@ -8116,7 +8103,6 @@ url https://github.com/omegaflow/sources/releases/download/impc.dlr.de/magnetosp
 ttl 900
 force em
 at sun 1
-at sun 1.0
 field data.grid.features.0.properties.vtec_assimilated_tecu ionosphere_tec_assimilated_tecu
 field data.grid.features.0.properties.vtec_rms_tecu ionosphere_tec_rms_tecu
 
@@ -8446,7 +8432,6 @@ url https://github.com/omegaflow/sources/releases/download/api.carbonintensity.o
 ttl 1800
 force thermal
 on earth 54.0 -2.0
-at sun 1.0
 path data.0.intensity.actual ngeso_carbon_intensity_gco2_kwh
 
 url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
@@ -8495,7 +8480,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 3600
 at sun 1.0
 force em
-at sun 1.0
 format universal
 extent 7.77e-6
 
@@ -8566,7 +8550,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 3600
 at sun 1.0
 force em
-at sun 1.0
 format universal
 extent 5.45e-6
 
@@ -8781,7 +8764,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 3600
 at sun 1.0
 force em
-at sun 1.0
 format universal
 extent 4.78e-6
 
@@ -8896,7 +8878,6 @@ url https://github.com/omegaflow/sources/releases/download/power.larc.nasa.gov/a
 ttl 3600
 force em
 at sun 1.0
-at sun 1.0
 obj_last value biosphere_solar_radiation_power
 
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/astro_neo_jpl_fireball_events.json
@@ -8920,7 +8901,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 3600
 at sun 1.0
 force em
-at sun 1.0
 format universal
 
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
@@ -8951,7 +8931,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 3600
 at sun 1.0
 force em
-at sun 1.0
 format universal
 extent 3.34e-9
 
@@ -8977,7 +8956,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 3600
 at sun 1.0
 force em
-at sun 1.0
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/earth-search.aws.element84.com/astro_sentinel2_l2a.json
@@ -9025,7 +9003,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 3600
 at sun 1.0
 force em
-at sun 1.0
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/aeronet.gsfc.nasa.gov/atmosphere_aeronet_aod440_global.json
@@ -9497,7 +9474,6 @@ url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/atmosphe
 ttl 3600
 force em
 at sun 1
-at sun 1.0
 format universal
 last_row average atmosphere_gwis_sf6_global_ppt
 
@@ -9566,7 +9542,6 @@ url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/atmosph
 ttl 3600
 on earth 0.0 0.0
 force diffusion
-at sun 1.0
 map
 lat_key 40.74
   lon_key -73.98
@@ -10436,7 +10411,6 @@ url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.go
 ttl 3600
 force advective
 at sun 1.0
-at sun 1.0
 field 0.speed exosphere_ace_speed_kms
 field 0.dens exosphere_ace_dens_ncc
 field 0.temperature exosphere_ace_temp_k
@@ -11091,7 +11065,6 @@ url https://github.com/omegaflow/sources/releases/download/services3.arcgis.com/
 ttl 3600
 at sun 1.0
 force thermal
-at sun 1.0
 format universal
 field properties.poly_GISAcres fire_acres
 field properties.poly_PolygonDateTime fire_polygon_ms
@@ -11725,7 +11698,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/
 ttl 86400
 at sun 1.0
 force em
-at sun 1.0
 format universal
 field H cosmic_asteroid_h_mag
 epoch_key epoch
@@ -12726,7 +12698,6 @@ url https://github.com/omegaflow/sources/releases/download/maia.usno.navy.mil/as
 ttl 86400
 force em
 at sun 1
-at sun 1.0
 last_line geosphere_ut1_utc_iers
 
 url https://github.com/omegaflow/sources/releases/download/network.igs.org/astro_igs_gnss_stations_global.json
@@ -13649,7 +13620,6 @@ url https://github.com/omegaflow/sources/releases/download/cmr.earthdata.nasa.go
 ttl 86400
 at sun 1.0
 force thermal
-at sun 1.0
 format universal
 field time_start footprint_time_start
 field time_end footprint_time_end
@@ -14026,7 +13996,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 86400
 at sun 1.0
 force em
-at sun 1.0
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_earth.bin
@@ -14047,7 +14016,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 86400
 at sun 1.0
 force em
-at sun 1.0
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_europa.bin
@@ -14068,7 +14036,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 86400
 at sun 1.0
 force em
-at sun 1.0
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_io.bin
@@ -14089,7 +14056,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 86400
 at sun 1.0
 force em
-at sun 1.0
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mars.bin
@@ -14191,8 +14157,6 @@ extent 1.75e-9
 
 url https://github.com/omegaflow/sources/releases/download/hpiers.obspm.fr/astro_orbital_celestrak_earth_orientation.json
 ttl 86400
-on earth 40.034 0.0
-ttl 86400
 force em
 at sun 1.0
 format universal
@@ -14209,7 +14173,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 86400
 force em
 at sun 1
-at sun 1.0
 regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
 
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/astro_orbital_jpl_atmospheric_fireballs.json
@@ -14246,7 +14209,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 86400
 force em
 at sun 9.6
-at sun 1.0
 regex \(kg\).\W*([0-9.]+) orbital_saturn_mass_x10_24_kg
 
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/astro_orbital_sentry_objects.json
@@ -14265,7 +14227,6 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astr
 ttl 86400
 force em
 at sun 0.7
-at sun 1.0
 regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/astro_pantheon_plus_sne.json
@@ -14433,7 +14394,6 @@ last_line solar_sunspot_number_silso
 url https://github.com/omegaflow/sources/releases/download/sidc.be/astro_sunspot_number_monthly.json
 ttl 86400
 force em
-at sun 1.0
 at sun 1.0
 last_line solar_sunspot_number_silso
 
@@ -15628,7 +15588,6 @@ url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/atmosph
 ttl 86400
 on earth 0.0 0.0
 force diffusion
-at sun 1.0
 map
 lat_key 40.74
   lon_key -73.98
@@ -16296,7 +16255,6 @@ url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent
 ttl 86400
 force em
 at sun 1
-at sun 1.0
 field scalerank biosphere_park_rank
 
 url https://data.rcsb.org/graphql?query={graphStatistics{totalEntries}}
@@ -16500,7 +16458,6 @@ url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.o
 ttl 86400
 force em
 at sun 1
-at sun 1.0
 last_line cryosphere_arctic_sea_ice_extent_nsidc
 
 url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/cryosphere_nsidc_sea_ice.json
@@ -16683,7 +16640,6 @@ url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.go
 ttl 86400
 force em
 at sun 1.0
-at sun 1.0
 field 0.flux exosphere_f107_sfu
 
 url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/exosphere_hot_jupiters.json
@@ -16792,7 +16748,6 @@ url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/geosphe
 ttl 86400
 at sun 1.0
 force diffusion
-at sun 1.0
 format universal
 map data
 lat_key latitude
@@ -17196,7 +17151,6 @@ url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=landslide&format=js
 ttl 86400
 at sun 1.0
 force seismic-surface
-at sun 1.0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -19793,7 +19747,6 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/magnetosph
 ttl 86400
 force gravity
 at sun 1
-at sun 1.0
 format universal
 last_line atmos_schumann_last_val
 
@@ -19853,7 +19806,6 @@ field hits.total subatomic_papers_total
 url https://github.com/omegaflow/sources/releases/download/github.com-scikit-hep-particle/subatomic_pdg_particles.json
 ttl 86400
 force em
-at sun 1.0
 at sun 1.0
 format universal
 last_row ID subatomare_last_pdg_id
@@ -20579,7 +20531,6 @@ url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent
 ttl 604800
 at sun 1.0
 force em
-at sun 1.0
 format universal
 field properties.rank cpoly_rank
 field 0 prefname
@@ -20733,7 +20684,6 @@ url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.o
 ttl 604800
 force thermal
 on earth 80.0 0.0
-at sun 1.0
 path data.-1.extent_mkm2 arctic_seaice_extent_mkm2
 path data.-1.missing arctic_seaice_missing
 
@@ -23443,7 +23393,6 @@ url https://github.com/omegaflow/sources/releases/download/github.com/technosphe
 ttl 604800
 at sun 1.0
 force em
-at sun 1.0
 format universal
 field properties.name technosphere_cable_name
 field properties.length technosphere_cable_length_km
@@ -25066,7 +25015,6 @@ url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent
 ttl 2592000
 at sun 1.0
 force em
-at sun 1.0
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_dark_matter_direct_limits.json
@@ -25131,11 +25079,6 @@ reach_ttl 86400
 catalog_epoch 504921600.0
 flux_from_mag celestial_gaia_nearby_g_magnitude
 force gravity
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
 at sun 1.0
 format universal
 cmap data

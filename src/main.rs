@@ -508,16 +508,15 @@ fn build_buffer(samples: Vec<Sample>, cadence: f64) -> Buffer {
     }
 }
 
-fn force_constants_by_id(id: f64) -> Option<(f64, bool)> {
+fn force_constants_by_id(id: f64, body_props: Option<&BodyProperties>) -> Option<(f64, bool)> {
     match id as u8 {
-        0 => Some((C_LIGHT, false)),
-        1 => Some((C_LIGHT, false)),
-        2 => Some((V_SOUND_288, false)),
-        3 => Some((V_P_GRANITE, false)),
-        4 => Some((V_S_GRANITE, false)),
-        5 => Some((ALPHA_AIR, true)),
-        6 => Some((D_AIR, true)),
-        7 => Some((10.0, false)),
+        0 | 1 => Some((C_LIGHT, false)),
+        2 => body_props.and_then(|p| p.v_sound).map(|v| (v, false)),
+        3 => body_props.and_then(|p| p.v_seismic_p).map(|v| (v, false)),
+        4 => body_props.and_then(|p| p.v_seismic_s).map(|v| (v, false)),
+        5 => body_props.and_then(|p| p.alpha_thermal).map(|v| (v, true)),
+        6 => body_props.and_then(|p| p.d_diffusion).map(|v| (v, true)),
+        7 => body_props.and_then(|p| p.v_advective).map(|v| (v, false)),
         _ => None,
     }
 }
@@ -530,6 +529,7 @@ fn enclose_family(
     pad: f64,
     records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     _frustum: Option<([f64; 3], [f64; 3], [f64; 3], f64, f64)>,
+    body_props: Option<&BodyProperties>,
 ) {
     if fam.cells.is_empty() {
         return;
@@ -589,17 +589,18 @@ fn enclose_family(
     for samples in visit {
         for smp in samples {
             let age = (t2 - smp.epoch).abs();
-            let causal_reach =
-                if let Some((v_or_d, is_diff)) = force_constants_by_id(smp.force_type) {
-                    let lifetime = smp.ttl;
-                    if is_diff {
-                        (2.0 * v_or_d * lifetime).sqrt()
-                    } else {
-                        v_or_d * lifetime
-                    }
+            let causal_reach = if let Some((v_or_d, is_diff)) =
+                force_constants_by_id(smp.force_type, body_props)
+            {
+                let lifetime = smp.ttl;
+                if is_diff {
+                    (2.0 * v_or_d * lifetime).sqrt()
                 } else {
-                    0.0
-                };
+                    v_or_d * lifetime
+                }
+            } else {
+                0.0
+            };
             let reach =
                 smp.extent.max(causal_reach) + smp.vmax * age + 0.5 * smp.amax * age * age + pad;
             let dx = smp.p0f[0] - qf[0];
@@ -609,7 +610,7 @@ fn enclose_family(
             if dist2_p0f > reach * reach {
                 continue;
             }
-            if let Some((_v_or_d, _is_diff)) = force_constants_by_id(smp.force_type) {
+            if force_constants_by_id(smp.force_type, body_props).is_some() {
                 if smp.tau > 0.0 && age > smp.tau * 64.0 {
                     continue;
                 }
@@ -651,7 +652,8 @@ fn sense_buffer(
 ) {
     for (body_name, fam) in &buf.bodies {
         let anchor = body_barycenter_position(body_name, t2, eph).unwrap_or([0.0, 0.0, 0.0]);
-        enclose_family(fam, anchor, center, t2, pad, records, _frustum);
+        let body_props = eph.get(body_name).and_then(|e| e.props.as_ref());
+        enclose_family(fam, anchor, center, t2, pad, records, _frustum, body_props);
     }
     enclose_family(
         &buf.inertial,
@@ -661,6 +663,7 @@ fn sense_buffer(
         pad,
         records,
         _frustum,
+        None,
     );
 }
 
