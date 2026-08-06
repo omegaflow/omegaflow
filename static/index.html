@@ -31,7 +31,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         </div>
     </div>
     <script type="module">
-        import { syncFrame, φ, transport, Φ, C, updateRtt, getRto } from '/constants.js';
+        import { syncFrame, φ, transport, Φ, C, updateRtt, getRto, BODY_REGISTRY } from '/constants.js';
         function reportState(category, detail) { try { fetch('/crash', { method: 'POST', body: `${category}: ${detail}` }); } catch {} }
 
         const oscillators = [];
@@ -198,11 +198,31 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition((pos) => {
                     const c = pos.coords;
+                    let stationBodyId = null;
                     if (!indexMap.has('lat')) {
                         registerOscillator('lat', c.latitude);
                         registerOscillator('lon', c.longitude);
                         registerOscillator('alt', c.altitude || 0);
                         registerOscillator('acc', c.accuracy);
+                        const hash = window.location.hash.replace('#', '');
+                        for (const part of hash.split('&')) {
+                            const eq = part.indexOf('=');
+                            if (eq < 0) continue;
+                            const k = part.substring(0, eq);
+                            const v = part.substring(eq + 1);
+                            if (k === 'body' && v) {
+                                for (const id in BODY_REGISTRY) {
+                                    if (BODY_REGISTRY[id] === v) {
+                                        stationBodyId = parseInt(id);
+                                        break;
+                                    }
+                                }
+                                if (stationBodyId) {
+                                    registerOscillator('body', stationBodyId);
+                                }
+                                break;
+                            }
+                        }
                         if (c.speed !== null && c.heading !== null) {
                             registerOscillator('spd', c.speed);
                             registerOscillator('hdg', c.heading);
@@ -212,6 +232,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     recordSample('lon', c.longitude);
                     recordSample('alt', c.altitude || 0);
                     recordSample('acc', c.accuracy);
+                    if (stationBodyId) {
+                        recordSample('body', stationBodyId);
+                    }
                     if (c.speed !== null && c.heading !== null) {
                         recordSample('spd', c.speed);
                         recordSample('hdg', c.heading);
@@ -233,10 +256,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         const fieldShader = `
 struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, presence: vec4f };
 const C_LIGHT: f32 = 299792458.0;
-const ALPHA_AIR: f32 = 2.18e-5;
-const V_P_GRANITE: f32 = 5950.0;
-const V_S_GRANITE: f32 = 3630.0;
-const D_AIR: f32 = 2.0e-5;
 fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32) -> f32 {
     let retarded = max(0.0, abs(vp.presence.w - t) - d_mag / C_LIGHT);
     return raw * exp(-retarded / max(ttl, 1e-9));
@@ -246,22 +265,9 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32) -> f32 {
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 
-struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) force_type: u32 };
+struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) force_type: u32, @location(3) @interpolate(flat) absorption: f32 };
 
 const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
-
-fn absorption_coeff(force_type: u32) -> f32 {
-    switch force_type {
-        case 0u, 1u: { return 0.0; }
-        case 2u: { return ALPHA_AIR; }
-        case 3u: { return 1.0 / V_P_GRANITE; }
-        case 4u: { return 1.0 / V_S_GRANITE; }
-        case 5u: { return ALPHA_AIR; }
-        case 6u: { return D_AIR; }
-        case 7u: { return 0.1; }
-        default: { return 0.0; }
-    }
-}
 
 fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let c = (1.0 - abs(2.0 * l - 1.0)) * s;
@@ -326,6 +332,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
 
     let f_type = min(u32(mt.z), 7u);
     out.force_type = f_type;
+    out.absorption = f32(mt.w);
     var lvl = vp.expose_lo[min(f_type, 3u)];
     if (f_type >= 4u) { lvl = vp.expose_hi[f_type - 4u]; }
     if (lvl <= 0.0) { return out; }
@@ -411,8 +418,7 @@ fn presence_probe() {
 
     let hdr_color = in.color * analog_intensity;
     let mapped_color = log2(hdr_color * 4.0 + vec3f(1.0)) / 8.0;
-    let absorption = absorption_coeff(in.force_type);
-    let alpha = clamp(exp(-absorption * analog_intensity * 10.0), 0.0, 1.0);
+    let alpha = clamp(exp(-in.absorption * analog_intensity * 10.0), 0.0, 1.0);
     return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), alpha);
 }
 `;

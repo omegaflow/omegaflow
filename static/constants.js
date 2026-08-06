@@ -68,7 +68,7 @@ export async function syncFrame(inputs, queries) {
     const meta = new Float32Array(oscCount * 4);
 
     for (let i = 0; i < oscCount; i++) {
-        if (o + 72 > bytes.length) break;
+        if (o + 80 > bytes.length) break;
         const x = dvRes.getFloat64(o, true); o += 8;
         const y = dvRes.getFloat64(o, true); o += 8;
         const z = dvRes.getFloat64(o, true); o += 8;
@@ -78,6 +78,7 @@ export async function syncFrame(inputs, queries) {
         const ttl = dvRes.getFloat64(o, true); o += 8;
         const tau = dvRes.getFloat64(o, true); o += 8;
         const force_type = dvRes.getFloat64(o, true); o += 8;
+        const absorption = dvRes.getFloat64(o, true); o += 8;
 
         const fOff = i * 8;
         field[fOff] = x;
@@ -93,7 +94,7 @@ export async function syncFrame(inputs, queries) {
         meta[mOff] = extent;
         meta[mOff + 1] = tau;
         meta[mOff + 2] = force_type;
-        meta[mOff + 3] = 0;
+        meta[mOff + 3] = absorption;
     }
     return { field, meta, count: oscCount };
 }

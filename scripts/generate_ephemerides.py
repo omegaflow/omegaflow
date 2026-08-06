@@ -58,6 +58,38 @@ WGCCRE = {
     504: ('callisto', 268.72, -0.009, 64.83, 0.003, 259.51, 21.5710715, 2410300.0, 0.0),
     606: ('titan', 36.41, -0.036, 83.94, -0.004, 189.64, 22.5769768, 2575500.0, 0.0),
     801: ('triton', 299.36, 0.70, 43.46, -0.51, 296.53, -61.2572637, 1353400.0, 0.0),
+    602: ('enceladus', 40.66, -0.036, 83.52, -0.004, 36.41, 262.7318996, 252100.0, 0.0),
+    603: ('rhea', 40.38, -0.036, 83.55, -0.004, 345.65, 79.6900478, 763800.0, 0.0),
+    604: ('dione', 40.66, -0.036, 83.52, -0.004, 357.00, 131.5349316, 561400.0, 0.0),
+    605: ('tethys', 50.41, -0.036, 83.55, -0.004, 299.11, 190.6979086, 531100.0, 0.0),
+    401: ('phobos', 317.68, -0.108, 54.46, -0.061, 165.00, 1128.844759, 11260.0, 0.0),
+    402: ('deimos', 317.68, -0.108, 54.46, -0.061, 240.00, 285.161891, 6230.0, 0.0),
+}
+
+MEDIA = {
+    10:   ('sun',       11557.5,  0.0,    0.0,    0.0,     0.0,     400000.0),
+    199:  ('mercury',   515.4,    5200.0, 3000.0, 0.0,     0.0,     0.0),
+    299:  ('venus',     433.1,    6200.0, 3600.0, 7.92e-7, 7.27e-7, 1.0),
+    399:  ('earth',     340.2,    5950.0, 3630.0, 2.18e-5, 2.00e-5, 15.0),
+    301:  ('moon',      355.3,    5000.0, 2900.0, 0.0,     0.0,     0.0),
+    4:    ('mars',      231.5,    5400.0, 3200.0, 1.74e-3, 1.60e-3, 30.0),
+    5:    ('jupiter',   933.5,    0.0,    0.0,    3.42e-5, 3.13e-5, 150.0),
+    6:    ('saturn',    871.2,    0.0,    0.0,    2.59e-5, 2.37e-5, 400.0),
+    7:    ('uranus',    580.9,    0.0,    0.0,    9.79e-6, 8.98e-6, 250.0),
+    8:    ('neptune',   568.7,    0.0,    0.0,    9.08e-6, 8.33e-6, 580.0),
+    9:    ('pluto',     125.7,    0.0,    0.0,    8.18e-2, 7.50e-2, 5.0),
+    501:  ('io',        137.8,    5800.0, 3400.0, 0.0,     0.0,     0.0),
+    502:  ('europa',    208.3,    3800.0, 1900.0, 0.0,     0.0,     0.0),
+    503:  ('ganymede',  218.5,    3800.0, 1900.0, 0.0,     0.0,     0.0),
+    504:  ('callisto',  228.2,    3800.0, 1900.0, 0.0,     0.0,     0.0),
+    606:  ('titan',     197.7,    3800.0, 1900.0, 2.85e-6, 2.62e-6, 1.0),
+    801:  ('triton',    125.7,    2800.0, 1400.0, 7.59e-2, 6.96e-2, 5.0),
+    602:  ('enceladus', 0.0,      3800.0, 1900.0, 0.0,     0.0,     0.0),
+    603:  ('rhea',      0.0,      3800.0, 1900.0, 0.0,     0.0,     0.0),
+    604:  ('dione',     0.0,      3800.0, 1900.0, 0.0,     0.0,     0.0),
+    605:  ('tethys',    0.0,      3800.0, 1900.0, 0.0,     0.0,     0.0),
+    401:  ('phobos',    0.0,      3200.0, 1800.0, 0.0,     0.0,     0.0),
+    402:  ('deimos',    0.0,      3200.0, 1800.0, 0.0,     0.0,     0.0),
 }
 
 
@@ -99,9 +131,16 @@ def generate(kernel_path, body_id, body_name):
 
 
 def write_binary(granules, body_name, body_id):
+    wgccre_entry = next((v for k, v in WGCCRE.items() if v[0] == body_name), None)
+    media_entry = next((v for k, v in MEDIA.items() if v[0] == body_name), None)
+    n_sections = 1
+    if wgccre_entry is not None:
+        n_sections += 1
+    if media_entry is not None:
+        n_sections += 1
     buf = bytearray()
     buf.extend(MAGIC)
-    buf.extend(struct.pack('<I', 1))
+    buf.extend(struct.pack('<I', n_sections))
     buf.extend(struct.pack('<I', 0))
     buf.extend(struct.pack('<I', len(granules)))
     buf.extend(struct.pack('<I', DEGREE))
@@ -112,8 +151,8 @@ def write_binary(granules, body_name, body_id):
         for c in cx: buf.extend(struct.pack('<d', c))
         for c in cy: buf.extend(struct.pack('<d', c))
         for c in cz: buf.extend(struct.pack('<d', c))
-    if body_id in WGCCRE:
-        _, a0, da0, d0, dd0, w0, dw, r, f = WGCCRE[body_id]
+    if wgccre_entry is not None:
+        _, a0, da0, d0, dd0, w0, dw, r, f = wgccre_entry
         buf.extend(struct.pack('<I', 1))
         buf.extend(struct.pack('<I', 0))
         buf.extend(struct.pack('<I', 17))
@@ -126,6 +165,18 @@ def write_binary(granules, body_name, body_id):
         buf.extend(struct.pack('<d', dw))
         buf.extend(struct.pack('<d', r))
         buf.extend(struct.pack('<d', f))
+    if media_entry is not None:
+        _, vs, vp, vsseis, ath, dd, vad = media_entry
+        buf.extend(struct.pack('<I', 2))
+        buf.extend(struct.pack('<I', 0))
+        buf.extend(struct.pack('<I', 17))
+        buf.extend(struct.pack('<I', 0))
+        buf.extend(struct.pack('<d', vs))
+        buf.extend(struct.pack('<d', vp))
+        buf.extend(struct.pack('<d', vsseis))
+        buf.extend(struct.pack('<d', ath))
+        buf.extend(struct.pack('<d', dd))
+        buf.extend(struct.pack('<d', vad))
     return bytes(buf)
 
 

@@ -15,10 +15,8 @@ fn main() {
     let mut current: Vec<String> = Vec::new();
     for line in content.lines() {
         let trimmed = line.trim();
-        if trimmed.starts_with("source ") {
-            if !current.is_empty() {
-                blocks.push(std::mem::take(&mut current));
-            }
+        if trimmed.starts_with("url ") && !current.is_empty() {
+            blocks.push(std::mem::take(&mut current));
         }
         current.push(line.to_string());
     }
@@ -44,12 +42,27 @@ fn main() {
         }
 
         let head = block[0].clone();
-        if !head.starts_with("source ") {
-            eprintln!("skipping block without source header: {:?}", block.first());
+        let name = if head.starts_with("source ") {
+            head.split_whitespace().nth(1).unwrap_or("").to_string()
+        } else if head.starts_with("url ") {
+            let url = head.split_whitespace().nth(1).unwrap_or("");
+            if let Some(pos) = url.rfind('/') {
+                let filename = &url[pos + 1..];
+                filename
+                    .strip_suffix(".json")
+                    .or_else(|| filename.strip_suffix(".bin"))
+                    .unwrap_or(filename)
+                    .to_string()
+            } else {
+                String::from("unknown")
+            }
+        } else {
+            eprintln!(
+                "skipping block without source or url header: {:?}",
+                block.first()
+            );
             continue;
-        }
-
-        let name = head.split_whitespace().nth(1).unwrap_or("").to_string();
+        };
 
         if delete_set.contains(name.as_str()) {
             deleted += 1;
@@ -238,6 +251,31 @@ fn strip_sphere_prefixes(block: &mut Vec<String>) -> usize {
         "orbital_",
         "cosmos_",
         "solar_",
+        "xmm_",
+        "intermagnet_",
+        "biome_",
+        "gdp_",
+        "swift_",
+        "vizier_",
+        "gaia_",
+        "gbif_",
+        "chandra_",
+        "jma_",
+        "bom_",
+        "usgs_",
+        "emsc_",
+        "openmeteo_",
+        "sdss_",
+        "paleoclimate_",
+        "universe_",
+        "cosmic_",
+        "aerosol_",
+        "asteroid_",
+        "config_",
+        "airport_",
+        "alert_",
+        "flare_",
+        "hist_",
     ];
     let extractors: &[&str] = &[
         "field ",
