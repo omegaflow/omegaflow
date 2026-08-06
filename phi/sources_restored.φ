@@ -500,24 +500,6 @@ last Hp magnetosphere_hp_nt
 last He magnetosphere_he_nt
 last total magnetosphere_bt_nt
 
-url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
-ttl 60
-force em
-on earth -35.2809 149.1300
-  path data.0 data
-
-url https://api.drand.sh/public/latest
-ttl 60
-force em
-at sun 1
-  field round round
-
-url https://beacon.nist.gov/beacon/2.0/pulse/last
-ttl 60
-force em
-on earth 39.9916 -105.2748
-  path pulse.pulseIndex pulseIndex
-
 url https://earthquake.tmd.go.th/earthquake_json.php?limit=200
 ttl 120
 force seismic-body
@@ -686,41 +668,6 @@ ttl 300
 force acoustic
 at sun 1
   field generated generated
-
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}
-ttl 300
-force diffusion
-at sun 1.0
-map .
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field key key
-  field species species
-  field kingdom kingdom
-  field phylum phylum
-  field class class
-  field order order
-  field family family
-  field eventDate eventDate
-map results
-  field genus genus
-  field year year
-  field month month
-  field day day
-  field countryCode countryCode
-  field basisOfRecord basisOfRecord
-  field occurrenceStatus occurrenceStatus
-  field individualCount individualCount
-
-url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate
-ttl 300
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field eventDate eventDate
 
 url https://opensky-network.org/api/states/all
 ttl 300
@@ -7228,45 +7175,6 @@ pos atmosphere_lat atmosphere_lon
   path current.dew_point_2m dewpoint_c
   path current.pressure_msl pressure_msl_hpa
 
-url https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
-ttl 600
-force em
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
-ttl 600
-force em
-on earth 55.685000 12.571000
-  field count count
-map .
-lat_key lat
-lon_key lon
-  field speciesCode speciesCode
-  field howMany howMany
-  field obsDt obsDt
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field key key
-
-url https://api.inaturalist.org/v1/observations?per_page=1
-ttl 600
-force em
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field species_guess species_guess
-  field total_results total_results
-  path total_results total_results
-  field total_results total_results
-  field species_count species_count
-  field total_results total_results
-
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth
 ttl 600
 force em
@@ -8092,18 +8000,6 @@ lon_key 13.41
   field pressure_msl pressure_msl
   field surface_pressure surface_pressure
 
-url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&geojson=true
-ttl 1800
-force diffusion
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.iconic_taxon_name iconic_taxon_name
-  field created_at created_at
-  field place_guess place_guess
-
 url https://seismic-api.science.unimelb.edu.au/three-day-quakes
 ttl 1800
 force em
@@ -8198,25 +8094,6 @@ on earth 0 0
   path value.timeSeries.0.sourceInfo.siteName siteName
   path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.latitude latitude
   path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.longitude longitude
-
-url https://api.carbonintensity.org.uk/intensity/date/{today}
-ttl 1800
-force thermal
-on earth 54.0 -2.0
-  path data.0.intensity.actual ngeso_carbon_intensity_gco2_kwh
-
-url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
-ttl 3600
-force gravity
-at sun 1.0
-map .
-lat_key lat
-lon_key lng
-  field event_date event_date
-  field event_time event_time
-  field location location
-field region region
-  field comments comments
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
 ttl 3600
@@ -9785,12 +9662,6 @@ on earth 26.100 -80.100
   field current.baa_7day_max baa_7day_max
   field current.ssta_90th_hs ssta_90th_hs
 
-url https://api.energy-charts.info/price?country=DE
-ttl 3600
-force em
-on earth 51.0 10.0
-last price biosphere_electricity_price_eur_mwh
-
 url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=volcanoes
 ttl 3600
 force em
@@ -9813,326 +9684,6 @@ lon_key lon
   field title title
   field categories.0.title title
   field id id
-
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=1&hasGeospatialIssue=false
-ttl 3600
-force em
-on earth -8.566564 -8.116489
-  field count count
-
-url https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-field family family
-  field key key
-  field coordinateUncertaintyInMeters coordinateUncertaintyInMeters
-  field key key
-  field key key
-  field key key
-  field species species
-  field kingdom kingdom
-  field eventDate eventDate
-  field locality locality
-  field key key
-  field key key
-  field key key
-  field key key
-  field key key
-  field count count
-  field key key
-  field key key
-  field coordinateUncertaintyInMeters coordinateUncertaintyInMeters
-  field key key
-
-url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
-ttl 3600
-force acoustic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field family family
-  field country country
-  field stateProvince stateProvince
-
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
-ttl 3600
-force em
-on earth 42.4809 -76.4527
-  field count count
-
-url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&basisOfRecord=MACHINE_OBSERVATION
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field family family
-  field countryCode countryCode
-  field occurrenceDate occurrenceDate
-
-url https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-
-url https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-
-url https://api.gbif.org/v1/occurrence/search?orderKey=180130&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field family family
-  field country country
-  field occurrenceDate occurrenceDate
-  field individualCount individualCount
-
-url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field genus genus
-  field country country
-  field occurrenceDate occurrenceDate
-  field individualCount individualCount
-
-url https://api.gbif.org/v1/occurrence/search?orderKey=719&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-field family family
-field kingdom kingdom
-  field iucnRedListCategory iucnRedListCategory
-  field species species
-  field occurrenceStatus occurrenceStatus
-  field species species
-  field locality locality
-  field eventDate eventDate
-field phylum phylum
-field order order
-  field country country
-
-url https://www.govtrack.us/api/v2/vote?created__gt={yesterday}&limit=0
-ttl 3600
-force em
-on earth 38.9 -77.0
-  field meta.total_count total_count
-
-url https://meta.icos-cp.eu/sparql?format=json&query=SELECT%20?s%20?name%20?lat%20?lon%20?alt%20?country%20?stType%20WHERE%7B?s%20a%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/ES%3E%20%3B%20%3Chttp://www.w3.org/2000/01/rdf-schema%23label%3E%20?name%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude%3E%20?lat%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude%3E%20?lon%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasCountry%3E%20?country%7D%20LIMIT%20200
-ttl 3600
-force diffusion
-at sun 1.0
-map results.bindings
-lat_key lat.value
-lon_key lon.value
-  field name.value value
-  field country.value value
-  field s.value value
-  field stType.value value
-
-url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.iconic_taxon_name iconic_taxon_name
-  field observed_on observed_on
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field observed_on observed_on
-
-url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=35&swlng=-10&nelat=70&nelng=40
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.iconic_taxon_name iconic_taxon_name
-  field observed_on observed_on
-  field place_guess place_guess
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.rank rank
-  field observed_on observed_on
-  field place_guess place_guess
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field observed_on observed_on
-  field place_guess place_guess
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.rank rank
-  field observed_on observed_on
-  field place_guess place_guess
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.rank rank
-  field observed_on observed_on
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.rank rank
-  field observed_on observed_on
-  field place_guess place_guess
-
-url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field observed_on observed_on
-  field place_guess place_guess
-
-url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
-ttl 3600
-force acoustic
-at sun 1.0
-map occurrences
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field vernacularName vernacularName
-  field year year
-  field month month
-
-url https://api.obis.org/v3/occurrence?taxonid=180130,137206&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field class class
-  field family family
-  field date_year date_year
-
-url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=1000&fields=decimalLatitude,decimalLongitude,scientificName,class,order,family,genus,species,date_year,country
-ttl 3600
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field class class
-  field order order
-  field family family
-  field date_year date_year
-  field country country
-
-url https://openlittermap.com/api/getdata?lat=0.0&lon=0.0&radius=50&format=json&limit=500
-ttl 3600
-force diffusion
-at sun 1.0
-map data
-lat_key lat
-lon_key lng
-field litter_type litter_type
-  field quantity quantity
-
-url https://openlittermap.com/api/getdata?lat={lat}&lon={lon}&radius=50&format=json&limit=500
-ttl 3600
-force diffusion
-body earth
-map data
-lat_key lat
-lon_key lon
-  field id id
-  field datetime datetime
-  field litter_type litter_type
-  field brand brand
-  field country_code country_code
-  field total_count total_count
 
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,shortwave_radiation_sum&past_days=1&forecast_days=0&timezone=auto
 ttl 3600
@@ -10315,22 +9866,6 @@ map features
   field attributes.Description_Link Description_Link
 lat_key geometry.y
 lon_key geometry.x
-
-url https://api.obis.org/v3/occurrence/grid/100?taxon=*&year=2026&geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))
-ttl 3600
-force diffusion
-body earth
-at sun 1.0
-
-url https://api.obis.org/v3/occurrence/grid/100?scientificname=&year={year}&hascoordinates=true
-ttl 300
-force em
-body earth
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-field year year
 
 url https://firms.modaps.eosdis.nasa.gov/api/area/json/{nasa_key}/MODIS_NRT/1/world
 ttl 3600
@@ -11082,23 +10617,6 @@ force em
 at sun 1.0
   field current.uv_index uv_index
 
-url https://api.eia.gov/v2/electricity/rto/region-data/data/?api_key=EIA_API_KEY&frequency=hourly&data[]=value&facets[type][]=D&sort[0][column]=period&sort[0][direction]=desc&length=500
-ttl 3600
-force diffusion
-at sun 1.0
-map data
-lat_key lat
-lon_key lon
-field_in respondent-name eia_grid_respondent
-field_in value eia_grid_demand_mw
-field_in period eia_grid_period
-
-url https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=1
-ttl 3600
-force em
-on earth 38.9072 -77.0369
-  field totalResults totalResults
-
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
 ttl 10800
 force thermal
@@ -11161,24 +10679,6 @@ lat_key latitude
 lon_key longitude
 field_in sst hydrosphere_cmems_sst_c
 field_in sst sea_surface_temp_c
-
-url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
-ttl 43200
-force em
-at sun 1.0
-format universal
-pos 0 0
-  field col2 col2
-  field col3 col3
-  field col4 col4
-  field col5 col5
-  field col6 col6
-  field col7 col7
-  field col3 col3
-  field col4 col4
-  field col5 col5
-  field col6 col6
-  field col7 col7
 
 url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdQMwind1day_LonPM180.json?x_wind%5B(2022-12-01T12%3A00%3A00Z)%5D%5B(10.0)%5D%5B(-75.0)%3A4%3A(75.0)%5D%5B(-180.0)%3A4%3A(180.0)%5D
 ttl 43200
@@ -12210,26 +11710,6 @@ dec_key dec
   field lx lx
   field donor_type donor_type
 dist_key dist
-
-url https://datacenter.iers.org/data/9/finals2000A.all
-ttl 86400
-force gravity
-at sun 1
-format universal
-rows
-  field 0 name meteorite_name
-  field 1 id meteorite_id
-  field 2 name_type classification_status
-  field 3 class meteorite_class
-  field 4 mass_g
-  field 5 fall fall_or_find
-  field 6 year year
-
-url https://maia.usno.navy.mil/ser7/finals2000A.daily
-ttl 86400
-force em
-at sun 1
-last_line geosphere_ut1_utc_iers
 
 url https://network.igs.org/api/public/stations?format=json
 ttl 86400
@@ -13453,14 +12933,6 @@ at sun 1.0
 force em
 format universal
 extent 1.75e-9
-
-url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
-ttl 86400
-force em
-at sun 1.0
-format universal
-header User-Agent "omegaflow"
-last line geosphere_earth_orientation_raw
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ttl 86400
@@ -14937,26 +14409,6 @@ rows
   field 1 co2_annual_mean_ppm
   field 2 co2_uncertainty_ppm
 
-url https://ghoapi.azureedge.net/api/AIR_12?\$filter=SpatialDimType+eq+'COUNTRY'&\$top=500
-ttl 86400
-force diffusion
-at sun 1.0
-map value
-  field SpatialDim SpatialDim
-  field NumericValue NumericValue
-  field TimeDim TimeDim
-  field Low Low
-  field High High
-
-url https://ghoapi.azureedge.net/api/AIR_12?$filter=SpatialDimType+eq+'COUNTRY'&$top=500
-ttl 86400
-force diffusion
-at sun 1
-map value
-  field SpatialDim SpatialDim
-  field TimeDim TimeDim
-  field NumericValue NumericValue
-
 url https://api.woudc.org/collections/stations/items?f=json&limit=500
 ttl 86400
 force em
@@ -15010,179 +14462,11 @@ lon_key station.longitude
   field station.name name
   field station.country country
 
-url https://epoch.ai/data/notable_ai_models.csv
-ttl 86400
-force em
-on earth 37.774 -122.419
-format universal
-last_row Training_compute_FLOP biosphere_ai_training_flops_frontier
-
-url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
-ttl 86400
-force em
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-  field eventDate eventDate
-  field locality locality
-
-url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
-ttl 86400
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-  field country country
-  field year year
-  field countryCode countryCode
-  field eventDate eventDate
-  field basisOfRecord basisOfRecord
-
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&datasetKey=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&limit=300
-ttl 86400
-force diffusion
-at sun 1.0
-format universal
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-  field depth depth
-
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
-ttl 86400
-force em
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field key key
-  field coordinateUncertaintyInMeters coordinateUncertaintyInMeters
-
-url https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
-ttl 86400
-force em
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-  field family family
-  field eventDate eventDate
-
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&year=2026,2026&limit=300&offset=0
-ttl 86400
-force diffusion
-at sun 1.0
-format universal
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-  field year year
-
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&decimalLatitude=-35,38&decimalLongitude=-20,55&basisOfRecord=HUMAN_OBSERVATION
-ttl 86400
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-field genus genus
-field family family
-field kingdom kingdom
-  field country country
-  field eventDate eventDate
-
-url https://meta.icos-cp.eu/sparql?format=json&query=SELECT%20?uri%20?name%20?lat%20?lon%20?alt%20?country%20?ecosys%20WHERE%20%7B?uri%20a%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/ES%3E%20%3B%20%3Chttp://www.w3.org/2000/01/rdf-schema%23label%3E%20?name%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude%3E%20?lat%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude%3E%20?lon%7D
-ttl 86400
-force diffusion
-at sun 1.0
-map results.bindings
-lat_key lat.value
-lon_key lon.value
-  field name.value value
-  field country.value value
-  field alt.value value
-  field ecosys.value value
-
 url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
 ttl 86400
 force em
 body earth
   field subset.0.1 1
-
-url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
-ttl 86400
-force em
-on earth 51.231 2.928
-  path total total
-
-url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
-ttl 86400
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field family family
-  field date_year date_year
-
-url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38
-ttl 86400
-force em
-at sun 1
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field eventDate eventDate
-  field depth depth
-
-url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true
-ttl 86400
-force em
-at sun 1
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field eventDate eventDate
-  field depth depth
-  field aphiaID aphiaID
-
-url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
-ttl 86400
-force em
-on earth 47.3769 8.5417
-  field total total
-
-url https://api.obis.org/v3/statistics
-ttl 86400
-force em
-on earth 51.231 2.928
-  field taxa taxa
-  field records records
-  field datasets datasets
-
-url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
-ttl 86400
-force diffusion
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field class class
-  field family family
-  field iucnRedListCategory iucnRedListCategory
-  field date_year date_year
 
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
 ttl 86400
@@ -15202,12 +14486,6 @@ force em
 on earth 38.978 -76.919
 format universal
 last_row VHI biosphere_global_vegetation_health_index
-
-url https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN
-ttl 86400
-force em
-on earth 46.2276 6.1432
-last_line biosphere_who_life_expectancy_global
 
 url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
 ttl 86400
@@ -15630,19 +14908,6 @@ format text
 rows
 field_in 0 timestamp_utc
 field_in 1 soil_temp_0_10cm_k
-
-url https://api.globalmangrovewatch.org/v2/countries
-ttl 86400
-force diffusion
-at sun 1.0
-map data
-lat_key latitude
-lon_key longitude
-  field country country
-  field iso3 iso3
-field country_area_km2 country_area_km2
-field mangrove_area_km2 mangrove_area_km2
-  field percent_mangrove percent_mangrove
 
 url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=application/json&count=1000
 ttl 86400
@@ -16416,17 +15681,6 @@ lon_key lon
   field Salinity Salinity
   field Oxygen Oxygen
 
-url https://stac.openlandmap.org/collections/sol_organic.carbon_usda.6a1c_m/items?limit=500&bbox=-180,-60,180,75
-ttl 86400
-force diffusion
-at sun 1.0
-map features
-lat_key geometry.coordinates.0.0.1
-lon_key geometry.coordinates.0.0.0
-  field properties.title title
-  field properties.datetime datetime
-  field properties.description description
-
 url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01&endtime=9999-01-01
 ttl 86400
 force seismic-body
@@ -16459,12 +15713,6 @@ map features
 lat_key geometry.y
 lon_key geometry.x
   field attributes.sm sm
-
-url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
-ttl 86400
-force em
-on earth 40.820 -96.702
-  field 0.DSCI DSCI
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6.0&orderby=time&limit=20
 ttl 86400
@@ -16504,18 +15752,6 @@ lon_key dec_long_va
   field peak_va peak_va
   field gage_ht gage_ht
 
-url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
-ttl 86400
-force diffusion
-at sun 1.0
-map items
-lat_key spatial.boundingBox.minY
-lon_key spatial.boundingBox.minX
-  field title title
-  field tags.0.name name
-  field spatial.representationalPoint.coordinates.0 centroid_lon
-  field spatial.representationalPoint.coordinates.1 centroid_lat
-
 url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
 ttl 86400
 force em
@@ -16532,24 +15768,6 @@ lat_key lat
 lon_key lon
   field elevation_meters elevation_meters
   field vnum vnum
-
-url https://www.bodc.ac.uk/data/published_data_library/catalogue/?jsonrequest=1&keywords=oxygen+salinity&limit=200
-ttl 86400
-force diffusion
-at sun 1.0
-map results
-lat_key geo_location.lat
-lon_key geo_location.lon
-  field title title
-  field variables.0 0
-  field temporal_coverage.start start
-  field temporal_coverage.end end
-  field bodc_id bodc_id
-  field species species
-  field cellcount cellcount
-  field cellcount_units cellcount_units
-  field hab_category hab_category
-field sample_date sample_date
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 ttl 86400
@@ -16714,24 +15932,6 @@ on earth 46.05 -125.00
 format universal
 last_row surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm
 last_row sea_surface_temperature hydrosphere_sst_ooi_c
-
-url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GEOTRACES
-ttl 86400
-force diffusion
-on earth 0.0 0.0
-map .
-
-url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIP
-ttl 86400
-force diffusion
-on earth 0.0 0.0
-map .
-
-url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIR
-ttl 86400
-force diffusion
-at sun 1
-map .
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
 ttl 86400
@@ -17769,18 +16969,6 @@ lon_key lng
   field status status
   field success_rate success_rate
 
-url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-  field 0 quantity_name
-  field 1 symbol
-  field 2 value
-  field 3 uncertainty
-  field 4 unit
-
 url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
 ttl 86400
 force em
@@ -17798,41 +16986,6 @@ body earth
   path properties.parameter.RH2M.0 RH2M
   path properties.parameter.WS10M.0 WS10M
   path properties.parameter.PRECTOTCORR.0 PRECTOTCORR
-
-url https://overpass-api.de/api/interpreter?data=[out:json];node[power=plant](global);out;
-ttl 86400
-force em
-at sun 1.0
-
-url https://api.openinframap.org/stats/country
-ttl 86400
-force em
-body earth
-map .
-lat_key centroid.lat
-lon_key centroid.lon
-  field country country
-field power_plant_count power_plant_count
-field wind_capacity_mw wind_capacity_mw
-  field solar_capacity_mw solar_capacity_mw
-field nuclear_capacity_mw nuclear_capacity_mw
-
-url https://ourairports.com/data/airports.csv
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-pos airport_latitude airport_longitude
-field_in 2 airport_type
-field_in 3 airport_name
-field_in 4 airport_latitude
-field_in 5 airport_longitude
-field_in 6 elevation_ft
-field_in 10 municipality
-field_in 11 scheduled_service
-field_in 12 icao_code
-field_in 13 iata_code
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+batsegrb
 ttl 604800
@@ -19712,229 +18865,6 @@ map elements
   field density density
   field melt melt
 
-url https://pdgapi.lbl.gov/summaries/S091M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S041M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S042M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/Q005M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S008M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/Q004M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S074M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/Q001M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S003M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S014M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S010M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S011M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S040M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S018M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S004M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S017M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S063M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S053M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S047M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S009M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S020M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S019M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S021M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/Q003M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S035M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/Q007TP
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/Q002M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S043
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S045M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S058M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S059M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S048M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S065M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S068M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S022M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S023M
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
-url https://pdgapi.lbl.gov/summaries/S044
-ttl 604800
-force em
-on earth 37.877 -122.247
-  field pdg_values.0.value value
-
 url https://raw.githubusercontent.com/cristianst85/GeoNuclearData/master/data/csv/denormalized/reactors.csv
 ttl 604800
 force thermal
@@ -19944,14 +18874,6 @@ map .
 lat_key Latitude
 lon_key Longitude
   field Capacity Capacity
-
-url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
-ttl 604800
-at sun 1.0
-force em
-format universal
-  field properties.name name
-  field properties.length length
 
 url https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv
 ttl 604800
@@ -20019,12 +18941,6 @@ on earth 50.727 -3.476
 format universal
 last line atmosphere_hadcrut5_temp_anomaly_raw
 
-url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest
-ttl 2592000
-force em
-on earth 38.907 -77.036
-  field data.0.areaHa areaHa
-
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
 ttl 2592000
 force em
@@ -20072,12 +18988,6 @@ body earth
 format text
 tail
 field_in undulate geosphere_geoid_height_m
-
-url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
-ttl 2592000
-force em
-on earth 43.073 -89.401
-  path success.data.0.n_intervals ics_timescale_units
 
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/dc_ch4_hol_fl02-noaa.txt
 ttl 2592000
