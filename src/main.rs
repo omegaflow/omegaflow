@@ -1912,7 +1912,6 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_stations_lat = String::from("lat");
     let mut cur_stations_lon = String::from("lng");
     let mut cur_stations_id = String::from("id");
-    let mut cur_name = String::new();
     let mut cur_flux_from_mag: Option<String> = None;
     let mut cur_abs_mag_from: Option<String> = None;
     let mut cur_reach_ttl: Option<u64> = None;
@@ -1924,16 +1923,16 @@ fn load_sources() -> Vec<SourceConfig> {
         () => {
             if active {
                 if cur_force.is_empty() {
-                    eprintln!("source refused (no force): {}", cur_name);
+                    eprintln!("source refused (no force): {}", cur_url);
                 } else if force_constants(&cur_force).is_none() {
                     eprintln!(
                         "source refused (unknown force '{}'): {}",
-                        cur_force, cur_name
+                        cur_force, cur_url
                     );
                 } else if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
                     eprintln!(
                         "source refused (flux_from_mag and abs_mag_from are mutually exclusive): {}",
-                        cur_name
+                        cur_url
                     );
                 } else {
                     let has_data_position = cur_pos.is_some()
@@ -1974,12 +1973,12 @@ fn load_sources() -> Vec<SourceConfig> {
                     {
                         Some(Frame::Surface { body_name: "earth".to_string(), lat: 0.0, lon: 0.0, alt: 0.0 })
                     } else {
-                        eprintln!("source refused (no reference frame): {}", cur_name);
+                        eprintln!("source refused (no reference frame): {}", cur_url);
                         None
                     };
                     if let Some(frame) = frame {
                         sources.push(SourceConfig {
-                            name: cur_name.clone(),
+                            name: String::new(),
                             ttl: cur_ttl,
                             url: cur_url.clone(),
                             frame,
@@ -2022,13 +2021,13 @@ fn load_sources() -> Vec<SourceConfig> {
             continue;
         }
         match parts[0] {
-            "source" => {
+            "url" => {
                 flush!();
                 cur_ttl = 0;
                 cur_force.clear();
                 cur_tau = None;
                 cur_tau_key = None;
-                cur_url.clear();
+                cur_url = line.get(4..).unwrap_or("").trim().to_string();
                 cur_lat = None;
                 cur_lon = None;
                 cur_alt = 0.0;
@@ -2052,10 +2051,8 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_reach_ttl = None;
                 cur_catalog_epoch = None;
                 cur_repeat_ra_bins = 0;
-                cur_name = parts.get(1).unwrap_or(&"").to_string();
                 active = true;
             }
-            "url" => cur_url = line.get(4..).unwrap_or("").trim().to_string(),
             "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
             "force" => cur_force = parts.get(1).unwrap_or(&"").to_string(),
             "tau" => cur_tau = parts.get(1).and_then(|s| s.parse().ok()),

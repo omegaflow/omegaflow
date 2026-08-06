@@ -34,6 +34,7 @@ fn main() {
     let mut deleted = 0usize;
     let mut converted = 0usize;
     let mut stripped = 0usize;
+    let mut sphere_stripped = 0usize;
 
     let mut source_blocks: Vec<(String, u64, Vec<String>)> = Vec::new();
 
@@ -88,6 +89,8 @@ fn main() {
             }
         }
 
+        sphere_stripped += strip_sphere_prefixes(&mut block);
+
         let ttl = extract_ttl(&block).unwrap_or(999999);
         source_blocks.push((name, ttl, block));
     }
@@ -116,9 +119,11 @@ fn main() {
 
     let source_count_before_new = source_blocks.len();
 
-    let existing_names: HashSet<&str> = source_blocks.iter().map(|(n, _, _)| n.as_str()).collect();
+    let existing_names: Vec<String> = source_blocks.iter().map(|(n, _, _)| n.clone()).collect();
+    let has_lmsal = existing_names.iter().any(|n| n == "lmsal_solar_flares");
+    let has_satnogs = existing_names.iter().any(|n| n == "satnogs_stations");
 
-    if !existing_names.contains("lmsal_solar_flares") {
+    if !has_lmsal {
         println!("Adding lmsal_solar_flares");
         source_blocks.push((
             "lmsal_solar_flares".to_string(),
@@ -142,7 +147,7 @@ fn main() {
         ));
     }
 
-    if !existing_names.contains("satnogs_stations") {
+    if !has_satnogs {
         println!("Adding satnogs_stations");
         source_blocks.push((
             "satnogs_stations".to_string(),
@@ -167,6 +172,20 @@ fn main() {
     }
 
     source_blocks.sort_by(|a, b| a.1.cmp(&b.1).then_with(|| a.0.cmp(&b.0)));
+
+    // Post-processing: strip sphere prefixes, remove source line, put url first
+    for (_, _, block) in &mut source_blocks {
+        strip_sphere_prefixes(block);
+        block.retain(|l| !l.trim_start().starts_with("source "));
+        // Move url to front
+        if let Some(url_pos) = block
+            .iter()
+            .position(|l| l.trim_start().starts_with("url "))
+        {
+            let url_line = block.remove(url_pos);
+            block.insert(0, url_line);
+        }
+    }
 
     let mut output = String::new();
     for (_, _, block) in &source_blocks {
@@ -203,13 +222,90 @@ fn extract_ttl(block: &[String]) -> Option<u64> {
     None
 }
 
+fn strip_sphere_prefixes(block: &mut Vec<String>) -> usize {
+    let prefixes = &[
+        "atmosphere_",
+        "biosphere_",
+        "geosphere_",
+        "magnetosphere_",
+        "exosphere_",
+        "technosphere_",
+        "hydrosphere_",
+        "cryosphere_",
+        "lithosphere_",
+        "subatomic_",
+        "astro_",
+        "orbital_",
+        "cosmos_",
+        "solar_",
+    ];
+    let extractors: &[&str] = &[
+        "field ",
+        "last ",
+        "last_row ",
+        "last_line ",
+        "first ",
+        "path ",
+        "hapi ",
+        "count ",
+        "xml_count ",
+        "tail ",
+        "field_in ",
+        "regex ",
+        "last_obj ",
+        "obj_last ",
+    ];
+    let mut count = 0;
+    for line in block.iter_mut() {
+        let trimmed = line.trim();
+        let is_pos = trimmed.starts_with("pos ");
+        let is_extractor = extractors.iter().any(|p| trimmed.starts_with(p));
+        if !is_pos && !is_extractor {
+            continue;
+        }
+        let mut parts: Vec<String> = trimmed.split_whitespace().map(|s| s.to_string()).collect();
+        let start = if is_pos { 1 } else { 1 };
+        let end = if is_pos {
+            parts.len().saturating_sub(1)
+        } else {
+            parts.len() - 1
+        };
+        let mut changed = false;
+        for i in start..=end {
+            if i >= parts.len() {
+                break;
+            }
+            for p in prefixes {
+                if parts[i].starts_with(p) {
+                    parts[i] = parts[i][p.len()..].to_string();
+                    changed = true;
+                    break;
+                }
+            }
+        }
+        if changed {
+            *line = parts.join(" ");
+            count += 1;
+        }
+    }
+    count
+}
+
 fn build_source_block(name: &str, ttl: u64, force: &str, fields: &[&str]) -> Vec<String> {
     let mut block: Vec<String> = Vec::new();
-    block.push(format!("source {}", name));
+    // url must be first line (new delimiter convention)
+    for f in fields {
+        if f.starts_with("url ") {
+            block.push(f.to_string());
+            break;
+        }
+    }
     block.push(format!("ttl {}", ttl));
     block.push(force.to_string());
     for f in fields {
-        block.push(f.to_string());
+        if !f.starts_with("url ") {
+            block.push(f.to_string());
+        }
     }
     block
 }
