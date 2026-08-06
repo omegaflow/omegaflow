@@ -7421,6 +7421,8 @@ field_in 10 geosphere_gfz_magnitude
 field_in 10 geosphere_gfz_mag_type
 field_in 11 geosphere_gfz_mag_author
 field_in 12 geosphere_gfz_location
+lat_key 2
+lon_key 3
 
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2&limit=100
 ttl 600
@@ -7566,6 +7568,8 @@ field_in 11 wave_height_m
 field_in 12 dominant_period_s
 field_in 14 pressure_hpa
 field_in 17 water_temp_c
+lat_key 5
+lon_key 6
 
 url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period&timezone=auto
 ttl 600
@@ -8004,6 +8008,8 @@ field_in 12 dominant_period_s
 field_in 18 water_temp_c
 field_in 17 air_temp_c
 field_in 15 pressure_hpa
+lat_key 1
+lon_key 2
 
 url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json
 ttl 1800
@@ -10524,6 +10530,8 @@ at sun 1.0
 format text
 rows
 field_in 7 atmosphere_aeronet_aod_500nm
+lat_key 1
+lon_key 2
 
 url https://db.satnogs.org/api/tle/?format=json
 ttl 14400
@@ -11175,6 +11183,8 @@ at sun 1.0
 format universal
 map .
 field_in 2 chandra_exposure_sec
+lat_key 0
+lon_key 1
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,instrument,obs_date+FROM+chanmaster+WHERE+status%3D'archived'+AND+exposure%3E10000+ORDER+BY+obs_date+DESC
 ttl 86400
@@ -12503,6 +12513,8 @@ rows
   field 4 mass_g
   field 5 fall fall_or_find
   field 6 year year
+lat_key 7
+lon_key 8
 
 url https://modis.gsfc.nasa.gov/data/dataprod/mod13.php
 ttl 86400
@@ -15171,6 +15183,8 @@ field_in 5 station_name
 field_in 1 station_latitude
 field_in 2 station_longitude
 field_in 3 station_elevation_m
+lat_key 1
+lon_key 2
 
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt
 ttl 86400
@@ -15538,6 +15552,8 @@ rows
 field_in 0 geosphere_orfeus_network
 field_in 1 geosphere_orfeus_station
 field_in 4 geosphere_orfeus_elevation_m
+lat_key 2
+lon_key 3
 
 url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
 ttl 86400
@@ -18669,6 +18685,8 @@ field_in 11 snr
 field_in 12 rms
 field_in 13 dist_mpc
 field_in 14 log_m_sun
+lat_key 2
+lon_key 3
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+"{catalog}"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 ttl 2592000
