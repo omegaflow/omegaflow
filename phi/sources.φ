@@ -65,7 +65,7 @@ last flux solar_xray_flux_wm2
 url https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json
 ttl 60
 force acoustic
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -95,7 +95,7 @@ field 0.bz_gsm exosphere_mag_bz_gsm_nt
 url https://api.adsb.lol/v2/point/50/10/1500
 ttl 60
 force em
-at sun 1.0
+on earth 0 0
 map ac
 lat_key lat
 lon_key lon
@@ -128,10 +128,10 @@ vr_key baro_rate
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.evid event_id
 field properties.time event_time_utc
 field properties.mag magnitude
@@ -141,10 +141,10 @@ field properties.region geographic_region
 url https://api.geonet.org.nz/quake?MMI=3
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.magnitude magnitude
 field properties.locality locality
 field properties.time event_time
@@ -154,10 +154,10 @@ field properties.mmi mmi_value
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag magnitude
 field properties.place locality
 field properties.time event_time
@@ -166,10 +166,10 @@ field properties.depth depth_km
 url http://irsc.ut.ac.ir/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time&starttime={today}T00:00:00
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag magnitude
 field properties.place locality
 field properties.time event_time
@@ -191,8 +191,10 @@ field isFinal geosphere_jma_eew_is_final
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 ttl 60
 force em
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field_in 0 timestamp_utc
 field_in 1 electron_2mev_flux
 field_in 2 electron_04mev_flux
@@ -200,8 +202,10 @@ field_in 2 electron_04mev_flux
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 ttl 60
 force em
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field_in 0 timestamp_utc
 field_in 1 flux_10mev_p_cm2s
 field_in 2 flux_50mev_p_cm2s
@@ -219,8 +223,10 @@ field flux_short_0_5_4A flux_0_5_4A_W_m2
 url https://services.swpc.noaa.gov/products/alerts.json
 ttl 60
 force em
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field time_tag alert_time_utc
 field message alert_message
 field issue_utc issue_time_utc
@@ -228,8 +234,10 @@ field issue_utc issue_time_utc
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 ttl 60
 force em
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field 0 datetime_utc
 field 1 flux_short_0_5_4A
 field 2 flux_long_1_8A
@@ -237,8 +245,10 @@ field 2 flux_long_1_8A
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
 ttl 60
 force em
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field time_tag flare_time_utc
 field class flare_classification
 field satellite goes_satellite
@@ -246,10 +256,10 @@ field satellite goes_satellite
 url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=text&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag magnitude
 field properties.place locality
 field properties.time event_time_ms
@@ -260,10 +270,10 @@ field properties.net reporting_network
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=1000&orderby=time&starttime={today}T00:00:00
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag magnitude
 field properties.place locality
 field properties.time event_time_utc_ms
@@ -281,10 +291,10 @@ geojson events properties.mag 0.0 seismic_magnitude_mw seismic_depth_m
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6&limit=50&orderby=time&eventtype=earthquake
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag event_magnitude
 field properties.place location_description
 field properties.time event_time_utc
@@ -296,30 +306,30 @@ field properties.sig significance_score
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field geometry.coordinates.2 geosphere_quake_depth_km
 field properties.mag geosphere_quake_magnitude
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
 ttl 60
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field geometry.coordinates.2 geosphere_quake_depth_km
 field properties.mag geosphere_quake_magnitude
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&orderby=time
 ttl 60
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag earthquake_magnitude
 field properties.place earthquake_place
 field properties.time earthquake_time_epoch
@@ -334,10 +344,10 @@ depth_key geometry.coordinates.2
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=magnitude
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag magnitude
 field properties.place place
 field properties.time event_time_epoch_ms
@@ -374,10 +384,10 @@ field_in kp magnetosphere_forecast_kp_max
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map .
-lat_key earthquake.hypocenter.latitude
-lon_key earthquake.hypocenter.longitude
+lat_key lat
+lon_key lon
 field id event_id
 field time event_time_jst
 field earthquake.hypocenter.name epicenter_name
@@ -428,7 +438,7 @@ path pulse.pulseIndex quantum_entropy_nist_beacon
 url https://earthquake.tmd.go.th/earthquake_json.php?limit=200
 ttl 120
 force seismic-body
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -442,8 +452,10 @@ field reg region
 url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
 ttl 180
 force gravity
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field time_tag timestamp_utc
 field Kp kp_index
 field a_running kp_a_running
@@ -458,8 +470,10 @@ last Fobs solar_radio_flux_sfu
 url https://github.com/omegaflow/sources/releases/download/gracedb.ligo.org/gracedb_lvk_o4_public_superevents_{latest}.json
 ttl 300
 force gravity
-at sun 1.0
+on earth 0 0
 map superevents
+lat_key lat
+lon_key lon
 field superevent_id event_id
 field t_0 gps_time
 field far false_alarm_rate_Hz
@@ -489,7 +503,7 @@ field type burst_classification
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/jpl_cad_neo_recent_approaches_{latest}.json
 ttl 300
 force gravity
-at sun 1.0
+on earth 0 0
 map data
 lat_key null
 lon_key null
@@ -514,8 +528,10 @@ at sun 1.0
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/solar_noaa_Integrated_irradiance_{latest}.json
 ttl 300
 force em
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field begin_time solar_flare_begin_time
 field peak_time solar_flare_peak_time
 field end_time solar_flare_end_time
@@ -537,7 +553,7 @@ path 0.proton_speed solar_wind_speed_kms
 url https://github.com/omegaflow/sources/releases/download/reg.bom.gov.au/bom_nsw_weather_observations_{latest}.json
 ttl 300
 force diffusion
-at sun 1.0
+on earth 0 0
 map observations.data
 lat_key lat
 lon_key lon
@@ -601,9 +617,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 300
 force diffusion
 at sun 1.0
-map .
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap .
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key occurrence_id
 field species species_name
 field kingdom kingdom_name
@@ -617,9 +633,9 @@ url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_mar
 ttl 300
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName species_name
 field eventDate observation_date
 
@@ -666,10 +682,10 @@ field properties.tsunami quake3d_tsunami_flag
 url https://github.com/omegaflow/sources/releases/download/services.arcgis.com/arcgis_goes_bolides_{latest}.json
 ttl 300
 force em
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.detected_duration goes_bolide_duration_s
 field properties.detected_energy goes_bolide_energy_tj
 
@@ -687,10 +703,10 @@ field properties.f6 gsn_seismic_elevation_m
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/arcgis_historical_quakes_{latest}.json
 ttl 300
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag quake_magnitude
 field properties.sig quake_significance
 field properties.depth quake_depth_km
@@ -702,10 +718,10 @@ field properties.tsunami quake_tsunami_flag
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/arcgis_metar_weather_{latest}.json
 ttl 300
 force thermal
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.TEMP metar_temp_f
 field properties.DEW_POINT metar_dew_point_f
 field properties.R_HUMIDITY metar_humidity_pct
@@ -772,10 +788,10 @@ field properties.tsunami usgs_tsunami_flag
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/arcgis_viirs_fire_{latest}.json
 ttl 300
 force thermal
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.bright_ti4 viirs_brightness_ti4_k
 field properties.bright_ti5 viirs_brightness_ti5_k
 field properties.frp viirs_fire_radiative_power_mw
@@ -837,14 +853,14 @@ lon_key attributes.lon
 url https://github.com/omegaflow/sources/releases/download/services.arcgis.com/esri_env_canada_wind_{latest}.json
 ttl 300
 force advective
-at sun 1.0
+on earth 0 0
 map features
 field attributes.Station_Name station_name
 field attributes.Temperature_C temp_c
 field attributes.CurrentConditions conditions
 field attributes.Wind wind_desc
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/esri_lightning_global_{latest}.json
 ttl 300
@@ -875,10 +891,10 @@ lon_key attributes.lon
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42043_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42043_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42043_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42043_current_speed_cms
@@ -886,10 +902,10 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42043_current_speed_cms
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42084_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42084_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42084_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42084_current_speed_cms
@@ -897,10 +913,10 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42084_current_speed_cms
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42091_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42091_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42091_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42091_current_speed_cms
@@ -908,10 +924,10 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42091_current_speed_cms
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42095_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42095_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42095_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42095_current_speed_cms
@@ -919,10 +935,10 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42095_current_speed_cms
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42098_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42098_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42098_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42098_current_speed_cms
@@ -930,10 +946,10 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42098_current_speed_cms
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42099_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42099_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42099_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42099_current_speed_cms
@@ -941,10 +957,10 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42099_current_speed_cms
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42360_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42360_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42360_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42360_current_speed_cms
@@ -1018,10 +1034,10 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42369_current_speed_cms
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42370_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42370_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42370_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42370_current_speed_cms
@@ -1095,10 +1111,10 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42384_current_speed_cms
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42386_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42386_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42386_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42386_current_speed_cms
@@ -1117,10 +1133,10 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42388_current_speed_cms
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42395_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42395_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42395_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42395_current_speed_cms
@@ -1161,10 +1177,10 @@ field properties.sea_water_speed_0__cm_s_1_ gcoos_42876_current_speed_cms
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/gcoos_buoy_wmo_42881_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.depth__m_ gcoos_42881_depth_m
 field properties.sea_surface_temperature_0__degr gcoos_42881_sst_deg
 field properties.sea_water_speed_0__cm_s_1_ gcoos_42881_current_speed_cms
@@ -1227,7 +1243,7 @@ field 1.location geosphere_jma_eq_location
 url https://github.com/omegaflow/sources/releases/download/tadas.afad.gov.tr/koeri_turkey_earthquakes_{latest}.json
 ttl 300
 force seismic-body
-at sun 1.0
+on earth 0 0
 map .
 lat_key latitude
 lon_key longitude
@@ -1241,10 +1257,10 @@ field type event_type
 url https://api.weather.gov/stations?state=CA,TX,NY&limit=500&cursor=&format=json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.stationIdentifier station_id
 field properties.name station_name
 field properties.elevation.value elevation_m
@@ -1280,7 +1296,7 @@ field v water_temperature_c
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_ibtracs_active_storms_{latest}.json
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat_key LAT
@@ -1319,7 +1335,7 @@ field estimated_kp estimated_kp
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_aurora_ovation_prime_{latest}.json
 ttl 300
 force em
-at sun 1.0
+on earth 0 0
 map coordinates
 lat_key 1
 lon_key 0
@@ -1328,16 +1344,20 @@ field_in 2 aurora_probability
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_dst_real_time_{latest}.json
 ttl 300
 force gravity
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field time_tag dst_time_utc
 field dst dst_index_nt
 
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_goes_electron_1day_{latest}.json
 ttl 300
 force diffusion
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field time_tag observation_time_utc
 field energy_channel0 electron_40keV
 field energy_channel1 electron_75keV
@@ -1349,8 +1369,10 @@ field satellite satellite_id
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_goes_integral_protons_1day_{latest}.json
 ttl 300
 force diffusion
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field 0 datetime_utc
 field 1 p_gt10mev_pfu
 field 2 p_gt50mev_pfu
@@ -1359,8 +1381,10 @@ field 3 p_gt100mev_pfu
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_goes_sep_7day_proton_flux_{latest}.json
 ttl 300
 force diffusion
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field 0 time_tag
 field 1 p_gt10mev_pfu
 field 2 p_gt50mev_pfu
@@ -1369,8 +1393,10 @@ field 3 p_gt100mev_pfu
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_goes_sep_proton_flux_{latest}.json
 ttl 300
 force diffusion
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field 0 datetime_utc
 field 1 p10_flux_pfu
 field 2 p50_flux_pfu
@@ -1379,8 +1405,10 @@ field 3 p100_flux_pfu
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_kp_index_realtime_{latest}.json
 ttl 300
 force gravity
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field 0 datetime_utc
 field 1 kp_index
 field 2 observing_stations
@@ -1389,8 +1417,10 @@ field 3 kp_fraction
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_kp_planetary_index_{latest}.json
 ttl 300
 force gravity
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field time_tag observation_time_utc
 field kp_index planetary_kp
 field kp_estimated estimated_kp
@@ -1416,10 +1446,10 @@ lon_key lon
 url https://github.com/omegaflow/sources/releases/download/api.weather.gov/nws_alerts_{latest}.json
 ttl 300
 force em
-at sun 1
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.event weather_event_type
 field properties.severity alert_severity
 field properties.headline alert_headline
@@ -1428,10 +1458,10 @@ field properties.areaDesc affected_area
 url https://github.com/omegaflow/sources/releases/download/api.weather.gov/nws_tsunami_warnings_{latest}.json
 ttl 300
 force gravity
-at sun 1
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.event weather_event_type
 field properties.severity alert_severity
 field properties.headline alert_headline
@@ -1440,10 +1470,10 @@ field properties.areaDesc affected_area
 url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_aftershock_forecast_significant_{latest}.json
 ttl 300
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag mainshock_magnitude
 field properties.place location_description
 field properties.time event_time_utc
@@ -1454,10 +1484,10 @@ field properties.cdi community_intensity
 url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_deep_focus_earthquakes_{latest}.json
 ttl 300
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag magnitude
 field properties.place locality
 field properties.time event_time
@@ -1512,10 +1542,10 @@ field properties.sig geosphere_quake_sig
 url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_pager_recent_alerts_{latest}.json
 ttl 300
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag magnitude
 field properties.place locality
 field properties.time event_time
@@ -1547,16 +1577,16 @@ path value.timeSeries.0.values.0.value.0.value hydrosphere_river_flow_cfs
 url https://github.com/omegaflow/sources/releases/download/waterservices.usgs.gov/usgs_streamflow_bbox_{latest}.json
 ttl 300
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map value.timeSeries
-lat_key sourceInfo.geoLocation.geogLocation.latitude
-lon_key sourceInfo.geoLocation.geogLocation.longitude
+lat_key lat
+lon_key lon
 field values.0.value.0.value hydrosphere_river_flow_cfs
 
 url https://github.com/omegaflow/sources/releases/download/volcanoes.usgs.gov/usgs_volcano_current_activity_{latest}.json
 ttl 300
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map .
 lat_key Latitude
 lon_key Longitude
@@ -1569,10 +1599,10 @@ field LastUpdated last_updated_utc
 url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=00400,00095,00300,63680&siteStatus=active&bbox=-125,24,-66,50&siteType=ST
 ttl 300
 force diffusion
-at sun 1.0
+on earth 0 0
 map value.timeSeries
-lat_key sourceInfo.geoLocation.geogLocation.latitude
-lon_key sourceInfo.geoLocation.geogLocation.longitude
+lat_key lat
+lon_key lon
 field sourceInfo.siteName station_name
 field variable.variableName parameter_name
 field values.0.value.0.value parameter_value
@@ -6746,7 +6776,7 @@ last_row 2 magnetosphere_solar_wind_density_noaa
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/swpc_goes_eps_protons_{latest}.json
 ttl 300
 force em
-at sun 1.0
+on earth 0 0
 map .
 lat_key satellite_lat
 lon_key satellite_lon
@@ -6758,7 +6788,7 @@ field flux proton_flux_pfu
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/swpc_goes_xray_flares_{latest}.json
 ttl 300
 force em
-at sun 1.0
+on earth 0 0
 map .
 lat_key satellite_lat
 lon_key satellite_lon
@@ -6777,8 +6807,10 @@ regex ("totalItems":...,) cosmic_icecube_alert_circular_count
 url https://github.com/omegaflow/sources/releases/download/gracedb.ligo.org/physics_ligo_grace_db_events_{latest}.json
 ttl 300
 force em
-at sun 1.0
+on earth 0 0
 map results
+lat_key lat
+lon_key lon
 field gpstime physics_ligo_event_gpstime
 field far physics_ligo_far_hz
 field significance physics_ligo_significance
@@ -6789,8 +6821,10 @@ field pipeline physics_ligo_pipeline
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/8518750_{latest}.json
 ttl 360
 force acoustic
-at sun 1.0
+on earth 0 0
 map data
+lat_key lat
+lon_key lon
 field t timestamp_utc
 field v water_level_m
 field q data_quality_flag
@@ -6830,10 +6864,10 @@ field 6 obs_date
 url https://github.com/omegaflow/sources/releases/download/eonet.gsfc.nasa.gov/nasa_eonet_events_{latest}.json
 ttl 600
 force seismic-body
-at sun 1.0
+on earth 0 0
 map events
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field title event_title
 field categories.0.title category
 field closed closed_date
@@ -6871,8 +6905,10 @@ field_in 11 fire_radiative_power
 url https://github.com/omegaflow/sources/releases/download/epic.gsfc.nasa.gov/solar_dscovr_epic_{latest}.json
 ttl 600
 force em
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field identifier solar_epic_image_id
 field image solar_epic_image_name
 field date solar_epic_date
@@ -7031,8 +7067,10 @@ alt_key elev
 url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/nws_sigmet_{latest}.json
 ttl 600
 force em
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field altitudeHi1 atmosphere_nws_sigmet_alt_hi_ft
 field movementDir atmosphere_nws_sigmet_movement_dir
 field movementSpd atmosphere_nws_sigmet_movement_spd_kt
@@ -7234,9 +7272,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 600
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species biosphere_species_nearby
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_recent_birds_{latest}.json
@@ -7248,10 +7286,10 @@ field count biosphere_bird_count
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_nearby_{latest}.json
 ttl 600
 force em
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field species_guess biosphere_inaturalist_observations_nearby
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_snowfall_{latest}.json
@@ -7334,7 +7372,7 @@ lon_key attributes.lon
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_air_quality_pm25_latest_results_{latest}.json
 ttl 600
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.location_id location_id
@@ -7344,13 +7382,13 @@ field attributes.country country
 field attributes.lastUpdated lastupdated
 field attributes.value value
 field attributes.unit unit
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_asam_events_v1_{latest}.json
 ttl 600
 force em
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.reference reference
@@ -7360,20 +7398,20 @@ field attributes.hostility_d hostility_d
 field attributes.victim_d victim_d
 field attributes.description description
 field attributes.hostilitytype_l hostilitytype_l
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services.arcgis.com/esri_canada_air_quality_{latest}.json
 ttl 600
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
 field attributes.id observation_id
 field attributes.aqhi_type observation_type
 field attributes.location_name_en location_en
 field attributes.location_name_fr location_fr
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services.arcgis.com/esri_cwfis_hotspots_{latest}.json
 ttl 600
@@ -7390,7 +7428,7 @@ lon_key attributes.lon
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_live_stream_gauges_v1_{latest}.json
 ttl 600
 force advective
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.stationid stationid
@@ -7398,13 +7436,13 @@ field attributes.stationurl stationurl
 field attributes.graphurl graphurl
 field attributes.org org
 field attributes.stage_ft stage_ft
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_modis_thermal_v1_{latest}.json
 ttl 600
 force thermal
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.BRIGHTNESS brightness
@@ -7414,8 +7452,8 @@ field attributes.SATELLITE satellite
 field attributes.CONFIDENCE confidence
 field attributes.VERSION version
 field attributes.BRIGHT_T31 bright_t31
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_noaa_storm_reports_sampler_{latest}.json
 ttl 600
@@ -7468,14 +7506,14 @@ lon_key attributes.lon
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_usa_wildfires_v1_{latest}.json
 ttl 600
 force thermal
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.IncidentName incidentname
 field attributes.IncidentTypeCategory incidenttypecategory
 field attributes.DailyAcres dailyacres
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_usgs_seismic_data_v1_{latest}.json
 ttl 600
@@ -7510,7 +7548,7 @@ lon_key attributes.lon
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_wildfire_aggregated_v1_{latest}.json
 ttl 600
 force thermal
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.IRWINID irwinid
@@ -7520,16 +7558,16 @@ field attributes.sum_estimatedunder18pop sum_estimatedunder18pop
 field attributes.sum_estimated18to64pop sum_estimated18to64pop
 field attributes.sum_estimated65pluspop sum_estimated65pluspop
 field attributes.sum_estimated0_14pop sum_estimated0_14pop
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/seismic-api.science.unimelb.edu.au/ga_earthquakes_today_{latest}.json
 ttl 600
 force em
-at sun 1
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag geosphere_ga_magnitude
 field properties.place geosphere_ga_location
 field properties.time geosphere_ga_time
@@ -7588,21 +7626,25 @@ path elevation.0 lidar_terrain_elevation_m
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&station={nearest_station}&format=json&date=today&units=metric&datum=MLLW&time_zone=gmt
 ttl 600
 force advective
-at sun 1.0
+on earth 0 0
 stations https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json
 stations_path stations
 stations_lat lat
 stations_lon lng
 stations_id id
 map data
+lat_key lat
+lon_key lon
 field v water_level_m
 field t observation_time
 
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_goes_flare_event_archive_{latest}.json
 ttl 600
 force em
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field_in 0 timestamp_utc
 field_in 1 flux_short_wm2
 field_in 2 flux_long_wm2
@@ -7610,18 +7652,20 @@ field_in 2 flux_long_wm2
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_goes_xrays_7day_{latest}.json
 ttl 600
 force em
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field time_tag xray_time_utc
 field flux xray_flux_W_m2
 
 url https://github.com/omegaflow/sources/releases/download/api.weather.gov/noaa_weather_alerts_{latest}.json
 ttl 600
 force em
-at sun 1.0
+on earth 0 0
 map features
-lat_key 38.9
-lon_key -77.0
+lat_key lat
+lon_key lon
 field properties.id alert_id
 field properties.event alert_event_type
 field properties.headline alert_headline
@@ -7758,15 +7802,15 @@ geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500,09380000,11447650,02177000,03036500,05064500,07010000,08330000,09421500,12144500&parameterCd=00060&period=PT1H
 ttl 600
 force advective
-at sun 1.0
+on earth 0 0
 map value.timeSeries
-lat_key sourceInfo.geoLocation.geogLocation.latitude
-lon_key sourceInfo.geoLocation.geogLocation.longitude
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/volcanoes.usgs.gov/usgs_volcano_observatory_status_{latest}.json
 ttl 600
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map .
 lat_key Latitude
 lon_key Longitude
@@ -7838,7 +7882,7 @@ path current.swell_wave_period hydrosphere_swell_period_s
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/ovation_aurora_{latest}.json
 ttl 600
 force em
-at sun 1
+on earth 0 0
 map coordinates
 lat_key 1
 lon_key 0
@@ -7847,7 +7891,7 @@ field_in 2 magnetosphere_aurora_power_gw
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/swpc_aurora_oval_{latest}.json
 ttl 600
 force em
-at sun 1.0
+on earth 0 0
 map coordinates
 lat_key 1
 lon_key 0
@@ -7856,7 +7900,7 @@ field_in 2 aurora_intensity
 url https://github.com/omegaflow/sources/releases/download/nhc.noaa.gov/nhc_current_storms_{latest}.json
 ttl 900
 force em
-at sun 1.0
+on earth 0 0
 map activeStorms
 lat_key latitude
 lon_key longitude
@@ -7869,10 +7913,10 @@ field pressure central_pressure_mb
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/noaa_tides_water_levels_{latest}.json
 ttl 900
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
-lat_key 32.757
-lon_key -117.226
+lat_key lat
+lon_key lon
 field t water_level_m
 field s sigma
 field f flood_level_flag
@@ -7880,10 +7924,10 @@ field f flood_level_flag
 url https://github.com/omegaflow/sources/releases/download/waterservices.usgs.gov/usgs_streamflow_instantaneous_{latest}.json
 ttl 900
 force diffusion
-at sun 1.0
+on earth 0 0
 map value.timeSeries
-lat_key sourceInfo.geoLocation.geogLocation.latitude
-lon_key sourceInfo.geoLocation.geogLocation.longitude
+lat_key lat
+lon_key lon
 field sourceInfo.siteName station_name
 field values.0.value.0.value streamflow_cfs
 field values.0.value.0.dateTime measurement_time
@@ -7984,10 +8028,10 @@ field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_tenne
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/ionosphere_tec_global_{latest}.json
 ttl 900
 force em
-at sun 1
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.tec ionosphere_tec_value
 
 url https://github.com/omegaflow/sources/releases/download/impc.dlr.de/ionosphere_total_electron_content_{latest}.json
@@ -8000,10 +8044,10 @@ field data.grid.features.0.properties.vtec_rms_tecu ionosphere_tec_rms_tecu
 url https://github.com/omegaflow/sources/releases/download/imis.bfs.de/bfs_odl_germany_{latest}.json
 ttl 900
 force em
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.kenn station_code
 field properties.name station_name
 field properties.value ambient_dose_rate_nsv_h
@@ -8013,8 +8057,10 @@ field properties.site_status site_status
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/jpl_cad_neo_recent_{latest}.json
 ttl 1800
 force gravity
-at sun 1.0
+on earth 0 0
 map data
+lat_key lat
+lon_key lon
 field_in 0 designation
 field_in 3 close_approach_date
 field_in 4 distance_au
@@ -8162,7 +8208,7 @@ field wxString weather_string
 url https://github.com/omegaflow/sources/releases/download/nhc.noaa.gov/nhc_active_atlantic_hurricanes_{latest}.json
 ttl 1800
 force thermal
-at sun 1.0
+on earth 0 0
 map activeStorms
 lat_key latitude
 lon_key longitude
@@ -8175,7 +8221,7 @@ field movementSpeed movement_speed_kt
 url https://github.com/omegaflow/sources/releases/download/nhc.noaa.gov/nhc_active_epac_storms_{latest}.json
 ttl 1800
 force thermal
-at sun 1.0
+on earth 0 0
 map activeStorms
 lat_key latitude
 lon_key longitude
@@ -8186,10 +8232,10 @@ field pressure pressure_mb
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_forecast_{latest}.json
 ttl 1800
 force diffusion
-at sun 1.0
+on earth 0 0
 map current
-lat_key 52.52
-lon_key 13.41
+lat_key lat
+lon_key lon
 field temperature_2m temperature_celsius
 field relative_humidity_2m relative_humidity_percent
 field apparent_temperature feels_like_celsius
@@ -8205,10 +8251,10 @@ field surface_pressure surface_pressure_hpa
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_needs_id_global_{latest}.json
 ttl 1800
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field taxon.name species_name
 field taxon.iconic_taxon_name iconic_taxon
 field created_at submission_time
@@ -8217,10 +8263,10 @@ field place_guess locality
 url https://github.com/omegaflow/sources/releases/download/seismic-api.science.unimelb.edu.au/ga_earthquakes_3day_{latest}.json
 ttl 1800
 force em
-at sun 1
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag geosphere_ga_magnitude_3d
 field properties.place geosphere_ga_location_3d
 field properties.time geosphere_ga_time_3d
@@ -8230,7 +8276,7 @@ alt_key geometry.coordinates.2
 url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/noaa_awc_sigmet_international_{latest}.json
 ttl 1800
 force acoustic
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -8240,7 +8286,7 @@ field severity severity
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_aurora_oval_north_{latest}.json
 ttl 1800
 force em
-at sun 1.0
+on earth 0 0
 map coordinates
 lat_key 1
 lon_key 0
@@ -8249,10 +8295,10 @@ field_in 2 aurora_probability_pct
 url https://github.com/omegaflow/sources/releases/download/api.weather.gov/noaa_weather_observations_{latest}.json
 ttl 1800
 force diffusion
-at sun 1.0
+on earth 0 0
 map properties
-lat_key 39.073
-lon_key -95.626
+lat_key lat
+lon_key lon
 field temperature temperature_celsius
 field dewpoint dewpoint_celsius
 field windDirection wind_direction
@@ -8328,7 +8374,7 @@ path data.0.intensity.actual ngeso_carbon_intensity_gco2_kwh
 url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
 ttl 3600
 force gravity
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lng
@@ -8341,7 +8387,7 @@ field comments observer_comments
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/cneos_fireballs_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map data
 lat_key lat
 lon_key lon
@@ -8380,17 +8426,17 @@ force em
 at sun 1.0
 verify false
 format json
-map data
+cmap data
 field main_id target_name
 field otype_txt instrument
 field sp_type observation_time
-lat_key ra
-lon_key dec
+ra_key ra
+dec_key dec
 
 url https://github.com/omegaflow/sources/releases/download/fireball.fripon.org/fripon_fireballs_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -8404,9 +8450,9 @@ ttl 3600
 force em
 at sun 1.0
 verify false
-map .
-lat_key ra
-lon_key dec
+cmap .
+ra_key ra
+dec_key dec
 field object target
 field instrument instrument
 field observation_id observation_id
@@ -8415,8 +8461,10 @@ field utc observation_date
 url https://github.com/omegaflow/sources/releases/download/gracedb.ligo.org/gracedb_latest_confirmed_gw_event_{latest}.json
 ttl 3600
 force gravity
-at sun 1.0
+on earth 0 0
 map superevents
+lat_key lat
+lon_key lon
 field superevent_id event_id
 field t_0 gps_time
 field far false_alarm_rate_Hz
@@ -8428,8 +8476,10 @@ field classification.BBH p_bbh
 url https://github.com/omegaflow/sources/releases/download/gracedb.ligo.org/gracedb_o4_mass_gap_candidates_{latest}.json
 ttl 3600
 force gravity
-at sun 1.0
+on earth 0 0
 map superevents
+lat_key lat
+lon_key lon
 field superevent_id event_id
 field t_0 gps_time
 field far false_alarm_rate_Hz
@@ -8450,20 +8500,20 @@ force em
 at sun 1.0
 verify false
 format universal
-map data
+cmap data
 field name source_name
 field t_scid target_class
-lat_key ra
-lon_key dec
+ra_key ra
+dec_key dec
 
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/heasarc_main_nicer_master_source_catalog_{latest}.json
 ttl 3600
 force em
 at sun 1.0
 format universal
-map .
-lat_key ra
-lon_key dec
+cmap .
+ra_key ra
+dec_key dec
 field name source_name
 field obsid observation_id
 field exposure exposure_time_ks
@@ -8508,8 +8558,10 @@ field magrms mag_variability_rms
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/jpl_cad_neo_30d_{latest}.json
 ttl 3600
 force gravity
-at sun 1.0
+on earth 0 0
 map data
+lat_key lat
+lon_key lon
 field_in 0 designation
 field_in 3 close_approach_date
 field_in 4 distance_au
@@ -8531,7 +8583,7 @@ field_in 7 v_rel_kms
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/jpl_fireball_impact_events_{latest}.json
 ttl 3600
 force gravity
-at sun 1.0
+on earth 0 0
 map data
 lat_key lat
 lon_key lon
@@ -8546,8 +8598,10 @@ field lon longitude
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/jpl_fireball_impacts_{latest}.json
 ttl 3600
 force gravity
-at sun 1.0
+on earth 0 0
 map data
+lat_key lat
+lon_key lon
 field_in 2 date
 field_in 3 radiated_energy_gj
 field_in 4 impact_energy_kt
@@ -8664,7 +8718,7 @@ force em
 at sun 1.0
 verify false
 format json
-map data
+cmap data
 field s_ra ra_deg
 field s_dec dec_deg
 field obs_id observation_id
@@ -8673,17 +8727,17 @@ field instrument_name instrument
 field filters filters
 field target_name target
 field calib_level calibration_level
-lat_key s_ra
-lon_key s_dec
+ra_key s_ra
+dec_key s_dec
 
 url https://github.com/omegaflow/sources/releases/download/mast.stsci.edu/mast_jwst_cosmosweb_nircam_metadata_{latest}.json
 ttl 3600
 force em
 at sun 1.0
 format universal
-map .
-lat_key s_ra
-lon_key s_dec
+cmap .
+ra_key s_ra
+dec_key s_dec
 field observationID obs_id
 field target_name field_name
 field t_exptime exposure_s
@@ -8711,9 +8765,9 @@ ttl 3600
 force em
 at sun 1.0
 format universal
-map .
-lat_key s_ra
-lon_key s_dec
+cmap .
+ra_key s_ra
+dec_key s_dec
 field observationID obs_id
 field target_name target_name
 field t_exptime exposure_sec
@@ -8726,9 +8780,9 @@ ttl 3600
 force em
 at sun 1.0
 format universal
-map .
-lat_key s_ra
-lon_key s_dec
+cmap .
+ra_key s_ra
+dec_key s_dec
 field observationID obs_id
 field target_name target_name
 field t_exptime exposure_sec
@@ -8741,9 +8795,9 @@ ttl 3600
 force em
 at sun 1.0
 format universal
-map .
-lat_key s_ra
-lon_key s_dec
+cmap .
+ra_key s_ra
+dec_key s_dec
 field observationID obs_id
 field target_name target_name
 field t_exptime exposure_sec
@@ -8774,7 +8828,7 @@ obj_last value biosphere_solar_radiation_power
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/neo_jpl_fireball_events_{latest}.json
 ttl 3600
 force gravity
-at sun 1.0
+on earth 0 0
 map data
 lat_key lat
 lon_key lon
@@ -8800,17 +8854,19 @@ force em
 at sun 1.0
 verify false
 format json
-map data
+cmap data
 field main_id observation_id
 field otype_txt instrument
-lat_key ra
-lon_key dec
+ra_key ra
+dec_key dec
 
 url https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field filename magnetogram_filename
 field date observation_date
 field time observation_time
@@ -8828,8 +8884,10 @@ extent 3.34e-9
 url https://github.com/omegaflow/sources/releases/download/tle.ivanstanojevic.me/orbital_tle_mirror_full_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map member
+lat_key lat
+lon_key lon
 field satelliteId satellite_norad_id
 field name satellite_name
 field date tle_epoch
@@ -8852,13 +8910,13 @@ format universal
 url https://github.com/omegaflow/sources/releases/download/earth-search.aws.element84.com/sentinel2_l2a_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 method post
 body {"collections":["sentinel-2-l2a"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
 header Content-Type application/json
 map features
-lat_key properties.proj:centroid.lat
-lon_key properties.proj:centroid.lon
+lat_key lat
+lon_key lon
 field id scene_id
 field collection collection
 field properties.datetime observation_time
@@ -9450,8 +9508,10 @@ field seaLevelPressure pressure_hpa
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_access_g_australia_{latest}.json
 ttl 3600
 force thermal
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.temperature_2m temp_2m_c
 field hourly.precipitation precipitation_mm
 field hourly.windspeed_10m wind_speed_ms
@@ -9460,8 +9520,10 @@ field hourly.uv_index uv_index
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_airquality_pm_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.pm2_5 pm25_ugm3
 field hourly.pm10 pm10_ugm3
 field hourly.nitrogen_dioxide no2_ugm3
@@ -9472,8 +9534,10 @@ field hourly.us_aqi aqi_us
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_arctic_surface_{latest}.json
 ttl 3600
 force thermal
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.temperature_2m temp_2m_c
 field hourly.snowfall snowfall_cm
 field hourly.snow_depth snow_depth_m
@@ -9503,8 +9567,10 @@ field hourly.windspeed_10m wind_speed_ms
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_ecmwf_ifs_clouds_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.cloudcover cloud_cover_pct
 field hourly.shortwave_radiation sw_radiation_wm2
 field hourly.direct_radiation direct_rad_wm2
@@ -9513,9 +9579,11 @@ field hourly.diffuse_radiation diffuse_rad_wm2
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=et0_fao_evapotranspiration,precipitation,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm&models=era5_seamless&forecast_days=1&format=json
 ttl 3600
 force diffusion
-at sun 1
+on earth 0 0
 body earth
 map daily.time
+lat_key lat
+lon_key lon
 field daily.et0_fao_evapotranspiration et0_mm_d
 field daily.precipitation precipitation_mm
 field daily.soil_moisture_0_to_7cm soil_moisture_0_7cm
@@ -9524,9 +9592,11 @@ field daily.soil_moisture_7_to_28cm soil_moisture_7_28cm
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=fire_danger_index,precipitation_sum,windspeed_10m_max,temperature_2m_max&models=best_match&forecast_days=7&format=json
 ttl 3600
 force thermal
-at sun 1
+on earth 0 0
 body earth
 map daily.time
+lat_key lat
+lon_key lon
 field daily.fire_danger_index fire_danger_index
 field daily.precipitation_sum precip_mm
 field daily.windspeed_10m_max wind_max_kmh
@@ -9535,8 +9605,10 @@ field daily.temperature_2m_max temp_max_c
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_flood_glofas_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map daily.time
+lat_key lat
+lon_key lon
 field daily.river_discharge discharge_m3s
 field daily.river_discharge_mean discharge_mean_m3s
 field daily.river_discharge_max discharge_max_m3s
@@ -9544,8 +9616,10 @@ field daily.river_discharge_max discharge_max_m3s
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_gem_canada_{latest}.json
 ttl 3600
 force thermal
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.temperature_2m temp_2m_c
 field hourly.snow_depth snow_depth_m
 field hourly.freezinglevel_height freezing_level_m
@@ -9554,8 +9628,10 @@ field hourly.precipitation precipitation_mm
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_gfs_pressure_levels_{latest}.json
 ttl 3600
 force thermal
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.temperature_500hPa temp_500hpa_c
 field hourly.temperature_700hPa temp_700hpa_c
 field hourly.temperature_850hPa temp_850hpa_c
@@ -9564,10 +9640,10 @@ field hourly.geopotential_height_500hPa z500_mgp
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_hourly_forecast_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map hourly
-lat_key 52.52
-lon_key 13.41
+lat_key lat
+lon_key lon
 field temperature_2m hourly_temperature_celsius
 field relative_humidity_2m hourly_humidity_percent
 field precipitation_probability hourly_precip_probability
@@ -9584,8 +9660,10 @@ field soil_moisture_0_1cm soil_moisture_m3m3
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_hydro_evapotranspiration_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.et0_fao_evapotranspiration et0_mm
 field hourly.soil_moisture_0_to_1cm sm_0_1cm_m3m3
 field hourly.soil_moisture_1_to_3cm sm_1_3cm_m3m3
@@ -9605,8 +9683,10 @@ field hourly.precipitation_probability precip_prob_pct
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_icon_seamless_wind_{latest}.json
 ttl 3600
 force acoustic
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.windspeed_10m wind_speed_ms
 field hourly.windgusts_10m wind_gust_ms
 field hourly.winddirection_10m wind_dir_deg
@@ -9625,8 +9705,10 @@ field hourly.cape cape_jkg
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_marine_waves_{latest}.json
 ttl 3600
 force acoustic
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.wave_height wave_height_m
 field hourly.wave_period wave_period_s
 field hourly.wave_direction wave_dir_deg
@@ -9636,8 +9718,10 @@ field hourly.ocean_current_velocity current_ms
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_snow_permafrost_proxy_{latest}.json
 ttl 3600
 force thermal
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.snow_depth snow_depth_m
 field hourly.frozen_soil_0_to_7cm frozen_0_7cm
 field hourly.frozen_soil_7_to_28cm frozen_7_28cm
@@ -9647,8 +9731,10 @@ field hourly.soil_temperature_6cm soil_temp_6cm_c
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_solar_dni_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.direct_normal_irradiance dni_wm2
 field hourly.global_tilted_irradiance gti_wm2
 field hourly.diffuse_radiation diffuse_wm2
@@ -9657,8 +9743,10 @@ field hourly.sunshine_duration sunshine_min
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_uv_southern_africa_{latest}.json
 ttl 3600
 force em
-at sun 1
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.uv_index uv_index
 field hourly.uv_index_clear_sky uv_index_clear_sky
 field hourly.direct_radiation direct_radiation_wm2
@@ -9666,20 +9754,20 @@ field hourly.direct_radiation direct_radiation_wm2
 url https://api.openaq.org/v3/locations?limit=500&has_geo=true&parameter_id=1&is_monitor=true
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 header X-API-Key OPENAQ_API_KEY
 map results
-lat_key coordinates.latitude
-lon_key coordinates.longitude
+lat_key lat
+lon_key lon
 
 url https://api.openaq.org/v3/locations?limit=500&has_geo=true&parameter_id=2&is_monitor=true
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 header X-API-Key OPENAQ_API_KEY
 map results
-lat_key coordinates.latitude
-lon_key coordinates.longitude
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_bom_{latest}.json
 ttl 3600
@@ -9880,7 +9968,7 @@ field current.ssta_90th_hs biosphere_coral_ssta_florida
 url https://github.com/omegaflow/sources/releases/download/api.gbif.org/ebird_recent_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -9897,19 +9985,19 @@ last price biosphere_electricity_price_eur_mwh
 url https://github.com/omegaflow/sources/releases/download/eonet.gsfc.nasa.gov/eonet_volcanoes_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map events
-lat_key geometry.0.coordinates.1
-lon_key geometry.0.coordinates.0
+lat_key lat
+lon_key lon
 field id biosphere_volcano_eonet_id
 
 url https://github.com/omegaflow/sources/releases/download/eonet.gsfc.nasa.gov/eonet_wildfires_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map events
-lat_key geometry.0.coordinates.1
-lon_key geometry.0.coordinates.0
+lat_key lat
+lon_key lon
 field geometry.0.magnitudeValue biosphere_fire_acres
 
 url https://github.com/omegaflow/sources/releases/download/api.gbif.org/gbif_occurrences_{latest}.json
@@ -9922,9 +10010,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 field family family
 
@@ -9932,9 +10020,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 3600
 force acoustic
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName species_name
 field family family_name
 field country country_code
@@ -9950,9 +10038,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName species_name
 field family family_name
 field countryCode country
@@ -9962,27 +10050,27 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_freshwater_fish_observations_{latest}.json
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_marine_mammal_sightings_{latest}.json
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName species_name
 field family family_name
 field country country_code
@@ -9993,9 +10081,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 field kingdom kingdom_name
 field phylum phylum_name
@@ -10017,9 +10105,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 3600
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_occurrence_key
 field coordinateUncertaintyInMeters biosphere_gbif_occurrences_uncertainty_m
 
@@ -10027,9 +10115,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName species_name
 field genus genus_name
 field country country_code
@@ -10040,18 +10128,18 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_species_occurrences_global_{latest}.json
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 field family family
 field kingdom kingdom
@@ -10060,9 +10148,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 field iucnRedListCategory iucn_category
 
@@ -10075,10 +10163,10 @@ field meta.total_count biosphere_legislation_votes
 url https://github.com/omegaflow/sources/releases/download/meta.icos-cp.eu/icos_carbon_portal_co2_station_data_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map results.bindings
-lat_key lat.value
-lon_key lon.value
+lat_key lat
+lon_key lon
 field name.value station_name
 field country.value country_code
 field s.value station_uri
@@ -10093,10 +10181,10 @@ field total_results biosphere_observations
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_amazon_biodiversity_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field taxon.name species_name
 field taxon.iconic_taxon_name iconic_taxon
 field observed_on observation_date
@@ -10104,20 +10192,20 @@ field observed_on observation_date
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_amphibia_global_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field taxon.name species_name
 field observed_on observation_date
 
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_europe_recent_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field taxon.name species_name
 field taxon.iconic_taxon_name iconic_taxon
 field observed_on observation_date
@@ -10139,10 +10227,10 @@ field species_count biosphere_fungi_species_count
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_fungi_global_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field taxon.name species_name
 field taxon.rank taxon_rank
 field observed_on observation_date
@@ -10151,10 +10239,10 @@ field place_guess locality
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_invasive_insects_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field taxon.name species_name
 field observed_on observation_date
 field place_guess locality
@@ -10162,10 +10250,10 @@ field place_guess locality
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_mammalia_global_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field taxon.name species_name
 field taxon.rank taxon_rank
 field observed_on observation_date
@@ -10174,10 +10262,10 @@ field place_guess locality
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_marine_fish_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field taxon.name species_name
 field taxon.rank taxon_rank
 field observed_on observation_date
@@ -10185,10 +10273,10 @@ field observed_on observation_date
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_reptilia_global_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field taxon.name species_name
 field taxon.rank taxon_rank
 field observed_on observation_date
@@ -10197,10 +10285,10 @@ field place_guess locality
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_threatened_species_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
+lat_key lat
+lon_key lon
 field taxon.name species_name
 field observed_on observation_date
 field place_guess locality
@@ -10215,9 +10303,9 @@ url https://github.com/omegaflow/sources/releases/download/records-ws.nbnatlas.o
 ttl 3600
 force acoustic
 at sun 1.0
-map occurrences
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap occurrences
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName species_name
 field vernacularName common_name
 field year obs_year
@@ -10227,9 +10315,9 @@ url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_mar
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName species_name
 field class taxon_class
 field family taxon_family
@@ -10239,9 +10327,9 @@ url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_mar
 ttl 3600
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName species_name
 field class taxon_class
 field order taxon_order
@@ -10252,7 +10340,7 @@ field country country_code
 url https://openlittermap.com/api/getdata?lat=0.0&lon=0.0&radius=50&format=json&limit=500
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
 lat_key lat
 lon_key lng
@@ -10289,10 +10377,10 @@ path daily.shortwave_radiation_sum.0 paleoclimate_shortwave_yesterday_mjm2
 url https://github.com/omegaflow/sources/releases/download/eonet.gsfc.nasa.gov/satnogs_wildfires_{latest}.json
 ttl 3600
 force em
-at sun 1
+on earth 0 0
 map events
-lat_key geometry.0.coordinates.1
-lon_key geometry.0.coordinates.0
+lat_key lat
+lon_key lon
 field title wildfire_title
 field categories.0.title event_category
 field id wildfire_eonet_id
@@ -10317,7 +10405,7 @@ field 0.temperature exosphere_ace_temp_k
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/aurora_oval_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map coordinates
 lat_key 1
 lon_key 0
@@ -10345,10 +10433,10 @@ last estimated_kp exosphere_kp_estimated
 url https://geofon.gfz.de/fdsnws/event/1/query?format=geojson&minmag=3&limit=100&region=AFRICA
 ttl 3600
 force em
-at sun 1
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag geosphere_africaarray_magnitude
 field properties.place geosphere_africaarray_location
 field properties.time geosphere_africaarray_time
@@ -10358,10 +10446,10 @@ alt_key geometry.coordinates.2
 url https://github.com/omegaflow/sources/releases/download/services3.arcgis.com/arcgis_pager_cat_earthquake_impacts_{latest}.json
 ttl 3600
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 field attributes.mag magnitude
 field attributes.place locality
 field attributes.alert alert_level
@@ -10370,7 +10458,7 @@ field attributes.fatalities fatalities
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_coral_reef_stations_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
 field attributes.name name
 field attributes.date date
@@ -10380,37 +10468,37 @@ field attributes.hs hs
 field attributes.dhw dhw
 field attributes.alert alert
 field attributes.ts_fig ts_fig
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services.arcgis.com/esri_epa_aqs_monitoring_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
 field attributes.AQS_Site_ID site_id
 field attributes.State state
 field attributes.City city
 field attributes.POC poc
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_historical_quakes_{latest}.json
 ttl 3600
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 field attributes.id id
 field attributes.code code
 field attributes.detail detail
 field attributes.gap gap
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_inat_preuc_view_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.observation_uuid observation_uuid
@@ -10419,8 +10507,8 @@ field attributes.user_login user_login
 field attributes.user_id user_id
 field attributes.taxon_id taxon_id
 field attributes.observed_on observed_on
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_inaturalist_{latest}.json
 ttl 3600
@@ -10468,25 +10556,25 @@ lon_key attributes.lon
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_noaa_temp_latest_{latest}.json
 ttl 3600
 force thermal
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.Date_ date_
 field attributes.Anomaly anomaly
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/OADS_Moorings/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 3600
-at sun 1.0
+on earth 0 0
 force diffusion
 map features
 field attributes.Mooring_Name mooring_name
 field attributes.Lon longitude
 field attributes.Lat latitude
 field attributes.Description_Link description_url
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://api.obis.org/v3/occurrence/grid/100?taxon=*&year=2026&geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))
 ttl 3600
@@ -10506,7 +10594,7 @@ field year year
 url https://github.com/omegaflow/sources/releases/download/firms.modaps.eosdis.nasa.gov/firms_modis_global_nrt_{latest}.json
 ttl 3600
 force thermal
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat_key latitude
@@ -10519,7 +10607,7 @@ field confidence fire_confidence
 url https://github.com/omegaflow/sources/releases/download/firms.modaps.eosdis.nasa.gov/firms_viirs_global_nrt_{latest}.json
 ttl 3600
 force thermal
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat_key latitude
@@ -10532,10 +10620,10 @@ field confidence fire_confidence
 url https://github.com/omegaflow/sources/releases/download/seismic-api.science.unimelb.edu.au/ga_earthquakes_month_{latest}.json
 ttl 3600
 force em
-at sun 1
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag geosphere_ga_magnitude_month
 field properties.place geosphere_ga_location_month
 field properties.time geosphere_ga_time_month
@@ -10576,10 +10664,10 @@ field properties.activity geosphere_geonet_volcano_activity
 url https://github.com/omegaflow/sources/releases/download/eonet.gsfc.nasa.gov/natural_events_{latest}.json
 ttl 3600
 force em
-at sun 1
+on earth 0 0
 map events
-lat_key geometry.0.coordinates.1
-lon_key geometry.0.coordinates.0
+lat_key lat
+lon_key lon
 field title eonet_event_title
 field categories.0.title event_category
 field id eonet_event_id
@@ -10587,17 +10675,17 @@ field id eonet_event_id
 url https://github.com/omegaflow/sources/releases/download/services3.arcgis.com/nifc_fires_{latest}.json
 ttl 3600
 force em
-at sun 1
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field attributes.IncidentName wildfire_name
 field attributes.PolygonAcres fire_acres
 
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/noaa_coops_tidal_predictions_usa_{latest}.json
 ttl 3600
 force gravity
-at sun 1.0
+on earth 0 0
 map predictions
 lat_key lat
 lon_key lon
@@ -10606,7 +10694,7 @@ field v predicted_tide_m
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/noaa_coops_water_temp_network_{latest}.json
 ttl 3600
 force thermal
-at sun 1.0
+on earth 0 0
 map stations
 lat_key lat
 lon_key lng
@@ -10670,7 +10758,7 @@ field running_avg_kp running_average_kp
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_ghcnd_daily_weather_summary_{latest}.json
 ttl 3600
 force thermal
-at sun 1.0
+on earth 0 0
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -10730,16 +10818,20 @@ field 11 SSS_PSU
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_dst_index_{latest}.json
 ttl 3600
 force gravity
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field time_tag timestamp_utc
 field dst dst_index_nT
 
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_swpc_solar_regions_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field region active_region_id
 field latitude helio_latitude
 field longitude helio_longitude
@@ -10751,20 +10843,20 @@ field first_date first_observed_date
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/noaa_tides_air_pressure_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
-lat_key 32.757
-lon_key -117.226
+lat_key lat
+lon_key lon
 field t pressure_time
 field v air_pressure_hpa
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=currents&units=metric&time_zone=gmt&format=json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
-lat_key 32.757
-lon_key -117.226
+lat_key lat
+lon_key lon
 field t current_time
 field v current_speed_cms
 field d current_direction
@@ -10772,20 +10864,20 @@ field d current_direction
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/noaa_tides_water_temperature_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
-lat_key 32.757
-lon_key -117.226
+lat_key lat
+lon_key lon
 field t temp_time
 field v water_temperature_celsius
 
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/noaa_tides_wind_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
-lat_key 32.757
-lon_key -117.226
+lat_key lat
+lon_key lon
 field t wind_time
 field s wind_speed_ms
 field d wind_direction
@@ -10794,10 +10886,10 @@ field g wind_gust_ms
 url https://github.com/omegaflow/sources/releases/download/api.weather.gov/noaa_weather_api_points_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map properties
-lat_key 39.7456
-lon_key -97.0892
+lat_key lat
+lon_key lon
 field cwa weather_forecast_office
 field forecastOffice forecast_office_url
 field forecastHourly hourly_forecast_url
@@ -10810,10 +10902,10 @@ field radarStation radar_station
 url https://github.com/omegaflow/sources/releases/download/api.weather.gov/noaa_weather_forecast_hourly_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map properties
-lat_key 39.7456
-lon_key -97.0892
+lat_key lat
+lon_key lon
 field updated forecast_update_time
 field units forecast_units
 field generatedAt generation_time
@@ -10845,10 +10937,10 @@ path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
 url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.object_id alert_id
 field properties.class_name deforestation_class
 field properties.area_km alert_area_km2
@@ -10870,10 +10962,10 @@ geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_earthquakes_month_{latest}.json
 ttl 3600
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field geometry.coordinates.2 geosphere_quake_depth_km
 field properties.mag geosphere_quake_magnitude
 
@@ -10902,10 +10994,10 @@ alt_key geometry.coordinates.2
 url https://waterservices.usgs.gov/nwis/gwlevels/?format=json&modifiedSince=P1D&siteStatus=active&siteType=GW&parameterCd=72019&countyCd=&stateCd=&bbox=-125,24,-66,50&resultRetrievalMode=grouped
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map value.timeSeries
-lat_key sourceInfo.geoLocation.geogLocation.latitude
-lon_key sourceInfo.geoLocation.geogLocation.longitude
+lat_key lat
+lon_key lon
 field sourceInfo.siteName station_name
 field sourceInfo.siteCode.0.value site_code
 field values.0.value.0.value groundwater_depth_ft
@@ -10914,10 +11006,10 @@ field values.0.value.0.dateTime measurement_datetime
 url https://github.com/omegaflow/sources/releases/download/waterservices.usgs.gov/usgs_nwis_streamflow_daily_{latest}.json
 ttl 3600
 force acoustic
-at sun 1.0
+on earth 0 0
 map value.timeSeries
-lat_key sourceInfo.geoLocation.geogLocation.latitude
-lon_key sourceInfo.geoLocation.geogLocation.longitude
+lat_key lat
+lon_key lon
 field sourceInfo.siteCode.0.value station_id
 field sourceInfo.siteName station_name
 field values.0.value.0.value streamflow_cfs
@@ -10931,10 +11023,10 @@ on earth 38.9072 -77.0369
 url https://github.com/omegaflow/sources/releases/download/waterservices.usgs.gov/usgs_streamflow_daily_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map value.timeSeries
-lat_key sourceInfo.geoLocation.geogLocation.latitude
-lon_key sourceInfo.geoLocation.geogLocation.longitude
+lat_key lat
+lon_key lon
 field sourceInfo.siteName station_name
 field values.0.value.0.value streamflow_cfs
 field values.0.value.0.dateTime measurement_datetime
@@ -10952,7 +11044,7 @@ field properties.volcanoName volcano_name
 url https://github.com/omegaflow/sources/releases/download/volcanoes.usgs.gov/usgs_volcano_weekly_activity_report_{latest}.json
 ttl 3600
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map .
 lat_key Latitude
 lon_key Longitude
@@ -10972,7 +11064,7 @@ field properties.poly_PolygonDateTime fire_polygon_ms
 url https://github.com/omegaflow/sources/releases/download/argovis-api.colorado.edu/argovis_core_profiles_{latest}.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -10985,10 +11077,10 @@ field date observation_date
 url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.FloodClass flood_class
 field properties.CountryCode country_code
 field properties.StartDate start_date
@@ -10998,7 +11090,7 @@ field properties.Area area_km2
 url https://github.com/omegaflow/sources/releases/download/erddap.aoml.noaa.gov/drifters_hourly_{latest}.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map table.rows
 lat_key 0
 lon_key 1
@@ -11014,7 +11106,7 @@ last_row TotalSPL hydrosphere_sound_pressure_db
 url https://www.globalfloods.eu/glofas-forecasting/?format=json
 ttl 3600
 force em
-at sun 1
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -11039,10 +11131,10 @@ field time obs_time
 url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.district district_name
 field properties.state state_name
 field properties.area_ha inundated_area_ha
@@ -11286,7 +11378,7 @@ first river_discharge hydrosphere_river_discharge_m3s
 url https://github.com/omegaflow/sources/releases/download/pegelonline.wsv.de/pegelonline_water_level_{latest}.json
 ttl 3600
 force gravity
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat_key latitude
@@ -11346,7 +11438,7 @@ field mag_class magnetosphere_mag_class
 url https://api.eia.gov/v2/electricity/rto/region-data/data/?api_key=EIA_API_KEY&frequency=hourly&data[]=value&facets[type][]=D&sort[0][column]=period&sort[0][direction]=desc&length=500
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
 lat_key lat
 lon_key lon
@@ -11373,8 +11465,10 @@ field_in 7 atmosphere_aeronet_aod_500nm
 url https://github.com/omegaflow/sources/releases/download/db.satnogs.org/satellite_satnogs_active_{latest}.json
 ttl 14400
 force em
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field tle0 satellite_name
 field tle1 satellite_tle_line1
 field tle2 satellite_tle_line2
@@ -11415,7 +11509,7 @@ field bottom_of_ocean_mixed_layer hydrosphere_cmems_mlotst_m
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/cmems_sst_global_{latest}.json
 ttl 21600
 force thermal
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat_key latitude
@@ -11438,7 +11532,7 @@ field col7 dy_celestial_pole_mas
 url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdQMwind1day_LonPM180.json?x_wind%5B(2022-12-01T12%3A00%3A00Z)%5D%5B(10.0)%5D%5B(-75.0)%3A4%3A(75.0)%5D%5B(-180.0)%3A4%3A(180.0)%5D
 ttl 43200
 force em
-at sun 1.0
+on earth 0 0
 map table.rows
 lat_key 2
 lon_key 3
@@ -11449,10 +11543,10 @@ field_in 4 coastwatch_ascat_x_wind_ms
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_daily_forecast_{latest}.json
 ttl 43200
 force diffusion
-at sun 1.0
+on earth 0 0
 map daily
-lat_key 52.52
-lon_key 13.41
+lat_key lat
+lon_key lon
 field temperature_2m_max daily_temp_max_celsius
 field temperature_2m_min daily_temp_min_celsius
 field precipitation_sum daily_precip_mm
@@ -11465,7 +11559,7 @@ field et0_fao_evapotranspiration daily_evapotranspiration_mm
 url https://github.com/omegaflow/sources/releases/download/weather.uwyo.edu/wyoming_radiosonde_berlin_{latest}.json
 ttl 43200
 force thermal
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat_key latitude
@@ -11476,7 +11570,7 @@ field pressure_hPa atmosphere_radiosonde_pressure_hpa
 url https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.gov/coastwatch_oisst_sea_ice_{latest}.json
 ttl 43200
 force thermal
-at sun 1.0
+on earth 0 0
 map table.rows
 lat_key 2
 lon_key 3
@@ -11486,7 +11580,7 @@ field_in 4 cryosphere_oisst_sea_ice_fraction
 url https://github.com/omegaflow/sources/releases/download/stationview.raspberryshake.org/raspberry_shake_stations_{latest}.json
 ttl 43200
 force seismic-surface
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat_key latitude
@@ -11497,7 +11591,7 @@ field elevation geosphere_raspberry_shake_elevation_m
 url https://github.com/omegaflow/sources/releases/download/erddap.ifremer.fr/ocean_argo_floats_profiles_{latest}.json
 ttl 43200
 force thermal
-at sun 1.0
+on earth 0 0
 map table.rows
 lat_key 2
 lon_key 1
@@ -11509,7 +11603,7 @@ field_in 4 argo_temp_c
 url https://data.pmel.noaa.gov/socat/erddap/tabledap/socat_v2026_fulldata.json?time,latitude,longitude,xCO2_water_sst_dry_ppm&time%3E={yesterday}&distinct()
 ttl 43200
 force diffusion
-at sun 1.0
+on earth 0 0
 map table.rows
 lat_key 1
 lon_key 2
@@ -11520,9 +11614,9 @@ url https://vsx.aavso.org/index.php?view=api.votable&format=json&ra=0&dec=0&radi
 ttl 86400
 force em
 at sun 1.0
-map .
-lat_key ra_hms
-lon_key dec_dms
+cmap .
+ra_key ra_hms
+dec_key dec_dms
 field oid vsx_oid
 field name star_name
 field type variable_type
@@ -11593,7 +11687,7 @@ last_line exosphere_chime_frb_count
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/cneos_fireballs_infrasound_{latest}.json
 ttl 86400
 force acoustic
-at sun 1.0
+on earth 0 0
 map data
 lat_key 3
 lon_key 5
@@ -11607,8 +11701,10 @@ field_in 8 velocity_kms
 url https://dasch.rc.fas.harvard.edu/lightcurve.php?objid=GJ+551&type=json&limit=500
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field 0 jd
 field 1 magnitude
 field 2 magnitude_error
@@ -11623,10 +11719,10 @@ format ephemeris_binary
 url https://github.com/omegaflow/sources/releases/download/services.terrascope.be/esa_worldcover_stac_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.0.0.1
-lon_key geometry.coordinates.0.0.0
+lat_key lat
+lon_key lon
 field properties.title product_title
 field properties.date product_date
 field properties.cloudCover cloud_cover_pct
@@ -12066,7 +12162,7 @@ field exposure exposure_s
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/heasarc_main_chandra_master_{latest}.json
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat_key 0
@@ -12078,9 +12174,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key ra
-lon_key dec
+cmap .
+ra_key ra
+dec_key dec
 field obsid observation_id
 field exposure exposure_s
 field instrument instrument
@@ -12091,9 +12187,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key ra
-lon_key dec
+cmap .
+ra_key ra
+dec_key dec
 field obsid chandra_obsid
 field exposure chandra_exposure_sec
 field detector chandra_detector
@@ -12573,7 +12669,7 @@ last_line geosphere_ut1_utc_iers
 url https://github.com/omegaflow/sources/releases/download/network.igs.org/igs_gnss_stations_global_{latest}.json
 ttl 86400
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -12997,8 +13093,10 @@ field 3 domain
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/jpl_cad_lunar_distance_{latest}.json
 ttl 86400
 force gravity
-at sun 1.0
+on earth 0 0
 map data
+lat_key lat
+lon_key lon
 field_in 0 designation
 field_in 3 close_approach_date
 field_in 4 distance_au
@@ -13008,7 +13106,7 @@ field_in 17 diameter_km
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/jpl_cad_lunar_distance_objects_{latest}.json
 ttl 86400
 force gravity
-at sun 1.0
+on earth 0 0
 map data
 lat_key null
 lon_key null
@@ -13114,10 +13212,12 @@ field 6 vz_au_day
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/jpl_sbdb_{latest}.json
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 verify false
 target Ceres
 map object
+lat_key lat
+lon_key lon
 field fullname name
 field spkid id
 field orbit_class.code orbit_class
@@ -13214,12 +13314,12 @@ field S/N kodiaq_sn
 url https://github.com/omegaflow/sources/releases/download/earth-search.aws.element84.com/landsat_c2_l2_{latest}.json
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 method post
 body {"collections":["landsat-c2-l2"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
 map features
-lat_key properties.proj:centroid.lat
-lon_key properties.proj:centroid.lon
+lat_key lat
+lon_key lon
 field id scene_id
 field collection collection
 field properties.datetime observation_time
@@ -13231,12 +13331,12 @@ field properties.landsat:wrs_row wrs_row
 url https://github.com/omegaflow/sources/releases/download/landsatlook.usgs.gov/landsatlook_c2l2_{latest}.json
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 method post
 body {"collections":["landsat-c2l2"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
 map features
-lat_key properties.proj:centroid.lat
-lon_key properties.proj:centroid.lon
+lat_key lat
+lon_key lon
 field id scene_id
 field properties.datetime observation_time
 field properties.eo:cloud_cover cloud_cover_pct
@@ -13501,7 +13601,7 @@ url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac
 ttl 86400
 force em
 at sun 1.0
-map .
+cmap .
 ra_key ra
 dec_key dec
 field pl_name planet_name
@@ -13516,7 +13616,7 @@ url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac
 ttl 86400
 force em
 at sun 1.0
-map .
+cmap .
 ra_key ra
 dec_key dec
 field pl_name planet_name
@@ -13534,7 +13634,7 @@ url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac
 ttl 86400
 force em
 at sun 1.0
-map .
+cmap .
 ra_key ra
 dec_key dec
 field toi toi_name
@@ -13550,9 +13650,9 @@ url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac
 ttl 86400
 force em
 at sun 1.0
-map .
-lat_key ra
-lon_key dec
+cmap .
+ra_key ra
+dec_key dec
 field toi toi_id
 field pl_orbper orbital_period_days
 field pl_rade earth_radius
@@ -13725,8 +13825,10 @@ url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTC
 ttl 86400
 force thermal
 body earth
-at sun 1
+on earth 0 0
 map properties.parameter.T2M
+lat_key lat
+lon_key lon
 field T2M temp_2m_c
 field PRECTOTCORR precip_mm
 field ALLSKY_SFC_SW_DWN sw_radiation_wm2
@@ -13787,7 +13889,7 @@ field 2 soi_index soi_value
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/neo_sentry_risk_list_{latest}.json
 ttl 86400
 force gravity
-at sun 1.0
+on earth 0 0
 map data
 lat_key null
 lon_key null
@@ -13823,8 +13925,10 @@ format ephemeris_binary
 url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field filename ring_diagram_filename
 field date obs_date
 field cr carrington_rotation
@@ -14067,7 +14171,7 @@ url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra=
 ttl 86400
 force em
 at sun 1.0
-map 0.Rows
+cmap 0.Rows
 ra_key ra
 dec_key dec
 field objid sdss_objid
@@ -14082,7 +14186,7 @@ url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,
 ttl 86400
 force em
 at sun 1.0
-map .
+cmap .
 ra_key ra
 dec_key dec
 z_key z
@@ -14094,7 +14198,7 @@ url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z
 ttl 86400
 force em
 at sun 1.0
-map .
+cmap .
 ra_key ra
 dec_key dec
 z_key z
@@ -14105,7 +14209,7 @@ url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,
 ttl 86400
 force em
 at sun 1.0
-map .
+cmap .
 ra_key ra
 dec_key dec
 field r mag_r
@@ -14476,9 +14580,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key RAJ2000
-lon_key DEJ2000
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
 field z redshift
 field r void_radius_mpc
 
@@ -14497,9 +14601,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key _RA
-lon_key _DE
+cmap .
+ra_key _RA
+dec_key _DE
 field zabs absorber_redshift
 field NHI column_density_cm2
 
@@ -14672,9 +14776,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key RAJ2000
-lon_key DEJ2000
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
 field SNR snr_name
 field MajDiam major_diam_arcmin
 field MinDiam minor_diam_arcmin
@@ -14772,9 +14876,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key RAJ2000
-lon_key DEJ2000
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
 field IPHAS iphas_id
 field r'mag r_band_mag
 field r'-i' r_minus_i_color
@@ -14812,9 +14916,9 @@ ttl 86400
 force gravity
 at sun 1.0
 format universal
-map .
-lat_key RAJ2000
-lon_key DEJ2000
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
 field Name cluster_name
 field logt log10_age_yr
 field [Fe/H] iron_abundance
@@ -14827,9 +14931,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key RAJ2000
-lon_key DEJ2000
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
 field z redshift
 field Vmag optical_magnitude
 field S15GHz flux_15ghz_jy
@@ -14947,9 +15051,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key RAJ2000
-lon_key DEJ2000
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
 field Reg region_name
 field Dist distance_pc
 field SimbadName simbad_id
@@ -15012,9 +15116,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key RAJ2000
-lon_key DEJ2000
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
 field Name cluster_name
 field SNR detection_snr
 field z redshift
@@ -15103,9 +15207,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key RAJ2000
-lon_key DEJ2000
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
 field imag i_magnitude
 field zphot photometric_redshift
 field zd deflector_redshift
@@ -15115,9 +15219,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key _RA
-lon_key _DE
+cmap .
+ra_key _RA
+dec_key _DE
 field zL lens_redshift
 field zS source_redshift
 field Sigma velocity_dispersion_kms
@@ -15127,9 +15231,9 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-map .
-lat_key _RA
-lon_key _DE
+cmap .
+ra_key _RA
+dec_key _DE
 field Star star_name
 field a semi_major_axis_arcsec
 field e eccentricity
@@ -15351,8 +15455,10 @@ field precipitation_sum precip_mm
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_era5_reanalysis_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map hourly.time
+lat_key lat
+lon_key lon
 field hourly.temperature_2m temp_2m_c
 field hourly.precipitation precipitation_mm
 field hourly.windspeed_10m wind_speed_ms
@@ -15362,8 +15468,10 @@ field hourly.surface_pressure surface_pressure_hpa
 url https://api.open-meteo.com/v1/forecast?latitude=50.0&longitude=10.0&daily=et0_fao_evapotranspiration,vapor_pressure_deficit&forecast_days=1&format=json
 ttl 86400
 force diffusion
-at sun 1
+on earth 0 0
 map daily.time
+lat_key lat
+lon_key lon
 field daily.et0_fao_evapotranspiration et0_mm_proxy_gpp
 field daily.vapor_pressure_deficit vpd_kpa
 field daily.growing_degree_days_base_0_limit_50 gdd_0_50
@@ -15381,8 +15489,10 @@ field 2 last_modified
 url https://github.com/omegaflow/sources/releases/download/ghoapi.azureedge.net/who_gho_air_quality_urban_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map value
+lat_key lat
+lon_key lon
 field SpatialDim country_code
 field NumericValue pm25_ugm3
 field TimeDim year
@@ -15392,8 +15502,10 @@ field High confidence_high
 url https://github.com/omegaflow/sources/releases/download/ghoapi.azureedge.net/who_gho_urban_air_quality_{latest}.json
 ttl 86400
 force diffusion
-at sun 1
+on earth 0 0
 map value
+lat_key lat
+lon_key lon
 field SpatialDim country_code
 field TimeDim year
 field NumericValue pm10_annual_mean
@@ -15421,10 +15533,10 @@ path numberMatched biosphere_ozone_measurement_total_count
 url https://woudc.org/api/records/observations/?dataset=TotalOzone&limit=2000&sortby=-datetime
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
-lat_key station.latitude
-lon_key station.longitude
+lat_key lat
+lon_key lon
 field datetime observation_datetime
 field value total_ozone_du
 field station.name station_name
@@ -15433,19 +15545,19 @@ field station.country country
 url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=uv_index
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map observations
-lat_key station.geometry.coordinates.1
-lon_key station.geometry.coordinates.0
+lat_key lat
+lon_key lon
 field value uv_index
 
 url https://woudc.org/api/records/observations/?dataset=UmkehrN14&limit=1000&sortby=-datetime
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
-lat_key station.latitude
-lon_key station.longitude
+lat_key lat
+lon_key lon
 field datetime observation_datetime
 field value uv_index_value
 field station.name station_name
@@ -15454,7 +15566,7 @@ field station.country country
 url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Animalia&geo=&format=json&limit=500
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -15468,7 +15580,7 @@ field collection_date collection_date
 url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Echinodermata&geo=&format=json&limit=300
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -15481,7 +15593,7 @@ field region province
 url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Plantae&geo=&format=json&limit=500
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -15500,7 +15612,7 @@ field totalCount biosphere_crispr_trials_recruiting
 url https://github.com/omegaflow/sources/releases/download/ebi.ac.uk/ebi_mgnify_marine_metagenomes_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
 lat_key latitude
 lon_key longitude
@@ -15510,7 +15622,7 @@ field attributes.biome biome_name
 url https://github.com/omegaflow/sources/releases/download/ebi.ac.uk/ebi_mgnify_public_metagenome_studies_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
 lat_key latitude
 lon_key longitude
@@ -15539,36 +15651,36 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_amphibian_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_arachnids_{latest}.json
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_arachnid_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_arthropods_{latest}.json
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_arthropod_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_biodiversity_global_{latest}.json
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species biosphere_gbif_occurrences_biodiversity_species
 field kingdom biosphere_gbif_occurrences_kingdom
 field eventDate biosphere_gbif_occurrences_biodiversity_date
@@ -15578,18 +15690,18 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_bird_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_birds_migratory_{latest}.json
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species biosphere_gbif_occurrences_bird_species
 field eventDate biosphere_gbif_occurrences_bird_date
 field locality biosphere_gbif_occurrences_bird_locality
@@ -15598,54 +15710,54 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_cnidarian_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_cnidarians_{latest}.json
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_cnidarian_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_echinoderms_{latest}.json
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_echinoderm_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_fungi_{latest}.json
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_fungi_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_insects_{latest}.json
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_insect_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_invasive_occurrences_{latest}.json
 ttl 86400
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 field country country_code
 field year observation_year
@@ -15655,9 +15767,9 @@ ttl 86400
 force diffusion
 at sun 1.0
 format universal
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species biosphere_gbif_occurrences_species
 field occurrenceStatus biosphere_gbif_occurrences_occurrence_status
 
@@ -15665,9 +15777,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_mammal_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_marine_invasives_{latest}.json
@@ -15675,9 +15787,9 @@ ttl 86400
 force diffusion
 at sun 1.0
 format universal
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species biosphere_gbif_occurrences_marine_species
 field depth biosphere_gbif_occurrences_depth_m
 
@@ -15685,9 +15797,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force em
 at sun 1
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species biosphere_gbif_occurrences_marine_species
 field locality biosphere_gbif_occurrences_marine_locality
 field eventDate biosphere_gbif_occurrences_marine_date
@@ -15696,9 +15808,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 field kingdom kingdom
 field phylum phylum
@@ -15716,18 +15828,18 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_mollusk_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_occurrence_invasive_{latest}.json
 ttl 86400
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 field countryCode country_code
 field year observation_year
@@ -15738,9 +15850,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_precise_key
 field coordinateUncertaintyInMeters biosphere_gbif_occurrences_uncertainty_m
 
@@ -15748,9 +15860,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_plant_key
 field coordinateUncertaintyInMeters biosphere_gbif_occurrences_plant_uncertainty_m
 
@@ -15758,9 +15870,9 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species biosphere_gbif_occurrences_plant_species
 field family biosphere_gbif_occurrences_plant_family
 field eventDate biosphere_gbif_occurrences_plant_date
@@ -15770,9 +15882,9 @@ ttl 86400
 force diffusion
 at sun 1.0
 format universal
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species biosphere_gbif_occurrences_species
 field year biosphere_gbif_occurrences_year
 
@@ -15780,18 +15892,18 @@ url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurre
 ttl 86400
 force em
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field key biosphere_gbif_occurrences_reptile_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_species_richness_africa_{latest}.json
 ttl 86400
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field species species_name
 field genus genus
 field family family
@@ -15802,10 +15914,10 @@ field eventDate observation_date
 url https://github.com/omegaflow/sources/releases/download/meta.icos-cp.eu/icos_fluxnet_tower_stations_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map results.bindings
-lat_key lat.value
-lon_key lon.value
+lat_key lat
+lon_key lon
 field name.value station_name
 field country.value country_code
 field alt.value altitude_m
@@ -15827,9 +15939,9 @@ url https://api.neotomadb.org/v2/data/datasets?limit=500
 ttl 86400
 force diffusion
 at sun 1.0
-map data
-lat_key site.geography.lat
-lon_key site.geography.lng
+cmap data
+ra_key site.geography.lat
+dec_key site.geography.lng
 field datasetid dataset_id
 field dataset.type dataset_type
 field dataset.name dataset_name
@@ -15841,9 +15953,9 @@ url https://api.neotomadb.org/v2/data/datasets?datasettype=ostracode&limit=500&o
 ttl 86400
 force diffusion
 at sun 1.0
-map data
-lat_key site.geography.latitude
-lon_key site.geography.longitude
+cmap data
+ra_key site.geography.latitude
+dec_key site.geography.longitude
 field site.sitename site_name
 field datasettype dataset_type
 
@@ -15851,18 +15963,18 @@ url https://api.neotomadb.org/v2/data/datasets?datasettype=plant+macrofossil&lim
 ttl 86400
 force diffusion
 at sun 1.0
-map data
-lat_key site.geography.latitude
-lon_key site.geography.longitude
+cmap data
+ra_key site.geography.latitude
+dec_key site.geography.longitude
 field site.sitename site_name
 
 url https://api.neotomadb.org/v2/data/sites?limit=500
 ttl 86400
 force diffusion
 at sun 1.0
-map data
-lat_key site.geography.lat
-lon_key site.geography.lng
+cmap data
+ra_key site.geography.lat
+dec_key site.geography.lng
 field siteid site_id
 field sitename site_name
 field site.description site_description
@@ -15880,9 +15992,9 @@ url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_cor
 ttl 86400
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName species_name
 field family taxon_family
 field date_year obs_year
@@ -15891,9 +16003,9 @@ url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_mar
 ttl 86400
 force em
 at sun 1
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName biosphere_obis_marine_species
 field eventDate biosphere_obis_marine_date
 field depth biosphere_obis_marine_depth_m
@@ -15902,9 +16014,9 @@ url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_mar
 ttl 86400
 force em
 at sun 1
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName biosphere_obis_species
 field eventDate biosphere_obis_date
 field depth biosphere_obis_depth_m
@@ -15928,9 +16040,9 @@ url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_thr
 ttl 86400
 force diffusion
 at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
+cmap results
+ra_key decimalLatitude
+dec_key decimalLongitude
 field scientificName species_name
 field class taxon_class
 field family taxon_family
@@ -15989,17 +16101,17 @@ last_line biosphere_who_life_expectancy_global
 url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/worldbank_forest_area_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map 1
-lat_key country.latitude
-lon_key country.longitude
+lat_key lat
+lon_key lon
 field value forest_pct
 field country.iso2Code country_code
 
 url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/worldbank_pm25_exposure_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
 lat_key latitude
 lon_key longitude
@@ -16039,10 +16151,10 @@ field order order_name
 url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map data
-lat_key location.lat
-lon_key location.lng
+lat_key lat
+lon_key lon
 field name station_name
 field id station_id
 field location.country country
@@ -16052,10 +16164,10 @@ field measurement_date measurement_year
 url https://gtnp.arcticportal.org/api/v1/gtnp-boreholes?format=json&limit=500
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map data
-lat_key location.lat
-lon_key location.lon
+lat_key lat
+lon_key lon
 field name borehole_name
 field id borehole_id
 field temperature_mean_c mean_annual_temp_c
@@ -16065,10 +16177,10 @@ field elevation_m elevation_m
 url https://gtnp.arcticportal.org/api/v1/calm-data?format=json&limit=500
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
-lat_key station.latitude
-lon_key station.longitude
+lat_key lat
+lon_key lon
 field value alt_cm
 field station.name station_name
 field year obs_year
@@ -16076,10 +16188,10 @@ field year obs_year
 url https://gtnp.arcticportal.org/api/boreholes/?format=json&limit=2000
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map data
-lat_key location.lat
-lon_key location.lng
+lat_key lat
+lon_key lon
 field name borehole_name
 field id borehole_id
 field location.country country
@@ -16091,10 +16203,10 @@ field temperature.0.mean_annual temp_c
 url https://gtnp.arcticportal.org/api/v1/tsp-annual?format=json&limit=500
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map data
-lat_key station.latitude
-lon_key station.longitude
+lat_key lat
+lon_key lon
 field value ground_temp_c
 field station.name station_name
 field year obs_year
@@ -16102,10 +16214,10 @@ field year obs_year
 url https://gtnp.arcticportal.org/api/v1/stations?format=json&limit=500
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
-lat_key station.latitude
-lon_key station.longitude
+lat_key lat
+lon_key lon
 field station.name station_name
 field station.country country
 
@@ -16318,10 +16430,10 @@ dist_key sy_dist 3.085677581e16
 url https://geofon.gfz.de/fdsnws/station/1/query?format=geojson&level=station&network=AF
 ttl 86400
 force em
-at sun 1
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.station geosphere_africaarray_station_code
 field properties.network geosphere_africaarray_network
 field properties.site.name geosphere_africaarray_station_name
@@ -16330,10 +16442,10 @@ alt_key geometry.coordinates.2
 url https://github.com/omegaflow/sources/releases/download/services3.arcgis.com/arcgis_pager_earthquake_impacts_{latest}.json
 ttl 86400
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key attributes.LATITUDE
-lon_key attributes.LONGITUDE
+lat_key lat
+lon_key lon
 field attributes.YEAR event_year
 field attributes.MAG magnitude
 field attributes.DEPTH depth_km
@@ -16344,8 +16456,10 @@ field attributes.COUNTRY country
 url https://catalogue.clms.copernicus.eu/odc/api/v1/collections
 ttl 86400
 force em
-at sun 1
+on earth 0 0
 map collections
+lat_key lat
+lon_key lon
 field id geosphere_clms_collection_id
 field title geosphere_clms_title
 field description geosphere_clms_description
@@ -16400,7 +16514,7 @@ field properties.numberHomeless emdat_homeless
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/esa_cci_soil_moisture_erddap_{latest}.json
 ttl 86400
-at sun 1.0
+on earth 0 0
 force diffusion
 format universal
 map data
@@ -16411,7 +16525,7 @@ field_in err sea_level_anomaly_m
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_alternate_fuel_{latest}.json
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.Station_Id station_id
@@ -16421,30 +16535,30 @@ field attributes.Address address
 field attributes.City city
 field attributes.State state
 field attributes.Zipcode zipcode
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_noaa_temp_historic_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.Date_ date_
 field attributes.Anomaly anomaly
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_noaa_temp_yearly_historic_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.Date_ date_
 field attributes.Anomaly anomaly
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/services2.arcgis.com/esri_tide_flooding_outlook_{latest}.json
 ttl 86400
@@ -16462,15 +16576,15 @@ lon_key attributes.Longitude
 url https://github.com/omegaflow/sources/releases/download/services2.arcgis.com/esri_tsunami_tide_stations_{latest}.json
 ttl 86400
 force advective
-at sun 1.0
+on earth 0 0
 map features
 field attributes.STAT station_id
 field attributes.STAT_NAME station_name
 field attributes.STAT_ST state
 field attributes.STAT_LAT latitude
 field attributes.STAT_LONG longitude
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/seismic-api.science.unimelb.edu.au/ga_seismic_stations_{latest}.json
 ttl 86400
@@ -16486,10 +16600,10 @@ field properties.type geosphere_ga_sensor_type
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gem_global_active_faults_{latest}.json
 ttl 86400
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.0.0.1
-lon_key geometry.coordinates.0.0.0
+lat_key lat
+lon_key lon
 field properties.name fault_name
 field properties.slip_type slip_type
 field properties.net_slip_rate slip_rate_mm_yr
@@ -16521,7 +16635,7 @@ field_in 1 soil_temp_0_10cm_k
 url https://github.com/omegaflow/sources/releases/download/mangrove-atlas.sei.org/global_mangrove_atlas_countries_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map data
 lat_key latitude
 lon_key longitude
@@ -16534,10 +16648,10 @@ field percent_mangrove mangrove_percent_total
 url https://github.com/omegaflow/sources/releases/download/webservices.volcano.si.edu/gvp_wfs_holocene_eruptions_{latest}.json
 ttl 86400
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.Eruption_Number eruption_id
 field properties.Volcano_Number volcano_id
 field properties.Volcano_Name volcano_name
@@ -16567,10 +16681,10 @@ field VEI vei_index
 url https://github.com/omegaflow/sources/releases/download/webservices.volcano.si.edu/gvp_wfs_holocene_volcanoes_{latest}.json
 ttl 86400
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.Volcano_Number volcano_id
 field properties.Volcano_Name volcano_name
 field properties.Primary_Volcano_Type volcano_type
@@ -16602,10 +16716,10 @@ field Tectonic_Setting tectonic_setting
 url https://github.com/omegaflow/sources/releases/download/webservices.volcano.si.edu/gvp_wfs_pleistocene_volcanoes_{latest}.json
 ttl 86400
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.Volcano_Number volcano_id
 field properties.Volcano_Name volcano_name
 field properties.Country country
@@ -16616,8 +16730,10 @@ field properties.Geologic_Epoch geologic_epoch
 url https://github.com/omegaflow/sources/releases/download/data.humdata.org/hdx_cod_ps_humanitarian_administrative_boundaries_{latest}.json
 ttl 86400
 force diffusion
-at sun 1
+on earth 0 0
 map result.results
+lat_key lat
+lon_key lon
 field title region_name
 field notes description
 field organization.title org
@@ -16635,8 +16751,10 @@ last soil_moisture_0_to_7cm geosphere_hist_soil_moisture_surface_m3m3
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_observatories_{latest}.json
 ttl 86400
 force em
-at sun 1
+on earth 0 0
 map catalog
+lat_key lat
+lon_key lon
 field id geosphere_magnetometer_id
 field title geosphere_magnetometer_title
 
@@ -16699,18 +16817,20 @@ field SiteDescription station_name
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/iris_seismic_networks_{latest}.json
 ttl 86400
 force em
-at sun 1
+on earth 0 0
 map features
+lat_key lat
+lon_key lon
 field properties.network geosphere_seismic_network_code
 field properties.description geosphere_seismic_network_name
 
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net={net}
 ttl 86400
 force em
-at sun 1
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.station geosphere_seismic_station_code
 field properties.network geosphere_seismic_network
 field properties.site.name geosphere_seismic_station_name
@@ -16743,10 +16863,10 @@ field Station geosphere_iris_station
 url https://github.com/omegaflow/sources/releases/download/isc.ac.uk/isc_catalog_historic_{latest}.json
 ttl 86400
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag magnitude
 field properties.place locality
 field properties.time event_time
@@ -16771,18 +16891,20 @@ field Author agency
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o,soc,bdod,clay,sand,silt,nitrogen&depth=0-5cm,5-15cm&value=mean
 ttl 86400
 force diffusion
-at sun 1
+on earth 0 0
 map properties.phh2o.layers
+lat_key lat
+lon_key lon
 field name depth_layer
 field values.mean ph_h2o_mean
 
 url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=drought&format=json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.district district_name
 field properties.state state_name
 field properties.ndvi_anomaly ndvi_anomaly
@@ -16790,11 +16912,11 @@ field properties.drought_class drought_severity_class
 
 url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=landslide&format=json
 ttl 86400
-at sun 1.0
+on earth 0 0
 force seismic-surface
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.district district_name
 field properties.state state_name
 field properties.susceptibility_class susceptibility_class
@@ -16807,10 +16929,10 @@ force gravity
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
 force em
 body earth
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.v_mean mean_speed_m_yr
 field properties.v0 latest_speed_m_yr
 field properties.date_start start_year
@@ -16853,10 +16975,10 @@ field units parameter_units
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/ncei_paleo_treering_studies_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map .
-lat_key site.latitude
-lon_key site.longitude
+lat_key lat
+lon_key lon
 field studyId study_id
 field title study_title
 field investigators.0.name investigator_name
@@ -16881,7 +17003,7 @@ field year last_eruption_year
 url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/noaa_cdo_daily_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -16910,7 +17032,7 @@ last_row average atmosphere_co2_ppm_mlo_monthly
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/noaa_coops_current_stations_{latest}.json
 ttl 86400
 force advective
-at sun 1.0
+on earth 0 0
 map stations
 lat_key lat
 lon_key lng
@@ -16944,7 +17066,7 @@ field_in 2 pdo_index
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_ghcnd_global_daily_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -16959,7 +17081,7 @@ field SNWD snow_depth_mm
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_ghcnd_global_station_inventory_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat_key 1
@@ -16972,7 +17094,7 @@ field_in 5 station_name
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_ghcnd_station_inventory_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat_key 1
@@ -16986,7 +17108,7 @@ field_in 3 station_elevation_m
 url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/noaa_ghcnd_stations_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -17096,7 +17218,7 @@ field_in 2 co2_ppm_uncertainty
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_gsod_global_surface_summary_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -17114,7 +17236,7 @@ field VISIB visibility_miles
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_ibtracs_last3years_{latest}.json
 ttl 86400
 force acoustic
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat_key LAT
@@ -17130,7 +17252,7 @@ field_in BASIN basin_code
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_isd_china_daily_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -17146,7 +17268,7 @@ field SLP sea_level_pressure_hpa
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_isd_south_africa_daily_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -17161,10 +17283,10 @@ field PRCP precipitation_inches
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_itrdb_northern_hemisphere_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map study
-lat_key site.0.geo.geometry.coordinates.1
-lon_key site.0.geo.geometry.coordinates.0
+lat_key lat
+lon_key lon
 field site.0.siteName site_name
 field site.0.elevation elevation_m
 field earliestYearBP earliest_year_bp
@@ -17175,10 +17297,10 @@ field species.0.speciesCode tree_species
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_itrdb_southern_hemisphere_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map study
-lat_key site.0.geo.geometry.coordinates.1
-lon_key site.0.geo.geometry.coordinates.0
+lat_key lat
+lon_key lon
 field site.0.siteName site_name
 field site.0.elevation elevation_m
 field earliestYearBP earliest_year_bp
@@ -17194,7 +17316,7 @@ last_row average atmosphere_gml_n2o_ppb_global
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_ncei_climate_extremes_monthly_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -17208,7 +17330,7 @@ field PRCP monthly_prcp_tenths_mm
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_ncei_climate_normals_1991_2020_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map .
 lat_key LATITUDE
 lon_key LONGITUDE
@@ -17243,7 +17365,7 @@ field PRCP precipitation_mm
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_ncei_gsom_climate_normals_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map .
 lat_key latitude
 lon_key longitude
@@ -17269,7 +17391,7 @@ field_in 4 ohc_tropics_zj
 url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&survey=WOCE&variable=T,S,O2,NO3,PO4,SiO3&limit=300
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map profiles
 lat_key latitude
 lon_key longitude
@@ -17314,10 +17436,10 @@ field country country
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_paleo_coral_records_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map study
-lat_key site.0.geo.geometry.coordinates.1
-lon_key site.0.geo.geometry.coordinates.0
+lat_key lat
+lon_key lon
 field site.0.siteName site_name
 field earliestYearBP earliest_year_bp
 field mostRecentYearBP most_recent_year_bp
@@ -17326,10 +17448,10 @@ field investigator investigator
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_paleo_coral_studies_global_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map studyList
-lat_key site.geo.geometry.coordinates.1
-lon_key site.geo.geometry.coordinates.0
+lat_key lat
+lon_key lon
 field xmlId study_id
 field studyName study_title
 field earliestYearBP earliest_year_bp
@@ -17339,10 +17461,10 @@ field site.siteName coral_site_name
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_paleo_ice_cores_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map study
-lat_key site.0.geo.geometry.coordinates.1
-lon_key site.0.geo.geometry.coordinates.0
+lat_key lat
+lon_key lon
 field site.0.siteName site_name
 field site.0.elevation elevation_m
 field earliestYearBP earliest_year_bp
@@ -17352,10 +17474,10 @@ field investigator investigator
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_paleo_pollen_records_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map study
-lat_key site.0.geo.geometry.coordinates.1
-lon_key site.0.geo.geometry.coordinates.0
+lat_key lat
+lon_key lon
 field site.0.siteName site_name
 field site.0.elevation elevation_m
 field earliestYearBP earliest_year_bp
@@ -17364,10 +17486,10 @@ field mostRecentYearBP most_recent_year_bp
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_paleo_speleothem_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map study
-lat_key site.0.geo.geometry.coordinates.1
-lon_key site.0.geo.geometry.coordinates.0
+lat_key lat
+lon_key lon
 field site.0.siteName site_name
 field site.0.elevation elevation_m
 field earliestYearBP earliest_year_bp
@@ -17382,8 +17504,10 @@ last_row average atmosphere_gwis_sf6_ppt_global
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_storm_events_hail_{latest}.json
 ttl 86400
 force acoustic
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field swdiJsonResponse.status query_status
 field summary.count event_count
 field summary.totalTimeInSeconds query_time
@@ -17391,8 +17515,10 @@ field summary.totalTimeInSeconds query_time
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_storm_events_significant_monthly_{latest}.json
 ttl 86400
 force acoustic
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field swdiJsonResponse.status query_status
 field summary.count event_count
 field summary.totalTimeInSeconds query_time
@@ -17400,8 +17526,10 @@ field summary.totalTimeInSeconds query_time
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_storm_events_tornadoes_{latest}.json
 ttl 86400
 force acoustic
-at sun 1.0
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 field swdiJsonResponse.status query_status
 field summary.count event_count
 field summary.totalTimeInSeconds query_time
@@ -17417,18 +17545,20 @@ field v predicted_tide_m
 url https://github.com/omegaflow/sources/releases/download/api.tidesandcurrents.noaa.gov/noaa_tides_predictions_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map predictions
-lat_key 32.757
-lon_key -117.226
+lat_key lat
+lon_key lon
 field t prediction_time
 field v predicted_tide_m
 
 url https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x
 ttl 86400
 force em
-at sun 1
+on earth 0 0
 map result.0
+lat_key lat
+lon_key lon
 field decl magnetic_declination_deg
 field incl magnetic_inclination_deg
 field bx bx_nT
@@ -17439,7 +17569,7 @@ field totalintensity total_field_nT
 url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -17450,10 +17580,10 @@ field Oxygen oxygen_ml_l
 url https://stac.openlandmap.org/collections/sol_organic.carbon_usda.6a1c_m/items?limit=500&bbox=-180,-60,180,75
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.0.0.1
-lon_key geometry.coordinates.0.0.0
+lat_key lat
+lon_key lon
 field properties.title layer_title
 field properties.datetime data_datetime
 field properties.description layer_description
@@ -17485,10 +17615,10 @@ field_in 4 geosphere_orfeus_elevation_m
 url https://github.com/omegaflow/sources/releases/download/gis1.servirglobal.net/servir_smap_soil_moisture_global_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.y
-lon_key geometry.x
+lat_key lat
+lon_key lon
 field attributes.sm soil_moisture_pct
 
 url https://github.com/omegaflow/sources/releases/download/usdmdataservices.unl.edu/usdm_conus_drought_{latest}.json
@@ -17616,10 +17746,10 @@ field gage_ht gage_height_ft
 url https://github.com/omegaflow/sources/releases/download/sciencebase.gov/usgs_sciencebase_nlcd_{latest}.json
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map items
-lat_key spatial.boundingBox.minY
-lon_key spatial.boundingBox.minX
+lat_key lat
+lon_key lon
 field title dataset_title
 field tags.0.name primary_tag
 field spatial.representationalPoint.coordinates.0 centroid_lon
@@ -17628,7 +17758,7 @@ field spatial.representationalPoint.coordinates.1 centroid_lat
 url https://github.com/omegaflow/sources/releases/download/volcanoes.usgs.gov/usgs_volcano_monitoring_{latest}.json
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 map .
 lat_key latitude
 lon_key longitude
@@ -17651,10 +17781,10 @@ field vnum geosphere_volcano_vnum
 url https://www.bodc.ac.uk/data/published_data_library/catalogue/?jsonrequest=1&keywords=oxygen+salinity&limit=200
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map results
-lat_key geo_location.lat
-lon_key geo_location.lon
+lat_key lat
+lon_key lon
 field title dataset_title
 field variables.0 primary_variable
 field temporal_coverage.start start_date
@@ -17722,7 +17852,7 @@ field sla sea_level_anomaly_m
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/cmems_global_sst_analysis_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat_key latitude
@@ -17773,7 +17903,7 @@ field sla absolute_dyn_top_m
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/cmems_sst_anomaly_global_l4_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat_key latitude
@@ -17801,7 +17931,7 @@ field SLEV hydrosphere_sea_level_m
 url https://github.com/omegaflow/sources/releases/download/ioc-sealevelmonitoring.org/ioc_psmsl_stationlist_{latest}.json
 ttl 86400
 force gravity
-at sun 1.0
+on earth 0 0
 map .
 lat_key Lat
 lon_key Lon
@@ -17810,24 +17940,26 @@ field observations ioc_station_observations
 url https://data.oceannetworks.ca/api/locations?token=OCEANNETWORKS_TOKEN&method=getLocations
 ttl 86400
 force diffusion
-at sun 1.0
+on earth 0 0
 map .
-lat_key bbox.maxLat
-lon_key bbox.maxLon
+lat_key lat
+lon_key lon
 
 url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/oceanography_cmems_global_analysis_{latest}.json
 ttl 86400
 force em
-at sun 1
+on earth 0 0
 format universal
 map .
+lat_key lat
+lon_key lon
 field id oceanography_cmems_service_id
 field name oceanography_cmems_service_name
 
 url https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.gov/oisst_sst_{latest}.json
 ttl 86400
 force thermal
-at sun 1.0
+on earth 0 0
 map table.rows
 lat_key 2
 lon_key 3
@@ -17863,8 +17995,10 @@ map .
 url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIR
 ttl 86400
 force diffusion
-at sun 1
+on earth 0 0
 map .
+lat_key lat
+lon_key lon
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
 ttl 86400
@@ -17938,7 +18072,7 @@ field stac_eo_cloud_cover lithosphere_cloud_cover_pct
 url https://github.com/omegaflow/sources/releases/download/lmsal.com/lmsal_solar_flares.json
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 map result
 lat_key hgs_y
 lon_key hgs_x
@@ -18426,8 +18560,10 @@ path 2 magnetosphere_intermagnet_gdh_s_nt
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_global_geomagnetic_observatories_{latest}.json
 ttl 86400
 force gravity
-at sun 1.0
+on earth 0 0
 map catalog
+lat_key lat
+lon_key lon
 field id dataset_id
 field title station_title
 
@@ -19255,7 +19391,7 @@ path 2 magnetosphere_tdc_f_nt
 url https://github.com/omegaflow/sources/releases/download/network.satnogs.org/satnogs_stations.json
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lng
@@ -19350,7 +19486,7 @@ field_in 13 iata_code
 url https://github.com/omegaflow/sources/releases/download/atlas.ripe.net/ripe_atlas_probes_{latest}.json
 ttl 86400
 force em
-at sun 1.0
+on earth 0 0
 map results
 field id probe_id
 field description description
@@ -19358,8 +19494,8 @@ field country_code country
 field asn_v4 asn
 field firmware_version fw_version
 field type probe_type
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 
 url https://developer.uspto.gov/ptab-api/v2/patents?limit=1
 ttl 86400
@@ -19801,13 +19937,13 @@ force em
 at sun 1.0
 verify false
 format universal
-map data
+cmap data
 field designation name
 field j_m mag_j
 field h_m mag_h
 field k_m mag_k
-lat_key ra
-lon_key dec
+ra_key ra
+dec_key dec
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/jpl_asteroids_{latest}.json
 ttl 604800
@@ -19861,7 +19997,7 @@ field sb_flux maxi_ssc_flux
 url https://raw.githubusercontent.com/omegaflow/sources/main/global_landslide_catalog.json
 ttl 604800
 force gravity
-at sun 1.0
+on earth 0 0
 map data
 lat_key latitude
 lon_key longitude
@@ -19884,7 +20020,7 @@ field exposure nicer_exposure_s
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/nmdb_stations_{latest}.json
 ttl 604800
 force em
-at sun 1.0
+on earth 0 0
 map data
 lat_key latitude
 lon_key longitude
@@ -20846,7 +20982,7 @@ field comments astro_swift_grb_comments
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/global_airports_{latest}_{latest}.json
 ttl 604800
 force em
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lon
@@ -21933,10 +22069,10 @@ path properties.parameter.PRECTOTCORR.07 atmosphere_power_precip_jul_clim_mm
 url https://github.com/omegaflow/sources/releases/download/glims.org/glims_glacier_points_{latest}.json
 ttl 604800
 force thermal
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 epoch_key properties.src_date
 field properties.db_area cryosphere_glims_glacier_area_km2
 
@@ -22204,47 +22340,47 @@ field properties.name geosphere_meteorite_name
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/ne_10m_places_{latest}.json
 ttl 604800
 force em
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.pop_max geosphere_population_max
 field properties.scalerank geosphere_place_rank
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/ne_glaciers_{latest}.json
 ttl 604800
 force em
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.0.0.1
-lon_key geometry.coordinates.0.0.0
+lat_key lat
+lon_key lon
 field properties.name geosphere_ne_glacier_name
 field properties.scalerank geosphere_ne_glacier_rank
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/ne_lakes_{latest}.json
 ttl 604800
 force em
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.0.0.1
-lon_key geometry.coordinates.0.0.0
+lat_key lat
+lon_key lon
 field properties.name geosphere_ne_lake_name
 field properties.scalerank geosphere_ne_lake_rank
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/ne_places_{latest}.json
 ttl 604800
 force em
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.name geosphere_ne_place_name
 field properties.scalerank geosphere_ne_place_rank
 
 url https://github.com/omegaflow/sources/releases/download/gist.githubusercontent.com/unesco_heritage_{latest}.json
 ttl 604800
 force em
-at sun 1.0
+on earth 0 0
 map .
 lat_key lat
 lon_key lng
@@ -22253,10 +22389,10 @@ field year geosphere_heritage_year
 url https://github.com/omegaflow/sources/releases/download/data.humdata.org/volcanoes_hdx_{latest}.json
 ttl 604800
 force em
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.V_Name geosphere_volcano_name
 field properties.Country geosphere_volcano_country
 field properties.PEI geosphere_volcano_pei
@@ -22273,16 +22409,16 @@ field elevation geosphere_volcano_elevation_m
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/global_rivers_{latest}.json
 ttl 604800
 force em
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.0.1
-lon_key geometry.coordinates.0.0
+lat_key lat
+lon_key lon
 field properties.name hydrosphere_river_name
 
 url https://raw.githubusercontent.com/omegaflow/sources/main/ndbc_station_list.json
 ttl 604800
 force thermal
-at sun 1.0
+on earth 0 0
 map data
 lat_key latitude
 lon_key longitude
@@ -22292,8 +22428,10 @@ field station_type hydrosphere_ndbc_station_type
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/molecular_periodic_elements_{latest}.json
 ttl 604800
 force em
-at sun 1.0
+on earth 0 0
 map elements
+lat_key lat
+lon_key lon
 field atomic_mass molecular_element_mass_u
 field density molecular_element_density_g_l
 field melt molecular_element_melt_k
@@ -22529,7 +22667,7 @@ field pdg_values.0.value subatomic_z_boson_mass_gev
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/geonuclear_power_plants_{latest}.json
 ttl 604800
 force thermal
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat_key Latitude
@@ -22547,7 +22685,7 @@ field properties.length technosphere_cable_length_km
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/wri_global_power_plants_{latest}.json
 ttl 604800
 force thermal
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat_key latitude
@@ -22558,7 +22696,7 @@ field primary_fuel wri_primary_fuel
 url https://github.com/omegaflow/sources/releases/download/egg.astro.cornell.edu/alfalfa_catalog_{latest}.json
 ttl 2592000
 force em
-at sun 1.0
+on earth 0 0
 verify false
 format universal
 map data
@@ -22586,11 +22724,11 @@ force em
 at sun 1.0
 verify false
 format universal
-map data
+cmap data
 catalog I/355/gaiadr3
-map data
-lat_key RAJ2000
-lon_key DEJ2000
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
 
 url https://github.com/omegaflow/sources/releases/download/climate-api.open-meteo.com/climate_projection_{latest}.json
 ttl 2592000
@@ -22732,40 +22870,40 @@ first elevation geosphere_openmeteo_elevation_m
 url https://github.com/omegaflow/sources/releases/download/api.opentopodata.org/opentopo_eudem25m_{latest}.json
 ttl 2592000
 force em
-at sun 1.0
+on earth 0 0
 map results
-lat_key location.lat
-lon_key location.lng
+lat_key lat
+lon_key lon
 field elevation geosphere_openmeteo_elevation_eudem25_m
 alt_key elevation
 
 url https://github.com/omegaflow/sources/releases/download/api.opentopodata.org/opentopo_gebco_bathymetry_{latest}.json
 ttl 2592000
 force em
-at sun 1.0
+on earth 0 0
 map results
-lat_key location.lat
-lon_key location.lng
+lat_key lat
+lon_key lon
 field elevation hydrosphere_bathymetry_gebco_m
 alt_key elevation
 
 url https://github.com/omegaflow/sources/releases/download/api.opentopodata.org/opentopo_mapzen_terrain_{latest}.json
 ttl 2592000
 force em
-at sun 1.0
+on earth 0 0
 map results
-lat_key location.lat
-lon_key location.lng
+lat_key lat
+lon_key lon
 field elevation geosphere_terrain_mapzen_m
 alt_key elevation
 
 url https://github.com/omegaflow/sources/releases/download/api.opentopodata.org/opentopo_srtm30m_{latest}.json
 ttl 2592000
 force em
-at sun 1.0
+on earth 0 0
 map results
-lat_key location.lat
-lon_key location.lng
+lat_key lat
+lon_key lon
 field elevation geosphere_openmeteo_elevation_srtm30_m
 alt_key elevation
 
