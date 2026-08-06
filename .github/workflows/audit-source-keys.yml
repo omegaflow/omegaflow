@@ -1,0 +1,25 @@
+name: Audit Source Keys
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'phi/sources.φ'
+      - 'scripts/api_audit.py'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run source key audit
+        run: |
+          python3 scripts/api_audit.py 2>&1 | tail -20
+
+      - name: Upload audit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-audit
+          path: phi/api_audit.jsonl
