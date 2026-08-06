@@ -19,6 +19,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Download SPICE kernels
+        run: |
+          mkdir -p kernels
+          declare -A KERNEL_URLS=(
+            ["de440.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp"
+            ["jup365.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/jup365.bsp"
+            ["sat441.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp"
+            ["mar099s.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/mar099s.bsp"
+            ["nep097.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep097.bsp"
+          )
+          for fn in "${!KERNEL_URLS[@]}"; do
+            url="${KERNEL_URLS[$fn]}"
+            if [ -f "kernels/$fn" ] && [ "$(stat -c%s "kernels/$fn" 2>/dev/null || echo 0)" -gt 100000 ]; then
+              echo "SKIP $fn (cached)"
+            else
+              echo "FETCH $fn from NAIF..."
+              curl -sS -L --max-time 600 --retry 3 -o "kernels/$fn" "$url" || echo "::warning::kernel $fn download failed"
+            fi
+          done
+          ls -lh kernels/
+
+      - name: Generate ephemerides
+        env:
+          OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+        run: |
+          pip install -q numpy spiceypy
+          cd kernels && python3 ../scripts/generate_ephemerides.py
+
       - name: eBird
         env:
           EBIRD_API_KEY: ${{ secrets.EBIRD_API_KEY }}
@@ -408,34 +436,6 @@ jobs:
           OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
         run: |
           python3 scripts/migrate_live_to_cdn.py --mode regen-cdn 2>&1 | tail -10
-
-      - name: Download SPICE kernels
-        run: |
-          mkdir -p kernels
-          declare -A KERNEL_URLS=(
-            ["de440.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp"
-            ["jup365.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/jup365.bsp"
-            ["sat441.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp"
-            ["mar099s.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/mar099s.bsp"
-            ["nep097.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep097.bsp"
-          )
-          for fn in "${!KERNEL_URLS[@]}"; do
-            url="${KERNEL_URLS[$fn]}"
-            if [ -f "kernels/$fn" ] && [ "$(stat -c%s "kernels/$fn" 2>/dev/null || echo 0)" -gt 100000 ]; then
-              echo "SKIP $fn (cached)"
-            else
-              echo "FETCH $fn from NAIF..."
-              curl -sS -L --max-time 600 --retry 3 -o "kernels/$fn" "$url" || echo "::warning::kernel $fn download failed"
-            fi
-          done
-          ls -lh kernels/
-
-      - name: Generate ephemerides
-        env:
-          OMEGAFLOW_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-        run: |
-          pip install -q numpy spiceypy
-          cd kernels && python3 ../scripts/generate_ephemerides.py
 
       - name: Publish Release
         env:

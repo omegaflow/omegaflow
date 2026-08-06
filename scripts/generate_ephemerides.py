@@ -144,6 +144,7 @@ HORIZONS_BODIES_STABLE = [
     ("Makemake;", "makemake"),
     ("Apophis", "apophis"),
     ("Bennu", "bennu"),
+    ("90000031", "encke"),
 ]
 
 HORIZONS_BODIES_DYNAMIC = [
@@ -155,14 +156,12 @@ HORIZONS_BODIES_DYNAMIC = [
     ("-144", "solar_orbiter"),
     ("-170", "jwst"),
     ("-61", "juno"),
+    ("2020-047A", "atlas_3i"),
 ]
 
 HORIZONS_BODIES = HORIZONS_BODIES_STABLE + HORIZONS_BODIES_DYNAMIC
 
-HORIZONS_RETRY = [
-    ("Encke", "encke"),
-    ("ATLAS-3I", "atlas_3i"),
-]
+HORIZONS_RETRY = []
 
 
 def _horizons_request(command, t_start, t_stop, step_days=1):
@@ -241,9 +240,9 @@ def _fit_granule_from_samples(samples, t0_jd, half_jd):
     return cx, cy, cz
 
 
-def generate_from_horizons(command, body_name, months=12):
+def generate_from_horizons(command, body_name, months=12, lookback=30):
     jd_now = _current_jd()
-    t_start = jd_now - 30
+    t_start = jd_now - lookback
     t_stop = jd_now + months * 30.44
     data = _horizons_request(command, t_start, t_stop, step_days=1)
     vectors = _extract_vectors(data)
@@ -306,7 +305,7 @@ def main():
 
     for command, body_name in HORIZONS_BODIES_DYNAMIC:
         try:
-            granules = generate_from_horizons(command, body_name, months=1)
+            granules = generate_from_horizons(command, body_name, months=1, lookback=5)
         except Exception as e:
             print(f"  SKIP {body_name}: Horizons error: {e}", file=sys.stderr)
             continue
