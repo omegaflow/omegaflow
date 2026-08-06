@@ -747,10 +747,10 @@ field properties.value_2 pm25_value_2
 url https://github.com/omegaflow/sources/releases/download/services.arcgis.com/geosphere_arcgis_earthquake_3d.json
 ttl 300
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag quake3d_magnitude
 field properties.sig quake3d_significance
 field properties.felt quake3d_felt_reports
@@ -834,10 +834,10 @@ field properties.FRP satellite_fire_frp_mw
 url https://github.com/omegaflow/sources/releases/download/services5.arcgis.com/geosphere_arcgis_satellite_positions.json
 ttl 300
 force em
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.altitude_km satellite_altitude_km
 field properties.velocity_kmps satellite_velocity_kmps
 field properties.inclination satellite_inclination_rad
@@ -854,10 +854,10 @@ path features.0.attributes.RadiationStorms space_weather_radiation_storm_scale
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_arcgis_usgs_seismic.json
 ttl 300
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
 field properties.mag usgs_magnitude
 field properties.sig usgs_significance
 field properties.depth usgs_depth_km
@@ -11450,30 +11450,6 @@ field extent magnetosphere_spot_extent
 field spot_class magnetosphere_spot_class
 field mag_class magnetosphere_mag_class
 
-url https://github.com/omegaflow/sources/releases/download/hub.docker.com/technosphere_dockerhub_alpine_pulls.json
-ttl 3600
-force em
-on earth 37.7749 -122.4194
-field pull_count biosphere_software_alpine_pulls_dockerhub
-
-url https://github.com/omegaflow/sources/releases/download/hub.docker.com/technosphere_dockerhub_node_pulls.json
-ttl 3600
-force em
-on earth 37.7749 -122.4194
-field pull_count biosphere_software_node_pulls_dockerhub
-
-url https://github.com/omegaflow/sources/releases/download/hub.docker.com/technosphere_dockerhub_python_pulls.json
-ttl 3600
-force em
-on earth 37.7749 -122.4194
-field pull_count biosphere_software_python_pulls_dockerhub
-
-url https://github.com/omegaflow/sources/releases/download/hub.docker.com/technosphere_dockerhub_ubuntu_pulls.json
-ttl 3600
-force em
-on earth 37.7749 -122.4194
-field pull_count biosphere_software_ubuntu_pulls_dockerhub
-
 url https://api.eia.gov/v2/electricity/rto/region-data/data/?api_key=EIA_API_KEY&frequency=hourly&data[]=value&facets[type][]=D&sort[0][column]=period&sort[0][direction]=desc&length=500
 ttl 3600
 force diffusion
@@ -11490,12 +11466,6 @@ ttl 3600
 force em
 on earth 38.9072 -77.0369
 field totalResults biosphere_cyber_vulnerability_count_nvd
-
-url https://github.com/omegaflow/sources/releases/download/en.wikipedia.org/technosphere_technosphere_wikipedia_views.json
-ttl 3600
-force em
-on earth 40.712 -74.006
-field query.random.0.id technosphere_wikipedia_random_id
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
 ttl 10800
@@ -15766,18 +15736,6 @@ force em
 on earth 37.872 -122.258
 field totalCount biosphere_crispr_trials_recruiting
 
-url https://github.com/omegaflow/sources/releases/download/api.crossref.org/biosphere_crossref_dois_total.json
-ttl 86400
-force em
-on earth 38.9072 -77.0369
-field message.total-results biosphere_doi_registrations_crossref
-
-url https://github.com/omegaflow/sources/releases/download/api.crossref.org/biosphere_crossref_members_total.json
-ttl 86400
-force em
-on earth 38.9072 -77.0369
-field message.total-results biosphere_doi_members_crossref
-
 url https://github.com/omegaflow/sources/releases/download/ebi.ac.uk/biosphere_ebi_mgnify_marine_metagenomes.json
 ttl 86400
 force diffusion
@@ -15815,30 +15773,6 @@ force em
 on earth 37.774 -122.419
 format universal
 last_row Training_compute_FLOP biosphere_ai_training_flops_frontier
-
-url https://github.com/omegaflow/sources/releases/download/ec.europa.eu/biosphere_eurostat_cpi_eu.json
-ttl 86400
-force em
-on earth 50.8503 4.3517
-obj_last value biosphere_inflation_eu_eurostat
-
-url https://github.com/omegaflow/sources/releases/download/ec.europa.eu/biosphere_eurostat_gdp_eu.json
-ttl 86400
-force em
-on earth 50.8503 4.3517
-obj_last value biosphere_gdp_eu_eurostat
-
-url https://github.com/omegaflow/sources/releases/download/ec.europa.eu/biosphere_eurostat_population_eu.json
-ttl 86400
-force em
-on earth 50.8503 4.3517
-obj_last value biosphere_population_eu_eurostat
-
-url https://github.com/omegaflow/sources/releases/download/ec.europa.eu/biosphere_eurostat_unemployment_eu.json
-ttl 86400
-force em
-on earth 50.8503 4.3517
-obj_last value biosphere_unemployment_eu_eurostat
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/biosphere_gbif_occurrences_amphibians.json
 ttl 86400
@@ -16266,23 +16200,11 @@ force em
 at sun 1
 field scalerank biosphere_park_rank
 
-url https://data.rcsb.org/graphql?query={graphStatistics{totalEntries}}
-ttl 86400
-force em
-on earth 40.444 -74.494
-field data.graphStatistics.totalEntries molecular_pdb_structures_total
-
 url https://github.com/omegaflow/sources/releases/download/restcountries.com/biosphere_restcountries_population.json
 ttl 86400
 force em
 on earth 38.899 -77.043
 field 0.population biosphere_country_population_sample
-
-url https://github.com/omegaflow/sources/releases/download/api.openalex.org/biosphere_semantic_scholar_papers.json
-ttl 86400
-force em
-on earth 47.6062 -122.3321
-field meta.count biosphere_semantic_scholar_papers_total
 
 url https://rest.uniprot.org/uniprotkb/statistics
 ttl 86400
@@ -16302,28 +16224,6 @@ ttl 86400
 force em
 on earth 46.2276 6.1432
 last_line biosphere_who_life_expectancy_global
-
-url https://github.com/omegaflow/sources/releases/download/api.openbrewerydb.org/biosphere_world_open_brewery_db.json
-ttl 86400
-force em
-on earth 0 0
-map .
-lat_key lat
-lon_key lon
-field id brewery_db_id
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_countries.json
-ttl 86400
-force diffusion
-at sun 1.0
-map 1
-lat_key latitude
-lon_key longitude
-field name country_name
-field id country_code
-field region.value region_name
-field incomeLevel.value income_level
-field capitalCity capital_city
 
 url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_forest_area.json
 ttl 86400
@@ -16346,16 +16246,6 @@ field country country_name
 field iso3 country_iso3
 field pm25_ugm3 pm25_ugm3
 field year data_year
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_water_access.json
-ttl 86400
-force diffusion
-at sun 1.0
-map 1
-lat_key country.latitude
-lon_key country.longitude
-field value water_access_pct
-field country.iso2Code country_code
 
 url https://github.com/omegaflow/sources/releases/download/api.marinespecies.org/biosphere_worldpop_population_density_global.json
 ttl 86400
@@ -19758,13 +19648,6 @@ path 1.1 magnetosphere_mcg_y_nt
 path 1.2 magnetosphere_mcg_z_nt
 path 2 magnetosphere_mcg_f_nt
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/magnetosphere_schumann_resonance.json
-ttl 86400
-force gravity
-at sun 1
-format universal
-last_line atmos_schumann_last_val
-
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/magnetosphere_tdc_hapi.json
 ttl 86400
 force gravity
@@ -19794,12 +19677,6 @@ force em
 on earth 54.683 25.287
 field a molecular_lattice_constant_a
 
-url https://github.com/omegaflow/sources/releases/download/data.rcsb.org/subatomic_molecular_protein_structures.json
-ttl 86400
-force em
-on earth 40.500 -74.450
-field rcsb_id biosphere_protein_structure_id
-
 url https://github.com/omegaflow/sources/releases/download/physics.nist.gov/subatomic_nist_codata_fundamental_constants.json
 ttl 86400
 force em
@@ -19812,12 +19689,6 @@ field 2 value
 field 3 uncertainty
 field 4 unit
 
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_particle_physics_papers_total.json
-ttl 86400
-force em
-on earth 46.233 6.056
-field hits.total subatomic_papers_total
-
 url https://github.com/omegaflow/sources/releases/download/github.com-scikit-hep-particle/subatomic_pdg_particles.json
 ttl 86400
 force em
@@ -19826,36 +19697,6 @@ format universal
 last_row ID subatomare_last_pdg_id
 last_row Mass subatomare_last_mass_mev
 last_row Charge subatomare_last_charge
-
-url https://github.com/omegaflow/sources/releases/download/api.crossref.org/subatomic_physics_crossref_dois.json
-ttl 86400
-force em
-on earth 42.530 -71.048
-field message.total-results biosphere_crossref_doi_count
-
-url https://github.com/omegaflow/sources/releases/download/api.crossref.org/subatomic_physics_crossref_jwst_high_z_papers.json
-ttl 86400
-force em
-on earth 39.328 -76.620
-field message.total-results cosmic_jwst_high_z_discovery_papers
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_iter_fusion_papers.json
-ttl 86400
-force em
-on earth 43.709 5.777
-field hits.hits.0.metadata.citation_count physics_fusion_research_citations
-
-url https://github.com/omegaflow/sources/releases/download/api.openalex.org/subatomic_physics_openalex_works.json
-ttl 86400
-force em
-on earth 42.373 -71.110
-field meta.count biosphere_openalex_work_count
-
-url https://github.com/omegaflow/sources/releases/download/crates.io/technosphere_cratesio_crates_total.json
-ttl 86400
-force em
-on earth 37.774 -122.419
-field meta.total biosphere_cratesio_crates_total
 
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,RH2M,WS10M,PRECTOTCORR&community=AG&longitude={lon}&latitude={lat}&start={date}&end={date}&format=JSON
 ttl 86400
@@ -19866,181 +19707,11 @@ path properties.parameter.RH2M.0 energy_nasa_humidity_pct
 path properties.parameter.WS10M.0 energy_nasa_wind_ms
 path properties.parameter.PRECTOTCORR.0 energy_nasa_precip_mm
 
-url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-ERA5&startyear={year}&endyear={year}&outputformat=json
-ttl 86400
-force em
-body earth
-path outputs.hourly.0.G(i) energy_solar_ghi_wm2
-path outputs.hourly.0.T2m energy_solar_temp_c
-path outputs.hourly.0.WS10m energy_solar_wind_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.github.com/technosphere_github_repos_total.json
-ttl 86400
-force em
-on earth 37.774 -122.419
-field total_count biosphere_github_repos_total
-
-url https://github.com/omegaflow/sources/releases/download/api.github.com/technosphere_github_users_total.json
-ttl 86400
-force em
-on earth 37.774 -122.419
-field total_count biosphere_github_users_total
-
-url https://github.com/omegaflow/sources/releases/download/musicbrainz.org/technosphere_musicbrainz_artists_total.json
-ttl 86400
-force em
-on earth 51.507 -0.127
-field artists.0.id biosphere_music_artists_total
-
-url https://github.com/omegaflow/sources/releases/download/musicbrainz.org/technosphere_musicbrainz_recordings_total.json
-ttl 86400
-force em
-on earth 51.507 -0.127
-field recordings.0.id biosphere_music_recordings_total
-
-url https://github.com/omegaflow/sources/releases/download/musicbrainz.org/technosphere_musicbrainz_releases_total.json
-ttl 86400
-force em
-on earth 51.507 -0.127
-field releases.0.id biosphere_music_releases_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_assembly_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count molecular_genome_assemblies_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_bioproject_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count molecular_bioprojects_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_biosample_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count molecular_biosamples_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_books_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count biosphere_nlm_books_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_clinical_trials_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count biosphere_clinical_trials_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_clinvar_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count biosphere_clinic_variants_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_gap_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count biosphere_dbgap_studies_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_gene_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count molecular_genbank_genes_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_genome_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count molecular_genome_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_mesh_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count biosphere_mesh_terms_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_nucleotide_total.json
-ttl 86400
-force gravity
-on earth 38.995 -77.101
-field eSearchResult.Count molecular_nucleotide_sequences_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_omim_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count biosphere_mendelian_disorders_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_pmc_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count biosphere_pmc_articles_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_protein_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count molecular_protein_sequences_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_pubmed_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count biosphere_pubmed_articles_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_snp_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count molecular_snp_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_sra_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count molecular_sequencing_runs_total
-
-url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_taxonomy_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field eSearchResult.Count biosphere_taxonomy_total
-
 url https://registry.npmjs.org/-/v1/search?text=*&size=1
 ttl 86400
 force em
 on earth 37.774 -122.419
 field total biosphere_npm_packages_total
-
-url https://github.com/omegaflow/sources/releases/download/api.fda.gov/technosphere_openfda_adverse_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field meta.results.total biosphere_fda_adverse_events_total
-
-url https://github.com/omegaflow/sources/releases/download/api.fda.gov/technosphere_openfda_device_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field meta.results.total biosphere_fda_devices_total
-
-url https://github.com/omegaflow/sources/releases/download/api.fda.gov/technosphere_openfda_drug_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field meta.results.total biosphere_fda_drugs_total
-
-url https://github.com/omegaflow/sources/releases/download/api.fda.gov/technosphere_openfda_recalls_total.json
-ttl 86400
-force em
-on earth 38.995 -77.101
-field meta.results.total biosphere_fda_recalls_total
 
 url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
 ttl 86400
@@ -20065,18 +19736,6 @@ field wind_capacity_mw wind_capacity_mw
 field solar_capacity_mw solar_capacity_mw
 field nuclear_capacity_mw nuclear_capacity_mw
 
-url https://openlibrary.org/authors.json?limit=1
-ttl 86400
-force em
-on earth 40.712 -74.006
-field size biosphere_openlibrary_authors_total
-
-url https://github.com/omegaflow/sources/releases/download/openlibrary.org/technosphere_openlibrary_books_total.json
-ttl 86400
-force em
-on earth 40.712 -74.006
-field size biosphere_openlibrary_books_total
-
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/technosphere_ourairports_global.json
 ttl 86400
 force em
@@ -20093,18 +19752,6 @@ field_in 10 municipality
 field_in 11 scheduled_service
 field_in 12 icao_code
 field_in 13 iata_code
-
-url https://pubchem.ncbi.nlm.nih.gov/rest/pug/compounds/count/JSON
-ttl 86400
-force em
-on earth 38.995 -77.101
-field PC_Compounds.0.properties.0.count molecular_compounds_total
-
-url https://pubchem.ncbi.nlm.nih.gov/rest/pug/substances/count/JSON
-ttl 86400
-force em
-on earth 38.995 -77.101
-field PC_Substances.0.properties.0.count molecular_substances_total
 
 url https://github.com/omegaflow/sources/releases/download/atlas.ripe.net/technosphere_ripe_atlas_probes.json
 ttl 86400
@@ -20131,40 +19778,6 @@ ttl 86400
 force em
 on earth 37.774 -122.419
 field query.statistics.articles biosphere_wikidata_entities_total
-
-url https://github.com/omegaflow/sources/releases/download/en.wikipedia.org/technosphere_wikipedia_articles_total.json
-ttl 86400
-force em
-on earth 37.774 -122.419
-field query.statistics.articles biosphere_wikipedia_articles_total
-
-url https://github.com/omegaflow/sources/releases/download/en.wikipedia.org/technosphere_wikipedia_edits_total.json
-ttl 86400
-force em
-on earth 37.774 -122.419
-field query.statistics.edits biosphere_wikipedia_edits_total
-
-url https://zenodo.org/api/records/?communities=iodp&size=100
-ttl 86400
-force diffusion
-at sun 1
-map hits.hits
-field metadata.doi dataset_doi
-field metadata.title dataset_title
-field metadata.creators.0.name primary_author
-field metadata.publication_date publication_date
-field metadata.description dataset_description
-field files.0.links.self file_download_url
-
-url https://zenodo.org/api/records/?q=IODP+DSDP&size=100
-ttl 86400
-force diffusion
-at sun 1
-map hits.hits
-field metadata.doi dataset_doi
-field metadata.title dataset_title
-field metadata.creators.0.name primary_author
-field metadata.publication_date publication_date
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/astro_batse_grb.json
 ttl 604800
@@ -21422,12 +21035,6 @@ ra_key ra
 dec_key dec
 plx_key parallax
 field phot_g_mean_mag star_g_mag
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/astro_solar_helioseismology_papers.json
-ttl 604800
-force em
-on earth 37.774 -122.419
-field hits.total solar_helioseismology_papers
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/astro_swift_bat.json
 ttl 604800
@@ -23088,12 +22695,6 @@ lon_key longitude
 field elevation_m hydrosphere_ndbc_station_elevation_m
 field station_type hydrosphere_ndbc_station_type
 
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_higgs_production_xsec_papers.json
-ttl 604800
-force em
-on earth 46.233 6.056
-field hits.total subatomic_higgs_xsec_papers
-
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/subatomic_molecular_periodic_elements.json
 ttl 604800
 force em
@@ -23102,18 +22703,6 @@ map elements
 field atomic_mass molecular_element_mass_u
 field density molecular_element_density_g_l
 field melt molecular_element_melt_k
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_muon_gminus2_papers.json
-ttl 604800
-force em
-on earth 41.833 -87.627
-field hits.total subatomic_muon_g2_papers
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_neutrino_oscillation_papers.json
-ttl 604800
-force em
-on earth 42.454 13.576
-field hits.total subatomic_neutrino_oscillation_papers
 
 url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_b_c_plus_mass.json
 ttl 604800
@@ -23343,48 +22932,6 @@ force em
 on earth 37.877 -122.247
 field pdg_values.0.value subatomic_z_boson_mass_gev
 
-url https://github.com/omegaflow/sources/releases/download/api.crossref.org/subatomic_physics_crossref_longevity_age_research.json
-ttl 604800
-force em
-on earth 51.500 -0.126
-field message.total-results biosphere_longevity_research_total
-
-url https://github.com/omegaflow/sources/releases/download/api.crossref.org/subatomic_physics_crossref_synthetic_genome_papers.json
-ttl 604800
-force em
-on earth 42.373 -71.110
-field message.total-results biosphere_synthetic_genome_research_total
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_bell_test_papers.json
-ttl 604800
-force em
-on earth 52.086 5.171
-field hits.hits.0.metadata.citation_count physics_bell_test_loophole_free_citations
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_organoid_papers.json
-ttl 604800
-force em
-on earth -37.813 144.963
-field hits.hits.0.metadata.citation_count biosphere_organoid_computing_citations
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_proton_decay_papers.json
-ttl 604800
-force em
-on earth 36.428 137.310
-field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_quantum_teleport_papers.json
-ttl 604800
-force em
-on earth 39.904 116.407
-field hits.hits.0.metadata.citation_count quantum_entanglement_distance_record_citations
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_time_crystal_papers.json
-ttl 604800
-force em
-on earth 42.360 -71.093
-field hits.hits.0.metadata.citation_count physics_time_crystal_research_citations
-
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/technosphere_geonuclear_power_plants.json
 ttl 604800
 force thermal
@@ -23475,53 +23022,11 @@ force em
 on earth 38.907 -77.036
 field data.0.areaHa biosphere_tree_cover_loss_ha_latest
 
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_birth_rate.json
-ttl 2592000
-force em
-on earth 38.899 -77.043
-field 1.0.value biosphere_birth_rate_per_1000
-
 url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_co2_emissions.json
 ttl 2592000
 force em
 on earth 38.899 -77.043
 field 1.0.value worldbank_co2_emissions_value
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_death_rate.json
-ttl 2592000
-force em
-on earth 38.899 -77.043
-field 1.0.value biosphere_death_rate_per_1000
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_life_expectancy.json
-ttl 2592000
-force em
-on earth 38.899 -77.043
-field 1.0.value biosphere_life_expectancy_years
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_median_age.json
-ttl 2592000
-force em
-on earth 38.899 -77.043
-field 1.0.value biosphere_median_age_years
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_population.json
-ttl 2592000
-force em
-on earth 38.899 -77.043
-field 1.0.value biosphere_worldbank_population_total
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_population_density.json
-ttl 2592000
-force em
-on earth 38.8991 -77.0430
-field 1.0.value biosphere_global_population_density_sqkm
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/biosphere_worldbank_urban_population_pct.json
-ttl 2592000
-force em
-on earth 38.899 -77.043
-field 1.0.value biosphere_urban_population_pct
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/cryosphere_paleoclimate_dome_fuji_co2.json
 ttl 2592000
@@ -23723,48 +23228,6 @@ ttl 2592000
 at sun 1.0
 force em
 format universal
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_dark_matter_direct_limits.json
-ttl 2592000
-force em
-on earth 42.454 13.576
-field hits.hits.0.metadata.citation_count quantum_dark_matter_limit_citations
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_neutrinoless_double_beta_limits.json
-ttl 2592000
-force em
-on earth 42.454 13.576
-field hits.hits.0.metadata.citation_count quantum_double_beta_limit_citations
-
-url https://github.com/omegaflow/sources/releases/download/api.crossref.org/subatomic_physics_crossref_biophoton_papers.json
-ttl 2592000
-force em
-on earth 50.775 6.084
-field message.total-results biosphere_biophoton_research_total
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_cmb_anomaly_papers.json
-ttl 2592000
-force em
-on earth 5.230 -52.769
-field hits.hits.0.metadata.citation_count cosmic_cmb_anomaly_research_citations
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_vacuum_metastability_papers.json
-ttl 2592000
-force em
-on earth 46.233 6.055
-field hits.hits.0.metadata.citation_count physics_vacuum_metastability_citations
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_xenonnt_papers.json
-ttl 2592000
-force em
-on earth 42.454 13.576
-field hits.hits.0.metadata.citation_count physics_dark_matter_limit_citations
-
-url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_quantum_gravity_lorentz_bounds.json
-ttl 2592000
-force em
-on earth 42.454 13.576
-field hits.hits.0.metadata.citation_count quantum_lorentz_bounds_citations
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/astro_gaia_nearby_1000.json
 ttl 315576000000
