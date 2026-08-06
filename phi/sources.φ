@@ -919,7 +919,7 @@ field emsc:depth depth_km
 url https://github.com/omegaflow/sources/releases/download/services.arcgis.com/geosphere_esri_current_wind_speed.json
 ttl 300
 force advective
-at sun 1.0
+on earth 0 0
 map features
 field attributes.name station_name
 field attributes.stid station_id
@@ -927,8 +927,8 @@ field attributes.elevation elevation_ft
 field attributes.wind_speed wind_speed_ms
 field attributes.wind_gust wind_gust_ms
 field attributes.wind_direction wind_dir_deg
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services.arcgis.com/geosphere_esri_env_canada_wind.json
 ttl 300
@@ -945,18 +945,18 @@ lon_key geometry.x
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/geosphere_esri_lightning_global.json
 ttl 300
 force em
-at sun 1.0
+on earth 0 0
 map features
 field attributes.type strike_type
 field attributes.intensity intensity_ka
 field attributes.multiplicity multiplicity
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_noaa_metar_wind.json
 ttl 300
 force advective
-at sun 1.0
+on earth 0 0
 map features
 field attributes.ICAO icao_code
 field attributes.STATION_NAME station_name
@@ -965,8 +965,8 @@ field attributes.DEW_POINT dew_point_c
 field attributes.AIR_TEMP air_temp_c
 field attributes.WIND_SPEED wind_speed_kt
 field attributes.WIND_DIR wind_dir_deg
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services6.arcgis.com/geosphere_gcoos_buoy_wmo_42043.json
 ttl 300
@@ -7409,7 +7409,7 @@ alt_key geometry.coordinates.2
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_active_hurricanes_sampler.json
 ttl 600
 force advective
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.STORMNAME stormname
@@ -7419,13 +7419,13 @@ field attributes.ADVISNUM advisnum
 field attributes.STORMNUM stormnum
 field attributes.FCSTPRD fcstprd
 field attributes.BASIN basin
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_active_hurricanes_v1.json
 ttl 600
 force advective
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.STORMNAME stormname
@@ -7435,8 +7435,8 @@ field attributes.ADVISNUM advisnum
 field attributes.STORMNUM stormnum
 field attributes.FCSTPRD fcstprd
 field attributes.BASIN basin
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_air_quality_pm25_latest_results.json
 ttl 600
@@ -7485,14 +7485,14 @@ lon_key geometry.x
 url https://github.com/omegaflow/sources/releases/download/services.arcgis.com/geosphere_esri_cwfis_hotspots.json
 ttl 600
 force thermal
-at sun 1.0
+on earth 0 0
 map features
 field attributes.lat latitude
 field attributes.lon longitude
 field attributes.rep_date report_date
 field attributes.source source_sensor
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_live_stream_gauges_v1.json
 ttl 600
@@ -7527,7 +7527,7 @@ lon_key geometry.x
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_noaa_storm_reports_sampler.json
 ttl 600
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.UTC_DATETIME utc_datetime
@@ -7537,13 +7537,13 @@ field attributes.COUNTY county
 field attributes.STATE state
 field attributes.LATITUDE latitude
 field attributes.LONGITUDE longitude
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_noaa_storm_reports_v1.json
 ttl 600
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.UTC_DATETIME utc_datetime
@@ -7553,13 +7553,13 @@ field attributes.COUNTY county
 field attributes.STATE state
 field attributes.LATITUDE latitude
 field attributes.LONGITUDE longitude
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_recent_hurricanes_v1.json
 ttl 600
 force advective
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.STORMNAME stormname
@@ -7569,8 +7569,8 @@ field attributes.MONTH month
 field attributes.DAY day
 field attributes.HHMM hhmm
 field attributes.TAU tau
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_usa_wildfires_v1.json
 ttl 600
@@ -7587,7 +7587,7 @@ lon_key geometry.x
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_usgs_seismic_data_v1.json
 ttl 600
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.id id
@@ -7597,13 +7597,13 @@ field attributes.sig sig
 field attributes.alert alert
 field attributes.place place
 field attributes.hoursOld hoursold
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_viirs_thermal_hotspots.json
 ttl 600
 force thermal
-at sun 1.0
+on earth 0 0
 map features
 field attributes.latitude latitude
 field attributes.longitude longitude
@@ -7611,8 +7611,8 @@ field attributes.bright_ti4 brightness_k
 field attributes.frp fire_radiative_power
 field attributes.acq_date acq_date
 field attributes.satellite satellite
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_wildfire_aggregated_v1.json
 ttl 600
@@ -10532,7 +10532,7 @@ lon_key geometry.x
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_inaturalist.json
 ttl 3600
 force diffusion
-at sun 1.0
+on earth 0 0
 map features
 field attributes.OBJECTID objectid
 field attributes.observation_id observation_id
@@ -10542,13 +10542,13 @@ field attributes.observer_id observer_id
 field attributes.observed_on observed_on
 field attributes.observed_on_month observed_on_month
 field attributes.observed_on_year observed_on_year
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_monitored_volcanos.json
 ttl 3600
 force em
-at sun 1.0
+on earth 0 0
 map features
 field attributes.Volcano_Name name
 field attributes.Observation observation
@@ -10556,21 +10556,21 @@ field attributes.Alert_Level alert_level
 field attributes.Color_Code color_code
 field attributes.Region region
 field attributes.Threat threat
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.Latitude
+lon_key attributes.Longitude
 
 url https://github.com/omegaflow/sources/releases/download/services5.arcgis.com/geosphere_esri_ndbc_buoy_obs.json
 ttl 3600
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
 field attributes.STN station_id
 field attributes.LAT latitude
 field attributes.LON longitude
 field attributes.YYYY year
 field attributes.MM month
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.lat
+lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/geosphere_esri_noaa_temp_latest.json
 ttl 3600
@@ -16820,15 +16820,15 @@ lon_key geometry.x
 url https://github.com/omegaflow/sources/releases/download/services2.arcgis.com/geosphere_esri_tide_flooding_outlook.json
 ttl 86400
 force advective
-at sun 1.0
+on earth 0 0
 map features
 field attributes.Station_ID station_id
 field attributes.Station_Name station_name
 field attributes.Latitude latitude
 field attributes.Longitude longitude
 field attributes.Daily_Flood_Likelihood flood_likelihood
-lat_key geometry.y
-lon_key geometry.x
+lat_key attributes.Latitude
+lon_key attributes.Longitude
 
 url https://github.com/omegaflow/sources/releases/download/services2.arcgis.com/geosphere_esri_tsunami_tide_stations.json
 ttl 86400
