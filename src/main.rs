@@ -938,9 +938,13 @@ pub enum JsonVal {
 }
 
 pub fn parse_json(s: &str) -> Option<JsonVal> {
+    let bytes = s.as_bytes();
+    // Jina-style metadata headers (Title:, URL Source:, Markdown Content:) precede
+    // the payload — jump to the first structural character.
+    let start = (0..bytes.len()).find(|&i| bytes[i] == b'{' || bytes[i] == b'[')?;
     let mut p = JsonParser {
-        chars: s.as_bytes(),
-        pos: 0,
+        chars: bytes,
+        pos: start,
     };
     p.skip_ws();
     p.parse_value()
@@ -1225,6 +1229,7 @@ fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
             vr_key: vr_key.into(),
             fields,
             lon_sign: None,
+            lat_sign: None,
         }]
     } else {
         vec![]
@@ -1363,6 +1368,7 @@ enum Extract {
         vr_key: String,
         fields: Vec<(String, String)>,
         lon_sign: Option<String>,
+        lat_sign: Option<String>,
     },
     CelestialMap {
         arr_path: String,
@@ -1446,6 +1452,8 @@ struct SourceConfig {
     format: String,
     extracts: Vec<Extract>,
     headers: Vec<(String, String)>,
+    post_body: Option<String>,
+    method: String,
     target: Option<String>,
     catalog: Option<String>,
     max_freq: Option<f64>,
@@ -1591,9 +1599,10 @@ fn spawn_task_curl(
         Option<String>,
         Vec<(String, String)>,
         u64,
+        String,
     ),
 ) -> Option<std::process::Child> {
-    let (_i, _origin, _region, url, body, headers, ttl) = task;
+    let (_i, _origin, _region, url, body, headers, ttl, method) = task;
     let mut cmd = Command::new("curl");
     cmd.arg("--remove-on-error");
     cmd.arg("--retry").arg("1");
@@ -1610,8 +1619,14 @@ fn spawn_task_curl(
     cmd.arg("--connect-timeout").arg(connect_t.to_string());
 
     if let Some(b) = body {
-        cmd.arg("-X").arg("POST");
+        if method.as_str() == "POST" || method.as_str() == "PUT" {
+            cmd.arg("-X").arg(method.as_str());
+        } else {
+            cmd.arg("-X").arg("POST");
+        }
         cmd.arg("-d").arg(b);
+    } else if method.as_str() != "GET" && !method.is_empty() {
+        cmd.arg("-X").arg(method.as_str());
     }
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
@@ -2106,6 +2121,8 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_max_freq: Option<f64> = None;
     let mut cur_min_freq: Option<f64> = None;
     let mut cur_body: Option<String> = None;
+    let mut cur_post_body: Option<String> = None;
+    let mut cur_method: Option<String> = None;
     let mut cur_stations_url: Option<String> = None;
     let mut cur_stations_path = String::from("stations");
     let mut cur_stations_lat = String::from("lat");
@@ -2145,7 +2162,7 @@ fn load_sources() -> Vec<SourceConfig> {
                             )
                         });
                     let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
-                        let body = cur_body.take().unwrap_or_else(|| {
+                        let body = cur_body.clone().unwrap_or_else(|| {
                             eprintln!("source refused (on without body): {}", cur_url);
                             String::new()
                         });
@@ -2155,7 +2172,7 @@ fn load_sources() -> Vec<SourceConfig> {
                             Some(Frame::Surface { body_name: body, lat, lon, alt: cur_alt })
                         }
                     } else if let Some(scale) = cur_scale {
-                        let body = cur_body.take().unwrap_or_else(|| {
+                        let body = cur_body.clone().unwrap_or_else(|| {
                             eprintln!("source refused (at without body): {}", cur_url);
                             String::new()
                         });
@@ -2165,7 +2182,7 @@ fn load_sources() -> Vec<SourceConfig> {
                             Some(Frame::Barycenter { body_name: body, scale })
                         }
                     } else if has_data_position {
-                        match cur_body.take() {
+                        match cur_body.clone() {
                             Some(body) => Some(Frame::Surface {
                                 body_name: body,
                                 lat: 0.0, lon: 0.0, alt: 0.0,
@@ -2182,7 +2199,7 @@ fn load_sources() -> Vec<SourceConfig> {
                         || cur_url.contains("{z}")
                         || cur_url.contains("{grid")
                     {
-                        match cur_body.take() {
+                        match cur_body.clone() {
                             Some(body) => Some(Frame::Surface {
                                 body_name: body,
                                 lat: 0.0, lon: 0.0, alt: 0.0,
@@ -2197,6 +2214,16 @@ fn load_sources() -> Vec<SourceConfig> {
                         None
                     };
                     if let Some(frame) = frame {
+                        if !matches!(frame, Frame::Surface { .. })
+                            && cur_extracts
+                                .iter()
+                                .any(|e| matches!(e, Extract::Map { .. }))
+                        {
+                            eprintln!(
+                                "warning: map extract with non-surface frame: {}",
+                                cur_url
+                            );
+                        }
                         sources.push(SourceConfig {
                             name: String::new(),
                             ttl: cur_ttl,
@@ -2208,6 +2235,8 @@ fn load_sources() -> Vec<SourceConfig> {
                             format: cur_format.clone(),
                             extracts: cur_extracts.clone(),
                             headers: cur_headers.clone(),
+                            post_body: cur_post_body.clone(),
+                            method: cur_method.clone().unwrap_or_else(|| "GET".to_string()),
                             target: cur_target.clone(),
                             catalog: cur_catalog.clone(),
                             max_freq: cur_max_freq,
@@ -2257,6 +2286,8 @@ fn load_sources() -> Vec<SourceConfig> {
                 cur_max_freq = None;
                 cur_min_freq = None;
                 cur_body = None;
+                cur_post_body = None;
+                cur_method = None;
                 cur_stations_url = None;
                 cur_stations_path = String::from("stations");
                 cur_stations_lat = String::from("lat");
@@ -2296,6 +2327,8 @@ fn load_sources() -> Vec<SourceConfig> {
             "max_freq" => cur_max_freq = parts.get(1).and_then(|s| s.parse().ok()),
             "min_freq" => cur_min_freq = parts.get(1).and_then(|s| s.parse().ok()),
             "body" => cur_body = Some(line.get(5..).unwrap_or("").trim().to_string()),
+            "post_body" => cur_post_body = Some(line.get(10..).unwrap_or("").trim().to_string()),
+            "method" => cur_method = parts.get(1).map(|s| s.to_string()),
             "verify" => {}
             "on" => {
                 cur_body = Some(parts.get(1).unwrap_or(&"").to_string());
@@ -2370,6 +2403,7 @@ fn load_sources() -> Vec<SourceConfig> {
                         vr_key: String::new(),
                         fields: Vec::new(),
                         lon_sign: None,
+                        lat_sign: None,
                     });
                 }
             }
@@ -2416,6 +2450,11 @@ fn load_sources() -> Vec<SourceConfig> {
             "lon_sign" => {
                 if let Some(Extract::Map { lon_sign, .. }) = cur_extracts.last_mut() {
                     *lon_sign = parts.get(1).map(|s| s.to_string());
+                }
+            }
+            "lat_sign" => {
+                if let Some(Extract::Map { lat_sign, .. }) = cur_extracts.last_mut() {
+                    *lat_sign = parts.get(1).map(|s| s.to_string());
                 }
             }
             "epoch_key" => {
@@ -2881,7 +2920,7 @@ fn render_source_body(
     r: f64,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<String> {
-    let tmpl = src.body.as_ref()?;
+    let tmpl = src.post_body.as_ref()?;
     let mut body = render_url(tmpl, x, y, z, tdb, r, &frame_body_name(&src.frame), eph);
     if let Some(ref t) = src.target {
         body = body.replace("{target}", t);
@@ -3104,6 +3143,7 @@ fn extract_pending(src: &SourceConfig, body: &str, body_bytes: &[u8], now: f64) 
                 vr_key,
                 fields,
                 lon_sign,
+                lat_sign,
             } => {
                 let eff_lat_key = lat_key.clone();
                 let eff_lon_key = lon_key.clone();
@@ -3136,15 +3176,21 @@ fn extract_pending(src: &SourceConfig, body: &str, body_bytes: &[u8], now: f64) 
                                         continue;
                                     }
                                 }
+                                let mut lat_val = la;
+                                if let Some(sign_key) = lat_sign {
+                                    if let Some(vv) = jpath_val(v, sign_key) {
+                                        if let JsonVal::Str(s) = vv {
+                                            if s.contains('S') || s.contains('s') {
+                                                lat_val = -la;
+                                            }
+                                        }
+                                    }
+                                }
                                 let mut lon_val = lo;
                                 if let Some(sign_key) = lon_sign {
                                     if let Some(vv) = jpath_val(v, sign_key) {
                                         if let JsonVal::Str(s) = vv {
-                                            if s.contains('W')
-                                                || s.contains('w')
-                                                || s.contains('S')
-                                                || s.contains('s')
-                                            {
+                                            if s.contains('W') || s.contains('w') {
                                                 lon_val = -lo;
                                             }
                                         }
@@ -3168,7 +3214,7 @@ fn extract_pending(src: &SourceConfig, body: &str, body_bytes: &[u8], now: f64) 
                                 let position = if let (Some(sp), Some(tr)) = (speed, track) {
                                     PendingPosition::SurfaceFlow {
                                         body_name: body_name.clone(),
-                                        lat: la,
+                                        lat: lat_val,
                                         lon: lon_val,
                                         alt: al,
                                         speed: sp,
@@ -3178,7 +3224,7 @@ fn extract_pending(src: &SourceConfig, body: &str, body_bytes: &[u8], now: f64) 
                                 } else {
                                     PendingPosition::Surface {
                                         body_name: body_name.clone(),
-                                        lat: la,
+                                        lat: lat_val,
                                         lon: lon_val,
                                         alt: al,
                                     }
@@ -3824,6 +3870,7 @@ fn warm_cache(archive: Arc<Archive>) {
             Option<String>,
             Vec<(String, String)>,
             u64,
+            String,
         )> = Vec::new();
         let mut task_prios: Vec<u8> = Vec::new();
         {
@@ -3947,6 +3994,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                     render_source_body(src, px, py, pz, now, r, &eph_map),
                                     render_headers(src, px, py, pz, now, r, &eph_map),
                                     src.ttl,
+                                    src.method.clone(),
                                 ));
                             }
                             continue;
@@ -3996,6 +4044,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             render_source_body(src, pos.0, pos.1, pos.2, now, r, &eph_map),
                             render_headers(src, pos.0, pos.1, pos.2, now, r, &eph_map),
                             src.ttl,
+                            src.method.clone(),
                         ));
                     }
                     Frame::Barycenter { body_name, scale } => {
@@ -4042,6 +4091,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             render_source_body(src, pos.0, pos.1, pos.2, now, r, &eph_map),
                             render_headers(src, pos.0, pos.1, pos.2, now, r, &eph_map),
                             src.ttl,
+                            src.method.clone(),
                         ));
                     }
                 }
@@ -4057,6 +4107,7 @@ fn warm_cache(archive: Arc<Archive>) {
                 Option<String>,
                 Vec<(String, String)>,
                 u64,
+                String,
             )>,
         >(2);
         eprintln!("warm_cache: {} tasks via parallel pool", tasks.len());
@@ -4088,7 +4139,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         }
                     }
                     if let Some((ci, n)) = done {
-                        let (src_idx, origin, region, url, _body, _headers, ttl) =
+                        let (src_idx, origin, region, url, _body, _headers, ttl, _method) =
                             chunk_tasks[n].clone();
                         let body_file = batch_dir.join(format!("b_{}", n));
                         let hdr_file = batch_dir.join(format!("h_{}", n));
@@ -4382,8 +4433,22 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::{render_source_body, render_source_url, SourceConfig};
+    use super::{parse_json, render_source_body, render_source_url, SourceConfig};
     use std::collections::HashMap;
+
+    #[test]
+    fn test_parse_json_skips_jina_header() {
+        let s = "Title: \n\n\nURL Source: http://api.wheretheiss.at/v1/satellites/25544\n\n\nMarkdown Content:\n{\"name\":\"iss\",\"id\":25544,\"latitude\":-39.79}";
+        let v = parse_json(s).unwrap();
+        let obj = match v {
+            super::JsonVal::Obj(m) => m,
+            _ => panic!("expected object"),
+        };
+        assert!(matches!(obj.get("name"), Some(super::JsonVal::Str(s)) if s == "iss"));
+        assert!(
+            matches!(obj.get("id"), Some(super::JsonVal::Num(n)) if (n - 25544.0).abs() < 1e-9)
+        );
+    }
 
     #[test]
     fn test_render_source_url_substitutions() {
@@ -4403,6 +4468,8 @@ mod tests {
             format: "json".into(),
             extracts: vec![],
             headers: vec![],
+            post_body: None,
+            method: "GET".to_string(),
             target: Some("Ceres".into()),
             catalog: Some("fp_psc".into()),
             max_freq: None,
@@ -4439,11 +4506,13 @@ mod tests {
             format: "json".into(),
             extracts: vec![],
             headers: vec![("Content-Type".into(), "application/stac+json".into())],
+            post_body: Some("{\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}],\"datetime\":\"{today}/{today}\"}".into()),
+            method: "GET".to_string(),
             target: None,
             catalog: None,
             max_freq: None,
             min_freq: None,
-            body: Some("{\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}],\"datetime\":\"{today}/{today}\"}".into()),
+            body: None,
             stations_url: None,
             stations_path: String::new(),
             stations_lat: String::new(),
@@ -4492,8 +4561,11 @@ mod tests {
                 vr_key: String::new(),
                 fields: vec![("4".into(), "argo_temp_c".into())],
                 lon_sign: None,
+                lat_sign: None,
             }],
             headers: vec![],
+            post_body: None,
+            method: "GET".into(),
             target: None,
             catalog: None,
             max_freq: None,
