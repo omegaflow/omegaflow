@@ -70,6 +70,30 @@ def _load_rename_map():
     return rename
 
 
+def _current_names_from_urls():
+    """Derive current source names from the CDN asset URLs in sources.φ.
+    The asset filename (last path segment without .json) is the source identity."""
+    names = set()
+    try:
+        for line in open("phi/sources.φ"):
+            line = line.strip()
+            if not line.startswith("url "):
+                continue
+            url = line[4:].strip()
+            if "releases/download/" not in url:
+                continue
+            asset = url.rsplit("/", 1)[-1]
+            if asset.endswith(".json"):
+                asset = asset[:-5]
+            elif asset.endswith(".bin"):
+                asset = asset[:-4]
+            if asset:
+                names.add(asset)
+    except Exception:
+        pass
+    return names
+
+
 def build_live_url_map():
     """Return {current_source_name: original_live_api_url} for all sources
     that can be recovered from git history."""
@@ -79,18 +103,11 @@ def build_live_url_map():
 
     rename = _load_rename_map()
 
-    # Map current names (with sphere prefixes + canonicalization) to recovered URLs
+    # Map current names (asset filenames from CDN URLs) to recovered URLs
     final = {}
-    all_names = set(live.keys()) | set(rename.keys())
 
-    # Read current source names from sources.φ
-    current_names = set()
-    try:
-        for line in open("phi/sources.φ"):
-            if line.startswith("source "):
-                current_names.add(line.strip().split()[1])
-    except Exception:
-        pass
+    # Read current source names from CDN asset URLs in sources.φ
+    current_names = _current_names_from_urls()
 
     for name in current_names:
         # Direct

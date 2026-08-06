@@ -109,22 +109,33 @@ def parse_sources():
     sources = []
     for block in blocks:
         lines = block.strip().split('\n')
-        if not lines or not lines[0].startswith('source '):
+        if not lines or not lines[0].startswith('url '):
             continue
-        name = lines[0].split()[1]
-        is_cdn = any('releases/download' in l for l in lines)
+        url = lines[0].split(None, 1)[1].strip()
+        is_cdn = 'releases/download' in url
         ttl = None
-        url = None
         for l in lines:
             if l.startswith('ttl '): ttl = int(l.split()[1])
-            if l.startswith('url '): url = l.split(None, 1)[1].strip()
         if not url:
             continue
+        name = _name_from_url(url)
         sources.append({
             "name": name, "ttl": ttl, "url": url, "is_cdn": is_cdn,
             "raw": block, "lines": lines
         })
     return sources, content
+
+
+def _name_from_url(url):
+    """Derive the source name from the URL (quellentreu: the source names itself)."""
+    from urllib.parse import urlparse
+    path = urlparse(url).path
+    last = path.rstrip('/').split('/')[-1]
+    if '.' in last:
+        last = last.rsplit('.', 1)[0]
+    if last:
+        return last
+    return urlparse(url).netloc.replace('.', '_')
 
 def get_domain_tag(url):
     from urllib.parse import urlparse
