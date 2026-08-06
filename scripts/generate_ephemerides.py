@@ -305,7 +305,7 @@ def main():
 
     for command, body_name in HORIZONS_BODIES_DYNAMIC:
         try:
-            months = 0.7 if body_name == "iss" else 1
+            months = 0.9 if body_name == "iss" else 1
             granules = generate_from_horizons(command, body_name, months=months, lookback=5)
         except Exception as e:
             print(f"  SKIP {body_name}: Horizons error: {e}", file=sys.stderr)
