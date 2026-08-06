@@ -8,7 +8,6 @@ use std::thread;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 const Φ: f64 = 1.618033988749895;
-const AU: f64 = 1.495978707e11;
 const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
 const PARSEC_M: f64 = 3.085677581e16;
@@ -1447,7 +1446,6 @@ struct SourceConfig {
     format: String,
     extracts: Vec<Extract>,
     headers: Vec<(String, String)>,
-    pos_fields: Option<(String, String, Option<String>, f64)>,
     target: Option<String>,
     catalog: Option<String>,
     max_freq: Option<f64>,
@@ -2147,50 +2145,24 @@ fn load_sources() -> Vec<SourceConfig> {
                             )
                         });
                     let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
-                        match &cur_body {
-                            Some(body) => Some(Frame::Surface {
-                                body_name: body.clone(),
-                                lat,
-                                lon,
-                                alt: cur_alt,
-                            }),
-                            None => {
-                                eprintln!(
-                                    "source refused (on without body directive): {}",
-                                    cur_url
-                                );
-                                None
-                            }
-                        }
+                        Some(Frame::Surface {
+                            body_name: cur_body.clone().unwrap_or_else(|| "earth".to_string()),
+                            lat,
+                            lon,
+                            alt: cur_alt,
+                        })
                     } else if let Some(scale) = cur_scale {
-                        match &cur_body {
-                            Some(body) => Some(Frame::Barycenter {
-                                body_name: body.clone(),
-                                scale,
-                            }),
-                            None => {
-                                eprintln!(
-                                    "source refused (at without body directive): {}",
-                                    cur_url
-                                );
-                                None
-                            }
-                        }
+                        Some(Frame::Barycenter {
+                            body_name: cur_body.clone().unwrap_or_else(|| "earth".to_string()),
+                            scale,
+                        })
                     } else if has_data_position {
-                        if cur_body.is_some() {
-                            Some(Frame::Surface {
-                                body_name: cur_body.as_ref().unwrap().clone(),
-                                lat: 0.0,
-                                lon: 0.0,
-                                alt: 0.0,
-                            })
-                        } else {
-                            eprintln!(
-                                "source refused (pos without body directive): {}",
-                                cur_url
-                            );
-                            None
-                        }
+                        Some(Frame::Surface {
+                            body_name: "earth".to_string(),
+                            lat: 0.0,
+                            lon: 0.0,
+                            alt: 0.0,
+                        })
                     } else if cur_url.contains("{lat}")
                         || cur_url.contains("{lon}")
                         || cur_url.contains("{x}")
@@ -2198,21 +2170,12 @@ fn load_sources() -> Vec<SourceConfig> {
                         || cur_url.contains("{z}")
                         || cur_url.contains("{grid")
                     {
-                        match &cur_body {
-                            Some(body) => Some(Frame::Surface {
-                                body_name: body.clone(),
-                                lat: 0.0,
-                                lon: 0.0,
-                                alt: 0.0,
-                            }),
-                            None => {
-                                eprintln!(
-                                    "source refused (template URL without body directive): {}",
-                                    cur_url
-                                );
-                                None
-                            }
-                        }
+                        Some(Frame::Surface {
+                            body_name: "earth".to_string(),
+                            lat: 0.0,
+                            lon: 0.0,
+                            alt: 0.0,
+                        })
                     } else {
                         eprintln!("source refused (no reference frame): {}", cur_url);
                         None
@@ -2229,7 +2192,6 @@ fn load_sources() -> Vec<SourceConfig> {
                             format: cur_format.clone(),
                             extracts: cur_extracts.clone(),
                             headers: cur_headers.clone(),
-                            pos_fields: cur_pos.clone(),
                             target: cur_target.clone(),
                             catalog: cur_catalog.clone(),
                             max_freq: cur_max_freq,
@@ -3561,7 +3523,7 @@ fn extract_pending(src: &SourceConfig, body: &str, body_bytes: &[u8], now: f64) 
 fn materialize(
     src: &SourceConfig,
     origin: Origin,
-    region: Option<(f64, f64)>,
+    _region: Option<(f64, f64)>,
     pend: PendingSample,
     origins: &mut HashMap<Origin, OriginState>,
     eph: &HashMap<String, BodyEphemeris>,
@@ -4425,7 +4387,6 @@ mod tests {
             format: "json".into(),
             extracts: vec![],
             headers: vec![],
-            pos_fields: None,
             target: Some("Ceres".into()),
             catalog: Some("fp_psc".into()),
             max_freq: None,
@@ -4462,7 +4423,6 @@ mod tests {
             format: "json".into(),
             extracts: vec![],
             headers: vec![("Content-Type".into(), "application/stac+json".into())],
-            pos_fields: None,
             target: None,
             catalog: None,
             max_freq: None,
@@ -4518,7 +4478,6 @@ mod tests {
                 lon_sign: None,
             }],
             headers: vec![],
-            pos_fields: None,
             target: None,
             catalog: None,
             max_freq: None,
