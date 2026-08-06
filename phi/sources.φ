@@ -77,6 +77,7 @@ field quality signal_quality
 url https://api.blitzortung.org/compressed/current_positions?lat={lat}&lon={lon}&range=500
 ttl 60
 force em
+body earth
 verify false
 map .
 lat_key lat
@@ -350,6 +351,7 @@ field properties.status review_status
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
 ttl 60
 force seismic-surface
+body earth
 geojson events properties.mag 0.0 seismic_magnitude_mw seismic_depth_m
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6&limit=50&orderby=time&eventtype=earthquake
@@ -6893,9 +6895,11 @@ url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa
 at sun 1.0
 ttl 600
 force thermal
+body earth
 
 url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/noaa_coops_water_levels_usa.json
 force em
+body earth
 map fires
 lat_key lat
 lon_key lon
@@ -9586,6 +9590,7 @@ field hourly.wind_speed_10m wind_speed_kmh
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m,windgusts_10m,cape&models=meteofrance_arome_france&forecast_days=2&format=json
 ttl 3600
 force thermal
+body earth
 map hourly.time
 field hourly.temperature_2m temp_2m_c
 field hourly.precipitation precipitation_mm
@@ -9596,6 +9601,7 @@ field hourly.cape cape_jkg
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m&models=italia_meteo_arpae_icon_2i&forecast_days=3&format=json
 ttl 3600
 force thermal
+body earth
 map hourly.time
 field hourly.temperature_2m temp_2m_c
 field hourly.precipitation precipitation_mm
@@ -9615,6 +9621,7 @@ url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=
 ttl 3600
 force diffusion
 at sun 1
+body earth
 map daily.time
 field daily.et0_fao_evapotranspiration et0_mm_d
 field daily.precipitation precipitation_mm
@@ -9625,6 +9632,7 @@ url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=
 ttl 3600
 force thermal
 at sun 1
+body earth
 map daily.time
 field daily.fire_danger_index fire_danger_index
 field daily.precipitation_sum precip_mm
@@ -9694,6 +9702,7 @@ field hourly.soil_moisture_9_to_27cm sm_9_27cm_m3m3
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=precipitation,cape,lifted_index,precipitation_probability&models=icon_d2&forecast_days=2&format=json
 ttl 3600
 force acoustic
+body earth
 map hourly.time
 field hourly.precipitation precipitation_mm
 field hourly.cape cape_jkg
@@ -9713,6 +9722,7 @@ field hourly.snowfall snowfall_cm
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m,cape&models=jma_msm&forecast_days=4&format=json
 ttl 3600
 force thermal
+body earth
 map hourly.time
 field hourly.temperature_2m temp_2m_c
 field hourly.precipitation precipitation_mm
@@ -9912,6 +9922,7 @@ at sun 1
 
 url https://api.superdarn.ca/v1/radars/status
 force em
+body earth
 map .
 lat_key latitude
 lon_key longitude
@@ -10358,6 +10369,7 @@ field quantity litter_quantity
 url https://openlittermap.com/api/getdata?lat={lat}&lon={lon}&radius=50&format=json&limit=500
 ttl 3600
 force diffusion
+body earth
 map data
 lat_key lat
 lon_key lon
@@ -10586,10 +10598,12 @@ lon_key geometry.x
 url https://api.obis.org/v3/occurrence/grid/100?taxon=*&year=2026&geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))
 ttl 3600
 force diffusion
+body earth
 at sun 1.0
 
 url https://api.obis.org/v3/occurrence/grid/100?taxon=*https://api.eurobis.org/year=2026https://api.eurobis.org/geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year}
 force em
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -13705,6 +13719,7 @@ field 13 j_d_annual_anomaly_c
 url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilMoi0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
 ttl 86400
 force diffusion
+body earth
 format text
 rows
 field_in 0 timestamp_utc
@@ -13846,6 +13861,7 @@ field WS10M wind_10m_m_s
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={today}&format=JSON
 ttl 86400
 force thermal
+body earth
 at sun 1
 map properties.parameter.T2M
 field T2M temp_2m_c
@@ -16109,6 +16125,7 @@ field meta.pagination.count biosphere_metagenomic_studies_count
 url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
 ttl 86400
 force em
+body earth
 field subset.0.1 biosphere_ndvi_local
 
 url https://api.neotomadb.org/v2/data/datasets?limit=500
@@ -16343,6 +16360,7 @@ field country.iso2Code country_code
 url https://github.com/omegaflow/sources/releases/download/api.marinespecies.org/biosphere_worldpop_population_density_global.json
 ttl 86400
 force diffusion
+body earth
 map data
 lat_key latitude
 lon_key longitude
@@ -16749,9 +16767,11 @@ url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physic
 at sun 1.0
 ttl 86400
 force thermal
+body earth
 
 url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/geosphere_esa_cci_soil_moisture_erddap.json
 force em
+body earth
 map .
 lat_key lat
 lon_key lon
@@ -16863,6 +16883,7 @@ field SiteDescription station_name
 url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilTMP0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
 ttl 86400
 force thermal
+body earth
 format text
 rows
 field_in 0 timestamp_utc
@@ -17156,6 +17177,7 @@ force gravity
 
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
 force em
+body earth
 at sun 1.0
 map features
 lat_key geometry.coordinates.1
@@ -17173,6 +17195,7 @@ force gravity
 
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=GRE&limit=500&format=json
 force em
+body earth
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -17185,6 +17208,7 @@ field properties.mission satellite_mission
 url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&output=json
 ttl 86400
 force em
+body earth
 field value lidar_3dep_elevation_m
 field resolution lidar_3dep_resolution_m
 
@@ -19836,6 +19860,7 @@ field meta.total biosphere_cratesio_crates_total
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,RH2M,WS10M,PRECTOTCORR&community=AG&longitude={lon}&latitude={lat}&start={date}&end={date}&format=JSON
 ttl 86400
 force em
+body earth
 path properties.parameter.T2M.0 energy_nasa_temp_c
 path properties.parameter.RH2M.0 energy_nasa_humidity_pct
 path properties.parameter.WS10M.0 energy_nasa_wind_ms
@@ -19844,6 +19869,7 @@ path properties.parameter.PRECTOTCORR.0 energy_nasa_precip_mm
 url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-ERA5&startyear={year}&endyear={year}&outputformat=json
 ttl 86400
 force em
+body earth
 path outputs.hourly.0.G(i) energy_solar_ghi_wm2
 path outputs.hourly.0.T2m energy_solar_temp_c
 path outputs.hourly.0.WS10m energy_solar_wind_ms
@@ -20029,6 +20055,7 @@ at sun 1.0
 
 url https://api.openinframap.org/stats/country
 force em
+body earth
 map .
 lat_key centroid.lat
 lon_key centroid.lon
@@ -23539,6 +23566,7 @@ path response.numFound climate_esa_cci_datasets
 url https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf
 ttl 2592000
 force em
+body earth
 format text
 tail
 field_in undulate geosphere_geoid_height_m
@@ -23589,6 +23617,7 @@ field_in 3 co2_sigma_ppmv
 url https://api.open-elevation.com/api/v1/lookup?locations={grid}
 ttl 2592000
 force em
+body earth
 map results
 lat_key latitude
 lon_key longitude
@@ -23668,6 +23697,7 @@ field properties.layers.0.depths.0.values.mean geosphere_soil_organic_carbon_x10
 url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&wkid=4326
 ttl 2592000
 force seismic-surface
+body earth
 path value geosphere_openmeteo_elevation_epqs_m
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/lithosphere_gem_active_faults.json

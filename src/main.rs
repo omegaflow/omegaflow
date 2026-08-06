@@ -2145,24 +2145,36 @@ fn load_sources() -> Vec<SourceConfig> {
                             )
                         });
                     let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
-                        Some(Frame::Surface {
-                            body_name: cur_body.clone().unwrap_or_else(|| "earth".to_string()),
-                            lat,
-                            lon,
-                            alt: cur_alt,
-                        })
+                        let body = cur_body.take().unwrap_or_else(|| {
+                            eprintln!("source refused (on without body): {}", cur_url);
+                            String::new()
+                        });
+                        if body.is_empty() {
+                            None
+                        } else {
+                            Some(Frame::Surface { body_name: body, lat, lon, alt: cur_alt })
+                        }
                     } else if let Some(scale) = cur_scale {
-                        Some(Frame::Barycenter {
-                            body_name: cur_body.clone().unwrap_or_else(|| "earth".to_string()),
-                            scale,
-                        })
+                        let body = cur_body.take().unwrap_or_else(|| {
+                            eprintln!("source refused (at without body): {}", cur_url);
+                            String::new()
+                        });
+                        if body.is_empty() {
+                            None
+                        } else {
+                            Some(Frame::Barycenter { body_name: body, scale })
+                        }
                     } else if has_data_position {
-                        Some(Frame::Surface {
-                            body_name: "earth".to_string(),
-                            lat: 0.0,
-                            lon: 0.0,
-                            alt: 0.0,
-                        })
+                        match cur_body.take() {
+                            Some(body) => Some(Frame::Surface {
+                                body_name: body,
+                                lat: 0.0, lon: 0.0, alt: 0.0,
+                            }),
+                            None => {
+                                eprintln!("source refused (pos without body directive): {}", cur_url);
+                                None
+                            }
+                        }
                     } else if cur_url.contains("{lat}")
                         || cur_url.contains("{lon}")
                         || cur_url.contains("{x}")
@@ -2170,12 +2182,16 @@ fn load_sources() -> Vec<SourceConfig> {
                         || cur_url.contains("{z}")
                         || cur_url.contains("{grid")
                     {
-                        Some(Frame::Surface {
-                            body_name: "earth".to_string(),
-                            lat: 0.0,
-                            lon: 0.0,
-                            alt: 0.0,
-                        })
+                        match cur_body.take() {
+                            Some(body) => Some(Frame::Surface {
+                                body_name: body,
+                                lat: 0.0, lon: 0.0, alt: 0.0,
+                            }),
+                            None => {
+                                eprintln!("source refused (template URL without body directive): {}", cur_url);
+                                None
+                            }
+                        }
                     } else {
                         eprintln!("source refused (no reference frame): {}", cur_url);
                         None
