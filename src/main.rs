@@ -68,6 +68,7 @@ struct ChebyshevGranule {
 #[derive(Clone, Default)]
 struct BodyEphemeris {
     granules: Vec<ChebyshevGranule>,
+    rotation_matrices: Vec<(f64, [f64; 9])>,
     props: Option<BodyProperties>,
 }
 
@@ -89,6 +90,7 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
     let section_count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
     let mut pos = 8usize;
     let mut granules = Vec::new();
+    let mut rotation_matrices = Vec::new();
     let mut props = None;
     for _ in 0..section_count {
         if pos + 24 > data.len() {
@@ -184,6 +186,25 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             pos += 48;
             continue;
         }
+        if stype == 3 {
+            for _ in 0..gcount {
+                if pos + 80 > data.len() {
+                    break;
+                }
+                let f = |i: usize| -> f64 {
+                    f64::from_le_bytes(
+                        data[pos + i * 8..pos + (i + 1) * 8]
+                            .try_into()
+                            .unwrap_or([0; 8]),
+                    )
+                };
+                let t0_jd = f(0);
+                let m: [f64; 9] = [f(1), f(2), f(3), f(4), f(5), f(6), f(7), f(8), f(9)];
+                rotation_matrices.push((t0_jd, m));
+                pos += 80;
+            }
+            continue;
+        }
         if stype != 0 {
             pos += gcount * (2 + 3 * (degree + 1)) * 8;
             continue;
@@ -222,7 +243,11 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
     if granules.is_empty() {
         None
     } else {
-        Some(BodyEphemeris { granules, props })
+        Some(BodyEphemeris {
+            granules,
+            rotation_matrices,
+            props,
+        })
     }
 }
 
@@ -257,13 +282,6 @@ fn body_fixed_to_icrs(
     let e = eph.get(name)?;
     let bp = e.props.as_ref()?;
     let [bx, by, bz] = body_barycenter_position(name, tdb, eph)?;
-    let jd = tdb / 86400.0 + J2000_EPOCH;
-    let tc = (jd - J2000_EPOCH) / 36525.0;
-    let a = (bp.α0_deg + bp.dα0_dt_deg_per_century * tc).to_radians();
-    let d = (bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc).to_radians();
-    let w = ((bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH))
-        - (bp.α0_deg + bp.dα0_dt_deg_per_century * tc))
-        .to_radians();
     let lr = lat.to_radians();
     let nr = lon.to_radians();
     let f = bp.flattening;
@@ -273,6 +291,30 @@ fn body_fixed_to_icrs(
     let xb = (n + alt) * lr.cos() * nr.cos();
     let yb = (n + alt) * lr.cos() * nr.sin();
     let zb = (n * (1.0 - e2) + alt) * sl;
+    if !e.rotation_matrices.is_empty() {
+        let jd = tdb / 86400.0 + J2000_EPOCH;
+        let rot_m = e
+            .rotation_matrices
+            .iter()
+            .min_by(|a, b| {
+                (jd - a.0)
+                    .abs()
+                    .partial_cmp(&(jd - b.0).abs())
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            })
+            .map(|(_, m)| m)?;
+        let xi = rot_m[0] * xb + rot_m[1] * yb + rot_m[2] * zb;
+        let yi = rot_m[3] * xb + rot_m[4] * yb + rot_m[5] * zb;
+        let zi = rot_m[6] * xb + rot_m[7] * yb + rot_m[8] * zb;
+        return Some([xi + bx, yi + by, zi + bz]);
+    }
+    let jd = tdb / 86400.0 + J2000_EPOCH;
+    let tc = (jd - J2000_EPOCH) / 36525.0;
+    let a = (bp.α0_deg + bp.dα0_dt_deg_per_century * tc).to_radians();
+    let d = (bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc).to_radians();
+    let w = ((bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH))
+        - (bp.α0_deg + bp.dα0_dt_deg_per_century * tc))
+        .to_radians();
     let xt = xb * w.cos() + yb * w.sin();
     let yt = -xb * w.sin() + yb * w.cos();
     let zt = zb;
@@ -281,8 +323,6 @@ fn body_fixed_to_icrs(
     let xi = xt * cd * ca - yt * sa - zt * sd * ca;
     let yi = xt * cd * sa + yt * ca - zt * sd * sa;
     let zi = xt * sd + zt * cd;
-    eprintln!("body_fixed_to_icrs: xb={} yb={} zb={} a_deg={} d_deg={} w_deg={} xi={} yi={} zi={} bx={} by={} bz={}",
-        xb, yb, zb, a.to_degrees(), d.to_degrees(), w.to_degrees(), xi, yi, zi, bx, by, bz);
     Some([xi + bx, yi + by, zi + bz])
 }
 
@@ -295,27 +335,46 @@ fn icrs_to_body_surface(
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<(f64, f64)> {
     let e = eph.get(body_name)?;
-    let bp = e.props.as_ref()?;
     let [bx, by, bz] = body_barycenter_position(body_name, tdb_secs, eph)?;
-    let jd = tdb_secs / 86400.0 + J2000_EPOCH;
-    let tc = (jd - J2000_EPOCH) / 36525.0;
-    let a = (bp.α0_deg + bp.dα0_dt_deg_per_century * tc).to_radians();
-    let d = (bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc).to_radians();
-    let w = ((bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH))
-        - (bp.α0_deg + bp.dα0_dt_deg_per_century * tc))
-        .to_radians();
     let rx = x - bx;
     let ry = y - by;
     let rz = z - bz;
-    let (sw, cw) = w.sin_cos();
-    let (sa, ca) = a.sin_cos();
-    let (sd, cd) = d.sin_cos();
-    let xt = cd * ca * rx + cd * sa * ry + sd * rz;
-    let yt = -sa * rx + ca * ry;
-    let zt = -sd * ca * rx - sd * sa * ry + cd * rz;
-    let xb = xt * cw - yt * sw;
-    let yb = xt * sw + yt * cw;
-    let zb = zt;
+    let (xb, yb, zb) = if !e.rotation_matrices.is_empty() {
+        let jd = tdb_secs / 86400.0 + J2000_EPOCH;
+        let rot_m = e
+            .rotation_matrices
+            .iter()
+            .min_by(|a, b| {
+                (jd - a.0)
+                    .abs()
+                    .partial_cmp(&(jd - b.0).abs())
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            })
+            .map(|(_, m)| m)?;
+        let xt = rot_m[0] * rx + rot_m[3] * ry + rot_m[6] * rz;
+        let yt = rot_m[1] * rx + rot_m[4] * ry + rot_m[7] * rz;
+        let zt = rot_m[2] * rx + rot_m[5] * ry + rot_m[8] * rz;
+        (xt, yt, zt)
+    } else {
+        let bp = e.props.as_ref()?;
+        let jd = tdb_secs / 86400.0 + J2000_EPOCH;
+        let tc = (jd - J2000_EPOCH) / 36525.0;
+        let a = (bp.α0_deg + bp.dα0_dt_deg_per_century * tc).to_radians();
+        let d = (bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc).to_radians();
+        let w = ((bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH))
+            - (bp.α0_deg + bp.dα0_dt_deg_per_century * tc))
+            .to_radians();
+        let (sw, cw) = w.sin_cos();
+        let (sa, ca) = a.sin_cos();
+        let (sd, cd) = d.sin_cos();
+        let xt = cd * ca * rx + cd * sa * ry + sd * rz;
+        let yt = -sa * rx + ca * ry;
+        let zt = -sd * ca * rx - sd * sa * ry + cd * rz;
+        let xb = xt * cw - yt * sw;
+        let yb = xt * sw + yt * cw;
+        (xb, yb, zt)
+    };
+    let bp = e.props.as_ref()?;
     let lon = yb.atan2(xb);
     let p = (xb * xb + yb * yb).sqrt();
     let f = bp.flattening;
@@ -4725,6 +4784,7 @@ mod tests {
         };
         let eph = super::BodyEphemeris {
             granules: vec![granule],
+            rotation_matrices: vec![],
             props: Some(props),
         };
         let mut map = HashMap::new();
@@ -4742,5 +4802,196 @@ mod tests {
             assert!((lat2 - lat).abs() < 1e-6, "lat {} vs {}", lat2, lat);
             assert!((lon2 - lon).abs() < 1e-6, "lon {} vs {}", lon2, lon);
         }
+    }
+
+    #[test]
+    fn test_rotation_matrix_roundtrip() {
+        use std::collections::HashMap;
+        let tdb = 3.0 * 86400.0;
+        let jd = super::J2000_EPOCH + 3.0;
+        let tc = (jd - super::J2000_EPOCH) / 36525.0;
+        let a = (317.68143f64 - 0.1061 * tc).to_radians();
+        let d = (52.88650f64 - 0.0609 * tc).to_radians();
+        let w = (176.630f64 + 350.89198226 * (jd - super::J2000_EPOCH)
+            - (317.68143f64 - 0.1061 * tc))
+            .to_radians();
+        let (sa, ca) = a.sin_cos();
+        let (sd, cd) = d.sin_cos();
+        let (sw, cw) = w.sin_cos();
+        let m: [f64; 9] = [
+            cd * ca * cw + sa * sw,
+            cd * ca * sw - sa * cw,
+            -sd * ca,
+            cd * sa * cw - ca * sw,
+            cd * sa * sw + ca * cw,
+            -sd * sa,
+            sd * cw,
+            sd * sw,
+            cd,
+        ];
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let props = super::BodyProperties {
+            α0_deg: 317.68143,
+            dα0_dt_deg_per_century: -0.1061,
+            δ0_deg: 52.88650,
+            dδ0_dt_deg_per_century: -0.0609,
+            w0_deg: 176.630,
+            dw_dt_deg_per_day: 350.89198226,
+            radius_m: 3389500.0,
+            flattening: 0.00589,
+            v_sound: None,
+            v_seismic_p: None,
+            v_seismic_s: None,
+            alpha_thermal: None,
+            d_diffusion: None,
+            v_advective: None,
+        };
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let eph = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![(jd, m)],
+            props: Some(props),
+        };
+        let mut map = HashMap::new();
+        map.insert("mars".to_string(), eph);
+        let cases = [
+            (35.0, -15.0, 0.0),
+            (0.0, 90.0, 0.0),
+            (89.9, 45.0, 0.0),
+            (-60.0, 170.0, 5000.0),
+        ];
+        for (lat, lon, alt) in cases {
+            let p = super::body_fixed_to_icrs("mars", lat, lon, alt, tdb, &map).unwrap();
+            let (lat2, lon2) =
+                super::icrs_to_body_surface(p[0], p[1], p[2], tdb, "mars", &map).unwrap();
+            assert!((lat2 - lat).abs() < 1e-6, "lat {} vs {}", lat2, lat);
+            assert!((lon2 - lon).abs() < 1e-6, "lon {} vs {}", lon2, lon);
+        }
+    }
+
+    #[test]
+    fn test_matrix_vs_wgccre_agreement() {
+        use std::collections::HashMap;
+        let tdb = 3.0 * 86400.0;
+        let jd = super::J2000_EPOCH + 3.0;
+        let tc = (jd - super::J2000_EPOCH) / 36525.0;
+        let a = (317.68143f64 - 0.1061 * tc).to_radians();
+        let d = (52.88650f64 - 0.0609 * tc).to_radians();
+        let w = (176.630f64 + 350.89198226 * (jd - super::J2000_EPOCH)
+            - (317.68143f64 - 0.1061 * tc))
+            .to_radians();
+        let (sa, ca) = a.sin_cos();
+        let (sd, cd) = d.sin_cos();
+        let (sw, cw) = w.sin_cos();
+        let m: [f64; 9] = [
+            cd * ca * cw + sa * sw,
+            cd * ca * sw - sa * cw,
+            -sd * ca,
+            cd * sa * cw - ca * sw,
+            cd * sa * sw + ca * cw,
+            -sd * sa,
+            sd * cw,
+            sd * sw,
+            cd,
+        ];
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let props = super::BodyProperties {
+            α0_deg: 317.68143,
+            dα0_dt_deg_per_century: -0.1061,
+            δ0_deg: 52.88650,
+            dδ0_dt_deg_per_century: -0.0609,
+            w0_deg: 176.630,
+            dw_dt_deg_per_day: 350.89198226,
+            radius_m: 3389500.0,
+            flattening: 0.00589,
+            v_sound: None,
+            v_seismic_p: None,
+            v_seismic_s: None,
+            alpha_thermal: None,
+            d_diffusion: None,
+            v_advective: None,
+        };
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let eph_matrix = super::BodyEphemeris {
+            granules: vec![granule.clone()],
+            rotation_matrices: vec![(jd, m)],
+            props: Some(props.clone()),
+        };
+        let eph_fallback = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![],
+            props: Some(props),
+        };
+        let mut map_matrix = HashMap::new();
+        map_matrix.insert("mars".to_string(), eph_matrix);
+        let mut map_fallback = HashMap::new();
+        map_fallback.insert("mars".to_string(), eph_fallback);
+        let cases = [(35.0, -15.0, 0.0), (0.0, 90.0, 0.0), (-60.0, 170.0, 5000.0)];
+        for (lat, lon, alt) in cases {
+            let pm = super::body_fixed_to_icrs("mars", lat, lon, alt, tdb, &map_matrix).unwrap();
+            let pf = super::body_fixed_to_icrs("mars", lat, lon, alt, tdb, &map_fallback).unwrap();
+            let d2 = (pm[0] - pf[0]).powi(2) + (pm[1] - pf[1]).powi(2) + (pm[2] - pf[2]).powi(2);
+            assert!(
+                d2 < 1.0,
+                "matrix vs wgccre disagree at ({}, {}): d2={}",
+                lat,
+                lon,
+                d2
+            );
+        }
+    }
+
+    #[test]
+    fn test_rotation_matrix_empty_fallback() {
+        use std::collections::HashMap;
+        let tdb = 3.0 * 86400.0;
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let props = super::BodyProperties {
+            α0_deg: 317.68143,
+            dα0_dt_deg_per_century: -0.1061,
+            δ0_deg: 52.88650,
+            dδ0_dt_deg_per_century: -0.0609,
+            w0_deg: 176.630,
+            dw_dt_deg_per_day: 350.89198226,
+            radius_m: 3389500.0,
+            flattening: 0.00589,
+            v_sound: None,
+            v_seismic_p: None,
+            v_seismic_s: None,
+            alpha_thermal: None,
+            d_diffusion: None,
+            v_advective: None,
+        };
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let eph = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![],
+            props: Some(props),
+        };
+        let mut map = HashMap::new();
+        map.insert("mars".to_string(), eph);
+        let p = super::body_fixed_to_icrs("mars", 35.0, -15.0, 0.0, tdb, &map).unwrap();
+        assert!(p[0] > 1.0e9);
     }
 }

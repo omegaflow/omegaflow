@@ -109,6 +109,31 @@ def fit_granule(kernel_path, body_id, t0_jd, half_jd):
     return cx, cy, cz
 
 
+def compute_rotation_matrix(body_id, body_name, t_jd):
+    t_sec = (t_jd - J2000) * 86400.0
+    frame_name = "IAU_" + body_name.upper()
+    try:
+        px = spice.pxform(frame_name, "J2000", t_sec)
+    except Exception:
+        return None
+    return [
+        px[0, 0], px[0, 1], px[0, 2],
+        px[1, 0], px[1, 1], px[1, 2],
+        px[2, 0], px[2, 1], px[2, 2],
+    ]
+
+
+def generate_rotation_matrices(kernel_path, body_id, body_name, granules):
+    spice.furnsh(kernel_path)
+    matrices = []
+    for t0_jd, _, _, _, _ in granules:
+        m = compute_rotation_matrix(body_id, body_name, t0_jd)
+        if m is not None:
+            matrices.append((t0_jd, m))
+    spice.unload(kernel_path)
+    return matrices
+
+
 def generate(kernel_path, body_id, body_name):
     spice.furnsh(kernel_path)
     cover = spice.spkcov(kernel_path, body_id)
@@ -130,13 +155,15 @@ def generate(kernel_path, body_id, body_name):
     return granules
 
 
-def write_binary(granules, body_name, body_id):
+def write_binary(granules, body_name, body_id, rotation_matrices=None):
     wgccre_entry = next((v for k, v in WGCCRE.items() if v[0] == body_name), None)
     media_entry = next((v for k, v in MEDIA.items() if v[0] == body_name), None)
     n_sections = 1
     if wgccre_entry is not None:
         n_sections += 1
     if media_entry is not None:
+        n_sections += 1
+    if rotation_matrices:
         n_sections += 1
     buf = bytearray()
     buf.extend(MAGIC)
@@ -177,6 +204,15 @@ def write_binary(granules, body_name, body_id):
         buf.extend(struct.pack('<d', ath))
         buf.extend(struct.pack('<d', dd))
         buf.extend(struct.pack('<d', vad))
+    if rotation_matrices:
+        buf.extend(struct.pack('<I', 3))
+        buf.extend(struct.pack('<I', len(rotation_matrices)))
+        buf.extend(struct.pack('<I', 8))
+        buf.extend(struct.pack('<I', 0))
+        for t0, m in rotation_matrices:
+            buf.extend(struct.pack('<d', t0))
+            for v in m:
+                buf.extend(struct.pack('<d', v))
     return bytes(buf)
 
 
@@ -331,7 +367,8 @@ def main():
             if not granules:
                 print(f"  SKIP {body_name}: no granules", file=sys.stderr)
                 continue
-            data = write_binary(granules, body_name, body_id)
+            rot_mats = generate_rotation_matrices(kernel_file, body_id, body_name, granules)
+            data = write_binary(granules, body_name, body_id, rotation_matrices=rot_mats)
             path = f'/tmp/ephemeris_{body_name}.bin'
             with open(path, 'wb') as f:
                 f.write(data)
