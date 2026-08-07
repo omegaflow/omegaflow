@@ -669,3 +669,18 @@ note MAST v0 invoke service name wrong (500). Research correct MAST TAP/catalog 
 key-needed edl-auth
 url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/hyrax/OMI_L2_OMSO2/daily/{year}/{year}-{month}-{day}/OMI-Aura_L2-OMSO2_{year}m{month}{day}t0000-o63123_v004.h5.json
 note GESDISC OMI-SO2 401 (EDL auth form different from Bearer). EARTHDATA_EDL_TOKEN present but needs EDL login flow. SO2 = diffusion.
+decline bare-count
+url https://api.gbif.org/v1/occurrence/count?isGeoreferenced=true
+note GBIF occurrence/count = bare aggregate count, no individual records. Force Gate: DECLINE. Individual occurrences via /occurrence/search with field species.
+
+decline bare-count
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat}&decimalLongitude={lon}&radius=10&limit=0
+note GBIF per-point count (field count, limit=0). Bare count no records. DECLINE.
+
+decline bare-count
+url https://api.gbif.org/v1/occurrence/search?limit=0
+note GBIF limit=0 count-only. DECLINE.
+
+decline bare-count
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
+note GBIF monthly count limit=0. DECLINE.

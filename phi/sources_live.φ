@@ -164,7 +164,6 @@ vr_key baro_rate
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 ttl 60
 force seismic-body
-body earth
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1627,8 +1626,8 @@ on earth 38.94900000 -77.36500000
 
 url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
 ttl 300
-force seismic-surface
-at sun 1.0
+force advective
+body earth
 map value.timeSeries
 lat_key sourceInfo.geoLocation.geogLocation.latitude
 lon_key sourceInfo.geoLocation.geogLocation.longitude
@@ -7315,6 +7314,7 @@ map data
 
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&station=8518750&format=json
+at sun 1.0
 ttl 600
 force thermal
 body earth
@@ -8437,7 +8437,6 @@ lon_key Site_Longitude(Degrees)
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-10.0&lon1=60.0&lat2=55.0&lon2=150.0
 ttl 1800
 force em
-body earth
 rows
 lat_key Site_Latitude(Degrees)
 lon_key Site_Longitude(Degrees)
@@ -9195,6 +9194,7 @@ format universal
 url https://earth-search.aws.element84.com/v1/search
 ttl 3600
 force em
+at sun 1.0
 method post
 body {"collections":["sentinel-2-l2a"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
 header Content-Type application/json
@@ -9877,6 +9877,7 @@ map hourly.time
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=et0_fao_evapotranspiration,precipitation,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm&models=era5_seamless&forecast_days=1&format=json
 ttl 3600
 force diffusion
+at sun 1
 body earth
 map daily.time
   field daily.et0_fao_evapotranspiration et0_fao_evapotranspiration
@@ -9888,6 +9889,7 @@ map daily.time
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=fire_danger_index,precipitation_sum,windspeed_10m_max,temperature_2m_max&models=best_match&forecast_days=7&format=json
 ttl 3600
 force thermal
+at sun 1
 body earth
 map daily.time
   field daily.fire_danger_index fire_danger_index
@@ -12811,6 +12813,7 @@ lon_key properties.proj:centroid.lon
 url https://lasp.colorado.edu/lisird/latis/dap/tsis1_hsrs.csv
 ttl 86400
 force em
+at sun 1.0
 format universal
 rows
   field wavelength wavelength
@@ -13279,6 +13282,7 @@ url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTC
 ttl 86400
 force thermal
 body earth
+at sun 1
 map properties.parameter.T2M
   field T2M T2M
   field PRECTOTCORR PRECTOTCORR
@@ -13425,8 +13429,8 @@ format universal
 
 
 url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep097.bsp
-body triton
 ttl 86400
+body triton
 force em
 at sun 1.0
 format ephemeris_binary
@@ -15174,32 +15178,32 @@ last_row 8 cryosphere_permafrost_temp_barrow_c
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2099942'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body apophis
 ttl 86400
+body apophis
 force em
 at sun 1.0
 format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2019-01A'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body atlas_3i
 ttl 86400
+body atlas_3i
 force em
 at sun 1.0
 format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-101955'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body bennu
 ttl 86400
+body bennu
 force em
 at sun 1.0
 format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='90000031'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body encke
 ttl 86400
+body encke
 force em
 at sun 1.0
 format ephemeris_binary
@@ -15214,64 +15218,64 @@ format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body iss
 ttl 86400
+body iss
 force em
 at sun 1.0
 format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-61'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body juno
 ttl 86400
+body juno
 force em
 at sun 1.0
 format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-170'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body jwst
 ttl 86400
+body jwst
 force em
 at sun 1.0
 format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Makemake'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body makemake
 ttl 86400
+body makemake
 force em
 at sun 1.0
 format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-98'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body new_horizons
 ttl 86400
+body new_horizons
 force em
 at sun 1.0
 format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2000004'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body vesta
 ttl 86400
+body vesta
 force em
 at sun 1.0
 format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body voyager1
 ttl 86400
+body voyager1
 force em
 at sun 1.0
 format ephemeris_binary
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-body voyager2
 ttl 86400
+body voyager2
 force em
 at sun 1.0
 format ephemeris_binary
@@ -15809,6 +15813,7 @@ url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&
 ttl 86400
 force em
 body earth
+at sun 1.0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -15867,7 +15872,6 @@ lon_key site.longitude
 url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
 ttl 86400
 force seismic-surface
-body earth
 map items
 lat_key latitude
 lon_key longitude
@@ -19920,6 +19924,7 @@ pmdec_key pmdec
 url https://openlittermap.com/api/getdata?lat=0.0&lon=0.0&radius=50&format=json&limit=500
 ttl 3600
 force biotic
+at sun 1.0
 map data
 lat_key geometry.coordinates.1
 lon_key lng
@@ -20395,6 +20400,7 @@ at sun 1.0
 url https://api.openinframap.org/stats/country
 ttl 86400
 force em
+at sun 1.0
 body earth
 map .
 lat_key centroid.lat
@@ -20450,12 +20456,10 @@ field station_type hydrosphere_ndbc_station_type
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
 ttl 300
 force seismic-surface
-body earth
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
 ttl 600
 force seismic-surface
-body earth
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -20465,7 +20469,6 @@ field_in properties.sig geosphere_earthquake_significance
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
 ttl 600
 force seismic-surface
-body earth
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -20475,7 +20478,6 @@ field_in properties.sig geosphere_quake_sig
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
 ttl 600
 force seismic-surface
-body earth
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -20484,7 +20486,6 @@ field_in properties.mag geosphere_quake_mag
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
 ttl 600
 force seismic-surface
-body earth
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -20494,7 +20495,6 @@ field_in properties.sig geosphere_quake_sig
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
 ttl 600
 force seismic-surface
-body earth
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -20508,7 +20508,6 @@ force seismic-surface
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
 ttl 1800
 force seismic-surface
-body earth
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -20529,7 +20528,6 @@ force seismic-surface
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
 ttl 3600
 force seismic-surface
-body earth
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -20690,8 +20688,8 @@ path properties.windSpeed.value atmosphere_wind_speed_jfk_ms
 
 url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}
 ttl 300
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -20704,74 +20702,43 @@ field order order_name
 field family family_name
 field eventDate observation_date
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
 ttl 600
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in species biosphere_species_nearby
 
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
-ttl 600
-force em
-on earth 55.685000 12.571000
-field count biosphere_bird_count
-map .
-
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
-ttl 3600
-force em
-on earth 42.4809 -76.4527
-field count biosphere_birding_hotspots
-map .
-
-url https://api.gbif.org/v1/occurrence/search?limit=0
-ttl 3600
-force em
-at sun 1.0
-field count biosphere_gbif_occurrence_count
-map .
 
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=1&hasGeospatialIssue=false
 ttl 3600
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_occurrence_key
 field_in coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
 
-url https://api.gbif.org/v1/occurrence/count?isGeoreferenced=true
-ttl 3600
-force em
-at sun 1.0
-path . biosphere_gbif_species_observations_total
-map results
-
-url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
-ttl 3600
-force em
-at sun 1.0
-field count biosphere_species_count
-map .
 
 url https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
 ttl 3600
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field species species_name
 field family family
 
+
 url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
 ttl 3600
-force acoustic
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -20780,10 +20747,11 @@ field family family_name
 field country country_code
 field stateProvince region
 
+
 url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&basisOfRecord=MACHINE_OBSERVATION
 ttl 3600
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -20792,28 +20760,31 @@ field family family_name
 field countryCode country
 field occurrenceDate observation_date
 
+
 url https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
 ttl 3600
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field species species_name
+
 
 url https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
 ttl 3600
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field species species_name
 
+
 url https://api.gbif.org/v1/occurrence/search?orderKey=180130&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
 ttl 3600
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -20823,10 +20794,11 @@ field country country_code
 field occurrenceDate sighting_date
 field individualCount group_size
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
 ttl 3600
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -20846,10 +20818,11 @@ field_in basisOfRecord basis_of_record
 field_in occurrenceStatus occurrence_status
 field_in individualCount individual_count
 
+
 url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
 ttl 3600
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -20859,19 +20832,21 @@ field country country_code
 field occurrenceDate observation_date
 field individualCount individual_count
 
+
 url https://api.gbif.org/v1/occurrence/search?orderKey=719&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
 ttl 3600
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field species species_name
 
+
 url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
 ttl 3600
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -20879,47 +20854,52 @@ field species species_name
 field family family
 field kingdom kingdom
 
+
 url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
 ttl 3600
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field species species_name
 field iucnRedListCategory iucn_category
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_amphibian_key
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_arachnid_key
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_arthropod_key
 
+
 url https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -20928,19 +20908,21 @@ field_in kingdom biosphere_gbif_kingdom
 field_in eventDate biosphere_gbif_biodiversity_date
 field_in locality biosphere_gbif_biodiversity_locality
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_bird_key
 
+
 url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -20948,64 +20930,71 @@ field_in species biosphere_gbif_bird_species
 field_in eventDate biosphere_gbif_bird_date
 field_in locality biosphere_gbif_bird_locality
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_cnidarian_key
+
 
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_cnidarian_key
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_echinoderm_key
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_fungi_key
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_insect_key
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_mammal_key
 
+
 url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -21013,46 +21002,43 @@ field_in species biosphere_gbif_marine_species
 field_in locality biosphere_gbif_marine_locality
 field_in eventDate biosphere_gbif_marine_date
 
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
-ttl 86400
-force em
-on earth 55.7022 12.5592
-field count biosphere_migratory_bird_records_this_month
-map .
 
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_mollusk_key
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_precise_key
 field_in coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_plant_key
 field_in coordinateUncertaintyInMeters biosphere_gbif_plant_uncertainty_m
 
+
 url https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -21060,19 +21046,21 @@ field_in species biosphere_gbif_plant_species
 field_in family biosphere_gbif_plant_family
 field_in eventDate biosphere_gbif_plant_date
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
 ttl 86400
-force em
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field_in key biosphere_gbif_reptile_key
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
 ttl 86400
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -21080,10 +21068,11 @@ field_in species species_name
 field_in country country_code
 field_in year observation_year
 
+
 url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&basisOfRecord=HUMAN_OBSERVATION&decimalLatitude=-90,90&habitat=MARINE
 ttl 86400
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -21094,10 +21083,11 @@ field order order
 field family family
 field country country_code
 
+
 url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
 ttl 86400
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -21107,10 +21097,11 @@ field_in year observation_year
 field_in eventDate observation_date
 field_in basisOfRecord basis_of_record
 
+
 url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&decimalLatitude=-35,38&decimalLongitude=-20,55&basisOfRecord=HUMAN_OBSERVATION
 ttl 86400
-force diffusion
-at sun 1.0
+force biotic
+body earth
 map results
 lat_key decimalLatitude
 lon_key decimalLongitude
@@ -21120,6 +21111,7 @@ field family family
 field kingdom kingdom
 field country country_code
 field eventDate observation_date
+
 
 url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate
 ttl 300
@@ -21749,7 +21741,6 @@ field place_guess locality
 url https://api.neotomadb.org/v2.0/data/datasets?datasettype=pollen&limit=2000&offset=0
 ttl 86400
 force biotic
-body earth
 map data
 lat_key site.geography.coordinates.1
 lon_key site.geography.coordinates.0
@@ -21764,7 +21755,6 @@ lon_key site.geography.coordinates.0
 url https://api.neotomadb.org/v2.0/data/datasets?datasettype=vertebrate+fauna&limit=2000&offset=0
 ttl 86400
 force biotic
-body earth
 map data
 lat_key site.geography.coordinates.1
 lon_key site.geography.coordinates.0
@@ -21778,7 +21768,6 @@ lon_key site.geography.coordinates.0
 url https://api.neotomadb.org/v2.0/data/datasets?datasettype=diatom&limit=2000&offset=0
 ttl 86400
 force biotic
-body earth
 map data
 lat_key site.geography.coordinates.1
 lon_key site.geography.coordinates.0
@@ -21793,7 +21782,6 @@ lon_key site.geography.coordinates.0
 url https://api.neotomadb.org/v2.0/data/datasets?datasettype=plant+macrofossils&limit=2000&offset=0
 ttl 86400
 force biotic
-body earth
 map data
 lat_key site.geography.coordinates.1
 lon_key site.geography.coordinates.0
@@ -21807,7 +21795,6 @@ lon_key site.geography.coordinates.0
 url https://coastwatch.noaa.gov/erddap/griddap/noaacrwbaa7dDaily.csv?bleaching_alert_area%5Blast%5D%5B(0.0):(30.0)%5D%5B(0.0):(60.0)%5D
 ttl 86400
 force thermal
-body earth
 map .
 lat_key latitude
 lon_key longitude
@@ -21817,7 +21804,6 @@ lon_key longitude
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{firms_map_key}/VIIRS_SNPP_NRT/World/1/{today}
 ttl 600
 force thermal
-body earth
 rows
 lat_key latitude
 lon_key longitude
