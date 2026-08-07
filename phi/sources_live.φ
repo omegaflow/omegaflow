@@ -22301,3 +22301,219 @@ field_in h_m mag_h
 field_in k_m mag_k
 lat_key ra
 lon_key dec
+
+
+url https://geomag.usgs.gov/ws/data/?id=BOU&type=adjusted&starttime={today}T00:00:00&endtime={today}T23:59:59&format=json&sampling_period=60
+ttl 60
+force gravity
+on earth 40.13 -105.24
+field BOU.0.0.0 magnetometer_x_bou_nt
+field BOU.0.0.1 magnetometer_y_bou_nt
+field BOU.0.0.2 magnetometer_z_bou_nt
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=Mauna_Loa&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
+ttl 86400
+force em
+on earth 19.54 -155.58
+format csv
+last_row AOD_500nm atmosphere_aerosol_optical_depth_mauna_loa
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdMH1chla1day.json?chlorophyll[(last)][(0.0)][({lat})][({lon})]
+ttl 86400
+force biotic
+on earth 19.54 -155.58
+path table.rows.0.4 biosphere_chlorophyll_satellite_mgm3
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8724580&product=wind&time_zone=gmt&units=metric&format=json&date=latest
+ttl 300
+force advective
+on earth 24.5557 -81.8079
+first data.0.s atmosphere_wind_speed_keywest_ms
+first data.0.dr atmosphere_wind_dir_keywest_deg
+
+url http://cosmicrays.oulu.fi/phi/Pulu_1min.txt
+ttl 3600
+force diffusion
+on earth 65.02 25.47
+format csv
+last_row 5 cosmic_neutron_flux_oulu_cpm
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=PUG1511&product=currents&time_zone=gmt&units=metric&format=json&date=latest
+ttl 300
+force advective
+on earth 47.24 -122.43
+first data.0.speed hydrosphere_current_speed_puget_ms
+first data.0.direction hydrosphere_current_dir_puget_deg
+
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=FRN&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+ttl 300
+force gravity
+on earth 62.03 -6.99
+field X magnetosphere_x_frn_nt
+field Y magnetosphere_y_frn_nt
+field Z magnetosphere_z_frn_nt
+
+url https://gml.noaa.gov/aftp/data/hats/cfcs/cfc11/combined/HATS_global_F11.txt
+ttl 2592000
+force diffusion
+at sun 1.0
+format csv
+last_row global_mean atmosphere_cfc11_global_ppt
+
+url https://gml.noaa.gov/aftp/data/hats/cfcs/cfc12/combined/HATS_global_F12.txt
+ttl 2592000
+force diffusion
+at sun 1.0
+format csv
+last_row global_mean atmosphere_cfc12_global_ppt
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00060&siteStatus=active
+ttl 300
+force advective
+at sun 1.0
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_river_flow_cfs
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00010&siteStatus=active
+ttl 300
+force thermal
+at sun 1.0
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_water_temp_c
+
+url http://www.nmdb.eu/nest/dynamics.php?stations=NEWK&output=json&resolution=60&history=300
+ttl 3600
+force diffusion
+on earth 39.74 -75.75
+path data.NEWK.1h.0.1 cosmic_neutron_flux_newk
+
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=HON&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+ttl 300
+force gravity
+on earth 21.32 -158.0
+field X magnetosphere_x_hon_nt
+field Y magnetosphere_y_hon_nt
+field Z magnetosphere_z_hon_nt
+
+url https://api.weather.gov/stations/KJFK/observations/latest
+ttl 300
+force advective
+on earth 40.64 -73.78
+path properties.temperature.value atmosphere_temp_jfk_c
+path properties.barometricPressure.value atmosphere_pressure_jfk_pa
+path properties.windSpeed.value atmosphere_wind_speed_jfk_ms
+
+url https://api.met.no/weatherapi/observationdata/2.0/?source=SN18700&referencetime=latest&elements=air_temperature
+ttl 3600
+force thermal
+on earth 59.91 10.75
+path data.observations.0.value atmosphere_temp_oslo_c
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00095&siteStatus=active
+ttl 300
+force diffusion
+at sun 1.0
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_water_conductivity_uscm
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=72019&siteStatus=active
+ttl 3600
+force diffusion
+at sun 1.0
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_groundwater_depth_ft
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00400&siteStatus=active
+ttl 3600
+force diffusion
+at sun 1.0
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_river_ph
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=63680&siteStatus=active
+ttl 3600
+force diffusion
+at sun 1.0
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_turbidity_fnu
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00300&siteStatus=active
+ttl 3600
+force diffusion
+at sun 1.0
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_dissolved_oxygen_mgl
+
+url https://www.ndbc.noaa.gov/data/realtime2/41001.spec
+ttl 300
+force acoustic
+on earth 34.68 -72.55
+format csv
+last_row SwH hydrosphere_swell_height_41001_m
+last_row SwP hydrosphere_swell_period_41001_s
+
+url http://www.nmdb.eu/nest/dynamics.php?stations=SPO&output=json&resolution=60&history=300
+ttl 3600
+force diffusion
+on earth -90.0 0.0
+path data.SPO.1h.0.1 cosmic_neutron_flux_south_pole
+
+url https://api.met.no/weatherapi/observationdata/2.0/?source=SN18700&referencetime=latest&elements=precipitation_amount
+ttl 3600
+force advective
+on earth 59.91 10.75
+path data.observations.0.value atmosphere_precipitation_oslo_mm
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8454000&product=air_temperature&date=latest&time_zone=gmt&units=metric&format=json
+ttl 300
+force thermal
+on earth 41.8067 -71.4006
+first v atmosphere_air_temp_providence_c
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.txt
+ttl 86400
+force diffusion
+at sun 1.0
+format csv
+last_row value atmosphere_co2_daily_mlo_ppm
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co/co_mm_gl.txt
+ttl 2592000
+force diffusion
+at sun 1.0
+format csv
+last_row average atmosphere_co_monthly_global_ppb
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplMURSST41.json?analysed_sst[(last)][(0.0)][({lat})][({lon})]
+ttl 86400
+force thermal
+on earth 0.0 0.0
+path table.rows.0.4 hydrosphere_sst_satellite_c
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.json?degree_heating_week[(last)][({lat})][({lon})]
+ttl 86400
+force thermal
+on earth 24.5 -80.5
+path table.rows.0.4 biosphere_coral_degree_heating_weeks
+
+url https://www.ndbc.noaa.gov/data/realtime2/62001.txt
+ttl 300
+force acoustic
+on earth 59.86 -19.55
+format csv
+last_row WTMP hydrosphere_buoy_62001_water_temp
+last_row WVHT hydrosphere_buoy_62001_wave_height
+last_row PRES hydrosphere_buoy_62001_pressure
+
+url https://www.ndbc.noaa.gov/data/realtime2/23001.txt
+ttl 300
+force acoustic
+on earth 0.0 81.0
+format csv
+last_row WTMP hydrosphere_buoy_23001_water_temp
+last_row WVHT hydrosphere_buoy_23001_wave_height
+
+url https://services.swpc.noaa.gov/json/ionospheric_foF2.json
+ttl 300
+force em
+at sun 1.0
+last fof2 ionosphere_fof2_global_mhz
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_tec_global.json
+ttl 300
+force em
+at sun 1.0
+last value ionosphere_tec_global_tecu
