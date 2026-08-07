@@ -364,3 +364,9 @@ note erddap.saeon.ac.za unreachable (HTTP 000, retry fails). South African ERDDA
 decline derived-satellite
 url https://global-surface-water.appspot.com/api/info?lat=45.0&lon=59.5
 note JRC GSW API 404. Also global surface water is derived satellite classification product - council: derived products DECLINE. No time-variable measurement.
+dead 404
+url https://lambda.gsfc.nasa.gov/data/planck/pr4/cmb/COM_PowerSpect_CMB-TT-full_R4.01.txt
+note LAMBDA path 404 (PR4 path wrong). Also power spectrum has no ra/dec position - not spatially placeable as oscillator. Research correct LAMBDA PR4 path or use Planck maps.
+decline text-circular
+url https://gcn.nasa.gov/api/circulars?subject=IceCube&limit=100
+note GCN circulars API 400 (server error) on this query. Also circulars are TEXT announcements (no position, no measurement) - council: text alerts DECLINE. Real IceCube alerts are in GCN Notices (json) with position.

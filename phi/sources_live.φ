@@ -1445,11 +1445,8 @@ force diffusion
 at sun 1
 map .
   field time_tag time_tag
-  field energy_channel0 energy_channel0
   field energy_channel1 energy_channel1
-  field energy_channel2 energy_channel2
   field energy_channel3 energy_channel3
-  field energy_channel4 energy_channel4
   field satellite satellite
 
 
@@ -1469,23 +1466,23 @@ ttl 300
 force em
 on earth 0 0
 map .
-  field obsTime obsTime
+  field observed_date obsTime
   field region region
   field latitude latitude
   field longitude longitude
   field area area
-  field numspot numspot
-  field magclass magclass
-  field event_c event_c
-  field event_m event_m
-  field event_x event_x
+  field number_spots numspot
+  field mag_class magclass
+  field c_xray_events event_c
+  field m_xray_events event_m
+  field x_xray_events event_x
 lat_key 1.latitude
 lon_key 1.latitude
-  field region_number region_number
+  field region region_number
   field hale_class hale_class
-  field mclass_flare_prob mclass_flare_prob
-  field xclass_flare_prob xclass_flare_prob
-  field spots spots
+  field m_flare_probability mclass_flare_prob
+  field x_flare_probability xclass_flare_prob
+  field number_spots spots
   field spot_class spot_class
   field mag_class mag_class
   field first_date first_date
@@ -7281,11 +7278,8 @@ ttl 300
 force em
 at sun 1.0
 map .
-lat_key satellite_lat
-lon_key satellite_lon
   field time_tag time_tag
   field satellite satellite
-  field energy_channel energy_channel
   field flux flux
 
 
@@ -10552,7 +10546,7 @@ lat_key geometry.y
 lon_key geometry.x
 
 
-url https://firms.modaps.eosdis.nasa.gov/api/area/json/{nasa_key}/MODIS_NRT/1/world
+url https://firms.modaps.eosdis.nasa.gov/api/area/json/{firms_map_key}/MODIS_NRT/1/world
 ttl 3600
 force thermal
 at sun 1.0
@@ -10566,7 +10560,7 @@ lon_key longitude
   field confidence confidence
 
 
-url https://firms.modaps.eosdis.nasa.gov/api/area/json/{nasa_key}/VIIRS_NOAA20_NRT/1/world
+url https://firms.modaps.eosdis.nasa.gov/api/area/json/{firms_map_key}/VIIRS_NOAA20_NRT/1/world
 ttl 3600
 force thermal
 at sun 1.0
@@ -10713,7 +10707,7 @@ field subregion subregion
   field datacoverage datacoverage
 
 
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={week_ago}&endDate={today}&format=json
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=USW00013739,USW00094728&startDate={week_ago}&endDate={today}&format=json
 ttl 3600
 force thermal
 at sun 1.0
@@ -13787,7 +13781,7 @@ dist_key DLum 3.0857e22
   field Kmag Kmag
 
 
-url https://firms.modaps.eosdis.nasa.gov/api/country/csv/{nasa_key}/VIIRS_SNPP_NRT/USA
+url https://firms.modaps.eosdis.nasa.gov/api/country/csv/{firms_map_key}/VIIRS_SNPP_NRT/USA
 ttl 86400
 force thermal
 at sun 1.0
@@ -14610,7 +14604,7 @@ format universal
 rows
 ra_key RAJ2000
 dec_key DEJ2000
-  field S1.4 flux_1400mhz_mjy
+field S1_4 flux_1400mhz_mjy
   field MajAxis MajAxis
 
 
@@ -14622,7 +14616,7 @@ format universal
 rows
 ra_key RAJ2000
 dec_key DEJ2000
-  field S1.4 flux_1400mhz_mjy
+field S1_4 flux_1400mhz_mjy
   field MajAxis MajAxis
 
 
@@ -21011,7 +21005,7 @@ url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basis
 ttl 300
 force diffusion
 at sun 1.0
-map .
+map results
 lat_key decimalLatitude
 lon_key decimalLongitude
 field key occurrence_id
@@ -21037,18 +21031,21 @@ ttl 600
 force em
 on earth 55.685000 12.571000
 field count biosphere_bird_count
+map results
 
 url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
 ttl 3600
 force em
 on earth 42.4809 -76.4527
 field count biosphere_birding_hotspots
+map results
 
 url https://api.gbif.org/v1/occurrence/search?limit=0
 ttl 3600
 force em
 at sun 1.0
 field count biosphere_gbif_occurrence_count
+map results
 
 url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=1&hasGeospatialIssue=false
 ttl 3600
@@ -21065,12 +21062,14 @@ ttl 3600
 force em
 at sun 1.0
 path . biosphere_gbif_species_observations_total
+map results
 
 url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
 ttl 3600
 force em
 at sun 1.0
 field count biosphere_species_count
+map results
 
 url https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
 ttl 3600
@@ -21332,6 +21331,7 @@ ttl 86400
 force em
 on earth 55.7022 12.5592
 field count biosphere_migratory_bird_records_this_month
+map results
 
 url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
 ttl 86400
@@ -21475,6 +21475,7 @@ ttl 86400
 force em
 on earth 51.231 2.928
 path total biosphere_cetacean_observations_24h
+map results
 
 url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38
 ttl 86400
@@ -22119,4 +22120,19 @@ map .
 lat_key latitude
 lon_key longitude
   field bleaching_alert_area bleach_alert_level
+
+
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{firms_map_key}/VIIRS_SNPP_NRT/World/1/{today}
+ttl 600
+force thermal
+rows
+lat_key latitude
+lon_key longitude
+  field bright_ti4 fire_brightness_k
+  field bright_ti5 brightness_ti5_k
+  field frp fire_radiative_power_mw
+  field confidence confidence_pct
+  field daynight day_night_flag
+  field acq_date acquisition_date
+  field acq_time acquisition_time
 
