@@ -22259,3 +22259,15 @@ lon_key geojson.coordinates.0
   field observed_on_details.date observed_date
   field place_guess place_guess
 
+
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-3-day.json
+ttl 300
+force em
+at sun 1.0
+map .
+  field time_tag measurement_time
+  field satellite satellite_id
+  field flux electron_flux_pfu
+  field energy energy_band
+

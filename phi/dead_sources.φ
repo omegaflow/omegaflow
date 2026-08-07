@@ -545,3 +545,25 @@ note MURSST dataset exists on pfeg but all bracket constraint forms rejected (40
 dead 404
 url https://kmtnet.kasi.re.kr/ulens/event/{year}/list.json
 note KMTNet microlensing event 404. Research current KMTNet event API.
+key-needed frost-client-id
+url https://frost.met.no/observations/v0.jsonld?sources=SN18700&elements=air_temperature&referencetime={today}/{today}
+note met.no Frost 401 - needs free client-id registration. Real observations (thermal). Gemini-verified correct endpoint.
+
+key-needed meteostat-key
+url https://meteostat.p.rapidapi.com/point/daily?lat={lat}&lon={lon}&start={today}&end={today}
+note Meteostat RapidAPI 401 - needs API key. Free tier available.
+dead 404
+url https://gml.noaa.gov/webdata/ccgg/flask/co/co_network_summary.json
+note GML webdata paths restructured (404). CO flask = diffusion. Research current GML CO data path (aftp also 404 for this product).
+
+dead 404
+url https://gml.noaa.gov/webdata/ozwv/UVB/TotalOzone/daily_summary.json
+note GML total ozone webdata 404.
+
+dead 404
+url https://gml.noaa.gov/webdata/ccgg/trends/radiocarbon/14co2_mm_gl.txt
+note GML radiocarbon 14CO2 404.
+
+dead 404
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}
+note LGDC GIRO DIDB foF2 404. Ionosonde foF2 = em. Research current LGDC/GIRO API path.
