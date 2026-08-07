@@ -591,3 +591,36 @@ note PSL AMO index = aggregate climate index (single scalar time series, no posi
 dead 404
 url https://www.ncei.noaa.gov/access/marine-debris/observations?format=json&bbox={lon_min},{lat_min},{lon_max},{lat_max}&limit=500
 note NCEI marine debris observations 404. Research current marine debris endpoint.
+dead 404
+url https://www.ncei.noaa.gov/data/lightning-global/access/gld360/{year}/{year}{month}{day}_GLD360_stations.json
+note GLD360 lightning station file 404. Research current GLD360 data access path.
+
+dead 400
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=icoads-daily&dataTypes=SST,WSPD,AT,SLP&stations=41200&startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&format=json
+note NCEI icoads-daily unsupported dataset name. Research correct ICOADS dataset ID.
+dead 404
+url https://services.swpc.noaa.gov/products/solar-wind/summary.json
+note SWPC products/ paths 404 (moved to json/ structure). solar wind = gravity/em.
+
+dead 404
+url https://services.swpc.noaa.gov/products/solar-region-summary.json
+note SWPC solar region summary 404 (moved).
+
+dead 404
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest_south.json
+note SWPC ovation aurora south variant 404 (only north exists).
+
+dead 404
+url https://services.swpc.noaa.gov/json/solar_events/solar_events.json
+note SWPC solar events json 404. Research current solar flare event path.
+
+dead 404
+url https://ogle.astrouw.edu.pl/ogle4/ews/last.list
+note OGLE EWS 404. Microlensing event list (gravity).
+
+dead 404
+url https://www.pmel.noaa.gov/vents/api/v1/vents?format=json&limit=500&activity=active
+note PMEL vents API 404 (HTML page). Hydrothermal vents = thermal.
+dead 404
+url https://coastwatch.noaa.gov/erddap/tabledap/noaaVIIRSboatdetect.csv?latitude,longitude,time,bright_ti4
+note VIIRS boat detect datasetID unknown. Research correct coastwatch ID.
