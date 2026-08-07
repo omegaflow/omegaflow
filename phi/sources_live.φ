@@ -22048,3 +22048,17 @@ lon_key geojson.coordinates.0
 field taxon.name species_name
 field observed_on observation_date
 field place_guess locality
+
+
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=pollen&limit=2000&offset=0
+ttl 86400
+force biotic
+map data
+lat_key site.geography.coordinates.1
+lon_key site.geography.coordinates.0
+  field site.sitename site_name
+  field site.altitude elevation_m
+  field site.datasets.0.datasetid dataset_id
+  field site.datasets.0.agerange.0.ageyoung age_young_yr
+  field site.datasets.0.agerange.0.ageold age_old_yr
+

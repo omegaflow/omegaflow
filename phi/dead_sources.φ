@@ -268,3 +268,6 @@ note celestrak_space_stations. Same as celestrak_active_satellites.
 dead 404-migrated
 url https://data.nasa.gov/resource/gh4g-9sfh.json?\$limit=50000&\$order=mass+DESC&\$where=reclat+IS+NOT+NULL
 note data.nasa.gov migrated Socrata->CKAN. gh4g-9sfh Socrata endpoint 404. Working JSON: https://data.nasa.gov/docs/legacy/meteorite_landings/Meteorite_Landings.json (12.6MB, 45716 rows, columns: name,id,nametype,recclass,mass (g),fall,year,reclat,reclong at data[]. Force should be gravity (meteorite masses), not seismic-body.
+decline forceless-reference
+url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
+note CODATA fundamental constants = reference values, not measurements. Council binding: "reference values that rest unchanged are the mountain's memory of measurement, not measurement itself." force diffusion is a false assignment. Decline per Force Gate.
