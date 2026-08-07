@@ -5788,8 +5788,149 @@ fn warm_cache(archive: Arc<Archive>) {
     }
 }
 
+fn ci_mode_main() -> i32 {
+    let loaded = load_sources();
+    let now = tdb_now();
+    let out_dir = "out";
+    let cdn_repo = "omegaflow/sources";
+    let have_gh = std::env::var("GH_TOKEN").is_ok() || std::env::var("OMEGAFLOW_TOKEN").is_ok();
+    let mut fetched: u64 = 0;
+    let mut skipped: u64 = 0;
+    let mut failed: u64 = 0;
+    let mut uploaded: u64 = 0;
+    for src in &loaded {
+        if src.url.starts_with("https://github.com/omegaflow/sources") {
+            continue;
+        }
+        let Some(netloc) = extract_netloc(&src.url) else {
+            failed += 1;
+            continue;
+        };
+        let name = source_name_from_url(&src.url);
+        if name.is_empty() {
+            failed += 1;
+            continue;
+        }
+        let out_path = format!("{}/{}/{}.json", out_dir, netloc, name);
+        if file_fresh(&out_path, src.ttl) {
+            skipped += 1;
+            continue;
+        }
+        let body = src.post_body.as_deref();
+        let body_str = fetch_one(&src.url, body, &src.headers, src.ttl);
+        match body_str {
+            Some(ref b) => match extract_pending(src, b, now) {
+                ExtractResult::Samples(ref v) if v.is_empty() => {
+                    failed += 1;
+                    eprintln!("MISS {} (no samples)", src.url);
+                }
+                ExtractResult::Samples(_) | ExtractResult::WithEphemeris(..) => {
+                    if let Some(parent) = std::path::Path::new(&out_path).parent() {
+                        std::fs::create_dir_all(parent).ok();
+                    }
+                    if std::fs::write(&out_path, b.as_bytes()).is_ok() {
+                        fetched += 1;
+                        if have_gh {
+                            let _ = Command::new("gh")
+                                .args([
+                                    "release", "create", netloc, "--repo", cdn_repo, "--notes", "",
+                                ])
+                                .stdout(std::process::Stdio::null())
+                                .stderr(std::process::Stdio::null())
+                                .status();
+                            let up = Command::new("gh")
+                                .args([
+                                    "release",
+                                    "upload",
+                                    netloc,
+                                    &out_path,
+                                    "--clobber",
+                                    "--repo",
+                                    cdn_repo,
+                                ])
+                                .stdout(std::process::Stdio::null())
+                                .stderr(std::process::Stdio::null())
+                                .status();
+                            if up.map_or(false, |s| s.success()) {
+                                uploaded += 1;
+                            } else {
+                                eprintln!("UPLOAD FAIL {} -> {}", src.url, netloc);
+                            }
+                        }
+                    } else {
+                        failed += 1;
+                        eprintln!("WRITE {} -> {}", src.url, out_path);
+                    }
+                }
+            },
+            None => {
+                failed += 1;
+                eprintln!("FAIL {}", src.url);
+            }
+        }
+    }
+    let ts = utc_iso8601_now();
+    eprintln!(
+        "{} ci-mode: fetched={} skipped={} failed={} uploaded={}",
+        ts, fetched, skipped, failed, uploaded
+    );
+    if failed > 0 {
+        1
+    } else {
+        0
+    }
+}
+
+fn extract_netloc(url: &str) -> Option<&str> {
+    let after = url
+        .strip_prefix("https://")
+        .or_else(|| url.strip_prefix("http://"))?;
+    after.split('/').next()
+}
+
+fn source_name_from_url(url: &str) -> String {
+    let path = url.split('?').next().unwrap_or(url);
+    let last = path.rsplit('/').next().unwrap_or("");
+    last.chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '_' || *c == '-' || *c == '.')
+        .take(64)
+        .collect()
+}
+
+fn utc_iso8601_now() -> String {
+    let dur = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default();
+    let secs = dur.as_secs();
+    let (y, m, d) = days_to_ymd(secs / 86400);
+    let sod = secs % 86400;
+    let hh = sod / 3600;
+    let mm = (sod % 3600) / 60;
+    let ss = sod % 60;
+    format!("{:04}{:02}{:02}T{:02}{:02}{:02}Z", y, m, d, hh, mm, ss)
+}
+
+fn file_fresh(path: &str, ttl: u64) -> bool {
+    if let Ok(meta) = std::fs::metadata(path) {
+        if let Ok(modified) = meta.modified() {
+            let age = SystemTime::now()
+                .duration_since(modified)
+                .unwrap_or_default()
+                .as_secs();
+            return age < ttl;
+        }
+    }
+    false
+}
+
 fn main() {
     load_env();
+    {
+        let args: Vec<String> = std::env::args().collect();
+        if args.len() > 1 && args[1] == "--ci-mode" {
+            std::process::exit(ci_mode_main());
+        }
+    }
     {
         let _ = (ECLIPTIC_OBLIQUITY, AU, GAUSS_K);
         let _ = PendingPosition::Surface {
@@ -6543,7 +6684,7 @@ mod tests {
         let now = super::tdb_now();
         let mut ok = 0usize;
         let mut fail: Vec<(String, String)> = Vec::new();
-        let mut limit = 200usize;
+        let mut limit = 400usize;
         super::load_env();
         for s in srcs.iter() {
             let mut url = s.url.clone();
