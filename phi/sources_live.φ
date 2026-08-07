@@ -15948,11 +15948,10 @@ lon_key site.longitude
 
 url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
 ttl 86400
-force seismic-body
-on earth 0 0
+force seismic-surface
 map items
-lat_key items.2.latitude
-lon_key items.2.latitude
+lat_key latitude
+lon_key longitude
   field name name
   field elevation elevation
   field deathsTotal deathsTotal
