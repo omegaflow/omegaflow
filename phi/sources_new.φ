@@ -1777,3 +1777,14 @@ lon_key spatial.boundingBox.minX
   field_in tags.0.name primary_tag
   field_in spatial.representationalPoint.coordinates.0 centroid_lon
   field_in spatial.representationalPoint.coordinates.1 centroid_lat
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=00060&siteStatus=active&bBox={lon_min},{lat_min},{lon_max},{lat_max}
+ttl 300
+force acoustic
+body earth
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field_in sourceInfo.siteName site_name
+  field_in variable.variableName variable_name
+  field_in values.0.value.0.value value
