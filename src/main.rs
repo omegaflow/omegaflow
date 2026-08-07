@@ -933,12 +933,14 @@ struct StationState {
 
 enum PendingPosition {
     Source,
-    Geodetic {
+    Surface {
+        body_name: String,
         lat: f64,
         lon: f64,
         alt: f64,
     },
-    GeodeticFlow {
+    SurfaceFlow {
+        body_name: String,
         lat: f64,
         lon: f64,
         alt: f64,
@@ -4186,7 +4188,8 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     jpath(v, vr_key)
                                 };
                                 let position = if let (Some(sp), Some(tr)) = (speed, track) {
-                                    PendingPosition::GeodeticFlow {
+                                    PendingPosition::SurfaceFlow {
+                                        body_name: frame_body_name(&src.frame),
                                         lat: la,
                                         lon: lon_val,
                                         alt: al,
@@ -4195,7 +4198,8 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                         vrate: vrate.unwrap_or(0.0),
                                     }
                                 } else {
-                                    PendingPosition::Geodetic {
+                                    PendingPosition::Surface {
+                                        body_name: frame_body_name(&src.frame),
                                         lat: la,
                                         lon: lon_val,
                                         alt: al,
@@ -4262,7 +4266,12 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 };
                                 pending.push(PendingSample {
                                     epoch: row_epoch,
-                                    position: PendingPosition::Geodetic { lat, lon, alt: 0.0 },
+                                    position: PendingPosition::Surface {
+                                        body_name: frame_body_name(&src.frame),
+                                        lat,
+                                        lon,
+                                        alt: 0.0,
+                                    },
                                     fields: ev_fields.clone(),
                                     extent: None,
                                     ttl: None,
@@ -4338,7 +4347,12 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             for (lon, lat) in vertices {
                                 pending.push(PendingSample {
                                     epoch,
-                                    position: PendingPosition::Geodetic { lat, lon, alt },
+                                    position: PendingPosition::Surface {
+                                        body_name: frame_body_name(&src.frame),
+                                        lat,
+                                        lon,
+                                        alt,
+                                    },
                                     fields: ev_fields.clone(),
                                     extent: None,
                                     ttl: None,
@@ -4464,7 +4478,12 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             if !ev_fields.is_empty() {
                                 pending.push(PendingSample {
                                     epoch: now,
-                                    position: PendingPosition::Geodetic { lat, lon, alt },
+                                    position: PendingPosition::Surface {
+                                        body_name: frame_body_name(&src.frame),
+                                        lat,
+                                        lon,
+                                        alt,
+                                    },
                                     fields: ev_fields,
                                     extent: None,
                                     ttl: None,
@@ -4493,7 +4512,12 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             }
                             pending.push(PendingSample {
                                 epoch: now,
-                                position: PendingPosition::Geodetic { lat, lon, alt },
+                                position: PendingPosition::Surface {
+                                    body_name: frame_body_name(&src.frame),
+                                    lat,
+                                    lon,
+                                    alt,
+                                },
                                 fields: ev_fields,
                                 extent: None,
                                 ttl: None,
@@ -4769,7 +4793,8 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                             if mag >= *min_mag {
                                                 pending.push(PendingSample {
                                                     epoch: now,
-                                                    position: PendingPosition::Geodetic {
+                                                    position: PendingPosition::Surface {
+                                                        body_name: frame_body_name(&src.frame),
                                                         lat: ela,
                                                         lon: elo,
                                                         alt: -ed * 1000.0,
@@ -4863,16 +4888,30 @@ fn materialize(
         return vec![];
     }
     let vmax_floor = 0.0f64;
-    let body_name = frame_body_name(&src.frame);
     let motion = match &pend.position {
         PendingPosition::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
-        PendingPosition::Geodetic { lat, lon, alt } => Motion::Surface {
-            body_name: body_name.clone(),
-            lat: *lat,
-            lon: *lon,
-            alt: *alt,
-        },
-        PendingPosition::GeodeticFlow {
+        PendingPosition::Surface {
+            body_name,
+            lat,
+            lon,
+            alt,
+        } => {
+            if eph
+                .get(body_name.as_str())
+                .and_then(|e| e.props.as_ref())
+                .is_none()
+            {
+                return vec![];
+            }
+            Motion::Surface {
+                body_name: body_name.clone(),
+                lat: *lat,
+                lon: *lon,
+                alt: *alt,
+            }
+        }
+        PendingPosition::SurfaceFlow {
+            body_name,
             lat,
             lon,
             alt,
@@ -4880,8 +4919,15 @@ fn materialize(
             track,
             vrate,
         } => {
+            if eph
+                .get(body_name.as_str())
+                .and_then(|e| e.props.as_ref())
+                .is_none()
+            {
+                return vec![];
+            }
             match surface_motion(
-                &body_name, *lat, *lon, *alt, *speed, *track, *vrate, pend.epoch, eph,
+                body_name, *lat, *lon, *alt, *speed, *track, *vrate, pend.epoch, eph,
             ) {
                 Some(m) => m,
                 None => return vec![],
@@ -5623,12 +5669,14 @@ fn main() {
     load_env();
     {
         let _ = (ECLIPTIC_OBLIQUITY, AU, GAUSS_K);
-        let _ = PendingPosition::Geodetic {
+        let _ = PendingPosition::Surface {
+            body_name: String::new(),
             lat: 0.0,
             lon: 0.0,
             alt: 0.0,
         };
-        let _ = PendingPosition::GeodeticFlow {
+        let _ = PendingPosition::SurfaceFlow {
+            body_name: String::new(),
             lat: 0.0,
             lon: 0.0,
             alt: 0.0,
@@ -5896,23 +5944,28 @@ mod tests {
         let expected_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
         assert!((p0.epoch - expected_epoch).abs() < 1e-6);
         match p0.position {
-            super::PendingPosition::Geodetic { lat, lon, alt } => {
+            super::PendingPosition::Surface {
+                lat,
+                lon,
+                alt,
+                body_name: _,
+            } => {
                 assert!((lat - 34.49025).abs() < 1e-6);
                 assert!((lon - -14.408395).abs() < 1e-6);
                 assert!((alt - -3.1).abs() < 1e-6);
             }
             _ => panic!(
-                "expected Geodetic position, got {:?}",
+                "expected Surface position, got {:?}",
                 std::mem::discriminant(&p0.position)
             ),
         }
         assert_eq!(p0.fields, vec![("argo_temp_c".to_string(), 23.478)]);
         let p1 = &pending[1];
         match p1.position {
-            super::PendingPosition::Geodetic { alt, .. } => {
+            super::PendingPosition::Surface { alt, .. } => {
                 assert!((alt - -1000.0).abs() < 1e-6);
             }
-            _ => panic!("expected Geodetic position"),
+            _ => panic!("expected Surface position"),
         }
     }
 
@@ -6304,7 +6357,8 @@ mod tests {
         };
         let pend = super::PendingSample {
             epoch: 0.0,
-            position: super::PendingPosition::Geodetic {
+            position: super::PendingPosition::Surface {
+                body_name: "mars".into(),
                 lat: 14.0,
                 lon: 90.0,
                 alt: 0.0,
