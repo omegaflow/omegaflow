@@ -307,3 +307,12 @@ note App path returns HTML. GeoServer WFS works (deter_amz, 29MB FeatureCollecti
 dead 404
 url http://reg.bom.gov.au/fwo/IDN60901.json
 note BOM reg.bom.gov.au retired (404). New API api.weather.bom.gov.au/v1/locations/<geohash>/observations needs 6-char geohash. Research BOM geohash-based API for NSW stations.
+dead 404
+url https://www.arpansa.gov.au/sites/default/files/legacy/pubs/uvindex/realtime/uvrt.xml
+note Legacy UV XML feed 404 (direct times out, Jina shows 404). New uvdata.arpansa.gov.au/api/uvindex/realtime also 404. Research current ARPANSA UV realtime endpoint.
+dead dns
+url https://erddap.aodn.org.au/erddap/tabledap/imos_argo_sst.csv?latitude,longitude,TEMP,PSAL,PRES,TIME&TIME%3E=now-7days&orderBy(%22TIME%22)
+note erddap.aodn.org.au DNS does not resolve (host migrated/retired). AODN moved to erddap-emii.aodn.org.au or new portal. Research current AODN Argo float ERDDAP host.
+dead 404
+url http://www.bom.gov.au/fwo/marine_warnings.json
+note BOM fwo/marine_warnings.json 404 (BOM API migrated). Also marine warnings = text warnings - council: text warnings DECLINE (forceless).
