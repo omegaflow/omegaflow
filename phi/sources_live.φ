@@ -11606,11 +11606,20 @@ at sun 1.0
 format ephemeris_binary
 
 
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,st_teff,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
 ttl 86400
-force em
-on earth 42.365 -71.105
-last_line exosphere_exoplanets_confirmed_total
+force gravity
+map .
+ra_key ra
+dec_key dec
+dist_key sy_dist
+  field pl_name planet_name
+  field pl_orbper orbital_period_days
+  field pl_rade radius_earth
+  field pl_bmasse mass_earth
+  field pl_eqt eq_temperature_k
+  field st_teff stellar_temp_k
+  field disc_year discovery_year
 
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,pl_name,sy_dist+FROM+ps+ORDER+BY+sy_dist&format=json
