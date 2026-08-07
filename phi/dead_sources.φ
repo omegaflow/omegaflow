@@ -913,3 +913,59 @@ note giro_fof2_vienna_24h: HTTP Error 404:
 dead 404
 url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=hmF2&startDate={yesterday}T00:00:00Z&endDate={today}T23:59:59Z&format=json
 note giro_hmf2_vienna_24h: HTTP Error 404: 
+
+decline
+url https://api.inaturalist.org/v1/observations?taxon_name=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&place_id=10
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&d1={today}
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.inaturalist.org/v1/observations?taxon_name=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&swlat=35&swlng=-10&nelat=70&nelng=40
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.inaturalist.org/v1/observations?taxon_name=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.inaturalist.org/v1/observations?taxon_name=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.obis.org/v3/occurrence?geometry=POLYGON((-30+35,-30+72,42+72,42+35,-30+35))&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate={today}
+note Force Gate: human observation record (database metadata), not physical field measurement
+
+decline
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=10&limit=0
+note Force Gate: bare aggregate count, no individual records
+
+decline
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+note Force Gate: bare aggregate count, no individual records
+
+decline
+url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+note Force Gate: bare aggregate count, no individual records

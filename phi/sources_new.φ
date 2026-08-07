@@ -21,126 +21,6 @@ lon_key Longitude(decimal_degrees)
   field_in Site_Name site_name
   field_in Elevation(m) elevation
 
-url https://api.inaturalist.org/v1/observations?taxon_name=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
-ttl 3600
-force diffusion
-on earth 0 0
-map results
-lat_key location.0
-lon_key location.1
-  field_in taxon.name species_name
-  field_in taxon.rank taxon_rank
-  field_in observed_on observation_date
-  field_in place_guess locality
-
-url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
-ttl 1800
-force diffusion
-on earth 0 0
-map results
-lat_key location.0
-lon_key location.1
-  field_in taxon.name species_name
-  field_in taxon.iconic_taxon_name iconic_taxon
-  field_in observed_on observation_date
-  field_in taxon.conservation_status.status iucn_status
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&place_id=10
-ttl 3600
-force diffusion
-on earth 0 0
-map results
-lat_key location.0
-lon_key location.1
-  field_in taxon.name species_name
-  field_in taxon.rank taxon_rank
-  field_in observed_on observation_date
-
-url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&d1={today}
-ttl 1800
-force acoustic
-on earth 0 0
-map results
-lat_key location.0
-lon_key location.1
-  field_in taxon.name species_name
-  field_in taxon.iconic_taxon_name iconic_taxon
-  field_in created_at submission_time
-  field_in place_guess locality
-
-url https://api.inaturalist.org/v1/observations?taxon_name=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
-ttl 3600
-force diffusion
-on earth 0 0
-map results
-lat_key location.0
-lon_key location.1
-  field_in taxon.name species_name
-  field_in taxon.rank taxon_rank
-  field_in observed_on observation_date
-  field_in place_guess locality
-  field_in taxon.conservation_status.status iucn_status
-
-url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&swlat=35&swlng=-10&nelat=70&nelng=40
-ttl 3600
-force diffusion
-on earth 0 0
-map results
-lat_key location.0
-lon_key location.1
-  field_in taxon.name species_name
-  field_in taxon.iconic_taxon_name iconic_taxon
-  field_in observed_on observation_date
-  field_in place_guess locality
-
-url https://api.inaturalist.org/v1/observations?taxon_name=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
-ttl 3600
-force diffusion
-on earth 0 0
-map results
-lat_key location.0
-lon_key location.1
-  field_in taxon.name species_name
-  field_in taxon.rank taxon_rank
-  field_in observed_on observation_date
-  field_in place_guess locality
-
-url https://api.inaturalist.org/v1/observations?taxon_name=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
-ttl 3600
-force diffusion
-on earth 0 0
-map results
-lat_key location.0
-lon_key location.1
-  field_in taxon.name species_name
-  field_in observed_on observation_date
-  field_in taxon.conservation_status.status iucn_status
-
-url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
-ttl 3600
-force diffusion
-on earth 0 0
-map results
-lat_key location.0
-lon_key location.1
-  field_in taxon.name species_name
-  field_in taxon.conservation_status.status iucn_status
-  field_in taxon.conservation_status.authority iucn_authority
-  field_in observed_on observation_date
-  field_in place_guess locality
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
-ttl 3600
-force diffusion
-on earth 0 0
-map results
-lat_key location.0
-lon_key location.1
-  field_in taxon.name species_name
-  field_in taxon.establishment_means establishment_means
-  field_in observed_on observation_date
-  field_in place_guess locality
-
 url https://api.neotomadb.org/v2.0/data/datasets?datasettype=ostracode&limit=1000&offset=0
 ttl 86400
 force seismic-body
@@ -171,18 +51,6 @@ lat_key site.geography.coordinates.1
 lon_key site.geography.coordinates.0
   field_in site.sitename site_name
   field_in dataset.datasetid dataset_id
-
-url https://api.obis.org/v3/occurrence?geometry=POLYGON((-30+35,-30+72,42+72,42+35,-30+35))&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate={today}
-ttl 86400
-force diffusion
-on earth 0 0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field_in scientificName species_name
-  field_in class taxon_class
-  field_in family family_name
-  field_in date_year obs_year
 
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=lightning_potential,cape,convective_inhibition&models=icon_seamless&forecast_days=3&format=json
 ttl 300
@@ -2098,30 +1966,6 @@ force diffusion
 on earth 0 0
 format csv
 last_row average atmosphere_co_monthly_global_ppb
-
-url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=10&limit=0
-ttl 86400
-force biotic
-at sun 1.0
-field count biosphere_gbif_records_10km
-
-url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=50&hasCoordinate=true&eventDate=LAST_30_DAYS&limit=0
-ttl 3600
-force biotic
-at sun 1.0
-field count biosphere_gbif_recent_50km
-
-url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
-ttl 3600
-force biotic
-at sun 1.0
-field total_results biosphere_inaturalist_research_10km
-
-url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
-ttl 86400
-force biotic
-at sun 1.0
-field count biosphere_obis_species_50km
 
 url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,swell_wave_height
 ttl 600

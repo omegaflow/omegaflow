@@ -2,6 +2,10 @@
 
 AGENTS.md is the primary constraint matrix. Git is the history. This file contains only pending work.
 
+## Autonomous Biodiversity Sensing
+
+Council decision 2026-08-07: biodiversity observation APIs (GBIF, iNaturalist, OBIS) measure human database records, not physical field quantities — forceless under the Force Gate. Genuine biophysical biodiversity measurements (camera traps, eDNA sequencers, bioacoustic monitors, chlorophyll fluorescence) carry force. Sources exist for acoustic (xeno-canto, passive acoustic monitoring) and satellite-derived (chlorophyll, NDVI). Open them when available.
+
 ---
 
 ## Council Agent Versioned (2026-08-07)
