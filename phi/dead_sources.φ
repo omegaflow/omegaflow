@@ -370,3 +370,6 @@ note LAMBDA path 404 (PR4 path wrong). Also power spectrum has no ra/dec positio
 decline text-circular
 url https://gcn.nasa.gov/api/circulars?subject=IceCube&limit=100
 note GCN circulars API 400 (server error) on this query. Also circulars are TEXT announcements (no position, no measurement) - council: text alerts DECLINE. Real IceCube alerts are in GCN Notices (json) with position.
+dead 404
+url https://api.openaq.org/v3/measurements?parameter_id=2&limit=1000&date_from={today}T00:00:00Z&date_to={today}T23:59:59Z&order_by=datetime&sort_order=desc
+note OpenAQ v3 /measurements 404 (path requires locations_id or different route). /v3/parameters/2 works (PM2.5 confirmed). Research correct v3 measurements path. OPENAQ_API_KEY present. PM2.5 = diffusion.
