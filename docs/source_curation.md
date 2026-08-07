@@ -149,10 +149,33 @@ counts sources whose extraction yields zero samples as FAIL.
 
 Run: `cargo test test_live_sources_extract -- --nocapture`
 Takes ~150s (network-bound, first 200 non-CDN sources). Output lines:
-- `FAIL <url> no samples` — parser extracted nothing from a 200 response.
-  This is the actionable list: the block's extract directives do not match
-  the live response. Fix the block (compare against the golden version in
-  `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ`).
+- `FAIL <url> no samples (empty-response (JSON parsed but all containers
+  empty))` — the API legitimately returned no data (`features:[]`, `[]`,
+  empty object). This is NOT a source defect; the source is correct and will
+  produce samples when data exists. Only verify the extract against a
+  data-bearing response (e.g. a wider time window).
+- `FAIL <url> no samples (data-present (container array has rows but extract
+  yielded nothing))` — the data IS there but the extract directives do not
+  match. This is the actionable defect: fix the block (compare against the
+  golden version in `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ`).
+- `FAIL <url> no samples (data-present (keys exist ...))` / `(JSON has
+  content but declared keys absent)` — data exists but keys/containers are
+  wrong. Fix the block.
+- `FAIL <url> no samples (data-present (non-JSON body: HTML/XML/text))` —
+  the API returned a maintenance/error page or an XML/VOTable response the
+  parser cannot consume (may be `parser-def` or a transient service outage).
+
+The `diagnose_no_samples` function (commit `2094638`) performs this
+classification; `json_has_content` counts only non-empty arrays as data
+(meta numbers like `count:0` or `api:2.7` are not rows). Unit-tested in
+`test_diagnose_no_samples`.
+- `source refused (pos without body directive)` — block uses data-carried
+  `pos` but declares no `body`. Fix the SOURCE (add `body <body>` matching the
+  source's world, or a proper frame), never invent a body in the parser.
+- `source refused (no reference frame)` — block has no frame at all.
+- `warning: map extract with non-surface frame` — map extract needs a
+  terrestrial surface frame; the block uses `at sun`/barycenter. The golden
+  sources used `wgs84` (→ `on <body>`); migration mislabeled them.
 - `source refused (pos without body directive)` — block uses data-carried
   `pos` but declares no `body`. Fix the SOURCE (add `body <body>` matching the
   source's world, or a proper frame), never invent a body in the parser.
