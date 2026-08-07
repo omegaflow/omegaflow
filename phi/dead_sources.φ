@@ -382,3 +382,33 @@ note OpenAQ v3 /measurements 404 (path requires locations_id or different route)
 # Format: FORMAT=votable ONLY (BINARY base64). Needs VOTable Extract
 #   parser. Schema discovery before each query:
 #   SELECT column_name FROM TAP_SCHEMA.columns WHERE table_name='X'
+parser-def html-app
+url https://actris.nilu.no/api/measurements/?format=json&instrument_type=HALO_DOPPLER_LIDAR&start_date={year}-{month}-{day}&end_date={year}-{month}-{day}
+note ACTRIS API returns SPA HTML page not JSON. Needs HtmlExtract or correct API path. Aerosol lidar measurements would be em/diffusion.
+
+parser-def html-app
+url https://actris.nilu.no/api/stations?format=json&limit=200&status=active
+note Same ACTRIS SPA issue. Station list anyway = metadata DECLINE.
+
+dead 404
+url https://lasp.colorado.edu/lisird/latis/dap/aim_sofie_temperature.csv?time>={today}
+note LaTiS DatasetNotFoundException: aim_sofie_temperature. Research correct LISIRD dataset name (aim_sofie).
+
+key-needed alerce-token
+url https://alerce.online/api/v1/objects/?format=json&ndet__gte=5&lastmjd__gte={today}
+note ALeRCE 403 (auth required). Free token registration needed.
+
+parser-def html-app
+url https://antares.noirlab.edu/api/v1/locus/?format=json&created__gte={today}T00:00:00Z&limit=500
+note ANTARES returns SPA HTML. Needs correct API path.
+
+dead dns
+url https://gdp.aoml.noaa.gov/erddap/tabledap/gdp_hourly.csv?id,longitude,latitude,time,sst,ve,vn&time>={today}
+note gdp.aoml.noaa.gov DNS unresolvable (host retired). GDP drifters moved - research new host.
+parser-def html-app
+url https://argovis.colorado.edu/argo/argoCores?startDate={today}T00:00:00Z&endDate={today}T23:59:59Z
+note Argovis returns SPA HTML. API path behind app. Research correct API (likely /api/v2/ or requires app route). Argo float CTD = thermal/diffusion.
+
+dead service-missing
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=5
+note PAGER_CAT service not in GVgbJbqm8hXASVYi account (506 services listed, only 2020_Earthquakes). Research correct PAGER service/account.

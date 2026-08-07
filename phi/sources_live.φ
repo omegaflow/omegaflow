@@ -8696,30 +8696,6 @@ on earth 0 0
   path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.longitude longitude
 
 
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
-ttl 3600
-force em
-at sun 1.0
-map data
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field date date
-  field energy energy
-  field alt alt
-  field vel vel
-cmap data
-field_in 0 peak_date
-field_in 1 energy_j
-field_in 3 latitude_deg
-field_in 4 lat_dir
-field_in 5 longitude_deg
-field_in 6 lon_dir
-field_in 7 altitude_km
-field_in 8 velocity_kms
-field_in 0 event_date
-field_in 1 energy
-field_in 2 impact_energy_kt
-
 
 url https://epic.gsfc.nasa.gov/api/natural/images
 ttl 3600
@@ -8910,14 +8886,6 @@ field_in 4 distance_au
 field_in 7 v_rel_kms
 
 
-url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
-ttl 3600
-force em
-at sun 1.0
-map data
-lat_key 3
-lon_key 5
-  
   
 field_in 0 event_date
 field_in 1 energy_j
@@ -8927,20 +8895,6 @@ field_in 5 longitude_deg
 field_in 7 altitude_km
 field_in 8 velocity_kms
 
-
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date
-ttl 3600
-force em
-at sun 1.0
-map data
-field_in 2 date
-field_in 3 radiated_energy_gj
-field_in 4 impact_energy_kt
-field_in 6 latitude
-field_in 7 lat_dir
-field_in 8 longitude
-field_in 9 lon_dir
-field_in 18 altitude_km
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
@@ -9159,14 +9113,6 @@ at sun 1.0
 obj_last value biosphere_solar_radiation_power
 
 
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&date-min=2020-01-01
-ttl 3600
-force em
-at sun 1.0
-map data
-lat_key 3
-lon_key 5
-  
   
 field_in 0 event_date
 field_in 1 energy_j
@@ -11521,14 +11467,18 @@ field number number
 field name name
   field class class
 
-
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
 ttl 86400
+force gravity
 at sun 1.0
-force em
-format universal
-  field_in 5 H
-epoch_key epoch
+map data
+  field full_name asteroid_name
+  field epoch epoch_jd
+  field H absolute_magnitude
+  field diameter estimated_diameter_km
+  field albedo geometric_albedo
+  field class orbit_class
+  field neo neo_flag
 
 
 url https://cddis.nasa.gov/archive/vlbi/ivsproducts/eops/ivseops.snx
@@ -12798,33 +12748,31 @@ map .
   field H H
   field diameter diameter
 
-
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-group=neo
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
 ttl 86400
 force gravity
-on earth 0.0 0.0
+at sun 1.0
 map data
-  field full_name full_name
-  field epoch epoch
-  field_in 5 H
-  field diameter diameter
-  field albedo albedo
-  field class class
-  field neo neo
+  field full_name asteroid_name
+  field epoch epoch_jd
+  field H absolute_magnitude
+  field diameter estimated_diameter_km
+  field albedo geometric_albedo
+  field class orbit_class
+  field neo neo_flag
 
-
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-class=TNO
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
 ttl 86400
 force gravity
-on earth 0.0 0.0
+at sun 1.0
 map data
-  field full_name full_name
-  field a a
-  field e e
-  field i i
-  field H H
-  field class class
-  field diameter diameter
+  field full_name asteroid_name
+  field epoch epoch_jd
+  field H absolute_magnitude
+  field diameter estimated_diameter_km
+  field albedo geometric_albedo
+  field class orbit_class
+  field neo neo_flag
 
 
 url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
@@ -13524,19 +13472,6 @@ force em
 at sun 1
 regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
 
-
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
-ttl 86400
-force em
-on earth 34.201 -118.171
-  field count count
-field_in 0 event_date
-field_in 1 energy_j
-field_in 2 impact_e_j
-field_in 3 latitude_deg
-field_in 5 longitude_deg
-field_in 7 altitude_km
-field_in 8 velocity_kms
 
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=599&OBJ_DATA=YES
@@ -20072,22 +20007,6 @@ lon_key geometry.coordinates.0.0.0
 
 
 
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=500&date-min=2010-01-01
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows data
-field_in 0 date date
-field_in 1 energy energy_kt
-field_in 2 impact_e impact_e_kt
-field_in 3 lat lat
-lat_sign 4 lat_dir
-field_in 5 lon lon
-lon_sign 6 lon_dir
-field_in 7 alt alt_km
-field_in 8 vel vel_km_s
-
 
 
 url https://records-ws.nbnatlas.org/occurrences/search?q=order:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
@@ -20642,11 +20561,6 @@ ttl 3600
 force em
 field count cneos_close_approach_count
 
-url https://ssd-api.jpl.nasa.gov/fireball.api
-ttl 3600
-force em
-field count biosphere_fireball_event_count
-
 url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
 ttl 86400
 force em
@@ -20659,10 +20573,18 @@ field taxa biosphere_ocean_species_known
 field records biosphere_ocean_records_total
 field datasets biosphere_ocean_datasets_count
 
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
 ttl 86400
-force em
-count data cosmos_asteroids_numbered_total
+force gravity
+at sun 1.0
+map data
+  field full_name asteroid_name
+  field epoch epoch_jd
+  field H absolute_magnitude
+  field diameter estimated_diameter_km
+  field albedo geometric_albedo
+  field class orbit_class
+  field neo neo_flag
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
 ttl 86400
@@ -22268,4 +22190,19 @@ map data
   path 2 s_nt
 
 
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=500&date-min=2010-01-01
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows data
+  field_in 0 event_date
+  field_in 1 energy_kt
+  field_in 2 impact_e_kt
+  field_in 3 latitude_deg
+  lat_sign 4 lat_dir
+  field_in 5 longitude_deg
+  lon_sign 6 lon_dir
+  field_in 7 altitude_km
+  field_in 8 velocity_kms
 
