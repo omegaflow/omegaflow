@@ -125,11 +125,23 @@ def compute_rotation_matrix(body_id, body_name, t_jd):
 
 def generate_rotation_matrices(kernel_path, body_id, body_name, granules):
     spice.furnsh(kernel_path)
+    pck_path = "pck00010.tpc"
+    pck_loaded = False
+    try:
+        spice.furnsh(pck_path)
+        pck_loaded = True
+    except Exception:
+        pass
     matrices = []
     for t0_jd, _, _, _, _ in granules:
         m = compute_rotation_matrix(body_id, body_name, t0_jd)
         if m is not None:
             matrices.append((t0_jd, m))
+    if pck_loaded:
+        try:
+            spice.unload(pck_path)
+        except Exception:
+            pass
     spice.unload(kernel_path)
     return matrices
 
