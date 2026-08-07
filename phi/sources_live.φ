@@ -23,8 +23,8 @@ ttl 10
 force em
 on earth 52.5 13.4
 map ac
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field hex hex
   field flight flight
   field alt_baro alt_baro
@@ -87,8 +87,8 @@ ttl 60
 force acoustic
 at sun 1.0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field amplitude amplitude
   field time time
   field frequency frequency
@@ -101,8 +101,8 @@ force em
 body earth
 verify false
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field utc utc
   field peak peak
 
@@ -123,8 +123,8 @@ ttl 60
 force em
 at sun 1.0
 map ac
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field hex hex
   field flight flight
   field alt_baro alt_baro
@@ -152,8 +152,8 @@ ttl 60
 force em
 on earth 0.0 0.0
 map ac
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field alt_baro alt_baro
 alt_key alt_baro
 vel_key gs
@@ -511,8 +511,8 @@ ttl 120
 force seismic-body
 at sun 1.0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field id id
   field mag mag
   field dep dep
@@ -613,8 +613,8 @@ ttl 300
 force diffusion
 at sun 1.0
 map observations.data
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field local_date_time local_date_time
   field air_temp air_temp
   field rel_hum rel_hum
@@ -628,8 +628,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field temp temp
   field dewp dewp
   field altim altim
@@ -681,8 +681,8 @@ ttl 300
 force em
 on earth 0.0 0.0
 map ac
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field gs gs
   field baro_rate baro_rate
   field alt_baro alt_baro
@@ -879,8 +879,8 @@ force seismic-body
 at sun 1.0
 format text
 rows
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field title title
   field description description
   field pubDate pubDate
@@ -1500,8 +1500,8 @@ lon_key geometry.coordinates.0
   path latitude latitude
   path longitude longitude
   path current.weather_code weather_code
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.urgency urgency
   field properties.id id
   field properties.certainty certainty
@@ -7209,8 +7209,8 @@ ttl 300
 force em
 on earth 0 0
 map items
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field measures.0.latestReading.value value
 
 
@@ -7485,8 +7485,8 @@ ttl 600
 force acoustic
 at sun 1
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field icaoId icaoId
   field acType acType
   field temp temp
@@ -7556,8 +7556,8 @@ ttl 600
 force acoustic
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field temp temp
   field altim altim
   field wspd wspd
@@ -7783,8 +7783,8 @@ ttl 600
 force em
 on earth 0 0
 map data
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field magnitude magnitude
   field kedalaman kedalaman
   field wilayah wilayah
@@ -8494,8 +8494,8 @@ ttl 1800
 force em
 at sun 1
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field icaoId icaoId
   field rawTAF rawTAF
   field issueTime issueTime
@@ -8510,8 +8510,8 @@ ttl 1800
 force acoustic
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field icaoId icaoId
   field temp temp
   field wdir wdir
@@ -8525,8 +8525,8 @@ ttl 1800
 force acoustic
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field icaoId icaoId
   field temp temp
   field dewp dewp
@@ -8541,8 +8541,8 @@ ttl 1800
 force acoustic
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field icaoId icaoId
   field temp temp
   field dewp dewp
@@ -8559,8 +8559,8 @@ ttl 1800
 force acoustic
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field icaoId icaoId
   field temp temp
   field dewp dewp
@@ -8620,8 +8620,8 @@ ttl 1800
 force acoustic
 at sun 1.0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field hazard hazard
 field severity severity
 
@@ -8703,8 +8703,8 @@ ttl 3600
 force em
 at sun 1.0
 map data
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field date date
   field energy energy
   field alt alt
@@ -8728,8 +8728,8 @@ ttl 3600
 force em
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field version version
   field identifier identifier
 
@@ -8769,8 +8769,8 @@ ttl 3600
 force em
 at sun 1.0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field date date
   field time time
   field nb_camera nb_camera
@@ -8885,31 +8885,6 @@ rows
 field peak_flux peak_flux
   field duration duration
   field type type
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
-ttl 3600
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field w1mpro w1mpro
-  field w2mpro w2mpro
-  field mjd mjd
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
-ttl 3600
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field medianmag medianmag
-  field magrms magrms
 
 
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&date-min={today}&date-max=%2B30&body=Earth&fullname=true&diameter=true&sort=date
@@ -9854,8 +9829,8 @@ ttl 3600
 force acoustic
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field icaoId icaoId
   field temp temp
   field wdir wdir
@@ -10296,8 +10271,8 @@ ttl 3600
 force acoustic
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field icaoId icaoId
   field fcsts.0.wdir wdir
   field fcsts.0.wspd wspd
@@ -10368,8 +10343,8 @@ map events
 lat_key geometry.0.coordinates.1
 lon_key geometry.0.coordinates.0
   field geometry.0.magnitudeValue magnitudeValue
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field title title
   field categories.0.title title
   field id id
@@ -10666,8 +10641,8 @@ ttl 3600
 force gravity
 at sun 1.0
 map predictions
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field v v
 
 
@@ -10676,7 +10651,7 @@ ttl 3600
 force thermal
 at sun 1.0
 map stations
-lat_key lat
+lat_key geometry.coordinates.1
 lon_key lng
   field id id
   field name name
@@ -10747,8 +10722,8 @@ lon_key LONGITUDE
   field PRCP PRCP
   field SNOW SNOW
   field AWND AWND
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field tmax_c tmax_c
   field tmin_c tmin_c
   field prcp_mm prcp_mm
@@ -10945,8 +10920,8 @@ ttl 3600
 force seismic-surface
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.alertLevel alertLevel
   field properties.volcanoName volcanoName
 
@@ -10979,8 +10954,8 @@ ttl 3600
 force diffusion
 at sun 1.0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 field profile_id profile_id
   field temperature temperature
   field salinity salinity
@@ -11023,8 +10998,8 @@ ttl 3600
 force em
 at sun 1
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field discharge discharge
   field probability probability
   field return_period return_period
@@ -11064,8 +11039,8 @@ force diffusion
 at sun 1.0
 format universal
 rows
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 field station_id station_id
   field site site
 field owner owner
@@ -11531,21 +11506,6 @@ lon_key dec_dms
   field mag_min mag_min
   field period period
   field epoch epoch
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL&format=csv&limit=5000
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field designation designation
-  field w1mpro w1mpro
-  field w2mpro w2mpro
-  field w3mpro w3mpro
-  field w4mpro w4mpro
 
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,Vmag+FROM+%22II/366/catv2021%22
@@ -12219,8 +12179,8 @@ force em
 at sun 1.0
 format universal
 rows
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field name name
   field trigger_time trigger_time
   field duration duration
@@ -12544,8 +12504,8 @@ ttl 86400
 force seismic-surface
 at sun 1.0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field site_code site_code
   field name name
 field country country
@@ -12610,20 +12570,6 @@ dec_key dec
   field ph_qual ph_qual
 
 
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field w1mpro w1mpro
-  field w2mpro w2mpro
-  field w3mpro w3mpro
-  field w4mpro w4mpro
-
-
 url https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json
 ttl 86400
 force diffusion
@@ -12633,271 +12579,6 @@ on earth 47.3769 8.5417
   field statistics.maxValueSandF maxValueSandF
   field statistics.minValueSandF minValueSandF
   field descriptionSandF descriptionSandF
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0+FROM+glimpse360_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<12+ORDER+BY+mag3_6+ASC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field designation designation
-  field mag3_6 mag3_6
-  field mag4_5 mag4_5
-  field mag5_8 mag5_8
-  field mag8_0 mag8_0
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag8_0,e_mag4_5+FROM+glimpseii_psc+WHERE+ra+IS+NOT+NULL+AND+mag4_5<12+ORDER+BY+mag4_5+ASC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field designation designation
-  field mag3_6 mag3_6
-  field mag4_5 mag4_5
-  field mag8_0 mag8_0
-  field e_mag4_5 e_mag4_5
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100,var_flg+FROM+iraspsc+WHERE+fnu_25>10+AND+fnu_60>10+ORDER+BY+fnu_60+DESC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field fnu_12 fnu_12
-  field fnu_25 fnu_25
-  field fnu_60 fnu_60
-  field fnu_100 fnu_100
-  field var_flg var_flg
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,f24,e_f24,snr24,flags+FROM+mipsgal_psc+WHERE+ra+IS+NOT+NULL+AND+f24>10+ORDER+BY+f24+DESC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field designation designation
-  field f24 f24
-  field e_f24 e_f24
-  field snr24 snr24
-  field flags flags
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000+AND+w1mpro+IS+NOT+NULL
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field w1mpro w1mpro
-  field w2mpro w2mpro
-  field mjd mjd
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_100mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_100+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_100mJy+DESC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field name name
-  field flux_100mJy flux_100mJy
-  field ext_flag ext_flag
-  field DETPROB DETPROB
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_143mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_143+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_143mJy+DESC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field name name
-  field flux_143mJy flux_143mJy
-  field ext_flag ext_flag
-  field DETPROB DETPROB
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_217mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_217+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_217mJy+DESC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field name name
-  field flux_217mJy flux_217mJy
-  field ext_flag ext_flag
-  field DETPROB DETPROB
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
-ttl 86400
-force diffusion
-at sun 1.0
-format universal
-rows
-ra_key RA
-dec_key DE
-z_key z
-  field name name
-  field yn_snr yn_snr
-  field yn_mass yn_mass
-  field theta500 theta500
-  field dist dist
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,i1_f_ap,i2_f_ap,i3_f_ap,i4_f_ap+FROM+sage_lmc+WHERE+ra+IS+NOT+NULL
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field designation designation
-  field i1_f_ap i1_f_ap
-  field i2_f_ap i2_f_ap
-  field i3_f_ap i3_f_ap
-  field i4_f_ap i4_f_ap
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,fluxj,fluxh,fluxk+FROM+sage_cat_irac+WHERE+ra+IS+NOT+NULL+AND+mag3_6<14+ORDER+BY+mag3_6+ASC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field designation designation
-  field mag3_6 mag3_6
-  field mag4_5 mag4_5
-  field mag5_8 mag5_8
-  field mag8_0 mag8_0
-  field fluxj fluxj
-  field fluxh fluxh
-  field fluxk fluxk
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field j_mag j_mag
-  field h_mag h_mag
-  field k_mag k_mag
-  field ir1_mag ir1_mag
-  field ir2_mag ir2_mag
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+designation,ra,dec,mag3_6,mag4_5,mag8_0+FROM+sage_cat_irac+WHERE+ra+IS+NOT+NULL+AND+dec<-65+AND+mag3_6<15+ORDER+BY+mag5_8+DESC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field designation designation
-  field mag3_6 mag3_6
-  field mag4_5 mag4_5
-  field mag8_0 mag8_0
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+target,ra,dec,mips_24_flux,mips_70_flux,mips_160_flux+FROM+spitzer.sings_mipssed_spec+WHERE+ra+IS+NOT+NULL+ORDER+BY+mips_70_flux+DESC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field target target
-  field mips_24_flux mips_24_flux
-  field mips_70_flux mips_70_flux
-  field mips_160_flux mips_160_flux
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field name name
-  field dist dist
-  field morph morph
-  field f3p6tot f3p6tot
-  field f4p5tot f4p5tot
-  field f5p8tot f5p8tot
-  field f8p0tot f8p0tot
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',266.4,-29.0,2.0))=1
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field j_m j_m
-  field h_m h_m
-  field k_m k_m
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field j_m j_m
-  field h_m h_m
-  field k_m k_m
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,w3mpro,w4mpro,w3snr,w4snr,cc_flags+FROM+wise_allwise_p3as_psd+WHERE+ABS(dec-23.44*SIN(ra*3.14159265/180))<10+AND+w4snr>5+AND+w3mpro<8+ORDER+BY+w4mpro+ASC
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field designation designation
-  field w3mpro w3mpro
-  field w4mpro w4mpro
-  field w3snr w3snr
-  field w4snr w4snr
 
 
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,gmag,rmag,imag,classtar,sharp
@@ -13320,7 +13001,7 @@ force gravity
 at sun 1.0
 format universal
 rows
-lat_key lat
+lat_key geometry.coordinates.1
   field name name
   field id id
   field fall fall
@@ -13638,8 +13319,8 @@ ttl 86400
 force thermal
 on earth 0 0
 map properties.parameter.T2M
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field T2M T2M
   field PRECTOTCORR PRECTOTCORR
   field ALLSKY_SFC_SW_DWN ALLSKY_SFC_SW_DWN
@@ -13698,8 +13379,8 @@ force thermal
 on earth 0.0 0.0
 format universal
 map data
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 field_in 0 year
 field_in 1 month
 field_in 2 pdo_index pdo_value
@@ -13728,21 +13409,6 @@ map data
   field_in 4 v_inf
   field_in 5 h
   field_in 6 diameter
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
-ttl 86400
-force gravity
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field object_name object_name
-  field abs_mag abs_mag
-  field diameter diameter
-  field extended extended
-  field neo_flag neo_flag
 
 
 url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json
@@ -14098,20 +13764,6 @@ dec_key DEJ2000
 z_key z
   field MaxMag MaxMag
   field Type Type
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv&limit=5000
-ttl 86400
-force em
-at sun 1.0
-format text
-rows
-ra_key ra
-dec_key dec
-  field designation designation
-  field j_m j_m
-  field h_m h_m
-  field k_m k_m
 
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,DLum,Kmag+FROM+%22J/ApJ/935/170/table4%22
@@ -15413,8 +15065,8 @@ ttl 86400
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.woudc_id woudc_id
   field properties.gaw_id gaw_id
   field properties.name name
@@ -16332,7 +15984,7 @@ ttl 86400
 force advective
 at sun 1.0
 map stations
-lat_key lat
+lat_key geometry.coordinates.1
 lon_key lng
   field id id
   field name name
@@ -16590,8 +16242,8 @@ force thermal
 on earth 0.0 0.0
 format universal
 map data
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 field_in 0 year
 field_in 1 ohc_world_zj
 field_in 2 ohc_nh_zj
@@ -16733,8 +16385,8 @@ ttl 86400
 force diffusion
 at sun 1.0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field Temperature Temperature
   field Salinity Salinity
   field Oxygen Oxygen
@@ -17052,8 +16704,8 @@ force em
 on earth 37.0 -120.0
 format universal
 map data
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 epoch_key datetime
   field stac_eo_cloud_cover stac_eo_cloud_cover
 
@@ -17064,8 +16716,8 @@ force em
 on earth 37.0 -120.0
 format universal
 map data
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 epoch_key datetime
   field stac_eo_cloud_cover stac_eo_cloud_cover
 
@@ -18097,7 +17749,7 @@ ttl 86400
 force em
 on earth 0 0
 map .
-lat_key lat
+lat_key geometry.coordinates.1
 lon_key lng
   field altitude altitude
   field name name
@@ -19012,25 +18664,6 @@ format universal
 tau_key _dist_m
 
 
-url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra%2Cdec%2Cdesignation%2Cj_m%2Ch_m%2Ck_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv
-ttl 604800
-force em
-at sun 1.0
-cmap data
-tau_key _dist_m
-ra_key RAJ2000
-dec_key DEJ2000
-plx_key default_plx
-  field Jmag Jmag
-  field Hmag Hmag
-  field Kmag Kmag
-  field Qflg Qflg
-  field Rflg Rflg
-  field Bflg Bflg
-  field Cflg Cflg
-  field Aflg Aflg
-
-
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+J%2FMNRAS%2F509%2F1662%2Ftable1
 ttl 604800
 force em
@@ -19040,21 +18673,6 @@ tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
-
-
-url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra%2Cdec%2Cdesignation%2Cw1mpro%2Cw2mpro%2Cw3mpro%2Cw4mpro+FROM+allwise_p3as_psd&format=csv
-ttl 604800
-force em
-at sun 1.0
-cmap data
-tau_key _dist_m
-ra_key ra
-dec_key dec
-plx_key default_plx
-  field w1mpro w1mpro
-  field w2mpro w2mpro
-  field w3mpro w3mpro
-  field w4mpro w4mpro
 
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmslew
@@ -20350,373 +19968,49 @@ pmdec_key pmdec
 
 
 
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}
-ttl 300
-force biotic
-at sun 1.0
-map .
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field key key
-  field species species
-  field kingdom kingdom
-  field phylum phylum
-  field class class
-  field order order
-  field family family
-  field eventDate eventDate
-map results
-  field genus genus
-  field year year
-  field month month
-  field day day
-  field countryCode countryCode
-  field basisOfRecord basisOfRecord
-  field occurrenceStatus occurrenceStatus
-  field individualCount individualCount
-
-
-
-
-url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate
-ttl 300
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field eventDate eventDate
-
-
-
-
-url https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
-ttl 600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-
-
-
-
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
-ttl 600
-force biotic
-on earth 55.685000 12.571000
-  field count count
-map .
-lat_key lat
-lon_key lon
-  field speciesCode speciesCode
-  field howMany howMany
-  field obsDt obsDt
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field key key
-
-
-
-
-url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&geojson=true
-ttl 1800
-force biotic
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.iconic_taxon_name iconic_taxon_name
-  field created_at created_at
-  field place_guess place_guess
-
-
-
-
-url https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-field family family
-  field key key
-  field coordinateUncertaintyInMeters coordinateUncertaintyInMeters
-  field key key
-  field key key
-  field key key
-  field species species
-  field kingdom kingdom
-  field eventDate eventDate
-  field locality locality
-  field key key
-  field key key
-  field key key
-  field key key
-  field key key
-  field count count
-  field key key
-  field key key
-  field coordinateUncertaintyInMeters coordinateUncertaintyInMeters
-  field key key
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field family family
-  field country country
-  field stateProvince stateProvince
-
-
-
-
-url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&basisOfRecord=MACHINE_OBSERVATION
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field family family
-  field countryCode countryCode
-  field occurrenceDate occurrenceDate
-
-
-
-
-url https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?orderKey=180130&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field family family
-  field country country
-  field occurrenceDate occurrenceDate
-  field individualCount individualCount
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field genus genus
-  field country country
-  field occurrenceDate occurrenceDate
-  field individualCount individualCount
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?orderKey=719&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-field family family
-field kingdom kingdom
-  field iucnRedListCategory iucnRedListCategory
-  field species species
-  field occurrenceStatus occurrenceStatus
-  field species species
-  field locality locality
-  field eventDate eventDate
-field phylum phylum
-field order order
-  field country country
 
 
 
 
-url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.iconic_taxon_name iconic_taxon_name
-  field observed_on observed_on
 
 
 
 
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field observed_on observed_on
 
 
 
 
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.rank rank
-  field observed_on observed_on
-  field place_guess place_guess
 
 
 
 
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field observed_on observed_on
-  field place_guess place_guess
 
 
 
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.rank rank
-  field observed_on observed_on
-  field place_guess place_guess
-
-
-
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.rank rank
-  field observed_on observed_on
-
-
-
-
-url https://api.inaturalist.org/v1/observations?iconic_taxa=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.rank rank
-  field observed_on observed_on
-  field place_guess place_guess
-
-
-
-
-url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field observed_on observed_on
-  field place_guess place_guess
-
-
-
-
-url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=1000&fields=decimalLatitude,decimalLongitude,scientificName,class,order,family,genus,species,date_year,country
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field class class
-  field order order
-  field family family
-  field date_year date_year
-  field country country
 
 
 
@@ -20726,7 +20020,7 @@ ttl 3600
 force biotic
 at sun 1.0
 map data
-lat_key lat
+lat_key geometry.coordinates.1
 lon_key lng
 field litter_type litter_type
   field quantity quantity
@@ -20739,8 +20033,8 @@ ttl 3600
 force biotic
 body earth
 map data
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field id id
   field datetime datetime
   field litter_type litter_type
@@ -20751,136 +20045,20 @@ lon_key lon
 
 
 
-url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
-ttl 86400
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-  field eventDate eventDate
-  field locality locality
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
-ttl 86400
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-  field country country
-  field year year
-  field countryCode countryCode
-  field eventDate eventDate
-  field basisOfRecord basisOfRecord
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
-ttl 86400
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field key key
-  field coordinateUncertaintyInMeters coordinateUncertaintyInMeters
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&year=2026,2026&limit=300&offset=0
-ttl 86400
-force biotic
-at sun 1.0
-format universal
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-  field year year
 
 
-
-
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&decimalLatitude=-35,38&decimalLongitude=-20,55&basisOfRecord=HUMAN_OBSERVATION
-ttl 86400
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-field genus genus
-field family family
-field kingdom kingdom
-  field country country
-  field eventDate eventDate
-
-
-
-
-url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
-ttl 86400
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field family family
-  field date_year date_year
-
-
-
-
-url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38
-ttl 86400
-force biotic
-at sun 1
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field eventDate eventDate
-  field depth depth
-
-
-
-
-url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true
-ttl 86400
-force biotic
-at sun 1
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field eventDate eventDate
-  field depth depth
-  field aphiaID aphiaID
-
-
-
-
-url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
-ttl 86400
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field class class
-  field family family
-  field iucnRedListCategory iucnRedListCategory
-  field date_year date_year
 
 
 
@@ -20899,124 +20077,18 @@ lon_key geometry.coordinates.0.0.0
 
 
 
-url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&basisOfRecord=MACHINE_OBSERVATION
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field family family
-  field countryCode countryCode
-  field occurrenceDate occurrenceDate
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
 
 
 
 
-url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field genus genus
-  field country country
-  field occurrenceDate occurrenceDate
-  field individualCount individualCount
-
-
-
-
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-field family family
-field kingdom kingdom
-  field iucnRedListCategory iucnRedListCategory
-  field species species
-  field occurrenceStatus occurrenceStatus
-  field species species
-  field locality locality
-  field eventDate eventDate
-field phylum phylum
-field order order
-  field country country
-
-
-
-
-url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=35&swlng=-10&nelat=70&nelng=40
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-  field taxon.name name
-  field taxon.iconic_taxon_name iconic_taxon_name
-  field observed_on observed_on
-  field place_guess place_guess
-
-
-
-
-url https://api.obis.org/v3/occurrence?taxonid=180130,137206&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field class class
-  field family family
-  field date_year date_year
-
-
-
-
-url https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
-ttl 86400
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field species species
-  field family family
-  field eventDate eventDate
 
 
 
@@ -21052,24 +20124,7 @@ lon_key decimalLongitude
 
 
 
-url https://api.obis.org/v3/occurrence?geometry=POLYGON%28%28-25%2030%2C%2045%2030%2C%2045%2072%2C%20-25%2072%29%29&size=1000&fields=decimalLatitude,decimalLongitude,scientificName,date_year
-ttl 3600
-force biotic
-at sun 1.0
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-  field scientificName scientificName
-  field date_year date_year
 
-
-
-url https://api.obis.org/v3/occurrence/grid/2?geometry=POLYGON%28%28-25%2030%2C%2045%2030%2C%2045%2072%2C%20-25%2072%29%29
-ttl 3600
-force biotic
-body earth
-map features
-  field n n
 
 
 
@@ -21133,7 +20188,7 @@ ttl 3600
 force biotic
 at sun 1.0
 map .
-lat_key lat
+lat_key geometry.coordinates.1
 lon_key lng
   field speciesCode speciesCode
   field comName comName
@@ -21172,7 +20227,7 @@ ttl 3600
 force gravity
 on earth 0 0
 map .
-lat_key lat
+lat_key geometry.coordinates.1
 lon_key lng
 field event_date date
 field event_time time
@@ -21182,24 +20237,7 @@ field comments observer_comments
 
 
 
-url https://api.obis.org/v3/occurrence/grid/100?taxon=*&year=2026&geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))
-ttl 3600
-force diffusion
-body earth
-at sun 1.0
 
-
-
-url https://api.obis.org/v3/occurrence/grid/100?taxon=*https://api.eurobis.org/year=2026https://api.eurobis.org/geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year}
-ttl 86400
-force em
-at sun 1.0
-body earth
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field species species_name
-field year year
 
 
 
@@ -21208,8 +20246,8 @@ ttl 3600
 force diffusion
 on earth 0 0
 map data
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 field_in respondent-name eia_grid_respondent
 field_in value eia_grid_demand_mw
 field_in period eia_grid_period
@@ -21221,8 +20259,8 @@ ttl 86400
 force diffusion
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 field processid specimen_id
 field bin barcode_index
 field species_name species
@@ -21237,8 +20275,8 @@ ttl 86400
 force diffusion
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 field processid specimen_id
 field bin barcode_index
 field species_name species
@@ -21252,8 +20290,8 @@ ttl 86400
 force diffusion
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 field processid specimen_id
 field bin barcode_index
 field species_name species
@@ -21359,8 +20397,8 @@ ttl 86400
 force diffusion
 on earth 0 0
 map results
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 field title dataset_title
 field variables.0 primary_variable
 field temporal_coverage.start start_date
@@ -21395,8 +20433,8 @@ ttl 86400
 force diffusion
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
 
 
 
@@ -21731,27 +20769,9 @@ lon_key longitude
 field elevation_m hydrosphere_ndbc_station_elevation_m
 field station_type hydrosphere_ndbc_station_type
 
-url https://api.inaturalist.org/v1/observations?per_page=1
-ttl 300
-force em
-field total_results biosphere_inaturalist_obs_count
-
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
 ttl 300
 force seismic-surface
-
-url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&per_page=20&order=desc&order_by=observed_on
-ttl 600
-force em
-map results
-lat_key geojson.coordinates.1
-lon_key geojson.coordinates.0
-field_in species_guess biosphere_inaturalist_nearby
-
-url https://api.inaturalist.org/v1/observations?per_page=1
-ttl 600
-force em
-path total_results biosphere_inaturalist_observations_total
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
 ttl 600
@@ -21809,46 +20829,6 @@ lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
 field_in properties.mag geosphere_quake_mag
 
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
-ttl 3600
-force em
-field count biosphere_birding_hotspots
-
-url https://api.gbif.org/v1/occurrence/search?limit=0
-ttl 3600
-force em
-field count biosphere_gbif_occurrence_count
-
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=1&hasGeospatialIssue=false
-ttl 3600
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_occurrence_key
-field_in coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
-
-url https://api.gbif.org/v1/occurrence/count?isGeoreferenced=true
-ttl 3600
-force em
-path . biosphere_gbif_species_observations_total
-
-url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
-ttl 3600
-force em
-path total_results biosphere_fungi_observations
-
-url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
-ttl 3600
-force em
-field total_results biosphere_fungi_observations
-field species_count biosphere_fungi_species_count
-
-url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
-ttl 3600
-force em
-field total_results biosphere_verified_observations
-
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
 ttl 3600
 force em
@@ -21856,42 +20836,6 @@ field data.0.4 cosmos_neo_first_dist_au
 field data.0.7 cosmos_neo_first_v_kms
 field data.0.10 cosmos_neo_first_h_mag
 count data cosmos_neo_count
-
-url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
-ttl 3600
-force em
-field count biosphere_species_count
-
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
-ttl 3600
-force diffusion
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in species species_name
-field_in kingdom kingdom_name
-field_in phylum phylum_name
-field_in class class_name
-field_in order order_name
-field_in family family_name
-field_in genus genus_name
-field_in year observation_year
-field_in month observation_month
-field_in day observation_day
-field_in eventDate observation_date
-field_in countryCode country_code
-field_in basisOfRecord basis_of_record
-field_in occurrenceStatus occurrence_status
-field_in individualCount individual_count
-
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
-ttl 3600
-force diffusion
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field species species_name
-field iucnRedListCategory iucn_category
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
 ttl 3600
@@ -21904,30 +20848,6 @@ map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
 field_in properties.mag geosphere_quake_mag
-
-url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
-ttl 3600
-force em
-field total_results biosphere_observations
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
-ttl 3600
-force em
-format text
-ra_key ra
-dec_key dec
-field w1mpro mag_w1
-field w2mpro mag_w2
-field mjd mjd_obs
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
-ttl 3600
-force em
-format text
-ra_key ra
-dec_key dec
-field medianmag median_mag
-field magrms mag_variability_rms
 
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
 ttl 3600
@@ -21943,142 +20863,6 @@ url https://ssd-api.jpl.nasa.gov/fireball.api
 ttl 3600
 force em
 field count biosphere_fireball_event_count
-
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_amphibian_key
-
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_arachnid_key
-
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_arthropod_key
-
-url https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in species biosphere_gbif_biodiversity_species
-field_in kingdom biosphere_gbif_kingdom
-field_in eventDate biosphere_gbif_biodiversity_date
-field_in locality biosphere_gbif_biodiversity_locality
-
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_bird_key
-
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_cnidarian_key
-
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_cnidarian_key
-
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_echinoderm_key
-
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_fungi_key
-
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_insect_key
-
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_mammal_key
-
-url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in species biosphere_gbif_marine_species
-field_in locality biosphere_gbif_marine_locality
-field_in eventDate biosphere_gbif_marine_date
-
-url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
-ttl 86400
-force em
-field count biosphere_migratory_bird_records_this_month
-
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_mollusk_key
-
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_plant_key
-field_in coordinateUncertaintyInMeters biosphere_gbif_plant_uncertainty_m
-
-url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
-ttl 86400
-force em
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in key biosphere_gbif_reptile_key
-
-url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
-ttl 86400
-force em
-path total biosphere_cetacean_observations_24h
 
 url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
 ttl 86400
@@ -22096,19 +20880,6 @@ url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
 ttl 86400
 force em
 count data cosmos_asteroids_numbered_total
-
-url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&basisOfRecord=HUMAN_OBSERVATION&decimalLatitude=-90,90&habitat=MARINE
-ttl 86400
-force diffusion
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field species species_name
-field kingdom kingdom
-field phylum phylum
-field order order
-field family family
-field country country_code
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
 ttl 86400
@@ -22161,146 +20932,6 @@ force seismic-surface
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
 ttl 86400
 force seismic-surface
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
-ttl 86400
-force em
-format text
-ra_key ra
-dec_key dec
-field j_m mag_j
-field h_m mag_h
-field k_m mag_k
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
-ttl 86400
-force em
-format text
-ra_key ra
-dec_key dec
-field w1mpro mag_w1
-field w2mpro mag_w2
-field w3mpro mag_w3
-field w4mpro mag_w4
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,e_mag3_6,e_mag8_0,sqf_3_6+FROM+glimpsei_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<10+ORDER+BY+mag3_6+ASC
-ttl 86400
-force em
-format text
-ra_key ra
-dec_key dec
-field designation source_id
-field mag3_6 irac_3_6um_mag
-field mag4_5 irac_4_5um_mag
-field mag5_8 irac_5_8um_mag
-field mag8_0 irac_8_0um_mag
-field e_mag3_6 irac_3_6um_error
-field sqf_3_6 source_quality_3_6
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
-ttl 86400
-force diffusion
-format text
-ra_key RA
-dec_key DE
-field name cluster_name
-field yn_snr sz_signal_to_noise
-field yn_mass sz_mass_10e14_msun
-field theta500 angular_radius_arcmin
-field dist distance_mpc
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
-ttl 86400
-force em
-format text
-ra_key ra
-dec_key dec
-field j_mag mag_j
-field h_mag mag_h
-field k_mag mag_k
-field ir1_mag mag_ir1
-field ir2_mag mag_ir2
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
-ttl 86400
-force em
-format text
-ra_key ra
-dec_key dec
-field name galaxy_name
-field dist distance_mpc
-field morph morphology
-field f3p6tot flux_3_6um
-field f4p5tot flux_4_5um
-field f5p8tot flux_5_8um
-field f8p0tot flux_8_0um
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
-ttl 86400
-force em
-format text
-ra_key ra
-dec_key dec
-field j_m mag_j
-field h_m mag_h
-field k_m mag_k
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
-ttl 86400
-force em
-format text
-ra_key ra
-dec_key dec
-field w1mpro mag_w1
-field w2mpro mag_w2
-field w3mpro mag_w3
-field w4mpro mag_w4
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
-ttl 86400
-force em
-format text
-ra_key ra
-dec_key dec
-field oid object_id
-field filterid filter_id
-field medianmag median_mag
-field magrms mag_rms
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+oid,ra,dec,filterid,medianmag,magrms,refmag+FROM+ztf_objects_dr20+WHERE+magrms%3E0.3+AND+ngoodobsrel%3E100
-ttl 86400
-force em
-format text
-ra_key ra
-dec_key dec
-field oid object_id
-field filterid filter_id
-field medianmag median_mag
-field magrms mag_rms
-
-url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
-ttl 86400
-force gravity
-format text
-ra_key ra
-dec_key dec
-field object_name neo_designation
-field abs_mag absolute_magnitude
-field diameter estimated_diameter_km
-field extended extended_object_flag
-field neo_flag near_earth_flag
-
-url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+designation,+j_m,+h_m,+k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-ttl 604800
-force em
-format votable
-map data
-field_in designation name
-field_in j_m mag_j
-field_in h_m mag_h
-field_in k_m mag_k
-lat_key ra
-lon_key dec
 
 
 url https://geomag.usgs.gov/ws/data/?id=BOU&type=adjusted&starttime={today}T00:00:00&endtime={today}T23:59:59&format=json&sampling_period=60
@@ -22367,3 +20998,1053 @@ on earth 40.64 -73.78
 path properties.temperature.value atmosphere_temp_jfk_c
 path properties.barometricPressure.value atmosphere_pressure_jfk_pa
 path properties.windSpeed.value atmosphere_wind_speed_jfk_ms
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}
+ttl 300
+force diffusion
+at sun 1.0
+map .
+lat_key decimalLatitude
+lon_key decimalLongitude
+field key occurrence_id
+field species species_name
+field kingdom kingdom_name
+field phylum phylum_name
+field class class_name
+field order order_name
+field family family_name
+field eventDate observation_date
+
+url https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+ttl 600
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_species_nearby
+
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
+ttl 600
+force em
+on earth 55.685000 12.571000
+field count biosphere_bird_count
+
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
+ttl 3600
+force em
+on earth 42.4809 -76.4527
+field count biosphere_birding_hotspots
+
+url https://api.gbif.org/v1/occurrence/search?limit=0
+ttl 3600
+force em
+at sun 1.0
+field count biosphere_gbif_occurrence_count
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=1&hasGeospatialIssue=false
+ttl 3600
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_occurrence_key
+field_in coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
+
+url https://api.gbif.org/v1/occurrence/count?isGeoreferenced=true
+ttl 3600
+force em
+at sun 1.0
+path . biosphere_gbif_species_observations_total
+
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
+ttl 3600
+force em
+at sun 1.0
+field count biosphere_species_count
+
+url https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field family family
+
+url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
+ttl 3600
+force acoustic
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field stateProvince region
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&basisOfRecord=MACHINE_OBSERVATION
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field countryCode country
+field occurrenceDate observation_date
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+
+url https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=180130&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field occurrenceDate sighting_date
+field individualCount group_size
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species species_name
+field_in kingdom kingdom_name
+field_in phylum phylum_name
+field_in class class_name
+field_in order order_name
+field_in family family_name
+field_in genus genus_name
+field_in year observation_year
+field_in month observation_month
+field_in day observation_day
+field_in eventDate observation_date
+field_in countryCode country_code
+field_in basisOfRecord basis_of_record
+field_in occurrenceStatus occurrence_status
+field_in individualCount individual_count
+
+url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field genus genus_name
+field country country_code
+field occurrenceDate observation_date
+field individualCount individual_count
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=719&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field family family
+field kingdom kingdom
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field iucnRedListCategory iucn_category
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_amphibian_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_arachnid_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_arthropod_key
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_biodiversity_species
+field_in kingdom biosphere_gbif_kingdom
+field_in eventDate biosphere_gbif_biodiversity_date
+field_in locality biosphere_gbif_biodiversity_locality
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_bird_key
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_bird_species
+field_in eventDate biosphere_gbif_bird_date
+field_in locality biosphere_gbif_bird_locality
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_cnidarian_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_cnidarian_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_echinoderm_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_fungi_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_insect_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_mammal_key
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_marine_species
+field_in locality biosphere_gbif_marine_locality
+field_in eventDate biosphere_gbif_marine_date
+
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
+ttl 86400
+force em
+on earth 55.7022 12.5592
+field count biosphere_migratory_bird_records_this_month
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_mollusk_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_precise_key
+field_in coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_plant_key
+field_in coordinateUncertaintyInMeters biosphere_gbif_plant_uncertainty_m
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_plant_species
+field_in family biosphere_gbif_plant_family
+field_in eventDate biosphere_gbif_plant_date
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_reptile_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
+ttl 86400
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species species_name
+field_in country country_code
+field_in year observation_year
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&basisOfRecord=HUMAN_OBSERVATION&decimalLatitude=-90,90&habitat=MARINE
+ttl 86400
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field kingdom kingdom
+field phylum phylum
+field order order
+field family family
+field country country_code
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
+ttl 86400
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species species_name
+field_in countryCode country_code
+field_in year observation_year
+field_in eventDate observation_date
+field_in basisOfRecord basis_of_record
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&decimalLatitude=-35,38&decimalLongitude=-20,55&basisOfRecord=HUMAN_OBSERVATION
+ttl 86400
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field genus genus
+field family family
+field kingdom kingdom
+field country country_code
+field eventDate observation_date
+
+url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate
+ttl 300
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field eventDate observation_date
+
+url https://api.obis.org/v3/occurrence?taxonid=180130,137206&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field class taxon_class
+field family taxon_family
+field date_year obs_year
+
+url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=1000&fields=decimalLatitude,decimalLongitude,scientificName,class,order,family,genus,species,date_year,country
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field class taxon_class
+field order taxon_order
+field family taxon_family
+field date_year obs_year
+field country country_code
+
+url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
+ttl 86400
+force em
+on earth 51.231 2.928
+path total biosphere_cetacean_observations_24h
+
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName biosphere_obis_marine_species
+field_in eventDate biosphere_obis_marine_date
+field_in depth biosphere_obis_marine_depth_m
+
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName biosphere_obis_species
+field_in eventDate biosphere_obis_date
+field_in depth biosphere_obis_depth_m
+field_in aphiaID biosphere_obis_aphia_id
+
+url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
+ttl 86400
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family taxon_family
+field date_year obs_year
+
+url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
+ttl 86400
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field class taxon_class
+field family taxon_family
+field iucnRedListCategory iucn_category
+field date_year obs_year
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
+ttl 3600
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field mjd mjd_obs
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+ttl 3600
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field medianmag median_mag
+field magrms mag_variability_rms
+
+url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL&format=csv&limit=5000
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_name
+field w1mpro mag_w1_3_4um
+field w2mpro mag_w2_4_6um
+field w3mpro mag_w3_12um
+field w4mpro mag_w4_22um
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field w3mpro mag_w3
+field w4mpro mag_w4
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0+FROM+glimpse360_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<12+ORDER+BY+mag3_6+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,e_mag3_6,e_mag8_0,sqf_3_6+FROM+glimpsei_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<10+ORDER+BY+mag3_6+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+field e_mag3_6 irac_3_6um_error
+field sqf_3_6 source_quality_3_6
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag8_0,e_mag4_5+FROM+glimpseii_psc+WHERE+ra+IS+NOT+NULL+AND+mag4_5<12+ORDER+BY+mag4_5+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag8_0 irac_8_0um_mag
+field e_mag4_5 irac_4_5um_error
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100,var_flg+FROM+iraspsc+WHERE+fnu_25>10+AND+fnu_60>10+ORDER+BY+fnu_60+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field fnu_12 flux_12um_jy
+field fnu_25 flux_25um_jy
+field fnu_60 flux_60um_jy
+field fnu_100 flux_100um_jy
+field var_flg variability_flag
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,f24,e_f24,snr24,flags+FROM+mipsgal_psc+WHERE+ra+IS+NOT+NULL+AND+f24>10+ORDER+BY+f24+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_id
+field f24 flux_24um_mJy
+field e_f24 flux_error_mJy
+field snr24 signal_to_noise_24um
+field flags quality_flags
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000+AND+w1mpro+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field mjd mjd_obs
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_100mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_100+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_100mJy+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field name source_name
+field flux_100mJy flux_100ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_143mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_143+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_143mJy+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field name source_name
+field flux_143mJy flux_143ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_217mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_217+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_217mJy+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field name source_name
+field flux_217mJy flux_217ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
+ttl 86400
+force diffusion
+at sun 1.0
+format text
+ra_key RA
+dec_key DE
+field name cluster_name
+field yn_snr sz_signal_to_noise
+field yn_mass sz_mass_10e14_msun
+field theta500 angular_radius_arcmin
+field dist distance_mpc
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,i1_f_ap,i2_f_ap,i3_f_ap,i4_f_ap+FROM+sage_lmc+WHERE+ra+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation sage_id
+field i1_f_ap flux_3_6um
+field i2_f_ap flux_4_5um
+field i3_f_ap flux_5_8um
+field i4_f_ap flux_8_0um
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,fluxj,fluxh,fluxk+FROM+sage_cat_irac+WHERE+ra+IS+NOT+NULL+AND+mag3_6<14+ORDER+BY+mag3_6+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_name
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+field fluxj j_band_flux_mJy
+field fluxh h_band_flux_mJy
+field fluxk k_band_flux_mJy
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field j_mag mag_j
+field h_mag mag_h
+field k_mag mag_k
+field ir1_mag mag_ir1
+field ir2_mag mag_ir2
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+designation,ra,dec,mag3_6,mag4_5,mag8_0+FROM+sage_cat_irac+WHERE+ra+IS+NOT+NULL+AND+dec<-65+AND+mag3_6<15+ORDER+BY+mag5_8+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_name
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag8_0 irac_8_0um_mag
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+target,ra,dec,mips_24_flux,mips_70_flux,mips_160_flux+FROM+spitzer.sings_mipssed_spec+WHERE+ra+IS+NOT+NULL+ORDER+BY+mips_70_flux+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field target galaxy_name
+field mips_24_flux flux_24um_mJy
+field mips_70_flux flux_70um_mJy
+field mips_160_flux flux_160um_mJy
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field name galaxy_name
+field dist distance_mpc
+field morph morphology
+field f3p6tot flux_3_6um
+field f4p5tot flux_4_5um
+field f5p8tot flux_5_8um
+field f8p0tot flux_8_0um
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',266.4,-29.0,2.0))=1
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field w3mpro mag_w3
+field w4mpro mag_w4
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,w3mpro,w4mpro,w3snr,w4snr,cc_flags+FROM+wise_allwise_p3as_psd+WHERE+ABS(dec-23.44*SIN(ra*3.14159265/180))<10+AND+w4snr>5+AND+w3mpro<8+ORDER+BY+w4mpro+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation wise_id
+field w3mpro w3_12um_mag
+field w4mpro w4_22um_mag
+field w3snr w3_snr
+field w4snr w4_snr
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field oid object_id
+field filterid filter_id
+field medianmag median_mag
+field magrms mag_rms
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+oid,ra,dec,filterid,medianmag,magrms,refmag+FROM+ztf_objects_dr20+WHERE+magrms%3E0.3+AND+ngoodobsrel%3E100
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field oid object_id
+field filterid filter_id
+field medianmag median_mag
+field magrms mag_rms
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
+ttl 86400
+force gravity
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field object_name neo_designation
+field abs_mag absolute_magnitude
+field diameter estimated_diameter_km
+field extended extended_object_flag
+field neo_flag near_earth_flag
+
+url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv&limit=5000
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_name
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+designation,+j_m,+h_m,+k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+ttl 604800
+force em
+at sun 1.0
+format votable
+map data
+field_in designation name
+field_in j_m mag_j
+field_in h_m mag_h
+field_in k_m mag_k
+lat_key ra
+lon_key dec
+
+url https://api.inaturalist.org/v1/observations?per_page=1
+ttl 300
+force em
+at sun 1.0
+field total_results biosphere_inaturalist_obs_count
+
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&per_page=20&order=desc&order_by=observed_on
+ttl 600
+force em
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in species_guess biosphere_inaturalist_nearby
+
+url https://api.inaturalist.org/v1/observations?per_page=1
+ttl 600
+force em
+at sun 1.0
+path total_results biosphere_inaturalist_observations_total
+
+url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&geojson=true
+ttl 1800
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field created_at submission_time
+field place_guess locality
+
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+ttl 3600
+force em
+at sun 1.0
+path total_results biosphere_fungi_observations
+
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+ttl 3600
+force em
+at sun 1.0
+field total_results biosphere_fungi_observations
+field species_count biosphere_fungi_species_count
+
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
+ttl 3600
+force em
+at sun 1.0
+field total_results biosphere_verified_observations
+
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
+ttl 3600
+force em
+at sun 1.0
+field total_results biosphere_observations
+
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field observed_on observation_date
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field observed_on observation_date
+
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=35&swlng=-10&nelat=70&nelng=40
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field observed_on observation_date
+field place_guess locality
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field observed_on observation_date
+field place_guess locality
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field observed_on observation_date
+field place_guess locality
