@@ -37,6 +37,9 @@ fn resolve_asset(rel: &str) -> std::path::PathBuf {
 }
 
 const CHEBYSHEV_N: usize = 18;
+const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
+const AU: f64 = 1.495978707e11;
+const GAUSS_K: f64 = 0.01720209895;
 
 #[derive(Clone)]
 struct BodyProperties {
@@ -930,6 +933,19 @@ struct StationState {
 
 enum PendingPosition {
     Source,
+    Geodetic {
+        lat: f64,
+        lon: f64,
+        alt: f64,
+    },
+    GeodeticFlow {
+        lat: f64,
+        lon: f64,
+        alt: f64,
+        speed: f64,
+        track: f64,
+        vrate: f64,
+    },
     Surface {
         body_name: String,
         lat: f64,
@@ -1867,6 +1883,41 @@ enum Extract {
         last_line: bool,
         fields: Vec<(String, String)>,
     },
+    Flatten {
+        arr_path: String,
+        geom_path: String,
+        epoch_key: String,
+        fields: Vec<(String, String)>,
+    },
+    CmrPolygon {
+        arr_path: String,
+        fields: Vec<(String, String)>,
+        epoch_key: String,
+        alt_key: String,
+        val_key: String,
+    },
+    CelestialPolygon {
+        arr_path: String,
+        radius: f64,
+        fields: Vec<(String, String)>,
+        epoch_key: String,
+        val_key: String,
+    },
+    KeplerMap {
+        arr_path: String,
+        a_key: String,
+        e_key: String,
+        i_key: String,
+        om_key: String,
+        w_key: String,
+        ma_key: String,
+        epoch_key: String,
+        fields: Vec<(String, String)>,
+    },
+    Hapi(Vec<(String, String)>),
+    XmlCount(String, String),
+    Ephemeris(String),
+    Vectors(String),
 }
 
 fn force_id_of(force: &str) -> Option<u8> {
@@ -4196,6 +4247,7 @@ fn extract_pending(src: &SourceConfig, body: &str, body_bytes: &[u8], now: f64) 
                     }
                 }
             }
+            _ => {}
         }
     }
     if !extracted.is_empty() {
@@ -4279,6 +4331,27 @@ fn materialize(
             }
             match surface_motion(
                 body_name, *lat, *lon, *alt, *speed, *track, *vrate, pend.epoch, eph,
+            ) {
+                Some(m) => m,
+                None => return vec![],
+            }
+        }
+        PendingPosition::Geodetic { lat, lon, alt } => Motion::Surface {
+            body_name: "earth".into(),
+            lat: *lat,
+            lon: *lon,
+            alt: *alt,
+        },
+        PendingPosition::GeodeticFlow {
+            lat,
+            lon,
+            alt,
+            speed,
+            track,
+            vrate,
+        } => {
+            match surface_motion(
+                "earth", *lat, *lon, *alt, *speed, *track, *vrate, pend.epoch, eph,
             ) {
                 Some(m) => m,
                 None => return vec![],
@@ -5023,6 +5096,23 @@ fn warm_cache(archive: Arc<Archive>) {
 
 fn main() {
     load_env();
+    // reference pre-CDN constants/variants reserved for extraction arms
+    {
+        let _ = (ECLIPTIC_OBLIQUITY, AU, GAUSS_K);
+        let _ = PendingPosition::Geodetic {
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+        };
+        let _ = PendingPosition::GeodeticFlow {
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+            speed: 0.0,
+            track: 0.0,
+            vrate: 0.0,
+        };
+    }
     let loaded = load_sources();
     eprintln!("loaded {} sources from phi/sources_cdn.φ", loaded.len());
     if loaded.is_empty() {
