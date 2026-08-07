@@ -280,3 +280,12 @@ note Station not found (404). Third-party coral.tsr.lol domain unreliable. NOAA 
 dead 404
 url https://coastwatch.noaa.gov/erddap/griddap/noaacrwdhwdaily.csv?degree_heating_week%5Blast%5D%5B-30:10:30%5D%5B-180:10:180%5D
 note DatasetID noaacrwdhwdaily unknown (404). CRW ERDDAP dataset IDs are versioned (e.g. CRW_sst_v2_0). Research current coastwatch.noaa.gov/erddap info/ dataset list for DHW dataset ID.
+decline model-forecast
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_500hPa,temperature_700hPa,temperature_850hPa,geopotential_height_500hPa&models=gfs&forecast_days=5&format=json
+note GFS model forecast output (pressure-level temperatures). Council: model forecasts DECLINE (no organism senses a weather model's output). Not a measurement. Also 'terra 1' frame keyword invalid.
+parser-def array-extract
+url https://data.sensor.community/airrohr/v1/filter/type=SEN5X
+note type=SEN5X returns 0 sensors (rare/legacy). Use type=SDS011 (18780 sensors, 8.2MB). But sensordatavalues is an array of {value_type,value} - needs array-index field extract (sensordatavalues.0.value with value_type=P1), current parser lacks this. Array Extract capability needed.
+dead 400
+url https://api.geonet.org.nz/strong-motion/site
+note strong-motion/site path invalid (400). Station registry anyway = metadata DECLINE. GeoNet working endpoints: api.geonet.org.nz/quake (FeatureCollection, coordinates=[lon,lat]) and volcano/val. Research correct station API if needed.
