@@ -12326,12 +12326,11 @@ at sun 1.0
 format universal
 rows
 lat_key lat
-lon_key long
   field name name
   field id id
   field fall fall
   field year year
-  field recclass recclass
+  field class class
   field mass mass
 
 url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
@@ -14333,12 +14332,14 @@ ttl 86400
 force em
 at sun 1
   field scalerank scalerank
+map features
 
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson
 ttl 86400
 force em
 at sun 1
   field scalerank scalerank
+map features
 
 url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
 ttl 86400
@@ -14610,8 +14611,6 @@ ttl 86400
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
   field properties.name name
 
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson
@@ -14619,8 +14618,6 @@ ttl 86400
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
   field properties.name name
 
 url https://service.earthscope.org/fdsnws/station/1/query?format=text&limit=50000
@@ -17214,20 +17211,6 @@ plx_key parallax
   field phot_g_mean_mag phot_g_mean_mag
   field bp_rp bp_rp
 
-url https://raw.githubusercontent.com/omegaflow/sources/main/gaia_wide_parallax4_mag11.json
-ttl 604800
-force em
-at sun 1.0
-cmap data
-tau_key _dist_m
-ra_key ra
-dec_key dec
-plx_key parallax
-  field phot_g_mean_mag phot_g_mean_mag
-  field bp_rp bp_rp
-  field ruwe ruwe
-  field mh_gspphot mh_gspphot
-
 url https://raw.githubusercontent.com/ofrohn/d3-celestial/master/data/constellations.bounds.json
 ttl 604800
 at sun 1.0
@@ -17332,18 +17315,6 @@ ra_key ra
 dec_key dec
 plx_key default_plx
   field sb_flux sb_flux
-
-url https://raw.githubusercontent.com/omegaflow/sources/main/global_landslide_catalog.json
-ttl 604800
-force gravity
-at sun 1.0
-map data
-lat_key latitude
-lon_key longitude
-epoch_key ev_date
-  field fatalities fatalities
-  field ev_id ev_id
-  field ls_size ls_size
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+nicermaster
 ttl 604800
@@ -18730,16 +18701,6 @@ map features
 lat_key geometry.coordinates.0.1
 lon_key geometry.coordinates.0.0
   field properties.name name
-
-url https://raw.githubusercontent.com/omegaflow/sources/main/ndbc_station_list.json
-ttl 604800
-force thermal
-at sun 1.0
-map data
-lat_key latitude
-lon_key longitude
-  field elevation_m elevation_m
-  field station_type station_type
 
 url https://raw.githubusercontent.com/Bowserinator/Periodic-Table-JSON/master/PeriodicTableJSON.json
 ttl 604800
