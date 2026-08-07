@@ -6314,7 +6314,38 @@ mod tests {
             ttl: None,
             tau: None,
         };
-        let eph = HashMap::new();
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let props = super::BodyProperties {
+            α0_deg: 317.68143,
+            dα0_dt_deg_per_century: -0.1061,
+            δ0_deg: 52.88650,
+            dδ0_dt_deg_per_century: -0.0609,
+            w0_deg: 176.630,
+            dw_dt_deg_per_day: 350.89198226,
+            radius_m: 3389500.0,
+            flattening: 0.00589,
+            v_sound: None,
+            v_seismic_p: None,
+            v_seismic_s: None,
+            alpha_thermal: None,
+            d_diffusion: None,
+            v_advective: None,
+        };
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let mars_eph = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![],
+            props: Some(props),
+        };
+        let mut eph = HashMap::new();
+        eph.insert("mars".to_string(), mars_eph);
         let mut origins = HashMap::new();
         let samples = super::materialize(&src, (0, 0, 0), None, pend, &mut origins, &eph);
         assert_eq!(samples.len(), 1, "expected one sample");
