@@ -4,7 +4,7 @@ All entries are session-sized — each group produces a complete, testable artif
 
 ---
 
-## Session 2: Touchpad / Touch Control (Item 6)
+## Session 2: Touchpad / Touch Control
 
 Isolated to `static/index.html`. One session.
 
