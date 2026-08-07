@@ -2200,7 +2200,7 @@ fn extract_header(s: &str, n: &str) -> Option<String> {
     None
 }
 
-fn fetch_one(
+fn fetch_raw(
     url: &str,
     body: Option<&str>,
     headers: &[(String, String)],
@@ -2232,6 +2232,29 @@ fn fetch_one(
     } else {
         None
     }
+}
+
+fn fetch_one(
+    url: &str,
+    body: Option<&str>,
+    headers: &[(String, String)],
+    ttl: u64,
+) -> Option<String> {
+    if !url.starts_with("https://github.com/omegaflow/sources") {
+        if let Some(netloc) = extract_netloc(url) {
+            let name = source_name_from_url(url);
+            if !name.is_empty() {
+                let cdn_url = format!(
+                    "https://github.com/omegaflow/sources/releases/download/{}/{}.json",
+                    netloc, name
+                );
+                if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl) {
+                    return Some(cdn_body);
+                }
+            }
+        }
+    }
+    fetch_raw(url, body, headers, ttl)
 }
 
 fn spawn_task_curl(
@@ -2766,7 +2789,7 @@ fn resolve_secret(url: &str) -> String {
 
 fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
-    for path in &["phi/sources_cdn.φ", "phi/sources_live.φ"] {
+    for path in &["phi/sources.φ"] {
         let content = match std::fs::read_to_string(path) {
             Ok(c) => c,
             Err(_) => continue,
@@ -5541,10 +5564,108 @@ fn warm_cache(archive: Arc<Archive>) {
                 let batch_dir =
                     std::path::PathBuf::from(format!("/tmp/of_pool_{}_{}", pid, swap_acc));
                 std::fs::create_dir_all(&batch_dir).ok();
+                let mut pre_filled: std::collections::HashSet<usize> =
+                    std::collections::HashSet::new();
+                for (n, (_i, _o, _r, url, _b, _h, ttl, _m)) in chunk_tasks.iter().enumerate() {
+                    if url.starts_with("https://github.com/omegaflow/sources") {
+                        continue;
+                    }
+                    if let Some(netloc) = extract_netloc(url) {
+                        let name = source_name_from_url(url);
+                        if !name.is_empty() {
+                            let cdn_url = format!(
+                                "https://github.com/omegaflow/sources/releases/download/{}/{}.json",
+                                netloc, name
+                            );
+                            if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], *ttl) {
+                                let body_file = batch_dir.join(format!("b_{}", n));
+                                std::fs::write(&body_file, cdn_body.as_bytes()).ok();
+                                pre_filled.insert(n);
+                            }
+                        }
+                    }
+                }
+                for n in pre_filled.iter() {
+                    let (src_idx, origin, region, _url, _body, _headers, ttl, _method) =
+                        chunk_tasks[*n].clone();
+                    let body_file = batch_dir.join(format!("b_{}", *n));
+                    let body_raw = std::fs::read_to_string(&body_file).ok();
+                    let _ = std::fs::remove_file(&body_file);
+                    let src = &ar.sources[src_idx];
+                    let mut origins = ar.origins.lock().unwrap_or_else(|e| e.into_inner());
+                    if body_raw.is_some() {
+                        let body = body_raw.as_deref().unwrap_or("");
+                        let entry = origins.entry(origin).or_default();
+                        entry.fetched = now;
+                        entry.ttl = ttl as f64;
+                        let body_bytes = body.as_bytes();
+                        let mut pendings: Option<Vec<PendingSample>> = None;
+                        if body_bytes.len() < 50 {
+                            entry.zero_yield += 1;
+                        } else {
+                            let result = extract_pending(src, body, now);
+                            match result {
+                                ExtractResult::WithEphemeris(samples, eph) => {
+                                    if let Some(ref bname) = src.body {
+                                        ar.body_ephemerides
+                                            .write()
+                                            .unwrap()
+                                            .insert(bname.clone(), eph);
+                                    }
+                                    pendings = Some(samples);
+                                }
+                                ExtractResult::Samples(v) => {
+                                    pendings = Some(v);
+                                }
+                            }
+                        }
+                        if let Some(pendings) = pendings {
+                            if pendings.is_empty() {
+                                let may_be_empty = src.extracts.iter().any(|e| {
+                                    matches!(
+                                        e,
+                                        Extract::Map { .. }
+                                            | Extract::GeojsonEvents { .. }
+                                            | Extract::CelestialMap { .. }
+                                            | Extract::Rows { .. }
+                                    )
+                                });
+                                if !may_be_empty {
+                                    let entry = origins.entry(origin).or_default();
+                                    entry.zero_yield += 1;
+                                }
+                            } else {
+                                origins.entry(origin).or_default().zero_yield = 0;
+                                let before = new_samples.len();
+                                let eph_map = ar.body_ephemerides.read().unwrap();
+                                for pend in pendings {
+                                    for smp in materialize(
+                                        src,
+                                        origin,
+                                        region,
+                                        pend,
+                                        &mut origins,
+                                        &eph_map,
+                                    ) {
+                                        new_samples.push(smp);
+                                    }
+                                }
+                                if new_samples.len() > before {
+                                    refreshed.insert(origin);
+                                }
+                            }
+                        }
+                    }
+                    drop(origins);
+                }
                 let mut children: Vec<(usize, std::process::Child)> = Vec::new();
                 let mut next = 0usize;
                 while next < chunk_tasks.len() || !children.is_empty() {
                     while children.len() < 32 && next < chunk_tasks.len() {
+                        if pre_filled.contains(&next) {
+                            next += 1;
+                            continue;
+                        }
                         if let Some(c) = spawn_task_curl(&batch_dir, next, &chunk_tasks[next]) {
                             children.push((next, c));
                         }
@@ -5817,7 +5938,7 @@ fn ci_mode_main() -> i32 {
             continue;
         }
         let body = src.post_body.as_deref();
-        let body_str = fetch_one(&src.url, body, &src.headers, src.ttl);
+        let body_str = fetch_raw(&src.url, body, &src.headers, src.ttl);
         match body_str {
             Some(ref b) => match extract_pending(src, b, now) {
                 ExtractResult::Samples(ref v) if v.is_empty() => {
@@ -5885,7 +6006,8 @@ fn extract_netloc(url: &str) -> Option<&str> {
     let after = url
         .strip_prefix("https://")
         .or_else(|| url.strip_prefix("http://"))?;
-    after.split('/').next()
+    let netloc = after.split('/').next()?;
+    Some(netloc.strip_prefix("www.").unwrap_or(netloc))
 }
 
 fn source_name_from_url(url: &str) -> String {
@@ -5950,10 +6072,10 @@ fn main() {
         };
     }
     let loaded = load_sources();
-    eprintln!("loaded {} sources from phi/sources_cdn.φ", loaded.len());
+    eprintln!("loaded {} sources from phi/sources.φ", loaded.len());
     if loaded.is_empty() {
         eprintln!(
-            "FATAL: zero sources loaded. Is phi/sources_cdn.φ present? cwd={:?}",
+            "FATAL: zero sources loaded. Is phi/sources.φ present? cwd={:?}",
             std::env::current_dir()
         );
     }
@@ -6684,7 +6806,7 @@ mod tests {
         let now = super::tdb_now();
         let mut ok = 0usize;
         let mut fail: Vec<(String, String)> = Vec::new();
-        let mut limit = 400usize;
+        let mut limit = 600usize;
         super::load_env();
         for s in srcs.iter() {
             let mut url = s.url.clone();
