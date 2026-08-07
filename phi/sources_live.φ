@@ -82,29 +82,7 @@ field_in 2 flux_long_wm2
 last flux solar_xray_flux_goes
 
 
-url https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json
-ttl 60
-force acoustic
-at sun 1.0
-map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field_in amplitude amplitude
-  field_in time time
-  field_in frequency frequency
-  field_in quality quality
 
-
-url https://api.blitzortung.org/compressed/current_positions?lat={lat}&lon={lon}&range=500
-ttl 60
-force em
-body earth
-verify false
-map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field_in utc utc
-  field_in peak peak
 
 
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
@@ -164,6 +142,7 @@ vr_key baro_rate
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 ttl 60
 force seismic-body
+body earth
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -177,7 +156,7 @@ lon_key geometry.coordinates.0
 url https://api.geonet.org.nz/quake?MMI=3
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -192,7 +171,7 @@ lon_key geometry.coordinates.0
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -202,17 +181,7 @@ lon_key geometry.coordinates.0
 field_in geometry.coordinates.2 depth
 
 
-url http://irsc.ut.ac.ir/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time&starttime={today}T00:00:00
-ttl 60
-force seismic-body
-at sun 1.0
-map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field_in properties.mag mag
-  field_in properties.place place
-  field_in properties.time time
-  field_in properties.depth depth
+
 
 
 url https://api.wolfx.jp/jma_eew.json
@@ -279,25 +248,13 @@ last current_int_xrlong solar_flare_intensity_wm2
 last current_class solar_flare_class
 
 
-url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=text&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
-ttl 60
-force seismic-body
-at sun 1.0
-map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field_in properties.mag mag
-  field_in properties.place place
-  field_in properties.time time
-  field_in properties.depth depth
-  field_in properties.magType magType
-  field_in properties.net net
+
 
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=1000&orderby=time&starttime={today}T00:00:00
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -320,7 +277,7 @@ geojson events properties.mag 0.0 seismic_magnitude_mw seismic_depth_m
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6&limit=50&orderby=time&eventtype=earthquake
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -336,7 +293,7 @@ field_in geometry.coordinates.2 depth
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -347,7 +304,7 @@ lon_key geometry.coordinates.0
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
 ttl 60
 force seismic-surface
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -358,7 +315,7 @@ lon_key geometry.coordinates.0
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&orderby=time
 ttl 60
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -377,7 +334,7 @@ depth_key geometry.coordinates.2
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=magnitude
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -391,8 +348,7 @@ field_in geometry.coordinates.2 depth
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
 ttl 60
 force seismic-surface
-on earth 39.749 -105.221
-  field properties.rms rms
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -430,7 +386,7 @@ last line magnetosphere_forecast_kp_max
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 ttl 60
 force seismic-body
-at sun 1.0
+on earth 0 0
 map .
 lat_key earthquake.hypocenter.latitude
 lon_key earthquake.hypocenter.longitude
@@ -473,19 +429,7 @@ last He magnetosphere_he_nt
 last total magnetosphere_bt_nt
 
 
-url https://earthquake.tmd.go.th/earthquake_json.php?limit=200
-ttl 120
-force seismic-body
-at sun 1.0
-map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field_in id id
-  field_in mag mag
-  field_in dep dep
-  field_in loc loc
-  field_in tm tm
-  field_in reg reg
+
 
 
 url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
@@ -512,60 +456,10 @@ url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&or
 ttl 300
 force gravity
 at sun 1.0
-map superevents
-  field_in superevent_id superevent_id
-  field_in t_0 t_0
-  field_in far far
-  field_in classification.BNS BNS
-  field_in classification.BBH BBH
-  field_in classification.NSBH NSBH
-  field_in classification.Terrestrial Terrestrial
-  field_in distance.mean mean
-  field_in distance.std std
-  field_in created created
+last superevents.far gw_superevent_latest_far
 
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
-ttl 300
-force em
-at sun 1.0
-format universal
-rows
-ra_key ra
-dec_key dec
-  field_in name name
-  field_in trigger_time trigger_time
-  field_in duration duration
-  field_in peak_flux peak_flux
-  field_in fluence fluence
-  field_in type type
 
-
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=50
-ttl 300
-force gravity
-at sun 1.0
-map data
-field_in 0 designation
-field_in 1 orbit_id
-field_in 3 close_approach_date
-field_in 4 distance_au
-field_in 5 distance_min_au
-field_in 7 velocity_km_s
-field_in 10 h_mag
-
-
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
-ttl 300
-at sun 1.0
-force em
-format universal
-
-
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&time.min=2026-07-01T00:00:00Z&time.max=2026-07-08T00:00:00Z&parameters=Time,BX_GSE,BY_GSE,BZ_GSE,flow_speed,proton_density,T,Pressure,SYM_H,AE_INDEX&format=json
-ttl 300
-force advective
-at sun 1.0
 
 
 url https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json
@@ -578,10 +472,10 @@ at sun 1.0
 url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
 ttl 300
 force diffusion
-at sun 1.0
+on earth 0 0
 map observations.data
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field_in local_date_time local_date_time
   field_in air_temp air_temp
   field_in rel_hum rel_hum
@@ -647,16 +541,16 @@ url https://opensky-network.org/api/states/all
 ttl 300
 force em
 on earth 0.0 0.0
-map ac
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field_in gs gs
-  field_in baro_rate baro_rate
-  field_in alt_baro alt_baro
-alt_key alt_baro
-vel_key gs
-trk_key track
-vr_key baro_rate
+map states
+lat_key 6
+lon_key 5
+  field_in 0 icao24
+  field_in 1 callsign
+  field_in 2 origin_country
+alt_key 7
+vel_key 9
+trk_key 10
+vr_key 11
 
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/0/query?where=1%3D1&outFields=value,value_2,parameter,city,country,lastUpdated&outSR=4326&f=geojson&resultRecordCount=5000
@@ -840,20 +734,7 @@ lon_key geometry.coordinates.0
 alt_key geometry.coordinates.2
 
 
-url https://www.emsc-csem.org/service/rss/rss.php?typ=felt&limit=100
-ttl 300
-force seismic-body
-at sun 1.0
-format text
-rows
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field_in title title
-  field_in description description
-  field_in pubDate pubDate
-  field_in georss:point georss:point
-  field_in emsc:magnitude emsc:magnitude
-  field_in emsc:depth emsc:depth
+
 
 
 url https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/Current_Wind_Speed/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
@@ -907,8 +788,8 @@ map features
   field_in attributes.AIR_TEMP AIR_TEMP
   field_in attributes.WIND_SPEED WIND_SPEED
   field_in attributes.WIND_DIR WIND_DIR
-lat_key attributes.lat
-lon_key attributes.lon
+lat_key geometry.y
+lon_key geometry.x
 
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42043/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr,sea_water_speed_1__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
@@ -1278,37 +1159,10 @@ lon_key geometry.coordinates.0
   field_in properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
 
 
-url https://api.wolfx.jp/jma_eqlist.json
-ttl 300
-force em
-at sun 1
-  field 1.latitude latitude
-  field 1.longitude longitude
-  field 1.magnitude magnitude
-  field 1.depth depth
-  field 1.time time
-  field 1.location location
-
-
-url https://tadas.afad.gov.tr/api/event/list?limit=200
-ttl 300
-force seismic-body
-at sun 1.0
-map .
-lat_key latitude
-lon_key longitude
-  field_in id id
-field_in magnitude magnitude
-  field_in depth depth
-  field_in location location
-  field_in event_date event_date
-  field_in type type
-
-
-url https://api.weather.gov/stations?state=CA,TX,NY&limit=500&cursor=&format=json
+url https://api.weather.gov/stations?state=CA,TX,NY&limit=500
 ttl 300
 force acoustic
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1318,51 +1172,28 @@ lon_key geometry.coordinates.0
   field_in properties.timeZone timeZone
 
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=omegaflow&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
 ttl 300
 force thermal
 on earth 40.7 -74.01
-map data
-  field_in t t
-  field_in v v
+last data.v atmosphere_air_temp_battery_c
 
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=omegaflow&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
 ttl 300
 force acoustic
 on earth 40.7 -74.01
-map data
-  field_in t t
-  field_in v v
-  field_in s s
-  field_in f f
-  field_in q q
+last data.v tide_height_battery_m_mllw
 
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&application=omegaflow&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
 ttl 300
 force thermal
 on earth 40.7 -74.01
-map data
-  field_in t t
-  field_in v v
+last data.v water_temp_battery_c
 
 
-url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ACTIVE.list.v04r00.csv
-ttl 300
-force acoustic
-at sun 1.0
-format universal
-map data
-lat_key LAT
-lon_key LON
-field_in NAME storm_name
-field_in SID storm_id
-field_in ISO_TIME timestamp_utc
-field_in WMO_WIND max_wind_kt
-field_in WMO_PRES min_pressure_hpa
-field_in DIST2LAND dist_to_land_km
-field_in SUBBASIN subbasin_code
+
 
 
 url https://www.ndbc.noaa.gov/data/realtime2/51407.dart
@@ -1372,20 +1203,6 @@ on earth 19.63 -156.49
 format universal
 rows
   last_row HEIGHT tsunami_buoy_51407_height_m
-
-url https://data.nasa.gov/docs/legacy/meteorite_landings/Meteorite_Landings.json
-ttl 86400
-force gravity
-on earth 0 0
-map .
-lat_key reclat
-lon_key reclong
-  field_in 8 name meteorite_name
-  field_in 11 recclass meteorite_class
-  field_in 12 mass_grams meteorite_mass_g
-  field_in 13 fall meteorite_fall_type
-  field_in 14 year meteorite_fall_year
-
 
 url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
 ttl 300
@@ -1429,47 +1246,10 @@ lon_key longitude
   field_in extent extent
 
 
-url https://api.weather.gov/alerts/active
-ttl 300
-force em
-at sun 1
-map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field_in properties.event event
-  field_in properties.severity severity
-  field_in properties.headline headline
-  field_in properties.areaDesc areaDesc
-  path latitude latitude
-  path longitude longitude
-  path current.weather_code weather_code
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field_in properties.urgency urgency
-  field_in properties.id id
-  field_in properties.certainty certainty
-  field_in properties.effective effective
-  field_in properties.expires expires
-  field_in properties.messageType messageType
-
-
-url https://api.weather.gov/alerts/active?event=Tsunami%20Warning
-ttl 300
-force gravity
-at sun 1
-map features
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
-  field_in properties.event event
-  field_in properties.severity severity
-  field_in properties.headline headline
-  field_in properties.areaDesc areaDesc
-
-
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.5&limit=100&orderby=time&producttype=aftershock-forecast
 ttl 300
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1484,7 +1264,7 @@ field_in geometry.coordinates.2 depth
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3.5&mindepth=300&limit=500&orderby=time&starttime={today}T00:00:00
 ttl 300
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1529,7 +1309,7 @@ depth_key geometry.coordinates.2
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.0&limit=100&orderby=time&producttype=pager
 ttl 300
 force seismic-body
-at sun 1.0
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -1574,24 +1354,13 @@ lon_key sourceInfo.geoLocation.geogLocation.longitude
   field_in values.0.value.0.value value
 
 
-url https://volcanoes.usgs.gov/hans-public/api/volcano/current
-ttl 300
-force seismic-surface
-at sun 1.0
-map .
-lat_key Latitude
-lon_key Longitude
-  field_in VolcanoID VolcanoID
-  field_in VolcanoName VolcanoName
-  field_in Level Level
-  field_in AviationColorCode AviationColorCode
-  field_in LastUpdated LastUpdated
+
 
 
 url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=00400,00095,00300,63680&siteStatus=active&bbox=-125,24,-66,50&siteType=ST
 ttl 300
 force diffusion
-at sun 1.0
+body earth
 map value.timeSeries
 lat_key sourceInfo.geoLocation.geogLocation.latitude
 lon_key sourceInfo.geoLocation.geogLocation.longitude
@@ -1603,15 +1372,12 @@ lon_key sourceInfo.geoLocation.geogLocation.longitude
 
 url https://www.ndbc.noaa.gov/data/realtime2/13002.txt
 ttl 300
-force acoustic
+force thermal
 on earth 21.0 -23.0
 format universal
-last_row WDIR hydrosphere_buoy_13002_wind_dir
-last_row WSPD hydrosphere_buoy_13002_wind_speed
-last_row WVHT hydrosphere_buoy_13002_wave_height
-last_row DPD hydrosphere_buoy_13002_dominant_period
-last_row PRES hydrosphere_buoy_13002_pressure
-last_row WTMP hydrosphere_buoy_13002_water_temp
+last_row ATMP hydrosphere_buoy_13002_air_temp_c
+last_row WTMP hydrosphere_buoy_13002_water_temp_c
+last_row PRES hydrosphere_buoy_13002_pressure_hpa
 
 
 url https://www.ndbc.noaa.gov/data/realtime2/14049.txt
@@ -1720,15 +1486,12 @@ last_row WTMP hydrosphere_buoy_31003_water_temp
 
 url https://www.ndbc.noaa.gov/data/realtime2/31006.txt
 ttl 300
-force acoustic
+force thermal
 on earth 4.0 -23.0
 format universal
-last_row WDIR hydrosphere_buoy_31006_wind_dir
-last_row WSPD hydrosphere_buoy_31006_wind_speed
-last_row WVHT hydrosphere_buoy_31006_wave_height
-last_row DPD hydrosphere_buoy_31006_dominant_period
-last_row PRES hydrosphere_buoy_31006_pressure
-last_row WTMP hydrosphere_buoy_31006_water_temp
+last_row ATMP hydrosphere_buoy_31006_air_temp_c
+last_row WTMP hydrosphere_buoy_31006_water_temp_c
+last_row PRES hydrosphere_buoy_31006_pressure_hpa
 
 
 url https://www.ndbc.noaa.gov/data/realtime2/31007.txt
@@ -2470,20 +2233,6 @@ last_row WVHT hydrosphere_buoy_42039_wave_height
 last_row DPD hydrosphere_buoy_42039_dominant_period
 last_row PRES hydrosphere_buoy_42039_pressure
 last_row WTMP hydrosphere_buoy_42039_water_temp
-
-
-url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
-ttl 300
-force acoustic
-on earth 29.22 -88.23
-tail
-format text
-field_in WDIR hydrosphere_buoy_42040_wind_dir
-field_in WSPD hydrosphere_buoy_42040_wind_speed
-field_in WVHT hydrosphere_buoy_42040_wave_height
-field_in DPD hydrosphere_buoy_42040_dominant_period
-field_in PRES hydrosphere_buoy_42040_pressure
-field_in WTMP hydrosphere_buoy_42040_water_temp
 
 
 url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
@@ -8138,17 +7887,7 @@ lat_key sourceInfo.geoLocation.geogLocation.latitude
 lon_key sourceInfo.geoLocation.geogLocation.longitude
 
 
-url https://volcanoes.usgs.gov/hans-public/api/volcano/list
-ttl 600
-force seismic-surface
-at sun 1.0
-map .
-lat_key Latitude
-lon_key Longitude
-  field_in VolcanoID VolcanoID
-  field_in VolcanoName VolcanoName
-  field_in Level Level
-  field_in AviationColorCode AviationColorCode
+
 
 
 url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto
@@ -10272,7 +10011,7 @@ format universal
 url https://geofon.gfz.de/fdsnws/event/1/query?format=geojson&minmag=3&limit=100&region=AFRICA
 ttl 3600
 force em
-at sun 1
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -10805,17 +10544,7 @@ lon_key geometry.coordinates.0
   field_in properties.volcanoName volcanoName
 
 
-url https://volcanoes.usgs.gov/hans-public/api/volcano/weekly
-ttl 3600
-force seismic-surface
-at sun 1.0
-map .
-lat_key Latitude
-lon_key Longitude
-  field_in VolcanoName VolcanoName
-  field_in ActivityCategory ActivityCategory
-  field_in StartDate StartDate
-  field_in EndDate EndDate
+
 
 
 url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_YearToDate/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&f=geojson&resultRecordCount=500
@@ -15259,7 +14988,7 @@ dist_key sy_dist 3.085677581e16
 url https://geofon.gfz.de/fdsnws/station/1/query?format=geojson&level=station&network=AF
 ttl 86400
 force em
-at sun 1
+on earth 0 0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
