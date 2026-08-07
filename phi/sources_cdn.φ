@@ -1443,19 +1443,6 @@ field event_x x_flare_prob_pct
 lat_key lat
 lon_key lon
 
-url https://github.com/omegaflow/sources/releases/download/api.weather.gov/nws_alerts_{latest}.json
-ttl 300
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.event weather_event_type
-field properties.severity alert_severity
-field properties.headline alert_headline
-field properties.areaDesc affected_area
-
-url https://github.com/omegaflow/sources/releases/download/api.weather.gov/nws_tsunami_warnings_{latest}.json
 ttl 300
 force gravity
 on earth 0 0
@@ -6952,7 +6939,7 @@ field_in AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/air_quality_full_{latest}.json
 ttl 600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -6966,7 +6953,7 @@ field current.ozone atmosphere_o3_ugm3
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/air_quality_trace_{latest}.json
 ttl 600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -6978,7 +6965,7 @@ field current.aerosol_optical_depth atmosphere_aerosol_optical_depth
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/air_quality_us_{latest}.json
 ttl 600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7024,7 +7011,7 @@ field validTimeTo valid_to_epoch
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/bom_observations_{latest}.json
 ttl 600
-force em
+force advective
 on earth -25.0 135.0
 field current.temperature_2m atmosphere_bom_temp_c
 field current.apparent_temperature atmosphere_bom_feels_like_c
@@ -7044,7 +7031,7 @@ field message atmosphere_bom_warning_message
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/jetstream_250hpa_{latest}.json
 ttl 600
-force em
+force advective
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7064,18 +7051,6 @@ field wspd atmosphere_metar_wind_kt
 field visib atmosphere_metar_visibility
 alt_key elev
 
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/nws_sigmet_{latest}.json
-ttl 600
-force em
-on earth 0 0
-map .
-lat_key lat
-lon_key lon
-field altitudeHi1 atmosphere_nws_sigmet_alt_hi_ft
-field movementDir atmosphere_nws_sigmet_movement_dir
-field movementSpd atmosphere_nws_sigmet_movement_spd_kt
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_airquality_full_{latest}.json
 ttl 600
 force diffusion
 at sun 1.0
@@ -7141,7 +7116,7 @@ path hourly.wind_speed_50hPa.0 atmosphere_wind_50hpa_ms
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_lightning_{latest}.json
 ttl 600
-force em
+force advective
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7150,7 +7125,7 @@ field minutely_15.lightning_potential atmosphere_openmeteo_lightning_potential
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_thunderstorm_{latest}.json
 ttl 600
-force em
+force advective
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7160,7 +7135,7 @@ field daily.wind_gusts_10m_max.0 atmosphere_wind_gust_max_ms
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_visibility_{latest}.json
 ttl 600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7171,7 +7146,7 @@ path current.is_day atmosphere_is_day
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_weather_{latest}.json
 ttl 600
-force em
+force advective
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7186,28 +7161,15 @@ field current.precipitation atmosphere_precipitation_mm
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_weather_alerts_{latest}.json
 ttl 600
-force em
+force advective
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
 path longitude atmosphere_lon
 path current.weather_code atmosphere_openmeteo_weather_code
 
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_weather_alerts_us_{latest}.json
 ttl 600
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.event atmosphere_alert_event
-field properties.severity atmosphere_alert_severity
-field properties.urgency atmosphere_alert_urgency
-field properties.areaDesc atmosphere_alert_area
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_weather_current_{latest}.json
-ttl 600
-force em
+force advective
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7220,7 +7182,7 @@ path current.wind_speed_10m atmosphere_wind_speed_ms
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_weather_evapotranspiration_{latest}.json
 ttl 600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7234,7 +7196,7 @@ path current.showers atmosphere_showers_mm
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/pressure_levels_{latest}.json
 ttl 600
-force em
+force advective
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7246,7 +7208,7 @@ path current.geopotential_height_850hPa atmosphere_geopotential_850hpa_m
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/wind_heights_{latest}.json
 ttl 600
-force em
+force advective
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7270,7 +7232,7 @@ path current.pressure_msl atmosphere_pressure_msl_hpa
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_nearby_species_{latest}.json
 ttl 600
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -7279,13 +7241,13 @@ field species biosphere_species_nearby
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_recent_birds_{latest}.json
 ttl 600
-force em
+force biotic
 on earth 55.685000 12.571000
 field count biosphere_bird_count
 
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_nearby_{latest}.json
 ttl 600
-force em
+force biotic
 on earth 0 0
 map results
 lat_key lat
@@ -7294,7 +7256,7 @@ field species_guess biosphere_inaturalist_observations_nearby
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_snowfall_{latest}.json
 ttl 600
-force em
+force advective
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7304,7 +7266,7 @@ path current.snow_depth cryosphere_snow_depth_m
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/snow_depth_{latest}.json
 ttl 600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7659,27 +7621,8 @@ lon_key lon
 field time_tag xray_time_utc
 field flux xray_flux_W_m2
 
-url https://github.com/omegaflow/sources/releases/download/api.weather.gov/noaa_weather_alerts_{latest}.json
 ttl 600
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.id alert_id
-field properties.event alert_event_type
-field properties.headline alert_headline
-field properties.severity alert_severity
-field properties.certainty alert_certainty
-field properties.urgency alert_urgency
-field properties.areaDesc affected_area
-field properties.effective effective_time
-field properties.expires expiration_time
-field properties.messageType message_type
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/soil_current_{latest}.json
-ttl 600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7821,7 +7764,7 @@ field AviationColorCode aviation_color
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/global_evapotranspiration_mm_{latest}.json
 ttl 600
-force em
+force diffusion
 at sun 1
 last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
 
@@ -7844,7 +7787,7 @@ field_in 17 water_temp_c
 
 url https://github.com/omegaflow/sources/releases/download/marine-api.open-meteo.com/openmeteo_marine_{latest}.json
 ttl 600
-force em
+force acoustic
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7855,7 +7798,7 @@ field current.wave_period hydrosphere_wave_period_s
 
 url https://github.com/omegaflow/sources/releases/download/marine-api.open-meteo.com/openmeteo_marine_ocean_{latest}.json
 ttl 600
-force em
+force advective
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -7867,7 +7810,7 @@ path current.sea_level_height_msl hydrosphere_sea_level_msl_m
 
 url https://github.com/omegaflow/sources/releases/download/marine-api.open-meteo.com/openmeteo_marine_waves_{latest}.json
 ttl 600
-force em
+force acoustic
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -8128,22 +8071,6 @@ field AOD_440nm aod_440nm
 field AOD_500nm aod_500nm
 field AOD_870nm aod_870nm
 
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/aviation_tafs_{latest}.json
-ttl 1800
-force em
-at sun 1
-map
-lat_key lat
-lon_key lon
-field icaoId station_icao
-field rawTAF raw_taf_text
-field issueTime issue_time
-field validTimeFrom valid_from_epoch
-field validTimeTo valid_to_epoch
-field name station_name
-field elev station_elevation_m
-
-url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/metar_africa_mideast_bbox_{latest}.json
 ttl 1800
 force acoustic
 on earth 0 0
@@ -8897,7 +8824,7 @@ field line2 tle_line2
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_vesta_vectors_{latest}.json
 ttl 3600
 at sun 1.0
-force em
+force gravity
 format universal
 extent 1.76e-6
 
@@ -9065,7 +8992,7 @@ field Total_Optical_Depth_500nm tot_od_500nm
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/aerosol_optical_depth_{latest}.json
 ttl 3600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
 path latitude atmosphere_lat
@@ -9077,7 +9004,7 @@ path current.pm10 atmosphere_pm10_ugm3
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_amazon_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth -3.47 -62.22
 path current.temperature_2m atmosphere_biome_amazon_temp_c
 path current.precipitation atmosphere_biome_amazon_precip_mm
@@ -9092,7 +9019,7 @@ path daily.sunshine_duration.0 atmosphere_biome_amazon_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_antarctic_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth -80.0 100.0
 path current.temperature_2m atmosphere_biome_antarctic_temp_c
 path current.precipitation atmosphere_biome_antarctic_precip_mm
@@ -9107,7 +9034,7 @@ path daily.sunshine_duration.0 atmosphere_biome_antarctic_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_atacama_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth -24.0 -69.5
 path current.temperature_2m atmosphere_biome_atacama_temp_c
 path current.precipitation atmosphere_biome_atacama_precip_mm
@@ -9122,7 +9049,7 @@ path daily.sunshine_duration.0 atmosphere_biome_atacama_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_borneo_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 0.5 114.0
 path current.temperature_2m atmosphere_biome_borneo_temp_c
 path current.precipitation atmosphere_biome_borneo_precip_mm
@@ -9137,7 +9064,7 @@ path daily.sunshine_duration.0 atmosphere_biome_borneo_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_cairo_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 30.0 31.0
 path current.temperature_2m atmosphere_biome_cairo_temp_c
 path current.precipitation atmosphere_biome_cairo_precip_mm
@@ -9152,7 +9079,7 @@ path daily.sunshine_duration.0 atmosphere_biome_cairo_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_cape_town_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth -34.0 18.5
 path current.temperature_2m atmosphere_biome_cape_town_temp_c
 path current.precipitation atmosphere_biome_cape_town_precip_mm
@@ -9167,7 +9094,7 @@ path daily.sunshine_duration.0 atmosphere_biome_cape_town_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_congo_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 0.0 18.0
 path current.temperature_2m atmosphere_biome_congo_temp_c
 path current.precipitation atmosphere_biome_congo_precip_mm
@@ -9182,7 +9109,7 @@ path daily.sunshine_duration.0 atmosphere_biome_congo_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_death_valley_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 36.5 -117.0
 path current.temperature_2m atmosphere_biome_death_valley_temp_c
 path current.precipitation atmosphere_biome_death_valley_precip_mm
@@ -9197,7 +9124,7 @@ path daily.sunshine_duration.0 atmosphere_biome_death_valley_sunshine_yesterday_
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_fiji_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth -18.0 178.0
 path current.temperature_2m atmosphere_biome_fiji_temp_c
 path current.precipitation atmosphere_biome_fiji_precip_mm
@@ -9212,7 +9139,7 @@ path daily.sunshine_duration.0 atmosphere_biome_fiji_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_gobi_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 44.0 105.0
 path current.temperature_2m atmosphere_biome_gobi_temp_c
 path current.precipitation atmosphere_biome_gobi_precip_mm
@@ -9227,7 +9154,7 @@ path daily.sunshine_duration.0 atmosphere_biome_gobi_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_greenland_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 72.0 -40.0
 path current.temperature_2m atmosphere_biome_greenland_temp_c
 path current.precipitation atmosphere_biome_greenland_precip_mm
@@ -9242,7 +9169,7 @@ path daily.sunshine_duration.0 atmosphere_biome_greenland_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_iceland_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 64.0 -19.0
 path current.temperature_2m atmosphere_biome_iceland_temp_c
 path current.precipitation atmosphere_biome_iceland_precip_mm
@@ -9257,7 +9184,7 @@ path daily.sunshine_duration.0 atmosphere_biome_iceland_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_kerguelen_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth -49.5 69.5
 path current.temperature_2m atmosphere_biome_kerguelen_temp_c
 path current.precipitation atmosphere_biome_kerguelen_precip_mm
@@ -9272,7 +9199,7 @@ path daily.sunshine_duration.0 atmosphere_biome_kerguelen_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_maldives_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 3.0 73.0
 path current.temperature_2m atmosphere_biome_maldives_temp_c
 path current.precipitation atmosphere_biome_maldives_precip_mm
@@ -9287,7 +9214,7 @@ path daily.sunshine_duration.0 atmosphere_biome_maldives_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_okavango_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth -19.5 23.5
 path current.temperature_2m atmosphere_biome_okavango_temp_c
 path current.precipitation atmosphere_biome_okavango_precip_mm
@@ -9302,7 +9229,7 @@ path daily.sunshine_duration.0 atmosphere_biome_okavango_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_patagonia_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth -50.0 -72.0
 path current.temperature_2m atmosphere_biome_patagonia_temp_c
 path current.precipitation atmosphere_biome_patagonia_precip_mm
@@ -9317,7 +9244,7 @@ path daily.sunshine_duration.0 atmosphere_biome_patagonia_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_sahara_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 23.0 5.0
 path current.temperature_2m atmosphere_biome_sahara_temp_c
 path current.precipitation atmosphere_biome_sahara_precip_mm
@@ -9332,7 +9259,7 @@ path daily.sunshine_duration.0 atmosphere_biome_sahara_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_siberia_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 62.0 105.0
 path current.temperature_2m atmosphere_biome_siberia_temp_c
 path current.precipitation atmosphere_biome_siberia_precip_mm
@@ -9347,7 +9274,7 @@ path daily.sunshine_duration.0 atmosphere_biome_siberia_sunshine_yesterday_s
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_tibet_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 32.0 86.0
 path current.temperature_2m atmosphere_biome_tibet_temp_c
 path current.precipitation atmosphere_biome_tibet_precip_mm
@@ -9360,68 +9287,36 @@ path daily.temperature_2m_min.0 atmosphere_biome_tibet_temp_min_yesterday_c
 path daily.precipitation_sum.0 atmosphere_biome_tibet_precip_yesterday_mm
 path daily.sunshine_duration.0 atmosphere_biome_tibet_sunshine_yesterday_s
 
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/bom_forecast_daily_{latest}.json
-ttl 3600
-force em
-on earth -25.0 135.0
-path daily.0 atmosphere_bom_forecast_data
-field daily.temperature_2m_max.0 atmosphere_bom_forecast_max_temp
-field daily.temperature_2m_min.0 atmosphere_bom_forecast_min_temp
-field daily.precipitation_sum.0 atmosphere_bom_forecast_precip_mm
-field daily.uv_index_max.0 atmosphere_bom_forecast_uv_index
-
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/co2_current_{latest}.json
 ttl 3600
-force em
+force diffusion
 on earth 19.5 -155.6
 path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm
 
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/co2_mauna_loa_{latest}.json
 ttl 3600
-force em
+force diffusion
 on earth 19.5362 -155.5763 3397
 format universal
 last_row (ppm) atmosphere_co2_weekly_ppm
 
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/daily_forecast_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path daily.temperature_2m_max.0 atmosphere_daily_temp_max_c
-path daily.temperature_2m_min.0 atmosphere_daily_temp_min_c
-path daily.precipitation_probability_max.0 atmosphere_daily_precip_prob_pct
-path daily.windspeed_10m_max.0 atmosphere_daily_wind_max_kms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/ensemble_forecast_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path daily.temperature_2m_max.0 atmosphere_ensemble_temp_max_c
-path daily.precipitation_sum.0 atmosphere_ensemble_precip_mm
-
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/gml_methane_{latest}.json
 ttl 3600
-force em
+force diffusion
 at sun 1
 format universal
 last_row average atmosphere_gml_methane_global_ppb
 
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/gml_n2o_{latest}.json
 ttl 3600
-force em
+force diffusion
 at sun 1
 format universal
 last_row average atmosphere_gml_n2o_global_ppb
 
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/gwis_sf6_{latest}.json
 ttl 3600
-force em
+force diffusion
 at sun 1
 format universal
 last_row average atmosphere_gwis_sf6_global_ppt
@@ -9434,28 +9329,6 @@ field solarterrestrialdata.solarflux.sflux atmosphere_hf_solar_flux_sfi
 field solarterrestrialdata.solarflux.Aindex atmosphere_hf_a_index
 field solarterrestrialdata.solarflux.Kindex atmosphere_hf_k_index
 field solarterrestrialdata.solarflux.MUF atmosphere_hf_muf_estimated
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/marine_daily_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path daily.wave_height_max.0 atmosphere_marine_wave_height_max_m
-path daily.wave_period_max.0 atmosphere_marine_wave_period_max_s
-path daily.swell_wave_height_max.0 atmosphere_marine_swell_height_max_m
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/marine_sst_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path current.sea_surface_temperature atmosphere_marine_sst_c
-path current.wave_height atmosphere_marine_wave_height_m
-path current.swell_wave_height atmosphere_marine_swell_height_m
 
 url https://github.com/omegaflow/sources/releases/download/aviationweather.gov/metar_polar_regions_{latest}.json
 ttl 3600
@@ -9563,18 +9436,6 @@ map hourly.time
 field hourly.temperature_2m temp_2m_c
 field hourly.precipitation precipitation_mm
 field hourly.windspeed_10m wind_speed_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/open_meteo_ecmwf_ifs_clouds_{latest}.json
-ttl 3600
-force em
-on earth 0 0
-map hourly.time
-lat_key lat
-lon_key lon
-field hourly.cloudcover cloud_cover_pct
-field hourly.shortwave_radiation sw_radiation_wm2
-field hourly.direct_radiation direct_rad_wm2
-field hourly.diffuse_radiation diffuse_rad_wm2
 
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=et0_fao_evapotranspiration,precipitation,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm&models=era5_seamless&forecast_days=1&format=json
 ttl 3600
@@ -9769,115 +9630,6 @@ map results
 lat_key lat
 lon_key lon
 
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_bom_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path hourly.temperature_2m.0 atmosphere_bom_om_temp_c
-path hourly.relative_humidity_2m.0 atmosphere_bom_om_humidity_pct
-path hourly.precipitation.0 atmosphere_bom_om_precip_mm
-path hourly.wind_speed_10m.0 atmosphere_bom_om_wind_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_cma_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path hourly.temperature_2m.0 atmosphere_cma_om_temp_c
-path hourly.relative_humidity_2m.0 atmosphere_cma_om_humidity_pct
-path hourly.precipitation.0 atmosphere_cma_om_precip_mm
-path hourly.pressure_msl.0 atmosphere_cma_om_pressure_hpa
-path hourly.wind_speed_10m.0 atmosphere_cma_om_wind_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_dwd_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path hourly.temperature_2m.0 atmosphere_dwd_om_temp_c
-path hourly.relative_humidity_2m.0 atmosphere_dwd_om_humidity_pct
-path hourly.precipitation.0 atmosphere_dwd_om_precip_mm
-path hourly.wind_speed_10m.0 atmosphere_dwd_om_wind_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_ecmwf_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path hourly.temperature_2m.0 atmosphere_ecmwf_om_temp_c
-path hourly.relative_humidity_2m.0 atmosphere_ecmwf_om_humidity_pct
-path hourly.precipitation.0 atmosphere_ecmwf_om_precip_mm
-path hourly.wind_speed_10m.0 atmosphere_ecmwf_om_wind_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_gem_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path hourly.temperature_2m.0 atmosphere_gem_om_temp_c
-path hourly.relative_humidity_2m.0 atmosphere_gem_om_humidity_pct
-path hourly.precipitation.0 atmosphere_gem_om_precip_mm
-path hourly.wind_speed_10m.0 atmosphere_gem_om_wind_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_jma_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path hourly.temperature_2m.0 atmosphere_jma_om_temp_c
-path hourly.relative_humidity_2m.0 atmosphere_jma_om_humidity_pct
-path hourly.precipitation.0 atmosphere_jma_om_precip_mm
-path hourly.wind_speed_10m.0 atmosphere_jma_om_wind_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_kma_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path hourly.temperature_2m.0 atmosphere_kma_om_temp_c
-path hourly.relative_humidity_2m.0 atmosphere_kma_om_humidity_pct
-path hourly.precipitation.0 atmosphere_kma_om_precip_mm
-path hourly.wind_speed_10m.0 atmosphere_kma_om_wind_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_meteofrance_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path hourly.temperature_2m.0 atmosphere_meteofrance_om_temp_c
-path hourly.relative_humidity_2m.0 atmosphere_meteofrance_om_humidity_pct
-path hourly.precipitation.0 atmosphere_meteofrance_om_precip_mm
-path hourly.wind_speed_10m.0 atmosphere_meteofrance_om_wind_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/openmeteo_metno_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path hourly.temperature_2m.0 atmosphere_metno_om_temp_c
-path hourly.relative_humidity_2m.0 atmosphere_metno_om_humidity_pct
-path hourly.precipitation.0 atmosphere_metno_om_precip_mm
-path hourly.wind_speed_10m.0 atmosphere_metno_om_wind_ms
-
 url https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&formatted=0
 ttl 3600
 force em
@@ -9962,7 +9714,7 @@ path current.uv_index_clear_sky atmosphere_uv_index_clear_sky
 
 url https://github.com/omegaflow/sources/releases/download/api.coral.tsr.lol/coral_bleach_southeast_florida_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 26.100 -80.100
 field current.dhw biosphere_coral_dhw_florida
 field current.baa_7day_max biosphere_coral_alert_florida
@@ -9970,7 +9722,7 @@ field current.ssta_90th_hs biosphere_coral_ssta_florida
 
 url https://github.com/omegaflow/sources/releases/download/api.gbif.org/ebird_recent_{latest}.json
 ttl 3600
-force em
+force biotic
 on earth 0 0
 map .
 lat_key lat
@@ -9979,15 +9731,9 @@ field speciesCode ebird_species_code
 field howMany ebird_observation_count
 field obsDt ebird_obs_time
 
-url https://github.com/omegaflow/sources/releases/download/api.energy-charts.info/entsoe_energy_{latest}.json
-ttl 3600
-force em
-on earth 51.0 10.0
-last price biosphere_electricity_price_eur_mwh
-
 url https://github.com/omegaflow/sources/releases/download/eonet.gsfc.nasa.gov/eonet_volcanoes_{latest}.json
 ttl 3600
-force em
+force seismic-surface
 on earth 0 0
 map events
 lat_key lat
@@ -10033,7 +9779,7 @@ field stateProvince region
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_bird_hotspots_{latest}.json
 ttl 3600
-force em
+force biotic
 on earth 42.4809 -76.4527
 field count biosphere_birding_hotspots
 
@@ -10106,7 +9852,7 @@ depth_key coordinatePrecision
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_occurrences_{latest}.json
 ttl 3600
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -10157,12 +9903,6 @@ dec_key decimalLongitude
 field species species_name
 field iucnRedListCategory iucn_category
 
-url https://github.com/omegaflow/sources/releases/download/govtrack.us/govtrack_votes_{latest}.json
-ttl 3600
-force em
-on earth 38.9 -77.0
-field meta.total_count biosphere_legislation_votes
-
 url https://github.com/omegaflow/sources/releases/download/meta.icos-cp.eu/icos_carbon_portal_co2_station_data_{latest}.json
 ttl 3600
 force diffusion
@@ -10177,7 +9917,7 @@ field stType.value station_type
 
 url https://github.com/omegaflow/sources/releases/download/api.inaturalist.org/inaturalist_observations_{latest}.json
 ttl 3600
-force em
+force biotic
 on earth 47.3769 8.5417
 field total_results biosphere_observations
 
@@ -10216,16 +9956,9 @@ field place_guess locality
 
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_fungi_{latest}.json
 ttl 3600
-force em
+force biotic
 on earth 47.3769 8.5417
 path total_results biosphere_fungi_observations
-
-url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_fungi_count_{latest}.json
-ttl 3600
-force em
-on earth 47.3769 8.5417
-field total_results biosphere_fungi_observations
-field species_count biosphere_fungi_species_count
 
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_fungi_global_{latest}.json
 ttl 3600
@@ -10298,7 +10031,7 @@ field place_guess locality
 
 url https://github.com/omegaflow/sources/releases/download/inaturalist.org/inaturalist_observations_verified_{latest}.json
 ttl 3600
-force em
+force biotic
 on earth 47.3769 8.5417
 field total_results biosphere_verified_observations
 
@@ -10379,7 +10112,7 @@ path daily.shortwave_radiation_sum.0 paleoclimate_shortwave_yesterday_mjm2
 
 url https://github.com/omegaflow/sources/releases/download/eonet.gsfc.nasa.gov/satnogs_wildfires_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 0 0
 map events
 lat_key lat
@@ -10424,7 +10157,7 @@ last dst exosphere_dst_nt
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/interstellar_object_tracking_{latest}.json
 ttl 3600
 at sun 1.0
-force em
+force gravity
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/kp_index_{latest}.json
@@ -10531,7 +10264,7 @@ lon_key attributes.lon
 
 url https://github.com/omegaflow/sources/releases/download/services9.arcgis.com/esri_monitored_volcanos_{latest}.json
 ttl 3600
-force em
+force seismic-surface
 on earth 0 0
 map features
 field attributes.Volcano_Name name
@@ -10624,7 +10357,7 @@ field confidence fire_confidence
 
 url https://github.com/omegaflow/sources/releases/download/seismic-api.science.unimelb.edu.au/ga_earthquakes_month_{latest}.json
 ttl 3600
-force em
+force seismic-body
 on earth 0 0
 map features
 lat_key lat
@@ -10654,7 +10387,7 @@ field 8 rake_deg
 
 url https://github.com/omegaflow/sources/releases/download/api.geonet.org.nz/geonet_volcanoes_{latest}.json
 ttl 3600
-force em
+force seismic-surface
 on earth 0 0
 header Accept application/vnd.geo+json;version=2
 map features
@@ -10666,20 +10399,9 @@ field properties.level geosphere_geonet_alert_level
 field properties.aviationColourCode geosphere_geonet_aviation_code
 field properties.activity geosphere_geonet_volcano_activity
 
-url https://github.com/omegaflow/sources/releases/download/eonet.gsfc.nasa.gov/natural_events_{latest}.json
-ttl 3600
-force em
-on earth 0 0
-map events
-lat_key lat
-lon_key lon
-field title eonet_event_title
-field categories.0.title event_category
-field id eonet_event_id
-
 url https://github.com/omegaflow/sources/releases/download/services3.arcgis.com/nifc_fires_{latest}.json
 ttl 3600
-force em
+force thermal
 on earth 0 0
 map features
 lat_key lat
@@ -10753,7 +10475,7 @@ field subregion subregion
 
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/noaa_estimated_kp_{latest}.json
 ttl 3600
-force em
+force gravity
 map
 on earth 55.0 0.0
 field time_tag observation_time
@@ -10915,30 +10637,6 @@ field updated forecast_update_time
 field units forecast_units
 field generatedAt generation_time
 
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/soil_moisture_profile_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path current.soil_moisture_0_to_7cm geosphere_soil_moisture_surface_m3m3
-path current.soil_moisture_7_to_28cm geosphere_soil_moisture_shallow_m3m3
-path current.soil_moisture_28_to_100cm geosphere_soil_moisture_deep_m3m3
-path current.soil_moisture_100_to_255cm geosphere_soil_moisture_bedrock_m3m3
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/soil_temperature_profile_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-path current.soil_temperature_0cm geosphere_soil_temp_surface_c
-path current.soil_temperature_6cm geosphere_soil_temp_6cm_c
-path current.soil_temperature_18cm geosphere_soil_temp_18cm_c
-path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
-
 url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
 ttl 3600
 force diffusion
@@ -10985,7 +10683,7 @@ field properties.mag geosphere_quake_mag
 
 url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_earthquakes_usgs_all_month_{latest}.json
 ttl 3600
-force em
+force seismic-body
 on earth 0 0
 map features
 lat_key lat
@@ -11094,7 +10792,7 @@ field properties.Area area_km2
 
 url https://github.com/omegaflow/sources/releases/download/erddap.aoml.noaa.gov/drifters_hourly_{latest}.json
 ttl 3600
-force em
+force advective
 on earth 0 0
 map table.rows
 lat_key 0
@@ -11103,7 +10801,7 @@ field_in 2 hydrosphere_drifter_sst_k
 
 url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/erddap_smartbay_spl_{latest}.json
 ttl 3600
-force em
+force acoustic
 on earth 42.62682 -8.78233
 format universal
 last_row TotalSPL hydrosphere_sound_pressure_db
@@ -11371,15 +11069,6 @@ on earth 44.104 -69.109
 format universal
 last_row navd88_meters hydrosphere_tide_level_m
 
-url https://github.com/omegaflow/sources/releases/download/flood-api.open-meteo.com/openmeteo_flood_{latest}.json
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-first river_discharge hydrosphere_river_discharge_m3s
-
 url https://github.com/omegaflow/sources/releases/download/pegelonline.wsv.de/pegelonline_water_level_{latest}.json
 ttl 3600
 force gravity
@@ -11451,12 +11140,6 @@ field_in respondent-name eia_grid_respondent
 field_in value eia_grid_demand_mw
 field_in period eia_grid_period
 
-url https://github.com/omegaflow/sources/releases/download/services.nvd.nist.gov/nvd_cve_count_{latest}.json
-ttl 3600
-force em
-on earth 38.9072 -77.0369
-field totalResults biosphere_cyber_vulnerability_count_nvd
-
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
 ttl 10800
 force thermal
@@ -11466,19 +11149,6 @@ rows
 lat_key 1
 lon_key 2
 field_in 7 atmosphere_aeronet_aod_500nm
-
-url https://github.com/omegaflow/sources/releases/download/db.satnogs.org/satellite_satnogs_active_{latest}.json
-ttl 14400
-force em
-on earth 0 0
-map .
-lat_key lat
-lon_key lon
-field tle0 satellite_name
-field tle1 satellite_tle_line1
-field tle2 satellite_tle_line2
-field norad_cat_id satellite_norad_id
-field tle_source satellite_tle_source
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
 ttl 21600
@@ -11523,7 +11193,7 @@ field_in sst hydrosphere_cmems_sst_c
 
 url https://github.com/omegaflow/sources/releases/download/hpiers.obspm.fr/iers_eop_bulletinb_{latest}.json
 ttl 43200
-force em
+force gravity
 at sun 1.0
 format universal
 pos 0 0
@@ -11666,7 +11336,7 @@ field class dynamical_class
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/asteroids_positions_{latest}.json
 ttl 86400
 at sun 1.0
-force em
+force gravity
 format universal
 field H cosmic_asteroid_h_mag
 epoch_key epoch
@@ -12036,7 +11706,7 @@ format ephemeris_binary
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/halley_vectors_{latest}.json
 ttl 86400
-force em
+force gravity
 on earth 34.201 -118.171
 extent 3.34e-8
 
@@ -12640,7 +12310,7 @@ dist_key dist
 
 url https://github.com/omegaflow/sources/releases/download/hpiers.obspm.fr/iers_eop_bulletinb_daily_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 1.0
 format universal
 pos 0 0
@@ -12667,7 +12337,7 @@ field 6 deps deps_arcsec
 
 url https://github.com/omegaflow/sources/releases/download/maia.usno.navy.mil/iers_ut1_utc_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 1
 last_line geosphere_ut1_utc_iers
 
@@ -13216,7 +12886,7 @@ field 6 vz_au_day
 
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/jpl_sbdb_{latest}.json
 ttl 86400
-force em
+force gravity
 on earth 0 0
 verify false
 target Ceres
@@ -13410,7 +13080,7 @@ format ephemeris_binary
 
 url https://github.com/omegaflow/sources/releases/download/mars.nasa.gov/mars_weather_{latest}.json
 ttl 86400
-force em
+force thermal
 path soles.0.min_temp cosmos_mars_min_temp_c
 path soles.0.max_temp cosmos_mars_max_temp_c
 path soles.0.pressure cosmos_mars_pressure_pa
@@ -13525,13 +13195,6 @@ field year fall_year
 field recclass meteorite_class
 field mass mass_grams
 
-url https://github.com/omegaflow/sources/releases/download/aa.usno.navy.mil/moon_phase_{latest}.json
-ttl 86400
-force em
-on earth 34.201 -118.171
-path properties.data.curphase cosmic_moon_phase
-path properties.data.fracillum cosmic_moon_illumination_pct
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_moon.bin
 ttl 86400
 body moon
@@ -13550,46 +13213,6 @@ dec_key Dec
 field designation designation
 field H absolute_mag
 field G slope_param
-
-url https://github.com/omegaflow/sources/releases/download/cmr.earthdata.nasa.gov/nasa_cmr_gedi_footprints_{latest}.json
-ttl 86400
-at sun 1.0
-force em
-format universal
-field time_start footprint_time_start
-field time_end footprint_time_end
-field dataset_id footprint_dataset_id
-field producer_granule_id footprint_granule_id
-
-url https://github.com/omegaflow/sources/releases/download/cmr.earthdata.nasa.gov/nasa_cmr_icesat2_atl06_footprints_{latest}.json
-ttl 86400
-at sun 1.0
-force em
-format universal
-field time_start footprint_time_start
-field time_end footprint_time_end
-field dataset_id footprint_dataset_id
-field producer_granule_id footprint_granule_id
-
-url https://github.com/omegaflow/sources/releases/download/cmr.earthdata.nasa.gov/nasa_cmr_icesat2_footprints_{latest}.json
-ttl 86400
-at sun 1.0
-force em
-format universal
-field time_start footprint_time_start
-field time_end footprint_time_end
-field dataset_id footprint_dataset_id
-field producer_granule_id footprint_granule_id
-
-url https://github.com/omegaflow/sources/releases/download/cmr.earthdata.nasa.gov/nasa_cmr_swot_ssg_ssh_{latest}.json
-ttl 86400
-at sun 1.0
-force em
-format universal
-field time_start footprint_time_start
-field time_end footprint_time_end
-field dataset_id footprint_dataset_id
-field producer_granule_id footprint_granule_id
 
 url https://github.com/omegaflow/sources/releases/download/cmr.earthdata.nasa.gov/nasa_cmr_viirs_fire_vnp14_nrt_{latest}.json
 ttl 86400
@@ -13976,7 +13599,7 @@ format ephemeris_binary
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbit_trace_ceres_{latest}.json
 ttl 86400
 at sun 1.0
-force em
+force gravity
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_earth.bin
@@ -13988,19 +13611,19 @@ format ephemeris_binary
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbit_trace_eris_{latest}.json
 ttl 86400
 at sun 1.0
-force em
+force gravity
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbit_trace_haumea_{latest}.json
 ttl 86400
 at sun 1.0
-force em
+force gravity
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbit_trace_makemake_{latest}.json
 ttl 86400
 at sun 1.0
-force em
+force gravity
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pluto.bin
@@ -14055,26 +13678,26 @@ format ephemeris_binary
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbit_trace_vesta_{latest}.json
 ttl 86400
 at sun 1.0
-force em
+force gravity
 format universal
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_apophis_vectors_{latest}.json
 ttl 86400
 at sun 1.0
-force em
+force gravity
 format universal
 extent 1.24e-9
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_bennu_vectors_{latest}.json
 ttl 86400
 at sun 1.0
-force em
+force gravity
 format universal
 extent 1.75e-9
 
 url https://github.com/omegaflow/sources/releases/download/hpiers.obspm.fr/orbital_celestrak_earth_orientation_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 1.0
 format universal
 header User-Agent "omegaflow"
@@ -14082,13 +13705,13 @@ last line geosphere_earth_orientation_raw
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_ceres_vectors_{latest}.json
 ttl 86400
-force em
+force gravity
 on earth 34.201 -118.171
 extent 3.16e-6
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_earth_mass_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 1
 regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
 
@@ -14100,31 +13723,31 @@ field count cosmic_fireball_count
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_jupiter_mass_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 5.2
 regex \(kg\).\W*([0-9.]+) orbital_jupiter_mass_x10_24_kg
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_mars_mass_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 1.5
 regex \(kg\).\W*([0-9.]+) orbital_mars_mass_x10_24_kg
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_mercury_mass_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 0.4
 regex \(kg\).\W*([0-9.]+) orbital_mercury_mass_x10_24_kg
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_neptune_mass_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 30.0
 regex \(kg\).\W*([0-9.]+) orbital_neptune_mass_x10_24_kg
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_saturn_mass_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 9.6
 regex \(kg\).\W*([0-9.]+) orbital_saturn_mass_x10_24_kg
 
@@ -14136,13 +13759,13 @@ field count nasa_sentry_risk_object_count
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_uranus_mass_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 19.2
 regex \(kg\).\W*([0-9.]+) orbital_uranus_mass_x10_24_kg
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/orbital_venus_mass_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 0.7
 regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg
 
@@ -14223,47 +13846,6 @@ field u mag_u
 field i mag_i
 field z mag_z
 
-url https://github.com/omegaflow/sources/releases/download/sidc.be/sidc_international_sunspot_number_{latest}.json
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-field_in 0 year
-field_in 1 month
-field_in 2 day
-field_in 3 sunspot_number
-
-url https://github.com/omegaflow/sources/releases/download/sidc.be/sidc_smoothed_monthly_sunspot_number_{latest}.json
-ttl 86400
-force em
-on earth 50.85 4.35
-format universal
-rows
-field 0 year
-field 1 month
-field 2 decimal_date
-field 3 monthly_mean_ssn
-field 4 monthly_mean_std
-field 5 num_observations
-field 6 smoothed_ssn
-field 7 smoothed_std
-
-url https://github.com/omegaflow/sources/releases/download/sidc.be/sidc_sunspot_number_daily_{latest}.json
-ttl 86400
-force em
-on earth 50.85 4.35
-format universal
-rows
-field 0 year
-field 1 month
-field 2 day
-field 3 decimal_year
-field 4 sunspot_number
-field 5 std_dev
-field 6 num_observations
-field 7 definitive_flag
-
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/solar_historical_surface_{latest}.json
 ttl 86400
 force em
@@ -14273,18 +13855,6 @@ path latitude atmosphere_lat
 path longitude atmosphere_lon
 last shortwave_radiation atmosphere_hist_solar_radiation_wm2
 last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
-
-url https://github.com/omegaflow/sources/releases/download/sidc.be/sunspot_number_global_{latest}.json
-ttl 86400
-force em
-at sun 1.0
-last_line solar_sunspot_number_silso
-
-url https://github.com/omegaflow/sources/releases/download/sidc.be/sunspot_number_monthly_{latest}.json
-ttl 86400
-force em
-at sun 1.0
-last_line solar_sunspot_number_silso
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
 ttl 86400
@@ -15377,18 +14947,12 @@ field Elevation(meters) elevation_m
 
 url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_pollen_germany_{latest}.json
 ttl 86400
-force em
+force biotic
 on earth 51.0 10.0
 field content.0.Pollen.Graeser.today biosphere_pollen_grass_germany_today
 field content.0.Pollen.Birke.today biosphere_pollen_birch_germany_today
 field content.0.Pollen.Beifuss.today biosphere_pollen_mugwort_germany_today
 field content.0.Pollen.Esche.today biosphere_pollen_ash_germany_today
-
-url https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/enso_oni_{latest}.json
-ttl 86400
-force em
-on earth 38.989 -76.937
-last_row ANOM atmosphere_enso_oni_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/historical_daily_{latest}.json
 ttl 86400
@@ -15401,36 +14965,6 @@ last temperature_2m_max atmosphere_hist_temp_max_c
 last temperature_2m_min atmosphere_hist_temp_min_c
 last precipitation_sum atmosphere_hist_precip_sum_mm
 last sunshine_duration atmosphere_hist_sunshine_s
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/historical_weather_{latest}.json
-ttl 86400
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-last temperature_2m atmosphere_hist_temp_c
-last precipitation atmosphere_hist_precip_mm
-last windspeed_10m atmosphere_hist_wind_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/historical_wind_{latest}.json
-ttl 86400
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-last wind_speed_10m atmosphere_hist_wind_speed_10m_ms
-last wind_speed_100m atmosphere_hist_wind_speed_100m_ms
-last wind_gusts_10m atmosphere_hist_wind_gusts_10m_ms
-
-url https://github.com/omegaflow/sources/releases/download/api.met.no/met_norway_sun_{latest}.json
-ttl 86400
-force em
-on earth 47.3769 8.5417
-header User-Agent "omegaflow"
-field properties.sunrise.time atmosphere_sunrise_time
-field properties.solar_noon.elevation atmosphere_solar_elevation_max_deg
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/ncei_global_summary_weather_{latest}.json
 ttl 86400
@@ -15515,20 +15049,6 @@ field SpatialDim country_code
 field TimeDim year
 field NumericValue pm10_annual_mean
 
-url https://github.com/omegaflow/sources/releases/download/api.woudc.org/woudc_ozone_stations_{latest}.json
-ttl 86400
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.woudc_id atmosphere_woudc_station_id
-field properties.gaw_id atmosphere_woudc_gaw_id
-field properties.name atmosphere_woudc_station_name
-field properties.type atmosphere_woudc_station_type
-field properties.country_name_en atmosphere_woudc_country
-field properties.active atmosphere_woudc_active
-
 url https://github.com/omegaflow/sources/releases/download/api.woudc.org/woudc_total_ozone_{latest}.json
 ttl 86400
 force em
@@ -15608,12 +15128,6 @@ field species_name species
 field country country
 field region province
 
-url https://github.com/omegaflow/sources/releases/download/clinicaltrials.gov/crispr_clinical_trials_recruiting_{latest}.json
-ttl 86400
-force em
-on earth 37.872 -122.258
-field totalCount biosphere_crispr_trials_recruiting
-
 url https://github.com/omegaflow/sources/releases/download/ebi.ac.uk/ebi_mgnify_marine_metagenomes_{latest}.json
 ttl 86400
 force diffusion
@@ -15645,16 +15159,9 @@ field 0 sample_accession
 field 1 description
 field 2 tax_id
 
-url https://github.com/omegaflow/sources/releases/download/epoch.ai/epoch_ai_compute_trends_{latest}.json
-ttl 86400
-force em
-on earth 37.774 -122.419
-format universal
-last_row Training_compute_FLOP biosphere_ai_training_flops_frontier
-
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_amphibians_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15663,7 +15170,7 @@ field key biosphere_gbif_occurrences_amphibian_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_arachnids_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15672,7 +15179,7 @@ field key biosphere_gbif_occurrences_arachnid_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_arthropods_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15681,7 +15188,7 @@ field key biosphere_gbif_occurrences_arthropod_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_biodiversity_global_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15693,7 +15200,7 @@ field locality biosphere_gbif_occurrences_biodiversity_locality
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_birds_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15702,7 +15209,7 @@ field key biosphere_gbif_occurrences_bird_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_birds_migratory_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15713,7 +15220,7 @@ field locality biosphere_gbif_occurrences_bird_locality
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_cnidaria_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15722,7 +15229,7 @@ field key biosphere_gbif_occurrences_cnidarian_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_cnidarians_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15731,7 +15238,7 @@ field key biosphere_gbif_occurrences_cnidarian_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_echinoderms_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15740,7 +15247,7 @@ field key biosphere_gbif_occurrences_echinoderm_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_fungi_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15749,7 +15256,7 @@ field key biosphere_gbif_occurrences_fungi_key
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_insects_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15780,7 +15287,7 @@ field occurrenceStatus biosphere_gbif_occurrences_occurrence_status
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_mammals_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15800,7 +15307,7 @@ field depth biosphere_gbif_occurrences_depth_m
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_marine_species_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1
 cmap results
 ra_key decimalLatitude
@@ -15825,13 +15332,13 @@ field country country_code
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_migrations_{latest}.json
 ttl 86400
-force em
+force biotic
 on earth 55.7022 12.5592
 field count biosphere_migratory_bird_records_this_month
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_mollusks_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15853,7 +15360,7 @@ field basisOfRecord basis_of_record
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_occurrences_precise_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15863,7 +15370,7 @@ field coordinateUncertaintyInMeters biosphere_gbif_occurrences_uncertainty_m
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_plants_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15873,7 +15380,7 @@ field coordinateUncertaintyInMeters biosphere_gbif_occurrences_plant_uncertainty
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_plants_bbox_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15895,7 +15402,7 @@ field year biosphere_gbif_occurrences_year
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_reptiles_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
@@ -15927,12 +15434,6 @@ field name.value station_name
 field country.value country_code
 field alt.value altitude_m
 field ecosys.value ecosystem_type
-
-url https://github.com/omegaflow/sources/releases/download/ebi.ac.uk/microbe_census_{latest}.json
-ttl 86400
-force em
-on earth 52.079 0.187
-field meta.pagination.count biosphere_metagenomic_studies_count
 
 url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
 ttl 86400
@@ -15989,7 +15490,7 @@ field site.geography.state state
 
 url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_cetaceans_{latest}.json
 ttl 86400
-force em
+force biotic
 on earth 51.231 2.928
 path total biosphere_cetacean_observations_24h
 
@@ -16006,7 +15507,7 @@ field date_year obs_year
 
 url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_marine_global_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1
 cmap results
 ra_key decimalLatitude
@@ -16017,7 +15518,7 @@ field depth biosphere_obis_marine_depth_m
 
 url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_marine_records_{latest}.json
 ttl 86400
-force em
+force biotic
 at sun 1
 cmap results
 ra_key decimalLatitude
@@ -16029,13 +15530,13 @@ field aphiaID biosphere_obis_aphia_id
 
 url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_species_{latest}.json
 ttl 86400
-force em
+force biotic
 on earth 47.3769 8.5417
 field total biosphere_ocean_occurrences_50km
 
 url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_statistics_{latest}.json
 ttl 86400
-force em
+force biotic
 on earth 51.231 2.928
 field taxa biosphere_ocean_species_known
 field records biosphere_ocean_records_total
@@ -16056,33 +15557,15 @@ field date_year obs_year
 
 url https://github.com/omegaflow/sources/releases/download/paleobiodb.org/paleobiology_pbdb_paleobiology_{latest}.json
 ttl 86400
-force em
+force biotic
 on earth 43.073 -89.401
 field records_returned paleobiology_pbdb_occurrence_count
 
 url https://github.com/omegaflow/sources/releases/download/api.neotomadb.org/paleoclimate_neotoma_paleoecology_{latest}.json
 ttl 86400
-force em
+force biotic
 on earth 43.073 -89.401
 field total paleoclimate_neotoma_occurrences
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/protected_lands_area_{latest}.json
-ttl 86400
-force em
-at sun 1
-field scalerank biosphere_park_area_rank
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/protected_lands_point_{latest}.json
-ttl 86400
-force em
-at sun 1
-field scalerank biosphere_park_rank
-
-url https://github.com/omegaflow/sources/releases/download/restcountries.com/restcountries_population_{latest}.json
-ttl 86400
-force em
-on earth 38.899 -77.043
-field 0.population biosphere_country_population_sample
 
 url https://rest.uniprot.org/uniprotkb/statistics
 ttl 86400
@@ -16090,40 +15573,11 @@ force em
 on earth 46.233 6.056
 field statistics.0.value molecular_proteins_total
 
-url https://github.com/omegaflow/sources/releases/download/star.nesdis.noaa.gov/vegetation_health_{latest}.json
-ttl 86400
-force em
-on earth 38.978 -76.919
-format universal
-last_row VHI biosphere_global_vegetation_health_index
-
 url https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN
 ttl 86400
 force em
 on earth 46.2276 6.1432
 last_line biosphere_who_life_expectancy_global
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/worldbank_forest_area_{latest}.json
-ttl 86400
-force diffusion
-on earth 0 0
-map 1
-lat_key lat
-lon_key lon
-field value forest_pct
-field country.iso2Code country_code
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/worldbank_pm25_exposure_{latest}.json
-ttl 86400
-force diffusion
-on earth 0 0
-map data
-lat_key latitude
-lon_key longitude
-field country country_name
-field iso3 country_iso3
-field pm25_ugm3 pm25_ugm3
-field year data_year
 
 url https://github.com/omegaflow/sources/releases/download/api.marinespecies.org/worldpop_population_density_global_{latest}.json
 ttl 86400
@@ -16240,48 +15694,12 @@ force em
 at sun 1
 last_line cryosphere_arctic_sea_ice_extent_nsidc
 
-url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/nsidc_sea_ice_{latest}.json
-ttl 86400
-force em
-on earth 40.008 -105.263
-format universal
-last_row extent hydrosphere_sea_ice_extent_north_mkm2
-last_row area hydrosphere_sea_ice_area_north_mkm2
-
-url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/nsidc_sea_ice_north_{latest}.json
-ttl 86400
-force em
-on earth 40.008 -105.263
-format universal
-last line cryosphere_sea_ice_extent_north_raw
-
-url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/nsidc_sea_ice_south_{latest}.json
-ttl 86400
-force em
-on earth -75.250 -0.071
-format universal
-last line cryosphere_sea_ice_extent_south_raw
-
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/permafrost_barrow_{latest}.json
 ttl 86400
 force em
 on earth 71.29 -156.57
 format universal
 last_row 8 cryosphere_permafrost_temp_barrow_c
-
-url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/sea_ice_north_{latest}.json
-ttl 86400
-force em
-on earth 40.008 -105.263
-format universal
-last_row extent cryosphere_sea_ice_north_mkm2
-
-url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/sea_ice_south_{latest}.json
-ttl 86400
-force em
-on earth -75.250 -0.071
-format universal
-last_row extent cryosphere_sea_ice_south_mkm2
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_apophis.bin
 ttl 86400
@@ -16402,20 +15820,6 @@ force em
 at sun 1.0
 format ephemeris_binary
 
-url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/exoplanet_count_{latest}.json
-ttl 86400
-force em
-at sun 1.0
-cmap .
-tau_key _dist_m
-ra_key ra
-dec_key dec
-field pl_eqt cosmic_exoplanet_eqt_k
-field pl_rade cosmic_exoplanet_radius_re
-field pl_orbper cosmic_exoplanet_period_d
-field pl_bmasse cosmic_exoplanet_mass_earth
-dist_key sy_dist 3.085677581e16
-
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/f107_flux_{latest}.json
 ttl 86400
 force em
@@ -16424,7 +15828,7 @@ field 0.flux exosphere_f107_sfu
 
 url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/hot_jupiters_{latest}.json
 ttl 86400
-force em
+force gravity
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -16474,24 +15878,6 @@ field spatial_extent.bbox.0 geosphere_clms_bbox_minx
 field spatial_extent.bbox.1 geosphere_clms_bbox_miny
 field spatial_extent.bbox.2 geosphere_clms_bbox_maxx
 field spatial_extent.bbox.3 geosphere_clms_bbox_maxy
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/earth_coastlines_110m_{latest}.json
-ttl 86400
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.name coastline_name
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/earth_country_boundaries_110m_{latest}.json
-ttl 86400
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.name boundary_name
 
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/earthscope_fdsn_stations_{latest}.json
 ttl 86400
@@ -16592,17 +15978,6 @@ field attributes.STAT_LAT latitude
 field attributes.STAT_LONG longitude
 lat_key lat
 lon_key lon
-
-url https://github.com/omegaflow/sources/releases/download/seismic-api.science.unimelb.edu.au/ga_seismic_stations_{latest}.json
-ttl 86400
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.station geosphere_ga_station_code
-field properties.network geosphere_ga_network
-field properties.type geosphere_ga_sensor_type
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gem_global_active_faults_{latest}.json
 ttl 86400
@@ -16745,26 +16120,6 @@ field title region_name
 field notes description
 field organization.title org
 
-url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/historical_soil_{latest}.json
-ttl 86400
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-last soil_temperature_0_to_7cm geosphere_hist_soil_temp_surface_c
-last soil_moisture_0_to_7cm geosphere_hist_soil_moisture_surface_m3m3
-
-url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/intermagnet_observatories_{latest}.json
-ttl 86400
-force em
-on earth 0 0
-map catalog
-lat_key lat
-lon_key lon
-field id geosphere_magnetometer_id
-field title geosphere_magnetometer_title
-
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/iris_fdsn_ic_au_regional_seismic_networks_{latest}.json
 ttl 86400
 force seismic-body
@@ -16820,16 +16175,6 @@ field Network network_code
 field Station station_code
 field Elevation elevation_m
 field SiteDescription station_name
-
-url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/iris_seismic_networks_{latest}.json
-ttl 86400
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.network geosphere_seismic_network_code
-field properties.description geosphere_seismic_network_name
 
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net={net}
 ttl 86400
@@ -17023,19 +16368,19 @@ field prcp_mm geosphere_daily_prcp_mm
 
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/noaa_ch4_global_{latest}.json
 ttl 86400
-force em
+force diffusion
 on earth 19.5362 -155.5763
 last_row average atmosphere_ch4_ppb_global
 
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/noaa_co2_annual_mean_{latest}.json
 ttl 86400
-force em
+force diffusion
 on earth 19.5362 -155.5763
 last_line atmosphere_co2_annual_mean_global
 
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/noaa_co2_mlo_monthly_{latest}.json
 ttl 86400
-force em
+force diffusion
 on earth 19.5362 -155.5763
 last_row average atmosphere_co2_ppm_mlo_monthly
 
@@ -17319,7 +16664,7 @@ field species.0.speciesCode tree_species
 
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/noaa_n2o_global_{latest}.json
 ttl 86400
-force em
+force diffusion
 on earth 19.5362 -155.5763
 last_row average atmosphere_gml_n2o_ppb_global
 
@@ -17507,7 +16852,7 @@ field mostRecentYearBP most_recent_year_bp
 
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/noaa_sf6_global_{latest}.json
 ttl 86400
-force em
+force diffusion
 on earth 19.5362 -155.5763
 last_row average atmosphere_gwis_sf6_ppt_global
 
@@ -17630,12 +16975,6 @@ map features
 lat_key lat
 lon_key lon
 field attributes.sm soil_moisture_pct
-
-url https://github.com/omegaflow/sources/releases/download/usdmdataservices.unl.edu/usdm_conus_drought_{latest}.json
-ttl 86400
-force em
-on earth 40.820 -96.702
-field 0.DSCI hydrosphere_conus_drought_severity_index
 
 url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_earthquakes_2015_M5_{latest}.json
 ttl 86400
@@ -17955,17 +17294,6 @@ map .
 lat_key lat
 lon_key lon
 
-url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/oceanography_cmems_global_analysis_{latest}.json
-ttl 86400
-force em
-on earth 0 0
-format universal
-map .
-lat_key lat
-lon_key lon
-field id oceanography_cmems_service_id
-field name oceanography_cmems_service_name
-
 url https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.gov/oisst_sst_{latest}.json
 ttl 86400
 force thermal
@@ -17984,7 +17312,7 @@ last_row salinity hydrosphere_salinity_psu
 
 url https://github.com/omegaflow/sources/releases/download/erddap.dataexplorer.oceanobservatories.org/ooi_ga01sumo_pco2_{latest}.json
 ttl 86400
-force em
+force diffusion
 on earth 46.05 -125.00
 format universal
 last_row surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm
@@ -18012,7 +17340,7 @@ lon_key lon
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
 ttl 86400
-force em
+force diffusion
 on earth 47.606 -122.335
 tail
 format text
@@ -18020,7 +17348,7 @@ field_in 0 hydrosphere_pmel_co2_mooring_raw
 
 url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/pmel_co2_ph_{latest}.json
 ttl 86400
-force em
+force diffusion
 on earth 47.6062 -122.3321
 format universal
 last_row pCO2_sw hydrosphere_pco2_pmel_uatm
@@ -18056,28 +17384,6 @@ on earth 40.0 5.0
 format universal
 map data
 field temperature hydrosphere_med_temp_c
-
-url https://github.com/omegaflow/sources/releases/download/planetarycomputer.microsoft.com/lithosphere_stac_landsat_pc.json
-ttl 86400
-force em
-on earth 37.0 -120.0
-format universal
-map data
-lat_key lat
-lon_key lon
-epoch_key datetime
-field stac_eo_cloud_cover lithosphere_cloud_cover_pct
-
-url https://github.com/omegaflow/sources/releases/download/earth-search.aws.element84.com/lithosphere_stac_sentinel2_aws.json
-ttl 86400
-force em
-on earth 37.0 -120.0
-format universal
-map data
-lat_key lat
-lon_key lon
-epoch_key datetime
-field stac_eo_cloud_cover lithosphere_cloud_cover_pct
 
 url https://github.com/omegaflow/sources/releases/download/lmsal.com/lmsal_solar_flares.json
 ttl 86400
@@ -19398,46 +18704,6 @@ path 1.1 magnetosphere_tdc_y_nt
 path 1.2 magnetosphere_tdc_z_nt
 path 2 magnetosphere_tdc_f_nt
 
-url https://github.com/omegaflow/sources/releases/download/network.satnogs.org/satnogs_stations.json
-ttl 86400
-force em
-on earth 0 0
-map .
-lat_key lat
-lon_key lng
-field altitude satnogs_station_alt_m
-field name satnogs_station_name
-field observations satnogs_station_observations
-field status satnogs_station_status
-field success_rate satnogs_station_success_rate_pct
-
-url https://github.com/omegaflow/sources/releases/download/crystallography.net/molecular_crystallography_xrd_{latest}.json
-ttl 86400
-force em
-on earth 54.683 25.287
-field a molecular_lattice_constant_a
-
-url https://github.com/omegaflow/sources/releases/download/physics.nist.gov/nist_codata_fundamental_constants_{latest}.json
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-field 0 quantity_name
-field 1 symbol
-field 2 value
-field 3 uncertainty
-field 4 unit
-
-url https://github.com/omegaflow/sources/releases/download/github.com-scikit-hep-particle/pdg_particles_{latest}.json
-ttl 86400
-force em
-at sun 1.0
-format universal
-last_row ID subatomare_last_pdg_id
-last_row Mass subatomare_last_mass_mev
-last_row Charge subatomare_last_charge
-
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,RH2M,WS10M,PRECTOTCORR&community=AG&longitude={lon}&latitude={lat}&start={date}&end={date}&format=JSON
 ttl 86400
 force em
@@ -19477,49 +18743,6 @@ field power_plant_count power_plant_count
 field wind_capacity_mw wind_capacity_mw
 field solar_capacity_mw solar_capacity_mw
 field nuclear_capacity_mw nuclear_capacity_mw
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/ourairports_global_{latest}.json
-ttl 86400
-force em
-at sun 1.0
-format universal
-rows
-pos airport_latitude airport_longitude
-field_in 2 airport_type
-field_in 3 airport_name
-field_in 4 airport_latitude
-field_in 5 airport_longitude
-field_in 6 elevation_ft
-field_in 10 municipality
-field_in 11 scheduled_service
-field_in 12 icao_code
-field_in 13 iata_code
-
-url https://github.com/omegaflow/sources/releases/download/atlas.ripe.net/ripe_atlas_probes_{latest}.json
-ttl 86400
-force em
-on earth 0 0
-map results
-field id probe_id
-field description description
-field country_code country
-field asn_v4 asn
-field firmware_version fw_version
-field type probe_type
-lat_key lat
-lon_key lon
-
-url https://developer.uspto.gov/ptab-api/v2/patents?limit=1
-ttl 86400
-force em
-on earth 38.995 -77.101
-field totalResults biosphere_uspto_patents_total
-
-url https://github.com/omegaflow/sources/releases/download/wikidata.org/wikidata_entities_total_{latest}.json
-ttl 86400
-force em
-on earth 37.774 -122.419
-field query.statistics.articles biosphere_wikidata_entities_total
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/batse_grb_{latest}.json
 ttl 604800
@@ -19888,15 +19111,6 @@ dist_scale 3.0857e22
 field energy_tev icecube_neutrino_energy_tev
 field error_radius_deg icecube_error_radius_deg
 
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/iau_constellation_boundaries_{latest}.json
-ttl 604800
-at sun 1.0
-force em
-format universal
-field properties.rank cpoly_rank
-field 0 prefname
-field 3 redshift
-
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/integral_agn_{latest}.json
 ttl 604800
 force em
@@ -20028,18 +19242,6 @@ ra_key ra
 dec_key dec
 plx_key default_plx
 field exposure nicer_exposure_s
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/nmdb_stations_{latest}.json
-ttl 604800
-force em
-on earth 0 0
-map data
-lat_key latitude
-lon_key longitude
-alt_key altitude_m
-field rigidity_gv nmdb_rigidity_gv
-field hist_min nmdb_hist_min_rate
-field hist_max nmdb_hist_max_rate
 
 url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/nsidc_arctic_seaice_{latest}.json
 ttl 604800
@@ -21890,7 +21092,7 @@ field redshift_info_distance astro_xmm_sources_redshift_info_distance
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_amazon_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth -3.47 -62.22
 path daily.temperature_2m_max.0 atmosphere_biome_amazon_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_amazon_temp_min_jan_2000_c
@@ -21901,7 +21103,7 @@ path daily.precipitation_sum.9131 atmosphere_biome_amazon_precip_dec_2024_mm
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_antarctic_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth -80.0 100.0
 path daily.temperature_2m_max.0 atmosphere_biome_antarctic_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_antarctic_temp_min_jan_2000_c
@@ -21910,7 +21112,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_antarctic_temp_min_dec_2024_
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_atacama_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth -24.0 -69.5
 path daily.temperature_2m_max.0 atmosphere_biome_atacama_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_atacama_temp_min_jan_2000_c
@@ -21919,7 +21121,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_atacama_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_borneo_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 0.5 114.0
 path daily.temperature_2m_max.0 atmosphere_biome_borneo_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_borneo_temp_min_jan_2000_c
@@ -21928,7 +21130,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_borneo_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_cairo_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 30.0 31.0
 path daily.temperature_2m_max.0 atmosphere_biome_cairo_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_cairo_temp_min_jan_2000_c
@@ -21937,7 +21139,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_cairo_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_cape_town_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth -34.0 18.5
 path daily.temperature_2m_max.0 atmosphere_biome_cape_town_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_cape_town_temp_min_jan_2000_c
@@ -21946,7 +21148,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_cape_town_temp_min_dec_2024_
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_congo_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 0.0 18.0
 path daily.temperature_2m_max.0 atmosphere_biome_congo_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_congo_temp_min_jan_2000_c
@@ -21955,7 +21157,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_congo_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_death_valley_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 36.5 -117.0
 path daily.temperature_2m_max.0 atmosphere_biome_death_valley_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_death_valley_temp_min_jan_2000_c
@@ -21964,7 +21166,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_death_valley_temp_min_dec_20
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_fiji_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth -18.0 178.0
 path daily.temperature_2m_max.0 atmosphere_biome_fiji_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_fiji_temp_min_jan_2000_c
@@ -21973,7 +21175,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_fiji_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_gobi_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 44.0 105.0
 path daily.temperature_2m_max.0 atmosphere_biome_gobi_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_gobi_temp_min_jan_2000_c
@@ -21982,7 +21184,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_gobi_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_greenland_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 72.0 -40.0
 path daily.temperature_2m_max.0 atmosphere_biome_greenland_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_greenland_temp_min_jan_2000_c
@@ -21991,7 +21193,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_greenland_temp_min_dec_2024_
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_iceland_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 64.0 -19.0
 path daily.temperature_2m_max.0 atmosphere_biome_iceland_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_iceland_temp_min_jan_2000_c
@@ -22000,7 +21202,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_iceland_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_kerguelen_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth -49.5 69.5
 path daily.temperature_2m_max.0 atmosphere_biome_kerguelen_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_kerguelen_temp_min_jan_2000_c
@@ -22009,7 +21211,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_kerguelen_temp_min_dec_2024_
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_maldives_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 3.0 73.0
 path daily.temperature_2m_max.0 atmosphere_biome_maldives_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_maldives_temp_min_jan_2000_c
@@ -22018,7 +21220,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_maldives_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_okavango_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth -19.5 23.5
 path daily.temperature_2m_max.0 atmosphere_biome_okavango_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_okavango_temp_min_jan_2000_c
@@ -22027,7 +21229,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_okavango_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_patagonia_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth -50.0 -72.0
 path daily.temperature_2m_max.0 atmosphere_biome_patagonia_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_patagonia_temp_min_jan_2000_c
@@ -22036,7 +21238,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_patagonia_temp_min_dec_2024_
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_sahara_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 23.0 5.0
 path daily.temperature_2m_max.0 atmosphere_biome_sahara_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_sahara_temp_min_jan_2000_c
@@ -22045,7 +21247,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_sahara_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_siberia_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 62.0 105.0
 path daily.temperature_2m_max.0 atmosphere_biome_siberia_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_siberia_temp_min_jan_2000_c
@@ -22054,7 +21256,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_siberia_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/api.open-meteo.com/biome_tibet_archive_{latest}.json
 ttl 604800
-force em
+force thermal
 on earth 32.0 86.0
 path daily.temperature_2m_max.0 atmosphere_biome_tibet_temp_max_jan_2000_c
 path daily.temperature_2m_min.0 atmosphere_biome_tibet_temp_min_jan_2000_c
@@ -22063,7 +21265,7 @@ path daily.temperature_2m_min.9131 atmosphere_biome_tibet_temp_min_dec_2024_c
 
 url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/co2_historical_{latest}.json
 ttl 604800
-force em
+force diffusion
 on earth 19.5 -155.6
 regex 2000\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2000_ppm
 regex 2020\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2020_ppm
@@ -22321,15 +21523,6 @@ lat_key lat
 lon_key lon
 field properties.ELEV volcano_elevation_m
 
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/earth_impact_craters_{latest}.json
-ttl 604800
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.Name geosphere_crater_name
-
 url https://github.com/omegaflow/sources/releases/download/services7.arcgis.com/esri_so2_volcano_emissions_{latest}.json
 ttl 604800
 force diffusion
@@ -22341,7 +21534,7 @@ field properties.SO2_Kilotons volcano_so2_kilotons
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/nasa_meteorite_landings_{latest}.json
 ttl 604800
-force em
+force gravity
 on earth 0 0
 map features
 lat_key lat
@@ -22349,58 +21542,9 @@ lon_key lon
 field properties.mass geosphere_meteorite_mass_g
 field properties.name geosphere_meteorite_name
 
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/ne_10m_places_{latest}.json
-ttl 604800
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.pop_max geosphere_population_max
-field properties.scalerank geosphere_place_rank
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/ne_glaciers_{latest}.json
-ttl 604800
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.name geosphere_ne_glacier_name
-field properties.scalerank geosphere_ne_glacier_rank
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/ne_lakes_{latest}.json
-ttl 604800
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.name geosphere_ne_lake_name
-field properties.scalerank geosphere_ne_lake_rank
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/ne_places_{latest}.json
-ttl 604800
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.name geosphere_ne_place_name
-field properties.scalerank geosphere_ne_place_rank
-
-url https://github.com/omegaflow/sources/releases/download/gist.githubusercontent.com/unesco_heritage_{latest}.json
-ttl 604800
-force em
-on earth 0 0
-map .
-lat_key lat
-lon_key lng
-field year geosphere_heritage_year
-
 url https://github.com/omegaflow/sources/releases/download/data.humdata.org/volcanoes_hdx_{latest}.json
 ttl 604800
-force em
+force seismic-surface
 on earth 0 0
 map features
 lat_key lat
@@ -22411,21 +21555,12 @@ field properties.PEI geosphere_volcano_pei
 
 url https://github.com/omegaflow/sources/releases/download/gist.githubusercontent.com/world_volcanoes_{latest}.json
 ttl 604800
-force em
+force seismic-surface
 on earth 0 0
 map .
 lat_key lat
 lon_key lon
 field elevation geosphere_volcano_elevation_m
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/global_rivers_{latest}.json
-ttl 604800
-force em
-on earth 0 0
-map features
-lat_key lat
-lon_key lon
-field properties.name hydrosphere_river_name
 
 url https://raw.githubusercontent.com/omegaflow/sources/main/ndbc_station_list.json
 ttl 604800
@@ -22436,245 +21571,6 @@ lat_key latitude
 lon_key longitude
 field elevation_m hydrosphere_ndbc_station_elevation_m
 field station_type hydrosphere_ndbc_station_type
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/molecular_periodic_elements_{latest}.json
-ttl 604800
-force em
-on earth 0 0
-map elements
-lat_key lat
-lon_key lon
-field atomic_mass molecular_element_mass_u
-field density molecular_element_density_g_l
-field melt molecular_element_melt_k
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_b_c_plus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_b_c_plus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_b_plus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_b_plus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_b_zero_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_b_zero_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_bottom_quark_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_bottom_quark_mass_gev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_charged_pion_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_charged_pion_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_charm_quark_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_charm_quark_mass_gev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_d_s_star_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_d_s_star_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_down_quark_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_down_quark_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_electron_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_electron_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_eta_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_eta_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_kaon_plus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_kaon_plus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_kaon_zero_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_kaon_zero_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_lambda_b_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_lambda_b_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_lambda_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_lambda_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_muon_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_muon_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_neutron_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_neutron_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_omega_b_minus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_omega_b_minus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_omega_c_2770_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_omega_c_2770_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_omega_c_zero_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_omega_c_zero_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_pion_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_pion_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_proton_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_proton_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_sigma_minus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_sigma_minus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_sigma_plus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_sigma_plus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_sigma_zero_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_sigma_zero_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_strange_quark_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_strange_quark_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_tau_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_tau_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_top_quark_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_top_quark_mass_gev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_up_quark_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_up_quark_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_w_boson_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_w_boson_mass_gev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_c_plus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_xi_c_plus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_c_prime_plus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_xi_c_prime_plus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_c_prime_zero_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_xi_c_prime_zero_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_c_zero_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_xi_c_zero_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_cc_plus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_xi_cc_plus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_cc_plusplus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_xi_cc_plusplus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_minus_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_xi_minus_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_zero_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_xi_zero_mass_mev
-
-url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_z_boson_mass_{latest}.json
-ttl 604800
-force em
-on earth 37.877 -122.247
-field pdg_values.0.value subatomic_z_boson_mass_gev
 
 url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/geonuclear_power_plants_{latest}.json
 ttl 604800
@@ -22742,17 +21638,6 @@ cmap data
 ra_key RAJ2000
 dec_key DEJ2000
 
-url https://github.com/omegaflow/sources/releases/download/climate-api.open-meteo.com/climate_projection_{latest}.json
-ttl 2592000
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-path latitude atmosphere_lat
-path longitude atmosphere_lon
-first temperature_2m_max atmosphere_climate_temp_max_c
-first temperature_2m_min atmosphere_climate_temp_min_c
-first precipitation_sum atmosphere_climate_precip_mm
-
 url https://github.com/omegaflow/sources/releases/download/metoffice.gov.uk/hadcrut5_temp_{latest}.json
 ttl 2592000
 force em
@@ -22760,21 +21645,9 @@ on earth 50.727 -3.476
 format universal
 last line atmosphere_hadcrut5_temp_anomaly_raw
 
-url https://github.com/omegaflow/sources/releases/download/data-api.globalforestwatch.org/globalforestwatch_tree_cover_loss_{latest}.json
-ttl 2592000
-force em
-on earth 38.907 -77.036
-field data.0.areaHa biosphere_tree_cover_loss_ha_latest
-
-url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/worldbank_co2_emissions_{latest}.json
-ttl 2592000
-force em
-on earth 38.899 -77.043
-field 1.0.value worldbank_co2_emissions_value
-
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/paleoclimate_dome_fuji_co2_{latest}.json
 ttl 2592000
-force em
+force diffusion
 on earth -77.3190 39.7030
 format universal
 map data
@@ -22785,7 +21658,7 @@ field_in 1 paleoclimate_domefuji_co2_ppm
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/paleoclimate_epica_co2_{latest}.json
 ttl 2592000
-force em
+force diffusion
 on earth -75.100 123.350
 format universal
 map data
@@ -22796,7 +21669,7 @@ field_in 4 paleoclimate_epica_co2_ppm
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/paleoclimate_vostok_icecore_{latest}.json
 ttl 2592000
-force em
+force diffusion
 on earth -78.464 106.833
 format universal
 map data
@@ -22819,12 +21692,6 @@ body earth
 format text
 tail
 field_in undulate geosphere_geoid_height_m
-
-url https://github.com/omegaflow/sources/releases/download/macrostrat.org/macrostrat_timescale_{latest}.json
-ttl 2592000
-force em
-on earth 43.073 -89.401
-path success.data.0.n_intervals geosphere_ics_timescale_units
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/noaa_epica_domec_deuterium_{latest}.json
 ttl 2592000
@@ -22880,46 +21747,6 @@ force em
 on earth 0.0 0.0
 first elevation geosphere_openmeteo_elevation_m
 
-url https://github.com/omegaflow/sources/releases/download/api.opentopodata.org/opentopo_eudem25m_{latest}.json
-ttl 2592000
-force em
-on earth 0 0
-map results
-lat_key lat
-lon_key lon
-field elevation geosphere_openmeteo_elevation_eudem25_m
-alt_key elevation
-
-url https://github.com/omegaflow/sources/releases/download/api.opentopodata.org/opentopo_gebco_bathymetry_{latest}.json
-ttl 2592000
-force em
-on earth 0 0
-map results
-lat_key lat
-lon_key lon
-field elevation hydrosphere_bathymetry_gebco_m
-alt_key elevation
-
-url https://github.com/omegaflow/sources/releases/download/api.opentopodata.org/opentopo_mapzen_terrain_{latest}.json
-ttl 2592000
-force em
-on earth 0 0
-map results
-lat_key lat
-lon_key lon
-field elevation geosphere_terrain_mapzen_m
-alt_key elevation
-
-url https://github.com/omegaflow/sources/releases/download/api.opentopodata.org/opentopo_srtm30m_{latest}.json
-ttl 2592000
-force em
-on earth 0 0
-map results
-lat_key lat
-lon_key lon
-field elevation geosphere_openmeteo_elevation_srtm30_m
-alt_key elevation
-
 url https://github.com/omegaflow/sources/releases/download/rest.isric.org/soilgrids_clay_{latest}.json
 ttl 2592000
 force em
@@ -22949,30 +21776,6 @@ ttl 2592000
 force seismic-surface
 body earth
 path value geosphere_openmeteo_elevation_epqs_m
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/lithosphere_gem_active_faults.json
-ttl 2592000
-at sun 1.0
-force em
-format universal
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/lithosphere_pb2002_boundaries.json
-ttl 2592000
-at sun 1.0
-force em
-format universal
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/lithosphere_pb2002_orogens.json
-ttl 2592000
-at sun 1.0
-force em
-format universal
-
-url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/lithosphere_pb2002_plates.json
-ttl 2592000
-at sun 1.0
-force em
-format universal
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_nearby_1000_{latest}.json
 ttl 315576000000

@@ -7551,43 +7551,6 @@ field_in 17 water_temp_c
 lat_key 5
 lon_key 6
 
-url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period&timezone=auto
-ttl 600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-  path latitude lat
-  path longitude lon
-  field current.wave_height wave_height
-  field current.wave_direction wave_direction
-  field current.wave_period wave_period
-
-url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,ocean_current_velocity,ocean_current_direction,sea_level_height_msl&timezone=auto
-ttl 600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-  path latitude lat
-  path longitude lon
-  path current.sea_surface_temperature sst_c
-  path current.ocean_current_velocity current_velocity_kmh
-  path current.ocean_current_direction current_direction_deg
-  path current.sea_level_height_msl sea_level_msl_m
-
-url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto
-ttl 600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-  path latitude lat
-  path longitude lon
-  path current.wind_wave_height wind_wave_m
-  path current.wind_wave_direction wind_wave_dir_deg
-  path current.wind_wave_period wind_wave_period_s
-  path current.swell_wave_height swell_m
-  path current.swell_wave_direction swell_dir_deg
-  path current.swell_wave_period swell_period_s
-
 url https://www.nhc.noaa.gov/CurrentStorms.json
 ttl 900
 force em
@@ -8242,11 +8205,6 @@ lat_key 3
 lon_key 5
   
   
-  
-  
-  
-
-
 field_in 0 event_date
 field_in 1 energy_j
 field_in 2 impact_e_j
@@ -8475,13 +8433,6 @@ at sun 1.0
 map data
 lat_key 3
 lon_key 5
-  
-  
-  
-  
-  
-  
-  
   
   
 field_in 0 event_date
@@ -9017,7 +8968,7 @@ on earth 19.5 -155.6
 
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
 ttl 3600
-force em
+force diffusion
 on earth 19.5362 -155.5763 3397
 format universal
 last_row (ppm) atmosphere_co2_weekly_ppm
@@ -9046,7 +8997,7 @@ pos atmosphere_lat atmosphere_lon
 
 url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
 ttl 3600
-force em
+force diffusion
 at sun 1
 format universal
 last_row average atmosphere_gml_methane_global_ppb
@@ -9063,7 +9014,7 @@ field_in 3 ch4_ppb_uncertainty
 
 url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
 ttl 3600
-force em
+force diffusion
 at sun 1
 format universal
 last_row average atmosphere_gml_n2o_global_ppb
@@ -9087,28 +9038,6 @@ on earth 35.0 -106.0
   field solarterrestrialdata.solarflux.Aindex Aindex
   field solarterrestrialdata.solarflux.Kindex Kindex
   field solarterrestrialdata.solarflux.MUF MUF
-
-url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&daily=wave_height_max,wave_period_max,swell_wave_height_max&timezone=auto
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-  path latitude lat
-  path longitude lon
-  path daily.wave_height_max.0 wave_height_max
-  path daily.wave_period_max.0 wave_period_max
-  path daily.swell_wave_height_max.0 swell_wave_height_max
-
-url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,wave_height,swell_wave_height
-ttl 3600
-force em
-at sun 1.0
-pos atmosphere_lat atmosphere_lon
-  path latitude lat
-  path longitude lon
-  path current.sea_surface_temperature marine_sst_c
-  path current.wave_height marine_wave_height_m
-  path current.swell_wave_height marine_swell_height_m
 
 url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
 ttl 3600
@@ -9321,17 +9250,6 @@ map hourly.time
   field hourly.precipitation precipitation
   field hourly.windspeed_10m windspeed_10m
   field hourly.cape cape
-
-url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,ocean_current_velocity&forecast_days=7&format=json
-ttl 3600
-force acoustic
-at sun 1.0
-map hourly.time
-  field hourly.wave_height wave_height
-  field hourly.wave_period wave_period
-  field hourly.wave_direction wave_direction
-  field hourly.swell_wave_height swell_wave_height
-  field hourly.ocean_current_velocity ocean_current_velocity
 
 url https://api.open-meteo.com/v1/forecast?latitude=50.0&longitude=10.0&hourly=snow_depth,soil_temperature_0cm,soil_temperature_6cm&forecast_days=7&format=json
 ttl 3600
@@ -14600,13 +14518,6 @@ map collections
   field spatial_extent.bbox.2 2
   field spatial_extent.bbox.3 3
 
-url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_coastline.geojson
-ttl 86400
-force em
-on earth 0 0
-map features
-  field properties.name name
-
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson
 ttl 86400
 force em
@@ -15093,7 +15004,7 @@ lon_key items.2.latitude
 
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
 ttl 86400
-force em
+force diffusion
 on earth 19.5362 -155.5763
 last_line atmosphere_co2_annual_mean_global
   field 0 year
@@ -15105,7 +15016,7 @@ field_in 2 co2_ppm_uncertainty
 
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
 ttl 86400
-force em
+force diffusion
 on earth 19.5362 -155.5763
 last_row average atmosphere_co2_ppm_mlo_monthly
 
@@ -15733,7 +15644,7 @@ last_row salinity hydrosphere_salinity_psu
 
 url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
 ttl 86400
-force em
+force diffusion
 on earth 46.05 -125.00
 format universal
 last_row surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm
@@ -15741,7 +15652,7 @@ last_row sea_surface_temperature hydrosphere_sst_ooi_c
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
 ttl 86400
-force em
+force diffusion
 on earth 47.606 -122.335
 tail
 format text
@@ -15749,7 +15660,7 @@ field_in 0 hydrosphere_pmel_co2_mooring_raw
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?station_id,longitude,latitude,time,pCO2_sw,pH_sw&orderByMax(%22station_id%2Ctime%22)
 ttl 86400
-force em
+force diffusion
 on earth 47.6062 -122.3321
 format universal
 last_row pCO2_sw hydrosphere_pco2_pmel_uatm
@@ -17601,14 +17512,6 @@ z_key redshift
   field web_page web_page
   field comments comments
 
-url https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/master/airports.json
-ttl 604800
-force em
-at sun 1.0
-map .
-lat_key lat
-lon_key lon
-
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+*+FROM+tevcat
 ttl 604800
@@ -18686,7 +18589,7 @@ last line atmosphere_hadcrut5_temp_anomaly_raw
 
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
 ttl 2592000
-force em
+force diffusion
 on earth -77.3190 39.7030
 format universal
 map data
@@ -18695,7 +18598,7 @@ field_in 1 paleoclimate_domefuji_co2_ppm
 
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
 ttl 2592000
-force em
+force diffusion
 on earth -75.100 123.350
 format universal
 map data
@@ -18704,7 +18607,7 @@ field_in 4 paleoclimate_epica_co2_ppm
 
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
 ttl 2592000
-force em
+force diffusion
 on earth -78.464 106.833
 format universal
 map data
@@ -18764,26 +18667,6 @@ body earth
 map results
 lat_key latitude
 lon_key longitude
-  field elevation elevation
-alt_key elevation
-
-url https://api.opentopodata.org/v1/eudem25m?locations={grid}
-ttl 2592000
-force em
-at sun 1.0
-map results
-lat_key location.lat
-lon_key location.lng
-  field elevation elevation
-alt_key elevation
-
-url https://api.opentopodata.org/v1/gebco2020?locations={grid}
-ttl 2592000
-force em
-at sun 1.0
-map results
-lat_key location.lat
-lon_key location.lng
   field elevation elevation
 alt_key elevation
 

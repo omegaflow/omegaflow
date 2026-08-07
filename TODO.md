@@ -283,15 +283,41 @@ Verification: NEO oscillators appear at correct ICRS positions. `cargo check` cl
 
 ---
 
-## Pre-CDN Format Migration: EM Force — World Bank Indicators
+## Pre-CDN Reclassification: World Bank Indicators DROP
 
-Migrate the 228 World Bank API source blocks. Largest single-domain batch.
+The 228 World Bank indicator blocks in `pre_cdn.φ` (GDP, birth rate, forest percentage, etc.) are economic statistics — not direct physical measurements. They have no force. The prior verdict of IMPLEMENT-NOW with `force em` is revoked under the Force Gate Principle: the measured quantity does not propagate through the block universe under any declared force. All 228 are DROP.
+Code: `phi/recovery/pre_cdn.φ` (inventory reference only — no migration occurs).
 
-Scope: 228 economic/development indicators. Keyless. Force `em`. Each block fetches a single country or global indicator. Static data with ttl≥86400 → `sources_cdn.φ`. Frame: `on earth <country_capital_lat> <country_capital_lon>` or `at sun 1.0` for global indicators.
+---
 
-Design pattern: canonical `field` declarations with consistent `biosphere_wb_<indicator>` prefix. Template-based generation acceptable — all blocks follow identical pattern differing only in URL indicator code and field name.
+## Pre-CDN Reclassification: Yahoo Finance DROP
 
-Verification: Random sample of 10 blocks parses and produces oscillators. All 228 blocks parse without error. `cargo check` clean.
+The 37 Yahoo Finance ETF/stock price blocks in `pre_cdn.φ` are symbolic abstractions (prices) — not physical measurements. They have no force. The prior verdict of IMPLEMENT-NOW is revoked. All 37 are DROP.
+Code: `phi/recovery/pre_cdn.φ` (inventory reference only — no migration occurs).
+
+---
+
+## Cleanup: Excise Force-Assigned World Bank Violations
+
+Three World Bank blocks were migrated to `sources_cdn.φ` with falsely assigned forces: `worldbank_forest_area` (force diffusion, economic statistic), `worldbank_pm25_exposure` (force diffusion, modeled estimate), `worldbank_co2_emissions` (force em, national accounting number). These violate the Force Gate Principle.
+Action: Remove the three blocks from `phi/sources_cdn.φ`. Verify `cargo check` clean. DONE.
+Code: `phi/sources_cdn.φ`
+
+---
+
+## Residual Force-Gate Classification
+
+The first Force-Gate re-audit corrected the large violations (weather→advective/thermal, air-quality→diffusion, gas concentrations→diffusion, ephemeris/masses→gravity, biotic occurrences→biotic, station/metadata/count blocks→DECLINED). A residual set of ambiguous single blocks awaits final classification:
+
+- `getUSVolcanoes` (USGS volcano list — catalog or seismic-surface?)
+- `fireball.api` (JPL bolide records — em or gravity?)
+- `getUSVolcanoes` / `esri_monitored_volcanos` vs pure volcano catalogs
+- `marine_daily`/`marine_sst` in live (forecast or measurement?)
+- Remaining `force em` blocks on ocean/SST/terrain in live file
+
+Action: Present the residual list to the Council. Bind each. Apply final corrections.
+Code: `phi/sources_cdn.φ`, `phi/sources_live.φ`
+Verification: Every source's force is physically accurate. `cargo check` clean.
 
 ---
 
