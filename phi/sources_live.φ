@@ -628,8 +628,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field temp temp
   field dewp dewp
   field altim altim
@@ -7492,8 +7492,8 @@ ttl 600
 force acoustic
 at sun 1
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field icaoId icaoId
   field acType acType
   field temp temp
@@ -7563,8 +7563,8 @@ ttl 600
 force acoustic
 on earth 0 0
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field temp temp
   field altim altim
   field wspd wspd
@@ -8499,8 +8499,8 @@ ttl 1800
 force em
 at sun 1
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field icaoId icaoId
   field rawTAF rawTAF
   field issueTime issueTime
@@ -8515,8 +8515,8 @@ ttl 1800
 force acoustic
 on earth 0 0
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field icaoId icaoId
   field temp temp
   field wdir wdir
@@ -8530,8 +8530,8 @@ ttl 1800
 force acoustic
 on earth 0 0
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field icaoId icaoId
   field temp temp
   field dewp dewp
@@ -8546,8 +8546,8 @@ ttl 1800
 force acoustic
 on earth 0 0
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field icaoId icaoId
   field temp temp
   field dewp dewp
@@ -8564,8 +8564,8 @@ ttl 1800
 force acoustic
 on earth 0 0
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field icaoId icaoId
   field temp temp
   field dewp dewp
@@ -8625,8 +8625,8 @@ ttl 1800
 force acoustic
 at sun 1.0
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field hazard hazard
 field severity severity
 
@@ -9834,8 +9834,8 @@ ttl 3600
 force acoustic
 on earth 0 0
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field icaoId icaoId
   field temp temp
   field wdir wdir
@@ -10276,8 +10276,8 @@ ttl 3600
 force acoustic
 on earth 0 0
 map .
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field icaoId icaoId
   field fcsts.0.wdir wdir
   field fcsts.0.wspd wspd
@@ -10646,8 +10646,8 @@ ttl 3600
 force gravity
 at sun 1.0
 map predictions
-lat_key geometry.coordinates.1
-lon_key geometry.coordinates.0
+lat_key lat
+lon_key lon
   field v v
 
 
@@ -10656,7 +10656,7 @@ ttl 3600
 force thermal
 at sun 1.0
 map stations
-lat_key geometry.coordinates.1
+lat_key lat
 lon_key lng
   field id id
   field name name
@@ -15984,7 +15984,7 @@ ttl 86400
 force advective
 at sun 1.0
 map stations
-lat_key geometry.coordinates.1
+lat_key lat
 lon_key lng
   field id id
   field name name
@@ -22051,6 +22051,47 @@ field place_guess locality
 
 
 url https://api.neotomadb.org/v2.0/data/datasets?datasettype=pollen&limit=2000&offset=0
+ttl 86400
+force biotic
+map data
+lat_key site.geography.coordinates.1
+lon_key site.geography.coordinates.0
+  field site.sitename site_name
+  field site.altitude elevation_m
+  field site.datasets.0.datasetid dataset_id
+  field site.datasets.0.agerange.0.ageyoung age_young_yr
+  field site.datasets.0.agerange.0.ageold age_old_yr
+
+
+
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=vertebrate+fauna&limit=2000&offset=0
+ttl 86400
+force biotic
+map data
+lat_key site.geography.coordinates.1
+lon_key site.geography.coordinates.0
+  field site.sitename site_name
+  field site.altitude elevation_m
+  field site.datasets.0.datasetid dataset_id
+  field site.datasets.0.agerange.0.ageyoung age_young_yr
+  field site.datasets.0.agerange.0.ageold age_old_yr
+
+
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=diatom&limit=2000&offset=0
+ttl 86400
+force biotic
+map data
+lat_key site.geography.coordinates.1
+lon_key site.geography.coordinates.0
+  field site.sitename site_name
+  field site.altitude elevation_m
+  field site.datasets.0.datasetid dataset_id
+  field site.datasets.0.agerange.0.ageyoung age_young_yr
+  field site.datasets.0.agerange.0.ageold age_old_yr
+
+
+
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=plant+macrofossils&limit=2000&offset=0
 ttl 86400
 force biotic
 map data
