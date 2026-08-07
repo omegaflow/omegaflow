@@ -10705,7 +10705,7 @@ ttl 86400
 at sun 1.0
 force em
 format universal
-  field H H
+  field_in 5 H
 epoch_key epoch
 
 url https://cddis.nasa.gov/archive/vlbi/ivsproducts/eops/ivseops.snx
@@ -12144,7 +12144,7 @@ on earth 0.0 0.0
 map data
   field full_name full_name
   field epoch epoch
-  field H H
+  field_in 5 H
   field diameter diameter
   field albedo albedo
   field class class
