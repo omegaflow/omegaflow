@@ -316,3 +316,9 @@ note erddap.aodn.org.au DNS does not resolve (host migrated/retired). AODN moved
 dead 404
 url http://www.bom.gov.au/fwo/marine_warnings.json
 note BOM fwo/marine_warnings.json 404 (BOM API migrated). Also marine warnings = text warnings - council: text warnings DECLINE (forceless).
+decline station-registry
+url https://fdsnws.raspberryshakedata.com/fdsnws/station/1/query?network=AM&channel=EHZ&level=station&format=text&includeavatability=true
+note Raspberry Shake station registry (level=station = list of stations, not measurements). Council: station lists carry no force, DECLINE. (Probe timed out HTTP 000 but classification independent of reachability.)
+dead 404-schema
+url https://www.ncdc.noaa.gov/swdiws/json/nx3structure/{today}
+note SWDI works but {today} must be yyyymmdd (not yyyy-mm-dd, else 500). nx3structure is RADAR structure product (CELL_ID, MAX_REFLECT, VIL) - NOT lightning, no lat/lon. Batch fields (lat,lon,striketype,signalstrength) don't match. Lightning dataset would be nx3strikes. Research correct SWDI lightning endpoint.
