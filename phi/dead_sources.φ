@@ -166,3 +166,14 @@ note csc2master table does not exist. Correct Chandra CSC2 table name + column s
 # (VOTable only) and batch-01 table/column names are fabricated. All need
 # schema discovery via heasarc.gsfc.nasa.gov/xamin/vo/tap/sync with correct
 # table list before any can be curated. Do NOT trust batch table names.
+parser-def votable-tap
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,instrument,obs_date+FROM+chanmaster+WHERE+status%3D'archived'+AND+exposure%3E10000+ORDER+BY+obs_date+DESC
+note chanmaster table exists but column 'instrument' missing. VOTable-only. Schema discovery needed alongside XmlCount parser.
+parser-def votable-tap
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
+note xmmssc table exists but column 'iauname' missing. VOTable-only. Schema discovery needed.
+
+# heasarc group — 37 remaining blocks share the identical defect:
+# FORMAT=csv unsupported (VOTable-only) + fabricated table/column names.
+# All require heasarc schema discovery + XmlCount/VOTable Extract parser.
+# blocks: heasarc_3fhl_high_energy_catalog, heasarc_4fgl_blazars_only, heasarc_4fgl_dr4_gamma_ray_catalog, heasarc_batse_large_spectral_catalog_grb, heasarc_bepposax_grb_catalog, heasarc_chandra_galactic_center, heasarc_comptel_mev_source_catalog, heasarc_einstein_ipc_source_catalog, heasarc_einstein_probe_ep1_source_catalog, heasarc_exosat_point_source_catalog, heasarc_fermi_3fgl_third_source_catalog, heasarc_fermi_gbm_tte_trigger_catalog, heasarc_fermi_lat_tev_blazar_qg_candidates, heasarc_gomos_envisat_ozone_profiles_l3, heasarc_hess_galactic_plane_survey, heasarc_icecube_10yr_ps_catalog, heasarc_integral_ibis, heasarc_integral_ibis_17yr_hard_xray, heasarc_integral_ibis_grb_catalog, heasarc_integral_spi_nucleosynthesis, heasarc_maxi_gsc_catalog, heasarc_nicer_master_source_catalog, heasarc_nustar_hard_xray_catalog, heasarc_rosat_2rxs, heasarc_rosat_bright_source_catalog, heasarc_rosat_bsc, heasarc_rosat_xclass_clusters, heasarc_rxte_asm_xray_sources, heasarc_rxte_hexte_hard_xray_sources, heasarc_sage2_stratospheric_aerosol, heasarc_swift_bat105m, heasarc_swift_uvot_galaxy_survey, heasarc_swift_xrt_gw170817_afterglow, heasarc_tevcat_ground_based, heasarc_xmm_obs, heasarc_xrb_catalog, heasarc_xrism_resolve_source_catalog

@@ -13423,20 +13423,15 @@ map .
   field vy vy
 
 
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,RAJ2000,DEJ2000,"S1.4",MajAxis,MinAxis+FROM+"VIII/65/nvss"+WHERE+"S1.4"%3E50+ORDER+BY+"S1.4"+DESC
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,%22S1.4%22,MajAxis,MinAxis+FROM+%22VIII/65/nvss%22+WHERE+%22S1.4%22%3E50+ORDER+BY+%22S1.4%22+DESC
 ttl 86400
 force em
-at sun 1.0
-format universal
-cmap data
-tau_key _dist_m
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
-  field S1_4 S1_4
-  field S1.4 4
-  field MajAxis MajAxis
-  field MinAxis MinAxis
-cmap .
+  field S1_4 flux_1400mhz_mjy
+  field MajAxis major_axis_arcsec
+  field MinAxis minor_axis_arcsec
 
 
 url https://api.astrocats.space/{target}/
