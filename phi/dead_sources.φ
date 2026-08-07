@@ -328,3 +328,9 @@ note Storm Events CSV export 400 (validates date/params poorly). Also storm even
 dead 404
 url https://coastwatch.noaa.gov/erddap/griddap/noaagoesglm5mfd.csv?flash_count%5Blast%5D%5B(-60.0):(60.0)%5D%5B(-180.0):(180.0)%5D&.draw=surface&.vars=longitude%7Clatitude%7Cflash_count
 note GLM datasetID noaagoesglm5mfd unknown on coastwatch (no GLM datasets there). GOES GLM data is at GES DISC (EDL-gated, EARTHDATA_EDL_TOKEN). Research correct GLM ERDDAP/grid source.
+dead dns-unreachable
+url https://erddap.incois.gov.in/erddap/griddap/INSAT3D_SST.csv?SST%5Blast%5D%5B(5):(25)%5D%5B(65):(90)%5D
+note erddap.incois.gov.in unreachable (HTTP 000, host check also fails). Indian ERDDAP often blocked/slow from outside. Research mirror (INCOIS data portal) or use GHRSST L4 SST instead.
+decline model-analysis
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_wav_anfc_0.083deg_PT3H-i.csv?VHM0%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VMDR%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VTM10%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D
+note CMEMS mod_glo_wav_anfc is model analysis/forecast - council: CMEMS model analysis DECLINE. Also nrt.cmems-du.eu returns HTML auth page (needs CMEMS_USER/PASS). Even with auth, model output has no force.
