@@ -153,10 +153,95 @@ difference is the IO channel."
 
 ---
 
-## 6. The 5-Session Roadmap (binding)
+## 6. Pure-Rust Ephemeris Compiler (No Crate, No Python, No FFI)
+
+The current CI generates `ephemeris_<body>.bin` files via Python + `spiceypy`
+(C-Fortran FFI wrapper). That Python dependency can be eliminated entirely.
+
+### What we need — and what we don't
+
+| Component | Needed? | Why |
+|---|---|---|
+| **DAF container parser** | ✅ | Reads the `.bsp` binary file record, summary chain, name records |
+| **SPK Type 2/3 Chebyshev evaluator** | ✅ | Extracts position coefficients directly from the kernel segment |
+| **PCK / generic rotation matrices** | ❌ | WGCCRE formulas in `body_fixed_to_icrs` (`src/main.rs:295-320`) compute `IAU_<BODY>→J2000` rotations analytically for EVERY body — no PCK kernel, no `pxform` needed |
+| **Text-kernel parser (leapseconds)** | ❌ | `J2000_EPOCH` + `tdb_now()` already exist in `src/main.rs` |
+| **Body-name→ID table** | ❌ | `BODY_ID_MAP` / `BodyEphemeris` already maps body names |
+| **External crates (`spicekit`, `anise`)** | ❌ | Vendored code: ~1200 lines of pure `std` Rust, MIT-licensed, zero cost to embed |
+
+### Why not ANISE
+
+ANISE (github.com/nyx-space/anise) has PCK support for arbitrary bodies but is
+MPL-2.0 (changes to the vendored code must stay under MPL) and >50,000 lines.
+The PCK part is unnecessary — WGCCRE handles rotation for every body. The
+DAF+SPK parts we need are ~1200 lines, readily available from the simpler,
+MIT-licensed `spicekit` crate or implementable directly from the public NAIF
+DAF file-format specification (naif.jpl.nasa.gov).
+
+### Architecture
+
+A second binary in the Cargo workspace: `src/bin/ephemeris_compiler.rs`.
+It uses **vendored** (embedded, not dependency-linked) DAF+SPK modules written
+in pure `std` Rust:
+
+```
+src/
+  main.rs                       ← Archivar (unchanged, std-only)
+  bin/ephemeris_compiler.rs     ← CI-only binary
+  spice_lite/
+    daf.rs                      ← ~400 lines: DAF FileRecord, summary chain, zero-copy doubles read
+    spk.rs                      ← ~600 lines: SPK Type 2/3 Chebyshev, state(body, center, et)
+    chebyshev.rs                ← ~200 lines: Chebyshev polynomial evaluation (same as CHEBYSHEV_N=18)
+    write_ephemeris.rs          ← ~100 lines: write ephemeris_<body>.bin with stype==0/1/2/3
+```
+
+The WGCCRE rotation logic already exists in `main.rs:249-320`
+(`body_fixed_to_icrs`, `icrs_to_body_surface`) — the compiler reuses the
+exact same formulas to produce `stype==3` rotation matrices for every body.
+
+No `[dependencies]` entries in `Cargo.toml` for these modules. All deps
+are `std`-replaceable: `bytemuck` → `unsafe { slice::from_raw_parts }`
+(aligned at 8-byte boundaries in the DAF format), `memmap2` → `std::fs::read`
+(100 MB kernel fits in CI's 7 GB RAM), `rustc-hash` → `std::collections::HashMap`
+(~30 segments per body), `thiserror` → manual `impl Display + Error`.
+
+### The three code paths (one binary, two modes)
+
+```
+cargo run (lokal)              → Archivar: WebSocket-Server, lesen flat .bin/CDN → rendern
+cargo run -- --ci-mode         → CI: sources_live.φ → fetch APIs → extract → gh upload (CDN Assets)
+cargo run -- --compile-eph     → CI: .bsp → DAF+SPK+WGCCRE → ephemeris_<body>.bin → gh upload (CDN Ephemeriden)
+```
+
+**Zero Python. Zero FFI. Zero crates.io dependencies.** The same codebase, the
+same WGCCRE formulas, the same `CHEBYSHEV_N`, the same binary header `0xCF 0x86
+0x01`. The Archivar compiles its own ephemera.
+
+---
+
+## 7. The 6-Session Roadmap (binding)
 
 Each session produces a complete, testable artifact. Interpretable by a
 session with zero prior context.
+
+### Session 0: Ephemeris Compiler with vendored DAF+SPK + WGCCRE
+**Code:** `src/bin/ephemeris_compiler.rs` + `src/spice_lite/da*/spk/chebyshev.rs`.
+- Extract DAF container parser and SPK Type 2/3 reader from the MIT-licensed
+  `spicekit` crate or implement directly from the NAIF DAF specification.
+- Read `de440.bsp` (and satellite kernels) — extract Chebyshev coefficients
+  DIRECTLY from the kernel segment (no refit needed — SPK stores Chebyshev
+  coefficients in the same structure our binary format uses).
+- Compute rotation matrices via the WGCCRE formulas from `body_fixed_to_icrs`.
+- Write `ephemeris_<body>.bin` with `stype==0` (Chebyshev), `stype==1`
+  (WGCCRE parameters), `stype==2` (media constants), `stype==3` (3×3 rotation
+  matrices).
+- Upload to CDN via `gh release upload` with the `omegaflow/sources` release
+  tag `ssd.jpl.nasa.gov`.
+- **Test:** `cargo run --bin ephemeris_compiler -- de440.bsp` produces valid
+  binaries. `parse_ephemeris_binary` in `src/main.rs` reads them correctly.
+  `cargo check` 0 warnings.
+- **Dependency impact:** None. All modules are vendored `std`-only Rust.
+  `Cargo.toml` remains empty (`[dependencies]` section unchanged).
 
 ### Session 1: CI-mode flag + naming convention + local file output
 **Code:** `src/main.rs` — new `ci_mode_main()` near `verify_sources_main()`.
@@ -206,14 +291,19 @@ session with zero prior context.
 - Remove dual-file loading from `load_sources()` (`src/main.rs:2646`) → single path
 - **Verify:** same number of active sources after merge. `cargo check` clean.
 
-### Session 5: Excise Python CDN scripts
+### Session 5: Excise Python scripts — Zero Python in CI
 **Code:** Remove scripts, update CI workflows.
 - Delete: `migrate_live_to_cdn.py`, `tap_to_cdn.py`, `shard_catalog.py`,
-  `refresh_catalogs.py`, `restore_all_live.py`
-- Keep: `generate_ephemerides.py` (SPICE Chebyshev fitting), `verify_sources.py`
-  (API audit tool)
-- **CI workflow:** `refresh-protected-data.yml` → reduced to only ephemeris
-  generation; all other steps replaced by `cargo run -- --ci-mode`
+  `refresh_catalogs.py`, `restore_all_live.py`, `generate_ephemerides.py`
+  (replaced by `cargo run -- --compile-eph`, Session 0)
+- Keep: `verify_sources.py` (API audit tool — optionally replaced by
+  `cargo run -- --verify-sources`)
+- **CI workflows:** `generate-ephemerides.yml` → replaced by
+  `cargo run -- --compile-eph`. `refresh-protected-data.yml` → replaced by
+  `cargo run -- --ci-mode`. Only the raw `pages.yml` and `release.yml`
+  workflows remain.
+- **Result:** GitHub Actions CI is `setup-rust-toolchain` + `cargo run`.
+  Zero Python. Zero `pip install`. Zero FFI.
 
 ---
 
