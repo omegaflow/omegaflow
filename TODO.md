@@ -234,3 +234,37 @@ Not part of this repository. `docs/omegaflow_sense_hardware.yaml` specifies hard
 
 REJECTED. AGENTS.md: "Frameless and forceless sources are refused at load." The code at line 2635 implements this: `force_id_of(&cur_force).is_none()` → source refused with `eprintln!`. Soft fallback to `em` would silently assign electromagnetic propagation physics to an unknown force type. A = A: an acoustic oscillator is not an electromagnetic oscillator. The physics is incorrect.
 If a force type is needed, it must be added to `force_id_of()` and `force_extent()` explicitly, with defined propagation constants. This constraint is architectural, not negotiable.
+
+---
+
+## Reference — Archived Concepts & Plans
+
+Original detailed specifications. Moved to `/home/johannes/projects/archive/omegaflow/` during 2026-08-07 consolidation. Recoverable for context when working on related TODO items.
+
+### docs/concepts/
+
+| File | What it covers |
+|---|---|
+| `CAUSALITY_PREFILTER.md` | Kausalitäts-Vorfilter Design (implemented in `causal_reach()`) |
+| `FORCE_SEPARATED_COMPUTE.md` | Compute-Shader Force-Separation (implemented in `presence_probe`) |
+| `FUTURE_CONCEPTS.md` | Visionary roadmap: water metaphor, stigmergic network, Nostr web |
+| `IAU-2000_EOP.md` | Earth Orientation Parameters via SPICE PCK (ephemerides pipeline) |
+| `LOST_CONCEPTS.md` | Removed concepts: Minkowski, TDA, Nostr, WASM pool |
+| `MASTER.md` | Consolidated architecture/status manifest (July — superseded by AGENTS.md) |
+| `MINKOWSKI_FIELD-PERMEABILITY.md` | Minkowski space-time weighting design |
+| `PARSER_MAGIC.md` | Parser issues/bugs (13 items, mostly fixed) |
+| `PARSER_MAGIC_2.md` | Std-only parser internals: mini-regex, template DSL |
+| `POINTCLOUD-RENDERING.md` | Discrete quad point cloud (v1) |
+| `POINTCLOUD-RENDERING_2.md` | Soft-glow circles + additive blending (v2, implemented) |
+| `PROPABILITY.md` | Causality prefilter design doc (typo: PROBABILITY) |
+| `SEARCH_COMMAND-PALETTE.md` | ⌘K fuzzy-search palette design |
+| `TAU-FORCE-FILTER.md` | ξ Tau astronomy paper critique (dead-end concept) |
+| `TAU-FORCE-RENDERING.md` | Deployment doc for point-cloud WGSL shader |
+
+### docs/plans/
+
+| File | What it covers |
+|---|---|
+| `MIRROR_RESEARCH.md` | CDN mirror research: which endpoints support mirroring |
+| `DOMAIN_COVERAGE.md` | Domain-by-domain API coverage report |
+| `REMOVE_BIAS.md` | WP1-WP7 body-agnostic refactor plan (with token analysis in `archive/omegaflow/analysis/`) |
