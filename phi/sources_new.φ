@@ -33,3 +33,18 @@ field AOD_675nm aod_675
 # parser-def html-extract: SDSS SearchTools/sql returns HTML page, not
 #   JSON. Requires HtmlExtract or correct JSON endpoint research.
 # =====================================================================
+
+# parser-fixed per Gemini research 2026-08-07:
+# SDSS: SearchTools/sql returns HTML; correct endpoint is
+# SkyserverWS/SearchTools/SqlSearch. SpecObj columns are petroMag_r/g/i
+# (not r/g/i - those are PhotoObj only). Tested: 500 on wrong cols,
+# JSON on correct endpoint. Requires URL-encoded cmd with %20.
+
+# Gemini-research fixes (verified 2026-08-07):
+# IRSA Gator ZTF: spatial=cone + objstr='{ra} {dec}' + radius<=3 arcsec
+# + selcols fid (not filterid) works. spatial=none/box always fails
+# (size limit). Needs {ra}/{dec} presence templates added to render_url
+# for presence-following queries.
+# USGS NWIS: bBox works (format=json,1.1&bBox=minlon,minlat,maxlon,maxlat).
+# met.no Frost API: https://frost.met.no/observations/v0.jsonld needs
+# free client-id.

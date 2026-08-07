@@ -9804,12 +9804,7 @@ field_in 2 n2o_ppb_mean
 field_in 3 n2o_ppb_uncertainty
 
 
-url https://gwis.jrc.ec.europa.eu/api/fire/current?format=json&limit=500
-ttl 3600
-force em
-at sun 1
-format universal
-last_row average atmosphere_gwis_sf6_global_ppt
+
 
 
 url https://www.hamqsl.com/solarxml.php
@@ -14935,16 +14930,7 @@ lon_key Site_Longitude(Degrees)
   field Precipitable_Water(cm) Precipitable_Water(cm)
 
 
-url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
-ttl 86400
-force diffusion
-at sun 1
-format universal
-rows
-lat_key Latitude(decimal_degrees)
-lon_key Longitude(decimal_degrees)
-  field Site_Name Site_Name
-  field Elevation(meters) Elevation(meters)
+
 
 
 url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
@@ -22403,3 +22389,63 @@ field country country_code
 field waterBody ocean_habitat
 field occurrenceDate observation_date
 field depth nesting_depth_cm
+
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00010
+ttl 300
+force thermal
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field sourceInfo.siteName station_name
+  field sourceInfo.siteCode.0.value site_code
+  field values.0.value.0.value hydrosphere_local_water_temp_c
+
+
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00095
+ttl 300
+force diffusion
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field sourceInfo.siteName station_name
+  field sourceInfo.siteCode.0.value site_code
+  field values.0.value.0.value hydrosphere_local_water_conductivity_uscm
+
+
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00400
+ttl 300
+force diffusion
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field sourceInfo.siteName station_name
+  field sourceInfo.siteCode.0.value site_code
+  field values.0.value.0.value hydrosphere_local_river_ph
+
+
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=63680
+ttl 300
+force diffusion
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field sourceInfo.siteName station_name
+  field sourceInfo.siteCode.0.value site_code
+  field values.0.value.0.value hydrosphere_local_turbidity_fnu
+
+
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00300
+ttl 300
+force diffusion
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field sourceInfo.siteName station_name
+  field sourceInfo.siteCode.0.value site_code
+  field values.0.value.0.value hydrosphere_local_dissolved_oxygen_mgl
+
