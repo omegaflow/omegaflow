@@ -262,12 +262,6 @@ at sun 1
 map .
   field time_tag time_tag
 field flux flux_long_1_8A
-lat_key satellite_lat
-lon_key satellite_lon
-  field begin_time begin_time
-  field peak_time peak_time
-  field class class
-  field energy energy
 field_in 0 timestamp_utc
 field_in 1 flux_short_wm2
 field_in 2 flux_long_wm2
@@ -495,7 +489,7 @@ map .
   field a_running a_running
   field station_count station_count
     last Kp magnetosphere_kp_index_noaa
-    field running_avg_kp running_avg_kp
+
 
 url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=Fobs
 ttl 300
@@ -519,7 +513,7 @@ map superevents
   field distance.std std
   field created created
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
 ttl 300
 force em
 at sun 1.0
@@ -667,7 +661,7 @@ lon_key features.0.properties.latitude
   field properties.mmi mmi
   field properties.tsunami tsunami
 
-url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,detected_duration,detected_energy,detected_latitude&outSR=4326&f=geojson&resultRecordCount=2000
+url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,detected_duration,detected_energy,detected_latitude,detected_longitude&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 300
 force em
 at sun 1.0
@@ -876,7 +870,7 @@ map features
 lat_key attributes.lat
 lon_key attributes.lon
 
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42043/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr,sea_water_speed_1__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42043/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_1__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
 force acoustic
 at sun 1.0
@@ -884,10 +878,10 @@ map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
-field properties.sea_surface_temperature_1__degr sea_surface_temperature_0__degr
+field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
 field properties.sea_water_speed_1__cm_s_1_ sea_water_speed_0__cm_s_1_
 
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42084/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42084/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
 force acoustic
 at sun 1.0
@@ -895,10 +889,10 @@ map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
-field properties.sea_surface_temperature_1__degr sea_surface_temperature_0__degr
+field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
 
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42091/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42091/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
 force acoustic
 at sun 1.0
@@ -906,10 +900,10 @@ map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
-field properties.sea_surface_temperature_1__degr sea_surface_temperature_0__degr
+field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
 
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42095/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42095/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
 force acoustic
 at sun 1.0
@@ -917,10 +911,10 @@ map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
-field properties.sea_surface_temperature_1__degr sea_surface_temperature_0__degr
+field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
 
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42098/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42098/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
 force acoustic
 at sun 1.0
@@ -928,10 +922,10 @@ map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
-field properties.sea_surface_temperature_1__degr sea_surface_temperature_0__degr
+field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
 
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42099/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42099/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
 force acoustic
 at sun 1.0
@@ -939,7 +933,7 @@ map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
-field properties.sea_surface_temperature_1__degr sea_surface_temperature_0__degr
+field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42360/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_water_speed__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
@@ -1096,7 +1090,7 @@ lon_key geometry.coordinates.0
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
 
-url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42386/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr,sea_water_speed_1__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42386/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_1__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
 force acoustic
 at sun 1.0
@@ -1104,7 +1098,7 @@ map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
-field properties.sea_surface_temperature_1__degr sea_surface_temperature_0__degr
+field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
 field properties.sea_water_speed_1__cm_s_1_ sea_water_speed_0__cm_s_1_
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42388/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
@@ -7485,8 +7479,8 @@ ttl 600
 force seismic-surface
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.sig sig
   field geometry.coordinates.2 2
@@ -7496,8 +7490,8 @@ ttl 600
 force seismic-surface
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.place place
   field properties.time time
@@ -7969,8 +7963,8 @@ ttl 1800
 force seismic-surface
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -8135,7 +8129,7 @@ force em
 format universal
 extent 5.45e-6
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
 ttl 3600
 force em
 at sun 1.0
@@ -8167,7 +8161,7 @@ cmap data
   field energy_tev energy_tev
   field error_radius_deg error_radius_deg
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
 ttl 3600
 force em
 at sun 1.0
@@ -8181,7 +8175,7 @@ lon_key dec
   field count_rate count_rate
   field type type
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+200+date,band,peak_flux,duration,type+FROM+sgraflares+WHERE+date+IS+NOT+NULL+ORDER+BY+date+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+date,band,peak_flux,duration,type+FROM+sgraflares+WHERE+date+IS+NOT+NULL+ORDER+BY+date+DESC
 ttl 3600
 force em
 on earth -29.008 266.417
@@ -11047,7 +11041,7 @@ force em
 on earth 34.201 -118.171
 extent 3.34e-8
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+3000+name,ra,dec,flux_10_1000,flux_10_30,flux_30_100,flux_100_1000,spectral_index,redshift,assoc_name+FROM+fermifhl+WHERE+flux_10_1000+IS+NOT+NULL+ORDER+BY+flux_10_1000+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_10_1000,flux_10_30,flux_30_100,flux_100_1000,spectral_index,redshift,assoc_name+FROM+fermifhl+WHERE+flux_10_1000+IS+NOT+NULL+ORDER+BY+flux_10_1000+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11060,7 +11054,7 @@ z_key redshift
   field spectral_index spectral_index
   field assoc_name assoc_name
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,redshift,spectral_index,nu_synpeak,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','FSRQ')+AND+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,redshift,spectral_index,nu_synpeak,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','FSRQ')+AND+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11074,7 +11068,7 @@ z_key redshift
   field class1 class1
   field assoc_name assoc_name
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+50000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,extended,assoc_name,redshift+FROM+fermilpsc+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,extended,assoc_name,redshift+FROM+fermilpsc+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11089,7 +11083,7 @@ z_key redshift
   field class1 class1
   field assoc_name assoc_name
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+2704+name,ra,dec,t90,fluence,peak_flux,time_trigger+FROM+batsegrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2704+name,ra,dec,t90,fluence,peak_flux,time_trigger+FROM+batsegrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11103,7 +11097,7 @@ dec_key dec
   field peak_flux peak_flux
   field time_trigger time_trigger
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+200+name,ra,dec,type,period,mass_donor,mass_bh,dist,classification+FROM+blackholebin+WHERE+ra+IS+NOT+NULL+ORDER+BY+mass_bh+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,type,period,mass_donor,mass_bh,dist,classification+FROM+blackholebin+WHERE+ra+IS+NOT+NULL+ORDER+BY+mass_bh+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11131,7 +11125,7 @@ dec_key dec
   field extent_flag extent_flag
   field var_flag var_flag
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+700+name,ra,dec,soft_flux,hard_flux,full_flux,band_ratio,photon_index,redshift+FROM+cdfnchandra+WHERE+ra+IS+NOT+NULL+ORDER+BY+full_flux+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+700+name,ra,dec,soft_flux,hard_flux,full_flux,band_ratio,photon_index,redshift+FROM+cdfnchandra+WHERE+ra+IS+NOT+NULL+ORDER+BY+full_flux+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11145,7 +11139,7 @@ z_key redshift
   field full_flux full_flux
   field photon_index photon_index
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+1000+name,ra,dec,flux_s,flux_h,flux_f,photon_index_ap,z_ap+FROM+cdfs7ms+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_f+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,flux_s,flux_h,flux_f,photon_index_ap,z_ap+FROM+cdfs7ms+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_f+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11159,7 +11153,7 @@ z_key z_ap
   field flux_f flux_f
   field photon_index_ap photon_index_ap
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,photon_index,exposure+FROM+chan_gc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,photon_index,exposure+FROM+chan_gc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11181,7 +11175,7 @@ field_in 2 chandra_exposure_sec
 lat_key 0
 lon_key 1
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,instrument,obs_date+FROM+chanmaster+WHERE+status%3D'archived'+AND+exposure%3E10000+ORDER+BY+obs_date+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,instrument,obs_date+FROM+chanmaster+WHERE+status%3D'archived'+AND+exposure%3E10000+ORDER+BY+obs_date+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11206,7 +11200,7 @@ lon_key dec
   field exposure exposure
   field detector detector
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+200+name,ra,dec,distance,age,type,obs_id+FROM+chansnr+WHERE+ra+IS+NOT+NULL+ORDER+BY+distance+ASC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,distance,age,type,obs_id+FROM+chansnr+WHERE+ra+IS+NOT+NULL+ORDER+BY+distance+ASC
 ttl 86400
 force em
 at sun 1.0
@@ -11219,7 +11213,7 @@ dec_key dec
   field age age
   field type type
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+50000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11278,7 +11272,7 @@ z_key redshift
   field nu_syn nu_syn
   field source_type source_type
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+3000+name,ra,dec,t90,fluence,peak_flux,redshift,trigger_time,classification+FROM+fermigbrst+WHERE+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,t90,fluence,peak_flux,redshift,trigger_time,classification+FROM+fermigbrst+WHERE+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11294,7 +11288,7 @@ field redshift redshift
   field trigger_time trigger_time
   field classification classification
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+2000+name,lat,lon,trigger_time,duration,e_mean,counts+FROM+fermitgf+WHERE+lat+IS+NOT+NULL+ORDER+BY+counts+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,lat,lon,trigger_time,duration,e_mean,counts+FROM+fermitgf+WHERE+lat+IS+NOT+NULL+ORDER+BY+counts+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11321,7 +11315,7 @@ dec_key DEJ2000
   field nu_flux nu_flux
   field LP_Index LP_Index
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,spinper,dist,optical_name+FROM+hmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,spinper,dist,optical_name+FROM+hmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11337,7 +11331,7 @@ dec_key dec
   field optical_name optical_name
 dist_key dist
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+name,ra,dec,ts,flux,p_value,sigma+FROM+icecube_ps_10y+WHERE+ra+IS+NOT+NULL+ORDER+BY+ts+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,ts,flux,p_value,sigma+FROM+icecube_ps_10y+WHERE+ra+IS+NOT+NULL+ORDER+BY+ts+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11363,7 +11357,7 @@ field_in 3 soft_band_flux
 field_in 4 hard_band_flux
 field_in 5 source_type
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+name,ra,dec,t90,fluence,peak_flux,time_trigger,error_radius+FROM+intgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,t90,fluence,peak_flux,time_trigger,error_radius+FROM+intgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11378,7 +11372,7 @@ field peak_flux peak_flux
   field time_trigger time_trigger
   field error_radius error_radius
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,dist,compact_type+FROM+lmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,dist,compact_type+FROM+lmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11409,7 +11403,7 @@ z_key redshift
   field error_radius error_radius
   field hardness_ratio_1 hardness_ratio_1
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+name,ra,dec,flux_4_10,flux_10_20,flux_20_40,n_sigma,type+FROM+maxigsc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_4_10,flux_10_20,flux_20_40,n_sigma,type+FROM+maxigsc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11423,7 +11417,7 @@ dec_key dec
   field flux_20_40 flux_20_40
   field type type
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+1000+latitude,longitude,co_total_column,co_surface,co_500hpa,co_300hpa,date+FROM+mopittl3m+WHERE+latitude+IS+NOT+NULL+ORDER+BY+co_total_column+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+latitude,longitude,co_total_column,co_surface,co_500hpa,co_300hpa,date+FROM+mopittl3m+WHERE+latitude+IS+NOT+NULL+ORDER+BY+co_total_column+DESC
 ttl 86400
 force diffusion
 at sun 1.0
@@ -11437,7 +11431,7 @@ field co_500hpa co_500hpa
 field co_300hpa co_300hpa
   field date date
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+100+name,ra,dec,dist,assoc_pulsar,luminosity_x,size_arcmin+FROM+pwncat+WHERE+ra+IS+NOT+NULL+ORDER+BY+luminosity_x+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+name,ra,dec,dist,assoc_pulsar,luminosity_x,size_arcmin+FROM+pwncat+WHERE+ra+IS+NOT+NULL+ORDER+BY+luminosity_x+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11466,7 +11460,7 @@ field_in 5 hardness_ratio_1
 field_in 6 hardness_ratio_2
 field_in 7 detection_likelihood
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11493,7 +11487,7 @@ field_in 4 hardness_ratio_1
 field_in 5 hardness_ratio_2
 field_in 6 source_extent
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+1000+name,ra,dec,redshift,count_rate,flux_0_1_2_4,luminosity_0_1_2_4,ext+FROM+xcsunion+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_0_1_2_4+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,redshift,count_rate,flux_0_1_2_4,luminosity_0_1_2_4,ext+FROM+xcsunion+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_0_1_2_4+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11519,7 +11513,7 @@ dec_key DEJ2000
   field Avg_Rate Avg_Rate
   field Rate_Err Rate_Err
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,count_rate+FROM+rxmtasm+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,count_rate+FROM+rxmtasm+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11544,7 +11538,7 @@ field_in 0 source_name
 field_in 3 hard_xray_flux
 field_in 5 source_type
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+2000+name,ra,dec,t90,fluence,redshift,time_trigger,xrt_column,host_galaxy+FROM+swiftgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,t90,fluence,redshift,time_trigger,xrt_column,host_galaxy+FROM+swiftgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11570,7 +11564,7 @@ dec_key dec
   field name name
   field ep_flux ep_flux
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+50000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -11582,7 +11576,7 @@ dec_key sc_dec
   field sc_hr4 sc_hr4
   field sc_var_flag sc_var_flag
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
 ttl 86400
 force em
 at sun 1.0
@@ -16775,7 +16769,7 @@ body earth
   path properties.parameter.PRECTOTCORR.0 PRECTOTCORR
 map features
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+batsegrb
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+batsegrb
 ttl 604800
 force em
 at sun 1.0
@@ -16787,7 +16781,7 @@ plx_key default_plx
   field trigger_num trigger_num
   field flux_64 flux_64
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+batsepulsr
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+batsepulsr
 ttl 604800
 force em
 at sun 1.0
@@ -16798,7 +16792,7 @@ dec_key dec
 plx_key default_plx
   field obsid obsid
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+chanmaster
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+chanmaster
 ttl 604800
 force em
 at sun 1.0
@@ -16826,7 +16820,7 @@ plx_key default_plx
   field category category
   field class class
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+fermil4fgl_dr4
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+fermil4fgl_dr4
 ttl 604800
 force em
 at sun 1.0
@@ -16905,7 +16899,7 @@ plx_key default_plx
   field assoc_error_radius assoc_error_radius
   field analysis_flags analysis_flags
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+fermil4lac
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+fermil4lac
 ttl 604800
 force em
 at sun 1.0
@@ -17125,7 +17119,7 @@ format universal
   field 3 redshift
 map features
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+intagn
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intagn
 ttl 604800
 force em
 at sun 1.0
@@ -17136,7 +17130,7 @@ dec_key dec
 plx_key default_plx
   field sb_flux sb_flux
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+intbsc
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intbsc
 ttl 604800
 force em
 at sun 1.0
@@ -17148,7 +17142,7 @@ plx_key default_plx
   field isgri_soft_rate isgri_soft_rate
   field isgri_hard_rate isgri_hard_rate
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+intisgri4yr
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intisgri4yr
 ttl 604800
 force em
 at sun 1.0
@@ -17159,7 +17153,7 @@ dec_key dec
 plx_key default_plx
   field distance distance
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+integralvartable
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+integralvartable
 ttl 604800
 force em
 at sun 1.0
@@ -17185,7 +17179,7 @@ dist_scale 1.495978707e11
   field a_au a_au
   field i_deg i_deg
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+maxigsc7yr
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+maxigsc7yr
 ttl 604800
 force em
 at sun 1.0
@@ -17198,7 +17192,7 @@ plx_key default_plx
   field flux_3_4 flux_3_4
   field excess_variance excess_variance
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+maximaster
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+maximaster
 ttl 604800
 force em
 at sun 1.0
@@ -17209,7 +17203,7 @@ dec_key dec
 plx_key default_plx
   field time time
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+maxissc
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+maxissc
 ttl 604800
 force em
 at sun 1.0
@@ -17220,7 +17214,7 @@ dec_key dec
 plx_key default_plx
   field sb_flux sb_flux
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+nicermaster
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+nicermaster
 ttl 604800
 force em
 at sun 1.0
@@ -17243,7 +17237,7 @@ alt_key altitude_m
   field hist_min hist_min
   field hist_max hist_max
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+xtemaster
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xtemaster
 ttl 604800
 force em
 at sun 1.0
@@ -17254,7 +17248,7 @@ dec_key dec
 plx_key default_plx
   field exposure exposure
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+xteslew
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xteslew
 ttl 604800
 force em
 at sun 1.0
@@ -17394,7 +17388,7 @@ dec_key dec
 plx_key parallax
   field phot_g_mean_mag phot_g_mean_mag
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+name%2Cra%2Cdec%2Cflux%2Credshift%2Csource_type+FROM+swbat105m
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+name%2Cra%2Cdec%2Cflux%2Credshift%2Csource_type+FROM+swbat105m
 ttl 604800
 force em
 at sun 1.0
@@ -17422,7 +17416,7 @@ z_key redshift
   field ctrpart_class ctrpart_class
   field source_type source_type
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+swiftgrb
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+swiftgrb
 ttl 604800
 force em
 at sun 1.0
@@ -17665,7 +17659,7 @@ plx_key default_plx
   field w3mpro w3mpro
   field w4mpro w4mpro
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+xmmslew
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmslew
 ttl 604800
 force em
 at sun 1.0
@@ -17676,7 +17670,7 @@ dec_key dec
 plx_key default_plx
   field flux_b8 flux_b8
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+*+FROM+xmmssc
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmssc
 ttl 604800
 force em
 at sun 1.0

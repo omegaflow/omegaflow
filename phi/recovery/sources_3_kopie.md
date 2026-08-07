@@ -1,0 +1,23029 @@
+source iss_position
+ttl 10
+force em
+pos orbital_iss_lat orbital_iss_lon orbital_iss_alt_km 1000.0
+url https://api.wheretheiss.at/v1/satellites/25544
+field latitude orbital_iss_lat
+field longitude orbital_iss_lon
+field altitude orbital_iss_alt_km
+
+source opensky_aircraft_positions
+ttl 10
+force em
+url https://api.adsb.lol/v2/point/{lat}/{lon}/250
+wgs84 52.5 13.4
+map ac
+lat_key lat
+lon_key lon
+field hex icao24
+field flight callsign
+field alt_baro baro_altitude_ft
+field gs velocity_kn
+field track heading_deg
+field baro_rate vertical_rate_ftmin
+
+source universe_iss_history
+ttl 10
+force em
+pos universe_iss_history_lat universe_iss_history_lon universe_iss_history_alt 1000
+url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
+field 0.latitude universe_iss_history_lat
+field 0.longitude universe_iss_history_lon
+field 0.altitude universe_iss_history_alt
+
+source anu_quantum_entropy
+ttl 60
+force em
+url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
+wgs84 -35.2809 149.1300
+path data.0 quantum_entropy_anu
+
+source atmosphere_blitzortung_strikes
+ttl 60
+force em
+url https://api.blitzortung.org/compressed/current_positions?lat={lat}&lon={lon}&range=500
+verify false
+map .
+lat_key lat
+lon_key lon
+field_in utc atmosphere_lightning_strike_utc
+field_in peak atmosphere_lightning_peak_current_ka
+
+source biosphere_etf_africa_broad
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_africa_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_africa_prev_close
+
+source biosphere_etf_brazil
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_brazil_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_brazil_prev_close
+
+source biosphere_etf_china
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_china_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_china_prev_close
+
+source biosphere_etf_dollar_index
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_dollar_index_price
+field chart.result.0.meta.chartPreviousClose biosphere_dollar_index_prev_close
+
+source biosphere_etf_dry_bulk_shipping
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_leading_global_trade_proxy_price
+field chart.result.0.meta.chartPreviousClose biosphere_leading_global_trade_proxy_prev_close
+
+source biosphere_etf_emerging_markets
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_emerging_markets_price
+field chart.result.0.meta.chartPreviousClose biosphere_emerging_markets_prev_close
+
+source biosphere_etf_europe
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_europe_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_europe_prev_close
+
+source biosphere_etf_frontier_markets
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_frontier_markets_price
+field chart.result.0.meta.chartPreviousClose biosphere_frontier_markets_prev_close
+
+source biosphere_etf_germany
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_germany_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_germany_prev_close
+
+source biosphere_etf_gold
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_commodity_gold_price
+field chart.result.0.meta.chartPreviousClose biosphere_commodity_gold_prev_close
+
+source biosphere_etf_india
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_india_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_india_prev_close
+
+source biosphere_etf_japan
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_japan_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_japan_prev_close
+
+source biosphere_etf_latin_america_broad
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_latin_america_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_latin_america_prev_close
+
+source biosphere_etf_mexico
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_mexico_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_mexico_prev_close
+
+source biosphere_etf_middle_east
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_gulf_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_gulf_prev_close
+
+source biosphere_etf_oil
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_commodity_oil_price
+field chart.result.0.meta.chartPreviousClose biosphere_commodity_oil_prev_close
+
+source biosphere_etf_sector_communication
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_communication_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_communication_prev_close
+
+source biosphere_etf_sector_consumer_discretionary
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_consumer_discretionary_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_consumer_discretionary_prev_close
+
+source biosphere_etf_sector_consumer_staples
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_consumer_staples_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_consumer_staples_prev_close
+
+source biosphere_etf_sector_energy
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_energy_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_energy_prev_close
+
+source biosphere_etf_sector_financials
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_financials_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_financials_prev_close
+
+source biosphere_etf_sector_healthcare
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_healthcare_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_healthcare_prev_close
+
+source biosphere_etf_sector_industrials
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_industrials_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_industrials_prev_close
+
+source biosphere_etf_sector_materials
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_materials_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_materials_prev_close
+
+source biosphere_etf_sector_real_estate
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_real_estate_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_real_estate_prev_close
+
+source biosphere_etf_sector_technology
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_technology_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_technology_prev_close
+
+source biosphere_etf_sector_utilities
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_sector_utilities_price
+field chart.result.0.meta.chartPreviousClose biosphere_sector_utilities_prev_close
+
+source biosphere_etf_semiconductors
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_leading_semiconductors_price
+field chart.result.0.meta.chartPreviousClose biosphere_leading_semiconductors_prev_close
+
+source biosphere_etf_south_africa
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_south_africa_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_south_africa_prev_close
+
+source biosphere_etf_southeast_asia
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_southeast_asia_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_southeast_asia_prev_close
+
+source biosphere_etf_transportation
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_leading_transportation_price
+field chart.result.0.meta.chartPreviousClose biosphere_leading_transportation_prev_close
+
+source biosphere_etf_treasury_yield_10y
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_interest_rate_10y_treasury
+field chart.result.0.meta.chartPreviousClose biosphere_interest_rate_10y_treasury_prev
+
+source biosphere_etf_usa
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_region_usa_price
+field chart.result.0.meta.chartPreviousClose biosphere_region_usa_prev_close
+
+source biosphere_etf_volatility
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
+wgs84 41.8781 -87.6298
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_fear_gauge_vix
+field chart.result.0.meta.chartPreviousClose biosphere_fear_gauge_vix_prev
+
+source biosphere_etf_world_all_country
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_world_acwi_price
+field chart.result.0.meta.chartPreviousClose biosphere_world_acwi_prev_close
+
+source biosphere_etf_world_developed
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/URTH?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_world_developed_price
+field chart.result.0.meta.chartPreviousClose biosphere_world_developed_prev_close
+
+source biosphere_github_public_events
+ttl 60
+force em
+ecliptic 1
+url https://api.github.com/events?per_page=100
+header User-Agent "omegaflow"
+count . biosphere_github_events_per_minute
+
+source biosphere_inex_traffic
+ttl 60
+force em
+url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
+wgs84 53.3 -6.2
+field statistics.curin biosphere_traffic_bits_in_per_s
+field statistics.curout biosphere_traffic_bits_out_per_s
+
+source biosphere_irail_belgium
+ttl 60
+force em
+url https://api.irail.be/liveboard/?station=Brussels&format=json
+wgs84 50.8 4.3
+count departures.departure biosphere_train_departures_belgium
+
+source biosphere_irish_rail_realtime
+ttl 60
+force em
+url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
+wgs84 53.3 -6.2
+format xml
+xml_count ObjStationData technosphere_train_departures_dublin
+
+source biosphere_ripe_bgp_default_route
+ttl 60
+force em
+ecliptic 1
+url https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0
+path data.nr_routes biosphere_bgp_nr_routes
+count data.bgp_state biosphere_bgp_default_route_count
+
+source biosphere_ripe_bgp_updates
+ttl 60
+force em
+ecliptic 1
+url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today}
+field data.nr_updates biosphere_bgp_updates_per_hour
+
+source biosphere_transport_bern_departures
+ttl 60
+force em
+url https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10
+wgs84 46.9 7.4
+count stationboard biosphere_transport_departures_bern
+
+source biosphere_transport_zurich_departures
+ttl 60
+force em
+url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
+wgs84 47.3 8.5
+count stationboard biosphere_transport_departures_zurich
+
+source biosphere_wiener_linien_realtime
+ttl 60
+force em
+url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
+wgs84 48.2 16.3
+count data.monitors.0.lines biosphere_transport_lines_vienna
+
+source biosphere_yahoo_finance_markets
+ttl 60
+force em
+url https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d
+wgs84 40.7128 -74.006
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_stock_price
+field chart.result.0.meta.chartPreviousClose biosphere_stock_prev_close
+
+source blitzortung_lightning_signals
+ttl 60
+force acoustic
+url https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json
+map .
+lat_key lat
+lon_key lon
+field amplitude signal_amplitude
+field time signal_time
+field frequency signal_freq_hz
+field quality signal_quality
+
+source cosmic_radiation_jung
+ttl 60
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=46.95&longitude=7.86&current=shortwave_radiation,uv_index&timezone=auto
+wgs84 46.95 7.86
+field current.shortwave_radiation cosmic_radiation_shortwave_wm2
+field current.uv_index cosmic_radiation_uv_index
+
+source drand_quantum_entropy
+ttl 60
+force em
+ecliptic 1
+url https://api.drand.sh/public/latest
+field round quantum_entropy_generation_round
+
+source emsc_european_seismic_realtime
+ttl 60
+force seismic-body
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.evid event_id
+field properties.time event_time_utc
+field properties.mag magnitude
+field properties.depth depth_km
+field properties.region geographic_region
+
+source exosphere_magnetometer
+ttl 60
+force gravity
+ssb
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+field 0.bt exosphere_mag_bt_nt
+field 0.bz_gsm exosphere_mag_bz_gsm_nt
+
+source exosphere_solar_flares
+ttl 60
+force em
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+field 0.current_int_xrlong exosphere_solar_flare_intensity
+field 0.current_class exosphere_solar_flare_class
+
+source exosphere_solar_wind
+ttl 60
+force advective
+ssb
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+field 0.proton_speed exosphere_proton_speed_kms
+field 0.proton_density exosphere_proton_density_ncc
+field 0.proton_temperature exosphere_proton_temp_k
+
+source geonet_nz_earthquake_events
+ttl 60
+force seismic-body
+url https://api.geonet.org.nz/quake?MMI=3
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.magnitude magnitude
+field properties.locality locality
+field properties.time event_time
+field properties.depth depth_km
+field properties.mmi mmi_value
+
+source geonet_quakes_strong
+ttl 60
+force seismic-body
+url https://api.geonet.org.nz/quake?MMI=3
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.magnitude magnitude
+field properties.locality locality
+field properties.time event_time
+field properties.depth depth_km
+field properties.mmi mmi_value
+
+source geosphere_jma_eew
+ttl 60
+force em
+ecliptic 1
+url https://api.wolfx.jp/jma_eew.json
+field Latitude geosphere_jma_eew_lat
+field Longitude geosphere_jma_eew_lon
+field Magnitude geosphere_jma_eew_mag
+field Depth geosphere_jma_eew_depth_km
+field OriginTime geosphere_jma_eew_origin_time
+field Hypocenter geosphere_jma_eew_hypocenter
+field isCancel geosphere_jma_eew_is_cancel
+field isFinal geosphere_jma_eew_is_final
+
+source geosphere_usgs_earthquake_detail
+ttl 60
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
+geojson events properties.mag 0.0 seismic_magnitude_mw seismic_depth_m
+
+source geosphere_usgs_earthquakes_24h
+ttl 60
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in geometry.coordinates.2 geosphere_quake_depth_km
+field_in properties.mag geosphere_quake_magnitude
+field metadata.count seismic_count_24h
+
+source geosphere_usgs_earthquakes_hour
+ttl 60
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in geometry.coordinates.2 geosphere_quake_depth_km
+field_in properties.mag geosphere_quake_magnitude
+
+source geosphere_usgs_significant_rms
+ttl 60
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+wgs84 39.749 -105.221
+path features.0.properties.rms geosphere_earth_hum_rms
+
+source ingv_italy_earthquakes
+ttl 60
+force seismic-body
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time
+field properties.depth depth_km
+
+source irsc_iran_earthquakes
+ttl 60
+force seismic-body
+url http://irsc.ut.ac.ir/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time&starttime={today}T00:00:00
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time
+field properties.depth depth_km
+
+source jma_japan_eew_public_api
+ttl 60
+force seismic-body
+url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
+map .
+lat_key earthquake.hypocenter.latitude
+lon_key earthquake.hypocenter.longitude
+field id event_id
+field time event_time_jst
+field earthquake.hypocenter.name epicenter_name
+field earthquake.maxScale jma_max_intensity
+field earthquake.magnitude magnitude
+field earthquake.hypocenter.depth depth_km
+field domesticTsunami tsunami_flag
+
+source magnetosphere_dst_index
+ttl 60
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/products/kyoto-dst.json
+last dst magnetosphere_dst_index_nt
+
+source magnetosphere_geomag_forecast
+ttl 60
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
+format csv
+last_row kp magnetosphere_forecast_kp_max
+
+source magnetosphere_goes
+ttl 60
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+last Hp magnetosphere_hp_nt
+last He magnetosphere_he_nt
+last total magnetosphere_bt_nt
+
+source magnetosphere_kp_index
+ttl 60
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+last kp_index magnetosphere_kp_index
+
+source magnetosphere_solar_wind
+ttl 60
+force gravity
+ssb
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+last bz_gsm magnetosphere_imf_bz_nt
+last bt magnetosphere_imf_bt_nt
+last by_gsm magnetosphere_imf_by_nt
+
+source noaa_goes18_electron_flux
+ttl 60
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+map .
+field_in 0 timestamp_utc
+field_in 1 electron_2mev_flux
+field_in 2 electron_04mev_flux
+
+source noaa_goes18_eps_energetic_particles
+ttl 60
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+field_in 0 timestamp_utc
+field_in 1 flux_10mev_p_cm2s
+field_in 2 flux_50mev_p_cm2s
+field_in 3 flux_100mev_p_cm2s
+
+source noaa_goes_exis_xrays
+ttl 60
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
+map
+field time_tag observation_time
+field flux_long_1_8A flux_1_8A_W_m2
+field flux_short_0_5_4A flux_0_5_4A_W_m2
+
+source noaa_goes_r_exis_euv_realtime
+ttl 60
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+map .
+field_in 0 timestamp_utc
+field_in 1 flux_short_wm2
+field_in 2 flux_long_wm2
+
+source noaa_swpc_alerts_current
+ttl 60
+force em
+ssb
+url https://services.swpc.noaa.gov/products/alerts.json
+map .
+field time_tag alert_time_utc
+field message alert_message
+field issue_utc issue_time_utc
+
+source noaa_swpc_geomagnetic_alerts
+ttl 60
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/products/alerts.json
+map
+field issue_time alert_time
+field message alert_text
+
+source noaa_swpc_geomagnetic_storm_alerts
+ttl 60
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/products/alerts.json
+map .
+field_in 0 timestamp_utc
+field_in 1 alert_type
+field_in 2 alert_message
+
+source noaa_swpc_goes_proton_primary
+ttl 60
+force diffusion
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+field time_tag timestamp_utc
+field satellite satellite_id
+field flux proton_flux_p_cm2s
+field energy proton_energy_band
+
+source noaa_swpc_goes_xray_flux
+ttl 60
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+map .
+field 0 datetime_utc
+field 1 flux_short_0_5_4A
+field 2 flux_long_1_8A
+
+source noaa_swpc_goes_xray_primary
+ttl 60
+force em
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+map .
+field time_tag timestamp_utc
+field satellite satellite_id
+field flux xray_flux_wm2
+field energy xray_energy_channel
+
+source noaa_swpc_solar_events
+ttl 60
+force em
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+map
+field time_tag observation_time
+field flux_long_1_8A xray_1_8A_W_m2
+field flux_short_0_5_4A xray_0_5_4A_W_m2
+
+source noaa_swpc_xray_flares_latest
+ttl 60
+force em
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+map .
+field time_tag flare_time_utc
+field class flare_classification
+field satellite goes_satellite
+
+source opensky_europe_flights
+ttl 60
+force em
+url https://api.adsb.lol/v2/point/50/10/1500
+map ac
+lat_key lat
+lon_key lon
+field hex icao24
+field flight callsign
+field alt_baro altitude_ft
+field gs velocity_kn
+field track track_deg
+
+source quantum_nist_randomness_beacon
+ttl 60
+force em
+url https://beacon.nist.gov/beacon/2.0/pulse/last
+wgs84 39.9916 -105.2748
+path pulse.pulseIndex quantum_entropy_nist_beacon
+
+source radiation_electrons
+ttl 60
+force diffusion
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+last_obj energy ">=2 MeV" flux radiation_electron_flux_2mev
+
+source radiation_proton_flux
+ttl 60
+force diffusion
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+last_obj energy "40300-73400 keV" flux radiation_proton_flux_40mev
+last_obj energy "83700-98500 keV" flux radiation_proton_flux_80mev
+
+source radiation_protons
+ttl 60
+force diffusion
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+last_obj energy ">=100 MeV" flux radiation_proton_flux_100mev
+
+source scedc_california_earthquakes
+ttl 60
+force seismic-body
+url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=text&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time_ms
+field properties.depth depth_km
+field properties.magType mag_type
+field properties.net reporting_network
+
+source solar_events
+ttl 60
+force em
+ssb
+url https://services.swpc.noaa.gov/json/edited_events.json
+last coded_type magnetosphere_swpc_latest_event
+
+source solar_indices
+ttl 60
+force em
+ssb
+url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
+last ssn solar_sunspot_number_observed
+
+source solar_radio_flux
+ttl 60
+force em
+ssb
+url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+path 0.details.0.flux solar_radio_flux_sfu
+
+source solar_sunspots
+ttl 60
+force em
+ssb
+url https://services.swpc.noaa.gov/json/solar_regions.json
+count . solar_active_region_count
+
+source solar_wind
+ttl 60
+force advective
+ssb
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+last proton_speed solar_wind_speed_km_s
+last proton_density solar_wind_density_cm3
+last proton_temperature solar_wind_temp_k
+
+source solar_xray
+ttl 60
+force em
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+last flux solar_xray_flux_wm2
+
+source solar_xray_flares
+ttl 60
+force em
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
+count . solar_flare_count_7d
+last max_class solar_flare_class_7d
+last max_xrlong solar_flare_xray_intensity
+
+source usgs_anss_comprehensive_earthquake_catalog
+ttl 60
+force seismic-body
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=1000&orderby=time&starttime={today}T00:00:00
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time_utc_ms
+field properties.depth depth_km
+field properties.type event_type
+field properties.net reporting_network
+field properties.status review_status
+
+source usgs_earthquake_significant_6
+ttl 60
+force seismic-body
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6&limit=50&orderby=time&eventtype=earthquake
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag event_magnitude
+field properties.place location_description
+field properties.time event_time_utc
+field properties.depth depth_km
+field properties.alert alert_level
+field properties.tsunami tsunami_warning
+field properties.sig significance_score
+
+source usgs_earthquakes_realtime
+ttl 60
+force acoustic
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&orderby=time
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag earthquake_magnitude
+field_in properties.place earthquake_place
+field_in properties.time earthquake_time_epoch
+field_in properties.magType magnitude_type
+field_in properties.type seismic_event_type
+field_in properties.dmin epicentral_distance
+field_in properties.sig seismic_significance
+field_in properties.tsunami tsunami_alert_flag
+field_in properties.status seismic_review_status
+depth_key geometry.coordinates.2
+
+source usgs_fdsn_earthquake_events_global
+ttl 60
+force seismic-body
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=magnitude
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place place
+field properties.time event_time_epoch_ms
+field properties.magType magnitude_type
+field properties.depth depth_km
+
+source world_open_sky_aircraft
+ttl 60
+force em
+url https://api.adsb.lol/v2/point/{lat}/{lon}/500
+wgs84 0.0 0.0
+map ac
+lat_key lat
+lon_key lon
+field alt_baro baro_altitude
+alt_key alt_baro
+vel_key gs
+trk_key track
+vr_key baro_rate
+
+source tmd_thailand_earthquakes
+ttl 120
+force seismic-body
+url https://earthquake.tmd.go.th/earthquake_json.php?limit=200
+map .
+lat_key lat
+lon_key lon
+field id event_id
+field mag magnitude
+field dep depth_km
+field loc epicenter_location
+field tm event_time
+field reg region
+
+source noaa_swpc_kp_index
+ttl 180
+force gravity
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+map .
+field time_tag timestamp_utc
+field Kp kp_index
+field a_running kp_a_running
+field station_count kp_station_count
+
+source arcgis_air_quality_pm25
+ttl 300
+force diffusion
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/0/query?where=1%3D1&outFields=value,value_2,parameter,city,country,lastUpdated&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.value pm25_concentration
+field properties.value_2 pm25_value_2
+
+source arcgis_earthquake_3d
+ttl 300
+force seismic-body
+url https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/Earthquake_Archive_3D/FeatureServer/0/query?where=1%3D1&outFields=mag,kmDepth,felt,cdi,mmi,tsunami,sig,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag quake3d_magnitude
+field properties.sig quake3d_significance
+field properties.felt quake3d_felt_reports
+field properties.kmDepth quake3d_depth_km
+field properties.cdi quake3d_cdi_intensity
+field properties.mmi quake3d_mmi_intensity
+field properties.tsunami quake3d_tsunami_flag
+
+# === GCOOS ArcGIS Buoys (31 stations, 2026-07-30) ===
+
+source arcgis_goes_bolides
+ttl 300
+force em
+url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,detected_duration,detected_energy,detected_latitude,detected_longitude&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.detected_duration goes_bolide_duration_s
+field properties.detected_energy goes_bolide_energy_tj
+
+source arcgis_gsn_seismic
+ttl 300
+force seismic-body
+url https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/gNnAj/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.f4 gsn_seismic_latitude
+field properties.f5 gsn_seismic_longitude
+field properties.f6 gsn_seismic_elevation_m
+
+# === Pre-built astronomical catalogs (GitHub CDN, 2026-07-30) ===
+# Source: Gaia DR3 (2022), Fermi 4FGL/4LAC DR4
+# Build script: /tmp/build_catalogs.py
+
+
+# === Pre-built astronomical catalogs (CDN, 2026-07-30) ===
+# Source: Gaia DR3 + HEASARC + VizieR, built with /tmp/build_all_catalogs.py
+# All serve from raw.githubusercontent.com/omegaflow/catalogs/main/
+
+source arcgis_historical_quakes
+ttl 300
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Historical_Quakes/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,depth,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag quake_magnitude
+field properties.sig quake_significance
+field properties.depth quake_depth_km
+field properties.felt quake_felt_reports
+field properties.cdi quake_cdi_intensity
+field properties.mmi quake_mmi_intensity
+field properties.tsunami quake_tsunami_flag
+
+source arcgis_metar_weather
+ttl 300
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/0/query?where=1%3D1&outFields=LATITUDE,LONGITUDE,TEMP,DEW_POINT,R_HUMIDITY,WIND_DIRECT,WIND_SPEED,WIND_GUST,WIND_CHILL,PRESSURE,VISIBILITY,HEAT_INDEX,ELEVATION&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.TEMP metar_temp_f
+field properties.DEW_POINT metar_dew_point_f
+field properties.R_HUMIDITY metar_humidity_pct
+field properties.WIND_SPEED metar_wind_speed_kt
+field properties.WIND_GUST metar_wind_gust_kt
+field properties.PRESSURE metar_pressure_mb
+field properties.VISIBILITY metar_visibility_mi
+field properties.HEAT_INDEX metar_heat_index_f
+field properties.ELEVATION metar_elevation_m
+
+source arcgis_ntad_dams
+ttl 300
+force gravity
+url https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Dams/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,nidHeight,damHeight&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.nidHeight ntad_dam_nid_height_m
+field properties.damHeight ntad_dam_height_m
+
+# === ArcGIS GSN Seismic Stations (150 stations, 2026-07-30) ===
+
+source arcgis_satellite_fire
+ttl 300
+force thermal
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/NOAA_Satellite_Fire_Detections_(v1)/FeatureServer/0/query?where=1%3D1&outFields=Lon,Lat,FRP,Satellite,Method,YearDay&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.FRP satellite_fire_frp_mw
+
+source arcgis_satellite_positions
+ttl 300
+force em
+url https://services5.arcgis.com/t2t1phUp5Bj3z8Lp/arcgis/rest/services/Satellite_Point/FeatureServer/0/query?where=1%3D1&outFields=sat_name,altitude_km,velocity_kmps,inclination,norad_cat_id&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.altitude_km satellite_altitude_km
+field properties.velocity_kmps satellite_velocity_kmps
+field properties.inclination satellite_inclination_rad
+field properties.norad_cat_id satellite_norad_id
+
+# === ArcGIS NTAD Dams (92,766 records, 2026-07-30) ===
+
+source arcgis_space_weather_scales
+ttl 300
+force gravity
+ssb
+url https://services3.arcgis.com/UJlXKlDHq85VvxWm/arcgis/rest/services/SpaceWeatherCurrent/FeatureServer/0/query?where=1%3D1&orderByFields=OBJECTID+DESC&resultRecordCount=1&returnGeometry=false&outFields=date_time_current,Geomagnetic,RadioBlackouts,RadiationStorms&f=json
+path features.0.attributes.Geomagnetic space_weather_geomagnetic_scale
+path features.0.attributes.RadioBlackouts space_weather_radio_blackout_scale
+path features.0.attributes.RadiationStorms space_weather_radiation_storm_scale
+
+source arcgis_usgs_seismic
+ttl 300
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,longitude,latitude,depth&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag usgs_magnitude
+field properties.sig usgs_significance
+field properties.depth usgs_depth_km
+field properties.felt usgs_felt_reports
+field properties.cdi usgs_cdi_intensity
+field properties.tsunami usgs_tsunami_flag
+
+source arcgis_viirs_fire
+ttl 300
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,bright_ti4,bright_ti5,frp,confidence&outSR=4326&f=geojson&resultRecordCount=5000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.bright_ti4 viirs_brightness_ti4_k
+field properties.bright_ti5 viirs_brightness_ti5_k
+field properties.frp viirs_fire_radiative_power_mw
+field properties.confidence viirs_confidence_pct
+
+source atmosphere_noaa_metar
+ttl 300
+force acoustic
+url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
+map .
+lat_key lat
+lon_key lon
+field_in temp atmosphere_metar_temp_c
+field_in dewp atmosphere_metar_dewpoint_c
+field_in altim atmosphere_metar_pressure_hpa
+field_in wspd atmosphere_metar_wind_speed_kt
+field_in wdir atmosphere_metar_wind_direction_deg
+
+source atmosphere_open_meteo_current
+ttl 300
+force advective
+pos atmosphere_lat atmosphere_lon
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,pressure_msl,wind_speed_10m,wind_direction_10m
+path latitude atmosphere_lat
+path longitude atmosphere_lon
+path current.temperature_2m atmosphere_temperature_c
+path current.relative_humidity_2m atmosphere_humidity_pct
+path current.apparent_temperature atmosphere_feels_like_c
+path current.precipitation atmosphere_precipitation_mm
+path current.rain atmosphere_rain_mm
+path current.weather_code atmosphere_weather_code
+path current.pressure_msl atmosphere_pressure_hpa
+path current.wind_speed_10m atmosphere_wind_speed_kmh
+path current.wind_direction_10m atmosphere_wind_direction_deg
+
+source atmosphere_rain_radar
+ttl 300
+force acoustic
+ecliptic 1
+url https://api.rainviewer.com/public/weather-maps.json
+field generated hydrosphere_rain_radar_generated_time
+
+source atmosphere_waqi_air_quality
+ttl 300
+force diffusion
+url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
+field data.aqi atmosphere_aqi
+field data.pm25 atmosphere_pm25_ugm3
+field data.pm10 atmosphere_pm10_ugm3
+
+source biosphere_energy_charts_renewable
+ttl 300
+force em
+url https://api.energy-charts.info/ren_share
+wgs84 50.0 10.0
+last data.1.data biosphere_renewable_share_pct
+
+source biosphere_inaturalist_observations
+ttl 300
+force em
+ecliptic 1
+url https://api.inaturalist.org/v1/observations?per_page=1
+field total_results biosphere_inaturalist_obs_count
+
+source biosphere_opensky_states
+ttl 300
+force em
+url https://api.adsb.lol/v2/point/{lat}/{lon}/500
+wgs84 0.0 0.0
+map ac
+lat_key lat
+lon_key lon
+field gs biosphere_aircraft_velocity
+field baro_rate biosphere_aircraft_vertical_rate
+field alt_baro biosphere_aircraft_geo_altitude
+alt_key alt_baro
+vel_key gs
+trk_key track
+vr_key baro_rate
+
+source biosphere_uk_carbon_intensity
+ttl 300
+force em
+url https://api.carbonintensity.org.uk/intensity
+wgs84 54.0 -2.0
+path data.0.intensity.actual technosphere_grid_carbon_intensity_gco2_kwh
+
+source bom_nsw_weather_observations
+ttl 300
+force diffusion
+url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+map observations.data
+lat_key lat
+lon_key lon
+field local_date_time observation_time
+field air_temp temperature_c
+field rel_hum relative_humidity_pct
+field wind_spd_kmh wind_speed_kmh
+field gust_kmh gust_speed_kmh
+field rain_trace rain_mm
+
+source cdaweb_ace_solar_wind_l1
+ttl 300
+force em
+ecliptic 0.99
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&parameters=BGSEc,Magnitude&time.min={today}T00:00:00.000Z&time.max={today}T23:59:59.000Z&format=csv
+format text
+rows
+field 0 epoch_utc
+field 1 bx_gse_nT
+field 2 by_gse_nT
+field 3 bz_gse_nT
+field 4 b_magnitude_nT
+
+source cdaweb_dscovr_imf
+ttl 300
+force gravity
+ssb
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min=2026-07-01T00:00:00Z&time.max=2026-07-13T23:59:59Z&parameters=Time,B1F1&format=json
+hapi B1F1 exosphere_mag_bt_nt
+
+# === NASA OMNI Combined Solar Wind + IMF (2026-07-30) ===
+
+source emsc_felt_earthquake_reports
+ttl 300
+force seismic-body
+url https://www.emsc-csem.org/service/rss/rss.php?typ=felt&limit=100
+format text
+rows
+lat_key lat
+lon_key lon
+field title event_title
+field description event_description
+field pubDate publication_date
+field georss:point location_point
+field emsc:magnitude magnitude
+field emsc:depth depth_km
+
+source esri_current_wind_speed
+ttl 300
+force advective
+url https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/Current_Wind_Speed/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.name station_name
+field_in attributes.stid station_id
+field_in attributes.elevation elevation_ft
+field_in attributes.wind_speed wind_speed_ms
+field_in attributes.wind_gust wind_gust_ms
+field_in attributes.wind_direction wind_dir_deg
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_env_canada_wind
+ttl 300
+force advective
+url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.Station_Name station_name
+field_in attributes.Temperature_C temp_c
+field_in attributes.CurrentConditions conditions
+field_in attributes.Wind wind_desc
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_lightning_global
+ttl 300
+force em
+url https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+map features
+field_in attributes.type strike_type
+field_in attributes.intensity intensity_ka
+field_in attributes.multiplicity multiplicity
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_metar_wind
+ttl 300
+force advective
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.ICAO icao_code
+field_in attributes.STATION_NAME station_name
+field_in attributes.COUNTRY country
+field_in attributes.DEW_POINT dew_point_c
+field_in attributes.AIR_TEMP air_temp_c
+field_in attributes.WIND_SPEED wind_speed_kt
+field_in attributes.WIND_DIR wind_dir_deg
+lat_key geometry.y
+lon_key geometry.x
+
+source gbif_global_occurrence_search
+ttl 300
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}
+map .
+lat_key decimalLatitude
+lon_key decimalLongitude
+field key occurrence_id
+field species species_name
+field kingdom kingdom_name
+field phylum phylum_name
+field class class_name
+field order order_name
+field family family_name
+field eventDate observation_date
+
+source gcoos_buoy_wmo_42043
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42043/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42043_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42043_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42043_current_speed_cms
+
+source gcoos_buoy_wmo_42084
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42084/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42084_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42084_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42084_current_speed_cms
+
+source gcoos_buoy_wmo_42091
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42091/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42091_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42091_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42091_current_speed_cms
+
+source gcoos_buoy_wmo_42095
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42095/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42095_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42095_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42095_current_speed_cms
+
+source gcoos_buoy_wmo_42098
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42098/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42098_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42098_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42098_current_speed_cms
+
+source gcoos_buoy_wmo_42099
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42099/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42099_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42099_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42099_current_speed_cms
+
+source gcoos_buoy_wmo_42360
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42360/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42360_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42360_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42360_current_speed_cms
+
+source gcoos_buoy_wmo_42361
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42361/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42361_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42361_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42361_current_speed_cms
+
+source gcoos_buoy_wmo_42362
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42362/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42362_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42362_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42362_current_speed_cms
+
+source gcoos_buoy_wmo_42363
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42363/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42363_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42363_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42363_current_speed_cms
+
+source gcoos_buoy_wmo_42364
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42364/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42364_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42364_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42364_current_speed_cms
+
+source gcoos_buoy_wmo_42365
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42365/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42365_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42365_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42365_current_speed_cms
+
+source gcoos_buoy_wmo_42369
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42369/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42369_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42369_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42369_current_speed_cms
+
+source gcoos_buoy_wmo_42370
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42370/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42370_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42370_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42370_current_speed_cms
+
+source gcoos_buoy_wmo_42373
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42373/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42373_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42373_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42373_current_speed_cms
+
+source gcoos_buoy_wmo_42374
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42374/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42374_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42374_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42374_current_speed_cms
+
+source gcoos_buoy_wmo_42377
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42377/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42377_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42377_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42377_current_speed_cms
+
+source gcoos_buoy_wmo_42379
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42379/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42379_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42379_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42379_current_speed_cms
+
+source gcoos_buoy_wmo_42382
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42382/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42382_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42382_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42382_current_speed_cms
+
+source gcoos_buoy_wmo_42384
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42384/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42384_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42384_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42384_current_speed_cms
+
+source gcoos_buoy_wmo_42386
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42386/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42386_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42386_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42386_current_speed_cms
+
+source gcoos_buoy_wmo_42388
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42388/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42388_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42388_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42388_current_speed_cms
+
+source gcoos_buoy_wmo_42395
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42395/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42395_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42395_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42395_current_speed_cms
+
+source gcoos_buoy_wmo_42400
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42400/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42400_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42400_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42400_current_speed_cms
+
+source gcoos_buoy_wmo_42873
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42873/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42873_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42873_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42873_current_speed_cms
+
+source gcoos_buoy_wmo_42876
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42876/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42876_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42876_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42876_current_speed_cms
+
+source gcoos_buoy_wmo_42881
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42881/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42881_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42881_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42881_current_speed_cms
+
+source gcoos_buoy_wmo_42884
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42884/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42884_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42884_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42884_current_speed_cms
+
+source gcoos_buoy_wmo_42887
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42887/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42887_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42887_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42887_current_speed_cms
+
+source gcoos_buoy_wmo_42934
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42934/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42934_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42934_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42934_current_speed_cms
+
+source gcoos_buoy_wmo_42936
+ttl 300
+force acoustic
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42936/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42936_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42936_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42936_current_speed_cms
+
+source gdacs_disaster_alerts
+ttl 300
+force seismic-body
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item hazard_event_count
+
+source geosphere_cenc_earthquakes
+ttl 300
+force em
+ecliptic 1
+url https://api.wolfx.jp/cenc_eqlist.json
+field 1.latitude geosphere_cenc_eq_lat
+field 1.longitude geosphere_cenc_eq_lon
+field 1.magnitude geosphere_cenc_eq_mag
+field 1.depth geosphere_cenc_eq_depth_km
+field 1.time geosphere_cenc_eq_time
+field 1.location geosphere_cenc_eq_location
+
+source geosphere_earthquakes
+ttl 300
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_significant_day
+ttl 300
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_emsc_earthquakes_significant
+ttl 300
+force em
+ecliptic 1
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_emsc_sig_magnitude
+field_in properties.flynn_region geosphere_emsc_sig_place
+field_in properties.time geosphere_emsc_sig_time
+field_in properties.depth geosphere_emsc_sig_depth
+alt_key geometry.coordinates.2
+
+source geosphere_jma_earthquakes
+ttl 300
+force em
+ecliptic 1
+url https://api.wolfx.jp/jma_eqlist.json
+field 1.latitude geosphere_jma_eq_lat
+field 1.longitude geosphere_jma_eq_lon
+field 1.magnitude geosphere_jma_eq_mag
+field 1.depth geosphere_jma_eq_depth_km
+field 1.time geosphere_jma_eq_time
+field 1.location geosphere_jma_eq_location
+
+source geosphere_nws_alerts
+ttl 300
+force em
+ecliptic 1
+url https://api.weather.gov/alerts/active
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.event weather_event_type
+field_in properties.severity alert_severity
+field_in properties.headline alert_headline
+field_in properties.areaDesc affected_area
+
+source geosphere_nws_tsunami_warnings
+ttl 300
+force gravity
+ecliptic 1
+url https://api.weather.gov/alerts/active?event=Tsunami%20Warning
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.event weather_event_type
+field_in properties.severity alert_severity
+field_in properties.headline alert_headline
+field_in properties.areaDesc affected_area
+
+source geosphere_tsunami_alerts_ntwc
+ttl 300
+force gravity
+ecliptic 1
+url https://www.tsunami.gov/events/xml/PAAQAtom.xml
+xml_count entry geosphere_tsunami_alert_count
+
+source geosphere_tsunami_alerts_ptwc
+ttl 300
+force gravity
+ecliptic 1
+url https://www.tsunami.gov/events/xml/PHEBAtom.xml
+xml_count entry geosphere_tsunami_alert_count
+
+source geosphere_usgs_streamflow
+ttl 300
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000&parameterCd=00060&siteStatus=all
+wgs84 38.94900000 -77.36500000
+path value.timeSeries.0.values.0.value.0.value hydrosphere_river_flow_cfs
+
+source geosphere_usgs_streamflow_bbox
+ttl 300
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field_in values.0.value.0.value hydrosphere_river_flow_cfs
+
+source gfz_f107_radio_flux
+ttl 300
+force em
+ssb
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=Fobs
+last Fobs solar_radio_flux_sfu
+
+# === CDAWeb HAPI DSCOVR IMF (2026-07-30) ===
+
+source gfz_kp_index
+ttl 300
+force gravity
+ssb
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+last kp_index magnetosphere_kp_index
+
+source gfz_sunspot_number
+ttl 300
+force em
+ssb
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
+last SN solar_sunspot_number
+
+source goes_eps_protons
+ttl 300
+force em
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json
+map .
+lat_key satellite_lat
+lon_key satellite_lon
+field_in time_tag observation_time
+field_in satellite satellite_id
+field_in energy_channel energy_channel_mev
+field_in flux proton_flux_pfu
+
+source goes_xray_flares
+ttl 300
+force em
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+map .
+lat_key satellite_lat
+lon_key satellite_lon
+field_in begin_time flare_start
+field_in peak_time flare_peak
+field_in class flare_class
+field_in energy flare_energy_w_m2
+
+source gracedb_lvk_o4_public_superevents
+ttl 300
+force gravity
+ssb
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200
+map superevents
+field superevent_id event_id
+field t_0 gps_time
+field far false_alarm_rate_Hz
+field classification.BNS p_bns
+field classification.BBH p_bbh
+field classification.NSBH p_nsbh
+field classification.Terrestrial p_terrestrial
+field distance.mean distance_mean_Mpc
+field distance.std distance_std_Mpc
+field created created_utc
+
+source heasarc_integral_ibas_sgr_burst_alerts
+ttl 300
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field trigger_time burst_utc
+field duration burst_duration_s
+field peak_flux peak_flux_erg_cm2_s
+field fluence fluence_erg_cm2
+field type burst_classification
+
+source hydrosphere_ndbc_buoy_41001
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
+wgs84 34.7 -72.4
+format csv
+last_row WDIR hydrosphere_buoy_41001_wind_dir
+last_row WSPD hydrosphere_buoy_41001_wind_speed
+last_row WVHT hydrosphere_buoy_41001_wave_height
+last_row DPD hydrosphere_buoy_41001_dominant_period
+last_row PRES hydrosphere_buoy_41001_pressure
+last_row WTMP hydrosphere_buoy_41001_water_temp
+
+source hydrosphere_ndbc_buoy_42001
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+wgs84 25.90 -89.67
+format csv
+last_row WDIR hydrosphere_buoy_42001_wind_dir
+last_row WSPD hydrosphere_buoy_42001_wind_speed
+last_row WVHT hydrosphere_buoy_42001_wave_height
+last_row DPD hydrosphere_buoy_42001_dominant_period
+last_row PRES hydrosphere_buoy_42001_pressure
+last_row WTMP hydrosphere_buoy_42001_water_temp
+
+source hydrosphere_ndbc_buoy_42002
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
+wgs84 25.16 -94.42
+format csv
+last_row WDIR hydrosphere_buoy_42002_wind_dir
+last_row WSPD hydrosphere_buoy_42002_wind_speed
+last_row WVHT hydrosphere_buoy_42002_wave_height
+last_row DPD hydrosphere_buoy_42002_dominant_period
+last_row PRES hydrosphere_buoy_42002_pressure
+last_row WTMP hydrosphere_buoy_42002_water_temp
+
+source hydrosphere_ndbc_buoy_42036
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
+wgs84 28.50 -84.52
+format csv
+last_row WDIR hydrosphere_buoy_42036_wind_dir
+last_row WSPD hydrosphere_buoy_42036_wind_speed
+last_row WVHT hydrosphere_buoy_42036_wave_height
+last_row DPD hydrosphere_buoy_42036_dominant_period
+last_row PRES hydrosphere_buoy_42036_pressure
+last_row WTMP hydrosphere_buoy_42036_water_temp
+
+source hydrosphere_ndbc_buoy_42040
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
+wgs84 29.22 -88.23
+format csv
+last_row WDIR hydrosphere_buoy_42040_wind_dir
+last_row WSPD hydrosphere_buoy_42040_wind_speed
+last_row WVHT hydrosphere_buoy_42040_wave_height
+last_row DPD hydrosphere_buoy_42040_dominant_period
+last_row PRES hydrosphere_buoy_42040_pressure
+last_row WTMP hydrosphere_buoy_42040_water_temp
+
+source hydrosphere_ndbc_buoy_42055
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
+wgs84 22.14 -91.39
+format csv
+last_row WDIR hydrosphere_buoy_42055_wind_dir
+last_row WSPD hydrosphere_buoy_42055_wind_speed
+last_row WVHT hydrosphere_buoy_42055_wave_height
+last_row DPD hydrosphere_buoy_42055_dominant_period
+last_row PRES hydrosphere_buoy_42055_pressure
+last_row WTMP hydrosphere_buoy_42055_water_temp
+
+source hydrosphere_ndbc_buoy_44009
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
+wgs84 38.46 -74.70
+format csv
+last_row WDIR hydrosphere_buoy_44009_wind_dir
+last_row WSPD hydrosphere_buoy_44009_wind_speed
+last_row WVHT hydrosphere_buoy_44009_wave_height
+last_row DPD hydrosphere_buoy_44009_dominant_period
+last_row PRES hydrosphere_buoy_44009_pressure
+last_row WTMP hydrosphere_buoy_44009_water_temp
+
+source hydrosphere_ndbc_buoy_44013
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/44013.txt
+wgs84 42.35 -70.69
+format csv
+last_row WDIR hydrosphere_buoy_44013_wind_dir
+last_row WSPD hydrosphere_buoy_44013_wind_speed
+last_row WVHT hydrosphere_buoy_44013_wave_height
+last_row DPD hydrosphere_buoy_44013_dominant_period
+last_row PRES hydrosphere_buoy_44013_pressure
+last_row WTMP hydrosphere_buoy_44013_water_temp
+
+source hydrosphere_ndbc_buoy_44014
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/44014.txt
+wgs84 36.61 -74.84
+format csv
+last_row WDIR hydrosphere_buoy_44014_wind_dir
+last_row WSPD hydrosphere_buoy_44014_wind_speed
+last_row WVHT hydrosphere_buoy_44014_wave_height
+last_row DPD hydrosphere_buoy_44014_dominant_period
+last_row PRES hydrosphere_buoy_44014_pressure
+last_row WTMP hydrosphere_buoy_44014_water_temp
+
+source hydrosphere_ndbc_buoy_44025
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/44025.txt
+wgs84 40.25 -73.17
+format csv
+last_row WDIR hydrosphere_buoy_44025_wind_dir
+last_row WSPD hydrosphere_buoy_44025_wind_speed
+last_row WVHT hydrosphere_buoy_44025_wave_height
+last_row DPD hydrosphere_buoy_44025_dominant_period
+last_row PRES hydrosphere_buoy_44025_pressure
+last_row WTMP hydrosphere_buoy_44025_water_temp
+
+source hydrosphere_ndbc_buoy_46001
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
+wgs84 56.30 -148.17
+format csv
+last_row WDIR hydrosphere_buoy_46001_wind_dir
+last_row WSPD hydrosphere_buoy_46001_wind_speed
+last_row WVHT hydrosphere_buoy_46001_wave_height
+last_row DPD hydrosphere_buoy_46001_dominant_period
+last_row PRES hydrosphere_buoy_46001_pressure
+last_row WTMP hydrosphere_buoy_46001_water_temp
+
+source hydrosphere_ndbc_buoy_46002
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46002.txt
+wgs84 42.67 -124.82
+format csv
+last_row WDIR hydrosphere_buoy_46002_wind_dir
+last_row WSPD hydrosphere_buoy_46002_wind_speed
+last_row WVHT hydrosphere_buoy_46002_wave_height
+last_row DPD hydrosphere_buoy_46002_dominant_period
+last_row PRES hydrosphere_buoy_46002_pressure
+last_row WTMP hydrosphere_buoy_46002_water_temp
+
+source hydrosphere_ndbc_buoy_46005
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46005.txt
+wgs84 46.06 -124.96
+format csv
+last_row WDIR hydrosphere_buoy_46005_wind_dir
+last_row WSPD hydrosphere_buoy_46005_wind_speed
+last_row WVHT hydrosphere_buoy_46005_wave_height
+last_row DPD hydrosphere_buoy_46005_dominant_period
+last_row PRES hydrosphere_buoy_46005_pressure
+last_row WTMP hydrosphere_buoy_46005_water_temp
+
+source hydrosphere_ndbc_buoy_46006
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46006.txt
+wgs84 55.06 -137.07
+format csv
+last_row WDIR hydrosphere_buoy_46006_wind_dir
+last_row WSPD hydrosphere_buoy_46006_wind_speed
+last_row WVHT hydrosphere_buoy_46006_wave_height
+last_row DPD hydrosphere_buoy_46006_dominant_period
+last_row PRES hydrosphere_buoy_46006_pressure
+last_row WTMP hydrosphere_buoy_46006_water_temp
+
+source hydrosphere_ndbc_buoy_46012
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46012.txt
+wgs84 37.36 -122.88
+format csv
+last_row WDIR hydrosphere_buoy_46012_wind_dir
+last_row WSPD hydrosphere_buoy_46012_wind_speed
+last_row WVHT hydrosphere_buoy_46012_wave_height
+last_row DPD hydrosphere_buoy_46012_dominant_period
+last_row PRES hydrosphere_buoy_46012_pressure
+last_row WTMP hydrosphere_buoy_46012_water_temp
+
+source hydrosphere_ndbc_buoy_46013
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46013.txt
+wgs84 38.24 -123.30
+format csv
+last_row WDIR hydrosphere_buoy_46013_wind_dir
+last_row WSPD hydrosphere_buoy_46013_wind_speed
+last_row WVHT hydrosphere_buoy_46013_wave_height
+last_row DPD hydrosphere_buoy_46013_dominant_period
+last_row PRES hydrosphere_buoy_46013_pressure
+last_row WTMP hydrosphere_buoy_46013_water_temp
+
+source hydrosphere_ndbc_buoy_46022
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46022.txt
+wgs84 40.74 -124.54
+format csv
+last_row WDIR hydrosphere_buoy_46022_wind_dir
+last_row WSPD hydrosphere_buoy_46022_wind_speed
+last_row WVHT hydrosphere_buoy_46022_wave_height
+last_row DPD hydrosphere_buoy_46022_dominant_period
+last_row PRES hydrosphere_buoy_46022_pressure
+last_row WTMP hydrosphere_buoy_46022_water_temp
+
+source hydrosphere_ndbc_buoy_46025
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46025.txt
+wgs84 33.75 -119.20
+format csv
+last_row WDIR hydrosphere_buoy_46025_wind_dir
+last_row WSPD hydrosphere_buoy_46025_wind_speed
+last_row WVHT hydrosphere_buoy_46025_wave_height
+last_row DPD hydrosphere_buoy_46025_dominant_period
+last_row PRES hydrosphere_buoy_46025_pressure
+last_row WTMP hydrosphere_buoy_46025_water_temp
+
+source hydrosphere_ndbc_buoy_46026
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46026.txt
+wgs84 37.75 -122.84
+format csv
+last_row WDIR hydrosphere_buoy_46026_wind_dir
+last_row WSPD hydrosphere_buoy_46026_wind_speed
+last_row WVHT hydrosphere_buoy_46026_wave_height
+last_row DPD hydrosphere_buoy_46026_dominant_period
+last_row PRES hydrosphere_buoy_46026_pressure
+last_row WTMP hydrosphere_buoy_46026_water_temp
+
+source hydrosphere_ndbc_buoy_46027
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46027.txt
+wgs84 41.85 -124.38
+format csv
+last_row WDIR hydrosphere_buoy_46027_wind_dir
+last_row WSPD hydrosphere_buoy_46027_wind_speed
+last_row WVHT hydrosphere_buoy_46027_wave_height
+last_row DPD hydrosphere_buoy_46027_dominant_period
+last_row PRES hydrosphere_buoy_46027_pressure
+last_row WTMP hydrosphere_buoy_46027_water_temp
+
+source hydrosphere_ndbc_buoy_46029
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46029.txt
+wgs84 46.12 -124.51
+format csv
+last_row WDIR hydrosphere_buoy_46029_wind_dir
+last_row WSPD hydrosphere_buoy_46029_wind_speed
+last_row WVHT hydrosphere_buoy_46029_wave_height
+last_row DPD hydrosphere_buoy_46029_dominant_period
+last_row PRES hydrosphere_buoy_46029_pressure
+last_row WTMP hydrosphere_buoy_46029_water_temp
+
+source hydrosphere_ndbc_buoy_46047
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46047.txt
+wgs84 32.42 -119.53
+format csv
+last_row WDIR hydrosphere_buoy_46047_wind_dir
+last_row WSPD hydrosphere_buoy_46047_wind_speed
+last_row WVHT hydrosphere_buoy_46047_wave_height
+last_row DPD hydrosphere_buoy_46047_dominant_period
+last_row PRES hydrosphere_buoy_46047_pressure
+last_row WTMP hydrosphere_buoy_46047_water_temp
+
+source hydrosphere_ndbc_buoy_46053
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46053.txt
+wgs84 34.26 -119.86
+format csv
+last_row WDIR hydrosphere_buoy_46053_wind_dir
+last_row WSPD hydrosphere_buoy_46053_wind_speed
+last_row WVHT hydrosphere_buoy_46053_wave_height
+last_row DPD hydrosphere_buoy_46053_dominant_period
+last_row PRES hydrosphere_buoy_46053_pressure
+last_row WTMP hydrosphere_buoy_46053_water_temp
+
+source hydrosphere_ndbc_buoy_46054
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46054.txt
+wgs84 34.27 -120.68
+format csv
+last_row WDIR hydrosphere_buoy_46054_wind_dir
+last_row WSPD hydrosphere_buoy_46054_wind_speed
+last_row WVHT hydrosphere_buoy_46054_wave_height
+last_row DPD hydrosphere_buoy_46054_dominant_period
+last_row PRES hydrosphere_buoy_46054_pressure
+last_row WTMP hydrosphere_buoy_46054_water_temp
+
+source hydrosphere_ndbc_buoy_46059
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46059.txt
+wgs84 38.07 -124.03
+format csv
+last_row WDIR hydrosphere_buoy_46059_wind_dir
+last_row WSPD hydrosphere_buoy_46059_wind_speed
+last_row WVHT hydrosphere_buoy_46059_wave_height
+last_row DPD hydrosphere_buoy_46059_dominant_period
+last_row PRES hydrosphere_buoy_46059_pressure
+last_row WTMP hydrosphere_buoy_46059_water_temp
+
+source hydrosphere_ndbc_buoy_46069
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46069.txt
+wgs84 33.66 -120.20
+format csv
+last_row WDIR hydrosphere_buoy_46069_wind_dir
+last_row WSPD hydrosphere_buoy_46069_wind_speed
+last_row WVHT hydrosphere_buoy_46069_wave_height
+last_row DPD hydrosphere_buoy_46069_dominant_period
+last_row PRES hydrosphere_buoy_46069_pressure
+last_row WTMP hydrosphere_buoy_46069_water_temp
+
+source hydrosphere_ndbc_buoy_46086
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46086.txt
+wgs84 32.49 -118.02
+format csv
+last_row WDIR hydrosphere_buoy_46086_wind_dir
+last_row WSPD hydrosphere_buoy_46086_wind_speed
+last_row WVHT hydrosphere_buoy_46086_wave_height
+last_row DPD hydrosphere_buoy_46086_dominant_period
+last_row PRES hydrosphere_buoy_46086_pressure
+last_row WTMP hydrosphere_buoy_46086_water_temp
+
+source hydrosphere_ndbc_buoy_51000
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/51000.txt
+wgs84 23.52 -153.82
+format csv
+last_row WDIR hydrosphere_buoy_51000_wind_dir
+last_row WSPD hydrosphere_buoy_51000_wind_speed
+last_row WVHT hydrosphere_buoy_51000_wave_height
+last_row DPD hydrosphere_buoy_51000_dominant_period
+last_row PRES hydrosphere_buoy_51000_pressure
+last_row WTMP hydrosphere_buoy_51000_water_temp
+
+source hydrosphere_ndbc_buoy_51001
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
+wgs84 24.44 -162.00
+format csv
+last_row WDIR hydrosphere_buoy_51001_wind_dir
+last_row WSPD hydrosphere_buoy_51001_wind_speed
+last_row WVHT hydrosphere_buoy_51001_wave_height
+last_row DPD hydrosphere_buoy_51001_dominant_period
+last_row PRES hydrosphere_buoy_51001_pressure
+last_row WTMP hydrosphere_buoy_51001_water_temp
+
+source hydrosphere_ndbc_buoy_51002
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/51002.txt
+wgs84 17.14 -157.80
+format csv
+last_row WDIR hydrosphere_buoy_51002_wind_dir
+last_row WSPD hydrosphere_buoy_51002_wind_speed
+last_row WVHT hydrosphere_buoy_51002_wave_height
+last_row DPD hydrosphere_buoy_51002_dominant_period
+last_row PRES hydrosphere_buoy_51002_pressure
+last_row WTMP hydrosphere_buoy_51002_water_temp
+
+source hydrosphere_ndbc_buoy_51004
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/51004.txt
+wgs84 17.56 -152.39
+format csv
+last_row WDIR hydrosphere_buoy_51004_wind_dir
+last_row WSPD hydrosphere_buoy_51004_wind_speed
+last_row WVHT hydrosphere_buoy_51004_wave_height
+last_row DPD hydrosphere_buoy_51004_dominant_period
+last_row PRES hydrosphere_buoy_51004_pressure
+last_row WTMP hydrosphere_buoy_51004_water_temp
+
+source hydrosphere_pegelonline_de
+ttl 300
+force gravity
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeCurrentMeasurement=true
+map .
+lat_key Latitude
+lon_key Longitude
+field_in timeseries.0.currentMeasurement.value hydrosphere_water_level_cm
+
+source hydrosphere_tide_1611400
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1611400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 21.9544 -159.3561
+first data.v hydrosphere_tide_height_m_nawiliwili
+
+source hydrosphere_tide_1612340
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 21.3033 -157.8645
+first data.v hydrosphere_tide_height_m_honolulu
+
+source hydrosphere_tide_1615680
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1615680&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 20.8949 -156.4690
+first data.v hydrosphere_tide_height_m_kahului_kahului_harbor
+
+source hydrosphere_tide_1617433
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617433&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 20.0366 -155.8294
+first data.v hydrosphere_tide_height_m_kawaihae
+
+source hydrosphere_tide_1619910
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1619910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 28.2117 -177.3600
+first data.v hydrosphere_tide_height_m_sand_island_midway_islands
+
+source hydrosphere_tide_1630000
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1630000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 13.4434 144.6564
+first data.v hydrosphere_tide_height_m_apra_harbor_guam
+
+source hydrosphere_tide_1770000
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1770000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 -14.28 -170.69
+first data.v hydrosphere_tide_height_m_pago_pago_american_samoa
+
+source hydrosphere_tide_1820000
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1820000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 8.7317 167.7361
+first data.v hydrosphere_tide_height_m_kwajalein_marshall_islands
+
+source hydrosphere_tide_1890000
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1890000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 19.2906 166.6175
+first data.v hydrosphere_tide_height_m_wake_island_pacific_ocean
+
+source hydrosphere_tide_2695535
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695535&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 32.3702 -64.6957
+first data.v hydrosphere_tide_height_m_bermuda_biological_station
+
+source hydrosphere_tide_8311030
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311030&product=water_level&datum=LWD&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 44.7028 -75.4944
+first data.v hydrosphere_tide_height_m_ogdensburg
+
+source hydrosphere_tide_8410140
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8410140&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 44.9046 -66.9829
+first data.v hydrosphere_tide_height_m_eastport
+
+source hydrosphere_tide_8413320
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8413320&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 44.3922 -68.2043
+first data.v hydrosphere_tide_height_m_bar_harbor
+
+source hydrosphere_tide_8418150
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8418150&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 43.6581 -70.2442
+first data.v hydrosphere_tide_height_m_portland
+
+source hydrosphere_tide_8443970
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8443970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 42.3539 -71.0503
+first data.v hydrosphere_tide_height_m_boston
+
+source hydrosphere_tide_8447435
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447435&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 41.6885 -69.9511
+first data.v hydrosphere_tide_height_m_chatham
+
+source hydrosphere_tide_8461490
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8461490&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 41.3717 -72.0956
+first data.v hydrosphere_tide_height_m_new_london
+
+source hydrosphere_tide_8516945
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8516945&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 40.8103 -73.7649
+first data.v hydrosphere_tide_height_m_kings_point
+
+source hydrosphere_tide_8518962
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518962&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 42.0139 -73.9392
+first data.v hydrosphere_tide_height_m_turkey_point_hudson_river_nerr
+
+source hydrosphere_tide_8534720
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8534720&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 39.3567 -74.4180
+first data.v hydrosphere_tide_height_m_atlantic_city
+
+source hydrosphere_tide_8551762
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551762&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 39.5822 -75.5890
+first data.v hydrosphere_tide_height_m_delaware_city
+
+source hydrosphere_tide_8570283
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 38.3283 -75.0917
+first data.v hydrosphere_tide_height_m_ocean_city_inlet
+
+source hydrosphere_tide_8575512
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8575512&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 38.9839 -76.4800
+first data.v hydrosphere_tide_height_m_annapolis
+
+source hydrosphere_tide_8632200
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8632200&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 37.1652 -75.9884
+first data.v hydrosphere_tide_height_m_kiptopeke
+
+source hydrosphere_tide_8635750
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 37.9961 -76.4644
+first data.v hydrosphere_tide_height_m_lewisetta
+
+source hydrosphere_tide_8651370
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8651370&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 36.1833 -75.7467
+first data.v hydrosphere_tide_height_m_duck
+
+source hydrosphere_tide_8654467
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8654467&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 35.2086 -75.7042
+first data.v hydrosphere_tide_height_m_uscg_station_hatteras
+
+source hydrosphere_tide_8656483
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8656483&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 34.7173 -76.6707
+first data.v hydrosphere_tide_height_m_beaufort_duke_marine_lab
+
+source hydrosphere_tide_8658120
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8658120&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 34.2267 -77.9533
+first data.v hydrosphere_tide_height_m_wilmington
+
+source hydrosphere_tide_8661070
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8661070&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 33.6550 -78.9180
+first data.v hydrosphere_tide_height_m_springmaid_pier
+
+source hydrosphere_tide_8665530
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8665530&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 32.7808 -79.9236
+first data.v hydrosphere_tide_height_m_charleston
+
+source hydrosphere_tide_8670870
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8670870&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 32.0347 -80.9030
+first data.v hydrosphere_tide_height_m_fort_pulaski
+
+source hydrosphere_tide_8679598
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8679598&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 30.7781 -81.4914
+first data.v hydrosphere_tide_height_m_kings_bay_msf_pier
+
+source hydrosphere_tide_8721604
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8721604&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 28.4158 -80.5931
+first data.v hydrosphere_tide_height_m_trident_pier_port_canaveral
+
+source hydrosphere_tide_8722670
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8722670&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 26.6128 -80.0342
+first data.v hydrosphere_tide_height_m_lake_worth_pier_atlantic_ocean
+
+source hydrosphere_tide_8723970
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8723970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 24.7110 -81.1060
+first data.v hydrosphere_tide_height_m_vaca_key_florida_bay
+
+source hydrosphere_tide_8725114
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8725114&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 26.1367 -81.7883
+first data.v hydrosphere_tide_height_m_naples_bay_north
+
+source hydrosphere_tide_8726384
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726384&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 27.6387 -82.5621
+first data.v hydrosphere_tide_height_m_port_manatee
+
+source hydrosphere_tide_8727520
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8727520&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 29.1350 -83.0320
+first data.v hydrosphere_tide_height_m_cedar_key
+
+source hydrosphere_tide_8728690
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8728690&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 29.7244 -84.9805
+first data.v hydrosphere_tide_height_m_apalachicola
+
+source hydrosphere_tide_8729210
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 30.2138 -85.8786
+first data.v hydrosphere_tide_height_m_panama_city_beach
+
+source hydrosphere_tide_8729840
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729840&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 30.4044 -87.2112
+first data.v hydrosphere_tide_height_m_pensacola
+
+source hydrosphere_tide_8741533
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8741533&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 30.3678 -88.5631
+first data.v hydrosphere_tide_height_m_pascagoula_noaa_lab
+
+source hydrosphere_tide_8760721
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8760721&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 29.1793 -89.2588
+first data.v hydrosphere_tide_height_m_pilottown
+
+source hydrosphere_tide_8761927
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761927&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 30.0272 -90.1133
+first data.v hydrosphere_tide_height_m_new_canal_station
+
+source hydrosphere_tide_8764044
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764044&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 29.6675 -91.2376
+first data.v hydrosphere_tide_height_m_berwick_atchafalaya_river
+
+source hydrosphere_tide_8766072
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8766072&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 29.5517 -92.3052
+first data.v hydrosphere_tide_height_m_freshwater_canal_locks
+
+source hydrosphere_tide_8767816
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8767816&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 30.2236 -93.2217
+first data.v hydrosphere_tide_height_m_lake_charles
+
+source hydrosphere_tide_8770613
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770613&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 29.6817 -94.9850
+first data.v hydrosphere_tide_height_m_morgans_point_barbours_cut
+
+source hydrosphere_tide_8772985
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8772985&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 28.7716 -95.6168
+first data.v hydrosphere_tide_height_m_sargent
+
+source hydrosphere_tide_8773037
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773037&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 28.4069 -96.7124
+first data.v hydrosphere_tide_height_m_seadrift
+
+source hydrosphere_tide_8775222
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775222&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 27.8461 -97.5207
+first data.v hydrosphere_tide_height_m_viola_turning_basin
+
+source hydrosphere_tide_8777812
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8777812&product=water_level&datum=MSL&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 26.8012 -97.4706
+first data.v hydrosphere_tide_height_m_rincon_del_san_jose
+
+source hydrosphere_tide_9014070
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014070&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 42.6211 -82.5267
+first data.v hydrosphere_tide_height_m_algonac
+
+source hydrosphere_tide_9052030
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052030&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 43.4642 -76.5118
+first data.v hydrosphere_tide_height_m_oswego
+
+source hydrosphere_tide_9052076
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052076&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 43.3384 -78.7273
+first data.v hydrosphere_tide_height_m_olcott
+
+source hydrosphere_tide_9063038
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063038&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 42.1539 -80.0758
+first data.v hydrosphere_tide_height_m_erie_lake_erie
+
+source hydrosphere_tide_9063053
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063053&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 41.7597 -81.2811
+first data.v hydrosphere_tide_height_m_fairport
+
+source hydrosphere_tide_9063079
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063079&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 41.5436 -82.7314
+first data.v hydrosphere_tide_height_m_marblehead
+
+source hydrosphere_tide_9075014
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075014&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 43.8464 -82.6431
+first data.v hydrosphere_tide_height_m_harbor_beach
+
+source hydrosphere_tide_9075065
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075065&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 45.0630 -83.4286
+first data.v hydrosphere_tide_height_m_alpena
+
+source hydrosphere_tide_9075080
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075080&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 45.7772 -84.7211
+first data.v hydrosphere_tide_height_m_mackinaw_city
+
+source hydrosphere_tide_9087023
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087023&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 43.9474 -86.4415
+first data.v hydrosphere_tide_height_m_ludington
+
+source hydrosphere_tide_9087031
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087031&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 42.7733 -86.2128
+first data.v hydrosphere_tide_height_m_holland
+
+source hydrosphere_tide_9087044
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 41.7297 -87.5383
+first data.v hydrosphere_tide_height_m_calumet_harbor
+
+source hydrosphere_tide_9087057
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087057&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 43.0020 -87.8876
+first data.v hydrosphere_tide_height_m_milwaukee
+
+source hydrosphere_tide_9087068
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087068&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 44.4639 -87.5010
+first data.v hydrosphere_tide_height_m_kewaunee_lake_michigan
+
+source hydrosphere_tide_9099018
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099018&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 46.5456 -87.3786
+first data.v hydrosphere_tide_height_m_marquette_c.g.
+
+source hydrosphere_tide_9099044
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 46.874443 -89.324165
+first data.v hydrosphere_tide_height_m_ontonagon
+
+source hydrosphere_tide_9099064
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099064&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 46.7758 -92.0920
+first data.v hydrosphere_tide_height_m_duluth
+
+source hydrosphere_tide_9099090
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099090&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 47.7486 -90.3413
+first data.v hydrosphere_tide_height_m_grand_marais_lake_superior
+
+source hydrosphere_tide_9410170
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410170&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 32.7156 -117.1767
+first data.v hydrosphere_tide_height_m_san_diego
+
+source hydrosphere_tide_9410660
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410660&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 33.720 -118.270
+first data.v hydrosphere_tide_height_m_los_angeles
+
+source hydrosphere_tide_9411340
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9411340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 34.4046 -119.6925
+first data.v hydrosphere_tide_height_m_santa_barbara
+
+source hydrosphere_tide_9412110
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9412110&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 35.1689 -120.7542
+first data.v hydrosphere_tide_height_m_port_san_luis
+
+source hydrosphere_tide_9413450
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9413450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 36.6089 -121.8914
+first data.v hydrosphere_tide_height_m_monterey
+
+source hydrosphere_tide_9414290
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 37.8063 -122.4659
+first data.v hydrosphere_tide_height_m_san_francisco
+
+source hydrosphere_tide_9416131
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416131&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 38.5622 -121.5463
+first data.v hydrosphere_tide_height_m_port_of_west_sacramento_washin
+
+source hydrosphere_tide_9416841
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416841&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 38.9146 -123.7111
+first data.v hydrosphere_tide_height_m_arena_cove
+
+source hydrosphere_tide_9418767
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9418767&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 40.7669 -124.2173
+first data.v hydrosphere_tide_height_m_north_spit
+
+source hydrosphere_tide_9419750
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9419750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 41.7456 -124.1844
+first data.v hydrosphere_tide_height_m_crescent_city
+
+source hydrosphere_tide_9431647
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9431647&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 42.7390 -124.4980
+first data.v hydrosphere_tide_height_m_port_orford
+
+source hydrosphere_tide_9435380
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9435380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 44.6254 -124.0449
+first data.v hydrosphere_tide_height_m_south_beach
+
+source hydrosphere_tide_9437540
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9437540&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 45.5545 -123.9189
+first data.v hydrosphere_tide_height_m_garibaldi
+
+source hydrosphere_tide_9440910
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 46.7075 -123.9669
+first data.v hydrosphere_tide_height_m_toke_point
+
+source hydrosphere_tide_9442396
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9442396&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 47.9128 -124.6357
+first data.v hydrosphere_tide_height_m_la_push_quillayute_river
+
+source hydrosphere_tide_9444900
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444900&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 48.1112 -122.7597
+first data.v hydrosphere_tide_height_m_port_townsend
+
+source hydrosphere_tide_9450460
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9450460&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 55.3319 -131.6261
+first data.v hydrosphere_tide_height_m_ketchikan
+
+source hydrosphere_tide_9451054
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451054&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 56.2467 -134.6470
+first data.v hydrosphere_tide_height_m_port_alexander
+
+source hydrosphere_tide_9452210
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 58.2988 -134.4106
+first data.v hydrosphere_tide_height_m_juneau
+
+source hydrosphere_tide_9452400
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 59.4508 -135.3280
+first data.v hydrosphere_tide_height_m_skagway_taiya_inlet
+
+source hydrosphere_tide_9452634
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452634&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 58.1947 -136.3469
+first data.v hydrosphere_tide_height_m_elfin_cove
+
+source hydrosphere_tide_9453220
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9453220&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 59.5485 -139.7334
+first data.v hydrosphere_tide_height_m_yakutat_yakutat_bay
+
+source hydrosphere_tide_9454050
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9454050&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 60.5583 -145.7530
+first data.v hydrosphere_tide_height_m_cordova
+
+source hydrosphere_tide_9455090
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455090&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 60.1193 -149.4281
+first data.v hydrosphere_tide_height_m_seward
+
+source hydrosphere_tide_9455500
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455500&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 59.4405 -151.7199
+first data.v hydrosphere_tide_height_m_seldovia
+
+source hydrosphere_tide_9455760
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455760&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 60.6833 -151.3980
+first data.v hydrosphere_tide_height_m_nikiski
+
+source hydrosphere_tide_9455920
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455920&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 61.2375 -149.8904
+first data.v hydrosphere_tide_height_m_anchorage
+
+source hydrosphere_tide_9457292
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457292&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 57.7317 -152.5120
+first data.v hydrosphere_tide_height_m_kodiak_island
+
+source hydrosphere_tide_9457804
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457804&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 56.8974 -154.2480
+first data.v hydrosphere_tide_height_m_alitak
+
+source hydrosphere_tide_9459450
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 55.3317 -160.5043
+first data.v hydrosphere_tide_height_m_sand_point
+
+source hydrosphere_tide_9459881
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459881&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 55.0599 -162.3261
+first data.v hydrosphere_tide_height_m_king_cove
+
+source hydrosphere_tide_9461380
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 51.8606 -176.6376
+first data.v hydrosphere_tide_height_m_adak_island
+
+source hydrosphere_tide_9461710
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461710&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 52.2319 -174.1725
+first data.v hydrosphere_tide_height_m_atka
+
+source hydrosphere_tide_9462450
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 52.9406 -168.8713
+first data.v hydrosphere_tide_height_m_nikolski
+
+source hydrosphere_tide_9462620
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462620&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 53.8792 -166.5403
+first data.v hydrosphere_tide_height_m_unalaska
+
+source hydrosphere_tide_9464212
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9464212&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 57.1253 -170.2852
+first data.v hydrosphere_tide_height_m_village_cove_st_paul_island
+
+source hydrosphere_tide_9468333
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468333&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 63.875 -160.788
+first data.v hydrosphere_tide_height_m_unalakleet
+
+source hydrosphere_tide_9468756
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468756&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 64.4946 -165.4396
+first data.v hydrosphere_tide_height_m_nome_norton_sound
+
+source hydrosphere_tide_9491094
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9491094&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 67.5758 -164.0644
+first data.v hydrosphere_tide_height_m_red_dog_dock
+
+source hydrosphere_tide_9497645
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9497645&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 70.4114 -148.5317
+first data.v hydrosphere_tide_height_m_prudhoe_bay
+
+source hydrosphere_tide_9751364
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751364&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 17.7477 -64.6984
+first data.v hydrosphere_tide_height_m_christiansted_harbor_st_croix
+
+source hydrosphere_tide_9753216
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 18.335278 -65.63111
+first data.v hydrosphere_tide_height_m_fajardo
+
+source hydrosphere_tide_9757811
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 18.480528 -66.70236
+first data.v hydrosphere_tide_height_m_arecibo
+
+source hydrosphere_tide_9759938
+ttl 300
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759938&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+wgs84 18.0893 -67.9382
+first data.v hydrosphere_tide_height_m_mona_island
+
+source hydrosphere_uk_flood_monitoring
+ttl 300
+force em
+url https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
+map items
+lat_key Lat
+lon_key Long
+field_in measures.0.latestReading.value hydrosphere_water_level_m
+
+source intermagnet_niemegk_realtime
+ttl 300
+force em
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json
+wgs84 52.07 12.68
+map .
+field 0 timestamp_utc
+field 1 xyz_vector_nT
+field 2 total_field_f_nT
+
+source intermagnet_niemegk_realtime_magnetic_data
+ttl 300
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json
+wgs84 52.07 12.68
+map .
+field 0 timestamp_utc
+field 1 xyz_vector_nT
+field 2 total_field_f_nT
+field 3 z_nT
+field 4 f_nT
+
+source ionosphere_giro_dxpredictor
+ttl 300
+force em
+url https://www.ionosonde.iap-kborn.de/actuellz.htm
+wgs84 54.6 13.4
+format html_table:1
+field data.0.MUF_D__MHz ionosonde_fof2_mhz
+field data.8.MUF_D__MHz ionosonde_muf3000_mhz
+
+source jpl_cad_neo_recent_approaches
+ttl 300
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=50
+map data
+lat_key null
+lon_key null
+field des neo_designation
+field dist_min lunar_distances
+field v_rel v_relative_km_s
+field h_mag absolute_magnitude
+field diameter estimated_diameter_km
+field epoch approach_time_jd
+
+source jpl_horizons_iss_vectors
+ttl 300
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_iss.json
+format text
+vectors iss_position
+
+source koeri_turkey_earthquakes
+ttl 300
+force seismic-body
+url https://tadas.afad.gov.tr/api/event/list?limit=200
+map .
+lat_key latitude
+lon_key longitude
+field id event_id
+field magnitude magnitude
+field depth depth_km
+field location epicenter_name
+field event_date event_time
+field type event_type
+
+source magnetosphere_noaa_imf_bz
+ttl 300
+force gravity
+ecliptic 0.99
+url https://services.swpc.noaa.gov/products/summary/solar-wind-mag-field.json
+path 0.bz_gsm magnetosphere_imf_bz_nt
+path 0.bt magnetosphere_imf_bt_nt
+
+source magnetosphere_noaa_kp_index
+ttl 300
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+path -1.Kp magnetosphere_kp_index
+path -1.a_running magnetosphere_kp_a_running
+
+source magnetosphere_noaa_swpc_electron_flux
+ttl 300
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+last flux radiation_electron_flux_goes
+
+source magnetosphere_noaa_swpc_kp_index
+ttl 300
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+last Kp magnetosphere_kp_index_noaa
+
+source magnetosphere_noaa_swpc_proton_flux
+ttl 300
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+last flux radiation_proton_flux_goes
+
+source magnetosphere_noaa_swpc_solar_wind
+ttl 300
+force gravity
+
+ssb
+url https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json
+last_row 1 magnetosphere_solar_wind_speed_noaa
+last_row 2 magnetosphere_solar_wind_density_noaa
+
+source nasa_omni_solar_wind
+ttl 300
+force advective
+ssb
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&time.min=2026-07-01T00:00:00Z&time.max=2026-07-08T00:00:00Z&parameters=Time,BX_GSE,BY_GSE,BZ_GSE,flow_speed,proton_density,T,Pressure,SYM_H,AE_INDEX&format=json
+hapi BX_GSE imf_bx_gse_nt
+hapi BY_GSE imf_by_gse_nt
+hapi BZ_GSE imf_bz_gse_nt
+hapi flow_speed solar_wind_speed_kms
+hapi proton_density solar_wind_density_ncc
+hapi T solar_wind_temp_k
+hapi Pressure solar_wind_dynamic_pressure_npa
+hapi SYM_H geomag_sym_h_nt
+hapi AE_INDEX geomag_ae_index_nt
+
+# === ArcGIS Feature Services (2026-07-30) ===
+
+source noaa_asos_surface_wind_observations
+ttl 300
+force acoustic
+url https://api.weather.gov/stations?state=CA,TX,NY&limit=500&cursor=&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.stationIdentifier station_id
+field properties.name station_name
+field properties.elevation.value elevation_m
+field properties.timeZone timezone
+
+source noaa_coops_air_temperature_realtime
+ttl 300
+force thermal
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+wgs84 40.7 -74.01
+map data
+field t observation_time_utc
+field v air_temperature_c
+
+source noaa_coops_water_level_realtime
+ttl 300
+force acoustic
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+wgs84 40.7 -74.01
+map data
+field t observation_time_utc
+field v water_level_m
+field s water_level_sigma
+field f quality_flags
+field q quality_code
+
+source noaa_coops_water_temperature_realtime
+ttl 300
+force thermal
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+wgs84 40.7 -74.01
+map data
+field t observation_time_utc
+field v water_temperature_c
+
+source noaa_ibtracs_active_storms
+ttl 300
+force acoustic
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ACTIVE.list.v04r00.csv
+format text
+rows
+lat_key LAT
+lon_key LON
+field NAME storm_name
+field SID storm_id
+field ISO_TIME timestamp_utc
+field WMO_WIND max_wind_kt
+field WMO_PRES min_pressure_hpa
+field DIST2LAND dist_to_land_km
+field SUBBASIN subbasin_code
+
+source noaa_ndbc_dart_realtime_pressure
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/51407.dart
+wgs84 19.63 -156.49
+format text
+rows
+field 0 year
+field 1 month
+field 2 day
+field 3 hour
+field 4 minute
+field 5 bottom_pressure_decibar
+field 6 bpr_anomaly_mm
+
+source noaa_planetary_k_index
+ttl 300
+force em
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+map
+wgs84 55.0 0.0
+field_in time_tag observation_time
+field_in kp_index kp_index
+field_in estimated_kp estimated_kp
+
+source noaa_swpc_aurora_ovation_prime
+ttl 300
+force em
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat_key 1
+lon_key 0
+field_in 2 aurora_probability
+
+source noaa_swpc_dst_real_time
+ttl 300
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/products/kyoto-dst.json
+map .
+field time_tag dst_time_utc
+field dst dst_index_nt
+
+source noaa_swpc_goes_electron_1day
+ttl 300
+force diffusion
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json
+map .
+field time_tag observation_time_utc
+field energy_channel0 electron_40keV
+field energy_channel1 electron_75keV
+field energy_channel2 electron_105keV
+field energy_channel3 electron_175keV
+field energy_channel4 electron_280keV
+field satellite satellite_id
+
+source noaa_swpc_goes_integral_protons_1day
+ttl 300
+force diffusion
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+field 0 datetime_utc
+field 1 p_gt10mev_pfu
+field 2 p_gt50mev_pfu
+field 3 p_gt100mev_pfu
+
+source noaa_swpc_goes_sep_7day_proton_flux
+ttl 300
+force diffusion
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-7-day.json
+map .
+field 0 time_tag
+field 1 p_gt10mev_pfu
+field 2 p_gt50mev_pfu
+field 3 p_gt100mev_pfu
+
+source noaa_swpc_goes_sep_proton_flux
+ttl 300
+force diffusion
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+field 0 datetime_utc
+field 1 p10_flux_pfu
+field 2 p50_flux_pfu
+field 3 p100_flux_pfu
+
+source noaa_swpc_kp_index_realtime
+ttl 300
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+map .
+field 0 datetime_utc
+field 1 kp_index
+field 2 observing_stations
+field 3 kp_fraction
+
+source noaa_swpc_kp_planetary_index
+ttl 300
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+map .
+field time_tag observation_time_utc
+field kp_index planetary_kp
+field kp_estimated estimated_kp
+
+source noaa_swpc_solar_region_magnetic_classes
+ttl 300
+force em
+ssb
+url https://services.swpc.noaa.gov/json/solar_regions.json
+map .
+field obsTime observation_time_utc
+field region ar_noaa_number
+field latitude heliographic_lat_deg
+field longitude heliographic_lon_deg
+field area ar_area_millionths
+field numspot sunspot_count
+field magclass mcintosh_magnetic_class
+field event_c c_flare_prob_pct
+field event_m m_flare_prob_pct
+field event_x x_flare_prob_pct
+
+source obis_marine_occurrences_recent
+ttl 300
+force diffusion
+url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field eventDate observation_date
+
+source open_meteo_air_quality
+ttl 300
+force diffusion
+url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=pm2_5,ozone,nitrogen_dioxide,sulphur_dioxide,carbon_monoxide
+pos latitude_deg longitude_deg
+field latitude latitude_deg
+field longitude longitude_deg
+field current.pm2_5 pm2_5
+field current.ozone ozone
+field current.nitrogen_dioxide nitrogen_dioxide
+field current.sulphur_dioxide sulphur_dioxide
+field current.carbon_monoxide carbon_monoxide
+
+source physics_gcn_icecube_circulars
+ttl 300
+force em
+url https://gcn.nasa.gov/circulars?query=icecube
+wgs84 -90.0 0.0 2835
+header User-Agent "omegaflow"
+regex ("totalItems":...,) cosmic_icecube_alert_circular_count
+
+source physics_ligo_grace_db_events
+ttl 300
+force em
+ssb
+url https://gracedb.ligo.org/api/superevents/?format=json
+map results
+field_in gpstime physics_ligo_event_gpstime
+field_in far physics_ligo_far_hz
+field_in significance physics_ligo_significance
+field_in p_astro physics_ligo_p_astro
+field_in group physics_ligo_event_group
+field_in pipeline physics_ligo_pipeline
+
+source solar_noaa_Integrated_irradiance
+ttl 300
+force em
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+map .
+field_in begin_time solar_flare_begin_time
+field_in peak_time solar_flare_peak_time
+field_in end_time solar_flare_end_time
+field_in class solar_flare_class
+field_in integrated_flux solar_flare_integrated_flux_wm2
+
+source solar_noaa_swpc_xray_flux
+ttl 300
+force em
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+last flux solar_xray_flux_goes
+
+source solar_wind_speed
+ttl 300
+force advective
+ssb
+url https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json
+path 0.proton_speed solar_wind_speed_kms
+
+source usgs_aftershock_forecast_significant
+ttl 300
+force seismic-body
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.5&limit=100&orderby=time&producttype=aftershock-forecast
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag mainshock_magnitude
+field properties.place location_description
+field properties.time event_time_utc
+field properties.depth depth_km
+field properties.alert alert_level
+field properties.cdi community_intensity
+
+source usgs_deep_focus_earthquakes
+ttl 300
+force seismic-body
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3.5&mindepth=300&limit=500&orderby=time&starttime={today}T00:00:00
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time
+field properties.depth depth_km
+
+source usgs_earthquake_all_2.5
+ttl 300
+force seismic-body
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200&orderby=time
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag event_magnitude
+field properties.place location_description
+field properties.time event_time_utc
+field properties.depth depth_km
+field properties.magType magnitude_type
+field properties.nst num_stations
+field properties.dmin epicentral_distance_deg
+
+source usgs_earthquakes_significant
+ttl 300
+force acoustic
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&orderby=time&limit=50
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag earthquake_magnitude
+field_in properties.place earthquake_place
+field_in properties.time earthquake_time_epoch
+field_in properties.magType magnitude_type
+field_in properties.sig seismic_significance
+field_in properties.tsunami tsunami_alert_flag
+depth_key geometry.coordinates.2
+
+source usgs_pager_recent_alerts
+ttl 300
+force seismic-body
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.0&limit=100&orderby=time&producttype=pager
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time
+field properties.depth depth_km
+field properties.alert alert_level
+field properties.cdi community_intensity
+
+source usgs_shakemap_significant_events
+ttl 300
+force seismic-body
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&limit=50&orderby=time&producttype=shakemap
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time
+field properties.depth depth_km
+field properties.mmi mmi_intensity
+field properties.alert alert_level
+field properties.cdi felt_intensity
+
+source usgs_volcano_current_activity
+ttl 300
+force seismic-surface
+url https://volcanoes.usgs.gov/hans-public/api/volcano/current
+map .
+lat_key Latitude
+lon_key Longitude
+field VolcanoID volcano_id
+field VolcanoName volcano_name
+field Level alert_level
+field AviationColorCode aviation_color
+field LastUpdated last_updated_utc
+
+source usgs_water_quality_realtime
+ttl 300
+force diffusion
+url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=00400,00095,00300,63680&siteStatus=active&bbox=-125,24,-66,50&siteType=ST
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteName station_name
+field variable.variableName parameter_name
+field values.0.value.0.value parameter_value
+field values.0.value.0.dateTime measurement_time
+
+source noaa_coops_water_levels_usa
+ttl 360
+force acoustic
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&station=8518750&format=json
+map data
+field_in t timestamp_utc
+field_in v water_level_m
+field_in q data_quality_flag
+
+url https://firms.modaps.eosdis.nasa.gov/api/country/csv/2204981707-VIR-24h/ZAF/1
+ttl 600
+force thermal
+url http://afis.meraka.org.za/afis/data/json/
+map fires
+lat_key lat
+lon_key lon
+field frp fire_radiative_power_mw
+field confidence confidence_pct
+field acq_date acquisition_date
+field satellite satellite
+
+source atmosphere_aeronet_gsfc_aod
+ttl 600
+force em
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
+wgs84 38.99 -76.84
+format csv
+last_row AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
+
+source atmosphere_air_quality_full
+ttl 600
+force em
+url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto
+field current.pm2_5 atmosphere_pm25_ugm3
+field current.pm10 atmosphere_pm10_ugm3
+field current.nitrogen_dioxide atmosphere_no2_ugm3
+field current.carbon_monoxide atmosphere_co_ugm3
+field current.sulphur_dioxide atmosphere_so2_ugm3
+field current.ozone atmosphere_o3_ugm3
+
+source atmosphere_air_quality_trace
+ttl 600
+force em
+url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=ammonia,dust,aerosol_optical_depth,formaldehyde
+field current.ammonia atmosphere_ammonia_ugm3
+field current.dust atmosphere_dust_ugm3
+field current.formaldehyde atmosphere_formaldehyde_ugm3
+field current.aerosol_optical_depth atmosphere_aerosol_optical_depth
+
+source atmosphere_air_quality_us
+ttl 600
+force em
+url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
+field current.us_aqi atmosphere_aqi_us
+
+source atmosphere_bom_observations
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m
+wgs84 -25.0 135.0
+field current.temperature_2m atmosphere_bom_temp_c
+field current.apparent_temperature atmosphere_bom_feels_like_c
+field current.relative_humidity_2m atmosphere_bom_humidity_pct
+field current.wind_speed_10m atmosphere_bom_wind_speed_kmh
+field current.wind_direction_10m atmosphere_bom_wind_dir
+path current atmosphere_bom_obs_data
+
+source atmosphere_bom_warnings
+ttl 600
+force em
+url https://api.weather.bom.gov.au/v1/warnings/{lat},{lon}
+wgs84 -25.0 135.0
+map data.warnings
+field_in type atmosphere_bom_warning_type
+field_in level atmosphere_bom_warning_level
+field_in message atmosphere_bom_warning_message
+
+source atmosphere_jetstream_250hpa
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa
+last hourly.windspeed_250hPa atmosphere_jetstream_250hpa_ms
+
+source atmosphere_lightning
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto
+field minutely_15.lightning_potential atmosphere_lightning_potential
+
+source atmosphere_metar_global
+ttl 600
+force acoustic
+url https://aviationweather.gov/api/data/metar?format=json&bbox=-180,-90,180,90
+map .
+lat_key lat
+lon_key lon
+field_in temp atmosphere_metar_temp_c
+field_in altim atmosphere_metar_pressure_hpa
+field_in wspd atmosphere_metar_wind_kt
+field_in visib atmosphere_metar_visibility
+alt_key elev
+
+source atmosphere_open_meteo_vertical_profile
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto
+path hourly.temperature_1000hPa.0 atmosphere_temp_1000hpa_c
+path hourly.temperature_950hPa.0 atmosphere_temp_950hpa_c
+path hourly.temperature_925hPa.0 atmosphere_temp_925hpa_c
+path hourly.temperature_900hPa.0 atmosphere_temp_900hpa_c
+path hourly.temperature_850hPa.0 atmosphere_temp_850hpa_c
+path hourly.temperature_800hPa.0 atmosphere_temp_800hpa_c
+path hourly.temperature_700hPa.0 atmosphere_temp_700hpa_c
+path hourly.temperature_600hPa.0 atmosphere_temp_600hpa_c
+path hourly.temperature_500hPa.0 atmosphere_temp_500hpa_c
+path hourly.temperature_400hPa.0 atmosphere_temp_400hpa_c
+path hourly.temperature_300hPa.0 atmosphere_temp_300hpa_c
+path hourly.temperature_250hPa.0 atmosphere_temp_250hpa_c
+path hourly.temperature_200hPa.0 atmosphere_temp_200hpa_c
+path hourly.temperature_150hPa.0 atmosphere_temp_150hpa_c
+path hourly.temperature_100hPa.0 atmosphere_temp_100hpa_c
+path hourly.temperature_70hPa.0 atmosphere_temp_70hpa_c
+path hourly.temperature_50hPa.0 atmosphere_temp_50hpa_c
+path hourly.relative_humidity_1000hPa.0 atmosphere_humidity_1000hpa_pct
+path hourly.relative_humidity_950hPa.0 atmosphere_humidity_950hpa_pct
+path hourly.relative_humidity_925hPa.0 atmosphere_humidity_925hpa_pct
+path hourly.relative_humidity_850hPa.0 atmosphere_humidity_850hpa_pct
+path hourly.relative_humidity_700hPa.0 atmosphere_humidity_700hpa_pct
+path hourly.relative_humidity_500hPa.0 atmosphere_humidity_500hpa_pct
+path hourly.relative_humidity_300hPa.0 atmosphere_humidity_300hpa_pct
+path hourly.relative_humidity_200hPa.0 atmosphere_humidity_200hpa_pct
+path hourly.relative_humidity_100hPa.0 atmosphere_humidity_100hpa_pct
+path hourly.relative_humidity_50hPa.0 atmosphere_humidity_50hpa_pct
+path hourly.wind_speed_1000hPa.0 atmosphere_wind_1000hpa_ms
+path hourly.wind_speed_950hPa.0 atmosphere_wind_950hpa_ms
+path hourly.wind_speed_925hPa.0 atmosphere_wind_925hpa_ms
+path hourly.wind_speed_850hPa.0 atmosphere_wind_850hpa_ms
+path hourly.wind_speed_700hPa.0 atmosphere_wind_700hpa_ms
+path hourly.wind_speed_500hPa.0 atmosphere_wind_500hpa_ms
+path hourly.wind_speed_300hPa.0 atmosphere_wind_300hpa_ms
+path hourly.wind_speed_250hPa.0 atmosphere_wind_250hpa_ms
+path hourly.wind_speed_200hPa.0 atmosphere_wind_200hpa_ms
+path hourly.wind_speed_100hPa.0 atmosphere_wind_100hpa_ms
+path hourly.wind_speed_70hPa.0 atmosphere_wind_70hpa_ms
+path hourly.wind_speed_50hPa.0 atmosphere_wind_50hpa_ms
+
+source atmosphere_pressure_levels
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto
+path current.temperature_500hPa atmosphere_temp_500hpa_c
+path current.temperature_850hPa atmosphere_temp_850hpa_c
+path current.geopotential_height_500hPa atmosphere_geopotential_500hpa_m
+path current.geopotential_height_850hPa atmosphere_geopotential_850hpa_m
+
+source atmosphere_sigmet
+ttl 600
+force em
+ecliptic 1
+url https://aviationweather.gov/api/data/airsigmet?format=json
+map .
+field_in altitudeHi1 atmosphere_sigmet_alt_hi_ft
+field_in movementDir atmosphere_sigmet_movement_dir
+field_in movementSpd atmosphere_sigmet_movement_spd_kt
+
+source atmosphere_thunderstorm
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=cape_max,wind_gusts_10m_max
+field daily.cape_max.0 atmosphere_convective_potential_jkg
+field daily.wind_gusts_10m_max.0 atmosphere_wind_gust_max_ms
+
+source atmosphere_visibility
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=visibility,sunshine_duration,is_day&timezone=auto
+path current.visibility atmosphere_visibility_m
+path current.sunshine_duration atmosphere_sunshine_duration_today_s
+path current.is_day atmosphere_is_day
+
+source atmosphere_weather
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto
+field current.temperature_2m atmosphere_temp_c
+field current.relative_humidity_2m atmosphere_humidity_pct
+field current.pressure_msl atmosphere_pressure_hpa
+field current.wind_speed_10m atmosphere_wind_speed_ms
+field current.wind_direction_10m atmosphere_wind_direction_deg
+field current.cloud_cover atmosphere_cloud_cover_pct
+field current.precipitation atmosphere_precipitation_mm
+
+source atmosphere_weather_alerts
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=weather_code&alerts=1
+path current.weather_code atmosphere_weather_code
+
+source atmosphere_weather_alerts_us
+ttl 600
+force em
+ecliptic 1
+url https://api.weather.gov/alerts/active
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.event atmosphere_alert_event
+field_in properties.severity atmosphere_alert_severity
+field_in properties.urgency atmosphere_alert_urgency
+field_in properties.areaDesc atmosphere_alert_area
+
+source atmosphere_weather_current
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,wind_speed_10m,wind_direction_10m
+path current.temperature_2m atmosphere_temp_c
+path current.relative_humidity_2m atmosphere_humidity_pct
+path current.precipitation atmosphere_precipitation_mm
+path current.surface_pressure atmosphere_pressure_hpa
+path current.wind_speed_10m atmosphere_wind_speed_ms
+
+source atmosphere_weather_evapotranspiration
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=et0_fao_evapotranspiration,vapor_pressure_deficit,dew_point_2m,weather_code,is_day,rain,showers&timezone=auto
+path current.et0_fao_evapotranspiration atmosphere_et0_evapotranspiration_mm
+path current.vapor_pressure_deficit atmosphere_vapor_pressure_deficit_kpa
+path current.dew_point_2m atmosphere_dewpoint_2m_c
+path current.weather_code atmosphere_weather_code_wmo
+path current.rain atmosphere_rain_mm
+path current.showers atmosphere_showers_mm
+
+source atmosphere_wind_heights
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_speed_180m,wind_direction_10m,wind_direction_80m,wind_direction_120m,wind_direction_180m,wind_gusts_10m,temperature_80m,temperature_120m,temperature_180m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,uv_index,uv_index_clear_sky,dew_point_2m,pressure_msl,surface_pressure&timezone=auto
+path current.wind_speed_80m atmosphere_wind_80m_kmh
+path current.wind_speed_120m atmosphere_wind_120m_kmh
+path current.wind_speed_180m atmosphere_wind_180m_kmh
+path current.wind_direction_80m atmosphere_winddir_80m_deg
+path current.wind_direction_120m atmosphere_winddir_120m_deg
+path current.wind_direction_180m atmosphere_winddir_180m_deg
+path current.temperature_80m atmosphere_temp_80m_c
+path current.temperature_120m atmosphere_temp_120m_c
+path current.temperature_180m atmosphere_temp_180m_c
+path current.cloud_cover_low atmosphere_cloud_low_pct
+path current.cloud_cover_mid atmosphere_cloud_mid_pct
+path current.cloud_cover_high atmosphere_cloud_high_pct
+path current.uv_index atmosphere_uv_index
+path current.uv_index_clear_sky atmosphere_uv_clearsky
+path current.dew_point_2m atmosphere_dewpoint_c
+path current.pressure_msl atmosphere_pressure_msl_hpa
+
+source aviation_pireps
+ttl 600
+force acoustic
+url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
+ecliptic 1
+map
+lat_key lat
+lon_key lon
+field_in icaoId station_icao
+field_in acType aircraft_type
+field_in temp temperature_celsius
+field_in wdir wind_direction
+field_in wspd wind_speed_knots
+field_in fltLvl flight_level
+field_in wxString weather_string
+field_in receipTime report_time
+field_in obsTime observation_epoch
+field_in rawOb raw_report
+
+source aviation_sigmets
+ttl 600
+force acoustic
+url https://aviationweather.gov/api/data/airsigmet?format=json&hours=3
+ecliptic 1
+map
+lat_key coords.0.lat
+lon_key coords.0.lon
+field_in seriesId series_id
+field_in hazard hazard_type
+field_in severity severity_level
+field_in airSigmetType sigmet_type
+field_in altitudeHi1 altitude_high_1
+field_in altitudeLow1 altitude_low_1
+field_in movementDir movement_direction
+field_in movementSpd movement_speed
+field_in rawAirSigmet raw_report
+field_in validTimeFrom valid_from_epoch
+field_in validTimeTo valid_to_epoch
+
+source biosphere_gbif_nearby_species
+ttl 600
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_species_nearby
+
+source biosphere_gbif_recent_birds
+ttl 600
+force em
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
+wgs84 55.685000 12.571000
+field count biosphere_bird_count
+
+source biosphere_inaturalist_nearby
+ttl 600
+force em
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&per_page=20&order=desc&order_by=observed_on
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in species_guess biosphere_inaturalist_nearby
+
+source biosphere_inaturalist_observations_count
+ttl 600
+force em
+ecliptic 1
+url https://api.inaturalist.org/v1/observations?per_page=1
+path total_results biosphere_inaturalist_observations_total
+
+source biosphere_inpe_fire_foci
+ttl 600
+force em
+ecliptic 1
+url https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/10min/
+format text
+rows
+field_in 0 biosphere_inpe_fire_lat
+field_in 1 biosphere_inpe_fire_lon
+field_in 2 biosphere_inpe_fire_date
+field_in 3 biosphere_inpe_fire_hour
+field_in 4 biosphere_inpe_fire_satellite
+field_in 5 biosphere_inpe_fire_frp_mw
+
+url https://api.wheretheiss.at/v1/satellites/25544/astronauts
+ttl 600
+force em
+ecliptic 1
+url https://api.wheretheiss.at/v1/satellites/25544/astronauts
+count people biosphere_humans_in_space
+
+url https://api.wheretheiss.at/v1/satellites/25544/astronauts
+ttl 600
+force em
+ecliptic 1
+url https://api.wheretheiss.at/v1/satellites/25544/astronauts
+field number orbital_humans_in_space_count
+
+source cryosphere_snow_depth
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snow_depth&timezone=auto
+field current.snow_depth cryosphere_snow_depth_m
+
+source cryosphere_snowfall
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth,temperature_2m,precipitation,cloud_cover,wind_speed_10m&timezone=auto
+path current.snowfall cryosphere_snowfall_cm
+path current.snow_depth cryosphere_snow_depth_m
+
+source esri_active_hurricanes_sampler
+ttl 600
+force advective
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.STORMNAME stormname
+field_in attributes.STORMTYPE stormtype
+field_in attributes.ADVDATE advdate
+field_in attributes.ADVISNUM advisnum
+field_in attributes.STORMNUM stormnum
+field_in attributes.FCSTPRD fcstprd
+field_in attributes.BASIN basin
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_active_hurricanes_v1
+ttl 600
+force advective
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.STORMNAME stormname
+field_in attributes.STORMTYPE stormtype
+field_in attributes.ADVDATE advdate
+field_in attributes.ADVISNUM advisnum
+field_in attributes.STORMNUM stormnum
+field_in attributes.FCSTPRD fcstprd
+field_in attributes.BASIN basin
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_air_quality_pm25_latest_results
+ttl 600
+force diffusion
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.location_id location_id
+field_in attributes.city city
+field_in attributes.location location
+field_in attributes.country country
+field_in attributes.lastUpdated lastupdated
+field_in attributes.value value
+field_in attributes.unit unit
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_asam_events_v1
+ttl 600
+force em
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/ASAM_events_V1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.reference reference
+field_in attributes.dateofocc dateofocc
+field_in attributes.subreg subreg
+field_in attributes.hostility_d hostility_d
+field_in attributes.victim_d victim_d
+field_in attributes.description description
+field_in attributes.hostilitytype_l hostilitytype_l
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_canada_air_quality
+ttl 600
+force diffusion
+url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/AirQualityHealthIndexCanada/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.id observation_id
+field_in attributes.aqhi_type observation_type
+field_in attributes.location_name_en location_en
+field_in attributes.location_name_fr location_fr
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_cwfis_hotspots
+ttl 600
+force thermal
+url https://services.arcgis.com/txWDfZ2LIgzmw5Ts/arcgis/rest/services/Hotspots_(CWFIS)/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+map features
+field_in attributes.lat latitude
+field_in attributes.lon longitude
+field_in attributes.rep_date report_date
+field_in attributes.source source_sensor
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_live_stream_gauges_v1
+ttl 600
+force advective
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Live_Stream_Gauges_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.stationid stationid
+field_in attributes.stationurl stationurl
+field_in attributes.graphurl graphurl
+field_in attributes.org org
+field_in attributes.stage_ft stage_ft
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_modis_thermal_v1
+ttl 600
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/MODIS_Thermal_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.BRIGHTNESS brightness
+field_in attributes.SCAN scan
+field_in attributes.TRACK track
+field_in attributes.SATELLITE satellite
+field_in attributes.CONFIDENCE confidence
+field_in attributes.VERSION version
+field_in attributes.BRIGHT_T31 bright_t31
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_storm_reports_sampler
+ttl 600
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_storm_reports_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.UTC_DATETIME utc_datetime
+field_in attributes.HAIL_SIZE hail_size
+field_in attributes.LOCATION location
+field_in attributes.COUNTY county
+field_in attributes.STATE state
+field_in attributes.LATITUDE latitude
+field_in attributes.LONGITUDE longitude
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_storm_reports_v1
+ttl 600
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_storm_reports_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.UTC_DATETIME utc_datetime
+field_in attributes.HAIL_SIZE hail_size
+field_in attributes.LOCATION location
+field_in attributes.COUNTY county
+field_in attributes.STATE state
+field_in attributes.LATITUDE latitude
+field_in attributes.LONGITUDE longitude
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_recent_hurricanes_v1
+ttl 600
+force advective
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Recent_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.STORMNAME stormname
+field_in attributes.DTG dtg
+field_in attributes.YEAR year
+field_in attributes.MONTH month
+field_in attributes.DAY day
+field_in attributes.HHMM hhmm
+field_in attributes.TAU tau
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_usa_wildfires_v1
+ttl 600
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USA_Wildfires_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.IncidentName incidentname
+field_in attributes.IncidentTypeCategory incidenttypecategory
+field_in attributes.DailyAcres dailyacres
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_usgs_seismic_data_v1
+ttl 600
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.id id
+field_in attributes.mag mag
+field_in attributes.eventType eventtype
+field_in attributes.sig sig
+field_in attributes.alert alert
+field_in attributes.place place
+field_in attributes.hoursOld hoursold
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_viirs_thermal_hotspots
+ttl 600
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+map features
+field_in attributes.latitude latitude
+field_in attributes.longitude longitude
+field_in attributes.bright_ti4 brightness_k
+field_in attributes.frp fire_radiative_power
+field_in attributes.acq_date acq_date
+field_in attributes.satellite satellite
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_wildfire_aggregated_v1
+ttl 600
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Wildfire_aggregated_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.IRWINID irwinid
+field_in attributes.sum_p0010001 sum_p0010001
+field_in attributes.sum_h0010001 sum_h0010001
+field_in attributes.sum_estimatedunder18pop sum_estimatedunder18pop
+field_in attributes.sum_estimated18to64pop sum_estimated18to64pop
+field_in attributes.sum_estimated65pluspop sum_estimated65pluspop
+field_in attributes.sum_estimated0_14pop sum_estimated0_14pop
+lat_key geometry.y
+lon_key geometry.x
+
+source gcn_circular_latest
+ttl 600
+force em
+url https://gcn.nasa.gov/circulars/44806.json
+map .
+path circularId circular_id
+path subject circular_subject
+path eventId event_id
+path body circular_body
+
+source geosphere_bmkg_earthquakes
+ttl 600
+force em
+ecliptic 1
+url https://bmkg-restapi.vercel.app/v1/earthquake/recent
+map data
+lat_key coordinates.lat
+lon_key coordinates.lon
+field_in magnitude geosphere_bmkg_magnitude
+field_in kedalaman geosphere_bmkg_depth_km
+field_in wilayah geosphere_bmkg_region
+field_in waktu geosphere_bmkg_time
+field_in dirasakan geosphere_bmkg_felt
+
+source geosphere_earthquakes_2_5_weekly
+ttl 600
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_earthquake_mag
+field_in properties.sig geosphere_earthquake_significance
+
+source geosphere_earthquakes_4_5_weekly
+ttl 600
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_earthquake_mag
+field_in properties.sig geosphere_earthquake_significance
+
+source geosphere_earthquakes_cenc
+ttl 600
+force seismic-surface
+url https://www.ceic.ac.cn/speedsearch?time=1&type=2&page=1
+wgs84 39.9 116.4
+count lines geosphere_earthquakes_cenc_count
+
+source geosphere_earthquakes_emsc_recent
+ttl 600
+force em
+ecliptic 1
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmagnitude=2&limit=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_emsc_magnitude
+field_in properties.flynn_region geosphere_emsc_location
+field_in properties.time geosphere_emsc_time
+field_in properties.depth geosphere_emsc_depth_km
+alt_key geometry.coordinates.2
+
+source geosphere_earthquakes_jma
+ttl 600
+force seismic-surface
+url https://www.jma.go.jp/bosai/quake/data/list.json
+wgs84 35.68 139.69
+last_line geosphere_earthquakes_jma_recent_mag
+
+source geosphere_earthquakes_m1_day
+ttl 600
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_m1_week
+ttl 600
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
+source geosphere_earthquakes_m2_5_day
+ttl 600
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_m4_5_day
+ttl 600
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_significant_week
+ttl 600
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_usgs_m2_week
+ttl 600
+force em
+ecliptic 1
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_usgs_magnitude_m2
+field_in properties.place geosphere_usgs_location_m2
+field_in properties.time geosphere_usgs_time_m2
+field_in properties.depth geosphere_usgs_depth_km_m2
+alt_key geometry.coordinates.2
+
+source geosphere_earthquakes_weekly
+ttl 600
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={week_ago}&endtime={today}&minmagnitude=2.5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_emsc_earthquakes_global
+ttl 600
+force em
+ecliptic 1
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=3&limit=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_emsc_global_magnitude
+field_in properties.flynn_region geosphere_emsc_global_place
+field_in properties.time geosphere_emsc_global_time
+field_in properties.depth geosphere_emsc_global_depth
+alt_key geometry.coordinates.2
+
+source geosphere_ga_earthquakes_today
+ttl 600
+force em
+ecliptic 1
+url https://seismic-api.science.unimelb.edu.au/today-quakes
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_ga_magnitude
+field_in properties.place geosphere_ga_location
+field_in properties.time geosphere_ga_time
+field_in properties.depth geosphere_ga_depth_km
+alt_key geometry.coordinates.2
+
+source geosphere_geonet_quakes
+ttl 600
+force em
+ecliptic 1
+url https://api.geonet.org.nz/quake?MMI=3
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.publicID geosphere_geonet_public_id
+field_in properties.magnitude geosphere_geonet_magnitude
+field_in properties.depth geosphere_geonet_depth_km
+field_in properties.time geosphere_geonet_time
+field_in properties.locality geosphere_geonet_locality
+field_in properties.mmi geosphere_geonet_mmi
+
+source geosphere_gfz_earthquakes
+ttl 600
+force seismic-body
+url https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=text&minmagnitude=3&limit=100
+format text
+rows
+lat_key 2
+lon_key 3
+field_in 0 geosphere_gfz_event_id
+field_in 1 geosphere_gfz_time
+field_in 4 geosphere_gfz_depth_km
+field_in 10 geosphere_gfz_magnitude
+field_in 10 geosphere_gfz_mag_type
+field_in 11 geosphere_gfz_mag_author
+field_in 12 geosphere_gfz_location
+
+source geosphere_ingv_earthquakes
+ttl 600
+force seismic-body
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2&limit=100
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_ingv_magnitude
+field_in properties.time geosphere_ingv_time
+field_in properties.place geosphere_ingv_location
+field_in properties.depth geosphere_ingv_depth_km
+alt_key geometry.coordinates.2
+
+source geosphere_soil_current
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto
+path current.soil_temperature_0cm geosphere_soil_temp_0cm_c
+path current.soil_temperature_6cm geosphere_soil_temp_6cm_c
+path current.soil_temperature_18cm geosphere_soil_temp_18cm_c
+path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
+path current.soil_moisture_0_to_1cm geosphere_soil_moisture_0cm_m3m3
+path current.soil_moisture_9_to_27cm geosphere_soil_moisture_18cm_m3m3
+path current.soil_moisture_27_to_81cm geosphere_soil_moisture_54cm_m3m3
+
+source hydrosphere_global_evapotranspiration_mm
+ttl 600
+force em
+ecliptic 1
+url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto
+last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
+
+source hydrosphere_marine
+ttl 600
+force em
+url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period&timezone=auto
+field current.wave_height hydrosphere_wave_height_m
+field current.wave_direction hydrosphere_wave_direction_deg
+field current.wave_period hydrosphere_wave_period_s
+
+source hydrosphere_marine_ocean
+ttl 600
+force em
+url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,ocean_current_velocity,ocean_current_direction,sea_level_height_msl&timezone=auto
+path current.sea_surface_temperature hydrosphere_sst_c
+path current.ocean_current_velocity hydrosphere_current_velocity_kmh
+path current.ocean_current_direction hydrosphere_current_direction_deg
+path current.sea_level_height_msl hydrosphere_sea_level_msl_m
+
+source hydrosphere_marine_waves
+ttl 600
+force em
+url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto
+path current.wind_wave_height hydrosphere_wind_wave_m
+path current.wind_wave_direction hydrosphere_wind_wave_dir_deg
+path current.wind_wave_period hydrosphere_wind_wave_period_s
+path current.swell_wave_height hydrosphere_swell_m
+path current.swell_wave_direction hydrosphere_swell_dir_deg
+path current.swell_wave_period hydrosphere_swell_period_s
+
+source jpl_horizons_parker_solar_probe
+ttl 600
+force gravity
+ssb
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_parker_solar_probe.json
+format text
+rows
+field_in 2 x_au
+field_in 3 y_au
+field_in 4 z_au
+field_in 5 vx_au_d
+field_in 6 vy_au_d
+field_in 7 vz_au_d
+
+source lidar_openmeteo_elevation
+ttl 600
+force em
+url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+path elevation.0 lidar_terrain_elevation_m
+
+source magnetosphere_ovation_aurora
+ttl 600
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat_key 1
+lon_key 0
+field_in 2 magnetosphere_aurora_power_gw
+
+source mpc_neocp_observations_list
+ttl 600
+force gravity
+url https://www.minorplanetcenter.net/iau/NEO/neocp.txt
+wgs84 0.0 0.0
+format text
+rows
+field 0 designation
+field 2 ra_hms
+field 3 dec_dms
+field 4 magnitude
+field 5 filter_band
+field 6 obs_date
+
+source nasa_eonet_events
+ttl 600
+force seismic-body
+url https://eonet.gsfc.nasa.gov/api/v3/events?limit=200&open=true
+map events
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field title event_title
+field categories.0.title category
+field closed closed_date
+
+source nasa_firms_global_active_fires
+ttl 600
+force thermal
+url https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv
+format csv
+rows
+pos latitude longitude
+field_in 0 latitude
+field_in 1 longitude
+field_in 2 fire_brightness_k
+field_in 5 acq_date
+field_in 6 acq_time
+field_in 8 confidence
+field_in 11 fire_radiative_power
+
+source noaa_coops_water_level_now
+ttl 600
+force advective
+stations https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json
+stations_path stations
+stations_lat lat
+stations_lon lng
+stations_id id
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&station={nearest_station}&format=json&date=today&units=metric&datum=MLLW&time_zone=gmt
+map data
+field v water_level_m
+field t observation_time
+
+source noaa_swpc_goes_flare_event_archive
+ttl 600
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+map .
+field_in 0 timestamp_utc
+field_in 1 flux_short_wm2
+field_in 2 flux_long_wm2
+
+source noaa_swpc_goes_xrays_7day
+ttl 600
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+map .
+field time_tag xray_time_utc
+field flux xray_flux_W_m2
+
+source noaa_weather_alerts
+ttl 600
+force em
+url https://api.weather.gov/alerts/active
+map features
+lat_key 38.9
+lon_key -77.0
+field_in properties.id alert_id
+field_in properties.event alert_event_type
+field_in properties.headline alert_headline
+field_in properties.severity alert_severity
+field_in properties.certainty alert_certainty
+field_in properties.urgency alert_urgency
+field_in properties.areaDesc affected_area
+field_in properties.effective effective_time
+field_in properties.expires expiration_time
+field_in properties.messageType message_type
+
+source open_meteo_airquality_full
+ttl 600
+force diffusion
+url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,aerosol_optical_depth&timezone=auto
+path latitude atmosphere_lat
+path longitude atmosphere_lon
+path current.pm10 atmosphere_pm10_ugm3
+path current.pm2_5 atmosphere_pm25_ugm3
+path current.carbon_monoxide atmosphere_co_ugm3
+path current.nitrogen_dioxide atmosphere_no2_ugm3
+path current.sulphur_dioxide atmosphere_so2_ugm3
+path current.ozone atmosphere_o3_ugm3
+path current.aerosol_optical_depth atmosphere_aod
+
+source physics_gcn_ligo_circulars
+ttl 600
+force em
+ssb
+url https://gcn.nasa.gov/circulars?query=IceCube%20LVK
+header User-Agent "omegaflow"
+regex ("totalItems":...,) cosmic_neutrino_gravwave_coincidence_count
+
+source physics_ligo_gracedb_events
+ttl 600
+force em
+ssb
+url https://gracedb.ligo.org/api/superevents/?count=10&category=production
+first superevents.0.superevent_id cosmic_gravitational_wave_latest_id
+count superevents cosmic_gravitational_wave_event_count
+
+source solar_dscovr_epic
+ttl 600
+force em
+
+ecliptic 1
+url https://epic.gsfc.nasa.gov/api/natural
+map .
+field_in identifier solar_epic_image_id
+field_in image solar_epic_image_name
+field_in date solar_epic_date
+field_in centroid_coordinates.lat solar_epic_centroid_lat
+field_in centroid_coordinates.lon solar_epic_centroid_lon
+
+source solar_euv
+ttl 600
+force em
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
+last value solar_euv_flux_wm2
+
+source solar_surface_radiation
+ttl 600
+force thermal
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto
+path current.shortwave_radiation atmosphere_sw_radiation_wm2
+path current.direct_radiation atmosphere_direct_rad_wm2
+path current.diffuse_radiation atmosphere_diffuse_rad_wm2
+path current.direct_normal_irradiance atmosphere_dni_wm2
+path current.vapour_pressure_deficit atmosphere_vpd_kpa
+path current.cape atmosphere_cape_jkg
+path current.evapotranspiration atmosphere_evapotranspiration_mm
+path current.et0_fao_evapotranspiration atmosphere_et0_mm
+path current.visibility atmosphere_visibility_m
+path current.freezing_level_height atmosphere_freezing_level_m
+path current.snow_depth atmosphere_snow_depth_m
+path current.precipitation_probability atmosphere_precip_probability_pct
+path current.weather_code atmosphere_wmo_code
+
+source swpc_aurora_oval
+ttl 600
+force em
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat_key 1
+lon_key 0
+field_in 2 aurora_intensity
+
+source usgs_nwis_water_data
+ttl 600
+force advective
+url https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?limit=100&api_key=DEMO_KEY&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field monitoring_location_id site_id
+field parameter_code param_code
+field value value
+field unit_of_measure unit
+field time observation_time
+field statistic_id statistic_id
+
+source usgs_volcano_observatory_status
+ttl 600
+force seismic-surface
+url https://volcanoes.usgs.gov/hans-public/api/volcano/list
+map .
+lat_key Latitude
+lon_key Longitude
+field VolcanoID volcano_id
+field VolcanoName volcano_name
+field Level alert_level
+field AviationColorCode aviation_color
+
+source bfs_odl_count
+ttl 900
+force em
+url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
+wgs84 51.5 10.5
+count . radiation_germany_active_stations
+
+source bfs_odl_germany
+ttl 900
+force em
+url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.kenn station_code
+field_in properties.name station_name
+field_in properties.value ambient_dose_rate_nsv_h
+field_in properties.nuclide nuclide
+field_in properties.site_status site_status
+
+source hydrosphere_usgs_arkansas_littlerock
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07263295&parameterCd=00060,00065
+wgs84 34.74 -92.27
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_arkansas_littlerock
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_arkansas_littlerock
+
+source hydrosphere_usgs_colorado_leesferry
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09380000&parameterCd=00060,00065
+wgs84 36.86 -111.59
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_colorado_leesferry
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_colorado_leesferry
+
+source hydrosphere_usgs_columbia_thedalles
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=14105700&parameterCd=00060,00065
+wgs84 45.61 -121.19
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_columbia_thedalles
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_columbia_thedalles
+
+source hydrosphere_usgs_grant_burton
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05413500&parameterCd=00060,00065
+wgs84 42.72 -90.82
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_grant_burton
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_grant_burton
+
+source hydrosphere_usgs_hudson_albany
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01358000&parameterCd=00060,00065
+wgs84 42.66 -73.75
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_hudson_albany
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_hudson_albany
+
+source hydrosphere_usgs_mississippi_stlouis
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07010000&parameterCd=00060,00065
+wgs84 38.87 -90.18
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_mississippi_stlouis
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_mississippi_stlouis
+
+source hydrosphere_usgs_mississippi_vicksburg
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07289000&parameterCd=00060,00065
+wgs84 32.35 -90.89
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_mississippi_vicksburg
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_mississippi_vicksburg
+
+source hydrosphere_usgs_missouri_bismarck
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06342500&parameterCd=00060,00065
+wgs84 46.85 -100.78
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_missouri_bismarck
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_missouri_bismarck
+
+source hydrosphere_usgs_missouri_hermann
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06934500&parameterCd=00060,00065
+wgs84 38.71 -91.44
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_missouri_hermann
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_missouri_hermann
+
+source hydrosphere_usgs_ohio_louisville
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03294500&parameterCd=00060,00065
+wgs84 38.26 -85.66
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_ohio_louisville
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_ohio_louisville
+
+source hydrosphere_usgs_potomac_washingtondc
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060,00065
+wgs84 38.95 -77.13
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_potomac_washingtondc
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_potomac_washingtondc
+
+source hydrosphere_usgs_riogrande_elpaso
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08371000&parameterCd=00060,00065
+wgs84 31.80 -106.53
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_riogrande_elpaso
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_riogrande_elpaso
+
+source hydrosphere_usgs_tennessee_chattanooga
+ttl 900
+force seismic-surface
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03565500&parameterCd=00060,00065
+wgs84 35.04 -85.31
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_tennessee_chattanooga
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_tennessee_chattanooga
+
+source ionosphere_tec_global
+ttl 900
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.tec ionosphere_tec_value
+
+source ionosphere_total_electron_content
+ttl 900
+force em
+ecliptic 1
+url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json
+field data.grid.features.0.properties.vtec_assimilated_tecu ionosphere_tec_assimilated_tecu
+field data.grid.features.0.properties.vtec_rms_tecu ionosphere_tec_rms_tecu
+
+source nhc_current_storms
+ttl 900
+force em
+url https://www.nhc.noaa.gov/CurrentStorms.json
+map activeStorms
+lat_key latitude
+lon_key longitude
+field_in name storm_name
+field_in windSpeed wind_speed_kts
+field_in movementDir movement_direction_deg
+field_in movementSpeed movement_speed_kts
+field_in pressure central_pressure_mb
+
+source noaa_tides_water_levels
+ttl 900
+force diffusion
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=water_level&datum=MSL&units=metric&time_zone=gmt&format=json
+map data
+lat_key 32.757
+lon_key -117.226
+field_in t water_level_m
+field_in s sigma
+field_in f flood_level_flag
+
+source usgs_streamflow_instantaneous
+ttl 900
+force diffusion
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065,00060&siteStatus=all
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field_in sourceInfo.siteName station_name
+field_in values.0.value.0.value streamflow_cfs
+field_in values.0.value.0.dateTime measurement_time
+field_in variable.variableName parameter_name
+field_in variable.unit.unitCode unit_code
+
+source aeronet_aod500_europe
+ttl 1800
+force diffusion
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_500nm aod_500
+field Angstrom_Exponent_440-870nm angstrom_exp
+
+source aeronet_aod_asia
+ttl 1800
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-10.0&lon1=60.0&lat2=55.0&lon2=150.0
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440nm
+field AOD_675nm aod_675nm
+
+source aeronet_aod_europe
+ttl 1800
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440nm
+field AOD_500nm aod_500nm
+field Angstrom_Exponent_440-870nm angstrom_440_870
+
+source aeronet_aod_north_america
+ttl 1800
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=15.0&lon1=-170.0&lat2=80.0&lon2=-40.0
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440nm
+field AOD_500nm aod_500nm
+field Precipitable_Water(cm) precip_water_cm
+
+source aeronet_aod_south_america
+ttl 1800
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-60.0&lon1=-90.0&lat2=15.0&lon2=-30.0
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440nm
+field AOD_500nm aod_500nm
+field AOD_870nm aod_870nm
+
+source atmosphere_waqi
+ttl 1800
+force diffusion
+url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
+field data.aqi atmosphere_waqi_aqi
+field data.iaqi.pm25.v atmosphere_waqi_pm25
+field data.iaqi.pm10.v atmosphere_waqi_pm10
+field data.iaqi.o3.v atmosphere_waqi_o3
+field data.iaqi.no2.v atmosphere_waqi_no2
+field data.time.s time_str
+
+source aviation_tafs
+ttl 1800
+force em
+url https://aviationweather.gov/api/data/taf?ids=KJFK&format=json
+ecliptic 1
+map
+lat_key lat
+lon_key lon
+field_in icaoId station_icao
+field_in rawTAF raw_taf_text
+field_in issueTime issue_time
+field_in validTimeFrom valid_from_epoch
+field_in validTimeTo valid_to_epoch
+field_in name station_name
+field_in elev station_elevation_m
+
+source geosphere_earthquakes_m1_month
+ttl 1800
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
+source geosphere_ga_earthquakes_3day
+ttl 1800
+force em
+ecliptic 1
+url https://seismic-api.science.unimelb.edu.au/three-day-quakes
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_ga_magnitude_3d
+field_in properties.place geosphere_ga_location_3d
+field_in properties.time geosphere_ga_time_3d
+field_in properties.depth geosphere_ga_depth_3d
+alt_key geometry.coordinates.2
+
+source geosphere_usgs_earthquakes_day
+ttl 1800
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in geometry.coordinates.2 geosphere_quake_depth_km
+field_in properties.mag geosphere_quake_magnitude
+
+source hydrosphere_usgs_nwis_streamflow
+ttl 1800
+force diffusion
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites={usgs_site}&parameterCd=00060&siteStatus=all
+wgs84 0 0
+path value.timeSeries.0.values.0.value.0.value hydrosphere_nwis_discharge_cfs
+path value.timeSeries.0.sourceInfo.siteName hydrosphere_nwis_site_name
+path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.latitude hydrosphere_nwis_lat
+path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.longitude hydrosphere_nwis_lon
+
+source inaturalist_needs_id_global
+ttl 1800
+force diffusion
+url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field created_at submission_time
+field place_guess locality
+
+source jpl_cad_neo_recent
+ttl 1800
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=500
+map data
+field_in 0 designation
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 velocity_km_s
+
+source metar_africa_mideast_bbox
+ttl 1800
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=-35,-20,38,65&format=json&hours=2
+map .
+lat_key lat
+lon_key lon
+field icaoId icao_code
+field temp temp_c
+field wdir wind_dir_deg
+field wspd wind_speed_kt
+field altim pressure_hpa
+field wxString weather_string
+
+source metar_asia_pacific_bbox
+ttl 1800
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=-10,60,55,150&format=json&hours=2
+map .
+lat_key lat
+lon_key lon
+field icaoId icao_code
+field temp temp_c
+field dewp dewpoint_c
+field wdir wind_dir_deg
+field wspd wind_speed_kt
+field altim pressure_hpa
+field wxString weather_string
+
+source metar_europe_bbox
+ttl 1800
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=35,-10,70,40&format=json&hours=2
+map .
+lat_key lat
+lon_key lon
+field icaoId icao_code
+field temp temp_c
+field dewp dewpoint_c
+field wdir wind_dir_deg
+field wspd wind_speed_kt
+field altim pressure_hpa
+field visib visibility_sm
+field wxString weather_string
+field rawOb raw_metar
+
+source metar_north_america_bbox
+ttl 1800
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=25,-170,72,-50&format=json&hours=2
+map .
+lat_key lat
+lon_key lon
+field icaoId icao_code
+field temp temp_c
+field dewp dewpoint_c
+field wdir wind_dir_deg
+field wspd wind_speed_kt
+field altim pressure_hpa
+field visib visibility_sm
+field wxString weather_string
+
+source ndbc_buoys_north_pacific
+ttl 1800
+force acoustic
+url https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt
+format text
+rows
+lat_key 1
+lon_key 2
+field_in 0 station_id
+field_in 8 wind_dir_deg
+field_in 9 wind_speed_ms
+field_in 11 wave_height_m
+field_in 12 dominant_period_s
+field_in 18 water_temp_c
+field_in 17 air_temp_c
+field_in 15 pressure_hpa
+
+source ngeso_carbon_intensity
+ttl 1800
+force thermal
+wgs84 54.0 -2.0
+url https://api.carbonintensity.org.uk/intensity/date/{today}
+path data.0.intensity.actual ngeso_carbon_intensity_gco2_kwh
+
+source nhc_active_atlantic_hurricanes
+ttl 1800
+force thermal
+url https://www.nhc.noaa.gov/CurrentStorms.json
+map activeStorms
+lat_key latitude
+lon_key longitude
+field stormName storm_name
+field windSpeed wind_speed_kt
+field pressure pressure_mb
+field movementDir movement_dir
+field movementSpeed movement_speed_kt
+
+source nhc_active_epac_storms
+ttl 1800
+force thermal
+url https://www.nhc.noaa.gov/CurrentStorms.json?basin=epac
+map activeStorms
+lat_key latitude
+lon_key longitude
+field stormName storm_name
+field windSpeed wind_speed_kt
+field pressure pressure_mb
+
+source noaa_awc_sigmet_international
+ttl 1800
+force acoustic
+url https://aviationweather.gov/api/data/sigmet?format=json
+map .
+lat_key lat
+lon_key lon
+field hazard hazard_type
+field severity severity
+
+source noaa_swpc_aurora_oval_north
+ttl 1800
+force em
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat_key 1
+lon_key 0
+field_in 2 aurora_probability_pct
+
+source noaa_weather_observations
+ttl 1800
+force diffusion
+url https://api.weather.gov/stations/KTOP/observations/latest
+map properties
+lat_key 39.073
+lon_key -95.626
+field_in temperature temperature_celsius
+field_in dewpoint dewpoint_celsius
+field_in windDirection wind_direction
+field_in windSpeed wind_speed_kts
+field_in barometricPressure pressure_pa
+field_in visibility visibility_m
+field_in relativeHumidity humidity_percent
+field_in textDescription weather_description
+
+source open_meteo_forecast
+ttl 1800
+force diffusion
+url https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,pressure_msl,surface_pressure&timezone=auto
+map current
+lat_key 52.52
+lon_key 13.41
+field_in temperature_2m temperature_celsius
+field_in relative_humidity_2m relative_humidity_percent
+field_in apparent_temperature feels_like_celsius
+field_in precipitation precipitation_mm
+field_in rain rain_mm
+field_in weather_code wmo_weather_code
+field_in cloud_cover cloud_cover_percent
+field_in wind_speed_10m wind_speed_kmh
+field_in wind_direction_10m wind_direction_degrees
+field_in pressure_msl sea_level_pressure_hpa
+field_in surface_pressure surface_pressure_hpa
+
+source orbital_celestrak_debris
+ttl 1800
+force em
+ecliptic 1
+url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=IRIDIUM+33
+field totalItems orbital_debris_iridium33
+
+source orbital_celestrak_gps
+ttl 1800
+force em
+ecliptic 1
+url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=NAVSTAR
+field totalItems orbital_gps_count
+
+source orbital_celestrak_satellites
+ttl 1800
+force em
+ecliptic 1
+url https://tle.ivanstanojevic.me/api/tle/?page-size=100
+map member
+field satelliteId satellite_norad_id
+field name satellite_name
+field date tle_epoch
+field line1 tle_line1
+field line2 tle_line2
+
+source waqi_cams_airquality_demo
+ttl 1800
+force diffusion
+url https://api.waqi.info/feed/here/?token=demo
+map data
+lat_key city.geo.0
+lon_key city.geo.1
+field aqi aqi
+field pm25 pm25_ugm3
+field pm10 pm10_ugm3
+field o3 o3_ugm3
+field no2 no2_ugm3
+
+source aeronet_aod440_global
+ttl 3600
+force diffusion
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440
+field AOD_500nm aod_500
+field Precipitable_Water(cm) precip_water
+
+source aeronet_aod_africa
+ttl 3600
+force diffusion
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440
+field AOD_500nm aod_500
+
+source aeronet_aod_africa_mideast
+ttl 3600
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440nm
+field AOD_500nm aod_500nm
+
+source aeronet_aod_americas
+ttl 3600
+force diffusion
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-55.0&lon1=-130.0&lat2=60.0&lon2=-30.0
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440
+field AOD_500nm aod_500
+
+source aeronet_aod_global
+ttl 3600
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440nm
+field AOD_500nm aod_500nm
+field AOD_870nm aod_870nm
+
+source aeronet_inv3_refractive_index
+ttl 3600
+force diffusion
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1&lat1=-90&lon1=-180&lat2=90&lon2=180
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field Real_part_of_Refractive_Index[440nm] ri_real_440
+field Imaginary_part_of_Refractive_Index[440nm] ri_imag_440
+field Asymmetry_Factor-Total[440nm] asymmetry_factor_440
+
+source aeronet_inv_ssa_global
+ttl 3600
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field Single_Scattering_Albedo[440nm] ssa_440nm
+field Single_Scattering_Albedo[675nm] ssa_675nm
+field Absorption_AOD[440nm] aabs_440nm
+
+source aeronet_sda_global
+ttl 3600
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&SDA15=1&AVG=10&if_no_html=1
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field Total_AOD_500nm[tau_a] aod_total_500nm
+field Fine_Mode_AOD_500nm[tau_f] aod_fine_500nm
+field Coarse_Mode_AOD_500nm[tau_c] aod_coarse_500nm
+
+source aeronet_tot_global
+ttl 3600
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&TOT15=1&AVG=10&if_no_html=1
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field Total_Optical_Depth_440nm tot_od_440nm
+field Total_Optical_Depth_500nm tot_od_500nm
+
+source alma_archive
+ttl 3600
+force em
+url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+field_in source_name target
+field_in project_code project
+lat_key ra
+lon_key dec
+
+source ams_fireball_events_recent
+ttl 3600
+force gravity
+url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
+map .
+lat_key lat
+lon_key lng
+field event_date date
+field event_time time
+field location city
+field region region
+field comments observer_comments
+
+source arcgis_pager_cat_earthquake_impacts
+ttl 3600
+force seismic-body
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&outFields=mag,place,time,alert,fatalities&f=json&resultRecordCount=500
+map features
+lat_key geometry.y
+lon_key geometry.x
+field attributes.mag magnitude
+field attributes.place locality
+field attributes.alert alert_level
+field attributes.fatalities fatalities
+
+source argovis_core_profiles
+ttl 3600
+force diffusion
+url https://argovis-api.colorado.edu/argo?startDate=2026-07-26T00:00:00Z&endDate=2026-07-27T00:00:00Z&box=%5B%5B-180,-90%5D,%5B180,90%5D%5D
+map .
+lat_key lat
+lon_key lon
+field_in profile_id profile_id
+field_in temperature temperature_c
+field_in salinity salinity_psu
+field_in pressure pressure_db
+field_in date observation_date
+
+source atmosphere_aerosol_optical_depth
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth,dust,pm2_5,pm10
+path current.aerosol_optical_depth atmosphere_aod
+path current.dust atmosphere_dust_ugm3
+path current.pm2_5 atmosphere_pm25_ugm3
+path current.pm10 atmosphere_pm10_ugm3
+
+source atmosphere_biome_amazon
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=-3.47&longitude=-62.22&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 -3.47 -62.22
+path current.temperature_2m atmosphere_biome_amazon_temp_c
+path current.precipitation atmosphere_biome_amazon_precip_mm
+path current.relative_humidity_2m atmosphere_biome_amazon_humidity_pct
+path current.surface_pressure atmosphere_biome_amazon_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_amazon_wind_ms
+path current.weather_code atmosphere_biome_amazon_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_amazon_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_amazon_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_amazon_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_amazon_sunshine_yesterday_s
+
+source atmosphere_biome_antarctic
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=-80.0&longitude=100.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 -80.0 100.0
+path current.temperature_2m atmosphere_biome_antarctic_temp_c
+path current.precipitation atmosphere_biome_antarctic_precip_mm
+path current.relative_humidity_2m atmosphere_biome_antarctic_humidity_pct
+path current.surface_pressure atmosphere_biome_antarctic_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_antarctic_wind_ms
+path current.weather_code atmosphere_biome_antarctic_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_antarctic_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_antarctic_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_antarctic_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_antarctic_sunshine_yesterday_s
+
+source atmosphere_biome_atacama
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=-24.0&longitude=-69.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 -24.0 -69.5
+path current.temperature_2m atmosphere_biome_atacama_temp_c
+path current.precipitation atmosphere_biome_atacama_precip_mm
+path current.relative_humidity_2m atmosphere_biome_atacama_humidity_pct
+path current.surface_pressure atmosphere_biome_atacama_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_atacama_wind_ms
+path current.weather_code atmosphere_biome_atacama_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_atacama_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_atacama_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_atacama_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_atacama_sunshine_yesterday_s
+
+source atmosphere_biome_borneo
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=0.5&longitude=114.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 0.5 114.0
+path current.temperature_2m atmosphere_biome_borneo_temp_c
+path current.precipitation atmosphere_biome_borneo_precip_mm
+path current.relative_humidity_2m atmosphere_biome_borneo_humidity_pct
+path current.surface_pressure atmosphere_biome_borneo_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_borneo_wind_ms
+path current.weather_code atmosphere_biome_borneo_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_borneo_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_borneo_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_borneo_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_borneo_sunshine_yesterday_s
+
+source atmosphere_biome_cairo
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=30.0&longitude=31.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 30.0 31.0
+path current.temperature_2m atmosphere_biome_cairo_temp_c
+path current.precipitation atmosphere_biome_cairo_precip_mm
+path current.relative_humidity_2m atmosphere_biome_cairo_humidity_pct
+path current.surface_pressure atmosphere_biome_cairo_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_cairo_wind_ms
+path current.weather_code atmosphere_biome_cairo_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_cairo_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_cairo_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_cairo_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_cairo_sunshine_yesterday_s
+
+source atmosphere_biome_cape_town
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=-34.0&longitude=18.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 -34.0 18.5
+path current.temperature_2m atmosphere_biome_cape_town_temp_c
+path current.precipitation atmosphere_biome_cape_town_precip_mm
+path current.relative_humidity_2m atmosphere_biome_cape_town_humidity_pct
+path current.surface_pressure atmosphere_biome_cape_town_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_cape_town_wind_ms
+path current.weather_code atmosphere_biome_cape_town_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_cape_town_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_cape_town_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_cape_town_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_cape_town_sunshine_yesterday_s
+
+source atmosphere_biome_congo
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=0.0&longitude=18.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 0.0 18.0
+path current.temperature_2m atmosphere_biome_congo_temp_c
+path current.precipitation atmosphere_biome_congo_precip_mm
+path current.relative_humidity_2m atmosphere_biome_congo_humidity_pct
+path current.surface_pressure atmosphere_biome_congo_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_congo_wind_ms
+path current.weather_code atmosphere_biome_congo_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_congo_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_congo_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_congo_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_congo_sunshine_yesterday_s
+
+source atmosphere_biome_death_valley
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=36.5&longitude=-117.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 36.5 -117.0
+path current.temperature_2m atmosphere_biome_death_valley_temp_c
+path current.precipitation atmosphere_biome_death_valley_precip_mm
+path current.relative_humidity_2m atmosphere_biome_death_valley_humidity_pct
+path current.surface_pressure atmosphere_biome_death_valley_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_death_valley_wind_ms
+path current.weather_code atmosphere_biome_death_valley_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_death_valley_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_death_valley_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_death_valley_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_death_valley_sunshine_yesterday_s
+
+source atmosphere_biome_fiji
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=-18.0&longitude=178.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 -18.0 178.0
+path current.temperature_2m atmosphere_biome_fiji_temp_c
+path current.precipitation atmosphere_biome_fiji_precip_mm
+path current.relative_humidity_2m atmosphere_biome_fiji_humidity_pct
+path current.surface_pressure atmosphere_biome_fiji_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_fiji_wind_ms
+path current.weather_code atmosphere_biome_fiji_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_fiji_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_fiji_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_fiji_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_fiji_sunshine_yesterday_s
+
+source atmosphere_biome_gobi
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=44.0&longitude=105.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 44.0 105.0
+path current.temperature_2m atmosphere_biome_gobi_temp_c
+path current.precipitation atmosphere_biome_gobi_precip_mm
+path current.relative_humidity_2m atmosphere_biome_gobi_humidity_pct
+path current.surface_pressure atmosphere_biome_gobi_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_gobi_wind_ms
+path current.weather_code atmosphere_biome_gobi_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_gobi_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_gobi_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_gobi_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_gobi_sunshine_yesterday_s
+
+source atmosphere_biome_greenland
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=72.0&longitude=-40.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 72.0 -40.0
+path current.temperature_2m atmosphere_biome_greenland_temp_c
+path current.precipitation atmosphere_biome_greenland_precip_mm
+path current.relative_humidity_2m atmosphere_biome_greenland_humidity_pct
+path current.surface_pressure atmosphere_biome_greenland_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_greenland_wind_ms
+path current.weather_code atmosphere_biome_greenland_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_greenland_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_greenland_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_greenland_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_greenland_sunshine_yesterday_s
+
+source atmosphere_biome_iceland
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=64.0&longitude=-19.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 64.0 -19.0
+path current.temperature_2m atmosphere_biome_iceland_temp_c
+path current.precipitation atmosphere_biome_iceland_precip_mm
+path current.relative_humidity_2m atmosphere_biome_iceland_humidity_pct
+path current.surface_pressure atmosphere_biome_iceland_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_iceland_wind_ms
+path current.weather_code atmosphere_biome_iceland_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_iceland_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_iceland_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_iceland_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_iceland_sunshine_yesterday_s
+
+source atmosphere_biome_kerguelen
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=-49.5&longitude=69.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 -49.5 69.5
+path current.temperature_2m atmosphere_biome_kerguelen_temp_c
+path current.precipitation atmosphere_biome_kerguelen_precip_mm
+path current.relative_humidity_2m atmosphere_biome_kerguelen_humidity_pct
+path current.surface_pressure atmosphere_biome_kerguelen_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_kerguelen_wind_ms
+path current.weather_code atmosphere_biome_kerguelen_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_kerguelen_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_kerguelen_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_kerguelen_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_kerguelen_sunshine_yesterday_s
+
+source atmosphere_biome_maldives
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=3.0&longitude=73.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 3.0 73.0
+path current.temperature_2m atmosphere_biome_maldives_temp_c
+path current.precipitation atmosphere_biome_maldives_precip_mm
+path current.relative_humidity_2m atmosphere_biome_maldives_humidity_pct
+path current.surface_pressure atmosphere_biome_maldives_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_maldives_wind_ms
+path current.weather_code atmosphere_biome_maldives_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_maldives_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_maldives_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_maldives_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_maldives_sunshine_yesterday_s
+
+source atmosphere_biome_okavango
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=-19.5&longitude=23.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 -19.5 23.5
+path current.temperature_2m atmosphere_biome_okavango_temp_c
+path current.precipitation atmosphere_biome_okavango_precip_mm
+path current.relative_humidity_2m atmosphere_biome_okavango_humidity_pct
+path current.surface_pressure atmosphere_biome_okavango_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_okavango_wind_ms
+path current.weather_code atmosphere_biome_okavango_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_okavango_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_okavango_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_okavango_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_okavango_sunshine_yesterday_s
+
+source atmosphere_biome_patagonia
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=-50.0&longitude=-72.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 -50.0 -72.0
+path current.temperature_2m atmosphere_biome_patagonia_temp_c
+path current.precipitation atmosphere_biome_patagonia_precip_mm
+path current.relative_humidity_2m atmosphere_biome_patagonia_humidity_pct
+path current.surface_pressure atmosphere_biome_patagonia_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_patagonia_wind_ms
+path current.weather_code atmosphere_biome_patagonia_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_patagonia_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_patagonia_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_patagonia_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_patagonia_sunshine_yesterday_s
+
+source atmosphere_biome_sahara
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=23.0&longitude=5.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 23.0 5.0
+path current.temperature_2m atmosphere_biome_sahara_temp_c
+path current.precipitation atmosphere_biome_sahara_precip_mm
+path current.relative_humidity_2m atmosphere_biome_sahara_humidity_pct
+path current.surface_pressure atmosphere_biome_sahara_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_sahara_wind_ms
+path current.weather_code atmosphere_biome_sahara_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_sahara_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_sahara_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_sahara_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_sahara_sunshine_yesterday_s
+
+source atmosphere_biome_siberia
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=62.0&longitude=105.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 62.0 105.0
+path current.temperature_2m atmosphere_biome_siberia_temp_c
+path current.precipitation atmosphere_biome_siberia_precip_mm
+path current.relative_humidity_2m atmosphere_biome_siberia_humidity_pct
+path current.surface_pressure atmosphere_biome_siberia_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_siberia_wind_ms
+path current.weather_code atmosphere_biome_siberia_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_siberia_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_siberia_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_siberia_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_siberia_sunshine_yesterday_s
+
+source atmosphere_biome_tibet
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude=32.0&longitude=86.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+wgs84 32.0 86.0
+path current.temperature_2m atmosphere_biome_tibet_temp_c
+path current.precipitation atmosphere_biome_tibet_precip_mm
+path current.relative_humidity_2m atmosphere_biome_tibet_humidity_pct
+path current.surface_pressure atmosphere_biome_tibet_pressure_hpa
+path current.wind_speed_10m atmosphere_biome_tibet_wind_ms
+path current.weather_code atmosphere_biome_tibet_weather_code
+path daily.temperature_2m_max.0 atmosphere_biome_tibet_temp_max_yesterday_c
+path daily.temperature_2m_min.0 atmosphere_biome_tibet_temp_min_yesterday_c
+path daily.precipitation_sum.0 atmosphere_biome_tibet_precip_yesterday_mm
+path daily.sunshine_duration.0 atmosphere_biome_tibet_sunshine_yesterday_s
+
+source atmosphere_bom_forecast_daily
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,uv_index_max&forecast_days=1
+wgs84 -25.0 135.0
+path daily.0 atmosphere_bom_forecast_data
+field daily.temperature_2m_max.0 atmosphere_bom_forecast_max_temp
+field daily.temperature_2m_min.0 atmosphere_bom_forecast_min_temp
+field daily.precipitation_sum.0 atmosphere_bom_forecast_precip_mm
+field daily.uv_index_max.0 atmosphere_bom_forecast_uv_index
+
+source atmosphere_co2_current
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
+wgs84 19.5 -155.6
+path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm
+
+source atmosphere_co2_mauna_loa
+ttl 3600
+force em
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
+wgs84 19.5362 -155.5763 3397
+format csv
+last_row (ppm) atmosphere_co2_weekly_ppm
+
+source atmosphere_daily_forecast
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max&timezone=auto
+path daily.temperature_2m_max.0 atmosphere_daily_temp_max_c
+path daily.temperature_2m_min.0 atmosphere_daily_temp_min_c
+path daily.precipitation_probability_max.0 atmosphere_daily_precip_prob_pct
+path daily.windspeed_10m_max.0 atmosphere_daily_wind_max_kms
+
+source atmosphere_ensemble_forecast
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/ensemble/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto
+path daily.temperature_2m_max.0 atmosphere_ensemble_temp_max_c
+path daily.precipitation_sum.0 atmosphere_ensemble_precip_mm
+
+source atmosphere_hamqsl_solar
+ttl 3600
+force em
+url https://www.hamqsl.com/solarxml.php
+wgs84 35.0 -106.0
+field solarterrestrialdata.solarflux.sflux atmosphere_hf_solar_flux_sfi
+field solarterrestrialdata.solarflux.Aindex atmosphere_hf_a_index
+field solarterrestrialdata.solarflux.Kindex atmosphere_hf_k_index
+field solarterrestrialdata.solarflux.MUF atmosphere_hf_muf_estimated
+
+source atmosphere_marine_daily
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&daily=wave_height_max,wave_period_max,swell_wave_height_max&timezone=auto
+path daily.wave_height_max.0 atmosphere_marine_wave_height_max_m
+path daily.wave_period_max.0 atmosphere_marine_wave_period_max_s
+path daily.swell_wave_height_max.0 atmosphere_marine_swell_height_max_m
+
+source atmosphere_marine_sst
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,wave_height,swell_wave_height
+path current.sea_surface_temperature atmosphere_marine_sst_c
+path current.wave_height atmosphere_marine_wave_height_m
+path current.swell_wave_height atmosphere_marine_swell_height_m
+
+source atmosphere_methane
+ttl 3600
+force em
+ecliptic 1
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+format csv
+last_row average atmosphere_methane_global_ppb
+
+source atmosphere_n2o
+ttl 3600
+force em
+ecliptic 1
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+format csv
+last_row average atmosphere_n2o_global_ppb
+
+source atmosphere_openmeteo_bom
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=bom_access_global&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+path hourly.temperature_2m.0 atmosphere_bom_om_temp_c
+path hourly.relative_humidity_2m.0 atmosphere_bom_om_humidity_pct
+path hourly.precipitation.0 atmosphere_bom_om_precip_mm
+path hourly.wind_speed_10m.0 atmosphere_bom_om_wind_ms
+
+source atmosphere_openmeteo_cma
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=cma_grapes_global&hourly=temperature_2m,relative_humidity_2m,precipitation,pressure_msl,wind_speed_10m&timezone=auto
+path hourly.temperature_2m.0 atmosphere_cma_om_temp_c
+path hourly.relative_humidity_2m.0 atmosphere_cma_om_humidity_pct
+path hourly.precipitation.0 atmosphere_cma_om_precip_mm
+path hourly.pressure_msl.0 atmosphere_cma_om_pressure_hpa
+path hourly.wind_speed_10m.0 atmosphere_cma_om_wind_ms
+
+source atmosphere_openmeteo_dwd
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=dwd_icon&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+path hourly.temperature_2m.0 atmosphere_dwd_om_temp_c
+path hourly.relative_humidity_2m.0 atmosphere_dwd_om_humidity_pct
+path hourly.precipitation.0 atmosphere_dwd_om_precip_mm
+path hourly.wind_speed_10m.0 atmosphere_dwd_om_wind_ms
+
+source atmosphere_openmeteo_ecmwf
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=ecmwf_ifs025&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+path hourly.temperature_2m.0 atmosphere_ecmwf_om_temp_c
+path hourly.relative_humidity_2m.0 atmosphere_ecmwf_om_humidity_pct
+path hourly.precipitation.0 atmosphere_ecmwf_om_precip_mm
+path hourly.wind_speed_10m.0 atmosphere_ecmwf_om_wind_ms
+
+source atmosphere_openmeteo_gem
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=gem_global&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+path hourly.temperature_2m.0 atmosphere_gem_om_temp_c
+path hourly.relative_humidity_2m.0 atmosphere_gem_om_humidity_pct
+path hourly.precipitation.0 atmosphere_gem_om_precip_mm
+path hourly.wind_speed_10m.0 atmosphere_gem_om_wind_ms
+
+source atmosphere_openmeteo_jma
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=jma_gsm&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+path hourly.temperature_2m.0 atmosphere_jma_om_temp_c
+path hourly.relative_humidity_2m.0 atmosphere_jma_om_humidity_pct
+path hourly.precipitation.0 atmosphere_jma_om_precip_mm
+path hourly.wind_speed_10m.0 atmosphere_jma_om_wind_ms
+
+source atmosphere_openmeteo_kma
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=kma_gdps&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+path hourly.temperature_2m.0 atmosphere_kma_om_temp_c
+path hourly.relative_humidity_2m.0 atmosphere_kma_om_humidity_pct
+path hourly.precipitation.0 atmosphere_kma_om_precip_mm
+path hourly.wind_speed_10m.0 atmosphere_kma_om_wind_ms
+
+source atmosphere_openmeteo_meteofrance
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=meteofrance_arpege_world&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+path hourly.temperature_2m.0 atmosphere_meteofrance_om_temp_c
+path hourly.relative_humidity_2m.0 atmosphere_meteofrance_om_humidity_pct
+path hourly.precipitation.0 atmosphere_meteofrance_om_precip_mm
+path hourly.wind_speed_10m.0 atmosphere_meteofrance_om_wind_ms
+
+source atmosphere_openmeteo_metno
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=metno_seamless&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+path hourly.temperature_2m.0 atmosphere_metno_om_temp_c
+path hourly.relative_humidity_2m.0 atmosphere_metno_om_humidity_pct
+path hourly.precipitation.0 atmosphere_metno_om_precip_mm
+path hourly.wind_speed_10m.0 atmosphere_metno_om_wind_ms
+
+source atmosphere_sf6
+ttl 3600
+force em
+ecliptic 1
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+format csv
+last_row average atmosphere_sf6_global_ppt
+
+source atmosphere_sunrise_sunset
+ttl 3600
+force em
+ecliptic 1
+url https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&formatted=0
+path results.day_length atmosphere_day_length_s
+path results.solar_noon atmosphere_solar_noon_iso
+
+url https://superdarn.ca/plotting/convection-maps/latest
+ttl 3600
+force em
+url https://api.superdarn.ca/v1/convection/map/latest
+wgs84 65.0 -147.0
+field map ocean_polar_convection_velocity_ms
+field velocity ocean_polar_ion_drift_ms
+
+url https://superdarn.ca/status
+ttl 3600
+force em
+ecliptic 1
+url https://api.superdarn.ca/v1/radars/status
+map .
+lat_key latitude
+lon_key longitude
+field_in name atmosphere_superdarn_radar_name
+field_in status atmosphere_superdarn_radar_status
+field_in frequency atmosphere_superdarn_frequency_khz
+
+source atmosphere_uv_daily
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&daily=uv_index_max,uv_index_clear_sky_max&timezone=auto
+path daily.uv_index_max.0 atmosphere_uv_index_max
+path daily.uv_index_clear_sky_max.0 atmosphere_uv_index_clear_sky_max
+
+source atmosphere_uv_index
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=uv_index,uv_index_clear_sky
+path current.uv_index atmosphere_uv_index
+path current.uv_index_clear_sky atmosphere_uv_index_clear_sky
+
+source biosphere_cdc_covid_global
+ttl 3600
+force em
+ecliptic 1
+url https://disease.sh/v3/covid-19/all
+field cases biosphere_covid_cases_global
+field deaths biosphere_covid_deaths_global
+field active biosphere_covid_active_global
+field critical biosphere_covid_critical_global
+
+source biosphere_coral_bleach_southeast_florida
+ttl 3600
+force em
+url https://api.coral.tsr.lol/stations/southeast_florida/current
+wgs84 26.100 -80.100
+field current.dhw biosphere_coral_dhw_florida
+field current.baa_7day_max biosphere_coral_alert_florida
+field current.ssta_90th_hs biosphere_coral_ssta_florida
+
+source biosphere_entsoe_energy
+ttl 3600
+force em
+url https://api.energy-charts.info/price?country=DE
+wgs84 51.0 10.0
+last price biosphere_electricity_price_eur_mwh
+
+source biosphere_eonet_volcanoes
+ttl 3600
+force em
+url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=volcanoes
+map events
+lat_key geometry.0.coordinates.1
+lon_key geometry.0.coordinates.0
+field_in id biosphere_volcano_eonet_id
+
+source biosphere_eonet_wildfires
+ttl 3600
+force em
+url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=wildfires
+map events
+lat_key geometry.0.coordinates.1
+lon_key geometry.0.coordinates.0
+field_in geometry.0.magnitudeValue biosphere_fire_acres
+
+source biosphere_exchangerate_api
+ttl 3600
+force em
+ecliptic 1
+url https://api.exchangerate-api.com/v4/latest/USD
+field rates.EUR biosphere_usd_eur_rate
+field rates.GBP biosphere_usd_gbp_rate
+field rates.JPY biosphere_usd_jpy_rate
+
+source biosphere_exchangerate_global
+ttl 3600
+force em
+ecliptic 1
+url https://open.er-api.com/v6/latest/USD
+field rates.EUR biosphere_usd_eur_rate
+field rates.CNY biosphere_usd_cny_rate
+field rates.INR biosphere_usd_inr_rate
+field rates.BRL biosphere_usd_brl_rate
+field rates.ZAR biosphere_usd_zar_rate
+field rates.NGN biosphere_usd_ngn_rate
+field rates.KES biosphere_usd_kes_rate
+field rates.EGP biosphere_usd_egp_rate
+field rates.GHS biosphere_usd_ghs_rate
+field rates.IDR biosphere_usd_idr_rate
+field rates.MXN biosphere_usd_mxn_rate
+field rates.TRY biosphere_usd_try_rate
+field rates.VND biosphere_usd_vnd_rate
+field rates.PKR biosphere_usd_pkr_rate
+field rates.BDT biosphere_usd_bdt_rate
+field rates.PHP biosphere_usd_php_rate
+
+source biosphere_gbif_bird_hotspots
+ttl 3600
+force em
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
+wgs84 42.4809 -76.4527
+field count biosphere_birding_hotspots
+
+source biosphere_gbif_occurrence_count
+ttl 3600
+force em
+ecliptic 1
+url https://api.gbif.org/v1/occurrence/search?limit=0
+field count biosphere_gbif_occurrence_count
+
+source biosphere_gbif_occurrences
+ttl 3600
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=1&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_occurrence_key
+field_in coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
+
+source biosphere_gbif_species_observations_count
+ttl 3600
+force em
+ecliptic 1
+url https://api.gbif.org/v1/occurrence/count?isGeoreferenced=true
+path . biosphere_gbif_species_observations_total
+
+source biosphere_gdelt_news_volume
+ttl 3600
+force em
+ecliptic 1
+url http://data.gdeltproject.org/normfiles/daily.csv
+count lines biosphere_news_climate_volume_intensity
+
+source biosphere_govtrack_votes
+ttl 3600
+force em
+url https://www.govtrack.us/api/v2/vote?created__gt={yesterday}&limit=0
+wgs84 38.9 -77.0
+field meta.total_count biosphere_legislation_votes
+
+source biosphere_inaturalist_fungi
+ttl 3600
+force em
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+path total_results biosphere_fungi_observations
+
+source biosphere_inaturalist_fungi_count
+ttl 3600
+force em
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+field total_results biosphere_fungi_observations
+field species_count biosphere_fungi_species_count
+
+source biosphere_inaturalist_verified
+ttl 3600
+force em
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
+field total_results biosphere_verified_observations
+
+source biosphere_launch_library
+ttl 3600
+force em
+ecliptic 1
+url https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1
+field count orbital_upcoming_launches
+
+source biosphere_tor_relays_running
+ttl 3600
+force em
+ecliptic 1
+url https://onionoo.torproject.org/summary?running=true
+field relays_published biosphere_tor_relay_count
+
+source biosphere_wikipedia_pageviews_total
+ttl 3600
+force em
+ecliptic 1
+url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
+path items.0.views social_wikipedia_pageviews_daily
+
+source biosphere_wildfires
+ttl 3600
+force em
+ecliptic 1
+url https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires
+map events
+lat_key geometry.0.coordinates.1
+lon_key geometry.0.coordinates.0
+field_in title wildfire_title
+field_in categories.0.title event_category
+field_in id wildfire_eonet_id
+
+source cadc
+ttl 3600
+force em
+url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+target,+obsid,+collection+FROM+caom2.Observation+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+field_in target target_name
+field_in obsid observation_id
+field_in collection collection
+lat_key ra
+lon_key dec
+
+source cdaweb_mms1_fgm_magnetic_field
+ttl 3600
+force em
+ecliptic 1
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&parameters=mms1_fgm_b_gsm_srvy_l2&time.min={today}T00:00:00.000Z&time.max={today}T06:00:00.000Z&format=csv
+format text
+rows
+field 0 epoch_utc
+field 1 bx_gsm_nT
+field 2 by_gsm_nT
+field 3 bz_gsm_nT
+field 4 b_total_nT
+
+source cddis_code_ionex_daily
+ttl 3600
+force em
+url https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX
+format text
+rows
+lat_key latitude
+lon_key longitude
+field 0 epoch_utc
+field 1 latitude_deg
+field 2 longitude_deg
+field 3 tec_tecu
+field 4 rms_tecu
+
+source cneos_fireballs
+ttl 3600
+force em
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
+map data
+lat_key lat
+lon_key lon
+field_in date event_date
+field_in energy impact_energy_kt
+field_in alt altitude_km
+field_in vel velocity_kms
+
+source copernicus_efas_flood_events
+ttl 3600
+force diffusion
+url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.FloodClass flood_class
+field properties.CountryCode country_code
+field properties.StartDate start_date
+field properties.EndDate end_date
+field properties.Area area_km2
+
+source cosmos_neo_close_approaches
+ttl 3600
+force em
+ssb
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+field data.0.4 cosmos_neo_first_dist_au
+field data.0.7 cosmos_neo_first_v_kms
+field data.0.10 cosmos_neo_first_h_mag
+count data cosmos_neo_count
+
+source dockerhub_alpine_pulls
+ttl 3600
+force em
+url https://hub.docker.com/v2/repositories/library/alpine
+wgs84 37.7749 -122.4194
+field pull_count biosphere_software_alpine_pulls_dockerhub
+
+source dockerhub_node_pulls
+ttl 3600
+force em
+url https://hub.docker.com/v2/repositories/library/node
+wgs84 37.7749 -122.4194
+field pull_count biosphere_software_node_pulls_dockerhub
+
+source dockerhub_python_pulls
+ttl 3600
+force em
+url https://hub.docker.com/v2/repositories/library/python
+wgs84 37.7749 -122.4194
+field pull_count biosphere_software_python_pulls_dockerhub
+
+source dockerhub_ubuntu_pulls
+ttl 3600
+force em
+url https://hub.docker.com/v2/repositories/library/ubuntu
+wgs84 37.7749 -122.4194
+field pull_count biosphere_software_ubuntu_pulls_dockerhub
+
+source earth_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_earth.json
+ephemeris orbital_earth_distance
+extent 4.26e-5
+
+source enceladus_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_enceladus.json
+ephemeris orbital_enceladus_distance
+extent 1.68e-6
+
+source encke_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_encke.json
+ephemeris orbital_encke_distance
+extent 1.34e-8
+
+source eris_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_eris.json
+ephemeris orbital_eris_distance
+extent 7.77e-6
+
+source esasky
+ttl 3600
+force em
+url https://sky.esa.int/esasky-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+lat_key ra
+lon_key dec
+
+source eso_archive
+ttl 3600
+force em
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt,sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+field_in main_id target_name
+field_in otype_txt instrument
+field_in sp_type observation_time
+lat_key ra
+lon_key dec
+
+source esri_coral_reef_stations
+ttl 3600
+force diffusion
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Coral_Reef_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.name name
+field_in attributes.date date
+field_in attributes.sst sst
+field_in attributes.ssta ssta
+field_in attributes.hs hs
+field_in attributes.dhw dhw
+field_in attributes.alert alert
+field_in attributes.ts_fig ts_fig
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_epa_aqs_monitoring
+ttl 3600
+force diffusion
+url https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/AQS_Monitor_Sites/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+map features
+field_in attributes.AQS_Site_ID site_id
+field_in attributes.State state
+field_in attributes.City city
+field_in attributes.POC poc
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_historical_quakes
+ttl 3600
+force seismic-body
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Historical_Quakes/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.id id
+field_in attributes.code code
+field_in attributes.detail detail
+field_in attributes.gap gap
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_inat_preuc_view
+ttl 3600
+force diffusion
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/iNat_PreUC_View/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.observation_uuid observation_uuid
+field_in attributes.user_name user_name
+field_in attributes.user_login user_login
+field_in attributes.user_id user_id
+field_in attributes.taxon_id taxon_id
+field_in attributes.observed_on observed_on
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_inaturalist
+ttl 3600
+force diffusion
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/iNaturalist/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.observation_id observation_id
+field_in attributes.taxon_id taxon_id
+field_in attributes.taxon_category_name taxon_category_name
+field_in attributes.observer_id observer_id
+field_in attributes.observed_on observed_on
+field_in attributes.observed_on_month observed_on_month
+field_in attributes.observed_on_year observed_on_year
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_monitored_volcanos
+ttl 3600
+force em
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Monitored_Global_USGS_Volcanos/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.Volcano_Name name
+field_in attributes.Observation observation
+field_in attributes.Alert_Level alert_level
+field_in attributes.Color_Code color_code
+field_in attributes.Region region
+field_in attributes.Threat threat
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_ndbc_buoy_obs
+ttl 3600
+force acoustic
+url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.STN station_id
+field_in attributes.LAT latitude
+field_in attributes.LON longitude
+field_in attributes.YYYY year
+field_in attributes.MM month
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_temp_latest
+ttl 3600
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_latest/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.Date_ date_
+field_in attributes.Anomaly anomaly
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_ocean_buoys
+ttl 3600
+force diffusion
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/OADS_Moorings/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.Mooring_Name mooring_name
+field_in attributes.Lon longitude
+field_in attributes.Lat latitude
+field_in attributes.Description_Link description_url
+lat_key geometry.y
+lon_key geometry.x
+
+url https://api.obis.org/v3/occurrence/grid/100?taxon=*&year=2026&geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))
+ttl 3600
+force diffusion
+url https://api.obis.org/v3/occurrence/grid/100?taxon=*https://api.eurobis.org/year=2026https://api.eurobis.org/geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year}
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field year year
+
+source europa_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_europa.json
+ephemeris orbital_europa_distance
+extent 1.04e-5
+
+source exosphere_ace_magnetometer
+ttl 3600
+force gravity
+ecliptic 0.99
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+field 0.gsm_bx exosphere_ace_bx_gsm_nt
+field 0.gsm_by exosphere_ace_by_gsm_nt
+field 0.gsm_bz exosphere_ace_bz_gsm_nt
+field 0.bt exosphere_ace_bt_nt
+
+source exosphere_ace_solar_wind
+ttl 3600
+force advective
+ssb
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+field 0.speed exosphere_ace_speed_kms
+field 0.dens exosphere_ace_dens_ncc
+field 0.temperature exosphere_ace_temp_k
+
+source exosphere_aurora_oval
+ttl 3600
+force em
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat_key 1
+lon_key 0
+field_in 0 atmosphere_aurora_power_gw
+field_in 2 atmosphere_aurora_probability_pct
+
+source exosphere_dst_index
+ttl 3600
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
+last dst exosphere_dst_nt
+
+source exosphere_interstellar_object_tracking
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_interstellar_3i.json
+ephemeris cosmic_interstellar_object_distance
+
+source exosphere_kp_index
+ttl 3600
+force gravity
+ecliptic 1
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+last estimated_kp exosphere_kp_estimated
+
+source exosphere_satnogs_radio_observations
+ttl 3600
+force em
+ecliptic 1
+url https://network.satnogs.org/api/observations/?format=json&limit=1
+count items biosphere_satnogs_observations
+
+source fripon_fireballs
+ttl 3600
+force em
+url https://fireball.fripon.org/ajax/liste_multiple.ajax.php
+map .
+lat_key lat
+lon_key lon
+field_in date event_date
+field_in time event_time
+field_in nb_camera camera_count
+field_in duration duration_s
+
+source ganymede_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_ganymede.json
+ephemeris orbital_ganymede_distance
+extent 1.76e-5
+
+source gbif
+ttl 3600
+force em
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
+field count biosphere_species_count
+
+source gbif_amphibian_global_occurrences
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field family family
+
+source gbif_bat_acoustic_monitoring_data
+ttl 3600
+force acoustic
+url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field stateProvince region
+
+source gbif_chiroptera_observations
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&basisOfRecord=MACHINE_OBSERVATION
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field countryCode country
+field occurrenceDate observation_date
+
+source gbif_ept_macroinvertebrate_bioindicators
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+
+source gbif_freshwater_fish_observations
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+
+source gbif_marine_mammal_sightings
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?orderKey=180130&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field occurrenceDate sighting_date
+field individualCount group_size
+
+source gbif_occurrence_search
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species species_name
+field_in kingdom kingdom_name
+field_in phylum phylum_name
+field_in class class_name
+field_in order order_name
+field_in family family_name
+field_in genus genus_name
+field_in year observation_year
+field_in month observation_month
+field_in day observation_day
+field_in eventDate observation_date
+field_in countryCode country_code
+field_in basisOfRecord basis_of_record
+field_in occurrenceStatus occurrence_status
+field_in individualCount individual_count
+depth_key coordinatePrecision
+
+source gbif_pollinator_bee_monitoring
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field genus genus_name
+field country country_code
+field occurrenceDate observation_date
+field individualCount individual_count
+
+source gbif_shorebird_coastal_occurrences
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?orderKey=719&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+
+source gbif_species_occurrences_global
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field family family
+field kingdom kingdom
+
+source gbif_threatened_species
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field iucnRedListCategory iucn_category
+
+source gcmt_global_moment_tensors_weekly
+ttl 3600
+force seismic-body
+url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form?itype=ymd&yr={year}&mo={month}&dy=01&otype=ymd&oyr={year}&omo={month}&ody={day}&jyr=1976&jday=1&ojyr=2025&ojday=366&nday=28&lmw=5&umw=10&llat=-90&ulat=90&llon=-180&ulon=180&lhd=0&uhd=1000&list=6
+format text
+rows
+pos 0 0
+field 0 event_date
+field 1 event_time
+field 2 centroid_lat
+field 3 centroid_lon
+field 4 depth_km
+field 5 moment_mag
+field 6 strike_deg
+field 7 dip_deg
+field 8 rake_deg
+
+source gemini_archive
+ttl 3600
+force em
+url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
+verify false
+map .
+lat_key ra
+lon_key dec
+field object target
+field instrument instrument
+field observation_id observation_id
+field utc observation_date
+
+source geosphere_africaarray_seismic
+ttl 3600
+force em
+ecliptic 1
+url https://geofon.gfz.de/fdsnws/event/1/query?format=geojson&minmag=3&limit=100&region=AFRICA
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_africaarray_magnitude
+field_in properties.place geosphere_africaarray_location
+field_in properties.time geosphere_africaarray_time
+field_in properties.depth geosphere_africaarray_depth_km
+alt_key geometry.coordinates.2
+
+source geosphere_copernicus_sentinel2_count
+ttl 3600
+force em
+ecliptic 1
+url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$top=1&$count=true
+path @odata.count technosphere_copernicus_s2_products_total
+
+source geosphere_earthquakes_ingv
+ttl 3600
+force seismic-surface
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+wgs84 40.0 15.0
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_m3_monthly
+ttl 3600
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_significant_month
+ttl 3600
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
+source geosphere_earthquakes_usgs_all_month
+ttl 3600
+force em
+ecliptic 1
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_usgs_magnitude_all
+field_in properties.place geosphere_usgs_location_all
+field_in properties.time geosphere_usgs_time_all
+field_in properties.depth geosphere_usgs_depth_km_all
+alt_key geometry.coordinates.2
+
+source geosphere_effis_fires
+ttl 3600
+force em
+url https://ies-ows.jrc.ec.europa.eu/effis?service=WFS&request=GetFeature&typeName=ms:modis.hs&outputFormat=application/json&maxFeatures=1
+wgs84 45.803 8.624
+field features biosphere_effis_fire_feature_count
+
+source geosphere_ga_earthquakes_month
+ttl 3600
+force em
+ecliptic 1
+url https://seismic-api.science.unimelb.edu.au/month-quakes
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_ga_magnitude_month
+field_in properties.place geosphere_ga_location_month
+field_in properties.time geosphere_ga_time_month
+field_in properties.depth geosphere_ga_depth_month
+alt_key geometry.coordinates.2
+
+source geosphere_gdacs_disasters
+ttl 3600
+force em
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item geosphere_disaster_active_total
+
+source geosphere_gdacs_disasters_total
+ttl 3600
+force em
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item geosphere_disasters_gdacs
+
+source geosphere_geonet_volcanoes
+ttl 3600
+force em
+ecliptic 1
+url https://api.geonet.org.nz/volcano/val
+header Accept application/vnd.geo+json;version=2
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.volcanoID geosphere_geonet_volcano_id
+field_in properties.volcanoTitle geosphere_geonet_volcano_name
+field_in properties.level geosphere_geonet_alert_level
+field_in properties.aviationColourCode geosphere_geonet_aviation_code
+field_in properties.activity geosphere_geonet_volcano_activity
+
+source geosphere_natural_events
+ttl 3600
+force em
+ecliptic 1
+url https://eonet.gsfc.nasa.gov/api/v3/events
+map events
+lat_key geometry.0.coordinates.1
+lon_key geometry.0.coordinates.0
+field_in title eonet_event_title
+field_in categories.0.title event_category
+field_in id eonet_event_id
+
+source geosphere_nifc_fires
+ttl 3600
+force em
+ecliptic 1
+url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in attributes.IncidentName wildfire_name
+field_in attributes.PolygonAcres fire_acres
+
+source geosphere_soil_moisture_profile
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm,soil_moisture_100_to_255cm&timezone=auto
+path current.soil_moisture_0_to_7cm geosphere_soil_moisture_surface_m3m3
+path current.soil_moisture_7_to_28cm geosphere_soil_moisture_shallow_m3m3
+path current.soil_moisture_28_to_100cm geosphere_soil_moisture_deep_m3m3
+path current.soil_moisture_100_to_255cm geosphere_soil_moisture_bedrock_m3m3
+
+source geosphere_soil_temperature_profile
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm&timezone=auto
+path current.soil_temperature_0cm geosphere_soil_temp_surface_c
+path current.soil_temperature_6cm geosphere_soil_temp_6cm_c
+path current.soil_temperature_18cm geosphere_soil_temp_18cm_c
+path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
+
+source geosphere_usgs_earthquakes_month
+ttl 3600
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in geometry.coordinates.2 geosphere_quake_depth_km
+field_in properties.mag geosphere_quake_magnitude
+
+source geosphere_usgs_significant_earthquakes
+ttl 3600
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={yesterday}&endtime={today}&minmagnitude=6.0
+wgs84 38.9072 -77.0369
+field metadata.count geosphere_earthquakes_magnitude6_usgs
+
+source geosphere_usgs_volcano_alerts
+ttl 3600
+force seismic-surface
+ecliptic 1
+url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.alertLevel volcano_alert_level
+field_in properties.volcanoName volcano_name
+
+source gracedb_latest_confirmed_gw_event
+ttl 3600
+force gravity
+ssb
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&label=GW&ordering=-created&per_page=10
+map superevents
+field superevent_id event_id
+field t_0 gps_time
+field far false_alarm_rate_Hz
+field labels event_labels
+field distance.mean luminosity_distance_Mpc
+field classification.BNS p_bns
+field classification.BBH p_bbh
+
+source gracedb_o4_mass_gap_candidates
+ttl 3600
+force gravity
+ssb
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&ordering=-created&per_page=100
+map superevents
+field superevent_id event_id
+field t_0 gps_time
+field far false_alarm_rate_Hz
+field classification.MassGap p_massgap
+field distance.mean distance_Mpc
+field created created_utc
+
+source haumea_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_haumea.json
+ephemeris orbital_haumea_distance
+extent 5.45e-6
+
+source heasarc
+ttl 3600
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+name,+t_scid+FROM+hst+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+field_in name source_name
+field_in t_scid target_class
+lat_key ra
+lon_key dec
+
+source heasarc_nicer_master_source_catalog
+ttl 3600
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field obsid observation_id
+field exposure exposure_time_ks
+field count_rate photon_count_rate_cts_s
+field type source_classification
+
+source heasarc_sgra_multiwavelength_flares
+ttl 3600
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+date,band,peak_flux,duration,type+FROM+sgraflares+WHERE+date+IS+NOT+NULL+ORDER+BY+date+DESC
+wgs84 -29.008 266.417
+format text
+rows
+field date flare_date_utc
+field band observing_band
+field peak_flux peak_flux
+field duration duration_min
+field type flare_classification
+
+source hydroshere_global_flood_awareness
+ttl 3600
+force em
+ecliptic 1
+url https://www.globalfloods.eu/glofas-forecasting/?format=json
+map .
+lat_key lat
+lon_key lon
+field_in discharge hydrosphere_glofas_discharge_m3s
+field_in probability hydrosphere_glofas_flood_probability
+field_in return_period hydrosphere_glofas_return_period_years
+
+source hydrosphere_drifters_hourly
+ttl 3600
+force em
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+map table.rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_drifter_sst_k
+
+source hydrosphere_erddap_smartbay_spl
+ttl 3600
+force em
+url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_ERD_INT_UWN_NAT.csv?time,TotalSPL,SPL63Hz,SPL125Hz,SPL2kHz,SPL5kHz
+wgs84 42.62682 -8.78233
+format csv
+last_row TotalSPL hydrosphere_sound_pressure_db
+
+source hydrosphere_onc_salinity_burrard
+ttl 86400
+force diffusion
+url https://dap.oceannetworks.ca/erddap/tabledap/scalar_1202591.csv?time,latitude,longitude,salinity&time>=max(time)-7day
+wgs84 49.301 -123.109
+format erddap
+last_row salinity hydrosphere_salinity_psu
+
+source hydrosphere_neracoos_a01_met_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/A01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+wgs84 42.523 -70.566
+format erddap
+last_row air_temperature hydrosphere_buoy_air_temp_c
+last_row barometric_pressure hydrosphere_buoy_pressure_hpa
+
+source hydrosphere_neracoos_a01_met_wind
+ttl 3600
+force advective
+url https://data.neracoos.org/erddap/tabledap/A01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+wgs84 42.523 -70.566
+format erddap
+last_row wind_speed hydrosphere_buoy_wind_speed_ms
+last_row wind_gust hydrosphere_buoy_wind_gust_ms
+
+source hydrosphere_neracoos_b01_met_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/B01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+wgs84 43.181 -70.428
+format erddap
+last_row air_temperature hydrosphere_buoy_air_temp_c
+last_row barometric_pressure hydrosphere_buoy_pressure_hpa
+
+source hydrosphere_neracoos_e01_met_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/E01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+wgs84 43.714 -69.356
+format erddap
+last_row air_temperature hydrosphere_buoy_air_temp_c
+
+source hydrosphere_neracoos_i01_met_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/I01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+wgs84 44.103 -68.109
+format erddap
+last_row air_temperature hydrosphere_buoy_air_temp_c
+
+source hydrosphere_neracoos_a01_waves
+ttl 3600
+force acoustic
+url https://data.neracoos.org/erddap/tabledap/A01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+wgs84 42.523 -70.566
+format erddap
+last_row significant_wave_height hydrosphere_wave_height_m
+
+source hydrosphere_neracoos_b01_waves
+ttl 3600
+force acoustic
+url https://data.neracoos.org/erddap/tabledap/B01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+wgs84 43.181 -70.428
+format erddap
+last_row significant_wave_height hydrosphere_wave_height_m
+
+source hydrosphere_neracoos_e01_waves
+ttl 3600
+force acoustic
+url https://data.neracoos.org/erddap/tabledap/E01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+wgs84 43.714 -69.356
+format erddap
+last_row significant_wave_height hydrosphere_wave_height_m
+
+source hydrosphere_neracoos_i01_waves
+ttl 3600
+force acoustic
+url https://data.neracoos.org/erddap/tabledap/I01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+wgs84 44.103 -68.109
+format erddap
+last_row significant_wave_height hydrosphere_wave_height_m
+
+source hydrosphere_neracoos_a01_ocean_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/A01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+wgs84 42.523 -70.566
+format erddap
+last_row temperature hydrosphere_ocean_temp_c
+last_row salinity hydrosphere_ocean_salinity_psu
+
+source hydrosphere_neracoos_b01_ocean_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/B01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+wgs84 43.181 -70.428
+format erddap
+last_row temperature hydrosphere_ocean_temp_c
+
+source hydrosphere_neracoos_e01_ocean_temp
+ttl 3600
+force thermal
+url https://data.neracoos.org/erddap/tabledap/E01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+wgs84 43.714 -69.356
+format erddap
+last_row temperature hydrosphere_ocean_temp_c
+
+source hydrosphere_neracoos_tide_adams
+ttl 3600
+force gravity
+url https://data.neracoos.org/erddap/tabledap/Hohonu_tide_Adams_Point_NH.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+wgs84 43.09 -70.74
+format erddap
+last_row navd88_meters hydrosphere_tide_level_m
+
+source hydrosphere_neracoos_tide_rockland
+ttl 3600
+force gravity
+url https://data.neracoos.org/erddap/tabledap/Greenstream_tide_ME_RKL.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+wgs84 44.104 -69.109
+format erddap
+last_row navd88_meters hydrosphere_tide_level_m
+
+source hydrosphere_neracoos_tide_bowdoinham
+ttl 3600
+force gravity
+url https://data.neracoos.org/erddap/tabledap/Greenstream_tide_ME_BWD.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+wgs84 44.01 -69.90
+format erddap
+last_row navd88_meters hydrosphere_tide_level_m
+
+source hydrosphere_emodnet_slev_europe
+ttl 86400
+force gravity
+url https://erddap.emodnet-physics.eu/erddap/tabledap/ERD_EP_SLEV_NRT_5m.csv?time,latitude,longitude,SLEV&time>=max(time)-1day
+wgs84 48.0 -5.0
+format erddap
+map data
+field_in SLEV hydrosphere_sea_level_m
+
+source hydrosphere_tmednet_med_temp
+ttl 86400
+force thermal
+url https://erddap.emodnet-physics.eu/erddap/tabledap/T-MEDNet.csv?time,latitude,longitude,temperature,site_name&time>=max(time)-2day
+wgs84 40.0 5.0
+format erddap
+map data
+field_in temperature hydrosphere_med_temp_c
+
+source hydrosphere_ctd_arcticnet_profiles
+ttl 86400
+force thermal
+url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PR_CTD_ArcticNet_collection.csv?time,latitude,longitude,depth,PSAL,TEMP&time>=max(time)-30day
+wgs84 70.0 -130.0
+format erddap
+map data
+alt_key depth
+field_in TEMP hydrosphere_ctd_temp_c
+field_in PSAL hydrosphere_ctd_salinity_psu
+
+source lithosphere_stac_landsat_pc
+ttl 86400
+force em
+url https://planetarycomputer.microsoft.com/api/stac/v1/search?collections=landsat-c2-l2&limit=200&bbox=-125,30,-115,40&datetime={today}T00:00:00Z/{today}T23:59:59Z
+wgs84 37.0 -120.0
+format stac
+map data
+lat_key lat
+lon_key lon
+epoch_key datetime
+field_in stac_eo_cloud_cover lithosphere_cloud_cover_pct
+
+source lithosphere_stac_sentinel2_aws
+ttl 86400
+force em
+url https://earth-search.aws.element84.com/v1/search?collections=sentinel-2-l2a&limit=200&bbox=-125,30,-115,40&datetime={today}T00:00:00Z/{today}T23:59:59Z
+wgs84 37.0 -120.0
+format stac
+map data
+lat_key lat
+lon_key lon
+epoch_key datetime
+field_in stac_eo_cloud_cover lithosphere_cloud_cover_pct
+
+source hydrosphere_flood
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/flood/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge
+first river_discharge hydrosphere_river_discharge_m3s
+
+source hydrosphere_pegelonline_water_level
+ttl 3600
+force gravity
+url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
+field 0.water.currentMeasurement.value hydrosphere_water_level_cm
+
+source icos_carbon_portal_co2_station_data
+ttl 3600
+force diffusion
+url https://meta.icos-cp.eu/sparql?format=json&query=SELECT%20?s%20?name%20?lat%20?lon%20?alt%20?country%20?stType%20WHERE%7B?s%20a%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/ES%3E%20%3B%20%3Chttp://www.w3.org/2000/01/rdf-schema%23label%3E%20?name%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude%3E%20?lat%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude%3E%20?lon%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasCountry%3E%20?country%7D%20LIMIT%20200
+map results.bindings
+lat_key lat.value
+lon_key lon.value
+field name.value station_name
+field country.value country_code
+field s.value station_uri
+field stType.value station_type
+
+source ifremer_argo_oxygen_profiles
+ttl 3600
+force diffusion
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy(%22time%22)&limit=3000
+format text
+rows
+lat_key latitude
+lon_key longitude
+field DOXY dissolved_oxygen_umolkg
+field TEMP water_temp_c
+field PSAL salinity_psu
+field PRES pressure_dbar
+field time obs_time
+
+source inaturalist
+ttl 3600
+force em
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
+field total_results biosphere_observations
+
+source inaturalist_amazon_biodiversity
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field observed_on observation_date
+
+source inaturalist_amphibia_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field observed_on observation_date
+
+source inaturalist_europe_recent
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=35&swlng=-10&nelat=70&nelng=40
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field observed_on observation_date
+field place_guess locality
+
+source inaturalist_fungi_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+source inaturalist_invasive_insects
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field observed_on observation_date
+field place_guess locality
+
+source inaturalist_mammalia_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+source inaturalist_marine_fish
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+
+source inaturalist_reptilia_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+source inaturalist_threatened_species
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field observed_on observation_date
+field place_guess locality
+
+source io_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_io.json
+ephemeris orbital_io_distance
+extent 1.22e-5
+
+source irsa_tap_neowiser
+ttl 3600
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
+format text
+rows
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field mjd mjd_obs
+
+source irsa_tap_ztf_objects
+ttl 3600
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+format text
+rows
+ra_key ra
+dec_key dec
+field medianmag median_mag
+field magrms mag_variability_rms
+
+source isro_bhuvan_flood_india
+ttl 3600
+force diffusion
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.district district_name
+field properties.state state_name
+field properties.area_ha inundated_area_ha
+field properties.date flood_date
+
+source jpl_cad_neo_30d
+ttl 3600
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&date-min={today}&date-max=%2B30&body=Earth&fullname=true&diameter=true&sort=date
+map data
+field_in 0 designation
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 velocity_km_s
+field_in 17 diameter_km
+
+source jpl_fireball_impact_events
+ttl 3600
+force gravity
+url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
+map data
+lat_key lat
+lon_key lon
+field date event_date
+field time event_time
+field alt altitude_km
+field v velocity_km_s
+field energy impact_energy_kt
+field lat latitude
+field lon longitude
+
+source jpl_fireball_impacts
+ttl 3600
+force gravity
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date
+map data
+field_in 2 date
+field_in 3 radiated_energy_gj
+field_in 4 impact_energy_kt
+field_in 6 latitude
+field_in 7 lat_dir
+field_in 8 longitude
+field_in 9 lon_dir
+field_in 18 altitude_km
+
+source jpl_horizons_voyager1
+ttl 3600
+force gravity
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
+format text
+rows
+field_in 2 x_au
+field_in 3 y_au
+field_in 4 z_au
+field_in 5 vx_au_d
+field_in 6 vy_au_d
+field_in 7 vz_au_d
+
+source jpl_horizons_voyager2
+ttl 3600
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
+wgs84 0.0 0.0
+format text
+rows
+field_in 2 x_au
+field_in 3 y_au
+field_in 4 z_au
+field_in 5 vx_au_d
+field_in 6 vy_au_d
+field_in 7 vz_au_d
+
+source juno_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_juno.json
+ephemeris orbital_juno_distance
+
+source jupiter_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_jupiter.json
+ephemeris orbital_jupiter_distance
+extent 4.67e-4
+
+source jwst_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_jwst.json
+ephemeris orbital_jwst_distance
+
+source lasp_fism2_euv_hr_model
+ttl 3600
+force em
+ssb
+url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
+format text
+rows
+field time model_time
+field wavelength wavelength_nm
+field irradiance modeled_irradiance_W_m2
+
+source lasp_lisird_f107_solar_flux
+ttl 3600
+force em
+url https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today}
+wgs84 49.32 -119.62
+format text
+rows
+field time observation_date
+field f107 f107_sfu
+field f107_adj f107_adjusted_sfu
+
+source lasp_lisird_tsis1_tsi_daily
+ttl 3600
+force em
+ssb
+url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
+format text
+rows
+field time observation_date
+field tsi total_solar_irradiance_W_m2
+field uncertainty tsi_uncertainty_W_m2
+
+source lasp_sdo_eve_l3_ssi_1nm
+ttl 3600
+force em
+ssb
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today}
+format text
+rows
+field time observation_date
+field wavelength wavelength_nm
+field irradiance spectral_irradiance_W_m2_nm
+field stdev irradiance_stdev_W_m2_nm
+
+source magnetosphere_aurora_forecast
+ttl 3600
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+count coordinates atmosphere_aurora_coord_count
+
+source magnetosphere_aurora_nowcast_north
+ttl 3600
+force em
+ecliptic 1
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+count coordinates atmosphere_aurora_coordinate_count
+
+source magnetosphere_solar_regions
+ttl 3600
+force gravity
+ssb
+url https://services.swpc.noaa.gov/json/solar_regions.json
+map .
+lat_key latitude
+lon_key longitude
+field_in region magnetosphere_sunspot_region
+field_in area magnetosphere_sunspot_area
+field_in number_spots magnetosphere_spot_count
+field_in extent magnetosphere_spot_extent
+field_in spot_class magnetosphere_spot_class
+field_in mag_class magnetosphere_mag_class
+
+source makemake_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_makemake.json
+ephemeris orbital_makemake_distance
+extent 4.78e-6
+
+source mars_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_mars.json
+ephemeris orbital_mars_distance
+extent 2.27e-5
+
+source mast_caom
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1
+verify false
+format votable
+map data
+field_in s_ra ra_deg
+field_in s_dec dec_deg
+field_in obs_id observation_id
+field_in obs_collection collection
+field_in instrument_name instrument
+field_in filters filters
+field_in target_name target
+field_in calib_level calibration_level
+lat_key s_ra
+lon_key s_dec
+
+source mast_jwst_cosmosweb_nircam_metadata
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+calib_level%3D3+AND+obs_id+LIKE+%27jw01727%25%27+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name field_name
+field t_exptime exposure_s
+field energy_bandpassName filter
+field em_min wl_min_m
+field em_max wl_max_m
+
+source mast_jwst_jades_nirspec_metadata
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+calib_level%3D3+AND+instrument_name+LIKE+%27NIRSPEC%25%27+AND+%28proposal_id%3D%271180%27+OR+proposal_id%3D%271286%27%29+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_field
+field t_exptime exposure_s
+field energy_bandpassName grating
+field em_min wl_min_m
+field em_max wl_max_m
+
+source mast_jwst_miri_public
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27MIRI%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field energy_bandpassName filter_name
+field em_min wavelength_min_m
+field em_max wavelength_max_m
+
+source mast_jwst_nircam_public
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27NIRCAM%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field energy_bandpassName filter_name
+field em_min wavelength_min_m
+field em_max wavelength_max_m
+
+source mast_jwst_nirspec_public
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27NIRSPEC%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field energy_bandpassName grating_filter
+field em_min wavelength_min_m
+field em_max wavelength_max_m
+
+source mercury_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_mercury.json
+ephemeris orbital_mercury_distance
+extent 1.63e-5
+
+source metar_polar_regions
+ttl 3600
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
+map .
+lat_key lat
+lon_key lon
+field icaoId icao_code
+field temp temp_c
+field wdir wind_dir_deg
+field wspd wind_speed_kt
+field altim pressure_hpa
+
+source moon_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_luna.json
+ephemeris orbital_moon_distance
+extent 1.16e-5
+
+source mpc_comet_ephemeris_bright
+ttl 3600
+force gravity
+url https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv
+wgs84 0.0 0.0
+format text
+rows
+field 0 designation
+field 1 ra_hms
+field 2 dec_dms
+field 3 delta_au
+field 4 r_au
+field 5 elongation_deg
+field 6 vmag
+
+source nasa_power_solar_radiation
+ttl 3600
+force em
+ssb
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
+obj_last value biosphere_solar_radiation_power
+
+source nbn_atlas_uk_bat_acoustic_records
+ttl 3600
+force acoustic
+url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
+map occurrences
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field vernacularName common_name
+field year obs_year
+field month obs_month
+
+source ncei_global_hourly_multi_station
+ttl 3600
+wgs84 0.0 0.0
+force diffusion
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json
+map
+lat_key 40.74
+  lon_key -73.98
+  lat 40.74
+  lon -73.98
+field_in station station_id
+field_in date observation_date
+field_in temperature temperature_celsius
+field_in dewPoint dewpoint_celsius
+field_in windSpeed wind_speed_ms
+field_in windDirection wind_direction_degrees
+field_in seaLevelPressure pressure_hpa
+
+source ncei_global_hourly_weather
+ttl 3600
+wgs84 0.0 0.0
+force diffusion
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+map
+lat_key 40.74
+  lon_key -73.98
+  lat 40.74
+  lon -73.98
+field_in station station_id
+field_in date observation_date
+field_in temperature temperature_celsius
+field_in dewPoint dewpoint_celsius
+field_in windSpeed wind_speed_ms
+field_in windDirection wind_direction_degrees
+field_in visibility visibility_m
+field_in seaLevelPressure pressure_hpa
+
+source ndbc_active_stations
+ttl 3600
+force diffusion
+url https://www.ndbc.noaa.gov/activestations.xml
+format text
+rows
+lat_key lat
+lon_key lon
+field station_id station_id
+field site station_name
+field owner owner
+
+source ndbc_dart_21413_nwpacific
+ttl 3600
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
+wgs84 38.7 148.7
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 6 data_type
+field_in 7 sea_level_height_m
+
+source ndbc_dart_23401_indian_ocean
+ttl 3600
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+wgs84 -8.4 67.5
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 7 sea_level_height_m
+
+source ndbc_dart_32401_spac
+ttl 3600
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+wgs84 -19.6 -162.1
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 7 sea_level_height_m
+
+source ndbc_dart_41420_caribbean
+ttl 3600
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
+wgs84 17.9 -74.9
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 7 sea_level_height_m
+
+source neo_jpl_fireball_events
+ttl 3600
+force gravity
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&date-min=2020-01-01
+map data
+lat_key lat
+lon_key lon
+field date fireball_date
+field time fireball_time
+field alt altitude_km
+field v velocity_km_s
+field vx velocity_x_km_s
+field vy velocity_y_km_s
+field vz velocity_z_km_s
+field energy impact_energy_kt
+field imp impact_flag
+
+source neptune_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_neptune.json
+ephemeris orbital_neptune_distance
+extent 1.65e-4
+
+source new_horizons_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_new_horizons.json
+ephemeris orbital_new_horizons_distance
+
+source noaa_coops_tidal_predictions_usa
+ttl 3600
+force gravity
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=9414290&product=predictions&datum=MLLW&time_zone=GMT&units=metric&format=json
+map predictions
+lat_key lat
+lon_key lon
+field v predicted_tide_m
+
+source noaa_coops_water_temp_network
+ttl 3600
+force thermal
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?expand=details&type=watertemp
+map stations
+lat_key lat
+lon_key lng
+field id station_id
+field name station_name
+field state state
+
+source noaa_crw_station_sst_gbr_central
+ttl 3600
+force thermal
+url https://api.coral.tsr.lol/stations/gbr_central/current
+wgs84 -18.0 147.0
+field current.sst_min sst_min_c
+field current.sst_max sst_max_c
+field current.ssta_90th_hs sst_anomaly_c
+field current.dhw dhw_degc_weeks
+field current.baa_7day_max bleach_alert_level
+
+source noaa_crw_station_sst_gbr_north
+ttl 3600
+force thermal
+url https://api.coral.tsr.lol/stations/gbr_northern/current
+wgs84 -14.0 145.0
+field current.sst_min sst_min_c
+field current.sst_max sst_max_c
+field current.ssta_90th_hs sst_anomaly_c
+field current.hs_90th hotspot_c
+field current.dhw dhw_degc_weeks
+field current.baa_7day_max bleach_alert_level
+
+source noaa_crw_station_sst_gbr_south
+ttl 3600
+force thermal
+url https://api.coral.tsr.lol/stations/gbr_southern/current
+wgs84 -22.0 150.0
+field current.sst_min sst_min_c
+field current.sst_max sst_max_c
+field current.ssta_90th_hs sst_anomaly_c
+field current.dhw dhw_degc_weeks
+field current.baa_7day_max bleach_alert_level
+
+source noaa_crw_virtual_stations
+ttl 3600
+force thermal
+url https://api.coral.tsr.lol/stations
+map .
+lat_key latitude
+lon_key longitude
+field slug station_id
+field avg_max_monthly_mean max_monthly_mean_c
+field bleaching_threshold bleach_threshold_c
+field region region
+field subregion subregion
+
+source noaa_estimated_kp
+ttl 3600
+force em
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+map
+wgs84 55.0 0.0
+field_in time_tag observation_time
+field_in kp kp_index
+field_in running_avg_kp running_average_kp
+
+source noaa_ghcnd_daily_weather_summary
+ttl 3600
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={today}&endDate={today}&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TMAX max_temp_tenth_c
+field TMIN min_temp_tenth_c
+field PRCP precipitation_tenth_mm
+field SNOW snowfall_mm
+field AWND avg_wind_speed_tenth_ms
+
+source noaa_gml_co2_weekly_mlo
+ttl 3600
+force diffusion
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+wgs84 19.5 -155.6
+format text
+rows
+field 0 year
+field 1 month
+field 2 day
+field 3 decimal_year
+field 4 co2_ppm_weekly
+field 5 co2_1yr_ago
+field 6 co2_10yr_ago
+field 7 co2_preindustrial_baseline
+
+source noaa_kp_index_historic
+ttl 3600
+force gravity
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+map
+wgs84 55.0 0.0
+field_in time_tag observation_time
+field_in kp_index kp_index
+field_in estimated_kp estimated_kp_value
+field_in kp kp_character
+
+source noaa_pmel_co2_moorings_gom
+ttl 3600
+force diffusion
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmel_co2_moorings_c2e7_ecb9_4565.csv?latitude,longitude,time,pCO2_sw,pCO2_air,xCO2_air,pH_sw,DOXY,CHL,NTU,SST,SSS
+format text
+rows
+lat_key latitude
+lon_key longitude
+field 0 station_id
+field 2 time_utc
+field 3 pCO2_sw_uatm
+field 4 pCO2_air_uatm
+field 5 xCO2_air_ppm
+field 6 pH_sw
+field 7 DOXY_umol_kg
+field 8 CHL_ug_l
+field 9 NTU
+field 10 SST_degC
+field 11 SSS_PSU
+
+source noaa_swpc_dst_index
+ttl 3600
+force gravity
+url https://services.swpc.noaa.gov/products/kyoto-dst.json
+map .
+field time_tag timestamp_utc
+field dst dst_index_nT
+
+source noaa_swpc_solar_regions
+ttl 3600
+force em
+url https://services.swpc.noaa.gov/json/solar_regions.json
+map .
+field region active_region_id
+field latitude helio_latitude
+field longitude helio_longitude
+field area sunspot_area_msh
+field spot_class spot_classification
+field mag_class magnetic_class
+field first_date first_observed_date
+
+source noaa_tides_air_pressure
+ttl 3600
+force diffusion
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=air_pressure&units=metric&time_zone=gmt&format=json
+map data
+lat_key 32.757
+lon_key -117.226
+field_in t pressure_time
+field_in v air_pressure_hpa
+
+source noaa_tides_currents
+ttl 3600
+force diffusion
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=currents&units=metric&time_zone=gmt&format=json
+map data
+lat_key 32.757
+lon_key -117.226
+field_in t current_time
+field_in v current_speed_cms
+field_in d current_direction
+
+source noaa_tides_water_temperature
+ttl 3600
+force diffusion
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=water_temperature&units=metric&time_zone=gmt&format=json
+map data
+lat_key 32.757
+lon_key -117.226
+field_in t temp_time
+field_in v water_temperature_celsius
+
+source noaa_tides_wind
+ttl 3600
+force diffusion
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=wind&units=metric&time_zone=gmt&format=json
+map data
+lat_key 32.757
+lon_key -117.226
+field_in t wind_time
+field_in s wind_speed_ms
+field_in d wind_direction
+field_in g wind_gust_ms
+
+source noaa_weather_api_points
+ttl 3600
+force diffusion
+url https://api.weather.gov/points/39.7456,-97.0892
+map properties
+lat_key 39.7456
+lon_key -97.0892
+field_in cwa weather_forecast_office
+field_in forecastOffice forecast_office_url
+field_in forecastHourly hourly_forecast_url
+field_in gridId grid_id
+field_in gridX grid_x
+field_in gridY grid_y
+field_in timeZone timezone
+field_in radarStation radar_station
+
+source noaa_weather_forecast_hourly
+ttl 3600
+force diffusion
+url https://api.weather.gov/gridpoints/TOP/31,80/forecast/hourly
+map properties
+lat_key 39.7456
+lon_key -97.0892
+field_in updated forecast_update_time
+field_in units forecast_units
+field_in generatedAt generation_time
+
+source noirlab_archive
+ttl 3600
+force em
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+field_in main_id observation_id
+field_in otype_txt instrument
+lat_key ra
+lon_key dec
+
+source nrao_archive
+ttl 3600
+force em
+url https://archive.nrao.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+obs_id,+project+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+field_in obs_id observation_id
+field_in project project_code
+lat_key ra
+lon_key dec
+
+source nso_gong_synoptic_magnetogram_metadata
+ttl 3600
+force em
+ssb
+url https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json
+map .
+field filename magnetogram_filename
+field date observation_date
+field time observation_time
+field carrington_rotation cr_number
+field coverage disk_coverage_pct
+field site recording_site
+
+source nvd_cve_count
+ttl 3600
+force em
+url https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=1
+wgs84 38.9072 -77.0369
+field totalResults biosphere_cyber_vulnerability_count_nvd
+
+source obis_marine_mammals_turtles
+ttl 3600
+force diffusion
+url https://api.obis.org/v3/occurrence?taxonid=180130,137206&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field class taxon_class
+field family taxon_family
+field date_year obs_year
+
+source obis_marine_occurrences_global
+ttl 3600
+force diffusion
+url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=1000&fields=decimalLatitude,decimalLongitude,scientificName,class,order,family,genus,species,date_year,country
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field class taxon_class
+field order taxon_order
+field family taxon_family
+field date_year obs_year
+field country country_code
+
+source open_meteo_access_g_australia
+ttl 3600
+force thermal
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m,uv_index&models=bom_access_global&forecast_days=7&format=json
+map hourly.time
+field_in hourly.temperature_2m temp_2m_c
+field_in hourly.precipitation precipitation_mm
+field_in hourly.windspeed_10m wind_speed_ms
+field_in hourly.uv_index uv_index
+
+source open_meteo_airquality_pm
+ttl 3600
+force diffusion
+url https://api.open-meteo.com/v1/air-quality/v1/air-quality?latitude={lat}&longitude={lon}&hourly=pm2_5,pm10,nitrogen_dioxide,ozone,european_aqi,us_aqi&forecast_days=5&format=json
+map hourly.time
+field_in hourly.pm2_5 pm25_ugm3
+field_in hourly.pm10 pm10_ugm3
+field_in hourly.nitrogen_dioxide no2_ugm3
+field_in hourly.ozone o3_ugm3
+field_in hourly.european_aqi aqi_eu
+field_in hourly.us_aqi aqi_us
+
+source open_meteo_arctic_surface
+ttl 3600
+force thermal
+url https://api.open-meteo.com/v1/forecast?latitude=80.0&longitude=0.0&hourly=temperature_2m,snowfall,snow_depth,precipitation,wind_speed_10m&models=icon_seamless&forecast_days=3&format=json
+map hourly.time
+field_in hourly.temperature_2m temp_2m_c
+field_in hourly.snowfall snowfall_cm
+field_in hourly.snow_depth snow_depth_m
+field_in hourly.precipitation precipitation_mm
+field_in hourly.wind_speed_10m wind_speed_kmh
+
+source open_meteo_arome_france
+ttl 3600
+force thermal
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m,windgusts_10m,cape&models=meteofrance_arome_france&forecast_days=2&format=json
+map hourly.time
+field_in hourly.temperature_2m temp_2m_c
+field_in hourly.precipitation precipitation_mm
+field_in hourly.windspeed_10m wind_speed_ms
+field_in hourly.windgusts_10m wind_gust_ms
+field_in hourly.cape cape_jkg
+
+source open_meteo_arpae_cosmo5m
+ttl 3600
+force thermal
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m&models=italia_meteo_arpae_icon_2i&forecast_days=3&format=json
+map hourly.time
+field_in hourly.temperature_2m temp_2m_c
+field_in hourly.precipitation precipitation_mm
+field_in hourly.windspeed_10m wind_speed_ms
+
+source open_meteo_ecmwf_ifs_clouds
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=cloudcover,shortwave_radiation,direct_radiation,diffuse_radiation,cloud_cover_low,cloud_cover_mid,cloud_cover_high&models=ecmwf_ifs025&forecast_days=10&format=json
+map hourly.time
+field_in hourly.cloudcover cloud_cover_pct
+field_in hourly.shortwave_radiation sw_radiation_wm2
+field_in hourly.direct_radiation direct_rad_wm2
+field_in hourly.diffuse_radiation diffuse_rad_wm2
+
+source open_meteo_et0_realtime_grid
+ttl 3600
+force diffusion
+ecliptic 1
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=et0_fao_evapotranspiration,precipitation,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm&models=era5_seamless&forecast_days=1&format=json
+map daily.time
+field_in daily.et0_fao_evapotranspiration et0_mm_d
+field_in daily.precipitation precipitation_mm
+field_in daily.soil_moisture_0_to_7cm soil_moisture_0_7cm
+field_in daily.soil_moisture_7_to_28cm soil_moisture_7_28cm
+
+source open_meteo_fire_danger_southern_africa
+ttl 3600
+force thermal
+ecliptic 1
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=fire_danger_index,precipitation_sum,windspeed_10m_max,temperature_2m_max&models=best_match&forecast_days=7&format=json
+map daily.time
+field_in daily.fire_danger_index fire_danger_index
+field_in daily.precipitation_sum precip_mm
+field_in daily.windspeed_10m_max wind_max_kmh
+field_in daily.temperature_2m_max temp_max_c
+
+source open_meteo_flood_glofas
+ttl 3600
+force diffusion
+url https://api.open-meteo.com/v1/flood/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge,river_discharge_mean,river_discharge_max&forecast_days=16&format=json
+map daily.time
+field_in daily.river_discharge discharge_m3s
+field_in daily.river_discharge_mean discharge_mean_m3s
+field_in daily.river_discharge_max discharge_max_m3s
+
+source open_meteo_gem_canada
+ttl 3600
+force thermal
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,snow_depth,freezinglevel_height,precipitation&models=gem_global&forecast_days=7&format=json
+map hourly.time
+field_in hourly.temperature_2m temp_2m_c
+field_in hourly.snow_depth snow_depth_m
+field_in hourly.freezinglevel_height freezing_level_m
+field_in hourly.precipitation precipitation_mm
+
+source open_meteo_gfs_pressure_levels
+ttl 3600
+force thermal
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_500hPa,temperature_700hPa,temperature_850hPa,geopotential_height_500hPa&models=gfs_seamless&forecast_days=5&format=json
+map hourly.time
+field_in hourly.temperature_500hPa temp_500hpa_c
+field_in hourly.temperature_700hPa temp_700hpa_c
+field_in hourly.temperature_850hPa temp_850hpa_c
+field_in hourly.geopotential_height_500hPa z500_mgp
+
+source open_meteo_hourly_forecast
+ttl 3600
+force diffusion
+url https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,apparent_temperature,precipitation_probability,precipitation,rain,weather_code,pressure_msl,surface_pressure,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_temperature_0cm,soil_moisture_0_1cm&timezone=auto
+map hourly
+lat_key 52.52
+lon_key 13.41
+field_in temperature_2m hourly_temperature_celsius
+field_in relative_humidity_2m hourly_humidity_percent
+field_in precipitation_probability hourly_precip_probability
+field_in precipitation hourly_precipitation_mm
+field_in weather_code hourly_weather_code
+field_in pressure_msl hourly_pressure_hpa
+field_in cloud_cover hourly_cloud_cover
+field_in wind_speed_10m hourly_wind_speed_kmh
+field_in wind_direction_10m hourly_wind_direction
+field_in wind_gusts_10m hourly_wind_gusts_kmh
+field_in soil_temperature_0cm soil_temperature_celsius
+field_in soil_moisture_0_1cm soil_moisture_m3m3
+
+source open_meteo_hydro_evapotranspiration
+ttl 3600
+force diffusion
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=et0_fao_evapotranspiration,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm&forecast_days=7&format=json
+map hourly.time
+field_in hourly.et0_fao_evapotranspiration et0_mm
+field_in hourly.soil_moisture_0_to_1cm sm_0_1cm_m3m3
+field_in hourly.soil_moisture_1_to_3cm sm_1_3cm_m3m3
+field_in hourly.soil_moisture_3_to_9cm sm_3_9cm_m3m3
+field_in hourly.soil_moisture_9_to_27cm sm_9_27cm_m3m3
+
+source open_meteo_icon_d2_precip
+ttl 3600
+force acoustic
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=precipitation,cape,lifted_index,precipitation_probability&models=icon_d2&forecast_days=2&format=json
+map hourly.time
+field_in hourly.precipitation precipitation_mm
+field_in hourly.cape cape_jkg
+field_in hourly.lifted_index lifted_index
+field_in hourly.precipitation_probability precip_prob_pct
+
+source open_meteo_icon_seamless_wind
+ttl 3600
+force acoustic
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=windspeed_10m,windgusts_10m,winddirection_10m,snowfall&models=icon_seamless&forecast_days=3&format=json
+map hourly.time
+field_in hourly.windspeed_10m wind_speed_ms
+field_in hourly.windgusts_10m wind_gust_ms
+field_in hourly.winddirection_10m wind_dir_deg
+field_in hourly.snowfall snowfall_cm
+
+source open_meteo_jma_msm_japan
+ttl 3600
+force thermal
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m,cape&models=jma_msm&forecast_days=4&format=json
+map hourly.time
+field_in hourly.temperature_2m temp_2m_c
+field_in hourly.precipitation precipitation_mm
+field_in hourly.windspeed_10m wind_speed_ms
+field_in hourly.cape cape_jkg
+
+source open_meteo_marine_waves
+ttl 3600
+force acoustic
+url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,ocean_current_velocity&forecast_days=7&format=json
+map hourly.time
+field_in hourly.wave_height wave_height_m
+field_in hourly.wave_period wave_period_s
+field_in hourly.wave_direction wave_dir_deg
+field_in hourly.swell_wave_height swell_height_m
+field_in hourly.ocean_current_velocity current_ms
+
+source open_meteo_snow_permafrost_proxy
+ttl 3600
+force thermal
+url https://api.open-meteo.com/v1/forecast?latitude=50.0&longitude=10.0&hourly=snow_depth,soil_temperature_0cm,soil_temperature_6cm&forecast_days=7&format=json
+map hourly.time
+field_in hourly.snow_depth snow_depth_m
+field_in hourly.frozen_soil_0_to_7cm frozen_0_7cm
+field_in hourly.frozen_soil_7_to_28cm frozen_7_28cm
+field_in hourly.soil_temperature_0cm soil_temp_0cm_c
+field_in hourly.soil_temperature_6cm soil_temp_6cm_c
+
+source open_meteo_solar_dni
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=direct_normal_irradiance,global_tilted_irradiance,diffuse_radiation,sunshine_duration&forecast_days=7&format=json
+map hourly.time
+field_in hourly.direct_normal_irradiance dni_wm2
+field_in hourly.global_tilted_irradiance gti_wm2
+field_in hourly.diffuse_radiation diffuse_wm2
+field_in hourly.sunshine_duration sunshine_min
+
+source open_meteo_uv_southern_africa
+ttl 3600
+force em
+ecliptic 1
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=uv_index,uv_index_clear_sky,direct_radiation&models=best_match&forecast_days=3&format=json
+map hourly.time
+field_in hourly.uv_index uv_index
+field_in hourly.uv_index_clear_sky uv_index_clear_sky
+field_in hourly.direct_radiation direct_radiation_wm2
+
+source openlittermap_litter_observations_global
+ttl 3600
+force diffusion
+url https://openlittermap.com/api/getdata?lat=0.0&lon=0.0&radius=50&format=json&limit=500
+map data
+lat_key lat
+lon_key lng
+field litter_type litter_type
+field quantity litter_quantity
+
+source openlittermap_litter_points
+ttl 3600
+force diffusion
+url https://openlittermap.com/api/getdata?lat={lat}&lon={lon}&radius=50&format=json&limit=500
+map data
+lat_key lat
+lon_key lon
+field id observation_id
+field datetime observation_date
+field litter_type litter_category
+field brand brand_name
+field country_code country
+field total_count item_count
+
+source orbital_atlas_3i_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_interstellar_3i.json
+ephemeris orbital_atlas_3i_distance
+extent 3.34e-9
+
+source orbital_celestrak_starlink
+ttl 3600
+force em
+ssb
+url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=STARLINK
+header User-Agent "omegaflow"
+field totalItems orbital_starlink_count
+
+source orbital_cneos_asteroids_inside_lunar_orbit
+ttl 3600
+force em
+ecliptic 1
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
+field count orbital_asteroids_closer_than_moon
+
+source orbital_cneos_close_approaches
+ttl 3600
+force em
+ecliptic 1
+url https://ssd-api.jpl.nasa.gov/cad.api
+field count cneos_close_approach_count
+
+source orbital_dsn_status
+ttl 3600
+force em
+ecliptic 1
+url https://eyes.nasa.gov/dsn-now/dsn.json
+count dsn biosphere_nasa_deep_space_network_signals
+
+source orbital_fireballs
+ttl 3600
+force em
+ecliptic 1
+url https://ssd-api.jpl.nasa.gov/fireball.api
+field count biosphere_fireball_event_count
+
+source orbital_tle_mirror_full
+ttl 3600
+force em
+url https://tle.ivanstanojevic.me/api/tle/?page-size=100
+map member
+field satelliteId satellite_norad_id
+field name satellite_name
+field date tle_epoch
+field line1 tle_line1
+field line2 tle_line2
+
+source orbital_vesta_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_vesta.json
+ephemeris orbital_vesta_distance
+extent 1.76e-6
+
+source paleoclimate_recent
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,shortwave_radiation_sum&past_days=1&forecast_days=0&timezone=auto
+path daily.temperature_2m_max.0 paleoclimate_temp_max_yesterday_c
+path daily.temperature_2m_min.0 paleoclimate_temp_min_yesterday_c
+path daily.precipitation_sum.0 paleoclimate_precip_yesterday_mm
+path daily.sunshine_duration.0 paleoclimate_sunshine_yesterday_s
+path daily.shortwave_radiation_sum.0 paleoclimate_shortwave_yesterday_mjm2
+
+source parker_solar_probe_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_parker_solar_probe.json
+ephemeris orbital_parker_solar_probe_distance
+
+source pluto_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_pluto.json
+ephemeris orbital_pluto_distance
+extent 7.94e-6
+
+source radiation_safecast
+ttl 3600
+force em
+url https://api.safecast.org/en-US/measurements.json?limit=100
+map .
+lat_key latitude
+lon_key longitude
+field_in value radiation_safecast_cpm
+
+source radiation_solar_shortwave
+ttl 3600
+force em
+ssb
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation
+field current.shortwave_radiation radiation_shortwave_openmeteo
+
+source radiation_solar_uv_index
+ttl 3600
+force em
+ssb
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=uv_index
+field current.uv_index radiation_uv_index_openmeteo
+
+source reliefweb_active_humanitarian_disasters
+ttl 3600
+force diffusion
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item disaster_count
+
+source saturn_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_saturn.json
+ephemeris orbital_saturn_distance
+extent 3.89e-4
+
+source sentinel2_l2a
+ttl 3600
+force em
+url https://earth-search.aws.element84.com/v1/search
+method post
+body {"collections":["sentinel-2-l2a"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
+header Content-Type application/json
+map features
+lat_key properties.proj:centroid.lat
+lon_key properties.proj:centroid.lon
+field id scene_id
+field collection collection
+field properties.datetime observation_time
+field properties.eo:cloud_cover cloud_cover_pct
+
+source solar_callisto_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_callisto.json
+ephemeris orbital_callisto_distance
+extent 1.61e-5
+
+source solar_noaa_srs
+ttl 3600
+force em
+
+ssb
+url https://services.swpc.noaa.gov/json/solar_regions.json
+map .
+lat_key latitude
+lon_key longitude
+field_in region_number solar_region_number
+field_in hale_class solar_region_hale_class
+field_in mclass_flare_prob solar_region_mflare_prob_pct
+field_in xclass_flare_prob solar_region_xflare_prob_pct
+field_in area solar_region_area_microhemispheres
+field_in spots solar_region_spot_count
+
+source solar_noaa_swpc_flare_count
+ttl 3600
+force em
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+count . solar_flare_count_noaa
+
+source solar_noaa_swpc_flares
+ttl 3600
+force em
+ssb
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+count . solar_flare_count_noaa
+
+source solar_orbiter_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_solar_orbiter.json
+ephemeris orbital_solar_orbiter_distance
+
+source sun_vectors
+ttl 3600
+force em gravity thermal
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_sun.json
+ephemeris orbital_sun_distance
+extent 0.004650
+
+source taf_global_forecasts
+ttl 3600
+force acoustic
+url https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid
+map .
+lat_key lat
+lon_key lon
+field icaoId icao_code
+field fcsts.0.wdir forecast_wind_dir
+field fcsts.0.wspd forecast_wind_kt
+field fcsts.0.visib forecast_visibility_sm
+field validTimeFrom valid_from
+field validTimeTo valid_to
+
+source technosphere_wikipedia_views
+ttl 3600
+force em
+url https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json
+wgs84 40.712 -74.006
+field query.random.0.id technosphere_wikipedia_random_id
+
+source temis_uv_index_daily_global
+ttl 3600
+force em
+url https://www.temis.nl/uvradiation/nrt/uvindex.php?date={year}{month}{day}&type=overpass&format=text
+format text
+rows
+lat_key latitude
+lon_key longitude
+field uvindex uv_index
+field cloud_modification cloud_factor
+field date measurement_date
+
+source terrabrasilis_deter_deforestation_alerts
+ttl 3600
+force diffusion
+url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.object_id alert_id
+field properties.class_name deforestation_class
+field properties.area_km alert_area_km2
+field properties.view_date detection_date
+field properties.uf state
+
+source titan_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_titan.json
+ephemeris orbital_titan_distance
+extent 1.72e-5
+
+source triton_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_triton.json
+ephemeris orbital_triton_distance
+extent 9.04e-6
+
+source universe_dscovr_epic
+ttl 3600
+force em
+url https://epic.gsfc.nasa.gov/api/natural/images
+map .
+lat_key centroid_coordinates.lat
+lon_key centroid_coordinates.lon
+field_in version universe_dscovr_version
+field_in identifier universe_dscovr_identifier
+
+source universe_jpl_close_approaches
+ttl 3600
+force em
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD&date-min={today}&limit=100
+cmap data
+tau_key _dist_m
+field_in 0 designation
+field_in 1 orbit_id
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 v_rel_kms
+
+source universe_jpl_fireballs
+ttl 3600
+force em
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
+cmap data
+tau_key _dist_m
+field_in 0 peak_date
+field_in 1 energy_j
+field_in 3 latitude_deg
+field_in 4 lat_dir
+field_in 5 longitude_deg
+field_in 6 lon_dir
+field_in 7 altitude_km
+field_in 8 velocity_kms
+
+source uranus_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_uranus.json
+ephemeris orbital_uranus_distance
+extent 1.70e-4
+
+source usgs_earthquakes_weekly
+ttl 3600
+force acoustic
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.5&orderby=magnitude&limit=100
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag magnitude
+field_in properties.place location_description
+field_in properties.time event_time
+field_in properties.url event_url
+field_in properties.dmin minimum_distance
+field_in properties.rms rms_residual
+field_in properties.gap azimuthal_gap
+field_in properties.nst station_count
+field_in properties.magType magnitude_type
+field_in properties.type event_type
+field_in properties.status review_status
+depth_key geometry.coordinates.2
+
+source usgs_nwis_groundwater_levels
+ttl 3600
+force diffusion
+url https://waterservices.usgs.gov/nwis/gwlevels/?format=json&modifiedSince=P1D&siteStatus=active&siteType=GW&parameterCd=72019&countyCd=&stateCd=&bbox=-125,24,-66,50&resultRetrievalMode=grouped
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteName station_name
+field sourceInfo.siteCode.0.value site_code
+field values.0.value.0.value groundwater_depth_ft
+field values.0.value.0.dateTime measurement_datetime
+
+source usgs_nwis_streamflow_daily
+ttl 3600
+force acoustic
+url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT={year}-{month}-01&endDT={year}-{month}-{day}&parameterCd=00060&siteStatus=all
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteCode.0.value station_id
+field sourceInfo.siteName station_name
+field values.0.value.0.value streamflow_cfs
+field values.0.value.0.dateTime streamflow_time_utc
+
+source usgs_streamflow_daily
+ttl 3600
+force diffusion
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065&siteStatus=all
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field_in sourceInfo.siteName station_name
+field_in values.0.value.0.value streamflow_cfs
+field_in values.0.value.0.dateTime measurement_datetime
+
+source usgs_volcano_weekly_activity_report
+ttl 3600
+force seismic-surface
+url https://volcanoes.usgs.gov/hans-public/api/volcano/weekly
+map .
+lat_key Latitude
+lon_key Longitude
+field VolcanoName volcano_name
+field ActivityCategory activity_category
+field StartDate activity_start_date
+field EndDate activity_end_date
+
+source venus_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_venus.json
+ephemeris orbital_venus_distance
+extent 4.05e-5
+
+source voyager1_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
+ephemeris orbital_voyager1_distance
+
+source voyager2_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
+ephemeris orbital_voyager2_distance
+
+source waqi_china_airquality
+ttl 3600
+force diffusion
+url https://api.waqi.info/map/bounds/?latlng=17,72,54,136&token=demo
+map data
+lat_key lat
+lon_key lon
+field aqi aqi_index
+field station.name station_name
+
+source waqi_east_asia_airquality
+ttl 3600
+force diffusion
+url https://api.waqi.info/map/bounds/?latlng=-10,100,55,145&token=demo
+map data
+lat_key lat
+lon_key lon
+field aqi aqi_index
+field station.name station_name
+
+source wfigs_current_fire_perimeters
+ttl 3600
+force thermal
+url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_YearToDate/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&f=geojson&resultRecordCount=500
+flatten features
+field_in properties.poly_GISAcres fire_acres
+field_in properties.poly_PolygonDateTime fire_polygon_ms
+
+source satellite_satnogs_active
+ttl 14400
+force em
+url https://db.satnogs.org/api/tle/?format=json
+map .
+field_in tle0 satellite_name
+field_in tle1 satellite_tle_line1
+field_in tle2 satellite_tle_line2
+field_in norad_cat_id satellite_norad_id
+field_in tle_source satellite_tle_source
+
+source biosphere_cdc_covid_variants
+ttl 43200
+wgs84 33.797 0.0
+86400
+force em
+url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
+field share biosphere_covid_variant_share
+
+source coastwatch_ascat_wind
+ttl 43200
+force em
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdQMwind1day_LonPM180.json?x_wind%5B(2022-12-01T12%3A00%3A00Z)%5D%5B(10.0)%5D%5B(-75.0)%3A4%3A(75.0)%5D%5B(-180.0)%3A4%3A(180.0)%5D
+map table.rows
+lat_key 2
+lon_key 3
+alt_key 1
+epoch_key 0
+field_in 4 coastwatch_ascat_x_wind_ms
+
+source coastwatch_oisst_sea_ice
+ttl 43200
+force thermal
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?ice%5B(last)%5D%5B(0)%5D%5B(-79.875)%3A20%3A(79.875)%5D%5B(-179.875)%3A20%3A(179.875)%5D
+map table.rows
+lat_key 2
+lon_key 3
+epoch_key 0
+field_in 4 cryosphere_oisst_sea_ice_fraction
+
+source iers_eop_bulletinb
+ttl 43200
+force em
+url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+format text
+pos 0 0
+field_in col2 mjd
+field_in col3 x_pole_mas
+field_in col4 y_pole_mas
+field_in col5 ut1_utc_ms
+field_in col6 dx_celestial_pole_mas
+field_in col7 dy_celestial_pole_mas
+
+source ocean_argo_floats_profiles
+ttl 43200
+force thermal
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json?time%2Clongitude%2Clatitude%2Cpres%2Ctemp%26time%3E%3D{yesterday}%26time%3C%3D{now}%26longitude%3E%3D{lon_min}%26longitude%3C%3D{lon_max}%26latitude%3E%3D{lat_min}%26latitude%3C%3D{lat_max}
+map table.rows
+lat_key 2
+lon_key 1
+alt_key 3
+alt_sign -1
+epoch_key 0
+field_in 4 argo_temp_c
+
+source open_meteo_daily_forecast
+ttl 43200
+force diffusion
+url https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration&timezone=auto
+map daily
+lat_key 52.52
+lon_key 13.41
+field_in temperature_2m_max daily_temp_max_celsius
+field_in temperature_2m_min daily_temp_min_celsius
+field_in precipitation_sum daily_precip_mm
+field_in precipitation_probability_max daily_precip_prob_max
+field_in wind_speed_10m_max daily_wind_max_kmh
+field_in wind_gusts_10m_max daily_wind_gust_max_kmh
+field_in shortwave_radiation_sum daily_solar_radiation_mjm2
+field_in et0_fao_evapotranspiration daily_evapotranspiration_mm
+
+source socat_surface_co2
+ttl 43200
+force diffusion
+url https://data.pmel.noaa.gov/socat/erddap/tabledap/socat_v2026_fulldata.json?time,latitude,longitude,xCO2_water_sst_dry_ppm&time%3E={yesterday}&distinct()
+map table.rows
+lat_key 1
+lon_key 2
+epoch_key 0
+field_in 3 socat_xco2_water_dry_ppm
+
+source wyoming_radiosonde_berlin
+ttl 43200
+force thermal
+url https://weather.uwyo.edu/wsgi/sounding?datetime={today}%2000:00:00&type=TEXT:CSV&id=10393&src=UNKNOWN
+format csv
+map .
+lat_key latitude
+lon_key longitude
+field temperature_C atmosphere_radiosonde_temp_c
+field pressure_hPa atmosphere_radiosonde_pressure_hpa
+
+source aavso_vsx_variable_stars
+ttl 86400
+force em
+url https://vsx.aavso.org/index.php?view=api.votable&format=json&ra=0&dec=0&radius=5
+map .
+lat_key ra_hms
+lon_key dec_dms
+field oid vsx_oid
+field name star_name
+field type variable_type
+field mag_max max_magnitude
+field mag_min min_magnitude
+field period period_days
+field epoch epoch_hjd
+
+source aeronet_aod20_global
+ttl 86400
+force diffusion
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD20=1&AVG=20&if_no_html=1
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440_l2
+field AOD_500nm aod_500_l2
+field Precipitable_Water(cm) precip_water_l2
+
+source aeronet_inv_ssa
+ttl 86400
+force diffusion
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field SSA_440nm ssa_440
+field SSA_675nm ssa_675
+field SSA_870nm ssa_870
+field SSA_1020nm ssa_1020
+
+source aeronet_site_list
+ttl 86400
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
+format text
+rows
+lat_key Latitude(decimal_degrees)
+lon_key Longitude(decimal_degrees)
+field Site_Name site_name
+field Elevation(meters) elevation_m
+
+source allwise_catalog_irsa_tap
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL&format=csv&limit=5000
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_name
+field w1mpro mag_w1_3_4um
+field w2mpro mag_w2_4_6um
+field w3mpro mag_w3_12um
+field w4mpro mag_w4_22um
+
+source arcgis_pager_earthquake_impacts
+ttl 86400
+force seismic-body
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500
+map features
+lat_key attributes.LATITUDE
+lon_key attributes.LONGITUDE
+field attributes.YEAR event_year
+field attributes.MAG magnitude
+field attributes.DEPTH depth_km
+field attributes.DEATHS fatalities
+field attributes.INJURIES injuries
+field attributes.COUNTRY country
+
+source arxiv_astro_total
+ttl 86400
+force em
+url http://export.arxiv.org/api/query?search_query=cat:astro-ph.*&max_results=0
+wgs84 40.712 -74.006
+field feed.totalResults exosphere_arxiv_astro_papers_total
+
+source arxiv_cs_total
+ttl 86400
+force em
+url http://export.arxiv.org/api/query?search_query=cat:cs.*&max_results=0
+wgs84 40.712 -74.006
+field feed.totalResults biosphere_arxiv_cs_papers_total
+
+source arxiv_hep_total
+ttl 86400
+force em
+url http://export.arxiv.org/api/query?search_query=cat:hep-*&max_results=0
+wgs84 40.712 -74.006
+field feed.totalResults subatomic_arxiv_hep_papers_total
+
+source arxiv_math_total
+ttl 86400
+force em
+url http://export.arxiv.org/api/query?search_query=cat:math.*&max_results=0
+wgs84 40.712 -74.006
+field feed.totalResults physics_arxiv_math_papers_total
+
+source arxiv_physics_total
+ttl 86400
+force em
+url http://export.arxiv.org/api/query?search_query=cat:physics.*&max_results=0
+wgs84 40.712 -74.006
+field feed.totalResults physics_arxiv_physics_papers_total
+
+source arxiv_qbio_total
+ttl 86400
+force em
+url http://export.arxiv.org/api/query?search_query=cat:q-bio.*&max_results=0
+wgs84 40.712 -74.006
+field feed.totalResults biosphere_arxiv_qbio_papers_total
+
+source arxiv_qfin_total
+ttl 86400
+force em
+url http://export.arxiv.org/api/query?search_query=cat:q-fin.*&max_results=0
+wgs84 40.712 -74.006
+field feed.totalResults biosphere_arxiv_qfin_papers_total
+
+source arxiv_stat_total
+ttl 86400
+force em
+url http://export.arxiv.org/api/query?search_query=cat:stat.*&max_results=0
+wgs84 40.712 -74.006
+field feed.totalResults physics_arxiv_stat_papers_total
+
+source asas_sn_variables_vizier
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,Vmag+FROM+%22II/366/catv2021%22
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+field_in 2 asas_sn_v_mag
+
+source astdys_tno_dynamical_classification
+ttl 86400
+force gravity
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+wgs84 0.0 0.0
+map .
+field number number
+field name name
+field class dynamical_class
+
+source atmosphere_dwd_pollen_germany
+ttl 86400
+force em
+url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
+wgs84 51.0 10.0
+field content.0.Pollen.Graeser.today biosphere_pollen_grass_germany_today
+field content.0.Pollen.Birke.today biosphere_pollen_birch_germany_today
+field content.0.Pollen.Beifuss.today biosphere_pollen_mugwort_germany_today
+field content.0.Pollen.Esche.today biosphere_pollen_ash_germany_today
+
+source atmosphere_enso_oni
+ttl 86400
+force em
+url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+wgs84 38.989 -76.937
+last_row ANOM atmosphere_enso_oni_c
+
+source atmosphere_historical_daily
+ttl 86400
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,et0_fao_evapotranspiration,shortwave_radiation_sum&timezone=auto
+last temperature_2m_max atmosphere_hist_temp_max_c
+last temperature_2m_min atmosphere_hist_temp_min_c
+last precipitation_sum atmosphere_hist_precip_sum_mm
+last sunshine_duration atmosphere_hist_sunshine_s
+
+source atmosphere_historical_weather
+ttl 86400
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=temperature_2m,relative_humidity_2m,precipitation,windspeed_10m,soil_temperature_0_to_7cm,soil_moisture_0_to_7cm&timezone=auto
+last temperature_2m atmosphere_hist_temp_c
+last precipitation atmosphere_hist_precip_mm
+last windspeed_10m atmosphere_hist_wind_ms
+
+source atmosphere_historical_wind
+ttl 86400
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=wind_speed_10m,wind_speed_100m,wind_direction_10m,wind_direction_100m,wind_gusts_10m&timezone=auto
+last wind_speed_10m atmosphere_hist_wind_speed_10m_ms
+last wind_speed_100m atmosphere_hist_wind_speed_100m_ms
+last wind_gusts_10m atmosphere_hist_wind_gusts_10m_ms
+
+source atmosphere_met_norway_sun
+ttl 86400
+force em
+url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00
+header User-Agent "omegaflow"
+field properties.sunrise.time atmosphere_sunrise_time
+field properties.solar_noon.elevation atmosphere_solar_elevation_max_deg
+
+source atmosphere_woudc_ozone_stations
+ttl 86400
+force em
+ecliptic 1
+url https://api.woudc.org/collections/stations/items?f=json&limit=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.woudc_id atmosphere_woudc_station_id
+field_in properties.gaw_id atmosphere_woudc_gaw_id
+field_in properties.name atmosphere_woudc_station_name
+field_in properties.type atmosphere_woudc_station_type
+field_in properties.country_name_en atmosphere_woudc_country
+field_in properties.active atmosphere_woudc_active
+
+source atmosphere_woudc_total_ozone
+ttl 86400
+force em
+url https://api.woudc.org/collections/totalozone/items?limit=1
+wgs84 43.780 -79.470
+path numberMatched biosphere_ozone_measurement_total_count
+
+source biosphere_arxiv_total_papers
+ttl 86400
+force em
+url http://export.arxiv.org/api/query?search_query=*:*&max_results=1
+wgs84 42.3601 -71.0589
+xml_count totalResults biosphere_arxiv_papers_total
+
+source biosphere_bci_clinical_trials_recruiting
+ttl 86400
+force em
+ecliptic 1
+url https://clinicaltrials.gov/api/v2/studies?query.term=brain-computer+interface&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+field totalCount biosphere_bci_trials_recruiting
+
+source biosphere_crispr_clinical_trials_recruiting
+ttl 86400
+force em
+url https://clinicaltrials.gov/api/v2/studies?query.term=CRISPR&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+wgs84 37.872 -122.258
+field totalCount biosphere_crispr_trials_recruiting
+
+source biosphere_crossref_dois_total
+ttl 86400
+force em
+url https://api.crossref.org/works?rows=1
+wgs84 38.9072 -77.0369
+field message.total-results biosphere_doi_registrations_crossref
+
+source biosphere_crossref_members_total
+ttl 86400
+force em
+url https://api.crossref.org/members?rows=1
+wgs84 38.9072 -77.0369
+field message.total-results biosphere_doi_members_crossref
+
+source biosphere_ecdc_monkeypox
+ttl 86400
+force em
+url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/json/data.json
+wgs84 59.365 18.016
+count . biosphere_monkeypox_record_count
+
+source biosphere_epoch_ai_compute_trends
+ttl 86400
+force em
+url https://epoch.ai/data/notable_ai_models.csv
+wgs84 37.774 -122.419
+format csv
+last_row Training_compute_FLOP biosphere_ai_training_flops_frontier
+
+source biosphere_eurostat_cpi_eu
+ttl 86400
+force em
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?geo=EU27_2020&unit=RCH_A&coicop=CP00&format=JSON
+wgs84 50.8503 4.3517
+obj_last value biosphere_inflation_eu_eurostat
+
+source biosphere_eurostat_gdp_eu
+ttl 86400
+force em
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nama_10_gdp?geo=EU27_2020&unit=CLV_I10&na_item=B1GQ&format=JSON
+wgs84 50.8503 4.3517
+obj_last value biosphere_gdp_eu_eurostat
+
+source biosphere_eurostat_population_eu
+ttl 86400
+force em
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?geo=EU27_2020&sex=T&age=TOTAL&format=JSON
+wgs84 50.8503 4.3517
+obj_last value biosphere_population_eu_eurostat
+
+source biosphere_eurostat_unemployment_eu
+ttl 86400
+force em
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_q?geo=EU27_2020&unit=PC_ACT&s_adj=SA&age=TOTAL&format=JSON
+wgs84 50.8503 4.3517
+obj_last value biosphere_unemployment_eu_eurostat
+
+source biosphere_gbif_amphibians
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_amphibian_key
+
+source biosphere_gbif_arachnids
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_arachnid_key
+
+source biosphere_gbif_arthropods
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_arthropod_key
+
+source biosphere_gbif_biodiversity_global
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_biodiversity_species
+field_in kingdom biosphere_gbif_kingdom
+field_in eventDate biosphere_gbif_biodiversity_date
+field_in locality biosphere_gbif_biodiversity_locality
+
+source biosphere_gbif_birds
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_bird_key
+
+source biosphere_gbif_birds_migratory
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_bird_species
+field_in eventDate biosphere_gbif_bird_date
+field_in locality biosphere_gbif_bird_locality
+
+source biosphere_gbif_cnidaria
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_cnidarian_key
+
+source biosphere_gbif_cnidarians
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_cnidarian_key
+
+source biosphere_gbif_echinoderms
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_echinoderm_key
+
+source biosphere_gbif_fungi
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_fungi_key
+
+source biosphere_gbif_insects
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_insect_key
+
+source biosphere_gbif_mammals
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_mammal_key
+
+source biosphere_gbif_marine_species
+ttl 86400
+force em
+ecliptic 1
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_marine_species
+field_in locality biosphere_gbif_marine_locality
+field_in eventDate biosphere_gbif_marine_date
+
+source biosphere_gbif_migrations
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
+wgs84 55.7022 12.5592
+field count biosphere_migratory_bird_records_this_month
+
+source biosphere_gbif_mollusks
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_mollusk_key
+
+source biosphere_gbif_occurrences_precise
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_precise_key
+field_in coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
+
+source biosphere_gbif_plants
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_plant_key
+field_in coordinateUncertaintyInMeters biosphere_gbif_plant_uncertainty_m
+
+source biosphere_gbif_plants_bbox
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_plant_species
+field_in family biosphere_gbif_plant_family
+field_in eventDate biosphere_gbif_plant_date
+
+source biosphere_gbif_reptiles
+ttl 86400
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_reptile_key
+
+source biosphere_global_ixp_count
+ttl 86400
+force em
+url https://www.peeringdb.com/api/ix?limit=1
+wgs84 38.899 -77.043
+count data biosphere_ixp_count
+
+source biosphere_microbe_census
+ttl 86400
+force em
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?page_size=1
+wgs84 52.079 0.187
+field meta.pagination.count biosphere_metagenomic_studies_count
+
+source biosphere_modis_ndvi_local
+ttl 86400
+force em
+url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
+field subset.0.1 biosphere_ndvi_local
+
+source biosphere_obis_cetaceans
+ttl 86400
+force em
+url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
+wgs84 51.231 2.928
+path total biosphere_cetacean_observations_24h
+
+source biosphere_obis_marine_global
+ttl 86400
+force em
+ecliptic 1
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName biosphere_obis_marine_species
+field_in eventDate biosphere_obis_marine_date
+field_in depth biosphere_obis_marine_depth_m
+
+source biosphere_obis_marine_records
+ttl 86400
+force em
+ecliptic 1
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName biosphere_obis_species
+field_in eventDate biosphere_obis_date
+field_in depth biosphere_obis_depth_m
+field_in aphiaID biosphere_obis_aphia_id
+
+source biosphere_obis_species
+ttl 86400
+force em
+url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+field total biosphere_ocean_occurrences_50km
+
+source biosphere_obis_statistics
+ttl 86400
+force em
+url https://api.obis.org/v3/statistics
+wgs84 51.231 2.928
+field taxa biosphere_ocean_species_known
+field records biosphere_ocean_records_total
+field datasets biosphere_ocean_datasets_count
+
+source biosphere_protected_lands_area
+ttl 86400
+force em
+ecliptic 1
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
+field_in scalerank biosphere_park_area_rank
+flatten features
+
+source biosphere_protected_lands_point
+ttl 86400
+force em
+ecliptic 1
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson
+field_in scalerank biosphere_park_rank
+flatten features
+
+source biosphere_restcountries_population
+ttl 86400
+force em
+url https://restcountries.com/v3.1/all?fields=name,population,latlng
+wgs84 38.899 -77.043
+field 0.population biosphere_country_population_sample
+
+source biosphere_semantic_scholar_papers
+ttl 86400
+force em
+url https://api.openalex.org/works?per-page=1
+wgs84 47.6062 -122.3321
+field meta.count biosphere_semantic_scholar_papers_total
+
+source biosphere_submarine_cables
+ttl 86400
+force em
+url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
+wgs84 38.899 -77.043
+count features biosphere_submarine_cable_count
+
+source biosphere_unhcr_displacement
+ttl 86400
+force em
+url https://api.unhcr.org/population/v1/population/?limit=1
+wgs84 46.234 6.140
+count items biosphere_displacement_record_count
+
+source biosphere_vegetation_health
+ttl 86400
+force em
+url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
+wgs84 38.978 -76.919
+format csv
+last_row VHI biosphere_global_vegetation_health_index
+
+source biosphere_who_cholera
+ttl 86400
+force em
+url https://ghoapi.azureedge.net/api/CHOLERA_0000000001
+wgs84 46.234 6.140
+count value biosphere_cholera_record_count
+
+source biosphere_who_gho_tuberculosis
+ttl 86400
+force em
+url https://ghoapi.azureedge.net/api/MDG_0000000020
+wgs84 46.234 6.140
+count value biosphere_tuberculosis_record_count
+
+source biosphere_who_influenza
+ttl 86400
+force em
+url https://xmart-api-public.who.int/FLUMART/VIW_FNT
+wgs84 46.234 6.140
+count value biosphere_influenza_record_count
+
+source biosphere_who_life_expectancy
+ttl 86400
+force em
+url https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN
+wgs84 46.2276 6.1432
+last_line biosphere_who_life_expectancy_global
+
+source bodc_ocean_chemistry_catalog
+ttl 86400
+force diffusion
+url https://www.bodc.ac.uk/data/published_data_library/catalogue/?jsonrequest=1&keywords=oxygen+salinity&limit=200
+map results
+lat_key geo_location.lat
+lon_key geo_location.lon
+field title dataset_title
+field variables.0 primary_variable
+field temporal_coverage.start start_date
+field temporal_coverage.end end_date
+field bodc_id bodc_dataset_id
+field species algae_species
+field cellcount cell_count
+field cellcount_units count_units
+field hab_category hab_level
+field sample_date sample_date
+
+source bold_animal_specimens_barcodes
+ttl 86400
+force diffusion
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Animalia&geo=&format=json&limit=500
+map .
+lat_key lat
+lon_key lon
+field processid specimen_id
+field bin barcode_index
+field species_name species
+field country country
+field region province
+field collection_date collection_date
+
+source bold_marine_invertebrate_barcodes
+ttl 86400
+force diffusion
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Echinodermata&geo=&format=json&limit=300
+map .
+lat_key lat
+lon_key lon
+field processid specimen_id
+field bin barcode_index
+field species_name species
+field country country
+field region province
+
+source bold_plant_specimens_barcodes
+ttl 86400
+force diffusion
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Plantae&geo=&format=json&limit=500
+map .
+lat_key lat
+lon_key lon
+field processid specimen_id
+field bin barcode_index
+field species_name species
+field country country
+field region province
+
+source cddis_ivs_eop_vlbi_results
+ttl 86400
+force gravity
+url https://cddis.nasa.gov/archive/vlbi/ivsproducts/eops/ivseops.snx
+wgs84 0.0 0.0
+format text
+rows
+field 0 epoch
+field 1 x_pole x_pole_mas
+field 2 y_pole y_pole_mas
+field 3 ut1_utc ut1_offset_ms
+field 4 length_of_day lod_ms
+
+source chime_frb_catalog_total
+ttl 86400
+force em
+url https://www.chime-frb.ca/catalog
+wgs84 49.321 -122.573
+last_line exosphere_chime_frb_count
+
+source cmems_atlantic_currents
+ttl 86400
+force diffusion
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?uo%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D,vo%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field uo current_u_ms
+field vo current_v_ms
+
+source cmems_aviso_mesoscale_eddy_tracking
+ttl 86400
+force diffusion
+url https://nrt.cmems-du.eu/erddap/tabledap/cmems_obs_mob_glo_phy-cur_nrt_0.1deg-SSH-eddy-track_PT1H.csv?latitude,longitude,time,radius_e,amplitude,speed_radius,eddy_type&time>=2026-01-01T00:00:00Z&orderBy(%22time%22)
+format text
+rows
+lat_key latitude
+lon_key longitude
+field time detection_time
+field radius_e eddy_effective_radius_km
+field amplitude ssh_amplitude_m
+field speed_radius rotation_speed_m_s
+field eddy_type cyclonic_anticyclonic
+
+source cmems_duacs_dt2024_sla_global_grid
+ttl 86400
+force gravity
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_my_multi-oi_P1D.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sla sea_level_anomaly_m
+
+source cmems_global_ocean_oxygen
+ttl 86400
+force diffusion
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field o2 oxygen_mmol_m3
+
+source cmems_global_sla_altimetry
+ttl 86400
+force acoustic
+url https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D,adt%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sla sea_level_anomaly_m
+field adt absolute_dynamic_topography_m
+
+source cmems_global_sst_analysis
+ttl 86400
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-sst_l4_multi-oi_P1D.csv?sst%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sst sea_surface_temp_c
+
+source cmems_glorys12_ocean_3d
+ttl 86400
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5B-1%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field thetao ocean_temp_c
+field so salinity_psu
+
+source cmems_glorys12_ocean_temperature_3d
+ttl 86400
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field thetao temperature_c
+
+source cmems_indian_ocean_waves
+ttl 86400
+force acoustic
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_wav_anfc_0.083deg_PT3H-m.csv?vhm0%5Blast%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field vhm0 wave_height_m
+
+source cmems_sentinel3_chlorophyll_global
+ttl 86400
+force diffusion
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs_oc_glo_bgc-plankton_nrt_l3_chl_P1D-m.csv?chl%5Blast%5D%5B(-80.0):(80.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field chl chlorophyll_mgm3
+
+source cmems_sla_global_adt
+ttl 86400
+force gravity
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_my_multi-oi_P1D.csv?adt%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field adt absolute_dyn_top_m
+
+source cmems_sst_anomaly_global_l4
+ttl 86400
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-sst_l4_multi-oi_P1D.csv?sst_anom%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sst_anom sst_anomaly_c
+
+source cneos_fireballs_infrasound
+ttl 86400
+force acoustic
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
+map data
+lat_key 3
+lon_key 5
+lon_sign 6
+field_in 0 event_date
+field_in 1 energy
+field_in 2 impact_energy_kt
+field_in 7 altitude_km
+field_in 8 velocity_kms
+
+source cosmos_asteroids_numbered
+ttl 86400
+force em
+ssb
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
+count data cosmos_asteroids_numbered_total
+
+source cosmos_asteroids_positions
+ttl 86400
+force em
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
+field_in H cosmic_asteroid_h_mag
+kepler_map data
+a_key a
+e_key e
+i_key i
+om_key om
+w_key w
+ma_key ma
+epoch_key epoch
+
+source cosmos_mars_landers
+ttl 86400
+force em
+url https://gist.githubusercontent.com/burritojustice/2d967b31c3bd11165b4439ebe98ecb01/raw/8594b09096f93f723c929c397de49ed7ac8ecc64/mars_landers.geojson
+areocentric 1
+flatten features
+
+source cosmos_mars_weather
+ttl 86400
+force em
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+path soles.0.min_temp cosmos_mars_min_temp_c
+path soles.0.max_temp cosmos_mars_max_temp_c
+path soles.0.pressure cosmos_mars_pressure_pa
+areocentric 1
+
+source cosmos_tle_catalog
+ttl 86400
+force em
+ssb
+url https://tle.ivanstanojevic.me/api/tle/
+field totalItems cosmos_tle_total_satellites
+field totalItems cosmos_tle_total_satellites
+count member cosmos_tle_page_count
+
+source cosmos_tle_search_iss
+ttl 86400
+force em
+ssb
+url https://tle.ivanstanojevic.me/api/tle/?search=ISS&page-size=50
+field totalItems cosmos_tle_iss_related_total
+field member.0.satelliteId cosmos_tle_iss_satellite_id
+count member cosmos_tle_iss_related_count
+
+source cratesio_crates_total
+ttl 86400
+force em
+url https://crates.io/api/v1/crates?per_page=1
+wgs84 37.774 -122.419
+field meta.total biosphere_cratesio_crates_total
+
+source cryosphere_nsidc_antarctic_sea_ice_v4
+ttl 86400
+force em
+ecliptic 1
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+last_line cryosphere_antarctic_sea_ice_extent_nsidc
+
+source cryosphere_nsidc_arctic_sea_ice_v4
+ttl 86400
+force em
+ecliptic 1
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+last_line cryosphere_arctic_sea_ice_extent_nsidc
+
+source cryosphere_nsidc_sea_ice
+ttl 86400
+force em
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+wgs84 40.008 -105.263
+format csv
+last_row extent hydrosphere_sea_ice_extent_north_mkm2
+last_row area hydrosphere_sea_ice_area_north_mkm2
+
+source cryosphere_nsidc_sea_ice_north
+ttl 86400
+force em
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+wgs84 40.008 -105.263
+format csv
+last line cryosphere_sea_ice_extent_north_raw
+
+source cryosphere_nsidc_sea_ice_south
+ttl 86400
+force em
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+wgs84 -75.250 -0.071
+format csv
+last line cryosphere_sea_ice_extent_south_raw
+
+source cryosphere_permafrost_barrow
+ttl 86400
+force em
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+wgs84 71.29 -156.57
+format csv
+last_row 8 cryosphere_permafrost_temp_barrow_c
+
+source cryosphere_sea_ice_north
+ttl 86400
+force em
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+wgs84 40.008 -105.263
+format csv
+last_row extent cryosphere_sea_ice_north_mkm2
+
+source cryosphere_sea_ice_south
+ttl 86400
+force em
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+wgs84 -75.250 -0.071
+format csv
+last_row extent cryosphere_sea_ice_south_mkm2
+
+source dartmouth_flood_observatory_global
+ttl 86400
+force diffusion
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item flood_event_count
+
+source dasch_harvard_agn_lightcurves
+ttl 86400
+force em
+ssb
+url https://dasch.rc.fas.harvard.edu/lightcurve.php?objid=GJ+551&type=json&limit=500
+map .
+field 0 jd
+field 1 magnitude
+field 2 magnitude_error
+
+source earth_coastlines_110m
+ttl 86400
+force em
+ssb
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_coastline.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.name coastline_name
+
+source earth_country_boundaries_110m
+ttl 86400
+force em
+ssb
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.name boundary_name
+
+source earthscope_fdsn_stations
+ttl 86400
+force acoustic
+url https://service.earthscope.org/fdsnws/station/1/query?format=text&limit=50000
+format text
+rows
+pos station_latitude station_longitude
+field_in 0 network_code
+field_in 1 station_code
+field_in 2 station_latitude
+field_in 3 station_longitude
+field_in 4 station_elevation_m
+field_in 5 site_name
+
+source ebi_mgnify_marine_metagenomes
+ttl 86400
+force diffusion
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update&biome_name=root:Environmental:Aquatic:Marine
+map data
+lat_key latitude
+lon_key longitude
+field attributes.study-name study_name
+field attributes.biome biome_name
+
+source ebi_mgnify_public_metagenome_studies
+ttl 86400
+force diffusion
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update
+map data
+lat_key latitude
+lon_key longitude
+field attributes.study-name study_name
+field attributes.biome biome_name
+field attributes.last-update last_update
+
+source emdat_disasters
+ttl 86400
+force gravity
+url https://services.arcgis.com/LG9Yn2oFqZi5PnO5/arcgis/rest/services/EDMAT_Disaster_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.totalDeath emdat_total_deaths
+field properties.totalAffected emdat_total_affected
+field properties.numberInjured emdat_injured
+field properties.numberHomeless emdat_homeless
+
+source ena_16s_amplicon_environmental_samples
+ttl 86400
+force diffusion
+url https://www.ebi.ac.uk/ena/portal/api/search?result=sample&query=tax_tree(2)&format=tsv&limit=500
+wgs84 0.0 0.0
+format text
+rows
+field 0 sample_accession
+field 1 description
+field 2 tax_id
+
+source energy_nasa_power_daily
+ttl 86400
+force em
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,RH2M,WS10M,PRECTOTCORR&community=AG&longitude={lon}&latitude={lat}&start={date}&end={date}&format=JSON
+path properties.parameter.T2M.0 energy_nasa_temp_c
+path properties.parameter.RH2M.0 energy_nasa_humidity_pct
+path properties.parameter.WS10M.0 energy_nasa_wind_ms
+path properties.parameter.PRECTOTCORR.0 energy_nasa_precip_mm
+
+source energy_pvgis_solar
+ttl 86400
+force em
+url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-ERA5&startyear={year}&endyear={year}&outputformat=json
+path outputs.hourly.0.G(i) energy_solar_ghi_wm2
+path outputs.hourly.0.T2m energy_solar_temp_c
+path outputs.hourly.0.WS10m energy_solar_wind_ms
+
+source eog_viirs_monthly_ntl_metadata
+ttl 86400
+force em
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP46A2&page_size=200
+count feed.entry viirs_ntl_granule_count
+
+source esa_cci_soil_moisture_erddap
+ttl 86400
+force diffusion
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_mynrt_l4_P1D-m.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sla sea_level_anomaly_m
+
+url https://data.ceda.ac.uk/neodc/esacci/sst/data
+ttl 86400
+force thermal
+url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS
+map .
+lat_key lat
+lon_key lon
+field sst_analysed sea_surface_temp_c
+field sst_uncertainty sst_uncertainty_k
+field time observation_time
+
+source esa_swarm_magnetic_field_hapi
+ttl 86400
+force gravity
+url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude&start={today}T00:00:00Z&stop={tomorrow}T00:00:00Z
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+
+source esa_worldcover_stac
+ttl 86400
+force diffusion
+url https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field properties.title product_title
+field properties.date product_date
+field properties.cloudCover cloud_cover_pct
+
+source esri_alternate_fuel
+ttl 86400
+force em
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Alternate_Fuel/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.Station_Id station_id
+field_in attributes.Station_Name station_name
+field_in attributes.Fuel_Type fuel_type
+field_in attributes.Address address
+field_in attributes.City city
+field_in attributes.State state
+field_in attributes.Zipcode zipcode
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_temp_historic
+ttl 86400
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_historic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.Date_ date_
+field_in attributes.Anomaly anomaly
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_noaa_temp_yearly_historic
+ttl 86400
+force thermal
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_yearly_historic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.OBJECTID objectid
+field_in attributes.Date_ date_
+field_in attributes.Anomaly anomaly
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_tide_flooding_outlook
+ttl 86400
+force advective
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Monthly_High_Tide_Flooding_Outlook_Daily_Flood_Likelihood/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.Station_ID station_id
+field_in attributes.Station_Name station_name
+field_in attributes.Latitude latitude
+field_in attributes.Longitude longitude
+field_in attributes.Daily_Flood_Likelihood flood_likelihood
+lat_key geometry.y
+lon_key geometry.x
+
+source esri_tsunami_tide_stations
+ttl 86400
+force advective
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Tsunami_Capable_Tide_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+map features
+field_in attributes.STAT station_id
+field_in attributes.STAT_NAME station_name
+field_in attributes.STAT_ST state
+field_in attributes.STAT_LAT latitude
+field_in attributes.STAT_LONG longitude
+lat_key geometry.y
+lon_key geometry.x
+
+source exoplanet_confirmed_total
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json
+wgs84 42.365 -71.105
+last_line exosphere_exoplanets_confirmed_total
+
+source exosphere_swpc_space_weather_alerts
+ttl 86400
+force advective
+ssb
+url https://services.swpc.noaa.gov/products/alerts.json
+count lines exosphere_swpc_alert_count
+
+source exosphere_donki_legacy_cme
+ttl 86400
+force advective
+ssb
+url https://services.swpc.noaa.gov/products/alerts.json
+count lines exosphere_donki_cme_count_2024
+
+source exosphere_donki_legacy_flares
+ttl 86400
+force em
+ssb
+url https://services.swpc.noaa.gov/products/alerts.json
+count lines exosphere_donki_flare_count_2024
+
+source exosphere_donki_legacy_gst
+ttl 86400
+force advective
+ssb
+url https://services.swpc.noaa.gov/products/alerts.json
+count lines exosphere_donki_gst_count_2024
+
+source exosphere_donki_legacy_hss
+ttl 86400
+force advective
+ssb
+url https://services.swpc.noaa.gov/products/alerts.json
+count lines exosphere_donki_hss_count_2024
+
+source exosphere_donki_legacy_ips
+ttl 86400
+force advective
+ssb
+url https://services.swpc.noaa.gov/products/alerts.json
+count lines exosphere_donki_ips_count_2024
+
+source exosphere_donki_legacy_mpc
+ttl 86400
+force advective
+ssb
+url https://services.swpc.noaa.gov/products/alerts.json
+count lines exosphere_donki_mpc_count_2024
+
+source exosphere_donki_legacy_sep
+ttl 86400
+force advective
+ssb
+url https://services.swpc.noaa.gov/products/alerts.json
+count lines exosphere_donki_sep_count_2024
+
+source exosphere_exoplanet_count
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+512+ra,dec,sy_dist,pl_eqt,pl_rade,pl_orbper,pl_bmasse+FROM+pscomppars+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+field_in pl_eqt cosmic_exoplanet_eqt_k
+field_in pl_rade cosmic_exoplanet_radius_re
+field_in pl_orbper cosmic_exoplanet_period_d
+field_in pl_bmasse cosmic_exoplanet_mass_earth
+dist_key sy_dist 3.085677581e16
+
+source exosphere_f107_flux
+ttl 86400
+force em
+ssb
+url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+field 0.flux exosphere_f107_sfu
+
+source exosphere_hot_jupiters
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+256+ra,dec,sy_dist,pl_eqt,pl_orbper+FROM+pscomppars+WHERE+pl_orbper%3C1+AND+sy_dist+IS+NOT+NULL+ORDER+BY+pl_orbper+ASC&format=json
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+field_in pl_eqt hot_jupiter_eqt_k
+field_in pl_orbper hot_jupiter_period_d
+dist_key sy_dist 3.085677581e16
+
+source fermi_4fgl_dr3_vizier
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,F1000i,PLGam+FROM+%22IX/67/4fgldr3%22
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+field_in 2 agn_gamma_flux_1000
+field_in 3 agn_pl_index
+
+source fermi_lat_4fgl_dr4
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,redshift,flux_100_300000,spectral_index,object_type,nu_flux,z_phot+FROM+fermilpsc+WHERE+flux_100_300000+IS+NOT+NULL+ORDER+BY+flux_100_300000+DESC&FORMAT=text&limit=2000
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field name source_name
+field flux_100_300000 flux_100mev_300gev_erg_cm2s
+field spectral_index spectral_index
+field object_type object_class
+field nu_flux nuflux_erg_cm2s
+field z_phot photometric_redshift
+
+source gbif_invasive_occurrences
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species species_name
+field_in country country_code
+field_in year observation_year
+
+source gbif_marine_species_global
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&basisOfRecord=HUMAN_OBSERVATION&decimalLatitude=-90,90&habitat=MARINE
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field kingdom kingdom
+field phylum phylum
+field order order
+field family family
+field country country_code
+
+source gbif_occurrence_invasive
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species species_name
+field_in countryCode country_code
+field_in year observation_year
+field_in eventDate observation_date
+field_in basisOfRecord basis_of_record
+
+source gbif_species_richness_africa
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&decimalLatitude=-35,38&decimalLongitude=-20,55&basisOfRecord=HUMAN_OBSERVATION
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field genus genus
+field family family
+field kingdom kingdom
+field country country_code
+field eventDate observation_date
+
+source gem_global_active_faults
+ttl 86400
+force seismic-surface
+url https://raw.githubusercontent.com/GEMScienceTools/gem-global-active-faults/master/geojson/gem_active_faults.geojson
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field properties.name fault_name
+field properties.slip_type slip_type
+field properties.net_slip_rate slip_rate_mm_yr
+field properties.country country
+field properties.aseismic_slip_factor aseismic_factor
+
+source geosphere_africaarray_stations
+ttl 86400
+force em
+ecliptic 1
+url https://geofon.gfz.de/fdsnws/station/1/query?format=geojson&level=station&network=AF
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.station geosphere_africaarray_station_code
+field_in properties.network geosphere_africaarray_network
+field_in properties.site.name geosphere_africaarray_station_name
+alt_key geometry.coordinates.2
+
+source geosphere_clms_collections
+ttl 86400
+force em
+ecliptic 1
+url https://catalogue.clms.copernicus.eu/odc/api/v1/collections
+map collections
+field_in id geosphere_clms_collection_id
+field_in title geosphere_clms_title
+field_in description geosphere_clms_description
+field_in spatial_extent.bbox.0 geosphere_clms_bbox_minx
+field_in spatial_extent.bbox.1 geosphere_clms_bbox_miny
+field_in spatial_extent.bbox.2 geosphere_clms_bbox_maxx
+field_in spatial_extent.bbox.3 geosphere_clms_bbox_maxy
+
+source geosphere_earthquakes_2015_M5
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_2016_M5
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_2017_M5
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_2018_M5
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_2019_M5
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_2020_M5
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_2021_M5
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_2022_M5
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_2023_M5
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_2024_M5
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_historical
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_m4_decade
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_m6_historical
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_usgs_m4plus_decade
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4.5&limit=300
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_ga_seismic_stations
+ttl 86400
+force em
+ecliptic 1
+url https://seismic-api.science.unimelb.edu.au/monitoring-sites
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.station geosphere_ga_station_code
+field_in properties.network geosphere_ga_network
+field_in properties.type geosphere_ga_sensor_type
+
+source geosphere_historical_soil
+ttl 86400
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto
+last soil_temperature_0_to_7cm geosphere_hist_soil_temp_surface_c
+last soil_moisture_0_to_7cm geosphere_hist_soil_moisture_surface_m3m3
+
+source geosphere_intermagnet_observatories
+ttl 86400
+force em
+ecliptic 1
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
+map catalog
+field_in id geosphere_magnetometer_id
+field_in title geosphere_magnetometer_title
+
+source geosphere_iris_seismic_networks
+ttl 86400
+force em
+ecliptic 1
+url https://service.earthscope.org/fdsnws/station/1/query?level=network&format=geocsv
+map features
+field_in properties.network geosphere_seismic_network_code
+field_in properties.description geosphere_seismic_network_name
+
+source geosphere_iris_seismic_stations
+ttl 86400
+force em
+ecliptic 1
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net={net}
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.station geosphere_seismic_station_code
+field_in properties.network geosphere_seismic_network
+field_in properties.site.name geosphere_seismic_station_name
+field_in properties.elevation geosphere_seismic_elevation_m
+alt_key geometry.coordinates.2
+
+source geosphere_noaa_ch4_global
+ttl 86400
+force em
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+wgs84 19.5362 -155.5763
+last_row average atmosphere_ch4_ppb_global
+
+source geosphere_noaa_co2_annual_mean
+ttl 86400
+force em
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+wgs84 19.5362 -155.5763
+last_line atmosphere_co2_annual_mean_global
+
+source geosphere_noaa_co2_mlo_monthly
+ttl 86400
+force em
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+wgs84 19.5362 -155.5763
+last_row average atmosphere_co2_ppm_mlo_monthly
+
+source geosphere_noaa_n2o_global
+ttl 86400
+force em
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+wgs84 19.5362 -155.5763
+last_row average atmosphere_n2o_ppb_global
+
+source geosphere_noaa_sf6_global
+ttl 86400
+force em
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+wgs84 19.5362 -155.5763
+last_row average atmosphere_sf6_ppt_global
+
+source geosphere_orfeus_stations
+ttl 86400
+force seismic-body
+url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01
+format text
+rows
+lat_key 2
+lon_key 3
+field_in 0 geosphere_orfeus_network
+field_in 1 geosphere_orfeus_station
+field_in 4 geosphere_orfeus_elevation_m
+
+source geosphere_usdm_conus_drought
+ttl 86400
+force em
+url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
+wgs84 40.820 -96.702
+field 0.DSCI hydrosphere_conus_drought_severity_index
+
+source geosphere_usgs_volcanoes_hans
+ttl 86400
+force seismic-surface
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+map .
+lat_key latitude
+lon_key longitude
+field_in elevation_meters geosphere_volcano_elevation_m
+field_in vnum geosphere_volcano_vnum
+
+source gfz_geofon_stations
+ttl 86400
+force seismic-body
+url https://geofon.gfz-potsdam.de/fdsnws/station/1/query?level=station&network=GE
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+field SiteDescription station_name
+
+source github_repos_total
+ttl 86400
+force em
+url https://api.github.com/search/repositories?q=stars:>0&per_page=1
+wgs84 37.774 -122.419
+field total_count biosphere_github_repos_total
+
+source github_users_total
+ttl 86400
+force em
+url https://api.github.com/search/users?q=type:user&per_page=1
+wgs84 37.774 -122.419
+field total_count biosphere_github_users_total
+
+source gldas_soil_temperature
+ttl 86400
+force thermal
+url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilTMP0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
+format text
+rows
+field_in 0 timestamp_utc
+field_in 1 soil_temp_0_10cm_k
+
+source global_mangrove_atlas_countries
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mangrove_countries.json
+map data
+lat_key latitude
+lon_key longitude
+field country country_name
+field iso3 country_iso3
+field country_area_km2 country_area_km2
+field mangrove_area_km2 mangrove_area_km2
+field percent_mangrove mangrove_percent_total
+
+source gtnp_active_layer_thickness
+ttl 86400
+force thermal
+url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
+map data
+lat_key location.lat
+lon_key location.lng
+field name station_name
+field id station_id
+field location.country country
+field active_layer_thickness alt_m
+field measurement_date measurement_year
+
+source gtnp_borehole_extended
+ttl 86400
+force thermal
+url https://gtnp.arcticportal.org/api/v1/gtnp-boreholes?format=json&limit=500
+map data
+lat_key location.lat
+lon_key location.lon
+field name borehole_name
+field id borehole_id
+field temperature_mean_c mean_annual_temp_c
+field depth_m borehole_depth_m
+field elevation_m elevation_m
+
+source gtnp_calm_active_layer_thickness
+ttl 86400
+force diffusion
+url https://gtnp.arcticportal.org/api/v1/calm-data?format=json&limit=500
+map data
+lat_key station.latitude
+lon_key station.longitude
+field value alt_cm
+field station.name station_name
+field year obs_year
+
+source gtnp_permafrost_boreholes
+ttl 86400
+force thermal
+url https://gtnp.arcticportal.org/api/boreholes/?format=json&limit=2000
+map data
+lat_key location.lat
+lon_key location.lng
+field name borehole_name
+field id borehole_id
+field location.country country
+field location.region region
+field elevation elevation_m
+field depth borehole_depth_m
+field temperature.0.mean_annual temp_c
+
+source gtnp_tsp_annual_ground_temperatures
+ttl 86400
+force thermal
+url https://gtnp.arcticportal.org/api/v1/tsp-annual?format=json&limit=500
+map data
+lat_key station.latitude
+lon_key station.longitude
+field value ground_temp_c
+field station.name station_name
+field year obs_year
+
+source gtnp_tsp_borehole_station_list
+ttl 86400
+force diffusion
+url https://gtnp.arcticportal.org/api/v1/stations?format=json&limit=500
+map data
+lat_key station.latitude
+lon_key station.longitude
+field station.name station_name
+field station.country country
+
+source gvp_wfs_holocene_eruptions
+ttl 86400
+force seismic-surface
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=application/json&count=1000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.Eruption_Number eruption_id
+field properties.Volcano_Number volcano_id
+field properties.Volcano_Name volcano_name
+field properties.Eruption_Year eruption_year
+field properties.Eruption_Month eruption_month
+field properties.Eruption_Day eruption_day
+field properties.VEI vei_index
+field properties.Evidence_Method evidence_method
+field properties.Explosivity_Index explosivity_class
+
+source gvp_wfs_holocene_eruptions_csv
+ttl 86400
+force seismic-surface
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=csv&count=1000
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Eruption_Number eruption_id
+field Volcano_Number volcano_id
+field Volcano_Name volcano_name
+field Eruption_Year eruption_year
+field Eruption_Month eruption_month
+field Eruption_Day eruption_day
+field VEI vei_index
+
+source gvp_wfs_holocene_volcanoes
+ttl 86400
+force seismic-surface
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=application/json&count=1000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.Volcano_Number volcano_id
+field properties.Volcano_Name volcano_name
+field properties.Primary_Volcano_Type volcano_type
+field properties.Last_Eruption_Year last_eruption_year
+field properties.Country country
+field properties.Region region
+field properties.Elevation elevation_m
+field properties.Tectonic_Setting tectonic_setting
+field properties.Evidence_Category evidence_category
+field properties.Major_Rock_Type major_rock_type
+
+source gvp_wfs_holocene_volcanoes_csv
+ttl 86400
+force seismic-surface
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=csv&count=1000
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Volcano_Number volcano_id
+field Volcano_Name volcano_name
+field Primary_Volcano_Type volcano_type
+field Last_Eruption_Year last_eruption_year
+field Country country
+field Region region
+field Elevation elevation_m
+field Tectonic_Setting tectonic_setting
+
+source gvp_wfs_pleistocene_volcanoes
+ttl 86400
+force seismic-surface
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Pleistocene_Volcanoes&outputFormat=application/json&count=1000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.Volcano_Number volcano_id
+field properties.Volcano_Name volcano_name
+field properties.Country country
+field properties.Region region
+field properties.Elevation elevation_m
+field properties.Geologic_Epoch geologic_epoch
+
+source halley_vectors
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_halley.json
+wgs84 34.201 -118.171
+ephemeris orbital_halley_distance
+extent 3.34e-8
+
+source hdx_cod_ps_humanitarian_administrative_boundaries
+ttl 86400
+force diffusion
+ecliptic 1
+url https://data.humdata.org/api/3/action/package_search?q=type:administrative-boundary&rows=500
+map result.results
+field title region_name
+field notes description
+field organization.title org
+
+source heasarc_3fhl_high_energy_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_10_1000,flux_10_30,flux_30_100,flux_100_1000,spectral_index,redshift,assoc_name+FROM+fermifhl+WHERE+flux_10_1000+IS+NOT+NULL+ORDER+BY+flux_10_1000+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field flux_10_1000 flux_10gev_1tev
+field spectral_index spectral_idx
+field assoc_name associated_name
+
+source heasarc_4fgl_blazars_only
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,redshift,spectral_index,nu_synpeak,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','FSRQ')+AND+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field flux_density gamma_flux
+field spectral_index spectral_idx
+field class1 blazar_type
+field assoc_name associated_name
+
+source heasarc_4fgl_dr4_gamma_ray_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,extended,assoc_name,redshift+FROM+fermilpsc+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field flux_density gamma_flux
+field spectral_index spectral_idx
+field signif_avg significance
+field class1 source_class
+field assoc_name associated_name
+
+source heasarc_batse_4b_grb_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2704+name,ra,dec,t90,fluence,peak_flux,time_trigger+FROM+batsegrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name burst_name
+field t90 duration_t90_s
+field fluence fluence_erg_cm2
+field peak_flux peak_flux_ph_cm2_s
+field time_trigger trigger_time_utc
+
+source heasarc_black_hole_binary_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,type,period,mass_donor,mass_bh,dist,classification+FROM+blackholebin+WHERE+ra+IS+NOT+NULL+ORDER+BY+mass_bh+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field type system_type
+field period orbital_period_h
+field mass_donor donor_mass_solar
+field mass_bh bh_mass_solar
+field classification spectral_class
+dist_key dist
+
+source heasarc_chandra_csc2
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,extent_flag,var_flag,conf_flag+FROM+csc+WHERE+conf_flag%3D0+ORDER+BY+name+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field name chandra_src_name
+field extent_flag xray_extended_flag
+field var_flag xray_variable_flag
+
+source heasarc_chandra_deep_field_north
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+700+name,ra,dec,soft_flux,hard_flux,full_flux,band_ratio,photon_index,redshift+FROM+cdfnchandra+WHERE+ra+IS+NOT+NULL+ORDER+BY+full_flux+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field soft_flux flux_soft_kev
+field hard_flux flux_hard_kev
+field full_flux flux_full
+field photon_index photon_idx
+
+source heasarc_chandra_deep_field_south_7ms
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,flux_s,flux_h,flux_f,photon_index_ap,z_ap+FROM+cdfs7ms+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_f+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key z_ap
+field flux_s flux_soft_kev
+field flux_h flux_hard_kev
+field flux_f flux_full
+field photon_index_ap photon_idx
+
+source heasarc_chandra_galactic_center
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,photon_index,exposure+FROM+chan_gc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field flux flux_erg_cm2s
+field photon_index photon_idx
+field exposure exposure_s
+
+source heasarc_chandra_master
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?request=doQuery&lang=ADQL&format=text&query=SELECT+TOP+100+ra,dec,exposure+FROM+chanmaster
+format text
+rows
+ra_key 0
+dec_key 1
+field_in 2 chandra_exposure_sec
+
+source heasarc_chandra_obs
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,instrument,obs_date+FROM+chanmaster+WHERE+status%3D'archived'+AND+exposure%3E10000+ORDER+BY+obs_date+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field obsid observation_id
+field exposure exposure_s
+field instrument instrument
+field obs_date obs_date
+
+source heasarc_chandra_obs_archive
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,detector,time+FROM+chanmaster+WHERE+status%3D%27archived%27+AND+exposure%3E10000+ORDER+BY+time+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field obsid chandra_obsid
+field exposure chandra_exposure_sec
+field detector chandra_detector
+
+source heasarc_chandra_snr_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,distance,age,type,obs_id+FROM+chansnr+WHERE+ra+IS+NOT+NULL+ORDER+BY+distance+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field name snr_name
+field distance distance_kpc
+field age age_yr
+field type snr_type
+
+source heasarc_fermi_4fgl_all
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field pivot_energy pivot_energy_mev
+field flux_density gamma_flux
+field spectral_index spectral_idx
+field signif_avg significance
+field class1 source_class
+field assoc_name associated_name
+
+source heasarc_fermi_4fgl_blazars
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+name,ra,dec,pl_flux_density,pl_index,detection_significance,source_type+FROM+fermilpsc+WHERE+detection_significance%3E10+AND+source_type+IN+(%27bll%27,%27fsrq%27,%27bcu%27)+ORDER+BY+pl_flux_density+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name blazar_name
+field pl_flux_density blazar_flux_1gev
+field source_type blazar_class
+
+source heasarc_fermi_4fgl_dr4
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,detection_significance,pl_flux_density,pl_index,source_type+FROM+fermilpsc+WHERE+detection_significance%3E10+ORDER+BY+detection_significance+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name gamma_source_name
+field pl_flux_density gamma_flux_1gev
+field pl_index spectral_index
+field source_type gamma_source_class
+
+source heasarc_fermi_4lac_agn
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3500+name,ra,dec,redshift,flux_1_100_gev,source_type,nu_syn+FROM+fermilac+WHERE+redshift+IS+NOT+NULL+AND+redshift%3E0+ORDER+BY+flux_1_100_gev+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field name agn_name
+field flux_1_100_gev agn_flux_1gev
+field nu_syn synchrotron_peak_hz
+field source_type agn_class
+
+source heasarc_fermi_blazars
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','bll','FSRQ','fsrq','BCU','bcu')+ORDER+BY+flux_density+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field flux_density gamma_flux
+field spectral_index spectral_idx
+field signif_avg significance
+field class1 blazar_type
+field assoc_name associated_name
+
+source heasarc_fermi_gbm_burst_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,t90,fluence,peak_flux,redshift,trigger_time,classification+FROM+fermigbrst+WHERE+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name burst_name
+field t90 duration_t90_s
+field fluence fluence_erg_cm2
+field peak_flux peak_flux_ph_cm2_s
+field redshift redshift
+field trigger_time trigger_time_utc
+field classification burst_classification
+
+source heasarc_fermi_gbm_tgf_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,lat,lon,trigger_time,duration,e_mean,counts+FROM+fermitgf+WHERE+lat+IS+NOT+NULL+ORDER+BY+counts+DESC
+format text
+rows
+lat_key lat
+lon_key lon
+field name tgf_name
+field trigger_time detection_utc
+field duration duration_ms
+field e_mean mean_energy_keV
+field counts total_photon_counts
+
+source heasarc_fourfgl_dr4
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Source_Name,CLASS1,GLON,GLAT,nu_flux,nu_flux_1000,LP_Index,Pivot_Energy,TS+FROM+public.angel_fourfgl+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+nu_flux+DESC&FORMAT=text
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Source_Name source_name
+field CLASS1 source_class
+field nu_flux energy_flux_1to100_gev_cm2s
+field LP_Index spectral_index
+
+source heasarc_hmxb_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,spinper,dist,optical_name+FROM+hmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field class source_class
+field period orbital_period_d
+field spinper spin_period_s
+field lx luminosity_erg_s
+field optical_name optical_counterpart
+dist_key dist
+
+source heasarc_icecube_10yr_ps_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,ts,flux,p_value,sigma+FROM+icecube_ps_10y+WHERE+ra+IS+NOT+NULL+ORDER+BY+ts+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field ts test_statistic
+field flux neutrino_flux
+field p_value p_value
+field sigma significance_sigma
+
+source heasarc_integral_ibis
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+name,ra,dec,sb_flux,hb_flux,source_type+FROM+intibisag2+WHERE+sb_flux+IS+NOT+NULL+ORDER+BY+sb_flux+DESC
+format text
+rows
+ra_key 1
+dec_key 2
+field_in 0 source_name
+field_in 3 soft_band_flux
+field_in 4 hard_band_flux
+field_in 5 source_type
+
+source heasarc_integral_ibis_grb_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,t90,fluence,peak_flux,time_trigger,error_radius+FROM+intgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name burst_name
+field t90 duration_t90_s
+field fluence fluence_erg_cm2
+field peak_flux peak_flux
+field time_trigger trigger_time_utc
+field error_radius position_error_arcmin
+
+source heasarc_lmxb_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,dist,compact_type+FROM+lmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field class source_class
+field period orbital_period_d
+field lx luminosity_erg_s
+field compact_type compact_object_type
+dist_key dist
+
+source heasarc_maxi_gsc7yr_xray
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,flux_4_10,flux_3_10,flux_10_20,object_type,redshift,error_radius,hardness_ratio_1+FROM+maxigsc7yr+WHERE+flux_4_10+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC&FORMAT=text&limit=2000
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field name source_name
+field flux_4_10 flux_4_10_erg_cm2s
+field flux_3_10 flux_3_10_erg_cm2s
+field object_type object_class
+field error_radius pos_error_arcsec
+field hardness_ratio_1 hardness_ratio
+
+source heasarc_maxi_gsc_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_4_10,flux_10_20,flux_20_40,n_sigma,type+FROM+maxigsc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field flux_4_10 flux_4to10_keV
+field flux_10_20 flux_10to20_keV
+field flux_20_40 flux_20to40_keV
+field type source_type
+
+source heasarc_mopitt_co_profile_l3
+ttl 86400
+force diffusion
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+latitude,longitude,co_total_column,co_surface,co_500hpa,co_300hpa,date+FROM+mopittl3m+WHERE+latitude+IS+NOT+NULL+ORDER+BY+co_total_column+DESC
+format text
+rows
+lat_key latitude
+lon_key longitude
+field co_total_column co_total_col
+field co_surface co_surface
+field co_500hpa co_500hpa
+field co_300hpa co_300hpa
+field date obs_date
+
+source heasarc_pulsar_wind_nebulae
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+name,ra,dec,dist,assoc_pulsar,luminosity_x,size_arcmin+FROM+pwncat+WHERE+ra+IS+NOT+NULL+ORDER+BY+luminosity_x+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name pwn_name
+field dist distance_kpc
+field assoc_pulsar associated_pulsar
+field luminosity_x x_ray_luminosity
+field size_arcmin angular_size_arcmin
+
+source heasarc_rosat_2rxs
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,source_extent,hardness_ratio_1,hardness_ratio_2,detection_likelihood+FROM+rass2rxs+WHERE+detection_likelihood%3E6+ORDER+BY+count_rate+DESC
+format text
+rows
+ra_key 1
+dec_key 2
+field_in 0 source_name
+field_in 3 xray_count_rate_cts
+field_in 4 source_extent
+field_in 5 hardness_ratio_1
+field_in 6 hardness_ratio_2
+field_in 7 detection_likelihood
+
+source heasarc_rosat_bright_source_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field count_rate xray_count_rate
+field hr1 hardness_ratio_1
+field hr2 hardness_ratio_2
+field ext source_extent
+
+source heasarc_rosat_bsc
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+format text
+rows
+ra_key 1
+dec_key 2
+field_in 0 source_name
+field_in 3 xray_count_rate
+field_in 4 hardness_ratio_1
+field_in 5 hardness_ratio_2
+field_in 6 source_extent
+
+source heasarc_rosat_xclass_clusters
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,redshift,count_rate,flux_0_1_2_4,luminosity_0_1_2_4,ext+FROM+xcsunion+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_0_1_2_4+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field count_rate xray_count_rate
+field flux_0_1_2_4 xray_flux
+field luminosity_0_1_2_4 xray_luminosity
+field ext extent
+
+source heasarc_rxte_asm
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Name,Avg_Rate,Rate_Err+FROM+public.rxte_asm+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Avg_Rate+DESC&FORMAT=text
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field Avg_Rate average_rate_ct_s
+field Rate_Err rate_error
+
+source heasarc_rxte_asm_xray_sources
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,count_rate+FROM+rxmtasm+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field flux xray_flux
+field flux_err flux_error
+field count_rate count_rate
+
+source heasarc_sage2_aerosol_extinction
+ttl 86400
+force diffusion
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
+format text
+rows
+lat_key latitude
+lon_key longitude
+field date measurement_date
+field altitude altitude_km
+field ext525 extinction_525nm_km
+field ext1020 extinction_1020nm_km
+
+source heasarc_swift_bat105m
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+2000+name,ra,dec,flux,redshift,source_type+FROM+swbat105m+WHERE+flux+IS+NOT+NULL+ORDER+BY+flux+DESC
+format text
+rows
+ra_key 1
+dec_key 2
+z_key 4
+field_in 0 source_name
+field_in 3 hard_xray_flux
+field_in 5 source_type
+
+source heasarc_swift_bat_grb_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,t90,fluence,redshift,time_trigger,xrt_column,host_galaxy+FROM+swiftgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name burst_name
+field t90 duration_t90_s
+field fluence fluence_erg_cm2
+field redshift redshift
+field time_trigger trigger_time_utc
+field host_galaxy host_galaxy_name
+
+source heasarc_tevcat_ground_based
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,energy_range,flux>100_mev,redshift,type,association+FROM+tevcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+name+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field energy_range energy_range_tev
+field flux>100_mev gamma_flux
+field type source_type
+field association association
+
+source heasarc_threefhl
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Source_Name,ASSOC1,TeV_Flag,GLON,GLAT,Energy_Flux_Band3,Power_Index+FROM+public.angel_threefhl+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Energy_Flux_Band3+DESC&FORMAT=text
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Source_Name source_name
+field ASSOC1 associated_source
+field Energy_Flux_Band3 energy_flux_10gev_2tev_erg_cm2s
+
+source heasarc_xmm_4xmm_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name xmm_src_name
+field ep_flux xmm_flux_erg_cm2s
+
+source heasarc_xmm_4xmm_dr13
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
+format text
+rows
+ra_key sc_ra
+dec_key sc_dec
+field sc_flux8 xray_flux
+field sc_hr4 hardness_ratio
+field sc_var_flag variability_flag
+
+source heasarc_xmm_obs
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,target_name,ra,dec,duration,revolution+FROM+xmmmaster+WHERE+pn_filter+IS+NOT+NULL+ORDER+BY+revolution+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field obsid observation_id
+field target_name target_name
+field duration exposure_s
+field revolution revolution
+
+source heasarc_xrb_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field class xrb_class
+field period orbital_period_d
+field spinper pulse_period_s
+field lx x_ray_luminosity
+field donor_type donor_star_type
+dist_key dist
+
+source hydrosphere_emodnet_vessel_density
+ttl 86400
+force em
+url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+wgs84 51.231 2.928
+count features biosphere_vessel_density_feature_count
+
+source hydrosphere_oisst_sst
+ttl 86400
+force thermal
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?sst%5B(last)%5D%5B(0.0)%5D%5B(-89.875):20:(89.875)%5D%5B(-179.875):20:(179.875)%5D
+map table.rows
+lat_key 2
+lon_key 3
+field_in 4 hydrosphere_sst_c
+
+source hydrosphere_ooi_ga01sumo_pco2
+ttl 86400
+force em
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+wgs84 46.05 -125.00
+format csv
+last_row surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm
+last_row sea_surface_temperature hydrosphere_sst_ooi_c
+
+source hydrosphere_pmel_co2_air
+ttl 86400
+force em
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
+wgs84 47.606 -122.335
+format csv
+last line hydrosphere_pmel_co2_mooring_raw
+
+source hydrosphere_pmel_co2_ph
+ttl 86400
+force em
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?station_id,longitude,latitude,time,pCO2_sw,pH_sw&orderByMax(%22station_id%2Ctime%22)
+wgs84 47.6062 -122.3321
+format csv
+last_row pCO2_sw hydrosphere_pco2_pmel_uatm
+last_row pH_sw hydrosphere_ph_pmel
+
+source icos_fluxnet_tower_stations
+ttl 86400
+force diffusion
+url https://meta.icos-cp.eu/sparql?format=json&query=SELECT%20?uri%20?name%20?lat%20?lon%20?alt%20?country%20?ecosys%20WHERE%20%7B?uri%20a%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/ES%3E%20%3B%20%3Chttp://www.w3.org/2000/01/rdf-schema%23label%3E%20?name%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude%3E%20?lat%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude%3E%20?lon%7D
+map results.bindings
+lat_key lat.value
+lon_key lon.value
+field name.value station_name
+field country.value country_code
+field alt.value altitude_m
+field ecosys.value ecosystem_type
+
+source iers_eop_bulletinb_daily
+ttl 86400
+force em
+url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+format text
+pos 0 0
+field col2 mjd
+field col3 x_pole_coordinate_mas
+field col4 y_pole_coordinate_mas
+field col5 ut1_minus_utc_ms
+field col6 dX_celestial_pole_mas
+field col7 dY_celestial_pole_mas
+
+source iers_rapid_eop_c04
+ttl 86400
+force gravity
+ecliptic 1
+url https://datacenter.iers.org/data/9/finals2000A.all
+format text
+rows
+field 0 mjd
+field 1 x_pole x_pole_arcsec
+field 2 y_pole y_pole_arcsec
+field 3 ut1_utc ut1_utc_offset_ms
+field 4 lod length_of_day_ms
+field 5 dpsi dpsi_arcsec
+field 6 deps deps_arcsec
+
+source iers_ut1_utc
+ttl 86400
+force em
+ecliptic 1
+url https://maia.usno.navy.mil/ser7/finals2000A.daily
+last_line geosphere_ut1_utc_iers
+
+source igs_gnss_stations_global
+ttl 86400
+force seismic-surface
+url https://network.igs.org/api/public/stations?format=json
+map .
+lat_key lat
+lon_key lon
+field site_code station_code
+field name station_name
+field country country
+field is_active active_status
+field elevation elevation_m
+
+source illustristng_tng100_halo_catalog
+ttl 86400
+force gravity
+url https://www.tng-project.org/api/TNG100-1/snapshots/99/halos/?format=json&limit=500&order_by=-mass_log_msun
+wgs84 0.0 0.0
+map results
+field id halo_id
+field mass_log_msun log10_halo_mass_solar
+field vel_disp velocity_dispersion_km_s
+field spin spin_parameter
+field subhalo_count num_subhalos
+
+source intermagnet_global_geomagnetic_observatories
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
+map catalog
+field id dataset_id
+field title station_title
+
+source ioc_psmsl_stationlist
+ttl 86400
+force gravity
+url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist
+map .
+lat_key Lat
+lon_key Lon
+field observations ioc_station_observations
+
+source iris_fdsn_ic_au_regional_seismic_networks
+ttl 86400
+force seismic-body
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=IC,AU
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+field SiteDescription location_name
+field StartTime deployment_start
+
+source iris_fdsn_ida_network_stations
+ttl 86400
+force seismic-body
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=II
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Location location_code
+field Elevation elevation_m
+field SiteDescription site_name
+field StartTime start_date
+
+source iris_fdsn_iu_global_seismographic_network
+ttl 86400
+force seismic-body
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=IU
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+field SiteDescription site_description
+field StartTime deployment_start
+
+source iris_ph5_stations
+ttl 86400
+force seismic-body
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&starttime=2020-01-01
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+field SiteDescription station_name
+
+source iris_spud_moment_tensor_solutions
+ttl 86400
+force seismic-body
+url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={today}T23:59:59&catalog=GCMT&format=text&nodata=404
+format text
+rows
+lat_key evla
+lon_key evlo
+field evdp depth_km
+field mag magnitude
+field tensor_name moment_tensor_name
+
+source irsa_2mass_point_source_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=fp_psc&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,j_m,h_m,k_m,ph_qual,gal_contam
+format text
+rows
+ra_key ra
+dec_key dec
+field designation twomass_id
+field j_m j_mag
+field h_m h_mag
+field k_m k_mag
+field ph_qual photo_quality
+field gal_contam galactic_contamination
+
+source irsa_2mass_psc
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+format text
+rows
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+source irsa_allwise_point_source_database
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,ph_qual
+format text
+rows
+ra_key ra
+dec_key dec
+field designation allwise_id
+field w1mpro w1_mag
+field w2mpro w2_mag
+field w3mpro w3_mag
+field w4mpro w4_mag
+field ph_qual photo_quality
+
+source irsa_allwise_psd
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+format text
+rows
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field w3mpro mag_w3
+field w4mpro mag_w4
+
+source irsa_dust_extinction_query
+ttl 86400
+force diffusion
+url https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json
+field statistics.refPixelValueSandF ebv_sfd98_reference
+field statistics.meanValueSandF ebv_sfd98_mean
+field statistics.maxValueSandF ebv_sfd98_max
+field statistics.minValueSandF ebv_sfd98_min
+field descriptionSandF map_description
+
+source irsa_glimpse360_outer_galaxy
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0+FROM+glimpse360_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<12+ORDER+BY+mag3_6+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+
+source irsa_glimpse_i_point_source_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,e_mag3_6,e_mag8_0,sqf_3_6+FROM+glimpsei_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<10+ORDER+BY+mag3_6+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+field e_mag3_6 irac_3_6um_error
+field sqf_3_6 source_quality_3_6
+
+source irsa_glimpse_ii_inner_galactic_plane
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag8_0,e_mag4_5+FROM+glimpseii_psc+WHERE+ra+IS+NOT+NULL+AND+mag4_5<12+ORDER+BY+mag4_5+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag8_0 irac_8_0um_mag
+field e_mag4_5 irac_4_5um_error
+
+source irsa_iras_psc_infrared
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100,var_flg+FROM+iraspsc+WHERE+fnu_25>10+AND+fnu_60>10+ORDER+BY+fnu_60+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field fnu_12 flux_12um_jy
+field fnu_25 flux_25um_jy
+field fnu_60 flux_60um_jy
+field fnu_100 flux_100um_jy
+field var_flg variability_flag
+
+source irsa_mipsgal_24um_point_source_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,f24,e_f24,snr24,flags+FROM+mipsgal_psc+WHERE+ra+IS+NOT+NULL+AND+f24>10+ORDER+BY+f24+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_id
+field f24 flux_24um_mJy
+field e_f24 flux_error_mJy
+field snr24 signal_to_noise_24um
+field flags quality_flags
+
+source irsa_neowise_r10
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000+AND+w1mpro+IS+NOT+NULL
+format text
+rows
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field mjd mjd_obs
+
+source irsa_planck_pccs2_100ghz_compact_sources
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_100mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_100+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_100mJy+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field flux_100mJy flux_100ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+source irsa_planck_pccs2_143ghz_compact_sources
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_143mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_143+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_143mJy+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field flux_143mJy flux_143ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+source irsa_planck_pccs2_217ghz_compact_sources
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_217mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_217+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_217mJy+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field flux_217mJy flux_217ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+source irsa_planck_pr2_sz_cluster_mmf3_catalog
+ttl 86400
+force diffusion
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
+format text
+rows
+ra_key RA
+dec_key DE
+z_key z
+field name cluster_name
+field yn_snr sz_signal_to_noise
+field yn_mass sz_mass_10e14_msun
+field theta500 angular_radius_arcmin
+field dist distance_mpc
+
+source irsa_sage_lmc_infrared_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,i1_f_ap,i2_f_ap,i3_f_ap,i4_f_ap+FROM+sage_lmc+WHERE+ra+IS+NOT+NULL
+format text
+rows
+ra_key ra
+dec_key dec
+field designation sage_id
+field i1_f_ap flux_3_6um
+field i2_f_ap flux_4_5um
+field i3_f_ap flux_5_8um
+field i4_f_ap flux_8_0um
+
+source irsa_sage_lmc_irac_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,fluxj,fluxh,fluxk+FROM+sage_cat_irac+WHERE+ra+IS+NOT+NULL+AND+mag3_6<14+ORDER+BY+mag3_6+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_name
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+field fluxj j_band_flux_mJy
+field fluxh h_band_flux_mJy
+field fluxk k_band_flux_mJy
+
+source irsa_sage_smc_infrared_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
+format text
+rows
+ra_key ra
+dec_key dec
+field j_mag mag_j
+field h_mag mag_h
+field k_mag mag_k
+field ir1_mag mag_ir1
+field ir2_mag mag_ir2
+
+source irsa_sage_smc_irac_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+designation,ra,dec,mag3_6,mag4_5,mag8_0+FROM+sage_cat_irac+WHERE+ra+IS+NOT+NULL+AND+dec<-65+AND+mag3_6<15+ORDER+BY+mag5_8+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_name
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag8_0 irac_8_0um_mag
+
+source irsa_sings_nearby_galaxies
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+target,ra,dec,mips_24_flux,mips_70_flux,mips_160_flux+FROM+spitzer.sings_mipssed_spec+WHERE+ra+IS+NOT+NULL+ORDER+BY+mips_70_flux+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field target galaxy_name
+field mips_24_flux flux_24um_mJy
+field mips_70_flux flux_70um_mJy
+field mips_160_flux flux_160um_mJy
+
+source irsa_sings_nearby_galaxies_photometry
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
+format text
+rows
+ra_key ra
+dec_key dec
+field name galaxy_name
+field dist distance_mpc
+field morph morphology
+field f3p6tot flux_3_6um
+field f4p5tot flux_4_5um
+field f5p8tot flux_5_8um
+field f8p0tot flux_8_0um
+
+source irsa_tap_2mass_galcenter
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',266.4,-29.0,2.0))=1
+format text
+rows
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+source irsa_tap_2mass_psc
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+format text
+rows
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+source irsa_tap_allwise
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+format text
+rows
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field w3mpro mag_w3
+field w4mpro mag_w4
+
+source irsa_wise_zodiacal_emission_proxy
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,w3mpro,w4mpro,w3snr,w4snr,cc_flags+FROM+wise_allwise_p3as_psd+WHERE+ABS(dec-23.44*SIN(ra*3.14159265/180))<10+AND+w4snr>5+AND+w3mpro<8+ORDER+BY+w4mpro+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation wise_id
+field w3mpro w3_12um_mag
+field w4mpro w4_22um_mag
+field w3snr w3_snr
+field w4snr w4_snr
+
+source irsa_ztf_dr20_object_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,gmag,rmag,imag,classtar,sharp
+format text
+rows
+ra_key ra
+dec_key dec
+field oid ztf_object_id
+field gmag g_mag
+field rmag r_mag
+field imag i_mag
+field classtar star_galaxy_score
+field sharp sharpness
+
+source irsa_ztf_objects
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+format text
+rows
+ra_key ra
+dec_key dec
+field oid object_id
+field filterid filter_id
+field medianmag median_mag
+field magrms mag_rms
+
+source irsa_ztf_variables
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+oid,ra,dec,filterid,medianmag,magrms,refmag+FROM+ztf_objects_dr20+WHERE+magrms%3E0.3+AND+ngoodobsrel%3E100
+format text
+rows
+ra_key ra
+dec_key dec
+field oid object_id
+field filterid filter_id
+field medianmag median_mag
+field magrms mag_rms
+
+source isc_catalog_historic
+ttl 86400
+force seismic-body
+url https://www.isc.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&limit=500&orderby=time&starttime=1900-01-01&endtime={today}
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time
+field properties.depth depth_km
+field properties.auth reporting_authority
+
+source isc_seismological_events
+ttl 86400
+force seismic-body
+url http://www.isc.ac.uk/cgi-bin/web-db-run?request=BULLETIN&out_format=CSV&searchshape=RECT&bot_lat=-90&top_lat=90&left_lon=-180&right_lon=180&start_year={year}&start_mon={month}&start_day={day}&start_time=00%3A00%3A00&end_year={year}&end_mon={month}&end_day={day}&end_time=23%3A59%3A59&min_mag=4.5&req_mag_type=mb&req_mag_agcy=ISC
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field EventID event_id
+field Time event_time
+field Depth depth_km
+field Magnitude magnitude
+field MagType mag_type
+field Author agency
+
+source isric_soilgrids_properties
+ttl 86400
+force diffusion
+ecliptic 1
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o,soc,bdod,clay,sand,silt,nitrogen&depth=0-5cm,5-15cm&value=mean
+map properties.phh2o.layers
+field_in name depth_layer
+field_in values.mean ph_h2o_mean
+
+source isro_bhuvan_drought_ndvi
+ttl 86400
+force diffusion
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=drought&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.district district_name
+field properties.state state_name
+field properties.ndvi_anomaly ndvi_anomaly
+field properties.drought_class drought_severity_class
+
+source isro_bhuvan_landslide_india
+ttl 86400
+force seismic-surface
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=landslide&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.district district_name
+field properties.state state_name
+field properties.susceptibility_class susceptibility_class
+
+url https://nsidc.org/api/itslive/antarctica
+ttl 86400
+force gravity
+url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.v_mean mean_speed_m_yr
+field properties.v0 latest_speed_m_yr
+field properties.date_start start_year
+field properties.date_end end_year
+field properties.mission satellite_mission
+
+url https://nsidc.org/api/itslive/greenland
+ttl 86400
+force gravity
+url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=GRE&limit=500&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.v_mean mean_speed_m_yr
+field properties.v0 latest_speed_m_yr
+field properties.date_start start_year
+field properties.date_end end_year
+field properties.mission satellite_mission
+
+source ivs_vlbi_station_catalog
+ttl 86400
+force gravity
+url https://cddis.nasa.gov/archive/vlbi/ivsdata/db/sched/ns-codes.txt
+wgs84 0.0 0.0
+format text
+rows
+field 0 station_code
+field 1 station_name
+field 2 cddis_code
+field 3 domain
+
+source jpl_cad_lunar_distance
+ttl 86400
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&sort=date
+map data
+field_in 0 designation
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 velocity_km_s
+field_in 17 diameter_km
+
+source jpl_cad_lunar_distance_objects
+ttl 86400
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&limit=100
+map data
+lat_key null
+lon_key null
+field des neo_designation
+field dist_min lunar_distances
+field v_rel v_relative_km_s
+field h_mag absolute_magnitude
+field diameter estimated_diameter_km
+field epoch approach_time_jd
+
+source jpl_horizons_apophis_elements
+ttl 86400
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/elements_apophis.json
+wgs84 0.0 0.0
+format text
+rows
+field_in 1 epoch_jd
+field_in 2 eccentricity
+field_in 3 perihelion_dist_au
+field_in 4 inclination_deg
+field_in 5 long_asc_node_deg
+field_in 6 arg_perihelion_deg
+field_in 7 time_perihelion_jd
+
+source jpl_horizons_comet_tsuchinshan_vectors
+ttl 86400
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_comet_c2023_a3.json
+wgs84 0.0 0.0
+format text
+rows
+field 0 epoch_jd
+field 1 x_au
+field 2 y_au
+field 3 z_au
+field 4 vx_au_day
+field 5 vy_au_day
+field 6 vz_au_day
+
+source jpl_horizons_jupiter_observer
+ttl 86400
+force gravity
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+wgs84 0.0 0.0
+format text
+rows
+field 0 epoch_jd
+field 1 ra_deg
+field 2 dec_deg
+field 3 distance_au
+field 4 solar_distance_au
+
+source jpl_horizons_mars_observer
+ttl 86400
+force gravity
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+wgs84 0.0 0.0
+format text
+rows
+field 0 epoch_jd
+field 1 ra_deg
+field 2 dec_deg
+field 3 distance_au
+field 4 solar_distance_au
+
+source jpl_horizons_saturn_observer
+ttl 86400
+force gravity
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+wgs84 0.0 0.0
+format text
+rows
+field 0 epoch_jd
+field 1 ra_deg
+field 2 dec_deg
+field 3 distance_au
+field 4 solar_distance_au
+
+source jpl_horizons_voyager1_vectors
+ttl 86400
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
+wgs84 0.0 0.0
+format text
+rows
+field 0 epoch_jd
+field 1 x_au
+field 2 y_au
+field 3 z_au
+field 4 vx_au_day
+field 5 vy_au_day
+field 6 vz_au_day
+
+source jpl_horizons_voyager2_vectors
+ttl 86400
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager2.json
+wgs84 0.0 0.0
+format text
+rows
+field 0 epoch_jd
+field 1 x_au
+field 2 y_au
+field 3 z_au
+field 4 vx_au_day
+field 5 vy_au_day
+field 6 vz_au_day
+
+source jpl_sbdb
+ttl 86400
+force em
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr={target}
+verify false
+target Ceres
+map object
+field fullname name
+field spkid id
+field orbit_class.code orbit_class
+field epoch epoch
+field e eccentricity
+field a semi_major_axis_au
+field q perihelion_au
+field i inclination_deg
+field node longitude_node_deg
+field per perihelion_arg_deg
+field tp perihelion_time
+field n mean_motion_deg_per_day
+field ma mean_anomaly_deg
+field H abs_magnitude
+
+source jpl_sbdb_ceres_ephemeris
+ttl 86400
+force gravity
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=ceres&phys-par=1
+wgs84 0.0 0.0
+map .
+field object display_name
+field epoch epoch_jd
+field e eccentricity
+field a semimajor_axis_au
+field q perihelion_au
+field i orbital_inclination_deg
+field node ascending_node_deg
+field peri perihelion_argument_deg
+field M mean_anomaly_deg
+field H absolute_magnitude
+field diameter diameter_km
+
+source jpl_sbdb_eris_ephemeris
+ttl 86400
+force gravity
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=eris&phys-par=1
+wgs84 0.0 0.0
+map .
+field object display_name
+field epoch epoch_jd
+field e eccentricity
+field a semimajor_axis_au
+field q perihelion_au
+field i orbital_inclination_deg
+field node ascending_node_deg
+field peri perihelion_argument_deg
+field M mean_anomaly_deg
+field H absolute_magnitude
+field diameter diameter_km
+
+source jpl_sbdb_neo_asteroid_catalog
+ttl 86400
+force gravity
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-group=neo
+wgs84 0.0 0.0
+map data
+field full_name asteroid_name
+field epoch epoch_jd
+field H absolute_magnitude
+field diameter estimated_diameter_km
+field albedo geometric_albedo
+field class orbit_class
+field neo neo_flag
+
+source jpl_sbdb_tno_distant_object_catalog
+ttl 86400
+force gravity
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-class=TNO
+wgs84 0.0 0.0
+map data
+field full_name tno_name
+field a semi_major_axis_au
+field e orbital_eccentricity
+field i orbital_inclination_deg
+field H absolute_magnitude
+field class orbit_class
+field diameter estimated_diameter_km
+
+source kodiaq_quasar_absorbers
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zQSO,%22S%2FN%22+FROM+%22J/ApJ/852/22/sample%22
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+field_in 3 kodiaq_sn
+
+source landsat_c2_l2
+ttl 86400
+force em
+url https://earth-search.aws.element84.com/v1/search
+method post
+body {"collections":["landsat-c2-l2"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
+map features
+lat_key properties.proj:centroid.lat
+lon_key properties.proj:centroid.lon
+field id scene_id
+field collection collection
+field properties.datetime observation_time
+field properties.eo:cloud_cover cloud_cover_pct
+field properties.landsat:collection_number collection_number
+field properties.landsat:wrs_path wrs_path
+field properties.landsat:wrs_row wrs_row
+
+source landsatlook_c2l2
+ttl 86400
+force em
+url https://landsatlook.usgs.gov/stac-server/search
+method post
+body {"collections":["landsat-c2l2"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
+map features
+lat_key properties.proj:centroid.lat
+lon_key properties.proj:centroid.lon
+field id scene_id
+field properties.datetime observation_time
+field properties.eo:cloud_cover cloud_cover_pct
+field properties.landsat:collection_number collection_number
+
+source lasp_lisird_tsis1_hybrid_reference_spectrum
+ttl 86400
+force em
+ssb
+url https://lasp.colorado.edu/lisird/latis/dap/tsis1_hsrs.csv
+format text
+rows
+field wavelength wavelength_nm
+field ssi spectral_irradiance_W_m2_nm
+field uncertainty ssi_uncertainty_W_m2_nm
+
+source lidar_3dep_elevation
+ttl 86400
+force em
+url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&output=json
+field value lidar_3dep_elevation_m
+field resolution lidar_3dep_resolution_m
+
+source lidar_lola_moon_elevation
+ttl 86400
+force em
+url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1
+wgs84 0 0
+field features.0.properties.pc:statistics.2.average lidar_lola_moon_z_mean_m
+field features.0.properties.pc:statistics.2.minimum lidar_lola_moon_z_min_m
+field features.0.properties.pc:statistics.2.maximum lidar_lola_moon_z_max_m
+
+source lidar_lola_moon_point_cloud
+ttl 86400
+force em
+url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1
+wgs84 0 0
+field features.0.properties.pc:count lidar_lola_moon_point_count
+field features.0.properties.pc:density lidar_lola_moon_point_density_per_km2
+
+source lidar_mola_mars_megdr_count
+ttl 86400
+force em
+url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=MEGDR&output=XML
+wgs84 0 0
+regex <Count>([0-9]+)</Count> lidar_mola_mars_megdr_product_count
+
+source lidar_mola_mars_pedr_count
+ttl 86400
+force em
+url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=PEDR&output=XML
+wgs84 0 0
+regex <Count>([0-9]+)</Count> lidar_mola_mars_pedr_product_count
+
+source local_group_dwarf_spheroids
+ttl 86400
+force gravity
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,D,Mass,HRV+FROM+%22J/AJ/144/4/catalog%22
+cmap data
+ra_key 0
+dec_key 1
+dist_key 2 3.0857e19
+field_in 3 local_group_dsph_mass
+radvel_key 4 1000
+
+source magnetosphere_abg
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 18.638 72.872
+path 1.0 magnetosphere_abg_x_nt
+path 1.1 magnetosphere_abg_y_nt
+path 1.2 magnetosphere_abg_z_nt
+path 2 magnetosphere_abg_s_nt
+
+source magnetosphere_abk
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 68.358 18.823
+path 1.0 magnetosphere_abk_x_nt
+path 1.1 magnetosphere_abk_y_nt
+path 1.2 magnetosphere_abk_z_nt
+path 2 magnetosphere_abk_s_nt
+
+source magnetosphere_abk_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 68.358 18.823
+path 1.0 magnetosphere_abk_x_nt
+path 1.1 magnetosphere_abk_y_nt
+path 1.2 magnetosphere_abk_z_nt
+path 2 magnetosphere_abk_f_nt
+
+source magnetosphere_aia
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -65.245 -64.25799999999998
+path 1.0 magnetosphere_aia_x_nt
+path 1.1 magnetosphere_aia_y_nt
+path 1.2 magnetosphere_aia_z_nt
+path 2 magnetosphere_aia_s_nt
+
+source magnetosphere_ars
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 56.433 58.567
+path 1.0 magnetosphere_ars_x_nt
+path 1.1 magnetosphere_ars_y_nt
+path 1.2 magnetosphere_ars_z_nt
+path 2 magnetosphere_ars_s_nt
+
+source magnetosphere_asp
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -23.762 133.883
+path 1.0 magnetosphere_asp_x_nt
+path 1.1 magnetosphere_asp_y_nt
+path 1.2 magnetosphere_asp_z_nt
+path 2 magnetosphere_asp_s_nt
+
+source magnetosphere_asp_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -23.762 133.883
+path 1.0 magnetosphere_asp_x_nt
+path 1.1 magnetosphere_asp_y_nt
+path 1.2 magnetosphere_asp_z_nt
+path 2 magnetosphere_asp_f_nt
+
+source magnetosphere_bdv
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 49.08 14.02
+path 1.0 magnetosphere_bdv_x_nt
+path 1.1 magnetosphere_bdv_y_nt
+path 1.2 magnetosphere_bdv_z_nt
+path 2 magnetosphere_bdv_s_nt
+
+source magnetosphere_bdv_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 49.08 14.02
+path 1.0 magnetosphere_bdv_x_nt
+path 1.1 magnetosphere_bdv_y_nt
+path 1.2 magnetosphere_bdv_z_nt
+path 2 magnetosphere_bdv_f_nt
+
+source magnetosphere_bel
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 51.836 20.789
+path 1.0 magnetosphere_bel_x_nt
+path 1.1 magnetosphere_bel_y_nt
+path 1.2 magnetosphere_bel_z_nt
+path 2 magnetosphere_bel_s_nt
+
+source magnetosphere_bel_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 51.836 20.789
+path 1.0 magnetosphere_bel_x_nt
+path 1.1 magnetosphere_bel_y_nt
+path 1.2 magnetosphere_bel_z_nt
+path 2 magnetosphere_bel_f_nt
+
+source magnetosphere_bfo
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 48.331 8.325
+path 1.0 magnetosphere_bfo_x_nt
+path 1.1 magnetosphere_bfo_y_nt
+path 1.2 magnetosphere_bfo_z_nt
+path 2 magnetosphere_bfo_s_nt
+
+source magnetosphere_bfo_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 48.331 8.325
+path 1.0 magnetosphere_bfo_x_nt
+path 1.1 magnetosphere_bfo_y_nt
+path 1.2 magnetosphere_bfo_z_nt
+path 2 magnetosphere_bfo_f_nt
+
+source magnetosphere_bou
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 40.14 -105.233
+path 1.0 magnetosphere_bou_x_nt
+path 1.1 magnetosphere_bou_y_nt
+path 1.2 magnetosphere_bou_z_nt
+path 2 magnetosphere_bou_s_nt
+
+source magnetosphere_bou_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 40.14 -105.233
+path 1.0 magnetosphere_bou_x_nt
+path 1.1 magnetosphere_bou_y_nt
+path 1.2 magnetosphere_bou_z_nt
+path 2 magnetosphere_bou_f_nt
+
+source magnetosphere_brw
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 71.32 -156.62
+path 1.0 magnetosphere_brw_x_nt
+path 1.1 magnetosphere_brw_y_nt
+path 1.2 magnetosphere_brw_z_nt
+path 2 magnetosphere_brw_s_nt
+
+source magnetosphere_brw_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 71.32 -156.62
+path 1.0 magnetosphere_brw_x_nt
+path 1.1 magnetosphere_brw_y_nt
+path 1.2 magnetosphere_brw_z_nt
+path 2 magnetosphere_brw_f_nt
+
+source magnetosphere_bsl
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 30.35 -89.63999999999999
+path 1.0 magnetosphere_bsl_x_nt
+path 1.1 magnetosphere_bsl_y_nt
+path 1.2 magnetosphere_bsl_z_nt
+path 2 magnetosphere_bsl_s_nt
+
+source magnetosphere_bsl_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 30.35 -89.63999999999999
+path 1.0 magnetosphere_bsl_x_nt
+path 1.1 magnetosphere_bsl_y_nt
+path 1.2 magnetosphere_bsl_z_nt
+path 2 magnetosphere_bsl_f_nt
+
+source magnetosphere_cki
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -12.188 96.834
+path 1.0 magnetosphere_cki_x_nt
+path 1.1 magnetosphere_cki_y_nt
+path 1.2 magnetosphere_cki_z_nt
+path 2 magnetosphere_cki_s_nt
+
+source magnetosphere_cki_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -12.188 96.834
+path 1.0 magnetosphere_cki_x_nt
+path 1.1 magnetosphere_cki_y_nt
+path 1.2 magnetosphere_cki_z_nt
+path 2 magnetosphere_cki_f_nt
+
+source magnetosphere_clf
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 48.025 2.26
+path 1.0 magnetosphere_clf_x_nt
+path 1.1 magnetosphere_clf_y_nt
+path 1.2 magnetosphere_clf_z_nt
+path 2 magnetosphere_clf_s_nt
+
+source magnetosphere_clf_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 48.025 2.26
+path 1.0 magnetosphere_clf_x_nt
+path 1.1 magnetosphere_clf_y_nt
+path 1.2 magnetosphere_clf_z_nt
+path 2 magnetosphere_clf_f_nt
+
+source magnetosphere_cmo
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 64.87 -147.86
+path 1.0 magnetosphere_cmo_x_nt
+path 1.1 magnetosphere_cmo_y_nt
+path 1.2 magnetosphere_cmo_z_nt
+path 2 magnetosphere_cmo_s_nt
+
+source magnetosphere_cmo_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 64.87 -147.86
+path 1.0 magnetosphere_cmo_x_nt
+path 1.1 magnetosphere_cmo_y_nt
+path 1.2 magnetosphere_cmo_z_nt
+path 2 magnetosphere_cmo_f_nt
+
+source magnetosphere_cnb
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -35.32 149.36
+path 1.0 magnetosphere_cnb_x_nt
+path 1.1 magnetosphere_cnb_y_nt
+path 1.2 magnetosphere_cnb_z_nt
+path 2 magnetosphere_cnb_s_nt
+
+source magnetosphere_cnb_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -35.32 149.36
+path 1.0 magnetosphere_cnb_x_nt
+path 1.1 magnetosphere_cnb_y_nt
+path 1.2 magnetosphere_cnb_z_nt
+path 2 magnetosphere_cnb_f_nt
+
+source magnetosphere_cpL
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 17.294 78.919
+path 1.0 magnetosphere_cpl_x_nt
+path 1.1 magnetosphere_cpl_y_nt
+path 2 magnetosphere_cpl_s_nt
+
+source magnetosphere_csy
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -66.283 110.533
+path 1.0 magnetosphere_csy_x_nt
+path 1.1 magnetosphere_csy_y_nt
+path 1.2 magnetosphere_csy_z_nt
+path 2 magnetosphere_csy_s_nt
+
+source magnetosphere_csy_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -66.283 110.533
+path 1.0 magnetosphere_csy_x_nt
+path 1.1 magnetosphere_csy_y_nt
+path 1.2 magnetosphere_csy_z_nt
+path 2 magnetosphere_csy_f_nt
+
+source magnetosphere_cta
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -20.09 146.264
+path 1.0 magnetosphere_cta_x_nt
+path 1.1 magnetosphere_cta_y_nt
+path 1.2 magnetosphere_cta_z_nt
+path 2 magnetosphere_cta_s_nt
+
+source magnetosphere_cta_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -20.09 146.264
+path 1.0 magnetosphere_cta_x_nt
+path 1.1 magnetosphere_cta_y_nt
+path 1.2 magnetosphere_cta_z_nt
+path 2 magnetosphere_cta_f_nt
+
+source magnetosphere_cyg
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 36.37 126.854
+path 1.0 magnetosphere_cyg_x_nt
+path 1.1 magnetosphere_cyg_y_nt
+path 1.2 magnetosphere_cyg_z_nt
+path 2 magnetosphere_cyg_s_nt
+
+source magnetosphere_cyg_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 36.37 126.854
+path 1.0 magnetosphere_cyg_x_nt
+path 1.1 magnetosphere_cyg_y_nt
+path 1.2 magnetosphere_cyg_z_nt
+path 2 magnetosphere_cyg_f_nt
+
+source magnetosphere_ded
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 70.36 -148.79
+path 1.0 magnetosphere_ded_x_nt
+path 1.1 magnetosphere_ded_y_nt
+path 1.2 magnetosphere_ded_z_nt
+path 2 magnetosphere_ded_s_nt
+
+source magnetosphere_ded_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 70.36 -148.79
+path 1.0 magnetosphere_ded_x_nt
+path 1.1 magnetosphere_ded_y_nt
+path 1.2 magnetosphere_ded_z_nt
+path 2 magnetosphere_ded_f_nt
+
+source magnetosphere_dlt
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 11.95 108.48
+path 1.0 magnetosphere_dlt_x_nt
+path 1.1 magnetosphere_dlt_y_nt
+path 1.2 magnetosphere_dlt_z_nt
+path 2 magnetosphere_dlt_s_nt
+
+source magnetosphere_dlt_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 11.95 108.48
+path 1.0 magnetosphere_dlt_x_nt
+path 1.1 magnetosphere_dlt_y_nt
+path 1.2 magnetosphere_dlt_z_nt
+path 2 magnetosphere_dlt_f_nt
+
+source magnetosphere_dou
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 50.1 4.6
+path 1.0 magnetosphere_dou_x_nt
+path 1.1 magnetosphere_dou_y_nt
+path 1.2 magnetosphere_dou_z_nt
+path 2 magnetosphere_dou_s_nt
+
+source magnetosphere_dou_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 50.1 4.6
+path 1.0 magnetosphere_dou_x_nt
+path 1.1 magnetosphere_dou_y_nt
+path 1.2 magnetosphere_dou_z_nt
+path 2 magnetosphere_dou_f_nt
+
+source magnetosphere_dur
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 41.65 14.47
+path 1.0 magnetosphere_dur_x_nt
+path 1.1 magnetosphere_dur_y_nt
+path 1.2 magnetosphere_dur_z_nt
+path 2 magnetosphere_dur_s_nt
+
+source magnetosphere_dur_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 41.65 14.47
+path 1.0 magnetosphere_dur_x_nt
+path 1.1 magnetosphere_dur_y_nt
+path 1.2 magnetosphere_dur_z_nt
+path 2 magnetosphere_dur_f_nt
+
+source magnetosphere_ebr
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 40.957 0.333
+path 1.0 magnetosphere_ebr_x_nt
+path 1.1 magnetosphere_ebr_y_nt
+path 1.2 magnetosphere_ebr_z_nt
+path 2 magnetosphere_ebr_s_nt
+
+source magnetosphere_ebr_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 40.957 0.333
+path 1.0 magnetosphere_ebr_x_nt
+path 1.1 magnetosphere_ebr_y_nt
+path 1.2 magnetosphere_ebr_z_nt
+path 2 magnetosphere_ebr_f_nt
+
+source magnetosphere_eyr
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -43.474 172.393
+path 1.0 magnetosphere_eyr_x_nt
+path 1.1 magnetosphere_eyr_y_nt
+path 1.2 magnetosphere_eyr_z_nt
+path 2 magnetosphere_eyr_s_nt
+
+source magnetosphere_eyr_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -43.474 172.393
+path 1.0 magnetosphere_eyr_x_nt
+path 1.1 magnetosphere_eyr_y_nt
+path 1.2 magnetosphere_eyr_z_nt
+path 2 magnetosphere_eyr_f_nt
+
+source magnetosphere_frd
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 38.21 -77.36700000000002
+path 1.0 magnetosphere_frd_x_nt
+path 1.1 magnetosphere_frd_y_nt
+path 1.2 magnetosphere_frd_z_nt
+path 2 magnetosphere_frd_s_nt
+
+source magnetosphere_frd_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 38.21 -77.36700000000002
+path 1.0 magnetosphere_frd_x_nt
+path 1.1 magnetosphere_frd_y_nt
+path 1.2 magnetosphere_frd_z_nt
+path 2 magnetosphere_frd_f_nt
+
+source magnetosphere_frn
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 37.09 -119.72
+path 1.0 magnetosphere_frn_x_nt
+path 1.1 magnetosphere_frn_y_nt
+path 1.2 magnetosphere_frn_z_nt
+path 2 magnetosphere_frn_s_nt
+
+source magnetosphere_frn_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 37.09 -119.72
+path 1.0 magnetosphere_frn_x_nt
+path 1.1 magnetosphere_frn_y_nt
+path 1.2 magnetosphere_frn_z_nt
+path 2 magnetosphere_frn_f_nt
+
+source magnetosphere_fur
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 48.17 11.28
+path 1.0 magnetosphere_fur_x_nt
+path 1.1 magnetosphere_fur_y_nt
+path 1.2 magnetosphere_fur_z_nt
+path 2 magnetosphere_fur_s_nt
+
+source magnetosphere_fur_hapi
+ttl 86400
+force gravity
+lon 11.28 V
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 48.17 11.28
+path 1.0 magnetosphere_fur_x_nt
+path 1.1 magnetosphere_fur_y_nt
+path 1.2 magnetosphere_fur_z_nt
+path 2 magnetosphere_fur_f_nt
+
+source magnetosphere_gan
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -0.695 73.154
+path 1.0 magnetosphere_gan_x_nt
+path 1.1 magnetosphere_gan_y_nt
+path 1.2 magnetosphere_gan_z_nt
+path 2 magnetosphere_gan_s_nt
+
+source magnetosphere_gan_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -0.695 73.154
+path 1.0 magnetosphere_gan_x_nt
+path 1.1 magnetosphere_gan_y_nt
+path 1.2 magnetosphere_gan_z_nt
+path 2 magnetosphere_gan_f_nt
+
+source magnetosphere_gck
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 44.633 20.767
+path 1.0 magnetosphere_gck_x_nt
+path 1.1 magnetosphere_gck_y_nt
+path 1.2 magnetosphere_gck_z_nt
+
+source magnetosphere_gdh
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 69.252 -53.533000000000015
+path 1.0 magnetosphere_gdh_x_nt
+path 1.1 magnetosphere_gdh_y_nt
+path 1.2 magnetosphere_gdh_z_nt
+path 2 magnetosphere_gdh_s_nt
+
+source magnetosphere_gng
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -31.356 115.715
+path 1.0 magnetosphere_gng_x_nt
+path 1.1 magnetosphere_gng_y_nt
+path 1.2 magnetosphere_gng_z_nt
+path 2 magnetosphere_gng_s_nt
+
+source magnetosphere_gng_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -31.356 115.715
+path 1.0 magnetosphere_gng_x_nt
+path 1.1 magnetosphere_gng_y_nt
+path 1.2 magnetosphere_gng_z_nt
+path 2 magnetosphere_gng_f_nt
+
+source magnetosphere_gua
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 13.59 144.87
+path 1.0 magnetosphere_gua_x_nt
+path 1.1 magnetosphere_gua_y_nt
+path 1.2 magnetosphere_gua_z_nt
+path 2 magnetosphere_gua_s_nt
+
+source magnetosphere_gua_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 13.59 144.87
+path 1.0 magnetosphere_gua_x_nt
+path 1.1 magnetosphere_gua_y_nt
+path 1.2 magnetosphere_gua_z_nt
+path 2 magnetosphere_gua_f_nt
+
+source magnetosphere_gui
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 28.321 -16.440999999999974
+path 1.0 magnetosphere_gui_x_nt
+path 1.1 magnetosphere_gui_y_nt
+path 1.2 magnetosphere_gui_z_nt
+path 2 magnetosphere_gui_s_nt
+
+source magnetosphere_gui_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 28.321 -16.440999999999974
+path 1.0 magnetosphere_gui_x_nt
+path 1.1 magnetosphere_gui_y_nt
+path 1.2 magnetosphere_gui_z_nt
+path 2 magnetosphere_gui_f_nt
+
+source magnetosphere_hbk
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -25.88 27.71
+path 1.0 magnetosphere_hbk_x_nt
+path 1.1 magnetosphere_hbk_y_nt
+path 1.2 magnetosphere_hbk_z_nt
+path 2 magnetosphere_hbk_s_nt
+
+source magnetosphere_her
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HER/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -34.43 19.23
+path 1.0 magnetosphere_her_x_nt
+path 1.1 magnetosphere_her_y_nt
+path 1.2 magnetosphere_her_z_nt
+path 2 magnetosphere_her_s_nt
+
+source magnetosphere_hlp
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 54.603 18.811
+path 1.0 magnetosphere_hlp_x_nt
+path 1.1 magnetosphere_hlp_y_nt
+path 1.2 magnetosphere_hlp_z_nt
+path 2 magnetosphere_hlp_s_nt
+
+source magnetosphere_hlp_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 54.603 18.811
+path 1.0 magnetosphere_hlp_x_nt
+path 1.1 magnetosphere_hlp_y_nt
+path 1.2 magnetosphere_hlp_z_nt
+path 2 magnetosphere_hlp_f_nt
+
+source magnetosphere_hon
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 21.32 -158.0
+path 1.0 magnetosphere_hon_x_nt
+path 1.1 magnetosphere_hon_y_nt
+path 1.2 magnetosphere_hon_z_nt
+path 2 magnetosphere_hon_s_nt
+
+source magnetosphere_hon_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 21.32 -158.0
+path 1.0 magnetosphere_hon_x_nt
+path 1.1 magnetosphere_hon_y_nt
+path 1.2 magnetosphere_hon_z_nt
+path 2 magnetosphere_hon_f_nt
+
+source magnetosphere_hrb
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 47.873 18.19
+path 1.0 magnetosphere_hrb_x_nt
+path 1.1 magnetosphere_hrb_y_nt
+path 1.2 magnetosphere_hrb_z_nt
+path 2 magnetosphere_hrb_s_nt
+
+source magnetosphere_hrb_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 47.873 18.19
+path 1.0 magnetosphere_hrb_x_nt
+path 1.1 magnetosphere_hrb_y_nt
+path 1.2 magnetosphere_hrb_z_nt
+path 2 magnetosphere_hrb_f_nt
+
+source magnetosphere_hrn
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 77.0 15.55
+path 1.0 magnetosphere_hrn_x_nt
+path 1.1 magnetosphere_hrn_y_nt
+path 1.2 magnetosphere_hrn_z_nt
+path 2 magnetosphere_hrn_s_nt
+
+source magnetosphere_hrn_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 77.0 15.55
+path 1.0 magnetosphere_hrn_x_nt
+path 1.1 magnetosphere_hrn_y_nt
+path 1.2 magnetosphere_hrn_z_nt
+path 2 magnetosphere_hrn_f_nt
+
+source magnetosphere_hua
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -12.05 -75.32999999999998
+path 1.0 magnetosphere_hua_x_nt
+path 1.1 magnetosphere_hua_y_nt
+path 1.2 magnetosphere_hua_z_nt
+path 2 magnetosphere_hua_s_nt
+
+source magnetosphere_hyb
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 17.42 78.55
+path 1.0 magnetosphere_hyb_x_nt
+path 1.2 magnetosphere_hyb_z_nt
+path 2 magnetosphere_hyb_s_nt
+
+source magnetosphere_hyb_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 17.42 78.55
+path 1.0 magnetosphere_hyb_x_nt
+path 1.1 magnetosphere_hyb_y_nt
+path 1.2 magnetosphere_hyb_z_nt
+path 2 magnetosphere_hyb_f_nt
+
+source magnetosphere_intermagnet_s
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ESK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 55.3 -3.2
+path 1.0 magnetosphere_esk_x_nt
+path 1.1 magnetosphere_esk_y_nt
+path 1.2 magnetosphere_esk_z_nt
+path 2 magnetosphere_esk_f_nt
+
+source magnetosphere_ipm
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -27.171 -109.41999999999999
+path 1.0 magnetosphere_ipm_x_nt
+path 1.1 magnetosphere_ipm_y_nt
+path 1.2 magnetosphere_ipm_z_nt
+path 2 magnetosphere_ipm_s_nt
+
+source magnetosphere_ipm_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -27.171 -109.41999999999999
+path 1.0 magnetosphere_ipm_x_nt
+path 1.1 magnetosphere_ipm_y_nt
+path 1.2 magnetosphere_ipm_z_nt
+path 2 magnetosphere_ipm_f_nt
+
+source magnetosphere_irt
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 52.17 104.45
+path 1.0 magnetosphere_irt_x_nt
+path 1.1 magnetosphere_irt_y_nt
+path 1.2 magnetosphere_irt_z_nt
+path 2 magnetosphere_irt_s_nt
+
+source magnetosphere_izn
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 40.5 29.72
+path 1.0 magnetosphere_izn_x_nt
+path 1.1 magnetosphere_izn_y_nt
+path 1.2 magnetosphere_izn_z_nt
+path 2 magnetosphere_izn_s_nt
+
+source magnetosphere_izn_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 40.5 29.72
+path 1.0 magnetosphere_izn_x_nt
+path 1.1 magnetosphere_izn_y_nt
+path 1.2 magnetosphere_izn_z_nt
+path 2 magnetosphere_izn_f_nt
+
+source magnetosphere_jai
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 26.92 75.8
+path 1.0 magnetosphere_jai_x_nt
+path 1.1 magnetosphere_jai_y_nt
+path 1.2 magnetosphere_jai_z_nt
+path 2 magnetosphere_jai_s_nt
+
+source magnetosphere_kak
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 36.232 140.186
+path 1.0 magnetosphere_kak_x_nt
+path 1.1 magnetosphere_kak_y_nt
+path 1.2 magnetosphere_kak_z_nt
+path 2 magnetosphere_kak_s_nt
+
+source magnetosphere_kak_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 36.232 140.186
+path 1.0 magnetosphere_kak_x_nt
+path 1.1 magnetosphere_kak_y_nt
+path 1.2 magnetosphere_kak_z_nt
+path 2 magnetosphere_kak_f_nt
+
+source magnetosphere_kdu
+ttl 86400
+force gravity
+lon 132.47 Vv
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -12.69 132.47
+path 1.0 magnetosphere_kdu_x_nt
+path 1.1 magnetosphere_kdu_y_nt
+path 1.2 magnetosphere_kdu_z_nt
+path 2 magnetosphere_kdu_s_nt
+
+source magnetosphere_kdu_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -12.69 132.47
+path 1.0 magnetosphere_kdu_x_nt
+path 1.1 magnetosphere_kdu_y_nt
+path 1.2 magnetosphere_kdu_z_nt
+path 2 magnetosphere_kdu_f_nt
+
+source magnetosphere_kir
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 67.843 20.42
+path 1.0 magnetosphere_kir_x_nt
+path 1.1 magnetosphere_kir_y_nt
+path 1.2 magnetosphere_kir_z_nt
+path 2 magnetosphere_kir_s_nt
+
+source magnetosphere_kir_hapi
+ttl 86400
+force gravity
+lon 20.42 V
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 67.843 20.42
+path 1.0 magnetosphere_kir_x_nt
+path 1.1 magnetosphere_kir_y_nt
+path 1.2 magnetosphere_kir_z_nt
+path 2 magnetosphere_kir_f_nt
+
+source magnetosphere_kmh
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -26.54 18.11
+path 1.0 magnetosphere_kmh_x_nt
+path 1.1 magnetosphere_kmh_y_nt
+path 1.2 magnetosphere_kmh_z_nt
+path 2 magnetosphere_kmh_s_nt
+
+source magnetosphere_kny
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 31.42 130.88
+path 1.0 magnetosphere_kny_x_nt
+path 1.1 magnetosphere_kny_y_nt
+path 1.2 magnetosphere_kny_z_nt
+path 2 magnetosphere_kny_s_nt
+
+source magnetosphere_kny_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 31.42 130.88
+path 1.0 magnetosphere_kny_x_nt
+path 1.1 magnetosphere_kny_y_nt
+path 1.2 magnetosphere_kny_z_nt
+path 2 magnetosphere_kny_f_nt
+
+source magnetosphere_kou
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 5.21 -52.73000000000002
+path 1.0 magnetosphere_kou_x_nt
+path 1.1 magnetosphere_kou_y_nt
+path 1.2 magnetosphere_kou_z_nt
+path 2 magnetosphere_kou_s_nt
+
+source magnetosphere_kou_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 5.21 -52.73000000000002
+path 1.0 magnetosphere_kou_x_nt
+path 1.1 magnetosphere_kou_y_nt
+path 1.2 magnetosphere_kou_z_nt
+path 2 magnetosphere_kou_f_nt
+
+source magnetosphere_lrm_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -22.22 114.1
+path 1.0 magnetosphere_trm_x_nt
+path 1.1 magnetosphere_trm_y_nt
+path 1.2 magnetosphere_trm_z_nt
+path 2 magnetosphere_lirm_f_nt
+
+source magnetosphere_lvv
+ttl 86400
+force gravity
+lon 23.75 Lb
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 49.9 23.75
+path 1.0 magnetosphere_lvv_x_nt
+path 1.1 magnetosphere_lvv_y_nt
+path 1.2 magnetosphere_lvv_z_nt
+path 2 magnetosphere_lvv_s_nt
+
+source magnetosphere_lyc
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 64.612 18.748
+path 1.0 magnetosphere_lyc_x_nt
+path 1.1 magnetosphere_lyc_y_nt
+path 1.2 magnetosphere_lyc_z_nt
+path 2 magnetosphere_lyc_s_nt
+
+source magnetosphere_lyc_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 64.612 18.748
+path 1.0 magnetosphere_lyc_x_nt
+path 1.1 magnetosphere_lyc_y_nt
+path 1.2 magnetosphere_lyc_z_nt
+path 2 magnetosphere_lyc_f_nt
+
+source magnetosphere_mab
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 50.298 5.682
+path 1.0 magnetosphere_mab_x_nt
+path 1.1 magnetosphere_mab_y_nt
+path 1.2 magnetosphere_mab_z_nt
+path 2 magnetosphere_mab_s_nt
+
+source magnetosphere_mab_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 50.298 5.682
+path 1.0 magnetosphere_mab_x_nt
+path 1.1 magnetosphere_mab_y_nt
+path 1.2 magnetosphere_mab_z_nt
+path 2 magnetosphere_mab_f_nt
+
+source magnetosphere_maw
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -67.6 62.88
+path 1.0 magnetosphere_maw_x_nt
+path 1.1 magnetosphere_maw_y_nt
+path 1.2 magnetosphere_maw_z_nt
+path 2 magnetosphere_maw_s_nt
+
+source magnetosphere_mcg_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -54.5 158.95
+path 1.0 magnetosphere_mcg_x_nt
+path 1.1 magnetosphere_mcg_y_nt
+path 1.2 magnetosphere_mcg_z_nt
+path 2 magnetosphere_mcg_f_nt
+
+source magnetosphere_mcqg
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -54.5 158.95
+path 1.0 magnetosphere_mcq_x_nt
+path 1.1 magnetosphere_mcqg_y_nt
+path 1.2 magnetosphere_mcq_z_nt
+path 2 magnetosphere_mcqg_s_nt
+
+source magnetosphere_mmb
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 43.91 144.19
+path 1.0 magnetosphere_mmb_x_nt
+path 1.1 magnetosphere_mmb_y_nt
+path 1.2 magnetosphere_mmb_z_nt
+
+source magnetosphere_mmb_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 43.91 144.19
+path 1.0 magnetosphere_mmb_x_nt
+path 1.1 magnetosphere_mmb_y_nt
+path 1.2 magnetosphere_mmb_z_nt
+path 2 magnetosphere_mmb_f_nt
+
+source magnetosphere_nag
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 61.167 -45.43299999999999
+path 1.0 magnetosphere_nag_x_nt
+path 1.1 magnetosphere_nag_y_nt
+path 1.2 magnetosphere_nag_z_nt
+path 2 magnetosphere_nag_s_nt
+~=3res O
+
+source magnetosphere_nck
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 47.63 16.72
+path 1.0 magnetosphere_nck_x_nt
+path 1.1 magnetosphere_nck_y_nt
+path 1.2 magnetosphere_nck_z_nt
+path 2 magnetosphere_nck_s_nt
+
+source magnetosphere_new
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 48.27 -117.12
+path 1.0 magnetosphere_new_x_nt
+path 1.1 magnetosphere_new_y_nt
+path 1.2 magnetosphere_new_z_nt
+path 2 magnetosphere_new_s_nt
+
+source magnetosphere_new_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 48.27 -117.12
+path 1.0 magnetosphere_new_x_nt
+path 1.1 magnetosphere_new_y_nt
+path 1.2 magnetosphere_new_z_nt
+path 2 magnetosphere_new_f_nt
+
+source magnetosphere_ngk
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 52.07 12.68
+path 1.0 magnetosphere_ngk_x_nt
+path 1.1 magnetosphere_ngk_y_nt
+path 1.2 magnetosphere_ngk_z_nt
+path 2 magnetosphere_ngk_s_nt
+
+source magnetosphere_ngk_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 52.07 12.68
+path 1.0 magnetosphere_ngk_x_nt
+path 1.1 magnetosphere_ngk_y_nt
+path 1.2 magnetosphere_ngk_z_nt
+path 2 magnetosphere_ngk_f_nt
+
+source magnetosphere_nur
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 60.51 24.66
+path 1.0 magnetosphere_nur_x_nt
+path 1.1 magnetosphere_nur_y_nt
+path 1.2 magnetosphere_nur_z_nt
+path 2 magnetosphere_nur_s_nt
+~=res O
+
+source magnetosphere_nvs
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 54.85 83.23
+path 1.0 magnetosphere_nvs_x_nt
+path 1.1 magnetosphere_nvs_y_nt
+path 1.2 magnetosphere_nvs_z_nt
+path 2 magnetosphere_nvs_s_nt
+
+source magnetosphere_orc
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -60.737 -44.73700000000002
+path 1.0 magnetosphere_orc_x_nt
+path 1.1 magnetosphere_orc_y_nt
+path 1.2 magnetosphere_orc_z_nt
+path 2 magnetosphere_orc_s_nt
+
+source magnetosphere_pag
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 42.515 24.177
+path 1.0 magnetosphere_pag_x_nt
+path 1.1 magnetosphere_pag_y_nt
+path 1.2 magnetosphere_pag_z_nt
+path 2 magnetosphere_pag_s_nt
+
+source magnetosphere_pag_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 42.515 24.177
+path 1.0 magnetosphere_pag_x_nt
+path 1.1 magnetosphere_pag_y_nt
+path 1.2 magnetosphere_pag_z_nt
+path 2 magnetosphere_pag_f_nt
+
+source magnetosphere_peg
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 38.1 23.9
+path 1.0 magnetosphere_peg_x_nt
+path 1.1 magnetosphere_peg_y_nt
+path 1.2 magnetosphere_peg_z_nt
+path 2 magnetosphere_peg_s_nt
+
+source magnetosphere_phu
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 21.03 105.96
+path 1.0 magnetosphere_phu_x_nt
+path 1.1 magnetosphere_phu_y_nt
+path 1.2 magnetosphere_phu_z_nt
+path 2 magnetosphere_phu_s_nt
+
+source magnetosphere_phu_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 21.03 105.96
+path 1.0 magnetosphere_phu_x_nt
+path 1.1 magnetosphere_phu_y_nt
+path 1.2 magnetosphere_phu_z_nt
+path 2 magnetosphere_phu_f_nt
+
+source magnetosphere_pil
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -31.667 -63.88099999999997
+path 1.0 magnetosphere_pil_x_nt
+path 1.1 magnetosphere_pil_y_nt
+path 1.2 magnetosphere_pil_z_nt
+path 2 magnetosphere_pil_s_nt
+
+source magnetosphere_ppt
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -17.567 -149.574
+path 1.0 magnetosphere_ppt_x_nt
+path 1.1 magnetosphere_ppt_y_nt
+path 1.2 magnetosphere_ppt_z_nt
+path 2 magnetosphere_ppt_s_nt
+
+source magnetosphere_ppt_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -17.567 -149.574
+path 1.0 magnetosphere_ppt_x_nt
+path 1.1 magnetosphere_ppt_y_nt
+path 1.2 magnetosphere_ppt_z_nt
+path 2 magnetosphere_ppt_f_nt
+
+source magnetosphere_reu
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -21.206 55.576
+path 1.0 magnetosphere_reu_x_nt
+path 1.1 magnetosphere_reu_y_nt
+path 1.2 magnetosphere_reu_z_nt
+path 2 magnetosphere_reu_s_nt
+
+source magnetosphere_reu_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -21.206 55.576
+path 1.0 magnetosphere_reu_x_nt
+path 1.1 magnetosphere_reu_y_nt
+path 1.2 magnetosphere_reu_z_nt
+path 2 magnetosphere_reu_f_nt
+
+source magnetosphere_sba
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -77.829 166.671
+path 1.0 magnetosphere_sba_x_nt
+path 1.1 magnetosphere_sba_y_nt
+path 1.2 magnetosphere_sba_z_nt
+path 2 magnetosphere_sba_s_nt
+
+source magnetosphere_schumann_resonance
+ttl 86400
+force gravity
+ecliptic 1
+url https://zenodo.org/records/15225820/files/NiNo_SR_params_2024.csv
+format csv
+last_line atmos_schumann_last_val
+
+source magnetosphere_sfs
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 36.667 -5.944999999999993
+path 1.0 magnetosphere_sfs_x_nt
+path 1.1 magnetosphere_sfs_y_nt
+path 1.2 magnetosphere_sfs_z_nt
+path 2 magnetosphere_sfs_s_nt
+
+source magnetosphere_sfs_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 36.667 -5.944999999999993
+path 1.0 magnetosphere_sfs_x_nt
+path 1.1 magnetosphere_sfs_y_nt
+path 1.2 magnetosphere_sfs_z
+path 2 magnetosphere_sfs_f_nt
+
+source magnetosphere_she
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -15.961 -5.747000000000014
+path 1.0 magnetosphere_she_x_nt
+path 1.1 magnetosphere_she_y_nt
+path 1.2 magnetosphere_she_z_nt
+path 2 magnetosphere_she_s_nt
+
+source magnetosphere_shu
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 55.35 -160.46
+path 1.0 magnetosphere_shu_x_nt
+path 1.1 magnetosphere_shu_y_nt
+path 1.2 magnetosphere_shu_z_nt
+path 2 magnetosphere_shu_s_nt
+
+source magnetosphere_shu_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 55.35 -160.46
+path 1.0 magnetosphere_shu_x_nt
+path 1.1 magnetosphere_shu_y_nt
+path 1.2 magnetosphere_shu_z_nt
+path 2 magnetosphere_shu_f_nt
+
+source magnetosphere_sit
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 57.06 -135.33
+path 1.0 magnetosphere_sit_x_nt
+path 1.1 magnetosphere_sit_y_nt
+path 1.2 magnetosphere_sit_z_nt
+path 2 magnetosphere_sit_s_nt
+
+source magnetosphere_sit_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 57.06 -135.33
+path 1.0 magnetosphere_sit_x_nt
+path 1.1 magnetosphere_sit_y_nt
+path 1.2 magnetosphere_sit_z
+path 2 magnetosphere_sit_f_nt
+
+source magnetosphere_sjg
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 18.11 -66.14999999999998
+path 1.0 magnetosphere_sjg_x_nt
+path 1.1 magnetosphere_sjg_y_nt
+path 1.2 magnetosphere_sjg_z_nt
+path 2 magnetosphere_sjg_s_nt
+
+source magnetosphere_sjg_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 18.11 -66.14999999999998
+path 1.0 magnetosphere_sjg_x_nt
+path 1.1 magnetosphere_sjg_y_nt
+path 1.2 magnetosphere_sjg_z_nt
+path 2 magnetosphere_sjg_f_nt
+
+source magnetosphere_sod
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 67.37 26.63
+path 1.0 magnetosphere_sod_x_nt
+path 1.1 magnetosphere_sod_y_nt
+path 1.2 magnetosphere_sod_z_nt
+
+source magnetosphere_spt
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 39.55 -4.350000000000023
+path 1.0 magnetosphere_spt_x_nt
+path 1.1 magnetosphere_spt_y_nt
+path 2 magnetosphere_spt_s_nt
+
+source magnetosphere_spt_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 39.55 -4.350000000000023
+path 1.0 magnetosphere_spt_x_nt
+path 1.1 magnetosphere_spt_y_nt
+path 1.2 magnetosphere_spt_z_nt
+path 2 magnetosphere_spt_f_nt
+
+source magnetosphere_sua
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 44.68 26.25
+path 1.0 magnetosphere_sua_x_nt
+path 1.1 magnetosphere_sua_y_nt
+path 1.2 magnetosphere_sua_z_nt
+path 2 magnetosphere_sua_s_nt
+
+source magnetosphere_sua_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 44.68 26.25
+path 1.0 magnetosphere_sua_x_nt
+path 1.1 magnetosphere_sua_y_nt
+path 1.2 magnetosphere_sua_z_nt
+path 2 magnetosphere_sua_f_nt
+
+source magnetosphere_tdc_hapi
+ttl 86400
+force gravity
+lon -12.315999999999974 A
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -37.067 -12.315999999999974
+path 1.0 magnetosphere_tdc_x_nt
+path 1.1 magnetosphere_tdc_y_nt
+path 1.2 magnetosphere_tdc_z_nt
+path 2 magnetosphere_tdc_f_nt
+
+source magnetosphere_thL
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 77.47 -69.22699999999998
+path 1.1 magnetosphere_thl_y_nt
+path 1.2 magnetosphere_thl_z_nt
+path 2 magnetosphere_thl_s_nt
+
+source magnetosphere_thy
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 46.9 17.89
+path 1.0 magnetosphere_thy_x_nt
+path 1.1 magnetosphere_thy_y_nt
+path 1.2 magnetosphere_thy_z_nt
+path 2 magnetosphere_thy_s_nt
+
+source magnetosphere_tirm
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -22.22 114.1
+path 1.0 magnetosphere_lrm_x_nt
+path 1.1 magnetosphere_ltrm_y_nt
+path 1.2 magnetosphere_trm_z_nt
+path 2 magnetosphere_ltrm_s_nt
+
+source magnetosphere_tlon
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 45.408 16.659
+path 1.0 magnetosphere_lon_x_nt
+path 1.1 magnetosphere_lon_y_nt
+path 1.2 magnetosphere_lon_z_nt
+path 2 magnetosphere_lon_s_nt
+
+source magnetosphere_tsu
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -19.202 17.584
+path 1.0 magnetosphere_tsu_x_nt
+path 1.1 magnetosphere_tsu_y_nt
+path 1.2 magnetosphere_tsu_z_nt
+path 2 magnetosphere_tsu_s_nt
+
+source magnetosphere_ttb
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -1.205 -48.51299999999998
+path 1.0 magnetosphere_ttb_x_nt
+path 1.1 magnetosphere_ttb_y_nt
+path 1.2 magnetosphere_ttb_z_nt
+path 2 magnetosphere_ttb_s_nt
+
+source magnetosphere_ttb_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -1.205 -48.51299999999998
+path 1.0 magnetosphere_ttb_x_nt
+path 1.1 magnetosphere_ttb_y_nt
+path 1.2 magnetosphere_ttb_z_nt
+path 2 magnetosphere_ttb_f_nt
+
+source magnetosphere_tuc
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 32.17 -110.72999999999999
+path 1.0 magnetosphere_tuc_x_nt
+path 1.1 magnetosphere_tuc_y_nt
+path 1.2 magnetosphere_tuc_z_nt
+path 2 magnetosphere_tuc_s_nt
+
+source magnetosphere_tuc_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 32.17 -110.72999999999999
+path 1.0 magnetosphere_tuc_x_nt
+path 1.1 magnetosphere_tuc_y_nt
+path 1.2 magnetosphere_tuc_z_nt
+path 2 magnetosphere_tuc_f_nt
+
+source magnetosphere_ups
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 59.903 17.353
+path 1.0 magnetosphere_ups_x_nt
+path 1.1 magnetosphere_ups_y_nt
+path 1.2 magnetosphere_ups_z_nt
+path 2 magnetosphere_ups_s_nt
+
+source magnetosphere_valL
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 51.933 -10.25
+path 1.0 magnetosphere_val_x_nt
+path 1.1 magnetosphere_val_y_nt
+path 1.2 magnetosphere_val_z_nt
+path 2 magnetosphere_val_s_nt
+
+source magnetosphere_vna
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -70.683 -8.281999999999982
+path 1.0 magnetosphere_vna_x_nt
+path 1.1 magnetosphere_vna_y_nt
+path 1.2 magnetosphere_vna_z_nt
+path 2 magnetosphere_vna_s_nt
+
+source magnetosphere_vna_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -22.4 -43.64999999999998
+path 1.0 magnetosphere_vna_x_nt
+path 1.1 magnetosphere_vna_y_nt
+path 1.2 magnetosphere_vna_z_nt
+path 2 magnetosphere_vna_f_nt
+path 1.0 magnetosphere_vss_x_nt
+path 1.2 magnetosphere_vss_z_nt
+path 2 magnetosphere_vss_f_nt
+
+source magnetosphere_vos
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -78.464 106.835
+path 1.0 magnetosphere_vos_x_nt
+path 1.1 magnetosphere_vos_y_nt
+path 1.2 magnetosphere_vos_z_nt
+path 2 magnetosphere_vos_s_nt
+
+source magnetosphere_vss
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 -22.4 -43.64999999999998
+path 1.0 magnetosphere_vss_x_nt
+path 1.1 magnetosphere_vss_y_nt
+path 1.2 magnetosphere_vss_z_nt
+path 2 magnetosphere_vss_s_nt
+
+source magnetosphere_wic
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 47.931 15.866
+path 1.0 magnetosphere_wic_x_nt
+path 1.1 magnetosphere_wic_y_nt
+path 1.2 magnetosphere_wic_z_nt
+path 2 magnetosphere_wic_s_
+
+source magnetosphere_wic_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 47.931 15.866
+path 1.0 magnetosphere_wic_x_nt
+path 1.1 magnetosphere_wic_y_nt
+path 1.2 magnetosphere_wic_z_nt
+path 2 magnetosphere_wic_f_nt
+
+source magnetosphere_wng
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 53.725 9.053
+path 1.0 magnetosphere_wng_x_nt
+path 1.1 magnetosphere_wng_y_nt
+path 1.2 magnetosphere_wng_z_nt
+path 2 magnetosphere_wng_s_nt
+
+source magnetosphere_wng_hapi
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+wgs84 53.725 9.053
+path 1.0 magnetosphere_wng_x_nt
+path 1.1 magnetosphere_wng_y_nt
+path 1.2 magnetosphere_wng_z_nt
+path 2 magnetosphere_wng_f_nt
+
+source mast_hst_public_observations
+ttl 86400
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27HST%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field instrument_name instrument
+field energy_bandpassName filter_name
+
+source mast_kepler_k2_legacy
+ttl 86400
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27Kepler%27+OR+obs_collection%3D%27K2%27+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field instrument_name instrument
+
+source mast_tess_observations_public
+ttl 86400
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27TESS%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field t_min tess_sector_start
+field t_max tess_sector_end
+
+source mast_tess_toi_official_release
+ttl 86400
+force em
+url https://tess.mit.edu/wp-content/uploads/all_targets_S001_v1.csv
+format text
+rows
+ra_key RA_deg
+dec_key Dec_deg
+field TIC tic_id
+field Sectors observed_sectors
+field T_mag tess_magnitude
+field Tmag_unc magnitude_uncertainty
+
+source mcgill_magnetar_catalog
+ttl 86400
+force em
+url https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
+format text
+rows
+ra_key RA_J2000
+dec_key Dec_J2000
+field Name magnetar_name
+field P_dot p_dot
+field P0 spin_period_s
+field B_surf surface_field_gauss
+field Dist distance_kpc
+field Type magnetar_type
+field LX x_ray_luminosity
+
+source mcgill_magnetar_outburst_history
+ttl 86400
+force em
+url https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
+format text
+rows
+ra_key RA_J2000
+dec_key Dec_J2000
+field Name magnetar_name
+field P0 spin_period_s
+field Pdot period_derivative
+field B_surf surface_B_field_gauss
+field Dist distance_kpc
+field Type sgr_or_axp
+field LX xray_luminosity_erg_s
+field LastBurst last_outburst_year
+
+source meteorite_landings_tidy
+ttl 86400
+force gravity
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
+format text
+rows
+lat_key lat
+lon_key long
+field name meteorite_name
+field id meteorite_id
+field fall fall_type
+field year fall_year
+field recclass meteorite_class
+field mass mass_grams
+
+source molecular_crystallography_xrd
+ttl 86400
+force em
+url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
+wgs84 54.683 25.287
+field a molecular_lattice_constant_a
+
+source molecular_protein_structures
+ttl 86400
+force em
+url https://data.rcsb.org/rest/v1/core/entry/1UBQ
+wgs84 40.500 -74.450
+field rcsb_id biosphere_protein_structure_id
+
+source moon_phase
+ttl 86400
+force em
+url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
+wgs84 34.201 -118.171
+path properties.data.curphase cosmic_moon_phase
+path properties.data.fracillum cosmic_moon_illumination_pct
+
+source mpc_tno_orbital_elements_database
+ttl 86400
+force gravity
+url https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
+format text
+rows
+ra_key RA
+dec_key Dec
+field designation designation
+field H absolute_mag
+field G slope_param
+
+source musicbrainz_artists_total
+ttl 86400
+force em
+url https://musicbrainz.org/ws/2/artist?query=*&limit=1&fmt=json
+wgs84 51.507 -0.127
+field artists.0.id biosphere_music_artists_total
+
+source musicbrainz_recordings_total
+ttl 86400
+force em
+url https://musicbrainz.org/ws/2/recording?query=*&limit=1&fmt=json
+wgs84 51.507 -0.127
+field recordings.0.id biosphere_music_recordings_total
+
+source musicbrainz_releases_total
+ttl 86400
+force em
+url https://musicbrainz.org/ws/2/release?query=*&limit=1&fmt=json
+wgs84 51.507 -0.127
+field releases.0.id biosphere_music_releases_total
+
+source nasa_cmr_gedi_footprints
+ttl 86400
+force em
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=GEDI02_A&page_size=2000&sort_key=-start_date
+cmr_polygon feed.entry
+field_in time_start footprint_time_start
+field_in time_end footprint_time_end
+field_in dataset_id footprint_dataset_id
+field_in producer_granule_id footprint_granule_id
+
+source nasa_cmr_icesat2_atl06_footprints
+ttl 86400
+force em
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ATL06&page_size=2000&sort_key=-start_date
+cmr_polygon feed.entry
+field_in time_start footprint_time_start
+field_in time_end footprint_time_end
+field_in dataset_id footprint_dataset_id
+field_in producer_granule_id footprint_granule_id
+
+source nasa_cmr_icesat2_footprints
+ttl 86400
+force em
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ATL03&page_size=2000&sort_key=-start_date
+cmr_polygon feed.entry
+field_in time_start footprint_time_start
+field_in time_end footprint_time_end
+field_in dataset_id footprint_dataset_id
+field_in producer_granule_id footprint_granule_id
+
+source nasa_cmr_swot_ssg_ssh
+ttl 86400
+force em
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=SWOT_L2_LR_SSH_D&page_size=2000&sort_key=-start_date
+cmr_polygon feed.entry
+field_in time_start footprint_time_start
+field_in time_end footprint_time_end
+field_in dataset_id footprint_dataset_id
+field_in producer_granule_id footprint_granule_id
+
+source nasa_cmr_viirs_fire_vnp14_nrt
+ttl 86400
+force thermal
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP14IMG_NRT&page_size=2000&sort_key=-start_date
+cmr_polygon feed.entry
+field_in time_start footprint_time_start
+field_in time_end footprint_time_end
+field_in dataset_id footprint_dataset_id
+field_in producer_granule_id footprint_granule_id
+field_in day_night_flag fire_day_night
+
+source nasa_exoplanet_atmospheres
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+2000+ra,dec,pl_name,pl_rade,pl_bmasse,pl_orbsmax,pl_eqt,st_teff,st_spectype,sy_distan+from+pscomppars+where+ra+is+not+null+and+pl_eqt+is+not+null+order+by+sy_distan+asc&format=json
+map .
+ra_key ra
+dec_key dec
+field_in pl_name planet_name
+field_in pl_rade planet_radius_earth_radius
+field_in pl_eqt equilibrium_temp_k
+field_in st_teff host_star_temp_k
+dist_key sy_distan
+
+source nasa_exoplanet_confirmed
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
+map .
+ra_key ra
+dec_key dec
+field pl_name planet_name
+field pl_orbper orbital_period_days
+field pl_rade radius_earth
+field pl_bmasse mass_earth
+field pl_eqt eq_temperature_k
+field disc_year discovery_year
+dist_key sy_dist
+
+source nasa_exoplanet_toi
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+toi,ra,dec,sy_dist,pl_orbper,pl_rade,tfopwg_disp+FROM+toi+WHERE+ra+IS+NOT+NULL+AND+tfopwg_disp+IN+(%27PC%27,%27KP%27,%27CP%27)+ORDER+BY+sy_dist+ASC
+map .
+ra_key ra
+dec_key dec
+field toi toi_name
+field pl_orbper orbital_period_days
+field pl_rade radius_earth
+field tfopwg_disp disposition
+dist_key sy_dist
+
+source nasa_exoplanet_toi_catalog
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
+map .
+lat_key ra
+lon_key dec
+field toi toi_id
+field pl_orbper orbital_period_days
+field pl_rade earth_radius
+field pl_masse earth_mass
+field pl_trandur transit_duration_hours
+field st_teff stellar_teff_K
+dist_key sy_dist
+
+source nasa_fermi_gamma_ray_sources_total
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/db-perl/W3Browse/w3query.pl?tablehead=name%3Dfermigtrig&Action=More+Options&ResultRange=1&order=desc&field=from&field=0+1+2+3
+wgs84 38.995 -77.101
+last_line exosphere_fermi_gamma_ray_sources_total
+
+source nasa_giss_gistemp_v4_global_temperature
+ttl 86400
+force thermal
+url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
+wgs84 0.0 0.0
+format text
+rows
+field 0 year
+field 13 j_d_annual_anomaly_c
+
+source nasa_gldas_soil_moisture_global
+ttl 86400
+force diffusion
+url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilMoi0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
+format text
+rows
+field_in 0 timestamp_utc
+field_in 1 soil_moisture_0_10cm_kgm2
+
+source nasa_meteorite_landings_all
+ttl 86400
+force gravity
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2019/2019-06-11/meteorites.csv
+format text
+rows
+lat_key 7
+lon_key 8
+field 0 name meteorite_name
+field 1 id meteorite_id
+field 2 name_type classification_status
+field 3 class meteorite_class
+field 4 mass_g
+field 5 fall fall_or_find
+field 6 year year
+
+source nasa_modis_vegetation_ndvi_global
+ttl 86400
+force em
+url https://modis.gsfc.nasa.gov/data/dataprod/mod13.php
+wgs84 0 0
+last_line biosphere_global_ndvi
+
+source nasa_ned_coma_cluster
+ttl 86400
+force em
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+5000+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,194.9,27.9,3.0))%3D1
+cmap data
+tau_key _dist_m
+ra_key 1
+dec_key 2
+z_key 3
+field 0 prefname
+field 3 redshift
+
+source nasa_ned_great_attractor
+ttl 86400
+force gravity
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+5000+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,243.7,-45.3,6.0))%3D1
+cmap data
+tau_key _dist_m
+ra_key 1
+dec_key 2
+z_key 3
+field 0 prefname
+field 3 redshift
+
+source nasa_ned_virgo_cluster
+ttl 86400
+force em
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+5000+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,187.7,12.4,3.0))%3D1
+cmap data
+tau_key _dist_m
+ra_key 1
+dec_key 2
+z_key 3
+
+source nasa_nexsci_direct_imaging_planets
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+200+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,st_mass,st_rad,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Imaging'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
+format text
+rows
+ra_key ra
+dec_key dec
+field pl_name planet_name
+field pl_massj planet_mass_MJup
+field pl_radj planet_radius_RJup
+field pl_orbsmax semimajor_axis_au
+field pl_orbeccen eccentricity
+field st_mass host_star_mass_Msun
+field sy_dist distance_pc
+field disc_year discovery_year
+
+source nasa_nexsci_radial_velocity_planets
+ttl 86400
+force gravity
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+5000+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_rvamp,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Radial+Velocity'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
+format text
+rows
+ra_key ra
+dec_key dec
+field pl_name planet_name
+field pl_massj planet_mass_MJup
+field pl_radj planet_radius_RJup
+field pl_orbsmax semimajor_axis_au
+field pl_orbeccen eccentricity
+field pl_rvamp rv_semi_amplitude_m_s
+field st_teff stellar_teff_K
+field sy_dist system_distance_pc
+field disc_year discovery_year
+
+source nasa_nexsci_transmission_spectroscopy
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+5000+pl_name,ra,dec,pl_radj,pl_bmassj,pl_trandep,pl_tranmid,pl_orbper,st_teff,st_rad,st_mass,sy_dist+FROM+ps+WHERE+pl_trandep+IS+NOT+NULL+AND+ra+IS+NOT+NULL+ORDER+BY+pl_trandep+DESC&FORMAT=csv
+format text
+rows
+ra_key ra
+dec_key dec
+field pl_name planet_name
+field pl_radj planet_radius_rjup
+field pl_bmassj planet_mass_mjup
+field pl_trandep transit_depth_ppt
+field pl_tranmid transit_midpoint_bjd
+field pl_orbper orbital_period_d
+field st_teff stellar_teff_K
+field sy_dist system_distance_pc
+
+source nasa_power_ag_climate_daily
+ttl 86400
+force thermal
+ecliptic 1
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}0101&end={year}1231&format=JSON
+map properties.parameter.T2M
+lat_key lat
+lon_key lon
+field T2M temp_2m_c
+field PRECTOTCORR precipitation_mm_d
+field ALLSKY_SFC_SW_DWN solar_irradiance_MJ_m2_d
+field RH2M humidity_pct
+field WS10M wind_10m_m_s
+
+source nasa_power_agricultural_climate
+ttl 86400
+force thermal
+ecliptic 1
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={today}&format=JSON
+map properties.parameter.T2M
+field T2M temp_2m_c
+field PRECTOTCORR precip_mm
+field ALLSKY_SFC_SW_DWN sw_radiation_wm2
+field RH2M rel_humidity_pct
+field WS10M wind_speed_10m_ms
+
+source nasa_sage3_iss_aerosol_cmr
+ttl 86400
+force diffusion
+url https://cmr.earthdata.nasa.gov/search/granules.json?collection_concept_id=C2565414058-GES_DISC&page_size=100&sort_key=-start_date
+wgs84 0.0 0.0
+map feed.entry
+field title granule_title
+field updated last_modified
+field boxes bounding_box
+
+source ncei_enso_oni_index
+ttl 86400
+force thermal
+ecliptic 1
+url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+format text
+rows
+field 0 season_year
+field 1 month
+field 2 anom_3month oni_anomaly_c
+
+source ncei_global_summary_weather
+ttl 86400
+wgs84 0.0 0.0
+force diffusion
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+map
+lat_key 40.74
+  lon_key -73.98
+  lat 40.74
+  lon -73.98
+field_in station station_id
+field_in date observation_date
+field_in TMAX temperature_max_celsius
+field_in TMIN temperature_min_celsius
+field_in PRCP precipitation_mm
+field_in SNOW snowfall_mm
+field_in AWND average_wind_speed_ms
+
+source ncei_nao_monthly_index
+ttl 86400
+force thermal
+url https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii
+wgs84 0.0 0.0
+format text
+rows
+field 0 year
+field 1 month
+field 2 nao_index nao_value
+
+source ncei_paleo_treering_parameters
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/paleo-search/study/params.json?dataTypeId=18
+wgs84 0.0 0.0
+map .
+field name parameter_name
+field id parameter_id
+field units parameter_units
+
+source ncei_paleo_treering_studies
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataTypeId=18&limit=500
+map .
+lat_key site.latitude
+lon_key site.longitude
+field studyId study_id
+field title study_title
+field investigators.0.name investigator_name
+field site.name site_name
+field site.elevation elevation_m
+field abstract study_abstract
+field publication.0.title publication_title
+field publication.0.year publication_year
+
+source ncei_pdo_monthly_index
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.pdo.dat
+wgs84 0.0 0.0
+format text
+rows
+field 0 year
+field 1 month
+field 2 pdo_index pdo_value
+
+source ncei_soi_monthly_index
+ttl 86400
+force thermal
+url https://www.cpc.ncep.noaa.gov/data/indices/soi
+wgs84 0.0 0.0
+format text
+rows
+field 0 year
+field 1 month
+field 2 soi_index soi_value
+
+source neo_sentry_risk_list
+ttl 86400
+force gravity
+url https://ssd-api.jpl.nasa.gov/sentry.api?all=1
+map data
+lat_key null
+lon_key null
+field des neo_designation
+field ip impact_probability
+field ps_max palermo_scale_max
+field date_range impact_date_range
+field v_inf v_infinity_km_s
+field h absolute_magnitude
+field diameter estimated_diameter_km
+
+source neotoma_datasets
+ttl 86400
+force diffusion
+url https://api.neotomadb.org/v2/data/datasets?limit=500
+map data
+lat_key site.geography.lat
+lon_key site.geography.lng
+field datasetid dataset_id
+field dataset.type dataset_type
+field dataset.name dataset_name
+field site.sitename site_name
+field dataset.units dataset_units
+field dataset.pi.name principal_investigator
+
+source neotoma_ostracod_sites
+ttl 86400
+force diffusion
+url https://api.neotomadb.org/v2/data/datasets?datasettype=ostracode&limit=500&offset=0
+map data
+lat_key site.geography.latitude
+lon_key site.geography.longitude
+field site.sitename site_name
+field datasettype dataset_type
+
+source neotoma_plant_macrofossil_sites
+ttl 86400
+force diffusion
+url https://api.neotomadb.org/v2/data/datasets?datasettype=plant+macrofossil&limit=500&offset=0
+map data
+lat_key site.geography.latitude
+lon_key site.geography.longitude
+field site.sitename site_name
+
+source neotoma_sites
+ttl 86400
+force diffusion
+url https://api.neotomadb.org/v2/data/sites?limit=500
+map data
+lat_key site.geography.lat
+lon_key site.geography.lng
+field siteid site_id
+field sitename site_name
+field site.description site_description
+field site.altitude altitude_m
+field site.geography.country country
+field site.geography.state state
+
+source neowise_asteroid_diameters
+ttl 86400
+force gravity
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field object_name neo_designation
+field abs_mag absolute_magnitude
+field diameter estimated_diameter_km
+field extended extended_object_flag
+field neo_flag near_earth_flag
+
+source ngdc_volcanoes_significant
+ttl 86400
+force seismic-body
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
+map items
+lat_key latitude
+lon_key longitude
+field name volcano_name
+field elevation elevation_m
+field deathsTotal deaths_total
+field year last_eruption_year
+
+source nist_codata_fundamental_constants
+ttl 86400
+force em
+url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
+format text
+rows
+field 0 quantity_name
+field 1 symbol
+field 2 value
+field 3 uncertainty
+field 4 unit
+
+source nlm_assembly_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=assembly&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_genome_assemblies_total
+
+source nlm_bioproject_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=bioproject&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_bioprojects_total
+
+source nlm_biosample_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=biosample&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_biosamples_total
+
+source nlm_books_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=books&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_nlm_books_total
+
+source nlm_clinical_trials_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinicaltrials&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_clinical_trials_total
+
+source nlm_clinvar_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinvar&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_clinic_variants_total
+
+source nlm_gap_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gap&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_dbgap_studies_total
+
+source nlm_gene_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_genbank_genes_total
+
+source nlm_genome_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=genome&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_genome_total
+
+source nlm_mesh_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=mesh&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_mesh_terms_total
+
+source nlm_nucleotide_total
+ttl 86400
+force gravity
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nucleotide&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_nucleotide_sequences_total
+
+source nlm_omim_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=omim&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_mendelian_disorders_total
+
+source nlm_pmc_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_pmc_articles_total
+
+source nlm_protein_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=protein&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_protein_sequences_total
+
+source nlm_pubmed_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_pubmed_articles_total
+
+source nlm_snp_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=snp&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_snp_total
+
+source nlm_sra_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_sequencing_runs_total
+
+source nlm_taxonomy_total
+ttl 86400
+force em
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&retmax=0
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_taxonomy_total
+
+source noaa_coops_current_stations
+ttl 86400
+force advective
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=currents
+map stations
+lat_key lat
+lon_key lng
+field id station_id
+field name station_name
+field state state
+
+source noaa_cpc_enso_nino34
+ttl 86400
+force thermal
+url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+wgs84 0.0 -170.0
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 3 nino12_sst_c
+field_in 4 nino12_sst_anom_c
+field_in 7 nino34_sst_c
+field_in 8 nino34_sst_anom_c
+
+source noaa_cpc_pdo_index
+ttl 86400
+force thermal
+url https://psl.noaa.gov/data/correlation/pdo.data
+wgs84 40.0 -170.0
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 pdo_index
+
+source noaa_ghcnd_global_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,SNWD&startDate={today}&endDate={today}&includeAttributes=false&format=json&limit=10000
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TMAX tmax_tenths_c
+field TMIN tmin_tenths_c
+field PRCP precipitation_tenths_mm
+field SNOW snowfall_mm
+field SNWD snow_depth_mm
+
+source noaa_ghcnd_global_station_inventory
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
+format text
+rows
+lat_key 1
+lon_key 2
+field 0 station_id
+field 3 elevation_m
+field 4 state
+field 5 station_name
+
+source noaa_ghcnd_station_inventory
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
+format text
+rows
+pos station_latitude station_longitude
+field_in 0 station_id
+field_in 1 station_latitude
+field_in 2 station_longitude
+field_in 3 station_elevation_m
+
+source noaa_gml_ch4_global
+ttl 86400
+force diffusion
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+wgs84 0.0 0.0
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 ch4_ppb_mean
+field_in 3 ch4_ppb_uncertainty
+
+source noaa_gml_ch4_global_trend_monthly
+ttl 86400
+force diffusion
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+wgs84 0.0 0.0
+format text
+rows
+field 0 year
+field 1 month
+field 2 ch4_global_ppb
+field 3 ch4_uncertainty_ppb
+field 4 ch4_trend_ppb
+field 5 trend_uncertainty
+
+source noaa_gml_co2_global_growth_rate
+ttl 86400
+force diffusion
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt
+wgs84 0.0 0.0
+format text
+rows
+field 0 year
+field 1 co2_growth_rate_ppm_yr
+field 2 growth_rate_uncertainty
+
+source noaa_gml_co2_mauna_loa
+ttl 86400
+force diffusion
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+wgs84 19.5 -155.6
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 4 co2_ppm
+field_in 6 co2_1_yr_ago
+field_in 7 co2_10_yr_ago
+
+source noaa_gml_co2_mauna_loa_realtime
+ttl 86400
+force diffusion
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+wgs84 19.5 -155.6
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 co2_ppm
+
+source noaa_gml_global_xco2_long_term_trend
+ttl 86400
+force diffusion
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+wgs84 0.0 0.0
+format text
+rows
+field 0 year
+field 1 co2_annual_mean_ppm
+field 2 co2_uncertainty_ppm
+
+source noaa_gml_n2o_global
+ttl 86400
+force diffusion
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+wgs84 0.0 0.0
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 n2o_ppb_mean
+field_in 3 n2o_ppb_uncertainty
+
+source noaa_gml_sf6_global
+ttl 86400
+force diffusion
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+wgs84 0.0 0.0
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 sf6_ppt_mean
+field_in 3 sf6_ppt_uncertainty
+
+source noaa_gml_stratospheric_aerosol
+ttl 86400
+force diffusion
+ecliptic 1
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+format text
+rows
+field_in 0 year
+field_in 1 co2_ppm_mean
+field_in 2 co2_ppm_uncertainty
+
+source noaa_gsod_global_surface_summary
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB&stations=72420314733,10637099999,47678099999,94120099999&startDate={today}&endDate={today}&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field DATE obs_date
+field TEMP mean_temp_f
+field MAX max_temp_f
+field MIN min_temp_f
+field PRCP precipitation_inch
+field WDSP wind_speed_kt
+field SLP sea_level_pressure_mb
+field VISIB visibility_miles
+
+source noaa_ibtracs_last3years
+ttl 86400
+force acoustic
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.last3years.list.v04r00.csv
+format text
+rows
+lat_key LAT
+lon_key LON
+field NAME storm_name
+field SID storm_id
+field SEASON season_year
+field ISO_TIME timestamp_utc
+field WMO_WIND max_wind_kt
+field WMO_PRES min_pressure_hpa
+field BASIN basin_code
+
+source noaa_isd_china_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=CH&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field MAX temp_max_f
+field MIN temp_min_f
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+field SLP sea_level_pressure_hpa
+
+source noaa_isd_south_africa_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=SF&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field MAX temp_max_f
+field MIN temp_min_f
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+
+source noaa_itrdb_northern_hemisphere
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=30&maxLat=90&minLon=-180&maxLon=180&headersOnly=true
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field site.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field investigator investigator
+field species.0.speciesCode tree_species
+
+source noaa_itrdb_southern_hemisphere
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=-90&maxLat=30&minLon=-180&maxLon=180&headersOnly=true
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field site.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field species.0.speciesCode tree_species
+
+source noaa_ncei_climate_extremes_monthly
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TMAX monthly_tmax_tenths_c
+field TMIN monthly_tmin_tenths_c
+field TAVG monthly_tavg_tenths_c
+field PRCP monthly_prcp_tenths_mm
+
+source noaa_ncei_climate_normals_1991_2020
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-daily&dataTypes=TEMP_NORMAL_MAX,TEMP_NORMAL_MIN,PRCP_NORMAL&stations=GM000003026,USW00094728,UK000003772,JN000047412&startDate=2010-01-01&endDate=2010-01-31&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP_NORMAL_MAX daily_normal_max_c
+field TEMP_NORMAL_MIN daily_normal_min_c
+field PRCP_NORMAL daily_normal_precip_mm
+
+source noaa_ncei_gebco_bathymetry
+ttl 86400
+force gravity
+url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22:{lon},%22y%22:{lat}%7D&geometryType=esriGeometryPoint&returnGeometry=false&f=json
+field value depth_m
+field objectId gebco_cell_id
+
+source noaa_ncei_gsom_climate_monthly
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json
+wgs84 0 0
+map
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field DATE month
+field TMAX max_temp_c
+field TMIN min_temp_c
+field TAVG avg_temp_c
+field PRCP precipitation_mm
+
+source noaa_ncei_gsom_climate_normals
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={today}&format=json
+map .
+lat_key latitude
+lon_key longitude
+field TMAX temp_max_c
+field TMIN temp_min_c
+field TAVG temp_avg_c
+field PRCP precip_mm
+
+source noaa_ncei_ohc_0_700m
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/yearly/h22-w0-700m.dat
+wgs84 0.0 0.0
+format text
+rows
+field_in 0 year
+field_in 1 ohc_world_zj
+field_in 2 ohc_nh_zj
+field_in 3 ohc_sh_zj
+field_in 4 ohc_tropics_zj
+
+source noaa_ncei_woce_ocean_sections_ctd
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&survey=WOCE&variable=T,S,O2,NO3,PO4,SiO3&limit=300
+map profiles
+lat_key latitude
+lon_key longitude
+field cast_id cast_identifier
+field cruise_id cruise_name
+field date obs_date
+field max_depth max_depth_m
+field temp_surface surface_temp_c
+field sal_surface surface_sal_psu
+
+source noaa_ndbc_dart_buoys_metadata
+ttl 86400
+force acoustic
+url https://www.ndbc.noaa.gov/activestations.xml
+format text
+rows
+lat_key lat
+lon_key lon
+field id station_id
+field name station_name
+field type sensor_type
+field elev depth_m
+field pgm program_code
+field met has_met_sensor
+field currents has_current_sensor
+
+source noaa_ngdc_significant_earthquakes
+ttl 86400
+force seismic-body
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?maxRows=2000&startRow=1&orderBy=year&ascending=false
+map items
+lat_key latitude
+lon_key longitude
+field year event_year
+field eqMagnitude richter_magnitude
+field eqMagUnk magnitude_unknown
+field damageAmountOrder damage_ordinal
+field deaths deaths_total
+field damageMillionsDollars damage_mmusd
+field country country
+
+source noaa_paleo_coral_records
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Coral&headersOnly=true
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field investigator investigator
+
+source noaa_paleo_coral_studies_global
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=coral&access=public&format=json&limit=200
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+field xmlId study_id
+field studyName study_title
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field site.siteName coral_site_name
+
+source noaa_paleo_ice_cores
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Ice+Core&headersOnly=true
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field site.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field investigator investigator
+
+source noaa_paleo_pollen_records
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Pollen&headersOnly=true
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field site.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+
+source noaa_paleo_speleothem
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Speleothem&headersOnly=true
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field site.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+
+source noaa_storm_events_hail
+ttl 86400
+force acoustic
+url https://www.ncei.noaa.gov/swdiws/json/nx3hail/{today}
+map .
+field swdiJsonResponse.status query_status
+field summary.count event_count
+field summary.totalTimeInSeconds query_time
+
+source noaa_storm_events_significant_monthly
+ttl 86400
+force acoustic
+url https://www.ncei.noaa.gov/swdiws/json/nx3meso/{today}
+map .
+field swdiJsonResponse.status query_status
+field summary.count event_count
+field summary.totalTimeInSeconds query_time
+
+source noaa_storm_events_tornadoes
+ttl 86400
+force acoustic
+url https://www.ncei.noaa.gov/swdiws/json/nx3structure/{today}
+map .
+field swdiJsonResponse.status query_status
+field summary.count event_count
+field summary.totalTimeInSeconds query_time
+
+source noaa_tide_predictions
+ttl 86400
+force acoustic
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+wgs84 40.7 -74.01
+map predictions
+field t prediction_time_utc
+field v predicted_tide_m
+
+source noaa_tides_predictions
+ttl 86400
+force diffusion
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=predictions&datum=MSL&units=metric&time_zone=gmt&format=json
+map predictions
+lat_key 32.757
+lon_key -117.226
+field_in t prediction_time
+field_in v predicted_tide_m
+
+source noaa_wmm_magnetic_field
+ttl 86400
+force em
+ecliptic 1
+url https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x
+map result.0
+field decl magnetic_declination_deg
+field incl magnetic_inclination_deg
+field bx bx_nT
+field by by_nT
+field bz bz_nT
+field totalintensity total_field_nT
+
+source noaa_wod18_ctd_profiles_realtime
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300
+map .
+lat_key lat
+lon_key lon
+field Temperature temperature_c
+field Salinity salinity_psu
+field Oxygen oxygen_ml_l
+
+source npm_packages_total
+ttl 86400
+force em
+url https://registry.npmjs.org/-/v1/search?text=*&size=1
+wgs84 37.774 -122.419
+field total biosphere_npm_packages_total
+
+source nso_gong_ring_diagram_flow_maps
+ttl 86400
+force em
+ssb
+url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json
+map .
+field filename ring_diagram_filename
+field date obs_date
+field cr carrington_rotation
+field latitude heliographic_latitude
+field longitude heliographic_longitude
+field vx eastward_flow_m_s
+field vy northward_flow_m_s
+
+source oac_astrocats
+ttl 86400
+force em
+url https://api.astrocats.space/{target}/
+verify false
+target SN2014J
+pos ra_deg dec_deg
+field ra ra_deg
+field dec dec_deg
+field name name
+field claimedtype type
+field redshift redshift
+
+source obis_coral_species_global
+ttl 86400
+force diffusion
+url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family taxon_family
+field date_year obs_year
+
+source obis_threatened_marine_species
+ttl 86400
+force diffusion
+url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field class taxon_class
+field family taxon_family
+field iucnRedListCategory iucn_category
+field date_year obs_year
+
+source oceanography_cmems_global_analysis
+ttl 86400
+force em
+ecliptic 1
+url https://my.cmems-du.eu/motu-web/services
+map .
+field_in id oceanography_cmems_service_id
+field_in name oceanography_cmems_service_name
+field_in dataset oceanography_cmems_dataset_id
+
+source open_meteo_cmip6_climate
+ttl 86400
+force thermal
+url https://climate-api.open-meteo.com/v1/climate?latitude=0.0&longitude=0.0&start_year=2020&end_year=2030&models=CMCC_CM2_VHR4,FGOALS_f3_H&daily=temperature_2m_mean,temperature_2m_max,precipitation_sum
+wgs84 0.0 0.0
+map daily
+field temperature_2m_mean temp_mean_c
+field precipitation_sum precip_mm
+
+source open_meteo_era5_reanalysis
+ttl 86400
+force thermal
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={today}&hourly=temperature_2m,precipitation,windspeed_10m,relative_humidity_2m,surface_pressure&models=era5&format=json
+map hourly.time
+field_in hourly.temperature_2m temp_2m_c
+field_in hourly.precipitation precipitation_mm
+field_in hourly.windspeed_10m wind_speed_ms
+field_in hourly.relative_humidity_2m rh_pct
+field_in hourly.surface_pressure surface_pressure_hpa
+
+source open_meteo_vegetation_proxy
+ttl 86400
+force diffusion
+ecliptic 1
+url https://api.open-meteo.com/v1/forecast?latitude=50.0&longitude=10.0&daily=et0_fao_evapotranspiration,vapor_pressure_deficit&forecast_days=1&format=json
+map daily.time
+field_in daily.et0_fao_evapotranspiration et0_mm_proxy_gpp
+field_in daily.vapor_pressure_deficit vpd_kpa
+field_in daily.growing_degree_days_base_0_limit_50 gdd_0_50
+
+source openfda_adverse_total
+ttl 86400
+force em
+url https://api.fda.gov/drug/event.json?limit=1
+wgs84 38.995 -77.101
+field meta.results.total biosphere_fda_adverse_events_total
+
+source openfda_device_total
+ttl 86400
+force em
+url https://api.fda.gov/device/510k.json?limit=1
+wgs84 38.995 -77.101
+field meta.results.total biosphere_fda_devices_total
+
+source openfda_drug_total
+ttl 86400
+force em
+url https://api.fda.gov/drug/drugsfda.json?limit=1
+wgs84 38.995 -77.101
+field meta.results.total biosphere_fda_drugs_total
+
+source openfda_recalls_total
+ttl 86400
+force em
+url https://api.fda.gov/drug/enforcement.json?limit=1
+wgs84 38.995 -77.101
+field meta.results.total biosphere_fda_recalls_total
+
+source openfoodfacts_products_count
+ttl 86400
+force em
+url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
+wgs84 48.8566 2.3522
+field count biosphere_food_product_count_openfoodfacts
+
+url https://overpass-api.de/api/interpreter?data=[out:json];node[power=plant](global);out;
+ttl 86400
+force em
+url https://api.openinframap.org/stats/country
+map .
+lat_key centroid.lat
+lon_key centroid.lon
+field country country_name
+field power_plant_count power_plant_count
+field wind_capacity_mw wind_capacity_mw
+field solar_capacity_mw solar_capacity_mw
+field nuclear_capacity_mw nuclear_capacity_mw
+
+source openlandmap_soil_carbon_stac
+ttl 86400
+force diffusion
+url https://stac.openlandmap.org/collections/sol_organic.carbon_usda.6a1c_m/items?limit=500&bbox=-180,-60,180,75
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field properties.title layer_title
+field properties.datetime data_datetime
+field properties.description layer_description
+
+source openlibrary_authors_total
+ttl 86400
+force em
+url https://openlibrary.org/authors.json?limit=1
+wgs84 40.712 -74.006
+field size biosphere_openlibrary_authors_total
+
+source openlibrary_books_total
+ttl 86400
+force em
+url https://openlibrary.org/books.json?limit=1
+wgs84 40.712 -74.006
+field size biosphere_openlibrary_books_total
+
+source orbit_celestrak_active
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+count lines orbital_active_satellites_celestrak
+
+source orbit_celestrak_active_satellites
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+count lines orbital_active_satellites_celestrak
+
+source orbit_celestrak_all_satellites
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+count lines orbital_satellites_active_celestrak
+
+source orbit_celestrak_cubesats
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=JSON
+count lines orbital_cubesats_celestrak
+
+source orbit_celestrak_debris
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
+count lines orbital_debris_tracked_celestrak
+
+source orbit_celestrak_debris_analyst
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
+count lines orbital_debris_tracked_celestrak
+
+source orbit_celestrak_engineering_sats
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=engineering&FORMAT=JSON
+count lines orbital_engineering_sats_celestrak
+
+source orbit_celestrak_glonass
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=glonass-ops&FORMAT=JSON
+count lines orbital_glonass_satellites_celestrak
+
+source orbit_celestrak_gps
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=JSON
+count lines orbital_gps_satellites_celestrak
+
+source orbit_celestrak_navigation_sats
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=gnss&FORMAT=JSON
+count lines orbital_navigation_sats_celestrak
+
+source orbit_celestrak_oneweb
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=oneweb&FORMAT=JSON
+count lines orbital_oneweb_satellites_celestrak
+
+source orbit_celestrak_science_sats
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=JSON
+count lines orbital_science_sats_celestrak
+
+source orbit_celestrak_space_stations
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=JSON
+count lines orbital_space_stations_celestrak
+
+source orbit_celestrak_starlink
+ttl 86400
+force em
+ssb
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=JSON
+count lines orbital_starlink_satellites_celestrak
+
+source orbit_celestrak_weather_sats
+ttl 86400
+force em
+ecliptic 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=JSON
+count lines orbital_weather_sats_celestrak
+
+source orbit_trace_callisto
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_callisto.json
+vectors orbital_callisto_rg
+
+source orbit_trace_ceres
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_ceres.json
+vectors orbital_ceres_rg
+
+source orbit_trace_earth
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_earth.json
+vectors orbital_earth_rg
+
+source orbit_trace_enceladus
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_enceladus.json
+vectors orbital_enceladus_rg
+
+source orbit_trace_eris
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_eris.json
+vectors orbital_eris_rg
+
+source orbit_trace_europa
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_europa.json
+vectors orbital_europa_rg
+
+source orbit_trace_ganymede
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_ganymede.json
+vectors orbital_ganymede_rg
+
+source orbit_trace_haumea
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_haumea.json
+vectors orbital_haumea_rg
+
+source orbit_trace_io
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_io.json
+vectors orbital_io_rg
+
+source orbit_trace_jupiter
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_jupiter.json
+vectors orbital_jupiter_rg
+
+source orbit_trace_makemake
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_makemake.json
+vectors orbital_makemake_rg
+
+source orbit_trace_mars
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_mars.json
+vectors orbital_mars_rg
+
+source orbit_trace_mercury
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_mercury.json
+vectors orbital_mercury_rg
+
+source orbit_trace_moon
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_moon.json
+vectors orbital_moon_rg
+
+source orbit_trace_neptune
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_neptune.json
+vectors orbital_neptune_rg
+
+source orbit_trace_pluto
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_pluto.json
+vectors orbital_pluto_rg
+
+source orbit_trace_saturn
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_saturn.json
+vectors orbital_saturn_rg
+
+source orbit_trace_sun
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_sun.json
+vectors orbital_sun_rg
+
+source orbit_trace_titan
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_titan.json
+vectors orbital_titan_rg
+
+source orbit_trace_triton
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_triton.json
+vectors orbital_triton_rg
+
+source orbit_trace_uranus
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_uranus.json
+vectors orbital_uranus_rg
+
+source orbit_trace_venus
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_venus.json
+vectors orbital_venus_rg
+
+source orbit_trace_vesta
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_vesta.json
+vectors orbital_vesta_rg
+
+source orbital_apophis_vectors
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_apophis.json
+ephemeris orbital_apophis_distance
+extent 1.24e-9
+
+source orbital_bennu_vectors
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_bennu.json
+ephemeris orbital_bennu_distance
+extent 1.75e-9
+
+source orbital_celestrak_earth_orientation
+ttl 86400
+wgs84 40.034 0.0
+86400
+force em
+url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
+format csv
+header User-Agent "omegaflow"
+last line geosphere_earth_orientation_raw
+
+source orbital_ceres_vectors
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_ceres.json
+wgs84 34.201 -118.171
+ephemeris orbital_ceres_distance
+extent 3.16e-6
+
+source orbital_earth_mass
+ttl 86400
+force em
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_earth.json
+regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
+
+source orbital_jpl_atmospheric_fireballs
+ttl 86400
+force em
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
+wgs84 34.201 -118.171
+field count cosmic_fireball_count
+
+source orbital_jupiter_mass
+ttl 86400
+force em
+ecliptic 5.2
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_jupiter.json
+regex \(kg\).\W*([0-9.]+) orbital_jupiter_mass_x10_24_kg
+
+source orbital_mars_mass
+ttl 86400
+force em
+ecliptic 1.5
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_mars.json
+regex \(kg\).\W*([0-9.]+) orbital_mars_mass_x10_24_kg
+
+source orbital_mercury_mass
+ttl 86400
+force em
+ecliptic 0.4
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_mercury.json
+regex \(kg\).\W*([0-9.]+) orbital_mercury_mass_x10_24_kg
+
+source orbital_neptune_mass
+ttl 86400
+force em
+ecliptic 30.0
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_neptune.json
+regex \(kg\).\W*([0-9.]+) orbital_neptune_mass_x10_24_kg
+
+source orbital_saturn_mass
+ttl 86400
+force em
+ecliptic 9.6
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_saturn.json
+regex \(kg\).\W*([0-9.]+) orbital_saturn_mass_x10_24_kg
+
+source orbital_sentry_objects
+ttl 86400
+force em
+url https://ssd-api.jpl.nasa.gov/sentry.api
+wgs84 34.201 -118.171
+field count nasa_sentry_risk_object_count
+
+source orbital_uranus_mass
+ttl 86400
+force em
+ecliptic 19.2
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_uranus.json
+regex \(kg\).\W*([0-9.]+) orbital_uranus_mass_x10_24_kg
+
+source orbital_venus_mass
+ttl 86400
+force em
+ecliptic 0.7
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_venus.json
+regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg
+
+source orfeus_eida_stations_europe
+ttl 86400
+force seismic-body
+url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01&endtime=9999-01-01
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+
+source ourairports_global
+ttl 86400
+force em
+url https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv
+format csv
+rows
+pos airport_latitude airport_longitude
+field_in 2 airport_type
+field_in 3 airport_name
+field_in 4 airport_latitude
+field_in 5 airport_longitude
+field_in 6 elevation_ft
+field_in 10 municipality
+field_in 11 scheduled_service
+field_in 12 icao_code
+field_in 13 iata_code
+
+source paleobiology_pbdb_paleobiology
+ttl 86400
+force em
+url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
+wgs84 43.073 -89.401
+field records_returned paleobiology_pbdb_occurrence_count
+
+source paleoclimate_neotoma_paleoecology
+ttl 86400
+force em
+url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
+wgs84 43.073 -89.401
+field total paleoclimate_neotoma_occurrences
+
+source pangaea_oai_geotraces_trace_metals
+ttl 86400
+force diffusion
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GEOTRACES
+wgs84 0.0 0.0
+map .
+
+source pangaea_oai_gnip_oxygen_isotopes
+ttl 86400
+force diffusion
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIP
+wgs84 0.0 0.0
+map .
+
+source pangaea_oai_gnir_river_isotopes
+ttl 86400
+force diffusion
+ecliptic 1
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIR
+map .
+
+source pantheon_plus_sne
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zCMB,mBcorr+FROM+%22J/ApJ/938/110/table7%22
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+field_in 3 pantheon_mBcorr
+
+source particle_physics_papers_total
+ttl 86400
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=find+tc&fields=titles,citation_count
+wgs84 46.233 6.056
+field hits.total subatomic_papers_total
+
+source physics_crossref_dois
+ttl 86400
+force em
+url https://api.crossref.org/works?rows=0
+wgs84 42.530 -71.048
+field message.total-results biosphere_crossref_doi_count
+
+source physics_crossref_jwst_high_z_papers
+ttl 86400
+force em
+url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
+wgs84 39.328 -76.620
+field message.total-results cosmic_jwst_high_z_discovery_papers
+
+source physics_inspirehep_iter_fusion_papers
+ttl 86400
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
+wgs84 43.709 5.777
+field hits.hits.0.metadata.citation_count physics_fusion_research_citations
+
+source physics_openalex_works
+ttl 86400
+force em
+url https://api.openalex.org/works?per-page=1
+wgs84 42.373 -71.110
+field meta.count biosphere_openalex_work_count
+
+source pubchem_compounds_total
+ttl 86400
+force em
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/compounds/count/JSON
+wgs84 38.995 -77.101
+field PC_Compounds.0.properties.0.count molecular_compounds_total
+
+source pubchem_substances_total
+ttl 86400
+force em
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/substances/count/JSON
+wgs84 38.995 -77.101
+field PC_Substances.0.properties.0.count molecular_substances_total
+
+source rapid_amoc_26n_transport_monthly
+ttl 86400
+force diffusion
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=moc_vertical
+wgs84 26.5 -75.0
+format text
+rows
+field 0 decimal_year
+field 1 moc_upper_sv
+field 2 moc_lower_sv
+field 3 florida_current_sv
+field 4 ekman_sv
+field 5 umo_sv
+
+source rapid_florida_current_daily
+ttl 86400
+force diffusion
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=fc
+wgs84 27.0 -79.5
+format text
+rows
+field 0 decimal_year
+field 1 florida_current_sv
+field 2 uncertainty_sv
+
+source rcsb_pdb_structures_total
+ttl 86400
+force em
+url https://data.rcsb.org/graphql?query={graphStatistics{totalEntries}}
+wgs84 40.444 -74.494
+field data.graphStatistics.totalEntries molecular_pdb_structures_total
+
+source ripe_atlas_probes
+ttl 86400
+force em
+url https://atlas.ripe.net/api/v2/probes/?status=1&page_size=500&format=json
+map results
+field_in id probe_id
+field_in description description
+field_in country_code country
+field_in asn_v4 asn
+field_in firmware_version fw_version
+field_in type probe_type
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+
+source sdss_dr18_cone_search
+ttl 86400
+force em
+url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra={ra}&dec={dec}&sr=6&format=json
+map 0.Rows
+ra_key ra
+dec_key dec
+field objid sdss_objid
+field type source_type
+field u mag_u
+field g mag_g
+field r mag_r
+field i mag_i
+field z mag_z
+
+source sdss_dr18_galaxies
+ttl 86400
+force em
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
+map .
+ra_key ra
+dec_key dec
+z_key z
+field r mag_r
+field g mag_g
+field i mag_i
+
+source sdss_dr18_qso
+ttl 86400
+force em
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
+map .
+ra_key ra
+dec_key dec
+z_key z
+field psfMag_r mag_r
+field psfMag_g mag_g
+
+source sdss_dr18_stars
+ttl 86400
+force em
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
+map .
+ra_key ra
+dec_key dec
+field r mag_r
+field g mag_g
+field u mag_u
+field i mag_i
+field z mag_z
+
+source servir_smap_soil_moisture_global
+ttl 86400
+force diffusion
+url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
+map features
+lat_key geometry.y
+lon_key geometry.x
+field attributes.sm soil_moisture_pct
+
+source sidc_international_sunspot_number
+ttl 86400
+force em
+ssb
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 sunspot_number
+
+source sidc_smoothed_monthly_sunspot_number
+ttl 86400
+force em
+url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
+wgs84 50.85 4.35
+format text
+rows
+field 0 year
+field 1 month
+field 2 decimal_date
+field 3 monthly_mean_ssn
+field 4 monthly_mean_std
+field 5 num_observations
+field 6 smoothed_ssn
+field 7 smoothed_std
+
+source sidc_sunspot_number_daily
+ttl 86400
+force em
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+wgs84 50.85 4.35
+format text
+rows
+field 0 year
+field 1 month
+field 2 day
+field 3 decimal_year
+field 4 sunspot_number
+field 5 std_dev
+field 6 num_observations
+field 7 definitive_flag
+
+source solar_historical_surface
+ttl 86400
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto
+last shortwave_radiation atmosphere_hist_solar_radiation_wm2
+last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
+
+source stackoverflow_questions_total
+ttl 86400
+force em
+url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
+wgs84 37.774 -122.419
+field total biosphere_stackoverflow_questions_total
+
+source subatomare_particles
+ttl 86400
+force em
+ssb
+url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
+format csv
+last_row ID subatomare_last_pdg_id
+last_row Mass subatomare_last_mass_mev
+last_row Charge subatomare_last_charge
+
+source sunspot_number_global
+ttl 86400
+force em
+ssb
+url https://www.sidc.be/silso/DATA/SN_d_tot_V2.0.txt
+last_line solar_sunspot_number_silso
+
+source sunspot_number_monthly
+ttl 86400
+force em
+ssb
+url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
+last_line solar_sunspot_number_silso
+
+source technosphere_stackoverflow_questions
+ttl 86400
+force em
+url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
+wgs84 40.712 -74.006
+path items.0.count technosphere_stackoverflow_questions_total
+
+source tess_exoplanet_candidates_total
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
+wgs84 42.365 -71.105
+last_line exosphere_tess_candidates_total
+
+source tevcat2_sources
+ttl 86400
+force em
+url https://tevcat2.tevcat.org/api/sources
+map .
+ra_key ra
+dec_key dec
+field_in name source_name
+field_in type source_type
+field_in distance distance_kpc
+field_in flux flux_tev_crab
+field_in index spectral_index
+
+source tns_transient_supernovae
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,z,MaxMag,Type+FROM+%22B/sn/sncat%22
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+field_in 3 tns_max_mag
+field_in 4 tns_sn_type
+
+source twomass_psc_irsa_tap
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv&limit=5000
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_name
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+source ucar_cosmic2_ro_level3_monthly
+ttl 86400
+force diffusion
+url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
+wgs84 0.0 0.0
+format text
+rows
+field 0 file_name
+field 1 file_size
+field 2 last_modified
+
+source uhecr_auger_host_galaxies
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,DLum,Kmag+FROM+%22J/ApJ/935/170/table4%22
+cmap data
+ra_key 0
+dec_key 1
+dist_key 2 3.0857e22
+field_in 3 uhecr_host_kmag
+
+source uniprot_proteins_total
+ttl 86400
+force em
+url https://rest.uniprot.org/uniprotkb/statistics
+wgs84 46.233 6.056
+field statistics.0.value molecular_proteins_total
+
+source universe_exoplanet_hosts
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,pl_name,sy_dist+FROM+ps+ORDER+BY+sy_dist&format=json
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+field_in sy_dist universe_exoplanet_distance_pc
+dist_key 3 3.085677581e16
+
+source universe_exoplanet_params
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,sy_dist,pl_orbper,pl_rade+FROM+ps+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+sy_dist&format=json
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+field_in sy_dist universe_exoplanet_distance_pc
+field_in pl_orbper universe_exoplanet_period_d
+field_in pl_rade universe_exoplanet_radius_re
+dist_key 2 3.085677581e16
+
+source universe_first_radio
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+%22VIII/92/first14%22
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+field_in 2 peak_jy
+field_in 3 int_jy
+
+source universe_frb_catalog_aa
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+TNS,RAJ2000,DEJ2000,DM+FROM+%22J/A%2BA/693/A279/frbs%22
+cmap data
+tau_key _dist_m
+ra_key 1
+dec_key 2
+field_in 0 tns_name
+field_in 3 dm
+
+source universe_frb_catalog_pasa
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,DM+FROM+%22J/other/PASA/33.45/frbcat%22
+cmap data
+tau_key _dist_m
+ra_key 1
+dec_key 2
+field_in 0 frb_name
+field_in 3 dm
+
+source universe_gaia_astrometric_binaries
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 phot_g_mean_mag
+field_in 3 parallax_mas
+field_in 4 ruwe
+
+source universe_gaia_blue_stragglers
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.1%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%3E2
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 bp_rp
+
+source universe_gaia_bright_giants
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20%3C%208%20AND%20parallax%20%3E%205
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 par
+
+source universe_gaia_bulge
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20SQRT%28POWER%28ra-266.4%2C2%29%2BPOWER%28dec%2B29%2C2%29%29%3C5%20AND%20parallax%20IS%20NOT%20NULL
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source universe_gaia_cool_dwarfs
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E2%20AND%20bp_rp%3C4%20AND%20parallax%3E20
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source universe_gaia_deep_mag
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20BETWEEN%2015%20AND%2018%20AND%20parallax%20IS%20NOT%20NULL
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+field_in 3 par
+
+source universe_gaia_extreme_blue
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%20-0.3%20AND%20phot_g_mean_mag%20%3C%2013
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+field_in 3 par
+field_in 4 bp_rp
+
+source universe_gaia_extreme_red
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3E%203.5%20AND%20phot_g_mean_mag%20%3C%2014
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+field_in 3 par
+field_in 4 bp_rp
+
+source universe_gaia_galactic_plane
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ABS%28b%29%3C10%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%20IS%20NOT%20NULL
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source universe_gaia_giant_branch
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E1.5%20AND%20bp_rp%3C3%20AND%20phot_g_mean_mag%3C12%20AND%20parallax%3E2
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source universe_gaia_high_velocity
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20radial_velocity%20IS%20NOT%20NULL%20AND%20ABS%28radial_velocity%29%20%3E%20200
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+field_in 3 par
+
+source universe_gaia_hot_subdwarfs
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.3%20AND%20phot_g_mean_mag%3C15%20AND%20parallax%3E1
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source universe_gaia_lmc
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 2 par
+
+source universe_gaia_main_sequence
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E-0.2%20AND%20bp_rp%3C1%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E5
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source universe_gaia_metal_poor
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%200.5%20AND%20phot_g_mean_mag%20%3C%2014%20AND%20parallax%20%3E%202
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 bp_rp
+
+source universe_gaia_metallicity
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cmh_gspphot%20FROM%20gaiadr3.gaia_source%20WHERE%20mh_gspphot%20IS%20NOT%20NULL%20AND%20parallax%20%3E%202
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 phot_g_mean_mag
+field_in 3 parallax_mas
+field_in 4 metallicity_dex
+
+source universe_gaia_nearby_1000
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source universe_gaia_red_clump
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E0.8%20AND%20bp_rp%3C1.2%20AND%20phot_g_mean_mag%3C13%20AND%20parallax%3E3
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 bp_rp
+
+source universe_gaia_smc
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 2 par
+
+source universe_nvss_radio
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,%22S1.4%22+FROM+%22VIII/65/nvss%22
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+field_in 2 flux_jy
+
+source universe_xmm_4xmm_dr13
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Source,RA_ICRS,DE_ICRS+FROM+%22IX/69/xmm4d13s%22
+cmap data
+tau_key _dist_m
+ra_key 1
+dec_key 2
+field_in 0 Source
+
+source usgs_earthquakes_hazard_layer
+ttl 86400
+force em
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6.0&orderby=time&limit=20
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag magnitude
+field_in properties.place location_description
+field_in properties.time event_time
+field_in properties.tsunami tsunami_flag
+field_in properties.alert alert_level
+field_in properties.sig significance
+field_in properties.cdi instrumental_intensity
+field_in properties.mmi maximum_intensity
+field_in properties.felt felt_reports
+depth_key geometry.coordinates.2
+
+source usgs_nwis_peak_streamflow
+ttl 86400
+force diffusion
+url https://nwis.waterdata.usgs.gov/usa/nwis/peak?state_cd=all&format=rdb&date_format=YYYY-MM-DD&peak_begin_date={year}-01-01&peak_end_date={year}-12-31
+format text
+rows
+lat_key dec_lat_va
+lon_key dec_long_va
+field site_no site_code
+field station_nm station_name
+field peak_dt peak_date
+field peak_va peak_discharge_cfs
+field gage_ht gage_height_ft
+
+source usgs_sciencebase_nlcd
+ttl 86400
+force diffusion
+url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
+map items
+lat_key spatial.boundingBox.minY
+lon_key spatial.boundingBox.minX
+field title dataset_title
+field tags.0.name primary_tag
+field spatial.representationalPoint.coordinates.0 centroid_lon
+field spatial.representationalPoint.coordinates.1 centroid_lat
+
+source usgs_volcano_monitoring
+ttl 86400
+force em
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+map .
+lat_key latitude
+lon_key longitude
+field volcano_name name
+field region region_code
+field elevation_meters elevation_m
+field nvews_threat threat_level
+field icao_coordinates icao_grid
+
+source uspto_patents_total
+ttl 86400
+force em
+url https://developer.uspto.gov/ptab-api/v2/patents?limit=1
+wgs84 38.995 -77.101
+field totalResults biosphere_uspto_patents_total
+
+source viirs_lst_global
+ttl 86400
+force thermal
+url https://firms.modaps.eosdis.nasa.gov/api/country/csv/{nasa_key}/VIIRS_SNPP_NRT/USA
+format text
+rows
+lat_key latitude
+lon_key longitude
+field brightness viirs_lst_brightness_k
+field scan track_scan_km
+field frp fire_radiative_power_mw
+field satellite satellite
+
+source vizier_2dfgrs
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,bJmag,z,SpClass+FROM+"J/MNRAS/329/227/2dFGRS"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+bJmag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field bJmag bj_magnitude
+field z redshift
+
+source vizier_2mass_psc_bright
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,%222MASS%22,Jmag,Hmag,Kmag,Qflg+FROM+%22II/246/out%22+WHERE+Jmag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+Jmag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field 2MASS source_name
+field Jmag j_mag
+field Hmag h_mag
+field Kmag k_mag
+field Qflg quality_flag
+
+source vizier_2qz_qso
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RAJ2000,DEJ2000,z1,bJmag,2QZ+FROM+"VII/241/2qz"+WHERE+RAJ2000+IS+NOT+NULL+AND+z1>0+ORDER+BY+z1+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field z1 redshift
+field bJmag bj_magnitude
+
+source vizier_4xmm_dr13
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RA_ICRS,DE_ICRS,Flux2,Flux3,%22HR1%22,%22HR2%22,4XMM+FROM+"IX/69/xmm4d13s"+WHERE+RA_ICRS+IS+NOT+NULL+ORDER+BY+Flux2+DESC
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field Flux2 flux_2to12_kev_erg_cm2s
+field HR1 hardness_ratio_1
+field HR2 hardness_ratio_2
+
+source vizier_6dfgs
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,cz,e_cz,bJmag,%22S%2FG%22+FROM+"VII/259/6dfgs"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+bJmag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field cz velocity_kms
+field bJmag bj_magnitude
+field S/G star_galaxy_flag
+
+source vizier_allwise_bright
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AllWISE,RAJ2000,DEJ2000,W1mag,W2mag,W3mag,W4mag,var_flg,ex+FROM+%22II/328/allwise%22+WHERE+W1mag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+W1mag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field AllWISE source_name
+field W1mag w1_3_4um_mag
+field W2mag w2_4_6um_mag
+field W3mag w3_12um_mag
+field W4mag w4_22um_mag
+field var_flg variability_flag
+field ex extended_source_flag
+
+source vizier_apogee_dr17_stellar_params
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+APOGEE_ID,RA,DEC,Teff,logg,M_H,alpha_M,VHELIO_AVG,DIST_BPG+FROM+"III/286/allstars"+WHERE+RA+IS+NOT+NULL+AND+ASPCAPFLAG%3D0+AND+SNR>100+ORDER+BY+SNR+DESC
+format text
+rows
+ra_key RA
+dec_key DEC
+field APOGEE_ID apogee_id
+field Teff effective_temp_K
+field logg surface_gravity
+field M_H metallicity
+field alpha_M alpha_over_m
+field VHELIO_AVG radial_velocity_km_s
+dist_key DIST_BPG
+
+source vizier_asteroid_families_nesvorny
+ttl 86400
+force gravity
+ssb
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Family,n,e,sini,a,H+FROM+"J/Icarus/239/46/table3"+WHERE+n+IS+NOT+NULL+ORDER+BY+n+DESC
+format text
+rows
+field Family family_name
+field n family_members
+field a semimajor_axis_au
+field e eccentricity
+field sini sin_inclination
+field H abs_magnitude
+
+source vizier_atlasgal_csc
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AGAL,_RA_icrs,_DE_icrs,GLON,GLAT,Fint,e_Fint,Fp,Reff+FROM+"J/A+A/568/A41/atl-csc"+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Fint+DESC
+format text
+rows
+ra_key _RA_icrs
+dec_key _DE_icrs
+field GLON galactic_longitude_deg
+field GLAT galactic_latitude_deg
+field Fint integrated_flux_jy
+field Reff effective_radius_arcsec
+
+source vizier_atnf_all_pulsars_distance
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Type+FROM+"VII/304/catalog"+WHERE+DIST+IS+NOT+NULL+AND+RAJ+IS+NOT+NULL+ORDER+BY+DIST+ASC
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+field JNAME pulsar_name
+field P0 period_s
+field DM dispersion_measure
+field Type pulsar_type
+dist_key DIST
+
+source vizier_atnf_millisecond_pulsars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Binary,Type+FROM+"VII/304/catalog"+WHERE+P0<0.03+AND+RAJ+IS+NOT+NULL+ORDER+BY+P0+ASC
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+field JNAME pulsar_name
+field P0 period_s
+field DM dispersion_measure
+field ASSOC associated_object
+field Binary binary_type
+field Type pulsar_type
+dist_key DIST
+
+source vizier_atnf_pulsar_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+Name,RAJ2000,DEJ2000,Dist,P0,F0,DM,S1400+FROM+%22J%2FApJS%2F208%2F17%2Fpsrcat%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+P0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field Dist distance_kpc
+field P0 period_s
+field F0 frequency_hz
+field DM dispersion_measure_pccm3
+field S1400 flux_1400mhz_mjy
+
+source vizier_bzcat5_blazars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+4000+Name,RAJ2000,DEJ2000,z,LogFlux,Type+FROM+%22VII/274/bzcat5%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+LogFlux+DESC
+cmap data
+tau_key _dist_m
+ra_key 1
+dec_key 2
+z_key 3
+field_in 0 source_name
+field_in 4 log_radio_flux
+field_in 5 blazar_type
+
+source vizier_carmenes_survey
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+format text
+rows
+ra_key _RA
+dec_key _DE
+field SpType spectral_type
+field Dist distance_pc
+
+source vizier_catwise_agn_candidates
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RA_ICRS,DE_ICRS,W1mproPM,W2mproPM,pmRA,pmDE+FROM+"II/365/catwise"+WHERE+RA_ICRS+IS+NOT+NULL+AND+W1mproPM<8+ORDER+BY+W1mproPM+ASC
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field W1mproPM w1_magnitude
+field W2mproPM w2_magnitude
+pmra_key pmRA
+pmdec_key pmDE
+
+source vizier_chandra_gc_xray
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,%22F2-8%22,%22HR0%22,%22HR1%22,%22HR2%22+FROM+"J/ApJS/235/26/table3"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+%22F2-8%22+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field F2-8 flux_2to8keV_erg_cm2s
+field HR0 hardness_ratio_0
+field HR1 hardness_ratio_1
+
+source vizier_cornish_5ghz_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,GLON,GLAT,RAJ2000,DEJ2000,Speak,Sint,ASc,mT+FROM+%22J/ApJS/205/1/catalog%22+WHERE+RAJ2000+IS+NOT+NULL+AND+Speak>1+ORDER+BY+Speak+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field GLON galactic_lon
+field GLAT galactic_lat
+field Speak peak_flux_5ghz_mJy_beam
+field Sint integrated_flux_5ghz_mJy
+field ASc spectral_index
+field mT source_type
+
+source vizier_cosmic_voids
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RAJ2000,DEJ2000,z,r,ID+FROM+"J/A+A/570/A106/void"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+r+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field z redshift
+field r void_radius_mpc
+
+source vizier_cosmograil_lcs
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+RAJ2000,DEJ2000,Name,SName+FROM+"J/A+A/640/A105/stars"+WHERE+RAJ2000+IS+NOT+NULL
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name lens_name
+
+source vizier_dla_sdss
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+_RA,_DE,zabs,NHI,QSO,SimbadName+FROM+"J/ApJ/800/7/dla"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+NHI+DESC
+format text
+rows
+ra_key _RA
+dec_key _DE
+field zabs absorber_redshift
+field NHI column_density_cm2
+
+source vizier_epta_dr2_pulsars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50+JNAME,RAJ,DECJ,P0,DM,Dist,Tspan+FROM+"J/A+A/678/A48/table1"+WHERE+RAJ+IS+NOT+NULL+ORDER+BY+Tspan+DESC
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+field JNAME pulsar_name
+field P0 period_s
+field DM dispersion_measure
+field Tspan timing_baseline_yr
+dist_key Dist
+
+source vizier_first_radio
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,Fpeak,Fint,Maj,Min+FROM+"VIII/92/first14"+WHERE+Fpeak%3E10+ORDER+BY+Fpeak+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Fpeak peak_flux_mjy
+field Fint int_flux_mjy
+field Maj majaxis_arcsec
+field Min minaxis_arcsec
+
+source vizier_first_radio_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,Fpeak,Fint,Maj+FROM+%22VIII/92/first14%22+WHERE+Fpeak%3E5+ORDER+BY+Fpeak+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Fpeak flux_peak_mjy
+field Fint flux_int_mjy
+field Maj major_axis_arcsec
+
+source vizier_gaia_binary_candidates
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RAJ2000,DEJ2000,Gmag,Plx,pmRA,pmDE,RUWE+FROM+"I/355/gaiadr3"+WHERE+RAJ2000+IS+NOT+NULL+AND+RUWE>1.4+ORDER+BY+Gmag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key Plx
+field Gmag g_magnitude
+field RUWE ruwe_astrometric_excess
+pmra_key pmRA
+pmdec_key pmDE
+
+source vizier_gaia_dr3_full_astrometric_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+DR3Name%2CRA_ICRS%2CDE_ICRS%2CPlx%2Ce_Plx%2CPM%2CpmRA%2Ce_pmRA%2CpmDE%2Ce_pmDE%2CGmag%2CBPmag%2CRPmag%2CRV%2Ce_RV+FROM+%22I%2F355%2Fgaiadr3%22+WHERE+RA_ICRS+IS+NOT+NULL+AND+Plx%3E5+ORDER+BY+Gmag+ASC
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field DR3Name gaia_dr3_id
+field Plx parallax_mas
+field e_Plx parallax_error_mas
+field PM total_proper_motion_mas_yr
+field e_pmRA pmra_error
+field e_pmDE pmdec_error
+field Gmag g_mag
+field BPmag bp_mag
+field RPmag rp_mag
+field e_RV radial_velocity_error
+dist_key 1000/Plx
+pmra_key pmRA
+pmdec_key pmDE
+radvel_key RadialVelocity
+
+source vizier_gaia_dr3_radial_velocities
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+DR3Name%2CRA_ICRS%2CDE_ICRS%2CPlx%2CpmRA%2CpmDE%2CRV%2Ce_RV%2CGmag%2CTeff+FROM+%22I%2F355%2Fgaiadr3%22+WHERE+RV+IS+NOT+NULL+AND+Plx%3E5+ORDER+BY+Plx+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+plx_key parallax
+field source_id gaia_source_id
+field pmra proper_motion_ra_mas_yr
+field pmdec proper_motion_dec_mas_yr
+field radial_velocity radial_velocity_km_s
+field radial_velocity_error rv_error_km_s
+field teff_gspphot effective_temp_K
+
+source vizier_galactic_black_hole_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+Name,RAJ2000,DEJ2000,Porb,Fx,MX,Mdist+FROM+"J/ApJS/163/2/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+MX+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field Porb orbital_period_h
+field Fx peak_x_flux_Crab
+field MX bh_mass_solar
+field Mdist distance_kpc
+
+source vizier_galah_dr4_stellar_parameters
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+star_id,RAJ2000,DEJ2000,Teff,logg,fe_h,alpha_fe,Vrad,age_bstep+FROM+"J/MNRAS/528/5/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+flag_sp%3D0+ORDER+BY+snr_c3_iraf+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field star_id galah_id
+field Teff effective_temp_K
+field logg surface_gravity
+field fe_h iron_abundance
+field alpha_fe alpha_over_iron
+field Vrad radial_velocity_km_s
+field age_bstep stellar_age_Gyr
+
+source vizier_galfa_hi_compact_sources
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+GLON,GLAT,RAJ2000,DEJ2000,VLSR,Sint,Peak+FROM+"J/ApJS/208/14/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Sint+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field VLSR radial_velocity_km_s
+field Sint integrated_flux_Jy_km_s
+field Peak peak_brightness_K
+
+source vizier_gcvs_variable_stars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,VarType,magMax,Min1,Period,SpType,pmRA,pmDE,VarName+FROM+%22B/gcvs/gcvs_cat%22+WHERE+RAJ2000+IS+NOT+NULL+AND+magMax<16+ORDER+BY+magMax+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field VarType variable_type
+field magMax max_magnitude
+field Min1 min_magnitude
+field Period variability_period_days
+field SpType spectral_type
+pmra_key pmRA
+pmdec_key pmDE
+
+source vizier_gleam_extragalactic_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Fintwide,alpha,e_alpha,Fpwide+FROM+"J/MNRAS/464/1146/gleam"+WHERE+RAJ2000+IS+NOT+NULL+AND+Fintwide>500+ORDER+BY+Fintwide+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field Fintwide int_flux_170_231mhz_mJy
+field alpha spectral_index
+field e_alpha spectral_index_error
+field Fpwide peak_flux_mJy_beam
+
+source vizier_green_snr_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+304+SNR,GLON,GLAT,Dmaj,Dmin,S1GHz,alpha,Type+FROM+"VII/278/snrs"+WHERE+GLON+IS+NOT+NULL+ORDER+BY+S1GHz+DESC
+format text
+rows
+ra_key GLON
+dec_key GLAT
+field SNR snr_name
+field Dmaj major_diam_arcmin
+field Dmin minor_diam_arcmin
+field S1GHz flux_1ghz_Jy
+field alpha spectral_index
+field Type morphology_type
+
+source vizier_harris_globular_clusters
+ttl 86400
+force gravity
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+157+ID,RAJ2000,DEJ2000,Rsun,FeH,VHB,sigv,MVt,RV+FROM+"VII/202/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Rsun+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field ID cluster_id
+field FeH iron_abundance
+field VHB horizontal_branch_magnitude
+field sigv velocity_dispersion_km_s
+field MVt total_abs_mag
+field RV radial_velocity_km_s
+dist_key Rsun
+
+source vizier_hecate_galaxies
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,HRV,D,W1mag,W2mag+FROM+"J/MNRAS/506/1896/hecate"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+D+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field HRV velocity_kms
+field D distance_mpc
+
+source vizier_hi4pi_allsky_survey
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+GLON,GLAT,NHI,VLSR,FWHM+FROM+"J/A+A/594/A116/hi4pi"+WHERE+NHI+IS+NOT+NULL+AND+NHI>1e20+ORDER+BY+NHI+DESC
+format text
+rows
+ra_key GLON
+dec_key GLAT
+field NHI hi_column_density_cm2
+field VLSR radial_velocity_km_s
+field FWHM line_width_km_s
+
+source vizier_higal_250um_compact_sources
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Fint,Fpeak,FWHMA,FWHMB,PA,SNR+FROM+%22J/A%2BA/591/A149/higalpsw%22+WHERE+RAJ2000+IS+NOT+NULL+AND+Fpeak>0.1+ORDER+BY+Fpeak+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field Fint integrated_flux_250um_Jy
+field Fpeak peak_flux_250um_Jy_beam
+field FWHMA major_axis_arcsec
+field FWHMB minor_axis_arcsec
+field PA position_angle_deg
+field SNR signal_to_noise
+
+source vizier_hipass_bright_galaxy_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+Name,RAJ2000,DEJ2000,cz,Sint,Wpeak,Dist+FROM+"J/MNRAS/322/486/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Sint+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name galaxy_name
+field cz recession_velocity_km_s
+field Sint integrated_hi_flux_Jy_km_s
+field Wpeak peak_width_km_s
+field Dist distance_Mpc
+
+source vizier_hipparcos_astrometry
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RArad,DErad,Plx,pmRA,pmDE,Hpmag,B-V,VA,Ntr+FROM+%22I/311/hip2%22+WHERE+RArad+IS+NOT+NULL+AND+Hpmag<12+ORDER+BY+Hpmag+ASC
+format text
+rows
+ra_key RArad
+dec_key DErad
+plx_key Plx
+field Hpmag hipparcos_magnitude
+field B-V b_minus_v_color
+field VA vt_magnitude
+field Ntr num_transits
+pmra_key pmRA
+pmdec_key pmDE
+
+source vizier_iphas_halpha_emitters
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+IPHAS,RAJ2000,DEJ2000,r%27mag,e_r%27mag,r%27-i,r%27-Ha,Flag+FROM+%22J/MNRAS/384/1277/emitters%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+r%27-Ha+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field IPHAS iphas_id
+field r'mag r_band_mag
+field r'-i r_minus_i_color
+field r'-Ha r_minus_halpha
+field Flag quality_flag
+
+source vizier_lotss_dr3
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Speak,SpeakTot,Maj,DCMaj,Source+FROM+"J/A+A/707/A198/lotssdr3"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SpeakTot+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Speak peak_flux_mjy
+field SpeakTot total_flux_mjy
+field Maj major_axis_arcsec
+field Source source_name
+
+source vizier_lotss_dr3_radio
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Speak,SpeakTot,Maj,DCMaj,Source+FROM+"J/A+A/707/A198/lotssdr3"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SpeakTot+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Speak peak_flux_mJy
+field SpeakTot total_flux_mJy
+field Maj major_axis_arcsec
+field Source source_name
+
+source vizier_milky_way_star_clusters
+ttl 86400
+force gravity
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3006+Name,RAJ2000,DEJ2000,d,logt,FeH,r2,Type+FROM+"J/A+A/558/A53/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+d+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name cluster_name
+field logt log10_age_yr
+field FeH iron_abundance
+field r2 tidal_radius_arcmin
+field Type cluster_type
+dist_key d
+
+source vizier_mojave_15ghz
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,z,Vmag,S15GHz,STot,SPeak,PTot,EVPA+FROM+%22J/AJ/130/1389/mojave%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+z+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field z redshift
+field Vmag optical_magnitude
+field S15GHz flux_15ghz_jy
+field STot total_flux_jy
+field SPeak peak_flux_jy
+field PTot polarization_percent
+field EVPA electric_vector_pa
+
+source vizier_mojave_15jy_sample
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,z,Speak+FROM+\"J/AJ/137/3718/table1\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Speak+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field Speak peak_flux_jy
+field Name source_name
+
+source vizier_mojave_18yr
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ID,OName,z,Opt,mu-max,beta-max,Nep,PA,logVarPA,_RA,_DE+FROM+%22J/ApJ/923/30/mojave18%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
+format text
+rows
+ra_key _RA
+dec_key _DE
+field OName other_name
+field z redshift
+field Opt optical_class
+field mu-max max_apparent_speed
+field beta-max max_beta_apparent
+field Nep num_epochs
+field PA position_angle
+field logVarPA log_variability_pa
+
+source vizier_mojave_jet_kinematics
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,z,S15,mu_app,Class+FROM+\"J/ApJS/260/12/table3\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S15+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field S15 flux_15ghz_jy
+field mu_app apparent_speed_c
+field Class source_class
+field Name source_name
+
+source vizier_nanograv_15yr_pulsars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+JNAME,RAdeg,DEdeg,Dist,P0,DM,tspan+FROM+"J/ApJ/951/L9/table1"+WHERE+RAdeg+IS+NOT+NULL+ORDER+BY+tspan+DESC
+format text
+rows
+ra_key RAdeg
+dec_key DEdeg
+field JNAME pulsar_name
+field P0 period_s
+field DM dispersion_measure
+field tspan timing_baseline_yr
+dist_key Dist
+
+source vizier_nvss_galcenter
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,"S1.4",MajAxis+FROM+"VIII/65/nvss"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))=1
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field S1.4 flux_14ghz_mjy
+field MajAxis majaxis_arcsec
+
+source vizier_nvss_radio
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,RAJ2000,DEJ2000,"S1.4",MajAxis,MinAxis+FROM+"VIII/65/nvss"+WHERE+"S1.4"%3E50+ORDER+BY+"S1.4"+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field S1.4 flux_14ghz_mjy
+field MajAxis majaxis_arcsec
+field MinAxis minaxis_arcsec
+
+source vizier_nvss_radio_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,%22S1.4%22,MajAxis+FROM+%22VIII/65/nvss%22+WHERE+%22S1.4%22%3E20+ORDER+BY+%22S1.4%22+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field S1.4 flux_1400mhz_mjy
+field MajAxis major_axis_arcsec
+
+source vizier_orion_region_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Reg,RAJ2000,DEJ2000,Dist,SimbadName+FROM+%22J/ApJS/229/28/table1%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Dist+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Reg region_name
+field Dist distance_pc
+field SimbadName simbad_id
+
+source vizier_ou_blazars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+No,Name,GLON,GLAT,_RA_icrs,_DE_icrs+FROM+%22J/A%2BA/607/A48/tablea1%22+WHERE+_RA_icrs+IS+NOT+NULL
+format text
+rows
+ra_key _RA_icrs
+dec_key _DE_icrs
+field Name source_name
+field GLON galactic_longitude
+field GLAT galactic_latitude
+
+source vizier_ovro_blazar_monitoring
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+IRAS,z,logLIR,F12um,F25um,F60um,F100um,_RA,_DE+FROM+%22J/ApJS/274/5/table1%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
+format text
+rows
+ra_key _RA
+dec_key _DE
+field z redshift
+field logLIR log_ir_luminosity
+field F12um flux_12um_jy
+field F25um flux_25um_jy
+field F60um flux_60um_jy
+field F100um flux_100um_jy
+
+source vizier_panstarrs_dr2_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+objID,RAJ2000,DEJ2000,gmag,rmag,imag,zmag,ymag+FROM+%22II/349/ps1%22+WHERE+RAJ2000+IS+NOT+NULL+AND+gmag<15
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field objID panstarrs_obj_id
+field gmag g_mag
+field rmag r_mag
+field imag i_mag
+field zmag z_mag
+field ymag y_mag
+
+source vizier_planck_psz2_clusters
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,SNR,z,Val,MSZ,Y5R500,MCXC+FROM+%22J/A%2BA/594/A27/psz2%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SNR+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name cluster_name
+field SNR detection_snr
+field z redshift
+field MSZ sz_mass
+field Y5R500 sz_flux
+field Val validation_flag
+field MCXC mcxc_crossmatch
+
+source vizier_racs_low_epoch1
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Source_name,RAJ2000,DEJ2000,Total_flux_887,Peak_flux_887,Maj,Min,Local_rms+FROM+"J/PASA/38/e058/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux_887>20+ORDER+BY+Total_flux_887+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Source_name source_name
+field Total_flux_887 total_flux_887mhz_mJy
+field Peak_flux_887 peak_flux_mJy_beam
+field Maj major_axis_arcsec
+field Local_rms local_rms_mJy
+
+source vizier_scardec_source_time_functions
+ttl 86400
+force seismic-body
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Seq,Nx,blambda,Title+FROM+%22J/A%2BA/614/A116/list%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Nx+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Seq source_seq
+field Nx num_spectra
+field blambda excitation_parameter
+field Title source_title
+
+source vizier_sdss12_galaxies
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RA_ICRS,DE_ICRS,zsp,rmag,gmag,imag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D3+AND+zsp+IS+NOT+NULL+AND+zsp%3E0.01
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+z_key zsp
+field rmag mag_r
+field gmag mag_g
+field imag mag_i
+
+source vizier_sdss12_quasars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RA_ICRS,DE_ICRS,zsp,rmag,gmag+FROM+%22V/147/sdss12%22+WHERE+zsp+IS+NOT+NULL+AND+zsp%3E0.5
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+z_key zsp
+field rmag mag_r
+field gmag mag_g
+
+source vizier_sdss12_stars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RA_ICRS,DE_ICRS,rmag,gmag,imag,zmag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D1+AND+rmag%3C18
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field rmag mag_r
+field gmag mag_g
+field imag mag_i
+
+source vizier_sdss_dr7_qso
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,z,imag+FROM+"VII/260/dr7qso"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+z+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field z redshift
+field imag i_magnitude
+
+source vizier_sl2s_lenses
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,imag,zphot,zd,zs,qflag+FROM+"J/ApJ/785/144/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+zphot+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field imag i_magnitude
+field zphot photometric_redshift
+field zd deflector_redshift
+
+source vizier_slacs_lenses
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+_RA,_DE,zL,zS,Sigma,Imag,Class+FROM+"J/ApJ/851/48/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+zL+ASC
+format text
+rows
+ra_key _RA
+dec_key _DE
+field zL lens_redshift
+field zS source_redshift
+field Sigma velocity_dispersion_kms
+
+source vizier_sstar_orbits
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+_RA,_DE,Star,a,e,i,Omega,w,Tp,Per+FROM+"J/ApJ/837/30/table3"+WHERE+_RA+IS+NOT+NULL
+format text
+rows
+ra_key _RA
+dec_key _DE
+field Star star_name
+field a semi_major_axis_arcsec
+field e eccentricity
+field i inclination_deg
+
+source vizier_tgss_adr1_150mhz
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Source_name,RAJ2000,DEJ2000,Total_flux,Peak_flux,Maj,Min,RMS+FROM+"J/A+A/598/A78/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux>200+ORDER+BY+Total_flux+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Source_name source_name
+field Total_flux total_flux_150mhz_mJy
+field Peak_flux peak_flux_mJy_beam
+field Maj major_axis_arcsec
+field RMS local_rms_mJy
+
+source vizier_vips_polarimetry
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1500+Name,RAJ2000,DEJ2000,Stotal,PolFrac,PolAngle+FROM+\"J/AJ/131/1937/table1\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Stotal+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Stotal total_flux_jy
+field PolFrac polarization_fraction
+field PolAngle polarization_angle_deg
+field Name source_name
+
+source vizier_vlass_epoch1_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Component_name,RAJ2000,DEJ2000,Total_flux,Peak_flux,Maj,Min,PA,RMS+FROM+"J/ApJS/255/30/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux>10+ORDER+BY+Total_flux+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Component_name source_name
+field Total_flux total_flux_mJy
+field Peak_flux peak_flux_mJy_beam
+field Maj major_axis_arcsec
+field Min minor_axis_arcsec
+field RMS local_rms_mJy
+
+source vizier_vsx_cataclysmic_variables
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+(Type+LIKE+'CV%25'+OR+Type+LIKE+'UG%25'+OR+Type+LIKE+'CN%25'+OR+Type+LIKE+'AM%25'+OR+Type+LIKE+'DQ%25')+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name star_name
+field Type variability_type
+field Period period_d
+field max max_magnitude
+field min min_magnitude
+
+source vizier_vsx_galactic_center_variables
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+1%3DCONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name star_name
+field Type variability_type
+field Period period_d
+field max max_magnitude
+
+source vizier_vsx_mira_longperiod
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+(Type+LIKE+'M+%25'+OR+Type+LIKE+'M%25'+OR+Type+LIKE+'SR%25'+OR+Type+LIKE+'SRA%25'+OR+Type+LIKE+'SRB%25')+AND+Period>100+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+Period+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name star_name
+field Type variability_type
+field Period period_d
+field max max_magnitude
+field min min_magnitude
+
+source vizier_wise_hii_regions
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+WISE,Cl,GLON,GLAT,Rad,HIIName,_RA_icrs,_DE_icrs+FROM+%22J/ApJS/212/1/wisecat%22+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Rad+DESC
+format text
+rows
+ra_key _RA_icrs
+dec_key _DE_icrs
+field WISE wise_id
+field Cl classification
+field GLON galactic_lon
+field GLAT galactic_lat
+field Rad angular_radius_arcsec
+field HIIName hii_region_name
+
+source who_gho_air_quality_urban
+ttl 86400
+force diffusion
+url https://ghoapi.azureedge.net/api/AIR_12?\$filter=SpatialDimType+eq+'COUNTRY'&\$top=500
+map value
+field SpatialDim country_code
+field NumericValue pm25_ugm3
+field TimeDim year
+field Low confidence_low
+field High confidence_high
+
+source who_gho_urban_air_quality
+ttl 86400
+force diffusion
+ecliptic 1
+url https://ghoapi.azureedge.net/api/AIR_12?$filter=SpatialDimType+eq+'COUNTRY'&$top=500
+map value
+field SpatialDim country_code
+field TimeDim year
+field NumericValue pm10_annual_mean
+
+source wikidata_entities_total
+ttl 86400
+force em
+url https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+wgs84 37.774 -122.419
+field query.statistics.articles biosphere_wikidata_entities_total
+
+source wikipedia_articles_total
+ttl 86400
+force em
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+wgs84 37.774 -122.419
+field query.statistics.articles biosphere_wikipedia_articles_total
+
+source wikipedia_edits_total
+ttl 86400
+force em
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+wgs84 37.774 -122.419
+field query.statistics.edits biosphere_wikipedia_edits_total
+
+source wikipedia_pages_total
+ttl 86400
+force em
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+wgs84 37.774 -122.419
+field query.statistics.pages biosphere_wikipedia_pages_total
+
+source world_open_brewery_db
+ttl 86400
+force em
+url https://api.openbrewerydb.org/v1/breweries?per_page=200
+map .
+lat_key latitude
+lon_key longitude
+field_in id brewery_db_id
+
+source worldbank_co2_emissions
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/co2_emissions_countries.json
+map data
+lat_key latitude
+lon_key longitude
+field country country_name
+field iso3 country_iso3
+field co2_kt co2_kt
+field year data_year
+
+source worldbank_countries
+ttl 86400
+force diffusion
+url https://api.worldbank.org/v2/country/all?format=json&per_page=300
+map 1
+lat_key latitude
+lon_key longitude
+field name country_name
+field id country_code
+field region.value region_name
+field incomeLevel.value income_level
+field capitalCity capital_city
+
+source worldbank_forest_area
+ttl 86400
+force diffusion
+url https://api.worldbank.org/v2/country/all/indicator/AG.LND.FRST.ZS?format=json&per_page=500
+map 1
+lat_key country.latitude
+lon_key country.longitude
+field value forest_pct
+field country.iso2Code country_code
+
+source worldbank_pm25_exposure
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/pm25_exposure_countries.json
+map data
+lat_key latitude
+lon_key longitude
+field country country_name
+field iso3 country_iso3
+field pm25_ugm3 pm25_ugm3
+field year data_year
+
+source worldbank_water_access
+ttl 86400
+force diffusion
+url https://api.worldbank.org/v2/country/all/indicator/SH.H2O.BASIC.ZS?format=json&per_page=500
+map 1
+lat_key country.latitude
+lon_key country.longitude
+field value water_access_pct
+field country.iso2Code country_code
+
+source worldpop_population_density_global
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/population_countries.json
+map data
+lat_key latitude
+lon_key longitude
+field country country_name
+field iso3 country_iso3
+field population population_estimate
+field year data_year
+
+url https://www.marinespecies.org/rest/AphiaRecordsByName/Solea%20solea?like=false&marine_only=true
+ttl 86400
+force diffusion
+url https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames[]=Mola+mola&marine_only=true
+wgs84 0.0 0.0
+map .
+field scientificName species_name
+field aphiaID aphia_id
+field kingdom kingdom
+field phylum phylum
+field class class_name
+field order order_name
+
+source woudc_total_ozone
+ttl 86400
+force diffusion
+url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=ozone_total_column
+map observations
+lat_key station.geometry.coordinates.1
+lon_key station.geometry.coordinates.0
+field value total_ozone_du
+field datetime obs_time
+
+source woudc_total_ozone_observations
+ttl 86400
+force diffusion
+url https://woudc.org/api/records/observations/?dataset=TotalOzone&limit=2000&sortby=-datetime
+map data
+lat_key station.latitude
+lon_key station.longitude
+field datetime observation_datetime
+field value total_ozone_du
+field station.name station_name
+field station.country country
+
+source woudc_uv_index
+ttl 86400
+force diffusion
+url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=uv_index
+map observations
+lat_key station.geometry.coordinates.1
+lon_key station.geometry.coordinates.0
+field value uv_index
+
+source woudc_uv_index_observations
+ttl 86400
+force diffusion
+url https://woudc.org/api/records/observations/?dataset=UmkehrN14&limit=1000&sortby=-datetime
+map data
+lat_key station.latitude
+lon_key station.longitude
+field datetime observation_datetime
+field value uv_index_value
+field station.name station_name
+field station.country country
+
+source zenodo_iodp_community
+ttl 86400
+force diffusion
+ecliptic 1
+url https://zenodo.org/api/records/?communities=iodp&size=100
+map hits.hits
+field metadata.doi dataset_doi
+field metadata.title dataset_title
+field metadata.creators.0.name primary_author
+field metadata.publication_date publication_date
+field metadata.description dataset_description
+field files.0.links.self file_download_url
+
+source zenodo_iodp_search
+ttl 86400
+force diffusion
+ecliptic 1
+url https://zenodo.org/api/records/?q=IODP+DSDP&size=100
+map hits.hits
+field metadata.doi dataset_doi
+field metadata.title dataset_title
+field metadata.creators.0.name primary_author
+field metadata.publication_date publication_date
+
+# STAC-based Earth observation sources
+# No auth required — public endpoints only
+# POST-only — requires method post + body directive
+# Response: GeoJSON FeatureCollection → map features
+# Position from properties.proj:centroid (lat/lon)
+
+source arcgis_volcanoes_world
+ttl 604800
+force seismic-surface
+url https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcanoes_of_the_world/FeatureServer/0/query?where=1%3D1&outFields=LATX,LONGX,ELEV,NAME,STATUS&outSR=4326&f=geojson&resultRecordCount=1000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.ELEV volcano_elevation_m
+
+source astro_batse_grb
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_batse_grb.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in trigger_num batse_grb_trigger_num
+field_in flux_64 batse_grb_flux_64
+
+source astro_batse_pulsar
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_batse_pulsar.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in obsid batse_pulsar_obsid
+
+source astro_chandra_master
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/chandra_master.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in obsid astro_chandra_master_obsid
+field_in status astro_chandra_master_status
+field_in name astro_chandra_master_name
+field_in lii astro_chandra_master_lii
+field_in bii astro_chandra_master_bii
+field_in time astro_chandra_master_time
+field_in detector astro_chandra_master_detector
+field_in grating astro_chandra_master_grating
+field_in exposure astro_chandra_master_exposure
+field_in type astro_chandra_master_type
+field_in pi astro_chandra_master_pi
+field_in cycle astro_chandra_master_cycle
+field_in proposal astro_chandra_master_proposal
+field_in public_date astro_chandra_master_public_date
+field_in sequence_number astro_chandra_master_sequence_number
+field_in data_mode astro_chandra_master_data_mode
+field_in category astro_chandra_master_category
+field_in class astro_chandra_master_class
+
+source astro_fermi_4fgl
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/fermi_4fgl.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in name astro_fermi_4fgl_name
+field_in data_release astro_fermi_4fgl_data_release
+field_in lii astro_fermi_4fgl_lii
+field_in bii astro_fermi_4fgl_bii
+field_in semi_major_axis_68 astro_fermi_4fgl_semi_major_axis_68
+field_in semi_minor_axis_68 astro_fermi_4fgl_semi_minor_axis_68
+field_in position_angle_68 astro_fermi_4fgl_position_angle_68
+field_in semi_major_axis_95 astro_fermi_4fgl_semi_major_axis_95
+field_in semi_minor_axis_95 astro_fermi_4fgl_semi_minor_axis_95
+field_in position_angle_95 astro_fermi_4fgl_position_angle_95
+field_in detection_significance astro_fermi_4fgl_detection_significance
+field_in pivot_energy astro_fermi_4fgl_pivot_energy
+field_in flux_1_100_gev astro_fermi_4fgl_flux_1_100_gev
+field_in flux_1_100_gev_error astro_fermi_4fgl_flux_1_100_gev_error
+field_in energy_flux astro_fermi_4fgl_energy_flux
+field_in energy_flux_error astro_fermi_4fgl_energy_flux_error
+field_in spectrum_type astro_fermi_4fgl_spectrum_type
+field_in pl_flux_density astro_fermi_4fgl_pl_flux_density
+field_in pl_flux_density_error astro_fermi_4fgl_pl_flux_density_error
+field_in pl_index astro_fermi_4fgl_pl_index
+field_in pl_index_error astro_fermi_4fgl_pl_index_error
+field_in lp_flux_density astro_fermi_4fgl_lp_flux_density
+field_in lp_flux_density_error astro_fermi_4fgl_lp_flux_density_error
+field_in lp_index astro_fermi_4fgl_lp_index
+field_in lp_index_error astro_fermi_4fgl_lp_index_error
+field_in lp_beta astro_fermi_4fgl_lp_beta
+field_in lp_beta_error astro_fermi_4fgl_lp_beta_error
+field_in lp_curve_significance astro_fermi_4fgl_lp_curve_significance
+field_in lp_epeak astro_fermi_4fgl_lp_epeak
+field_in lp_epeak_error astro_fermi_4fgl_lp_epeak_error
+field_in plec_flux_density astro_fermi_4fgl_plec_flux_density
+field_in plec_flux_density_error astro_fermi_4fgl_plec_flux_density_error
+field_in plec_index_s astro_fermi_4fgl_plec_index_s
+field_in plec_index_s_error astro_fermi_4fgl_plec_index_s_error
+field_in plec_exp_factor_s astro_fermi_4fgl_plec_exp_factor_s
+field_in plec_exp_factor_s_error astro_fermi_4fgl_plec_exp_factor_s_error
+field_in plec_exp_index astro_fermi_4fgl_plec_exp_index
+field_in plec_exp_index_error astro_fermi_4fgl_plec_exp_index_error
+field_in plec_curve_significance astro_fermi_4fgl_plec_curve_significance
+field_in plec_epeak astro_fermi_4fgl_plec_epeak
+field_in plec_epeak_error astro_fermi_4fgl_plec_epeak_error
+field_in npred astro_fermi_4fgl_npred
+field_in variability_index astro_fermi_4fgl_variability_index
+field_in frac_variability astro_fermi_4fgl_frac_variability
+field_in frac_variability_error astro_fermi_4fgl_frac_variability_error
+field_in significance_peak astro_fermi_4fgl_significance_peak
+field_in flux_peak astro_fermi_4fgl_flux_peak
+field_in flux_peak_error astro_fermi_4fgl_flux_peak_error
+field_in time_peak astro_fermi_4fgl_time_peak
+field_in time_peak_interval astro_fermi_4fgl_time_peak_interval
+field_in alt_gammaray_name_1 astro_fermi_4fgl_alt_gammaray_name_1
+field_in alt_gammaray_name_2 astro_fermi_4fgl_alt_gammaray_name_2
+field_in alt_gammaray_name_3 astro_fermi_4fgl_alt_gammaray_name_3
+field_in alt_gammaray_name_4 astro_fermi_4fgl_alt_gammaray_name_4
+field_in alt_gammaray_name_5 astro_fermi_4fgl_alt_gammaray_name_5
+field_in alt_gammaray_name_6 astro_fermi_4fgl_alt_gammaray_name_6
+field_in extended_source_name astro_fermi_4fgl_extended_source_name
+field_in tevcat_flag astro_fermi_4fgl_tevcat_flag
+field_in tevcat_assoc astro_fermi_4fgl_tevcat_assoc
+field_in source_type astro_fermi_4fgl_source_type
+field_in source_type_alt astro_fermi_4fgl_source_type_alt
+field_in assoc_name astro_fermi_4fgl_assoc_name
+field_in assoc_name_alt astro_fermi_4fgl_assoc_name_alt
+field_in assoc_prob_bay astro_fermi_4fgl_assoc_prob_bay
+field_in assoc_prob_lr astro_fermi_4fgl_assoc_prob_lr
+field_in assoc_ra astro_fermi_4fgl_assoc_ra
+field_in assoc_dec astro_fermi_4fgl_assoc_dec
+field_in assoc_error_radius astro_fermi_4fgl_assoc_error_radius
+field_in analysis_flags astro_fermi_4fgl_analysis_flags
+
+source astro_fermi_4lac
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/fermi_4lac.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key redshift
+field_in name astro_fermi_4lac_name
+field_in data_release astro_fermi_4lac_data_release
+field_in lii astro_fermi_4lac_lii
+field_in bii astro_fermi_4lac_bii
+field_in detection_significance astro_fermi_4lac_detection_significance
+field_in flux_1_100_gev astro_fermi_4lac_flux_1_100_gev
+field_in flux_1_100_gev_error astro_fermi_4lac_flux_1_100_gev_error
+field_in energy_flux astro_fermi_4lac_energy_flux
+field_in energy_flux_error astro_fermi_4lac_energy_flux_error
+field_in spectrum_type astro_fermi_4lac_spectrum_type
+field_in pl_index astro_fermi_4lac_pl_index
+field_in pl_index_error astro_fermi_4lac_pl_index_error
+field_in pivot_energy astro_fermi_4lac_pivot_energy
+field_in lp_index astro_fermi_4lac_lp_index
+field_in lp_index_error astro_fermi_4lac_lp_index_error
+field_in lp_beta astro_fermi_4lac_lp_beta
+field_in lp_beta_error astro_fermi_4lac_lp_beta_error
+field_in analysis_flags astro_fermi_4lac_analysis_flags
+field_in source_type astro_fermi_4lac_source_type
+field_in assoc_name astro_fermi_4lac_assoc_name
+field_in assoc_prob_bay astro_fermi_4lac_assoc_prob_bay
+field_in assoc_prob_lr astro_fermi_4lac_assoc_prob_lr
+field_in assoc_catalog astro_fermi_4lac_assoc_catalog
+field_in assoc_ra astro_fermi_4lac_assoc_ra
+field_in assoc_dec astro_fermi_4lac_assoc_dec
+field_in assoc_error_radius astro_fermi_4lac_assoc_error_radius
+field_in vlbi_assoc_name astro_fermi_4lac_vlbi_assoc_name
+field_in sed_class astro_fermi_4lac_sed_class
+field_in he_peak astro_fermi_4lac_he_peak
+field_in he_peak_error astro_fermi_4lac_he_peak_error
+field_in he_nufnu_peak astro_fermi_4lac_he_nufnu_peak
+field_in he_nufnu_peak_error astro_fermi_4lac_he_nufnu_peak_error
+field_in nu_syn astro_fermi_4lac_nu_syn
+field_in nufnu_syn astro_fermi_4lac_nufnu_syn
+field_in variability_index astro_fermi_4lac_variability_index
+field_in frac_variability astro_fermi_4lac_frac_variability
+field_in frac_variability_error astro_fermi_4lac_frac_variability_error
+field_in highest_energy_photon astro_fermi_4lac_highest_energy_photon
+
+source astro_frb_chime
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_frb.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+field_in DM frb_dispersion_measure
+field_in SNR frb_signal_to_noise
+field_in Flux frb_flux_jy
+field_in Fluence frb_fluence_jy_ms
+field_in Widthfitb frb_width_ms
+field_in SpInd frb_spectral_index
+
+source astro_gaia_binaries
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_binaries.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
+
+source astro_gaia_blue_supergiants
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_blue_supergiants.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_blue_supergiants_phot_g_mean_mag
+field_in bp_rp astro_gaia_blue_supergiants_bp_rp
+
+source astro_gaia_bright_vmag7
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag7.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in pmra astro_gaia_bright_vmag7_pmra
+field_in pmdec astro_gaia_bright_vmag7_pmdec
+field_in phot_g_mean_mag astro_gaia_bright_vmag7_phot_g_mean_mag
+field_in phot_bp_mean_mag astro_gaia_bright_vmag7_phot_bp_mean_mag
+field_in phot_rp_mean_mag astro_gaia_bright_vmag7_phot_rp_mean_mag
+field_in radial_velocity astro_gaia_bright_vmag7_radial_velocity
+field_in teff_gspphot astro_gaia_bright_vmag7_teff_gspphot
+field_in mh_gspphot astro_gaia_bright_vmag7_mh_gspphot
+field_in bp_rp astro_gaia_bright_vmag7_bp_rp
+
+source astro_gaia_bright_vmag9
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_bright_vmag9_phot_g_mean_mag
+
+source astro_gaia_giants
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_giants.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_giants_phot_g_mean_mag
+field_in bp_rp astro_gaia_giants_bp_rp
+field_in teff_gspphot astro_gaia_giants_teff_gspphot
+
+source astro_gaia_high_pm
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_high_pm.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_high_pm_phot_g_mean_mag
+field_in pmra astro_gaia_high_pm_pmra
+field_in pmdec astro_gaia_high_pm_pmdec
+
+source astro_gaia_hypervelocity
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_hypervelocity.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_hypervelocity_phot_g_mean_mag
+field_in radial_velocity astro_gaia_hypervelocity_radial_velocity
+
+source astro_gaia_metal_poor
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_metal_poor.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_metal_poor_phot_g_mean_mag
+field_in mh_gspphot astro_gaia_metal_poor_mh_gspphot
+
+source astro_gaia_nearby_plx10
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in pmra astro_gaia_nearby_plx10_pmra
+field_in pmdec astro_gaia_nearby_plx10_pmdec
+field_in phot_g_mean_mag astro_gaia_nearby_plx10_phot_g_mean_mag
+field_in bp_rp astro_gaia_nearby_plx10_bp_rp
+field_in radial_velocity astro_gaia_nearby_plx10_radial_velocity
+
+source astro_gaia_nearby_plx50
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx50.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in pmra astro_gaia_nearby_plx50_pmra
+field_in pmdec astro_gaia_nearby_plx50_pmdec
+field_in phot_g_mean_mag astro_gaia_nearby_plx50_phot_g_mean_mag
+field_in bp_rp astro_gaia_nearby_plx50_bp_rp
+field_in radial_velocity astro_gaia_nearby_plx50_radial_velocity
+
+source astro_gaia_white_dwarfs
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_white_dwarfs.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag astro_gaia_white_dwarfs_phot_g_mean_mag
+field_in bp_rp astro_gaia_white_dwarfs_bp_rp
+
+source astro_heasarc_icecube
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_icecube.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+dist_key dist_mpc
+dist_scale 3.0857e22
+field_in energy_tev icecube_neutrino_energy_tev
+field_in error_radius_deg icecube_error_radius_deg
+
+source astro_integral_agn
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_agn.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in sb_flux integral_agn_flux
+
+source astro_integral_bsc
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_bsc.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in isgri_soft_rate integral_soft_rate
+field_in isgri_hard_rate integral_hard_rate
+
+source astro_integral_isgri4yr
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_isgri4yr.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in distance integral_isgri_distance
+
+source astro_integral_var
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_var.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_20_40kev integral_flux_20_40kev
+field_in var_20_40kev integral_variability
+
+source astro_jpl_asteroids
+ttl 604800
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/jpl_asteroids.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+dist_key dist_au
+dist_scale 1.495978707e11
+field_in e asteroid_eccentricity
+field_in a_au asteroid_semimajor_axis_au
+field_in i_deg asteroid_inclination_deg
+
+source astro_maxi_gsc7yr
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_gsc7yr.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_4_10 maxi_flux_4_10
+field_in flux_3_4 maxi_flux_3_4
+field_in excess_variance maxi_excess_variance
+
+source astro_maxi_master
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_master.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in time maxi_master_time
+
+source astro_maxi_ssc
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_ssc.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in sb_flux maxi_ssc_flux
+
+source astro_nicer_master
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_nicer_master.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in exposure nicer_exposure_s
+
+source astro_nmdb_stations
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/nmdb_stations.json
+map data
+lat_key latitude
+lon_key longitude
+alt_key altitude_m
+field_in rigidity_gv nmdb_rigidity_gv
+field_in hist_min nmdb_hist_min_rate
+field_in hist_max nmdb_hist_max_rate
+
+source astro_nsidc_arctic_seaice
+ttl 604800
+force thermal
+wgs84 80.0 0.0
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/nsidc_arctic_seaice.json
+path data.-1.extent_mkm2 arctic_seaice_extent_mkm2
+path data.-1.missing arctic_seaice_missing
+
+source astro_rxte_master
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_rxte_master.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in exposure rxte_exposure_s
+
+source astro_rxte_slew
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_rxte_slew.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in stop_time rxte_slew_stop_time
+
+source astro_sdss_galaxies
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/sdss_galaxies.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key z
+field_in zerr astro_sdss_galaxies_zerr
+field_in specObjID astro_sdss_galaxies_specObjID
+field_in mjd astro_sdss_galaxies_mjd
+field_in plate astro_sdss_galaxies_plate
+field_in fiberID astro_sdss_galaxies_fiberID
+
+source astro_sdss_stars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/sdss_stars.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in g astro_sdss_stars_g
+field_in r astro_sdss_stars_r
+field_in i astro_sdss_stars_i
+field_in psfMag_r astro_sdss_stars_psfMag_r
+
+source astro_swift_bat
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/swift_bat.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key redshift
+field_in source_number astro_swift_bat_source_number
+field_in name astro_swift_bat_name
+field_in lii astro_swift_bat_lii
+field_in bii astro_swift_bat_bii
+field_in snr astro_swift_bat_snr
+field_in ctrpart_name astro_swift_bat_ctrpart_name
+field_in ctrpart_ra astro_swift_bat_ctrpart_ra
+field_in ctrpart_dec astro_swift_bat_ctrpart_dec
+field_in flux astro_swift_bat_flux
+field_in flux_lower astro_swift_bat_flux_lower
+field_in flux_upper astro_swift_bat_flux_upper
+field_in spectral_index astro_swift_bat_spectral_index
+field_in spectral_index_lower astro_swift_bat_spectral_index_lower
+field_in spectral_index_upper astro_swift_bat_spectral_index_upper
+field_in chi_squared astro_swift_bat_chi_squared
+field_in log_lx astro_swift_bat_log_lx
+field_in ctrpart_class astro_swift_bat_ctrpart_class
+field_in source_type astro_swift_bat_source_type
+
+source astro_swift_grb
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/swift_grb.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key redshift
+field_in name astro_swift_grb_name
+field_in target_id astro_swift_grb_target_id
+field_in other_id astro_swift_grb_other_id
+field_in det_flag astro_swift_grb_det_flag
+field_in slew_info astro_swift_grb_slew_info
+field_in pos_err astro_swift_grb_pos_err
+field_in lii astro_swift_grb_lii
+field_in bii astro_swift_grb_bii
+field_in pos_flag astro_swift_grb_pos_flag
+field_in pos_ref astro_swift_grb_pos_ref
+field_in start_time astro_swift_grb_start_time
+field_in stop_time astro_swift_grb_stop_time
+field_in duration astro_swift_grb_duration
+field_in trigger_time astro_swift_grb_trigger_time
+field_in trigger_ref astro_swift_grb_trigger_ref
+field_in bat_detection astro_swift_grb_bat_detection
+field_in bat_dettype astro_swift_grb_bat_dettype
+field_in bat_ra astro_swift_grb_bat_ra
+field_in bat_dec astro_swift_grb_bat_dec
+field_in bat_pos_err astro_swift_grb_bat_pos_err
+field_in bat_pos_ref astro_swift_grb_bat_pos_ref
+field_in bat_theta astro_swift_grb_bat_theta
+field_in bat_phi astro_swift_grb_bat_phi
+field_in bat_imagesig astro_swift_grb_bat_imagesig
+field_in bat_t90 astro_swift_grb_bat_t90
+field_in bat_t50 astro_swift_grb_bat_t50
+field_in bat_start astro_swift_grb_bat_start
+field_in bat_stop astro_swift_grb_bat_stop
+field_in bat_t100_start astro_swift_grb_bat_t100_start
+field_in bat_t100_stop astro_swift_grb_bat_t100_stop
+field_in bat_fluence_model astro_swift_grb_bat_fluence_model
+field_in bat_fluence astro_swift_grb_bat_fluence
+field_in bat_fluence_err astro_swift_grb_bat_fluence_err
+field_in bat_fluence1 astro_swift_grb_bat_fluence1
+field_in bat_fluence1_err astro_swift_grb_bat_fluence1_err
+field_in bat_fluence2 astro_swift_grb_bat_fluence2
+field_in bat_fluence2_err astro_swift_grb_bat_fluence2_err
+field_in bat_fluence3 astro_swift_grb_bat_fluence3
+field_in bat_fluence3_err astro_swift_grb_bat_fluence3_err
+field_in bat_fluence4 astro_swift_grb_bat_fluence4
+field_in bat_fluence4_err astro_swift_grb_bat_fluence4_err
+field_in bat_peak_time astro_swift_grb_bat_peak_time
+field_in bat_peak_model astro_swift_grb_bat_peak_model
+field_in bat_peak_flux astro_swift_grb_bat_peak_flux
+field_in bat_peak_flux_err astro_swift_grb_bat_peak_flux_err
+field_in bat_peak_flux1 astro_swift_grb_bat_peak_flux1
+field_in bat_peak_flux1_err astro_swift_grb_bat_peak_flux1_err
+field_in bat_peak_flux2 astro_swift_grb_bat_peak_flux2
+field_in bat_peak_flux2_err astro_swift_grb_bat_peak_flux2_err
+field_in bat_peak_flux3 astro_swift_grb_bat_peak_flux3
+field_in bat_peak_flux3_err astro_swift_grb_bat_peak_flux3_err
+field_in bat_peak_flux4 astro_swift_grb_bat_peak_flux4
+field_in bat_peak_flux4_err astro_swift_grb_bat_peak_flux4_err
+field_in bat_peakfluxp astro_swift_grb_bat_peakfluxp
+field_in bat_peakfluxp_err astro_swift_grb_bat_peakfluxp_err
+field_in bat_peakfluxp1 astro_swift_grb_bat_peakfluxp1
+field_in bat_peakfluxp1_err astro_swift_grb_bat_peakfluxp1_err
+field_in bat_peakfluxp2 astro_swift_grb_bat_peakfluxp2
+field_in bat_peakfluxp2_err astro_swift_grb_bat_peakfluxp2_err
+field_in bat_peakfluxp3 astro_swift_grb_bat_peakfluxp3
+field_in bat_peakfluxp3_err astro_swift_grb_bat_peakfluxp3_err
+field_in bat_peakfluxp4 astro_swift_grb_bat_peakfluxp4
+field_in bat_peakfluxp4_err astro_swift_grb_bat_peakfluxp4_err
+field_in bat_plsl astro_swift_grb_bat_plsl
+field_in bat_plsl_err astro_swift_grb_bat_plsl_err
+field_in bat_pl_chi2 astro_swift_grb_bat_pl_chi2
+field_in bat_pl_dof astro_swift_grb_bat_pl_dof
+field_in bat_ctslope astro_swift_grb_bat_ctslope
+field_in bat_ctslope_err astro_swift_grb_bat_ctslope_err
+field_in bat_ctslope_n_err astro_swift_grb_bat_ctslope_n_err
+field_in bat_ctezero astro_swift_grb_bat_ctezero
+field_in bat_ctezero_err astro_swift_grb_bat_ctezero_err
+field_in bat_ctezero_n_err astro_swift_grb_bat_ctezero_n_err
+field_in bat_ct_chi2 astro_swift_grb_bat_ct_chi2
+field_in bat_ct_dof astro_swift_grb_bat_ct_dof
+field_in bat_epeak astro_swift_grb_bat_epeak
+field_in bat_epeak_ref astro_swift_grb_bat_epeak_ref
+field_in bat_eiso astro_swift_grb_bat_eiso
+field_in bat_eiso1000 astro_swift_grb_bat_eiso1000
+field_in bat_eiso_alpha astro_swift_grb_bat_eiso_alpha
+field_in bat_eiso_beta astro_swift_grb_bat_eiso_beta
+field_in bat_eiso_norm astro_swift_grb_bat_eiso_norm
+field_in bat_eiso_dur astro_swift_grb_bat_eiso_dur
+field_in bat_eiso_ref astro_swift_grb_bat_eiso_ref
+field_in bat_redshift astro_swift_grb_bat_redshift
+field_in bat_hrd1 astro_swift_grb_bat_hrd1
+field_in bat_hrd1_err astro_swift_grb_bat_hrd1_err
+field_in bat_hrd2 astro_swift_grb_bat_hrd2
+field_in bat_hrd2_err astro_swift_grb_bat_hrd2_err
+field_in bat_comment astro_swift_grb_bat_comment
+field_in xrt_detection astro_swift_grb_xrt_detection
+field_in xrt_ra astro_swift_grb_xrt_ra
+field_in xrt_dec astro_swift_grb_xrt_dec
+field_in xrt_pos_err astro_swift_grb_xrt_pos_err
+field_in xrt_pos_ref astro_swift_grb_xrt_pos_ref
+field_in xrt_onsource astro_swift_grb_xrt_onsource
+field_in xrt_c100_rate astro_swift_grb_xrt_c100_rate
+field_in xrt_c100_start astro_swift_grb_xrt_c100_start
+field_in xrt_c100_stop astro_swift_grb_xrt_c100_stop
+field_in xrt_c100_expo astro_swift_grb_xrt_c100_expo
+field_in xrt_c100_mode astro_swift_grb_xrt_c100_mode
+field_in xrt_e1_rate astro_swift_grb_xrt_e1_rate
+field_in xrt_e1_rate_err astro_swift_grb_xrt_e1_rate_err
+field_in xrt_e1_rate1 astro_swift_grb_xrt_e1_rate1
+field_in xrt_e1_rate1_err astro_swift_grb_xrt_e1_rate1_err
+field_in xrt_e1_rate2 astro_swift_grb_xrt_e1_rate2
+field_in xrt_e1_rate2_err astro_swift_grb_xrt_e1_rate2_err
+field_in xrt_e1_rate3 astro_swift_grb_xrt_e1_rate3
+field_in xrt_e1_rate3_err astro_swift_grb_xrt_e1_rate3_err
+field_in xrt_e1_start astro_swift_grb_xrt_e1_start
+field_in xrt_e1_stop astro_swift_grb_xrt_e1_stop
+field_in xrt_e1_expo astro_swift_grb_xrt_e1_expo
+field_in xrt_hrd1 astro_swift_grb_xrt_hrd1
+field_in xrt_hrd1_err astro_swift_grb_xrt_hrd1_err
+field_in xrt_hrd2 astro_swift_grb_xrt_hrd2
+field_in xrt_hrd2_err astro_swift_grb_xrt_hrd2_err
+field_in xrt_e1_mode astro_swift_grb_xrt_e1_mode
+field_in xrt_lcchange astro_swift_grb_xrt_lcchange
+field_in xrt_flare astro_swift_grb_xrt_flare
+field_in uvot_detection astro_swift_grb_uvot_detection
+field_in uvot_ra astro_swift_grb_uvot_ra
+field_in uvot_dec astro_swift_grb_uvot_dec
+field_in uvot_pos_err astro_swift_grb_uvot_pos_err
+field_in uvot_pos_ref astro_swift_grb_uvot_pos_ref
+field_in uvot_onsource astro_swift_grb_uvot_onsource
+field_in uvot_vv_flux astro_swift_grb_uvot_vv_flux
+field_in uvot_vv_mag astro_swift_grb_uvot_vv_mag
+field_in uvot_vv_mag_err astro_swift_grb_uvot_vv_mag_err
+field_in uvot_vv_start astro_swift_grb_uvot_vv_start
+field_in uvot_vv_stop astro_swift_grb_uvot_vv_stop
+field_in uvot_vv_expo astro_swift_grb_uvot_vv_expo
+field_in uvot_w1_flux astro_swift_grb_uvot_w1_flux
+field_in uvot_w1_mag astro_swift_grb_uvot_w1_mag
+field_in uvot_w1_mag_err astro_swift_grb_uvot_w1_mag_err
+field_in uvot_w1_start astro_swift_grb_uvot_w1_start
+field_in uvot_w1_stop astro_swift_grb_uvot_w1_stop
+field_in uvot_w1_expo astro_swift_grb_uvot_w1_expo
+field_in redshift_err astro_swift_grb_redshift_err
+field_in redshift_type astro_swift_grb_redshift_type
+field_in redshift_line astro_swift_grb_redshift_line
+field_in redshift_from astro_swift_grb_redshift_from
+field_in redshift_ref astro_swift_grb_redshift_ref
+field_in galactic_nh astro_swift_grb_galactic_nh
+field_in followup astro_swift_grb_followup
+field_in radio_detection astro_swift_grb_radio_detection
+field_in radio_ref astro_swift_grb_radio_ref
+field_in infra_detection astro_swift_grb_infra_detection
+field_in infra_ref astro_swift_grb_infra_ref
+field_in opt_detection astro_swift_grb_opt_detection
+field_in opt_ref astro_swift_grb_opt_ref
+field_in ot_ra astro_swift_grb_ot_ra
+field_in ot_dec astro_swift_grb_ot_dec
+field_in ot_pos_err astro_swift_grb_ot_pos_err
+field_in ot_pos_ref astro_swift_grb_ot_pos_ref
+field_in other_obs astro_swift_grb_other_obs
+field_in other_obs_ref astro_swift_grb_other_obs_ref
+field_in other_obs2 astro_swift_grb_other_obs2
+field_in other_obs2_ref astro_swift_grb_other_obs2_ref
+field_in other_obs3 astro_swift_grb_other_obs3
+field_in other_obs3_ref astro_swift_grb_other_obs3_ref
+field_in other_obs4 astro_swift_grb_other_obs4
+field_in other_obs4_ref astro_swift_grb_other_obs4_ref
+field_in supernova_flag astro_swift_grb_supernova_flag
+field_in galaxy_flag astro_swift_grb_galaxy_flag
+field_in galaxy_name astro_swift_grb_galaxy_name
+field_in galaxy_type astro_swift_grb_galaxy_type
+field_in galaxy_ra astro_swift_grb_galaxy_ra
+field_in galaxy_dec astro_swift_grb_galaxy_dec
+field_in galaxy_pos_ref astro_swift_grb_galaxy_pos_ref
+field_in galaxy_redshift astro_swift_grb_galaxy_redshift
+field_in galaxy_ref astro_swift_grb_galaxy_ref
+field_in galaxy_offset astro_swift_grb_galaxy_offset
+field_in ground_counterpart astro_swift_grb_ground_counterpart
+field_in web_page astro_swift_grb_web_page
+field_in comments astro_swift_grb_comments
+
+source astro_tevcat
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/tevcat.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key redshift
+field_in source_number astro_tevcat_source_number
+field_in source_sample astro_tevcat_source_sample
+field_in name astro_tevcat_name
+field_in alt_name astro_tevcat_alt_name
+field_in lii astro_tevcat_lii
+field_in bii astro_tevcat_bii
+field_in source_type astro_tevcat_source_type
+field_in flux astro_tevcat_flux
+field_in spectral_index astro_tevcat_spectral_index
+field_in distance astro_tevcat_distance
+field_in discovery_date astro_tevcat_discovery_date
+field_in extended_flag astro_tevcat_extended_flag
+field_in x_size astro_tevcat_x_size
+field_in y_size astro_tevcat_y_size
+field_in tevcat_url astro_tevcat_tevcat_url
+
+source astro_twomass_psc
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/twomass_psc.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+field_in Jmag astro_twomass_psc_Jmag
+field_in Hmag astro_twomass_psc_Hmag
+field_in Kmag astro_twomass_psc_Kmag
+field_in Qflg astro_twomass_psc_Qflg
+field_in Rflg astro_twomass_psc_Rflg
+field_in Bflg astro_twomass_psc_Bflg
+field_in Cflg astro_twomass_psc_Cflg
+field_in Aflg astro_twomass_psc_Aflg
+
+source astro_vizier_2qz
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_2qz_recno
+field_in 2QZ vizier_2qz_2QZ
+field_in intNo vizier_2qz_intNo
+field_in intName vizier_2qz_intName
+
+source astro_vizier_6dfgs
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_6dfgs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in 6dFGS vizier_6dfgs_6dFGS
+field_in Nm vizier_6dfgs_Nm
+field_in Nz vizier_6dfgs_Nz
+field_in bJmag vizier_6dfgs_bJmag
+
+source astro_vizier_apass
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_apass.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in e_RAJ2000 astro_vizier_apass_e_RAJ2000
+field_in e_DEJ2000 astro_vizier_apass_e_DEJ2000
+field_in Field astro_vizier_apass_Field
+field_in nobs astro_vizier_apass_nobs
+field_in mobs astro_vizier_apass_mobs
+field_in B-V astro_vizier_apass_B-V
+field_in e_B-V astro_vizier_apass_e_B-V
+field_in Vmag astro_vizier_apass_Vmag
+field_in e_Vmag astro_vizier_apass_e_Vmag
+field_in u_e_Vmag astro_vizier_apass_u_e_Vmag
+field_in Bmag astro_vizier_apass_Bmag
+field_in e_Bmag astro_vizier_apass_e_Bmag
+field_in u_e_Bmag astro_vizier_apass_u_e_Bmag
+field_in g'mag astro_vizier_apass_g'mag
+field_in e_g'mag astro_vizier_apass_e_g'mag
+field_in u_e_g'mag astro_vizier_apass_u_e_g'mag
+field_in r'mag astro_vizier_apass_r'mag
+field_in e_r'mag astro_vizier_apass_e_r'mag
+field_in u_e_r'mag astro_vizier_apass_u_e_r'mag
+field_in i'mag astro_vizier_apass_i'mag
+field_in e_i'mag astro_vizier_apass_e_i'mag
+field_in u_e_i'mag astro_vizier_apass_u_e_i'mag
+
+source astro_vizier_carmenes
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_carmenes.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_carmenes_recno
+field_in MWSC vizier_carmenes_MWSC
+field_in Name vizier_carmenes_Name
+field_in Type vizier_carmenes_Type
+
+source astro_vizier_cosmic_voids
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_cosmic_voids.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field_in recno vizier_cosmic_voids_recno
+field_in ID vizier_cosmic_voids_ID
+field_in r vizier_cosmic_voids_r
+field_in p-value vizier_cosmic_voids_p-value
+
+source astro_vizier_distant_halo
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_distant_halo.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+
+source astro_vizier_dla
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_dla.json
+cmap data
+tau_key _dist_m
+ra_key _RA
+dec_key _DE
+plx_key default_plx
+field_in zabs dla_redshift
+field_in NHI dla_neutral_hydrogen
+
+source astro_vizier_first
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_first.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_first_recno
+field_in FIRST vizier_first_FIRST
+field_in p(S) vizier_first_p(S)
+field_in Fpeak vizier_first_Fpeak
+
+source astro_vizier_gcvs_variables
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_gcvs_variables_recno
+field_in VarNum vizier_gcvs_variables_VarNum
+field_in m_VarNum vizier_gcvs_variables_m_VarNum
+field_in GCVS vizier_gcvs_variables_GCVS
+
+source astro_vizier_glade
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+dist_key Dist
+dist_scale 1.0
+field_in recno astro_vizier_glade_recno
+field_in PGC astro_vizier_glade_PGC
+field_in GWGC astro_vizier_glade_GWGC
+field_in HyperLEDA astro_vizier_glade_HyperLEDA
+field_in 2MASS astro_vizier_glade_2MASS
+field_in SDSS-DR12 astro_vizier_glade_SDSS-DR12
+field_in Flag1 astro_vizier_glade_Flag1
+field_in e_Dist astro_vizier_glade_e_Dist
+field_in Bmag astro_vizier_glade_Bmag
+field_in e_Bmag astro_vizier_glade_e_Bmag
+field_in BMAG astro_vizier_glade_BMAG
+field_in Jmag astro_vizier_glade_Jmag
+field_in e_Jmag astro_vizier_glade_e_Jmag
+field_in Hmag astro_vizier_glade_Hmag
+field_in e_Hmag astro_vizier_glade_e_Hmag
+field_in Kmag astro_vizier_glade_Kmag
+field_in e_Kmag astro_vizier_glade_e_Kmag
+field_in Flag2 astro_vizier_glade_Flag2
+field_in Flag3 astro_vizier_glade_Flag3
+
+source astro_vizier_glade2
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+dist_key Dist
+dist_scale 1.0
+field_in recno vizier_glade2_recno
+field_in PGC vizier_glade2_PGC
+field_in GWGC vizier_glade2_GWGC
+field_in HyperLEDA vizier_glade2_HyperLEDA
+
+source astro_vizier_gleam
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gleam.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+field_in bckwide gleam_brightness_wide
+field_in lrmswide gleam_peak_flux_wide
+
+source astro_vizier_hecate
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hecate.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_hecate_recno
+field_in PGC vizier_hecate_PGC
+field_in HyperLEDA vizier_hecate_HyperLEDA
+field_in NED vizier_hecate_NED
+
+source astro_vizier_hi4pi
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hi4pi.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+
+source astro_vizier_lotss_dr3
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_lotss_dr3.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_lotss_dr3_recno
+field_in Source vizier_lotss_dr3_Source
+field_in e_RAJ2000 vizier_lotss_dr3_e_RAJ2000
+field_in e_DEJ2000 vizier_lotss_dr3_e_DEJ2000
+
+source astro_vizier_nvss
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_nvss.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_nvss_recno
+field_in Field vizier_nvss_Field
+field_in Xpos vizier_nvss_Xpos
+field_in Ypos vizier_nvss_Ypos
+
+source astro_vizier_orion_region
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_orion_region.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_orion_region_recno
+field_in Seq vizier_orion_region_Seq
+field_in ePos vizier_orion_region_ePos
+field_in CTot vizier_orion_region_CTot
+
+source astro_vizier_prigozhin_pulsars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_prigozhin_pulsars_recno
+field_in Name vizier_prigozhin_pulsars_Name
+field_in imag vizier_prigozhin_pulsars_imag
+field_in zphot vizier_prigozhin_pulsars_zphot
+
+source astro_vizier_qso_variable
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_qso_variable.json
+cmap data
+tau_key _dist_m
+ra_key _RA
+dec_key _DE
+plx_key default_plx
+field_in Mass qso_variable_mass
+field_in Dist qso_variable_dist_pc
+
+source astro_vizier_sdss_qso
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_sdss_qso.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field_in recno vizier_sdss_qso_recno
+field_in SDSS vizier_sdss_qso_SDSS
+field_in umag vizier_sdss_qso_umag
+field_in e_umag vizier_sdss_qso_e_umag
+
+source astro_vizier_snrs
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_snrs_recno
+field_in SNR vizier_snrs_SNR
+field_in MajDiam vizier_snrs_MajDiam
+field_in MinDiam vizier_snrs_MinDiam
+
+source astro_vizier_tycho2
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_tycho2.json
+cmap data
+tau_key _dist_m
+ra_key RAmdeg
+dec_key DEmdeg
+plx_key default_plx
+field_in recno astro_vizier_tycho2_recno
+field_in TYC1 astro_vizier_tycho2_TYC1
+field_in TYC2 astro_vizier_tycho2_TYC2
+field_in TYC3 astro_vizier_tycho2_TYC3
+field_in pflag astro_vizier_tycho2_pflag
+field_in RAmdeg astro_vizier_tycho2_RAmdeg
+field_in DEmdeg astro_vizier_tycho2_DEmdeg
+field_in pmRA astro_vizier_tycho2_pmRA
+field_in pmDE astro_vizier_tycho2_pmDE
+field_in e_RAmdeg astro_vizier_tycho2_e_RAmdeg
+field_in e_DEmdeg astro_vizier_tycho2_e_DEmdeg
+field_in e_pmRA astro_vizier_tycho2_e_pmRA
+field_in e_pmDE astro_vizier_tycho2_e_pmDE
+field_in EpRAm astro_vizier_tycho2_EpRAm
+field_in EpDEm astro_vizier_tycho2_EpDEm
+field_in Num astro_vizier_tycho2_Num
+field_in q_RAmdeg astro_vizier_tycho2_q_RAmdeg
+field_in q_DEmdeg astro_vizier_tycho2_q_DEmdeg
+field_in q_pmRA astro_vizier_tycho2_q_pmRA
+field_in q_pmDE astro_vizier_tycho2_q_pmDE
+field_in BTmag astro_vizier_tycho2_BTmag
+field_in e_BTmag astro_vizier_tycho2_e_BTmag
+field_in VTmag astro_vizier_tycho2_VTmag
+field_in e_VTmag astro_vizier_tycho2_e_VTmag
+field_in prox astro_vizier_tycho2_prox
+field_in TYC astro_vizier_tycho2_TYC
+field_in HIP astro_vizier_tycho2_HIP
+field_in CCDM astro_vizier_tycho2_CCDM
+field_in RA(ICRS) astro_vizier_tycho2_RA(ICRS)
+field_in DE(ICRS) astro_vizier_tycho2_DE(ICRS)
+field_in EpRA-1990 astro_vizier_tycho2_EpRA-1990
+field_in EpDE-1990 astro_vizier_tycho2_EpDE-1990
+field_in e_RAdeg astro_vizier_tycho2_e_RAdeg
+field_in e_DEdeg astro_vizier_tycho2_e_DEdeg
+field_in posflg astro_vizier_tycho2_posflg
+field_in corr astro_vizier_tycho2_corr
+
+source astro_vizier_ucac5
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_ucac5.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in SrcIDgaia astro_vizier_ucac5_SrcIDgaia
+field_in RAgaia astro_vizier_ucac5_RAgaia
+field_in e_RAgaia astro_vizier_ucac5_e_RAgaia
+field_in DEgaia astro_vizier_ucac5_DEgaia
+field_in e_DEgaia astro_vizier_ucac5_e_DEgaia
+field_in Org astro_vizier_ucac5_Org
+field_in Nu astro_vizier_ucac5_Nu
+field_in EPucac astro_vizier_ucac5_EPucac
+field_in pmRA astro_vizier_ucac5_pmRA
+field_in e_pmRA astro_vizier_ucac5_e_pmRA
+field_in pmDE astro_vizier_ucac5_pmDE
+field_in e_pmDE astro_vizier_ucac5_e_pmDE
+field_in Gmag astro_vizier_ucac5_Gmag
+field_in f_mag astro_vizier_ucac5_f_mag
+field_in Rmag astro_vizier_ucac5_Rmag
+field_in Jmag astro_vizier_ucac5_Jmag
+field_in Hmag astro_vizier_ucac5_Hmag
+field_in Kmag astro_vizier_ucac5_Kmag
+
+source astro_vizier_variable_stars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_variable_stars.json
+cmap data
+tau_key _dist_m
+ra_key _RA
+dec_key _DE
+plx_key default_plx
+field_in a variable_star_semimajor
+field_in e variable_star_eccentricity
+field_in i variable_star_inclination
+
+source astro_vizier_vsx_variables
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_vsx_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_vsx_variables_recno
+field_in OID vizier_vsx_variables_OID
+field_in Name vizier_vsx_variables_Name
+field_in V vizier_vsx_variables_V
+
+source astro_vizier_xmm4d13s
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_xmm4d13s.json
+cmap data
+tau_key _dist_m
+ra_key RA_ICRS
+dec_key DE_ICRS
+plx_key default_plx
+field_in Flux1 xmm4d13_flux1
+field_in Flux2 xmm4d13_flux2
+
+source astro_vizier_young_stars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_young_stars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno vizier_young_stars_recno
+field_in Name vizier_young_stars_Name
+field_in FileName vizier_young_stars_FileName
+field_in SName vizier_young_stars_SName
+
+source astro_wise_allsky
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/wise_allsky.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in w1mpro astro_wise_allsky_w1mpro
+field_in w2mpro astro_wise_allsky_w2mpro
+field_in w3mpro astro_wise_allsky_w3mpro
+field_in w4mpro astro_wise_allsky_w4mpro
+
+source astro_xmm_slew
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_xmm_slew.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_b8 xmm_slew_flux_b8
+
+source astro_xmm_sources
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/xmm_sources.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key redshift_zsp
+field_in srcid astro_xmm_sources_srcid
+field_in name astro_xmm_sources_name
+field_in obsid astro_xmm_sources_obsid
+field_in pps_srcnum astro_xmm_sources_pps_srcnum
+field_in n_obs astro_xmm_sources_n_obs
+field_in n_contrib astro_xmm_sources_n_contrib
+field_in n_exp astro_xmm_sources_n_exp
+field_in error_radius astro_xmm_sources_error_radius
+field_in error_ell_major astro_xmm_sources_error_ell_major
+field_in error_ell_minor astro_xmm_sources_error_ell_minor
+field_in error_ell_pa astro_xmm_sources_error_ell_pa
+field_in lii astro_xmm_sources_lii
+field_in bii astro_xmm_sources_bii
+field_in x_pixel astro_xmm_sources_x_pixel
+field_in x_pixel_error astro_xmm_sources_x_pixel_error
+field_in x_pixel_neg_err astro_xmm_sources_x_pixel_neg_err
+field_in x_pixel_pos_err astro_xmm_sources_x_pixel_pos_err
+field_in y_pixel astro_xmm_sources_y_pixel
+field_in y_pixel_error astro_xmm_sources_y_pixel_error
+field_in y_pixel_neg_err astro_xmm_sources_y_pixel_neg_err
+field_in y_pixel_pos_err astro_xmm_sources_y_pixel_pos_err
+field_in ccdpn astro_xmm_sources_ccdpn
+field_in pn_rawx astro_xmm_sources_pn_rawx
+field_in pn_rawy astro_xmm_sources_pn_rawy
+field_in ccdm1 astro_xmm_sources_ccdm1
+field_in m1_rawx astro_xmm_sources_m1_rawx
+field_in m1_rawy astro_xmm_sources_m1_rawy
+field_in ccdm2 astro_xmm_sources_ccdm2
+field_in m2_rawx astro_xmm_sources_m2_rawx
+field_in m2_rawy astro_xmm_sources_m2_rawy
+field_in dist_nn astro_xmm_sources_dist_nn
+field_in n_blend astro_xmm_sources_n_blend
+field_in ep_flux astro_xmm_sources_ep_flux
+field_in ep_flux_error astro_xmm_sources_ep_flux_error
+field_in ep_1_flux astro_xmm_sources_ep_1_flux
+field_in ep_1_flux_error astro_xmm_sources_ep_1_flux_error
+field_in ep_2_flux astro_xmm_sources_ep_2_flux
+field_in ep_2_flux_error astro_xmm_sources_ep_2_flux_error
+field_in ep_3_flux astro_xmm_sources_ep_3_flux
+field_in ep_3_flux_error astro_xmm_sources_ep_3_flux_error
+field_in ep_4_flux astro_xmm_sources_ep_4_flux
+field_in ep_4_flux_error astro_xmm_sources_ep_4_flux_error
+field_in ep_5_flux astro_xmm_sources_ep_5_flux
+field_in ep_5_flux_error astro_xmm_sources_ep_5_flux_error
+field_in pn_flux astro_xmm_sources_pn_flux
+field_in pn_flux_error astro_xmm_sources_pn_flux_error
+field_in pn_1_flux astro_xmm_sources_pn_1_flux
+field_in pn_1_flux_error astro_xmm_sources_pn_1_flux_error
+field_in pn_2_flux astro_xmm_sources_pn_2_flux
+field_in pn_2_flux_error astro_xmm_sources_pn_2_flux_error
+field_in pn_3_flux astro_xmm_sources_pn_3_flux
+field_in pn_3_flux_error astro_xmm_sources_pn_3_flux_error
+field_in pn_4_flux astro_xmm_sources_pn_4_flux
+field_in pn_4_flux_error astro_xmm_sources_pn_4_flux_error
+field_in pn_5_flux astro_xmm_sources_pn_5_flux
+field_in pn_5_flux_error astro_xmm_sources_pn_5_flux_error
+field_in m1_flux astro_xmm_sources_m1_flux
+field_in m1_flux_error astro_xmm_sources_m1_flux_error
+field_in m1_1_flux astro_xmm_sources_m1_1_flux
+field_in m1_1_flux_error astro_xmm_sources_m1_1_flux_error
+field_in m1_2_flux astro_xmm_sources_m1_2_flux
+field_in m1_2_flux_error astro_xmm_sources_m1_2_flux_error
+field_in m1_3_flux astro_xmm_sources_m1_3_flux
+field_in m1_3_flux_error astro_xmm_sources_m1_3_flux_error
+field_in m1_4_flux astro_xmm_sources_m1_4_flux
+field_in m1_4_flux_error astro_xmm_sources_m1_4_flux_error
+field_in m1_5_flux astro_xmm_sources_m1_5_flux
+field_in m1_5_flux_error astro_xmm_sources_m1_5_flux_error
+field_in m2_flux astro_xmm_sources_m2_flux
+field_in m2_flux_error astro_xmm_sources_m2_flux_error
+field_in m2_1_flux astro_xmm_sources_m2_1_flux
+field_in m2_1_flux_error astro_xmm_sources_m2_1_flux_error
+field_in m2_2_flux astro_xmm_sources_m2_2_flux
+field_in m2_2_flux_error astro_xmm_sources_m2_2_flux_error
+field_in m2_3_flux astro_xmm_sources_m2_3_flux
+field_in m2_3_flux_error astro_xmm_sources_m2_3_flux_error
+field_in m2_4_flux astro_xmm_sources_m2_4_flux
+field_in m2_4_flux_error astro_xmm_sources_m2_4_flux_error
+field_in m2_5_flux astro_xmm_sources_m2_5_flux
+field_in m2_5_flux_error astro_xmm_sources_m2_5_flux_error
+field_in ep_rate astro_xmm_sources_ep_rate
+field_in ep_rate_error astro_xmm_sources_ep_rate_error
+field_in pn_rate astro_xmm_sources_pn_rate
+field_in pn_rate_error astro_xmm_sources_pn_rate_error
+field_in pn_1_rate astro_xmm_sources_pn_1_rate
+field_in pn_1_rate_error astro_xmm_sources_pn_1_rate_error
+field_in pn_2_rate astro_xmm_sources_pn_2_rate
+field_in pn_2_rate_error astro_xmm_sources_pn_2_rate_error
+field_in pn_3_rate astro_xmm_sources_pn_3_rate
+field_in pn_3_rate_error astro_xmm_sources_pn_3_rate_error
+field_in pn_4_rate astro_xmm_sources_pn_4_rate
+field_in pn_4_rate_error astro_xmm_sources_pn_4_rate_error
+field_in pn_5_rate astro_xmm_sources_pn_5_rate
+field_in pn_5_rate_error astro_xmm_sources_pn_5_rate_error
+field_in m1_rate astro_xmm_sources_m1_rate
+field_in m1_rate_error astro_xmm_sources_m1_rate_error
+field_in m1_1_rate astro_xmm_sources_m1_1_rate
+field_in m1_1_rate_error astro_xmm_sources_m1_1_rate_error
+field_in m1_2_rate astro_xmm_sources_m1_2_rate
+field_in m1_2_rate_error astro_xmm_sources_m1_2_rate_error
+field_in m1_3_rate astro_xmm_sources_m1_3_rate
+field_in m1_3_rate_error astro_xmm_sources_m1_3_rate_error
+field_in m1_4_rate astro_xmm_sources_m1_4_rate
+field_in m1_4_rate_error astro_xmm_sources_m1_4_rate_error
+field_in m1_5_rate astro_xmm_sources_m1_5_rate
+field_in m1_5_rate_error astro_xmm_sources_m1_5_rate_error
+field_in m2_rate astro_xmm_sources_m2_rate
+field_in m2_rate_error astro_xmm_sources_m2_rate_error
+field_in m2_1_rate astro_xmm_sources_m2_1_rate
+field_in m2_1_rate_error astro_xmm_sources_m2_1_rate_error
+field_in m2_2_rate astro_xmm_sources_m2_2_rate
+field_in m2_2_rate_error astro_xmm_sources_m2_2_rate_error
+field_in m2_3_rate astro_xmm_sources_m2_3_rate
+field_in m2_3_rate_error astro_xmm_sources_m2_3_rate_error
+field_in m2_4_rate astro_xmm_sources_m2_4_rate
+field_in m2_4_rate_error astro_xmm_sources_m2_4_rate_error
+field_in m2_5_rate astro_xmm_sources_m2_5_rate
+field_in m2_5_rate_error astro_xmm_sources_m2_5_rate_error
+field_in ep_cts astro_xmm_sources_ep_cts
+field_in ep_cts_error astro_xmm_sources_ep_cts_error
+field_in pn_cts astro_xmm_sources_pn_cts
+field_in pn_cts_error astro_xmm_sources_pn_cts_error
+field_in m1_cts astro_xmm_sources_m1_cts
+field_in m1_cts_error astro_xmm_sources_m1_cts_error
+field_in m2_cts astro_xmm_sources_m2_cts
+field_in m2_cts_error astro_xmm_sources_m2_cts_error
+field_in ep_det_ml astro_xmm_sources_ep_det_ml
+field_in pn_det_ml astro_xmm_sources_pn_det_ml
+field_in pn_1_det_ml astro_xmm_sources_pn_1_det_ml
+field_in pn_2_det_ml astro_xmm_sources_pn_2_det_ml
+field_in pn_3_det_ml astro_xmm_sources_pn_3_det_ml
+field_in pn_4_det_ml astro_xmm_sources_pn_4_det_ml
+field_in pn_5_det_ml astro_xmm_sources_pn_5_det_ml
+field_in m1_det_ml astro_xmm_sources_m1_det_ml
+field_in m1_1_det_ml astro_xmm_sources_m1_1_det_ml
+field_in m1_2_det_ml astro_xmm_sources_m1_2_det_ml
+field_in m1_3_det_ml astro_xmm_sources_m1_3_det_ml
+field_in m1_4_det_ml astro_xmm_sources_m1_4_det_ml
+field_in m1_5_det_ml astro_xmm_sources_m1_5_det_ml
+field_in m2_det_ml astro_xmm_sources_m2_det_ml
+field_in m2_1_det_ml astro_xmm_sources_m2_1_det_ml
+field_in m2_2_det_ml astro_xmm_sources_m2_2_det_ml
+field_in m2_3_det_ml astro_xmm_sources_m2_3_det_ml
+field_in m2_4_det_ml astro_xmm_sources_m2_4_det_ml
+field_in m2_5_det_ml astro_xmm_sources_m2_5_det_ml
+field_in extent astro_xmm_sources_extent
+field_in extent_error astro_xmm_sources_extent_error
+field_in extent_neg_err astro_xmm_sources_extent_neg_err
+field_in extent_pos_err astro_xmm_sources_extent_pos_err
+field_in extent_ml astro_xmm_sources_extent_ml
+field_in stack_det_ml astro_xmm_sources_stack_det_ml
+field_in stack_flux astro_xmm_sources_stack_flux
+field_in stack_flux_error astro_xmm_sources_stack_flux_error
+field_in stack_flux_neg_err astro_xmm_sources_stack_flux_neg_err
+field_in stack_flux_pos_err astro_xmm_sources_stack_flux_pos_err
+field_in stack_nh astro_xmm_sources_stack_nh
+field_in stack_nh_error astro_xmm_sources_stack_nh_error
+field_in stack_nh_neg_err astro_xmm_sources_stack_nh_neg_err
+field_in stack_nh_pos_err astro_xmm_sources_stack_nh_pos_err
+field_in stack_gamma astro_xmm_sources_stack_gamma
+field_in stack_gamma_error astro_xmm_sources_stack_gamma_error
+field_in stack_gamma_neg_err astro_xmm_sources_stack_gamma_neg_err
+field_in stack_gamma_pos_err astro_xmm_sources_stack_gamma_pos_err
+field_in pn_1_ecf astro_xmm_sources_pn_1_ecf
+field_in pn_2_ecf astro_xmm_sources_pn_2_ecf
+field_in pn_3_ecf astro_xmm_sources_pn_3_ecf
+field_in pn_4_ecf astro_xmm_sources_pn_4_ecf
+field_in pn_5_ecf astro_xmm_sources_pn_5_ecf
+field_in m1_1_ecf astro_xmm_sources_m1_1_ecf
+field_in m1_2_ecf astro_xmm_sources_m1_2_ecf
+field_in m1_3_ecf astro_xmm_sources_m1_3_ecf
+field_in m1_4_ecf astro_xmm_sources_m1_4_ecf
+field_in m1_5_ecf astro_xmm_sources_m1_5_ecf
+field_in m2_1_ecf astro_xmm_sources_m2_1_ecf
+field_in m2_2_ecf astro_xmm_sources_m2_2_ecf
+field_in m2_3_ecf astro_xmm_sources_m2_3_ecf
+field_in m2_4_ecf astro_xmm_sources_m2_4_ecf
+field_in m2_5_ecf astro_xmm_sources_m2_5_ecf
+field_in ep_hr1 astro_xmm_sources_ep_hr1
+field_in ep_hr1_error astro_xmm_sources_ep_hr1_error
+field_in ep_hr2 astro_xmm_sources_ep_hr2
+field_in ep_hr2_error astro_xmm_sources_ep_hr2_error
+field_in ep_hr3 astro_xmm_sources_ep_hr3
+field_in ep_hr3_error astro_xmm_sources_ep_hr3_error
+field_in ep_hr4 astro_xmm_sources_ep_hr4
+field_in ep_hr4_error astro_xmm_sources_ep_hr4_error
+field_in pn_hr1 astro_xmm_sources_pn_hr1
+field_in pn_hr1_error astro_xmm_sources_pn_hr1_error
+field_in pn_hr2 astro_xmm_sources_pn_hr2
+field_in pn_hr2_error astro_xmm_sources_pn_hr2_error
+field_in pn_hr3 astro_xmm_sources_pn_hr3
+field_in pn_hr3_error astro_xmm_sources_pn_hr3_error
+field_in pn_hr4 astro_xmm_sources_pn_hr4
+field_in pn_hr4_error astro_xmm_sources_pn_hr4_error
+field_in m1_hr1 astro_xmm_sources_m1_hr1
+field_in m1_hr1_error astro_xmm_sources_m1_hr1_error
+field_in m1_hr2 astro_xmm_sources_m1_hr2
+field_in m1_hr2_error astro_xmm_sources_m1_hr2_error
+field_in m1_hr3 astro_xmm_sources_m1_hr3
+field_in m1_hr3_error astro_xmm_sources_m1_hr3_error
+field_in m1_hr4 astro_xmm_sources_m1_hr4
+field_in m1_hr4_error astro_xmm_sources_m1_hr4_error
+field_in m2_hr1 astro_xmm_sources_m2_hr1
+field_in m2_hr1_error astro_xmm_sources_m2_hr1_error
+field_in m2_hr2 astro_xmm_sources_m2_hr2
+field_in m2_hr2_error astro_xmm_sources_m2_hr2_error
+field_in m2_hr3 astro_xmm_sources_m2_hr3
+field_in m2_hr3_error astro_xmm_sources_m2_hr3_error
+field_in m2_hr4 astro_xmm_sources_m2_hr4
+field_in m2_hr4_error astro_xmm_sources_m2_hr4_error
+field_in pn_1_exposure astro_xmm_sources_pn_1_exposure
+field_in pn_2_exposure astro_xmm_sources_pn_2_exposure
+field_in pn_3_exposure astro_xmm_sources_pn_3_exposure
+field_in pn_4_exposure astro_xmm_sources_pn_4_exposure
+field_in pn_5_exposure astro_xmm_sources_pn_5_exposure
+field_in m1_1_exposure astro_xmm_sources_m1_1_exposure
+field_in m1_2_exposure astro_xmm_sources_m1_2_exposure
+field_in m1_3_exposure astro_xmm_sources_m1_3_exposure
+field_in m1_4_exposure astro_xmm_sources_m1_4_exposure
+field_in m1_5_exposure astro_xmm_sources_m1_5_exposure
+field_in m2_1_exposure astro_xmm_sources_m2_1_exposure
+field_in m2_2_exposure astro_xmm_sources_m2_2_exposure
+field_in m2_3_exposure astro_xmm_sources_m2_3_exposure
+field_in m2_4_exposure astro_xmm_sources_m2_4_exposure
+field_in m2_5_exposure astro_xmm_sources_m2_5_exposure
+field_in pn_bg astro_xmm_sources_pn_bg
+field_in pn_1_bg astro_xmm_sources_pn_1_bg
+field_in pn_2_bg astro_xmm_sources_pn_2_bg
+field_in pn_3_bg astro_xmm_sources_pn_3_bg
+field_in pn_4_bg astro_xmm_sources_pn_4_bg
+field_in pn_5_bg astro_xmm_sources_pn_5_bg
+field_in m1_bg astro_xmm_sources_m1_bg
+field_in m1_1_bg astro_xmm_sources_m1_1_bg
+field_in m1_2_bg astro_xmm_sources_m1_2_bg
+field_in m1_3_bg astro_xmm_sources_m1_3_bg
+field_in m1_4_bg astro_xmm_sources_m1_4_bg
+field_in m1_5_bg astro_xmm_sources_m1_5_bg
+field_in m2_bg astro_xmm_sources_m2_bg
+field_in m2_1_bg astro_xmm_sources_m2_1_bg
+field_in m2_2_bg astro_xmm_sources_m2_2_bg
+field_in m2_3_bg astro_xmm_sources_m2_3_bg
+field_in m2_4_bg astro_xmm_sources_m2_4_bg
+field_in m2_5_bg astro_xmm_sources_m2_5_bg
+field_in ep_ontime astro_xmm_sources_ep_ontime
+field_in pn_ontime astro_xmm_sources_pn_ontime
+field_in m1_ontime astro_xmm_sources_m1_ontime
+field_in m2_ontime astro_xmm_sources_m2_ontime
+field_in pn_pileup astro_xmm_sources_pn_pileup
+field_in m1_pileup astro_xmm_sources_m1_pileup
+field_in m2_pileup astro_xmm_sources_m2_pileup
+field_in pn_maskfrac astro_xmm_sources_pn_maskfrac
+field_in m1_maskfrac astro_xmm_sources_m1_maskfrac
+field_in m2_maskfrac astro_xmm_sources_m2_maskfrac
+field_in dist_ref astro_xmm_sources_dist_ref
+field_in ep_offax astro_xmm_sources_ep_offax
+field_in pn_offax astro_xmm_sources_pn_offax
+field_in m1_offax astro_xmm_sources_m1_offax
+field_in m2_offax astro_xmm_sources_m2_offax
+field_in tseries_flag astro_xmm_sources_tseries_flag
+field_in spectra_flag astro_xmm_sources_spectra_flag
+field_in chi2prob astro_xmm_sources_chi2prob
+field_in fvar astro_xmm_sources_fvar
+field_in fvar_error astro_xmm_sources_fvar_error
+field_in var_flag astro_xmm_sources_var_flag
+field_in pn_1_vig astro_xmm_sources_pn_1_vig
+field_in pn_2_vig astro_xmm_sources_pn_2_vig
+field_in pn_3_vig astro_xmm_sources_pn_3_vig
+field_in pn_4_vig astro_xmm_sources_pn_4_vig
+field_in pn_5_vig astro_xmm_sources_pn_5_vig
+field_in m1_1_vig astro_xmm_sources_m1_1_vig
+field_in m1_2_vig astro_xmm_sources_m1_2_vig
+field_in m1_3_vig astro_xmm_sources_m1_3_vig
+field_in m1_4_vig astro_xmm_sources_m1_4_vig
+field_in m1_5_vig astro_xmm_sources_m1_5_vig
+field_in m2_1_vig astro_xmm_sources_m2_1_vig
+field_in m2_2_vig astro_xmm_sources_m2_2_vig
+field_in m2_3_vig astro_xmm_sources_m2_3_vig
+field_in m2_4_vig astro_xmm_sources_m2_4_vig
+field_in m2_5_vig astro_xmm_sources_m2_5_vig
+field_in sum_flag astro_xmm_sources_sum_flag
+field_in ep_flag astro_xmm_sources_ep_flag
+field_in pn_flag astro_xmm_sources_pn_flag
+field_in m1_flag astro_xmm_sources_m1_flag
+field_in m2_flag astro_xmm_sources_m2_flag
+field_in var_chi2 astro_xmm_sources_var_chi2
+field_in var_chi2_1 astro_xmm_sources_var_chi2_1
+field_in var_chi2_2 astro_xmm_sources_var_chi2_2
+field_in var_chi2_3 astro_xmm_sources_var_chi2_3
+field_in var_chi2_4 astro_xmm_sources_var_chi2_4
+field_in var_chi2_5 astro_xmm_sources_var_chi2_5
+field_in var_prob astro_xmm_sources_var_prob
+field_in var_prob_1 astro_xmm_sources_var_prob_1
+field_in var_prob_2 astro_xmm_sources_var_prob_2
+field_in var_prob_3 astro_xmm_sources_var_prob_3
+field_in var_prob_4 astro_xmm_sources_var_prob_4
+field_in var_prob_5 astro_xmm_sources_var_prob_5
+field_in fratio astro_xmm_sources_fratio
+field_in fratio_error astro_xmm_sources_fratio_error
+field_in fratio_1 astro_xmm_sources_fratio_1
+field_in fratio_1_error astro_xmm_sources_fratio_1_error
+field_in fratio_2 astro_xmm_sources_fratio_2
+field_in fratio_2_error astro_xmm_sources_fratio_2_error
+field_in fratio_3 astro_xmm_sources_fratio_3
+field_in fratio_3_error astro_xmm_sources_fratio_3_error
+field_in fratio_4 astro_xmm_sources_fratio_4
+field_in fratio_4_error astro_xmm_sources_fratio_4_error
+field_in fratio_5 astro_xmm_sources_fratio_5
+field_in fratio_5_error astro_xmm_sources_fratio_5_error
+field_in fluxvar astro_xmm_sources_fluxvar
+field_in fluxvar_1 astro_xmm_sources_fluxvar_1
+field_in fluxvar_2 astro_xmm_sources_fluxvar_2
+field_in fluxvar_3 astro_xmm_sources_fluxvar_3
+field_in fluxvar_4 astro_xmm_sources_fluxvar_4
+field_in fluxvar_5 astro_xmm_sources_fluxvar_5
+field_in time astro_xmm_sources_time
+field_in end_time astro_xmm_sources_end_time
+field_in xmm_revolution astro_xmm_sources_xmm_revolution
+field_in pn_submode astro_xmm_sources_pn_submode
+field_in m1_submode astro_xmm_sources_m1_submode
+field_in m2_submode astro_xmm_sources_m2_submode
+field_in pn_filter astro_xmm_sources_pn_filter
+field_in m1_filter astro_xmm_sources_m1_filter
+field_in m2_filter astro_xmm_sources_m2_filter
+field_in classx_class astro_xmm_sources_classx_class
+field_in classx_outlier astro_xmm_sources_classx_outlier
+field_in classx_prob_agn astro_xmm_sources_classx_prob_agn
+field_in classx_prob_star astro_xmm_sources_classx_prob_star
+field_in classx_prob_gal_xrb astro_xmm_sources_classx_prob_gal_xrb
+field_in classx_prob_gal_cv astro_xmm_sources_classx_prob_gal_cv
+field_in classx_prob_bkg_agn astro_xmm_sources_classx_prob_bkg_agn
+field_in classx_prob_extragal_xrb astro_xmm_sources_classx_prob_extragal_xrb
+field_in classx_prob_extended astro_xmm_sources_classx_prob_extended
+field_in om_srcid astro_xmm_sources_om_srcid
+field_in om_uvw2_ab_mag astro_xmm_sources_om_uvw2_ab_mag
+field_in om_uvw2_ab_mag_error astro_xmm_sources_om_uvw2_ab_mag_error
+field_in om_uvm2_ab_mag astro_xmm_sources_om_uvm2_ab_mag
+field_in om_uvm2_ab_mag_error astro_xmm_sources_om_uvm2_ab_mag_error
+field_in om_uvw1_ab_mag astro_xmm_sources_om_uvw1_ab_mag
+field_in om_uvw1_ab_mag_error astro_xmm_sources_om_uvw1_ab_mag_error
+field_in om_u_ab_mag astro_xmm_sources_om_u_ab_mag
+field_in om_u_ab_mag_error astro_xmm_sources_om_u_ab_mag_error
+field_in om_b_ab_mag astro_xmm_sources_om_b_ab_mag
+field_in om_b_ab_mag_error astro_xmm_sources_om_b_ab_mag_error
+field_in om_v_ab_mag astro_xmm_sources_om_v_ab_mag
+field_in om_v_ab_mag_error astro_xmm_sources_om_v_ab_mag_error
+field_in om_match_prob astro_xmm_sources_om_match_prob
+field_in om_uvw2_quality_flag astro_xmm_sources_om_uvw2_quality_flag
+field_in om_uvm2_quality_flag astro_xmm_sources_om_uvm2_quality_flag
+field_in om_uvw1_quality_flag astro_xmm_sources_om_uvw1_quality_flag
+field_in om_u_quality_flag astro_xmm_sources_om_u_quality_flag
+field_in om_b_quality_flag astro_xmm_sources_om_b_quality_flag
+field_in om_v_quality_flag astro_xmm_sources_om_v_quality_flag
+field_in om_uvw2_extended_flag astro_xmm_sources_om_uvw2_extended_flag
+field_in om_uvm2_extended_flag astro_xmm_sources_om_uvm2_extended_flag
+field_in om_uvw1_extended_flag astro_xmm_sources_om_uvw1_extended_flag
+field_in om_u_extended_flag astro_xmm_sources_om_u_extended_flag
+field_in om_b_extended_flag astro_xmm_sources_om_b_extended_flag
+field_in om_v_extended_flag astro_xmm_sources_om_v_extended_flag
+field_in om_uvw2_chisq astro_xmm_sources_om_uvw2_chisq
+field_in om_uvw2_chisq_dof astro_xmm_sources_om_uvw2_chisq_dof
+field_in om_uvm2_chisq astro_xmm_sources_om_uvm2_chisq
+field_in om_uvm2_chisq_dof astro_xmm_sources_om_uvm2_chisq_dof
+field_in om_uvw1_chisq astro_xmm_sources_om_uvw1_chisq
+field_in om_uvw1_chisq_dof astro_xmm_sources_om_uvw1_chisq_dof
+field_in om_u_chisq astro_xmm_sources_om_u_chisq
+field_in om_u_chisq_dof astro_xmm_sources_om_u_chisq_dof
+field_in om_b_chisq astro_xmm_sources_om_b_chisq
+field_in om_b_chisq_dof astro_xmm_sources_om_b_chisq_dof
+field_in om_v_chisq astro_xmm_sources_om_v_chisq
+field_in om_v_chisq_dof astro_xmm_sources_om_v_chisq_dof
+field_in wise_name astro_xmm_sources_wise_name
+field_in wise_w1mag astro_xmm_sources_wise_w1mag
+field_in wise_w1mag_error astro_xmm_sources_wise_w1mag_error
+field_in wise_w2mag astro_xmm_sources_wise_w2mag
+field_in wise_w2mag_error astro_xmm_sources_wise_w2mag_error
+field_in wise_w3mag astro_xmm_sources_wise_w3mag
+field_in wise_w3mag_error astro_xmm_sources_wise_w3mag_error
+field_in wise_w4mag astro_xmm_sources_wise_w4mag
+field_in wise_w4mag_error astro_xmm_sources_wise_w4mag_error
+field_in wise_match_prob astro_xmm_sources_wise_match_prob
+field_in gaiadr3_source_id astro_xmm_sources_gaiadr3_source_id
+field_in gaiadr3_parallax astro_xmm_sources_gaiadr3_parallax
+field_in gaiadr3_parallax_error astro_xmm_sources_gaiadr3_parallax_error
+field_in gaiadr3_parallax_overerr astro_xmm_sources_gaiadr3_parallax_overerr
+field_in gaiadr3_pm_ra astro_xmm_sources_gaiadr3_pm_ra
+field_in gaiadr3_pm_dec astro_xmm_sources_gaiadr3_pm_dec
+field_in gaiadr3_gmag astro_xmm_sources_gaiadr3_gmag
+field_in gaiadr3_bpmag astro_xmm_sources_gaiadr3_bpmag
+field_in gaiadr3_rpmag astro_xmm_sources_gaiadr3_rpmag
+field_in gaia_match_prob astro_xmm_sources_gaia_match_prob
+field_in info_counterparts astro_xmm_sources_info_counterparts
+field_in gaiadr3_dist astro_xmm_sources_gaiadr3_dist
+field_in classopt_class astro_xmm_sources_classopt_class
+field_in classopt_prob_star astro_xmm_sources_classopt_prob_star
+field_in classopt_prob_agn astro_xmm_sources_classopt_prob_agn
+field_in classopt_prob_galaxy astro_xmm_sources_classopt_prob_galaxy
+field_in spec_flux_pl astro_xmm_sources_spec_flux_pl
+field_in spec_flux_pl_neg_err astro_xmm_sources_spec_flux_pl_neg_err
+field_in spec_flux_pl_pos_err astro_xmm_sources_spec_flux_pl_pos_err
+field_in spec_nh_pl astro_xmm_sources_spec_nh_pl
+field_in spec_nh_pl_neg_err astro_xmm_sources_spec_nh_pl_neg_err
+field_in spec_nh_pl_pos_err astro_xmm_sources_spec_nh_pl_pos_err
+field_in spec_gamma_pl astro_xmm_sources_spec_gamma_pl
+field_in spec_gamma_pl_neg_err astro_xmm_sources_spec_gamma_pl_neg_err
+field_in spec_gamma_pl_pos_err astro_xmm_sources_spec_gamma_pl_pos_err
+field_in spec_iin_pl astro_xmm_sources_spec_iin_pl
+field_in spec_iin_pl_neg_err astro_xmm_sources_spec_iin_pl_neg_err
+field_in spec_iin_pl_pos_err astro_xmm_sources_spec_iin_pl_pos_err
+field_in spec_dof_pl astro_xmm_sources_spec_dof_pl
+field_in spec_pvalue_pl astro_xmm_sources_spec_pvalue_pl
+field_in spec_flag_pl astro_xmm_sources_spec_flag_pl
+field_in spec_info astro_xmm_sources_spec_info
+field_in approx_source_var astro_xmm_sources_approx_source_var
+field_in redshift_tpz_flag_zconf astro_xmm_sources_redshift_tpz_flag_zconf
+field_in redshift_lph_z_best astro_xmm_sources_redshift_lph_z_best
+field_in redshift_lph_flag_zconf astro_xmm_sources_redshift_lph_flag_zconf
+field_in redshift_info_distance astro_xmm_sources_redshift_info_distance
+
+source atmosphere_biome_amazon_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-3.47&longitude=-62.22&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 -3.47 -62.22
+path daily.temperature_2m_max.0 atmosphere_biome_amazon_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_amazon_temp_min_jan_2000_c
+path daily.precipitation_sum.0 atmosphere_biome_amazon_precip_jan_2000_mm
+path daily.temperature_2m_max.9131 atmosphere_biome_amazon_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_amazon_temp_min_dec_2024_c
+path daily.precipitation_sum.9131 atmosphere_biome_amazon_precip_dec_2024_mm
+
+source atmosphere_biome_antarctic_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-80.0&longitude=100.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 -80.0 100.0
+path daily.temperature_2m_max.0 atmosphere_biome_antarctic_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_antarctic_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_antarctic_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_antarctic_temp_min_dec_2024_c
+
+source atmosphere_biome_atacama_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-24.0&longitude=-69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 -24.0 -69.5
+path daily.temperature_2m_max.0 atmosphere_biome_atacama_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_atacama_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_atacama_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_atacama_temp_min_dec_2024_c
+
+source atmosphere_biome_borneo_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=0.5&longitude=114.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 0.5 114.0
+path daily.temperature_2m_max.0 atmosphere_biome_borneo_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_borneo_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_borneo_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_borneo_temp_min_dec_2024_c
+
+source atmosphere_biome_cairo_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=30.0&longitude=31.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 30.0 31.0
+path daily.temperature_2m_max.0 atmosphere_biome_cairo_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_cairo_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_cairo_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_cairo_temp_min_dec_2024_c
+
+source atmosphere_biome_cape_town_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-34.0&longitude=18.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 -34.0 18.5
+path daily.temperature_2m_max.0 atmosphere_biome_cape_town_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_cape_town_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_cape_town_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_cape_town_temp_min_dec_2024_c
+
+source atmosphere_biome_congo_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=0.0&longitude=18.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 0.0 18.0
+path daily.temperature_2m_max.0 atmosphere_biome_congo_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_congo_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_congo_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_congo_temp_min_dec_2024_c
+
+source atmosphere_biome_death_valley_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=36.5&longitude=-117.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 36.5 -117.0
+path daily.temperature_2m_max.0 atmosphere_biome_death_valley_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_death_valley_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_death_valley_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_death_valley_temp_min_dec_2024_c
+
+source atmosphere_biome_fiji_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-18.0&longitude=178.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 -18.0 178.0
+path daily.temperature_2m_max.0 atmosphere_biome_fiji_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_fiji_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_fiji_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_fiji_temp_min_dec_2024_c
+
+source atmosphere_biome_gobi_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=44.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 44.0 105.0
+path daily.temperature_2m_max.0 atmosphere_biome_gobi_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_gobi_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_gobi_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_gobi_temp_min_dec_2024_c
+
+source atmosphere_biome_greenland_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=72.0&longitude=-40.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 72.0 -40.0
+path daily.temperature_2m_max.0 atmosphere_biome_greenland_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_greenland_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_greenland_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_greenland_temp_min_dec_2024_c
+
+source atmosphere_biome_iceland_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=64.0&longitude=-19.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 64.0 -19.0
+path daily.temperature_2m_max.0 atmosphere_biome_iceland_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_iceland_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_iceland_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_iceland_temp_min_dec_2024_c
+
+source atmosphere_biome_kerguelen_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-49.5&longitude=69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 -49.5 69.5
+path daily.temperature_2m_max.0 atmosphere_biome_kerguelen_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_kerguelen_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_kerguelen_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_kerguelen_temp_min_dec_2024_c
+
+source atmosphere_biome_maldives_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=3.0&longitude=73.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 3.0 73.0
+path daily.temperature_2m_max.0 atmosphere_biome_maldives_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_maldives_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_maldives_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_maldives_temp_min_dec_2024_c
+
+source atmosphere_biome_okavango_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-19.5&longitude=23.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 -19.5 23.5
+path daily.temperature_2m_max.0 atmosphere_biome_okavango_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_okavango_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_okavango_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_okavango_temp_min_dec_2024_c
+
+source atmosphere_biome_patagonia_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-50.0&longitude=-72.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 -50.0 -72.0
+path daily.temperature_2m_max.0 atmosphere_biome_patagonia_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_patagonia_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_patagonia_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_patagonia_temp_min_dec_2024_c
+
+source atmosphere_biome_sahara_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=23.0&longitude=5.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 23.0 5.0
+path daily.temperature_2m_max.0 atmosphere_biome_sahara_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_sahara_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_sahara_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_sahara_temp_min_dec_2024_c
+
+source atmosphere_biome_siberia_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=62.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 62.0 105.0
+path daily.temperature_2m_max.0 atmosphere_biome_siberia_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_siberia_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_siberia_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_siberia_temp_min_dec_2024_c
+
+source atmosphere_biome_tibet_archive
+ttl 604800
+force em
+url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=32.0&longitude=86.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+wgs84 32.0 86.0
+path daily.temperature_2m_max.0 atmosphere_biome_tibet_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_tibet_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_tibet_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_tibet_temp_min_dec_2024_c
+
+source atmosphere_co2_historical
+ttl 604800
+force em
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+wgs84 19.5 -155.6
+regex 2000\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2000_ppm
+regex 2020\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2020_ppm
+regex 2025\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2025_ppm
+
+source atmosphere_power_climatology
+ttl 604800
+force em
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2001&end=2020&format=JSON
+path properties.parameter.T2M.01 atmosphere_power_temp_jan_clim_c
+path properties.parameter.T2M.07 atmosphere_power_temp_jul_clim_c
+path properties.parameter.PRECTOTCORR.01 atmosphere_power_precip_jan_clim_mm
+path properties.parameter.PRECTOTCORR.07 atmosphere_power_precip_jul_clim_mm
+
+source esri_so2_volcano_emissions
+ttl 604800
+force diffusion
+url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+map features
+lat_key properties.Lat
+lon_key properties.Long
+field properties.SO2_Kilotons volcano_so2_kilotons
+
+source exosphere_sdss_cosmic_web_galaxies
+ttl 604800
+force em
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?format=json&cmd=SELECT+TOP+1024+ra,dec,z,petroMag_g+FROM+SpecObj+WHERE+class=%27GALAXY%27+AND+z+BETWEEN+0.01+AND+2+AND+petroMag_g+<+19
+cmap 0.Rows
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key z
+field_in petroMag_g sdss_galaxy_mag_g
+
+source exosphere_simbad_brown_dwarfs
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source exosphere_simbad_carbon_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source exosphere_simbad_eclipsing_binaries
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source exosphere_simbad_galaxies
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+source exosphere_simbad_galaxy_clusters
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+source exosphere_simbad_high_z_galaxies
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source exosphere_simbad_highest_redshift_quasar
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source exosphere_simbad_millisecond_pulsars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source exosphere_simbad_novae
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source exosphere_simbad_pulsars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source exosphere_simbad_quasars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source exosphere_simbad_supernovae
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source exosphere_simbad_symbiotic_stars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source exosphere_simbad_white_dwarfs
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source exosphere_simbad_wolf_rayet
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source exosphere_simbad_young_stellar_objects
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source geonuclear_power_plants
+ttl 604800
+force thermal
+url https://raw.githubusercontent.com/cristianst85/GeoNuclearData/master/data/csv/denormalized/nuclear_power_plants.csv
+format csv
+map .
+lat_key Latitude
+lon_key Longitude
+field Capacity geonuclear_capacity_mw
+
+source geosphere_earth_impact_craters
+ttl 604800
+force em
+url https://raw.githubusercontent.com/arijguest/3D-meteorite-viewer/main/earth-impact-craters-v2.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.Name geosphere_crater_name
+
+source geosphere_nasa_meteorite_landings
+ttl 604800
+force em
+url https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mass geosphere_meteorite_mass_g
+field_in properties.name geosphere_meteorite_name
+
+source geosphere_ne_10m_places
+ttl 604800
+force em
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places_simple.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.pop_max geosphere_population_max
+field_in properties.scalerank geosphere_place_rank
+
+source geosphere_ne_glaciers
+ttl 604800
+force em
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_glaciated_areas.geojson
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field_in properties.name geosphere_ne_glacier_name
+field_in properties.scalerank geosphere_ne_glacier_rank
+
+source geosphere_ne_lakes
+ttl 604800
+force em
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_lakes.geojson
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field_in properties.name geosphere_ne_lake_name
+field_in properties.scalerank geosphere_ne_lake_rank
+
+source geosphere_ne_places
+ttl 604800
+force em
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_populated_places.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.name geosphere_ne_place_name
+field_in properties.scalerank geosphere_ne_place_rank
+
+source geosphere_unesco_heritage
+ttl 604800
+force em
+url https://gist.githubusercontent.com/rsicarelli/ba4b383a7b56c2f4292597e8c0965cc7/raw/a421c3ba23938f6963b120c6372ac74ca3186052/real.planet.world-heritage.json
+map .
+lat_key lat
+lon_key lng
+field_in year geosphere_heritage_year
+
+source geosphere_volcanoes_hdx
+ttl 604800
+force em
+url https://data.humdata.org/dataset/a60ac839-920d-435a-bf7d-25855602699d/resource/7234d067-2d74-449a-9c61-22ae6d98d928/download/volcano.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.V_Name geosphere_volcano_name
+field_in properties.Country geosphere_volcano_country
+field_in properties.PEI geosphere_volcano_pei
+
+source geosphere_world_volcanoes
+ttl 604800
+force em
+url https://gist.githubusercontent.com/vasturiano/3c27138769a04d1780562ce04afbedf2/raw/83dde896972fad0f1f823191ea90e3d451d3977a/world_volcanoes.json
+map .
+lat_key lat
+lon_key lon
+field_in elevation geosphere_volcano_elevation_m
+
+source glims_glacier_points
+ttl 604800
+force thermal
+url https://www.glims.org/geoserver/ows?service=wfs&version=2.0.0&request=GetFeature&typeName=GLIMS:GLIMS_Points&bbox={lon_min},{lat_min},{lon_max},{lat_max},EPSG:4326&count=500&outputFormat=application/json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+epoch_key properties.src_date
+field properties.db_area cryosphere_glims_glacier_area_km2
+
+source higgs_production_xsec_papers
+ttl 604800
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Higgs+production+cross+section&fields=titles,citation_count
+wgs84 46.233 6.056
+field hits.total subatomic_higgs_xsec_papers
+
+source hydrosphere_global_rivers
+ttl 604800
+force em
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_lake_centerlines.geojson
+map features
+lat_key geometry.coordinates.0.1
+lon_key geometry.coordinates.0.0
+field_in properties.name hydrosphere_river_name
+
+source iau_constellation_boundaries
+ttl 604800
+force em
+url https://raw.githubusercontent.com/ofrohn/d3-celestial/master/data/constellations.bounds.json
+celestial_polygon features
+radius 3.085677581e19
+field_in properties.rank cpoly_rank
+field 0 prefname
+field 3 redshift
+
+source irsa
+ttl 604800
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+designation,+j_m,+h_m,+k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+field_in designation name
+field_in j_m mag_j
+field_in h_m mag_h
+field_in k_m mag_k
+lat_key ra
+lon_key dec
+
+source molecular_periodic_elements
+ttl 604800
+force em
+url https://raw.githubusercontent.com/Bowserinator/Periodic-Table-JSON/master/PeriodicTableJSON.json
+map elements
+field_in atomic_mass molecular_element_mass_u
+field_in density molecular_element_density_g_l
+field_in melt molecular_element_melt_k
+
+source muon_gminus2_papers
+ttl 604800
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=muon+g-2+anomalous+magnetic+moment&fields=titles,citation_count
+wgs84 41.833 -87.627
+field hits.total subatomic_muon_g2_papers
+
+source nasa_global_landslide_catalog
+ttl 604800
+force gravity
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/global_landslide_catalog.json
+map data
+lat_key latitude
+lon_key longitude
+epoch_key ev_date
+field fatalities nasa_glc_fatalities
+field ev_id nasa_glc_event_id
+field ls_size nasa_glc_landslide_size
+
+source ndbc_buoy_station_list
+ttl 604800
+force thermal
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/ndbc_station_list.json
+map data
+lat_key latitude
+lon_key longitude
+field elevation_m hydrosphere_ndbc_station_elevation_m
+field station_type hydrosphere_ndbc_station_type
+
+source neutrino_oscillation_papers
+ttl 604800
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrino+oscillation&fields=titles,citation_count
+wgs84 42.454 13.576
+field hits.total subatomic_neutrino_oscillation_papers
+
+source physics_cern_alice_pbpb
+ttl 604800
+force em
+url https://opendata.cern.ch/api/records/?q=experiment:ALICE&size=1
+wgs84 46.233 6.055
+count aggregations.experiment.buckets biosphere_cern_alice_pbpb_count
+
+source physics_cern_cms_data
+ttl 604800
+force em
+url https://opendata.cern.ch/api/records/?q=experiment:CMS&size=1
+wgs84 46.233 6.055
+count aggregations.experiment.buckets biosphere_cern_cms_record_count
+
+source physics_cern_open_data
+ttl 604800
+force em
+url https://opendata.cern.ch/api/records/?size=1
+wgs84 46.233 6.055
+count aggregations.experiment.buckets biosphere_cern_total_record_count
+
+source physics_crossref_longevity_age_research
+ttl 604800
+force em
+url https://api.crossref.org/works?query=biological+age+clock+epigenetic&rows=0
+wgs84 51.500 -0.126
+field message.total-results biosphere_longevity_research_total
+
+source physics_crossref_synthetic_genome_papers
+ttl 604800
+force em
+url https://api.crossref.org/works?query=synthetic+genome+writing+minimal+cell&rows=0
+wgs84 42.373 -71.110
+field message.total-results biosphere_synthetic_genome_research_total
+
+source physics_inspirehep_bell_test_papers
+ttl 604800
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=loophole-free+Bell+test&fields=titles,citation_count
+wgs84 52.086 5.171
+field hits.hits.0.metadata.citation_count physics_bell_test_loophole_free_citations
+
+source physics_inspirehep_organoid_papers
+ttl 604800
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=organoid+intelligence+biocomputing&fields=titles,citation_count
+wgs84 -37.813 144.963
+field hits.hits.0.metadata.citation_count biosphere_organoid_computing_citations
+
+source physics_inspirehep_proton_decay_papers
+ttl 604800
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
+wgs84 36.428 137.310
+field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
+
+source physics_inspirehep_quantum_teleport_papers
+ttl 604800
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=quantum+entanglement+satellite+distance+record&fields=titles,citation_count
+wgs84 39.904 116.407
+field hits.hits.0.metadata.citation_count quantum_entanglement_distance_record_citations
+
+source physics_inspirehep_time_crystal_papers
+ttl 604800
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=time+crystal&fields=titles,citation_count
+wgs84 42.360 -71.093
+field hits.hits.0.metadata.citation_count physics_time_crystal_research_citations
+
+source raspberry_shake_stations
+ttl 604800
+force seismic-surface
+url https://stationview.raspberryshake.org/stations?online=true
+map .
+lat_key latitude
+lon_key longitude
+field elevation seismic_station_elevation_m
+
+source simbad
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source simbad_bright_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source simbad_nearby_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx50.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source solar_helioseismology_papers
+ttl 604800
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=helioseismology&fields=titles
+wgs84 37.774 -122.419
+field hits.total solar_helioseismology_papers
+
+source subatomic_pdg_b_c_plus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S091M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_b_c_plus_mass_mev
+
+source subatomic_pdg_b_plus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S041M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_b_plus_mass_mev
+
+source subatomic_pdg_b_zero_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S042M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_b_zero_mass_mev
+
+source subatomic_pdg_bottom_quark_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/Q005M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_bottom_quark_mass_gev
+
+source subatomic_pdg_charged_pion_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S008M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_charged_pion_mass_mev
+
+source subatomic_pdg_charm_quark_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/Q004M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_charm_quark_mass_gev
+
+source subatomic_pdg_d_s_star_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S074M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_d_s_star_mass_mev
+
+source subatomic_pdg_down_quark_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/Q001M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_down_quark_mass_mev
+
+source subatomic_pdg_electron_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S003M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_electron_mass_mev
+
+source subatomic_pdg_eta_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S014M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_eta_mass_mev
+
+source subatomic_pdg_kaon_plus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S010M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_kaon_plus_mass_mev
+
+source subatomic_pdg_kaon_zero_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S011M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_kaon_zero_mass_mev
+
+source subatomic_pdg_lambda_b_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S040M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_lambda_b_mass_mev
+
+source subatomic_pdg_lambda_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S018M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_lambda_mass_mev
+
+source subatomic_pdg_muon_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S004M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_muon_mass_mev
+
+source subatomic_pdg_neutron_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S017M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_neutron_mass_mev
+
+source subatomic_pdg_omega_b_minus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S063M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_omega_b_minus_mass_mev
+
+source subatomic_pdg_omega_c_2770_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S053M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_omega_c_2770_mass_mev
+
+source subatomic_pdg_omega_c_zero_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S047M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_omega_c_zero_mass_mev
+
+source subatomic_pdg_pion_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S009M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_pion_mass_mev
+
+source subatomic_pdg_proton_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S016M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_proton_mass_mev
+
+source subatomic_pdg_sigma_minus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S020M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_sigma_minus_mass_mev
+
+source subatomic_pdg_sigma_plus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S019M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_sigma_plus_mass_mev
+
+source subatomic_pdg_sigma_zero_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S021M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_sigma_zero_mass_mev
+
+source subatomic_pdg_strange_quark_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/Q003M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_strange_quark_mass_mev
+
+source subatomic_pdg_tau_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S035M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_tau_mass_mev
+
+source subatomic_pdg_top_quark_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/Q007TP
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_top_quark_mass_gev
+
+source subatomic_pdg_up_quark_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/Q002M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_up_quark_mass_mev
+
+source subatomic_pdg_w_boson_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S043M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_w_boson_mass_gev
+
+source subatomic_pdg_xi_c_plus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S045M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_xi_c_plus_mass_mev
+
+source subatomic_pdg_xi_c_prime_plus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S058M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_xi_c_prime_plus_mass_mev
+
+source subatomic_pdg_xi_c_prime_zero_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S059M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_xi_c_prime_zero_mass_mev
+
+source subatomic_pdg_xi_c_zero_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S048M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_xi_c_zero_mass_mev
+
+source subatomic_pdg_xi_cc_plus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S065M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_xi_cc_plus_mass_mev
+
+source subatomic_pdg_xi_cc_plusplus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S068M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_xi_cc_plusplus_mass_mev
+
+source subatomic_pdg_xi_minus_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S022M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_xi_minus_mass_mev
+
+source subatomic_pdg_xi_zero_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S023M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_xi_zero_mass_mev
+
+source subatomic_pdg_z_boson_mass
+ttl 604800
+force em
+url https://pdgapi.lbl.gov/summaries/S044M
+wgs84 37.877 -122.247
+field pdg_values.0.value subatomic_z_boson_mass_gev
+
+source technosphere_global_airports
+ttl 604800
+force em
+url https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/master/airports.json
+map .
+lat_key lat
+lon_key lon
+field_in elevation technosphere_airport_elevation_ft
+
+source technosphere_submarine_cables
+ttl 604800
+force em
+url https://github.com/lifewinning/submarine-cable-taps/raw/master/data/submarine_cables.geojson
+field_in properties.name technosphere_cable_name
+field_in properties.length technosphere_cable_length_km
+flatten features
+
+source universe_simbad_agn
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_barium_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_blazars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_blue_compact_dwarfs
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+source universe_simbad_blue_giants
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_blue_supergiants
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_brown_dwarfs
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_carbon_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_carbon_stars_var
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_cepheids
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_ch_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_dark_nebulae
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_dwarf_galaxies
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+source universe_simbad_dwarf_novae
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_eclipsing_binaries
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_emission_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_flare_stars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_fu_oris
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_galaxies
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+source universe_simbad_galaxy_clusters
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+source universe_simbad_gamma_bursts
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_giant_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_globular_clusters
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hecate.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_gravitational_lenses
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_herbig_haro
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_hii_regions
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+source universe_simbad_hvc
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+source universe_simbad_interstellar_medium
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_ir_sources
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_ism
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_long_period
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_lpv_mira
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_masers
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_microquasars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_millisecond_pulsars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_mira_variables
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_molecule_clouds
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_nebulae
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_novae
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_oh_maser
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_oh_masers
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_planetary_nebulae
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_post_agb_stars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_pre_ms_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_proper_motion
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_high_pm.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_pulsars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_pulsating_white_dwarfs
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_quasars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_rcrb_variables
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_red_giants
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_red_supergiants
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_reflection_nebulae
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_rr_lyrae
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_s_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_stellar_associations
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_supernova_remnants
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_supernovae
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_symbiotic_stars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_ttauri_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_variable_stars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_white_dwarfs
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_wolf_rayet_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_xray_sources
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source universe_simbad_yellow_supergiants
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_young_stellar_objects
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source universe_simbad_yso
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag star_g_mag
+
+source wri_global_power_plants
+ttl 604800
+force thermal
+url https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv
+format csv
+map .
+lat_key latitude
+lon_key longitude
+field capacity_mw wri_plant_capacity_mw
+field primary_fuel wri_primary_fuel
+
+source alfalfa_catalog
+ttl 2592000
+force em
+url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
+verify false
+format csv
+map data
+field_in 0 agc_nr
+field_in 1 name
+field_in 2 ra_deg_hi
+field_in 3 dec_deg_hi
+field_in 4 ra_deg_oc
+field_in 5 dec_deg_oc
+field_in 6 vhelio_km_s
+field_in 7 w50_km_s
+field_in 8 err_w50
+field_in 9 hi_flux_jy
+field_in 10 err_flux
+field_in 11 snr
+field_in 12 rms
+field_in 13 dist_mpc
+field_in 14 log_m_sun
+lat_key 2
+lon_key 3
+
+source atmosphere_climate_projection
+ttl 2592000
+force em
+url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum
+first temperature_2m_max atmosphere_climate_temp_max_c
+first temperature_2m_min atmosphere_climate_temp_min_c
+first precipitation_sum atmosphere_climate_precip_mm
+
+source atmosphere_hadcrut5_temp
+ttl 2592000
+force em
+url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
+wgs84 50.727 -3.476
+format csv
+last line atmosphere_hadcrut5_temp_anomaly_raw
+
+source biosphere_globalforestwatch_tree_cover_loss
+ttl 2592000
+force em
+url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest
+wgs84 38.907 -77.036
+field data.0.areaHa biosphere_tree_cover_loss_ha_latest
+
+source biosphere_worldbank_birth_rate
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CBRT.IN?format=json&date=2023&per_page=1&mrv=1
+wgs84 38.899 -77.043
+field 1.0.value biosphere_birth_rate_per_1000
+
+source biosphere_worldbank_co2_emissions
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.GHG.CO2.MT.CE.AR5?format=json
+wgs84 38.899 -77.043
+field 1.0.value worldbank_co2_emissions_value
+
+source biosphere_worldbank_death_rate
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1
+wgs84 38.899 -77.043
+field 1.0.value biosphere_death_rate_per_1000
+
+source biosphere_worldbank_gdp_growth_afghanistan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/AFG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 33.83 67.71
+field 1.0.value biosphere_gdp_growth_afghanistan_pct
+
+source biosphere_worldbank_gdp_growth_albania
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ALB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 41.33 19.82
+field 1.0.value biosphere_gdp_growth_albania_pct
+
+source biosphere_worldbank_gdp_growth_algeria
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 36.75 3.06
+field 1.0.value biosphere_gdp_growth_algeria_pct
+
+source biosphere_worldbank_gdp_growth_american_samoa
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ASM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -14.28 -170.70
+field 1.0.value biosphere_gdp_growth_american_samoa_pct
+
+source biosphere_worldbank_gdp_growth_andorra
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/AND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 42.51 1.52
+field 1.0.value biosphere_gdp_growth_andorra_pct
+
+source biosphere_worldbank_gdp_growth_angola
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/AGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -8.84 13.23
+field 1.0.value biosphere_gdp_growth_angola_pct
+
+source biosphere_worldbank_gdp_growth_antigua_and_barbuda
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ATG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 17.12 -61.85
+field 1.0.value biosphere_gdp_growth_antigua_and_barbuda_pct
+
+source biosphere_worldbank_gdp_growth_argentina
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ARG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -34.60 -58.38
+field 1.0.value biosphere_gdp_growth_argentina_pct
+
+source biosphere_worldbank_gdp_growth_armenia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ARM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 40.18 44.51
+field 1.0.value biosphere_gdp_growth_armenia_pct
+
+source biosphere_worldbank_gdp_growth_aruba
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ABW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 12.52 -70.03
+field 1.0.value biosphere_gdp_growth_aruba_pct
+
+source biosphere_worldbank_gdp_growth_australia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/AUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -35.28 149.13
+field 1.0.value biosphere_gdp_growth_australia_pct
+
+source biosphere_worldbank_gdp_growth_austria
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/AUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 48.21 16.37
+field 1.0.value biosphere_gdp_growth_austria_pct
+
+source biosphere_worldbank_gdp_growth_azerbaijan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/AZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 40.40 49.87
+field 1.0.value biosphere_gdp_growth_azerbaijan_pct
+
+source biosphere_worldbank_gdp_growth_bahamas
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BHS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 25.06 -77.35
+field 1.0.value biosphere_gdp_growth_bahamas_pct
+
+source biosphere_worldbank_gdp_growth_bahrain
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BHR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 26.23 50.59
+field 1.0.value biosphere_gdp_growth_bahrain_pct
+
+source biosphere_worldbank_gdp_growth_bangladesh
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BGD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 23.81 90.41
+field 1.0.value biosphere_gdp_growth_bangladesh_pct
+
+source biosphere_worldbank_gdp_growth_barbados
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 13.10 -59.62
+field 1.0.value biosphere_gdp_growth_barbados_pct
+
+source biosphere_worldbank_gdp_growth_belarus
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BLR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 53.90 27.57
+field 1.0.value biosphere_gdp_growth_belarus_pct
+
+source biosphere_worldbank_gdp_growth_belgium
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BEL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 50.85 4.35
+field 1.0.value biosphere_gdp_growth_belgium_pct
+
+source biosphere_worldbank_gdp_growth_belize
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BLZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 17.25 -88.77
+field 1.0.value biosphere_gdp_growth_belize_pct
+
+source biosphere_worldbank_gdp_growth_benin
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 6.50 2.60
+field 1.0.value biosphere_gdp_growth_benin_pct
+
+source biosphere_worldbank_gdp_growth_bermuda
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BMU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 32.29 -64.78
+field 1.0.value biosphere_gdp_growth_bermuda_pct
+
+source biosphere_worldbank_gdp_growth_bhutan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BTN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 27.47 89.64
+field 1.0.value biosphere_gdp_growth_bhutan_pct
+
+source biosphere_worldbank_gdp_growth_bolivia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BOL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -16.50 -68.15
+field 1.0.value biosphere_gdp_growth_bolivia_pct
+
+source biosphere_worldbank_gdp_growth_bosnia_and_herzegovina
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BIH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 43.85 18.41
+field 1.0.value biosphere_gdp_growth_bosnia_and_herzegovina_pct
+
+source biosphere_worldbank_gdp_growth_botswana
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -24.63 25.90
+field 1.0.value biosphere_gdp_growth_botswana_pct
+
+source biosphere_worldbank_gdp_growth_brazil
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -15.80 -47.88
+field 1.0.value biosphere_gdp_growth_brazil_pct
+
+source biosphere_worldbank_gdp_growth_british_virgin_islands
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/VGB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 18.42 -64.62
+field 1.0.value biosphere_gdp_growth_british_virgin_islands_pct
+
+source biosphere_worldbank_gdp_growth_brunei_darussalam
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 4.94 114.94
+field 1.0.value biosphere_gdp_growth_brunei_darussalam_pct
+
+source biosphere_worldbank_gdp_growth_bulgaria
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BGR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 42.70 23.32
+field 1.0.value biosphere_gdp_growth_bulgaria_pct
+
+source biosphere_worldbank_gdp_growth_burkina_faso
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BFA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 12.37 -1.52
+field 1.0.value biosphere_gdp_growth_burkina_faso_pct
+
+source biosphere_worldbank_gdp_growth_burundi
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/BDI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -3.36 29.92
+field 1.0.value biosphere_gdp_growth_burundi_pct
+
+source biosphere_worldbank_gdp_growth_cabo_verde
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CPV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 14.93 -23.51
+field 1.0.value biosphere_gdp_growth_cabo_verde_pct
+
+source biosphere_worldbank_gdp_growth_cambodia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/KHM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 11.56 104.93
+field 1.0.value biosphere_gdp_growth_cambodia_pct
+
+source biosphere_worldbank_gdp_growth_cameroon
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 3.87 11.52
+field 1.0.value biosphere_gdp_growth_cameroon_pct
+
+source biosphere_worldbank_gdp_growth_canada
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 45.42 -75.70
+field 1.0.value biosphere_gdp_growth_canada_pct
+
+source biosphere_worldbank_gdp_growth_cayman_islands
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CYM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 19.29 -81.37
+field 1.0.value biosphere_gdp_growth_cayman_islands_pct
+
+source biosphere_worldbank_gdp_growth_central_african_republic
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 4.39 18.56
+field 1.0.value biosphere_gdp_growth_central_african_republic_pct
+
+source biosphere_worldbank_gdp_growth_chad
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TCD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 15.45 18.73
+field 1.0.value biosphere_gdp_growth_chad_pct
+
+source biosphere_worldbank_gdp_growth_channel_islands
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CHI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 49.19 -2.11
+field 1.0.value biosphere_gdp_growth_channel_islands_pct
+
+source biosphere_worldbank_gdp_growth_chile
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -33.45 -70.67
+field 1.0.value biosphere_gdp_growth_chile_pct
+
+source biosphere_worldbank_gdp_growth_china
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CHN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 39.91 116.40
+field 1.0.value biosphere_gdp_growth_china_pct
+
+source biosphere_worldbank_gdp_growth_colombia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/COL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 4.71 -74.07
+field 1.0.value biosphere_gdp_growth_colombia_pct
+
+source biosphere_worldbank_gdp_growth_comoros
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/COM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -11.72 43.25
+field 1.0.value biosphere_gdp_growth_comoros_pct
+
+source biosphere_worldbank_gdp_growth_congo
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/COD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -4.32 15.30
+field 1.0.value biosphere_gdp_growth_congo_pct
+
+source biosphere_worldbank_gdp_growth_congo_republic
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/COG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -4.26 15.28
+field 1.0.value biosphere_gdp_growth_congo_republic_pct
+
+source biosphere_worldbank_gdp_growth_costa_rica
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 9.93 -84.08
+field 1.0.value biosphere_gdp_growth_costa_rica_pct
+
+source biosphere_worldbank_gdp_growth_cote_d_ivoire
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CIV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 5.35 -4.01
+field 1.0.value biosphere_gdp_growth_cote_d_ivoire_pct
+
+source biosphere_worldbank_gdp_growth_croatia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/HRV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 45.81 15.98
+field 1.0.value biosphere_gdp_growth_croatia_pct
+
+source biosphere_worldbank_gdp_growth_cuba
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CUB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 23.13 -82.38
+field 1.0.value biosphere_gdp_growth_cuba_pct
+
+source biosphere_worldbank_gdp_growth_curacao
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CUW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 12.11 -68.93
+field 1.0.value biosphere_gdp_growth_curacao_pct
+
+source biosphere_worldbank_gdp_growth_cyprus
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CYP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 35.17 33.36
+field 1.0.value biosphere_gdp_growth_cyprus_pct
+
+source biosphere_worldbank_gdp_growth_czechia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 50.08 14.44
+field 1.0.value biosphere_gdp_growth_czechia_pct
+
+source biosphere_worldbank_gdp_growth_denmark
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 55.68 12.57
+field 1.0.value biosphere_gdp_growth_denmark_pct
+
+source biosphere_worldbank_gdp_growth_DEU
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+wgs84 52.520 13.405
+field 1.0.value biosphere_gdp_growth_pct_DEU
+
+source biosphere_worldbank_gdp_growth_djibouti
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 11.58 43.15
+field 1.0.value biosphere_gdp_growth_djibouti_pct
+
+source biosphere_worldbank_gdp_growth_dominica
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DMA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 15.30 -61.39
+field 1.0.value biosphere_gdp_growth_dominica_pct
+
+source biosphere_worldbank_gdp_growth_dominican_republic
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 18.49 -69.93
+field 1.0.value biosphere_gdp_growth_dominican_republic_pct
+
+source biosphere_worldbank_gdp_growth_ecuador
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ECU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -0.23 -78.52
+field 1.0.value biosphere_gdp_growth_ecuador_pct
+
+source biosphere_worldbank_gdp_growth_egypt
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/EGY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 30.04 31.24
+field 1.0.value biosphere_gdp_growth_egypt_pct
+
+source biosphere_worldbank_gdp_growth_el_salvador
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SLV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 13.69 -89.19
+field 1.0.value biosphere_gdp_growth_el_salvador_pct
+
+source biosphere_worldbank_gdp_growth_equatorial_guinea
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GNQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 3.75 8.77
+field 1.0.value biosphere_gdp_growth_equatorial_guinea_pct
+
+source biosphere_worldbank_gdp_growth_eritrea
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ERI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 15.33 38.93
+field 1.0.value biosphere_gdp_growth_eritrea_pct
+
+source biosphere_worldbank_gdp_growth_estonia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/EST/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 59.44 24.75
+field 1.0.value biosphere_gdp_growth_estonia_pct
+
+source biosphere_worldbank_gdp_growth_eswatini
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SWZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -26.32 31.17
+field 1.0.value biosphere_gdp_growth_eswatini_pct
+
+source biosphere_worldbank_gdp_growth_ethiopia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ETH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 9.03 38.74
+field 1.0.value biosphere_gdp_growth_ethiopia_pct
+
+source biosphere_worldbank_gdp_growth_faroe_islands
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/FRO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 62.01 -6.77
+field 1.0.value biosphere_gdp_growth_faroe_islands_pct
+
+source biosphere_worldbank_gdp_growth_fiji
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/FJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -18.14 178.44
+field 1.0.value biosphere_gdp_growth_fiji_pct
+
+source biosphere_worldbank_gdp_growth_finland
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/FIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 60.17 24.94
+field 1.0.value biosphere_gdp_growth_finland_pct
+
+source biosphere_worldbank_gdp_growth_france
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/FRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 48.86 2.35
+field 1.0.value biosphere_gdp_growth_france_pct
+
+source biosphere_worldbank_gdp_growth_french_polynesia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PYF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -17.55 -149.60
+field 1.0.value biosphere_gdp_growth_french_polynesia_pct
+
+source biosphere_worldbank_gdp_growth_gabon
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GAB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 0.39 9.45
+field 1.0.value biosphere_gdp_growth_gabon_pct
+
+source biosphere_worldbank_gdp_growth_gambia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GMB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 13.45 -16.63
+field 1.0.value biosphere_gdp_growth_gambia_pct
+
+source biosphere_worldbank_gdp_growth_georgia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GEO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 41.72 44.79
+field 1.0.value biosphere_gdp_growth_georgia_pct
+
+source biosphere_worldbank_gdp_growth_germany
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 52.52 13.40
+field 1.0.value biosphere_gdp_growth_germany_pct
+
+source biosphere_worldbank_gdp_growth_ghana
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GHA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 5.56 -0.20
+field 1.0.value biosphere_gdp_growth_ghana_pct
+
+source biosphere_worldbank_gdp_growth_gibraltar
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GIB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 36.14 -5.35
+field 1.0.value biosphere_gdp_growth_gibraltar_pct
+
+source biosphere_worldbank_gdp_growth_greece
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GRC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 37.98 23.73
+field 1.0.value biosphere_gdp_growth_greece_pct
+
+source biosphere_worldbank_gdp_growth_greenland
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 64.15 -21.94
+field 1.0.value biosphere_gdp_growth_greenland_pct
+
+source biosphere_worldbank_gdp_growth_grenada
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GRD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 12.05 -61.75
+field 1.0.value biosphere_gdp_growth_grenada_pct
+
+source biosphere_worldbank_gdp_growth_guam
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GUM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 13.44 144.79
+field 1.0.value biosphere_gdp_growth_guam_pct
+
+source biosphere_worldbank_gdp_growth_guatemala
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GTM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 14.63 -90.51
+field 1.0.value biosphere_gdp_growth_guatemala_pct
+
+source biosphere_worldbank_gdp_growth_guinea
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 9.51 -13.71
+field 1.0.value biosphere_gdp_growth_guinea_pct
+
+source biosphere_worldbank_gdp_growth_guinea_bissau
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GNB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 11.86 -15.60
+field 1.0.value biosphere_gdp_growth_guinea_bissau_pct
+
+source biosphere_worldbank_gdp_growth_guyana
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GUY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 6.80 -58.16
+field 1.0.value biosphere_gdp_growth_guyana_pct
+
+source biosphere_worldbank_gdp_growth_haiti
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/HTI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 18.59 -72.31
+field 1.0.value biosphere_gdp_growth_haiti_pct
+
+source biosphere_worldbank_gdp_growth_honduras
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/HND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 14.07 -87.21
+field 1.0.value biosphere_gdp_growth_honduras_pct
+
+source biosphere_worldbank_gdp_growth_hong_kong_sar
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/HKG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 22.32 114.17
+field 1.0.value biosphere_gdp_growth_hong_kong_sar_pct
+
+source biosphere_worldbank_gdp_growth_hungary
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/HUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 47.50 19.04
+field 1.0.value biosphere_gdp_growth_hungary_pct
+
+source biosphere_worldbank_gdp_growth_iceland
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ISL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 64.15 -21.94
+field 1.0.value biosphere_gdp_growth_iceland_pct
+
+source biosphere_worldbank_gdp_growth_india
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 28.61 77.21
+field 1.0.value biosphere_gdp_growth_india_pct
+
+source biosphere_worldbank_gdp_growth_indonesia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/IDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -6.21 106.85
+field 1.0.value biosphere_gdp_growth_indonesia_pct
+
+source biosphere_worldbank_gdp_growth_iran
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/IRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 35.69 51.39
+field 1.0.value biosphere_gdp_growth_iran_pct
+
+source biosphere_worldbank_gdp_growth_iraq
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/IRQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 33.31 44.36
+field 1.0.value biosphere_gdp_growth_iraq_pct
+
+source biosphere_worldbank_gdp_growth_ireland
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/IRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 53.35 -6.26
+field 1.0.value biosphere_gdp_growth_ireland_pct
+
+source biosphere_worldbank_gdp_growth_israel
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ISR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 31.78 35.22
+field 1.0.value biosphere_gdp_growth_israel_pct
+
+source biosphere_worldbank_gdp_growth_italy
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ITA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 41.90 12.50
+field 1.0.value biosphere_gdp_growth_italy_pct
+
+source biosphere_worldbank_gdp_growth_jamaica
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/JAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 18.01 -76.79
+field 1.0.value biosphere_gdp_growth_jamaica_pct
+
+source biosphere_worldbank_gdp_growth_japan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/JPN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 35.69 139.69
+field 1.0.value biosphere_gdp_growth_japan_pct
+
+source biosphere_worldbank_gdp_growth_jordan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/JOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 31.95 35.91
+field 1.0.value biosphere_gdp_growth_jordan_pct
+
+source biosphere_worldbank_gdp_growth_kazakhstan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/KAZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 51.16 71.43
+field 1.0.value biosphere_gdp_growth_kazakhstan_pct
+
+source biosphere_worldbank_gdp_growth_kenya
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/KEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -1.29 36.82
+field 1.0.value biosphere_gdp_growth_kenya_pct
+
+source biosphere_worldbank_gdp_growth_kiribati
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/KIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 1.33 172.97
+field 1.0.value biosphere_gdp_growth_kiribati_pct
+
+source biosphere_worldbank_gdp_growth_korea
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/KOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 37.57 126.98
+field 1.0.value biosphere_gdp_growth_korea_pct
+
+source biosphere_worldbank_gdp_growth_kosovo
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/XKX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 42.66 21.16
+field 1.0.value biosphere_gdp_growth_kosovo_pct
+
+source biosphere_worldbank_gdp_growth_kuwait
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/KWT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 29.38 47.98
+field 1.0.value biosphere_gdp_growth_kuwait_pct
+
+source biosphere_worldbank_gdp_growth_kyrgyz_republic
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/KGZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 42.87 74.59
+field 1.0.value biosphere_gdp_growth_kyrgyz_republic_pct
+
+source biosphere_worldbank_gdp_growth_lao_pdr
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LAO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 17.97 102.63
+field 1.0.value biosphere_gdp_growth_lao_pdr_pct
+
+source biosphere_worldbank_gdp_growth_latvia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LVA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 56.95 24.11
+field 1.0.value biosphere_gdp_growth_latvia_pct
+
+source biosphere_worldbank_gdp_growth_lebanon
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LBN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 33.89 35.50
+field 1.0.value biosphere_gdp_growth_lebanon_pct
+
+source biosphere_worldbank_gdp_growth_lesotho
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LSO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -29.31 27.49
+field 1.0.value biosphere_gdp_growth_lesotho_pct
+
+source biosphere_worldbank_gdp_growth_liberia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 6.30 -10.80
+field 1.0.value biosphere_gdp_growth_liberia_pct
+
+source biosphere_worldbank_gdp_growth_libya
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LBY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 32.89 13.19
+field 1.0.value biosphere_gdp_growth_libya_pct
+
+source biosphere_worldbank_gdp_growth_liechtenstein
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LIE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 47.14 9.52
+field 1.0.value biosphere_gdp_growth_liechtenstein_pct
+
+source biosphere_worldbank_gdp_growth_lithuania
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LTU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 54.69 25.28
+field 1.0.value biosphere_gdp_growth_lithuania_pct
+
+source biosphere_worldbank_gdp_growth_luxembourg
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LUX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 49.61 6.13
+field 1.0.value biosphere_gdp_growth_luxembourg_pct
+
+source biosphere_worldbank_gdp_growth_macao_sar
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MAC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 22.20 113.55
+field 1.0.value biosphere_gdp_growth_macao_sar_pct
+
+source biosphere_worldbank_gdp_growth_madagascar
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MDG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -18.88 47.52
+field 1.0.value biosphere_gdp_growth_madagascar_pct
+
+source biosphere_worldbank_gdp_growth_malawi
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MWI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -13.96 33.79
+field 1.0.value biosphere_gdp_growth_malawi_pct
+
+source biosphere_worldbank_gdp_growth_malaysia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MYS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 3.14 101.69
+field 1.0.value biosphere_gdp_growth_malaysia_pct
+
+source biosphere_worldbank_gdp_growth_maldives
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MDV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 4.18 73.51
+field 1.0.value biosphere_gdp_growth_maldives_pct
+
+source biosphere_worldbank_gdp_growth_mali
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MLI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 12.65 -8.00
+field 1.0.value biosphere_gdp_growth_mali_pct
+
+source biosphere_worldbank_gdp_growth_malta
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MLT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 35.90 14.46
+field 1.0.value biosphere_gdp_growth_malta_pct
+
+source biosphere_worldbank_gdp_growth_marshall_islands
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 7.09 171.21
+field 1.0.value biosphere_gdp_growth_marshall_islands_pct
+
+source biosphere_worldbank_gdp_growth_mauritania
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MRT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 18.09 -15.98
+field 1.0.value biosphere_gdp_growth_mauritania_pct
+
+source biosphere_worldbank_gdp_growth_mauritius
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -20.35 57.55
+field 1.0.value biosphere_gdp_growth_mauritius_pct
+
+source biosphere_worldbank_gdp_growth_mexico
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MEX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 19.43 -99.13
+field 1.0.value biosphere_gdp_growth_mexico_pct
+
+source biosphere_worldbank_gdp_growth_micronesia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/FSM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 7.42 151.99
+field 1.0.value biosphere_gdp_growth_micronesia_pct
+
+source biosphere_worldbank_gdp_growth_moldova
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MDA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 47.01 28.86
+field 1.0.value biosphere_gdp_growth_moldova_pct
+
+source biosphere_worldbank_gdp_growth_monaco
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MCO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 43.74 7.42
+field 1.0.value biosphere_gdp_growth_monaco_pct
+
+source biosphere_worldbank_gdp_growth_mongolia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MNG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 47.92 106.92
+field 1.0.value biosphere_gdp_growth_mongolia_pct
+
+source biosphere_worldbank_gdp_growth_montenegro
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MNE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 42.44 19.26
+field 1.0.value biosphere_gdp_growth_montenegro_pct
+
+source biosphere_worldbank_gdp_growth_morocco
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MAR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 34.02 -6.83
+field 1.0.value biosphere_gdp_growth_morocco_pct
+
+source biosphere_worldbank_gdp_growth_mozambique
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MOZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -25.97 32.57
+field 1.0.value biosphere_gdp_growth_mozambique_pct
+
+source biosphere_worldbank_gdp_growth_myanmar
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 19.76 96.10
+field 1.0.value biosphere_gdp_growth_myanmar_pct
+
+source biosphere_worldbank_gdp_growth_namibia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/NAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -22.56 17.08
+field 1.0.value biosphere_gdp_growth_namibia_pct
+
+source biosphere_worldbank_gdp_growth_nauru
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/NRU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -0.55 166.93
+field 1.0.value biosphere_gdp_growth_nauru_pct
+
+source biosphere_worldbank_gdp_growth_nepal
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/NPL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 27.71 85.32
+field 1.0.value biosphere_gdp_growth_nepal_pct
+
+source biosphere_worldbank_gdp_growth_netherlands
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/NLD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 52.37 4.90
+field 1.0.value biosphere_gdp_growth_netherlands_pct
+
+source biosphere_worldbank_gdp_growth_new_caledonia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/NCL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -22.27 166.46
+field 1.0.value biosphere_gdp_growth_new_caledonia_pct
+
+source biosphere_worldbank_gdp_growth_new_zealand
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/NZL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -41.29 174.78
+field 1.0.value biosphere_gdp_growth_new_zealand_pct
+
+source biosphere_worldbank_gdp_growth_nicaragua
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/NIC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 12.15 -86.23
+field 1.0.value biosphere_gdp_growth_nicaragua_pct
+
+source biosphere_worldbank_gdp_growth_niger
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/NER/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 13.51 2.11
+field 1.0.value biosphere_gdp_growth_niger_pct
+
+source biosphere_worldbank_gdp_growth_nigeria
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/NGA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 9.06 7.49
+field 1.0.value biosphere_gdp_growth_nigeria_pct
+
+source biosphere_worldbank_gdp_growth_north_korea
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PRK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 39.04 125.76
+field 1.0.value biosphere_gdp_growth_north_korea_pct
+
+source biosphere_worldbank_gdp_growth_north_macedonia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MKD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 41.99 21.43
+field 1.0.value biosphere_gdp_growth_north_macedonia_pct
+
+source biosphere_worldbank_gdp_growth_northern_mariana_islands
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MNP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 15.21 145.72
+field 1.0.value biosphere_gdp_growth_northern_mariana_islands_pct
+
+source biosphere_worldbank_gdp_growth_norway
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/NOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 59.91 10.75
+field 1.0.value biosphere_gdp_growth_norway_pct
+
+source biosphere_worldbank_gdp_growth_oman
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/OMN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 23.59 58.41
+field 1.0.value biosphere_gdp_growth_oman_pct
+
+source biosphere_worldbank_gdp_growth_pakistan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PAK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 33.68 73.05
+field 1.0.value biosphere_gdp_growth_pakistan_pct
+
+source biosphere_worldbank_gdp_growth_palau
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PLW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 7.50 134.62
+field 1.0.value biosphere_gdp_growth_palau_pct
+
+source biosphere_worldbank_gdp_growth_panama
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 8.98 -79.52
+field 1.0.value biosphere_gdp_growth_panama_pct
+
+source biosphere_worldbank_gdp_growth_papua_new_guinea
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PNG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -9.44 147.18
+field 1.0.value biosphere_gdp_growth_papua_new_guinea_pct
+
+source biosphere_worldbank_gdp_growth_paraguay
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PRY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -25.26 -57.59
+field 1.0.value biosphere_gdp_growth_paraguay_pct
+
+source biosphere_worldbank_gdp_growth_peru
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PER/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -12.05 -77.04
+field 1.0.value biosphere_gdp_growth_peru_pct
+
+source biosphere_worldbank_gdp_growth_philippines
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 14.60 120.98
+field 1.0.value biosphere_gdp_growth_philippines_pct
+
+source biosphere_worldbank_gdp_growth_poland
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/POL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 52.23 21.01
+field 1.0.value biosphere_gdp_growth_poland_pct
+
+source biosphere_worldbank_gdp_growth_portugal
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PRT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 38.72 -9.13
+field 1.0.value biosphere_gdp_growth_portugal_pct
+
+source biosphere_worldbank_gdp_growth_puerto_rico
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 18.47 -66.11
+field 1.0.value biosphere_gdp_growth_puerto_rico_pct
+
+source biosphere_worldbank_gdp_growth_qatar
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/QAT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 25.29 51.53
+field 1.0.value biosphere_gdp_growth_qatar_pct
+
+source biosphere_worldbank_gdp_growth_romania
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ROU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 44.43 26.10
+field 1.0.value biosphere_gdp_growth_romania_pct
+
+source biosphere_worldbank_gdp_growth_russian_federation
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/RUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 55.76 37.62
+field 1.0.value biosphere_gdp_growth_russian_federation_pct
+
+source biosphere_worldbank_gdp_growth_rwanda
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/RWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -1.95 30.06
+field 1.0.value biosphere_gdp_growth_rwanda_pct
+
+source biosphere_worldbank_gdp_growth_samoa
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/WSM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -13.85 -171.75
+field 1.0.value biosphere_gdp_growth_samoa_pct
+
+source biosphere_worldbank_gdp_growth_san_marino
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 43.94 12.45
+field 1.0.value biosphere_gdp_growth_san_marino_pct
+
+source biosphere_worldbank_gdp_growth_sao_tome_and_principe
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/STP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 0.33 6.73
+field 1.0.value biosphere_gdp_growth_sao_tome_and_principe_pct
+
+source biosphere_worldbank_gdp_growth_saudi_arabia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SAU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 24.71 46.68
+field 1.0.value biosphere_gdp_growth_saudi_arabia_pct
+
+source biosphere_worldbank_gdp_growth_senegal
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 14.72 -17.45
+field 1.0.value biosphere_gdp_growth_senegal_pct
+
+source biosphere_worldbank_gdp_growth_serbia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 44.79 20.45
+field 1.0.value biosphere_gdp_growth_serbia_pct
+
+source biosphere_worldbank_gdp_growth_seychelles
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SYC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -4.68 55.47
+field 1.0.value biosphere_gdp_growth_seychelles_pct
+
+source biosphere_worldbank_gdp_growth_sierra_leone
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SLE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 8.46 -13.23
+field 1.0.value biosphere_gdp_growth_sierra_leone_pct
+
+source biosphere_worldbank_gdp_growth_singapore
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SGP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 1.35 103.82
+field 1.0.value biosphere_gdp_growth_singapore_pct
+
+source biosphere_worldbank_gdp_growth_sint_maarten_dutch_part
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SXM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 18.03 -63.05
+field 1.0.value biosphere_gdp_growth_sint_maarten_dutch_part_pct
+
+source biosphere_worldbank_gdp_growth_slovak_republic
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SVK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 48.15 17.11
+field 1.0.value biosphere_gdp_growth_slovak_republic_pct
+
+source biosphere_worldbank_gdp_growth_slovenia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SVN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 46.06 14.51
+field 1.0.value biosphere_gdp_growth_slovenia_pct
+
+source biosphere_worldbank_gdp_growth_solomon_islands
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SLB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -9.43 159.95
+field 1.0.value biosphere_gdp_growth_solomon_islands_pct
+
+source biosphere_worldbank_gdp_growth_somalia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 2.05 45.32
+field 1.0.value biosphere_gdp_growth_somalia_pct
+
+source biosphere_worldbank_gdp_growth_south_africa
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ZAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -25.75 28.22
+field 1.0.value biosphere_gdp_growth_south_africa_pct
+
+source biosphere_worldbank_gdp_growth_south_sudan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SSD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 4.85 31.58
+field 1.0.value biosphere_gdp_growth_south_sudan_pct
+
+source biosphere_worldbank_gdp_growth_spain
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ESP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 40.42 -3.70
+field 1.0.value biosphere_gdp_growth_spain_pct
+
+source biosphere_worldbank_gdp_growth_sri_lanka
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LKA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 6.93 79.86
+field 1.0.value biosphere_gdp_growth_sri_lanka_pct
+
+source biosphere_worldbank_gdp_growth_st_kitts_and_nevis
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/KNA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 17.30 -62.73
+field 1.0.value biosphere_gdp_growth_st_kitts_and_nevis_pct
+
+source biosphere_worldbank_gdp_growth_st_lucia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/LCA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 13.91 -60.98
+field 1.0.value biosphere_gdp_growth_st_lucia_pct
+
+source biosphere_worldbank_gdp_growth_st_martin_french_part
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/MAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 18.07 -63.08
+field 1.0.value biosphere_gdp_growth_st_martin_french_part_pct
+
+source biosphere_worldbank_gdp_growth_st_vincent_and_the_grenadines
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/VCT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 13.16 -61.22
+field 1.0.value biosphere_gdp_growth_st_vincent_and_the_grenadines_pct
+
+source biosphere_worldbank_gdp_growth_sudan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 15.50 32.56
+field 1.0.value biosphere_gdp_growth_sudan_pct
+
+source biosphere_worldbank_gdp_growth_suriname
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SUR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 5.85 -55.20
+field 1.0.value biosphere_gdp_growth_suriname_pct
+
+source biosphere_worldbank_gdp_growth_sweden
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 59.33 18.07
+field 1.0.value biosphere_gdp_growth_sweden_pct
+
+source biosphere_worldbank_gdp_growth_switzerland
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/CHE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 47.37 8.54
+field 1.0.value biosphere_gdp_growth_switzerland_pct
+
+source biosphere_worldbank_gdp_growth_syrian_arab_republic
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/SYR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 33.51 36.29
+field 1.0.value biosphere_gdp_growth_syrian_arab_republic_pct
+
+source biosphere_worldbank_gdp_growth_tajikistan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TJK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 38.56 68.77
+field 1.0.value biosphere_gdp_growth_tajikistan_pct
+
+source biosphere_worldbank_gdp_growth_tanzania
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -6.16 35.75
+field 1.0.value biosphere_gdp_growth_tanzania_pct
+
+source biosphere_worldbank_gdp_growth_thailand
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/THA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 13.76 100.50
+field 1.0.value biosphere_gdp_growth_thailand_pct
+
+source biosphere_worldbank_gdp_growth_timor_leste
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TLS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -8.55 125.58
+field 1.0.value biosphere_gdp_growth_timor_leste_pct
+
+source biosphere_worldbank_gdp_growth_togo
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 6.17 1.33
+field 1.0.value biosphere_gdp_growth_togo_pct
+
+source biosphere_worldbank_gdp_growth_tonga
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TON/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -21.17 -175.20
+field 1.0.value biosphere_gdp_growth_tonga_pct
+
+source biosphere_worldbank_gdp_growth_trinidad_and_tobago
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TTO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 10.69 -61.52
+field 1.0.value biosphere_gdp_growth_trinidad_and_tobago_pct
+
+source biosphere_worldbank_gdp_growth_tunisia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 36.81 10.18
+field 1.0.value biosphere_gdp_growth_tunisia_pct
+
+source biosphere_worldbank_gdp_growth_turkiye
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TUR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 39.93 32.85
+field 1.0.value biosphere_gdp_growth_turkiye_pct
+
+source biosphere_worldbank_gdp_growth_turkmenistan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TKM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 37.95 58.38
+field 1.0.value biosphere_gdp_growth_turkmenistan_pct
+
+source biosphere_worldbank_gdp_growth_turks_and_caicos_islands
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TCA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 21.46 -71.14
+field 1.0.value biosphere_gdp_growth_turks_and_caicos_islands_pct
+
+source biosphere_worldbank_gdp_growth_tuvalu
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/TUV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -8.52 179.19
+field 1.0.value biosphere_gdp_growth_tuvalu_pct
+
+source biosphere_worldbank_gdp_growth_uganda
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/UGA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 0.34 32.58
+field 1.0.value biosphere_gdp_growth_uganda_pct
+
+source biosphere_worldbank_gdp_growth_ukraine
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/UKR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 50.45 30.52
+field 1.0.value biosphere_gdp_growth_ukraine_pct
+
+source biosphere_worldbank_gdp_growth_united_arab_emirates
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ARE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 24.45 54.38
+field 1.0.value biosphere_gdp_growth_united_arab_emirates_pct
+
+source biosphere_worldbank_gdp_growth_united_kingdom
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/GBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 51.51 -0.13
+field 1.0.value biosphere_gdp_growth_united_kingdom_pct
+
+source biosphere_worldbank_gdp_growth_united_states
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 38.90 -77.03
+field 1.0.value biosphere_gdp_growth_united_states_pct
+
+source biosphere_worldbank_gdp_growth_uruguay
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/URY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -34.90 -56.16
+field 1.0.value biosphere_gdp_growth_uruguay_pct
+
+source biosphere_worldbank_gdp_growth_uzbekistan
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/UZB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 41.29 69.24
+field 1.0.value biosphere_gdp_growth_uzbekistan_pct
+
+source biosphere_worldbank_gdp_growth_vanuatu
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/VUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -17.73 168.32
+field 1.0.value biosphere_gdp_growth_vanuatu_pct
+
+source biosphere_worldbank_gdp_growth_venezuela
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/VEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 10.48 -66.90
+field 1.0.value biosphere_gdp_growth_venezuela_pct
+
+source biosphere_worldbank_gdp_growth_vietnam
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/VNM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 21.02 105.83
+field 1.0.value biosphere_gdp_growth_vietnam_pct
+
+source biosphere_worldbank_gdp_growth_virgin_islands_u_s
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/VIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 18.34 -64.93
+field 1.0.value biosphere_gdp_growth_virgin_islands_u_s_pct
+
+source biosphere_worldbank_gdp_growth_west_bank_and_gaza
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/PSE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 31.95 35.23
+field 1.0.value biosphere_gdp_growth_west_bank_and_gaza_pct
+
+source biosphere_worldbank_gdp_growth_yemen
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/YEM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 15.36 44.19
+field 1.0.value biosphere_gdp_growth_yemen_pct
+
+source biosphere_worldbank_gdp_growth_zambia
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ZMB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -15.38 28.32
+field 1.0.value biosphere_gdp_growth_zambia_pct
+
+source biosphere_worldbank_gdp_growth_zimbabwe
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/ZWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+wgs84 -17.82 31.03
+field 1.0.value biosphere_gdp_growth_zimbabwe_pct
+
+source biosphere_worldbank_life_expectancy
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.LE00.IN?format=json&date=2023&per_page=1&mrv=1
+wgs84 38.899 -77.043
+field 1.0.value biosphere_life_expectancy_years
+
+source biosphere_worldbank_median_age
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.MEDN?format=json&date=2023&per_page=1&mrv=1
+wgs84 38.899 -77.043
+field 1.0.value biosphere_median_age_years
+
+source biosphere_worldbank_population
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.TOTL?format=json
+wgs84 38.899 -77.043
+field 1.0.value biosphere_worldbank_population_total
+
+source biosphere_worldbank_population_density
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.POP.DNST?format=json&per_page=1&date=2023
+wgs84 38.8991 -77.0430
+field 1.0.value biosphere_global_population_density_sqkm
+
+source biosphere_worldbank_urban_population_pct
+ttl 2592000
+force em
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.URB.TOTL.IN.ZS?format=json&date=2023&per_page=1&mrv=1
+wgs84 38.899 -77.043
+field 1.0.value biosphere_urban_population_pct
+
+source dark_matter_direct_limits
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=dark+matter+direct+detection+limit+XENONnT+LZ&fields=titles,citation_count
+wgs84 42.454 13.576
+field hits.hits.0.metadata.citation_count quantum_dark_matter_limit_citations
+
+source geopages
+ttl 2592000
+force em
+url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
+count query.geosearch biosphere_geopages_nearby
+
+source geosphere_cci_datasets
+ttl 2592000
+force em
+url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1
+wgs84 51.2802 -0.5231
+path response.numFound climate_esa_cci_datasets
+
+source geosphere_elevation
+ttl 2592000
+force em
+url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+first elevation geosphere_elevation_m
+
+source geosphere_eoapi_collections
+ttl 2592000
+force em
+url https://stac.eoapi.dev/collections
+wgs84 38.900 -77.020
+count collections biosphere_eoapi_collection_count
+
+source geosphere_icgem_geoid_height
+ttl 2592000
+force em
+url https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf
+format csv
+last_row undulate geosphere_geoid_height_m
+
+source geosphere_macrostrat_ages
+ttl 2592000
+force em
+url https://macrostrat.org/api/v2/units?format=json
+wgs84 43.073 -89.401
+count success.data macrostrat_unit_count
+
+source geosphere_macrostrat_timescale
+ttl 2592000
+force em
+url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
+wgs84 43.073 -89.401
+path success.data.0.n_intervals geosphere_ics_timescale_units
+
+source geosphere_openelevation_srtm
+ttl 2592000
+force em
+url https://api.open-elevation.com/api/v1/lookup?locations={grid}
+map results
+lat_key latitude
+lon_key longitude
+field_in elevation geosphere_elevation_openelev_m
+alt_key elevation
+
+source geosphere_opentopo_eudem25m
+ttl 2592000
+force em
+url https://api.opentopodata.org/v1/eudem25m?locations={grid}
+map results
+lat_key location.lat
+lon_key location.lng
+field_in elevation geosphere_elevation_eudem25_m
+alt_key elevation
+
+source geosphere_opentopo_gebco_bathymetry
+ttl 2592000
+force em
+url https://api.opentopodata.org/v1/gebco2020?locations={grid}
+map results
+lat_key location.lat
+lon_key location.lng
+field_in elevation hydrosphere_bathymetry_gebco_m
+alt_key elevation
+
+source geosphere_opentopo_mapzen_terrain
+ttl 2592000
+force em
+url https://api.opentopodata.org/v1/mapzen?locations={grid}
+map results
+lat_key location.lat
+lon_key location.lng
+field_in elevation geosphere_terrain_mapzen_m
+alt_key elevation
+
+source geosphere_opentopo_srtm30m
+ttl 2592000
+force em
+url https://api.opentopodata.org/v1/srtm30m?locations={grid}
+map results
+lat_key location.lat
+lon_key location.lng
+field_in elevation geosphere_elevation_srtm30_m
+alt_key elevation
+
+source geosphere_planetary_computer_collections
+ttl 2592000
+force em
+url https://planetarycomputer.microsoft.com/api/stac/v1/collections
+wgs84 47.640000000 -122.140000000
+count collections biosphere_planetary_computer_collection_count
+
+source geosphere_soilgrids_clay
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_clay_pct
+
+source geosphere_soilgrids_ph
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_ph_x10
+
+source geosphere_soilgrids_sand
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=sand&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_sand_pct
+
+source geosphere_soilgrids_soc
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_organic_carbon_x10
+
+source geosphere_usgs_epqs_elevation
+ttl 2592000
+force seismic-surface
+url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&wkid=4326
+path value geosphere_elevation_epqs_m
+
+source lithosphere_gem_active_faults
+ttl 2592000
+force em
+url https://raw.githubusercontent.com/cossatot/gem-global-active-faults/master/geojson/gem_active_faults_harmonized.geojson
+flatten features
+
+source lithosphere_pb2002_boundaries
+ttl 2592000
+force em
+url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json
+flatten features
+
+source lithosphere_pb2002_orogens
+ttl 2592000
+force em
+url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_orogens.json
+flatten features
+
+source lithosphere_pb2002_plates
+ttl 2592000
+force em
+url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json
+flatten features
+
+source ned
+ttl 2592000
+force em
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+field_in preferredname name
+field_in redshift redshift
+field_in vel velocity_km_s
+lat_key ra
+lon_key dec
+
+source neutrinoless_double_beta_limits
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrinoless+double+beta+decay+limit&fields=titles,citation_count
+wgs84 42.454 13.576
+field hits.hits.0.metadata.citation_count quantum_double_beta_limit_citations
+
+source noaa_epica_domec_deuterium
+ttl 2592000
+force diffusion
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/dc_ch4_hol_fl02-noaa.txt
+wgs84 -75.1 123.35
+format text
+rows
+field 0 depth_m
+field 1 age_yr_bp
+field 2 ch4_ppbv
+
+source noaa_vostok_deuterium
+ttl 2592000
+force diffusion
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt
+wgs84 -78.464 106.837
+format text
+rows
+field 0 depth_m
+field 1 age_yr_bp
+field 2 deuterium_delta
+
+source noaa_wais_divide_co2
+ttl 2592000
+force diffusion
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/antarctica2015co2wais-noaa.txt
+wgs84 -79.467 -112.085
+format text
+rows
+field 0 depth_m
+field 1 age_yr_bp
+field 2 co2_ppmv
+field 3 co2_sigma_ppmv
+
+source paleoclimate_dome_fuji_co2
+ttl 2592000
+force em
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
+wgs84 -77.3190 39.7030
+format csv
+rows
+field_in 0 paleoclimate_domefuji_age_bp
+field_in 1 paleoclimate_domefuji_co2_ppm
+
+source paleoclimate_epica_co2
+ttl 2592000
+force em
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
+wgs84 -75.100 123.350
+format text
+rows
+field_in 3 paleoclimate_epica_age_bp
+field_in 4 paleoclimate_epica_co2_ppm
+
+source paleoclimate_vostok_icecore
+ttl 2592000
+force em
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
+wgs84 -78.464 106.833
+format text
+rows
+field_in 0 paleoclimate_vostok_depth_m
+field_in 1 paleoclimate_vostok_age_bp
+field_in 2 paleoclimate_vostok_co2_ppm
+
+source physics_cern_opendata_records
+ttl 2592000
+force em
+url https://opendata.cern.ch/api/records/?size=1&page=1
+wgs84 46.233 6.055
+field hits.total physics_cern_opendata_total
+
+source physics_crossref_biophoton_papers
+ttl 2592000
+force em
+url https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0
+wgs84 50.775 6.084
+field message.total-results biosphere_biophoton_research_total
+
+source physics_inspirehep_cmb_anomaly_papers
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count
+wgs84 5.230 -52.769
+field hits.hits.0.metadata.citation_count cosmic_cmb_anomaly_research_citations
+
+source physics_inspirehep_vacuum_metastability_papers
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count
+wgs84 46.233 6.055
+field hits.hits.0.metadata.citation_count physics_vacuum_metastability_citations
+
+source physics_inspirehep_xenonnt_papers
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+matter&fields=titles,citation_count
+wgs84 42.454 13.576
+field hits.hits.0.metadata.citation_count physics_dark_matter_limit_citations
+
+source quantum_gravity_lorentz_bounds
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Lorentz+invariance+violation+quantum+gravity&fields=titles,citation_count
+wgs84 42.454 13.576
+field hits.hits.0.metadata.citation_count quantum_lorentz_bounds_citations
+
+source vizier
+ttl 2592000
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+"{catalog}"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+catalog I/355/gaiadr3
+map data
+lat_key RAJ2000
+lon_key DEJ2000
+source hydrosphere_cmems_sst_global
+ttl 21600
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/CMEMS_SST_GLO_SST_L4_REP_OBSERVATIONS_010_011_monthly.csv?analysed_sst%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format csv
+rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_cmems_sst_k
+
+source hydrosphere_cmems_heat_content_700m
+ttl 21600
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1M-m.csv?thetao%5Blast%5D%5B0%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format csv
+rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_cmems_ocean_temp_c
+
+source hydrosphere_cmems_mixed_layer_depth
+ttl 21600
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1M-m.csv?mlotst%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format csv
+rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_cmems_mlotst_m
+
+source atmosphere_aeronet_aod_full
+ttl 10800
+force thermal
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
+format csv
+rows
+lat_key 1
+lon_key 2
+field_in 7 atmosphere_aeronet_aod_500nm
+
+source ndbc_all_buoys
+ttl 600
+force acoustic
+url https://www.ndbc.noaa.gov/data/latest_obs/all_stations.txt
+format text
+rows
+lat_key 5
+lon_key 6
+field_in 0 station_id
+field_in 8 wind_dir_deg
+field_in 9 wind_speed_ms
+field_in 10 gust_ms
+field_in 11 wave_height_m
+field_in 12 dominant_period_s
+field_in 14 pressure_hpa
+field_in 17 water_temp_c
+
+source hydrosphere_pegelonline_all_stations
+ttl 1800
+force advective
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeTimeseries=true&includeCurrentMeasurement=true
+format json
+map features
+lat_key latitude
+lon_key longitude
+field_in shortname hydrosphere_pegelonline_station
+field_in water hydrosphere_pegelonline_water_level_cm
+
+source exosphere_cmems_currents
+ttl 21600
+force advective
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?uo%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D,vo%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format csv
+rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_cmems_current_u_ms
+field_in 3 hydrosphere_cmems_current_v_ms
+
+source geosphere_raspberry_shake_stations
+ttl 43200
+force seismic-surface
+url https://stationview.raspberryshake.org/api/stations
+format json
+map features
+lat_key latitude
+lon_key longitude
+field_in stnm geosphere_raspberry_shake_name
+field_in ntwk geosphere_raspberry_shake_network
+
+source geosphere_iris_stations
+ttl 86400
+force seismic-body
+url https://service.iris.edu/fdsnws/station/1/query?network=*&station=*&location=*&channel=BH?&format=geojson&level=station
+format json
+map features
+lat_key latitude
+lon_key longitude
+field_in properties.network geosphere_iris_network
+field_in properties.station geosphere_iris_station
+
+source geosphere_orfeus_stations
+ttl 86400
+force seismic-body
+url https://www.orfeus-eu.org/fdsnws/station/1/query?network=*&station=*&location=*&channel=BH?&format=geojson&level=station
+format json
+map features
+lat_key latitude
+lon_key longitude
+field_in properties.network geosphere_orfeus_network
+field_in properties.station geosphere_orfeus_station
+
+source biosphere_gbif_invasive_species
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?country=DE&hasCoordinate=true&isInvasive=true&limit=300&offset=0
+format json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_species
+field_in occurrenceStatus biosphere_gbif_occurrence_status
+
+source biosphere_gbif_range_shifts
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&year=2026,2026&limit=300&offset=0
+format json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_species
+field_in year biosphere_gbif_year
+
+source biosphere_gbif_marine_invasives
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&datasetKey=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&limit=300
+format json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_marine_species
+field_in depth biosphere_gbif_depth_m
+source universe_sdss_stars
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,s.psfmag_g+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.sdssdr13_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.sdssdr13_photoprimary+AS+s+ON+x.original_ext_source_id=s.objid+WHERE+g.parallax+>+0+AND+s.psfmag_g+<+17
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_sdss_gmag
+
+source universe_vizier_2mass
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_2mass_gaia_g_mag
+
+source universe_vizier_apass
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,e.bmag,e.vmag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.apassdr9_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.apassdr9+AS+e+ON+x.clean_apassdr9_oid=e.recno+WHERE+g.parallax+>+0+AND+e.bmag+<+13
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_vizier_bmag
+field_in 4 universe_vizier_vmag
+
+source universe_vizier_panstarrs
+ttl 86400
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_panstarrs_gaia_g_mag
+
+source exosphere_gaia_nearby_stars
+ttl 604800
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax+>+0+ORDER+BY+parallax+DESC
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 6 gaia_nearby_star_mag
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+
+source exosphere_gaia_stars
+ttl 604800
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+6+AND+parallax+>+0+ORDER+BY+phot_g_mean_mag
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 6 cosmic_star_magnitude
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+
+source exosphere_gaia_stellar_ages
+ttl 604800
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+128+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,ap.age_flame,ap.teff_gspphot+FROM+gaiadr3.astrophysical_parameters+AS+ap+JOIN+gaiadr3.gaia_source+AS+g+ON+ap.source_id=g.source_id+WHERE+ap.age_flame+IS+NOT+NULL+AND+g.parallax+>+0+ORDER+BY+ap.age_flame+DESC
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 6 cosmic_oldest_star_age_gyr
+field_in 7 cosmic_oldest_star_temp_k
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+
+source exosphere_gaia_variable_stars
+ttl 604800
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,v.pf+FROM+gaiadr3.vari_cepheid+AS+v+JOIN+gaiadr3.gaia_source+AS+g+ON+v.source_id=g.source_id+WHERE+g.parallax+>+0+ORDER+BY+v.pf+DESC
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 6 gaia_cepheid_period_d
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+
