@@ -1,0 +1,5 @@
+# sources_live.φ — Live-API sources (no CDN mirror)
+# Entries from the original sources.φ that fetch from live APIs,
+# not from omegaflow/sources CDN releases.
+# URL format: direct API endpoints with {SECRET_NAME} templates.
+
