@@ -5932,7 +5932,7 @@ fn ci_mode_main() -> i32 {
             failed += 1;
             continue;
         }
-        let out_path = format!("{}/{}/{}.json", out_dir, netloc, name);
+        let out_path = format!("{}/{}/{}.json", out_dir, netloc, utc_iso8601_now());
         if file_fresh(&out_path, src.ttl) {
             skipped += 1;
             continue;

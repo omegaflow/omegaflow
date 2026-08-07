@@ -7751,6 +7751,7 @@ extent 5.45e-6
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
 ttl 3600
 force em
+body earth
 cmap .
 map data
   field_in name name
@@ -7777,6 +7778,7 @@ cmap .
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
 ttl 3600
 force em
+body earth
 at sun 1.0
 format universal
 map .
@@ -7791,6 +7793,7 @@ lon_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+date,band,peak_flux,duration,type+FROM+sgraflares+WHERE+date+IS+NOT+NULL+ORDER+BY+date+DESC
 ttl 3600
 force em
+body earth
 on earth -29.008 266.417
 format universal
 rows
@@ -10285,6 +10288,7 @@ field_in 3 agn_pl_index
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,redshift,flux_100_300000,spectral_index,object_type,nu_flux,z_phot+FROM+fermilpsc+WHERE+flux_100_300000+IS+NOT+NULL+ORDER+BY+flux_100_300000+DESC&FORMAT=text&limit=2000
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10329,6 +10333,7 @@ extent 3.34e-8
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_10_1000,flux_10_30,flux_30_100,flux_100_1000,spectral_index,redshift,assoc_name+FROM+fermifhl+WHERE+flux_10_1000+IS+NOT+NULL+ORDER+BY+flux_10_1000+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10342,6 +10347,7 @@ z_key redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,redshift,spectral_index,nu_synpeak,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','FSRQ')+AND+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10356,6 +10362,7 @@ z_key redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,extended,assoc_name,redshift+FROM+fermilpsc+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10371,6 +10378,7 @@ z_key redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2704+name,ra,dec,t90,fluence,peak_flux,time_trigger+FROM+batsegrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10385,6 +10393,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,type,period,mass_donor,mass_bh,dist,classification+FROM+blackholebin+WHERE+ra+IS+NOT+NULL+ORDER+BY+mass_bh+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10401,6 +10410,7 @@ dist_key dist
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,extent_flag,var_flag,conf_flag+FROM+csc+WHERE+conf_flag%3D0+ORDER+BY+name+ASC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10413,6 +10423,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+700+name,ra,dec,soft_flux,hard_flux,full_flux,band_ratio,photon_index,redshift+FROM+cdfnchandra+WHERE+ra+IS+NOT+NULL+ORDER+BY+full_flux+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10427,6 +10438,7 @@ z_key redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,flux_s,flux_h,flux_f,photon_index_ap,z_ap+FROM+cdfs7ms+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_f+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10441,6 +10453,7 @@ z_key z_ap
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,photon_index,exposure+FROM+chan_gc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10453,6 +10466,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?request=doQuery&lang=ADQL&format=text&query=SELECT+TOP+100+ra,dec,exposure+FROM+chanmaster
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 map .
@@ -10463,6 +10477,7 @@ lon_key 1
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,instrument,obs_date+FROM+chanmaster+WHERE+status%3D'archived'+AND+exposure%3E10000+ORDER+BY+obs_date+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 map .
@@ -10476,6 +10491,7 @@ field_in obs_date obs_date
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,detector,time+FROM+chanmaster+WHERE+status%3D%27archived%27+AND+exposure%3E10000+ORDER+BY+time+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 map .
@@ -10488,6 +10504,7 @@ lon_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,distance,age,type,obs_id+FROM+chansnr+WHERE+ra+IS+NOT+NULL+ORDER+BY+distance+ASC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10501,6 +10518,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10516,6 +10534,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+name,ra,dec,pl_flux_density,pl_index,detection_significance,source_type+FROM+fermilpsc+WHERE+detection_significance%3E10+AND+source_type+IN+(%27bll%27,%27fsrq%27,%27bcu%27)+ORDER+BY+pl_flux_density+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10533,6 +10552,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,detection_significance,pl_flux_density,pl_index,source_type+FROM+fermilpsc+WHERE+detection_significance%3E10+ORDER+BY+detection_significance+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10546,6 +10566,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3500+name,ra,dec,redshift,flux_1_100_gev,source_type,nu_syn+FROM+fermilac+WHERE+redshift+IS+NOT+NULL+AND+redshift%3E0+ORDER+BY+flux_1_100_gev+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10560,6 +10581,7 @@ z_key redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,t90,fluence,peak_flux,redshift,trigger_time,classification+FROM+fermigbrst+WHERE+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10576,6 +10598,7 @@ field_in redshift redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,lat,lon,trigger_time,duration,e_mean,counts+FROM+fermitgf+WHERE+lat+IS+NOT+NULL+ORDER+BY+counts+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10590,6 +10613,7 @@ lon_key geometry.coordinates.0
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Source_Name,CLASS1,GLON,GLAT,nu_flux,nu_flux_1000,LP_Index,Pivot_Energy,TS+FROM+public.angel_fourfgl+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+nu_flux+DESC&FORMAT=text
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10603,6 +10627,7 @@ dec_key DEJ2000
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,spinper,dist,optical_name+FROM+hmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10619,6 +10644,7 @@ dist_key dist
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,ts,flux,p_value,sigma+FROM+icecube_ps_10y+WHERE+ra+IS+NOT+NULL+ORDER+BY+ts+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10632,6 +10658,7 @@ field_in p_value p_value
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+name,ra,dec,sb_flux,hb_flux,source_type+FROM+intibisag2+WHERE+sb_flux+IS+NOT+NULL+ORDER+BY+sb_flux+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10645,6 +10672,7 @@ field_in 5 source_type
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,t90,fluence,peak_flux,time_trigger,error_radius+FROM+intgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10660,6 +10688,7 @@ field_in peak_flux peak_flux
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,dist,compact_type+FROM+lmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10675,6 +10704,7 @@ dist_key dist
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,flux_4_10,flux_3_10,flux_10_20,object_type,redshift,error_radius,hardness_ratio_1+FROM+maxigsc7yr+WHERE+flux_4_10+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC&FORMAT=text&limit=2000
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 cmap .
@@ -10691,6 +10721,7 @@ z_key redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_4_10,flux_10_20,flux_20_40,n_sigma,type+FROM+maxigsc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10705,6 +10736,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+latitude,longitude,co_total_column,co_surface,co_500hpa,co_300hpa,date+FROM+mopittl3m+WHERE+latitude+IS+NOT+NULL+ORDER+BY+co_total_column+DESC
 ttl 86400
 force diffusion
+body earth
 at sun 1.0
 format universal
 rows
@@ -10719,6 +10751,7 @@ field_in co_300hpa co_300hpa
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+name,ra,dec,dist,assoc_pulsar,luminosity_x,size_arcmin+FROM+pwncat+WHERE+ra+IS+NOT+NULL+ORDER+BY+luminosity_x+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10733,6 +10766,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,source_extent,hardness_ratio_1,hardness_ratio_2,detection_likelihood+FROM+rass2rxs+WHERE+detection_likelihood%3E6+ORDER+BY+count_rate+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10748,6 +10782,7 @@ field_in 7 detection_likelihood
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10761,6 +10796,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10775,6 +10811,7 @@ field_in 6 source_extent
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,redshift,count_rate,flux_0_1_2_4,luminosity_0_1_2_4,ext+FROM+xcsunion+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_0_1_2_4+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10789,6 +10826,7 @@ z_key redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Name,Avg_Rate,Rate_Err+FROM+public.rxte_asm+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Avg_Rate+DESC&FORMAT=text
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10801,6 +10839,7 @@ dec_key DEJ2000
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,count_rate+FROM+rxmtasm+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10813,6 +10852,7 @@ field_in count_rate count_rate
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+2000+name,ra,dec,flux,redshift,source_type+FROM+swbat105m+WHERE+flux+IS+NOT+NULL+ORDER+BY+flux+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10826,6 +10866,7 @@ field_in 5 source_type
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,t90,fluence,redshift,time_trigger,xrt_column,host_galaxy+FROM+swiftgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10841,6 +10882,7 @@ field_in redshift redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10852,6 +10894,7 @@ dec_key dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -10864,6 +10907,7 @@ dec_key sc_dec
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
 ttl 86400
 force em
+body earth
 at sun 1.0
 format universal
 rows
@@ -11482,6 +11526,7 @@ cmap .
 url https://heasarc.gsfc.nasa.gov/db-perl/W3Browse/w3query.pl?tablehead=name%3Dfermigtrig&Action=More+Options&ResultRange=1&order=desc&field=from&field=0+1+2+3
 ttl 86400
 force em
+body earth
 on earth 38.995 -77.101
 last_line exosphere_fermi_gamma_ray_sources_total
 
@@ -15682,6 +15727,7 @@ map features
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+batsegrb
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15694,6 +15740,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+batsepulsr
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15705,6 +15752,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+chanmaster
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15733,6 +15781,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+fermil4fgl_dr4
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15812,6 +15861,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+fermil4lac
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15887,6 +15937,7 @@ map features
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intagn
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15898,6 +15949,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intbsc
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15910,6 +15962,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intisgri4yr
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15921,6 +15974,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+integralvartable
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15947,6 +16001,7 @@ dist_scale 1.495978707e11
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+maxigsc7yr
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15960,6 +16015,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+maximaster
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15971,6 +16027,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+maxissc
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -15982,6 +16039,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+nicermaster
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -16005,6 +16063,7 @@ alt_key altitude_m
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xtemaster
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -16016,6 +16075,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xteslew
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -16156,6 +16216,7 @@ plx_key parallax
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+name%2Cra%2Cdec%2Cflux%2Credshift%2Csource_type+FROM+swbat105m
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -16184,6 +16245,7 @@ z_key redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+swiftgrb
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -16369,6 +16431,7 @@ z_key redshift
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+*+FROM+tevcat
 ttl 604800
 force em
+body earth
 at sun 1.0
 format universal
 tau_key _dist_m
@@ -16386,6 +16449,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmslew
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -16397,6 +16461,7 @@ plx_key default_plx
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmssc
 ttl 604800
 force em
+body earth
 at sun 1.0
 cmap .
 tau_key _dist_m
@@ -22446,6 +22511,7 @@ field_in zone ring_zone
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2704+name,ra,dec,t90,fluence,peak_flux,time_trigger+FROM+batsegrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22459,6 +22525,7 @@ field time_trigger trigger_time_utc
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2704+name,ra,dec,t90,fluence,peak_flux,time_trigger+FROM+batsegrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22472,6 +22539,7 @@ field time_trigger trigger_time_utc
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+100+ra,dec,exposure+FROM+chanmaster
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key 0
@@ -22490,6 +22558,7 @@ field_in 3 agn_pl_index
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3500+name,ra,dec,redshift,flux_1_100_gev,source_type,nu_syn+FROM+fermilac+WHERE+redshift+IS+NOT+NULL+AND+redshift%3E0+ORDER+BY+flux_1_100_gev+DESC
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22508,6 +22577,7 @@ last_line exosphere_chime_frb_count
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
 ttl 300
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22522,6 +22592,7 @@ field type burst_classification
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
 ttl 300
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22536,6 +22607,7 @@ field type burst_classification
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
 ttl 300
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22550,6 +22622,7 @@ field type burst_classification
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
 ttl 300
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22577,6 +22650,7 @@ field epoch approach_time_jd
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,flux_4_10,flux_3_10,flux_10_20,object_type,redshift,error_radius,hardness_ratio_1+FROM+maxigsc7yr+WHERE+flux_4_10+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC&FORMAT=text&limit=2000
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22616,6 +22690,7 @@ field status alert_status
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
 ttl 3600
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22629,6 +22704,7 @@ field type source_classification
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Name,Avg_Rate,Rate_Err+FROM+public.rxte_asm+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Avg_Rate+DESC&FORMAT=text
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key RAJ2000
@@ -22640,6 +22716,7 @@ field Rate_Err rate_error
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Name,Avg_Rate,Rate_Err+FROM+public.rxte_asm+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Avg_Rate+DESC&FORMAT=text
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key RAJ2000
@@ -22674,6 +22751,7 @@ field z mag_z
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+2000+name,ra,dec,flux,redshift,source_type+FROM+swbat105m+WHERE+flux+IS+NOT+NULL+ORDER+BY+flux+DESC
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key 1
@@ -22686,6 +22764,7 @@ field_in 5 source_type
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,t90,fluence,redshift,time_trigger,xrt_column,host_galaxy+FROM+swiftgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22700,6 +22779,7 @@ field host_galaxy host_galaxy_name
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,energy_range,flux>100_mev,redshift,type,association+FROM+tevcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+name+ASC
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22736,6 +22816,7 @@ field mjd mjd_obs
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key ra
@@ -22746,6 +22827,7 @@ field ep_flux xmm_flux_erg_cm2s
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
 ttl 86400
 force em
+body earth
 format text
 rows
 ra_key ra
