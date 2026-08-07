@@ -358,3 +358,9 @@ note Meteostat station search requires API key (empty key=), free tier. Also sta
 dead 400
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,SLP,WDSP,PRCP&countries=RS&startDate={today}&endDate={today}&includeAttributes=false&format=json
 note NCEI data service requires explicit stations= (countries alone -> 400 'A station is required'). Works with stations=<ISD-ID>. Research ISD station IDs for Russia. GHCND/ISD are real measurements (thermal) once station list known.
+dead dns-unreachable
+url https://erddap.saeon.ac.za/erddap/tabledap/saeon_obs_network.csv?latitude,longitude,temperature,humidity,wind_speed,pressure,time&time%3E=now-24hours&orderBy(%22time%22)
+note erddap.saeon.ac.za unreachable (HTTP 000, retry fails). South African ERDDAP slow/blocked externally. Research mirror or use NOAA/other regional met networks.
+decline derived-satellite
+url https://global-surface-water.appspot.com/api/info?lat=45.0&lon=59.5
+note JRC GSW API 404. Also global surface water is derived satellite classification product - council: derived products DECLINE. No time-variable measurement.
