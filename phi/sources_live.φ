@@ -10713,7 +10713,7 @@ field subregion subregion
   field datacoverage datacoverage
 
 
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={today}&endDate={today}&format=json
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={week_ago}&endDate={today}&format=json
 ttl 3600
 force thermal
 at sun 1.0
@@ -16016,7 +16016,7 @@ field_in 1 month
 field_in 2 pdo_index
 
 
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,SNWD&startDate={today}&endDate={today}&includeAttributes=false&format=json&limit=10000
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,SNWD&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json&limit=10000
 ttl 86400
 force thermal
 at sun 1.0
@@ -16072,7 +16072,7 @@ field_in 2 sf6_ppt_mean
 field_in 3 sf6_ppt_uncertainty
 
 
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB&stations=72420314733,10637099999,47678099999,94120099999&startDate={today}&endDate={today}&format=json
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB&stations=72420314733,10637099999,47678099999,94120099999&startDate={week_ago}&endDate={today}&format=json
 ttl 86400
 force thermal
 at sun 1.0
@@ -16108,7 +16108,7 @@ field_in WMO_PRES min_pressure_hpa
 field_in BASIN basin_code
 
 
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=CH&startDate={today}&endDate={today}&includeAttributes=false&format=json
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=CH&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json
 ttl 86400
 force thermal
 at sun 1.0
@@ -16125,7 +16125,7 @@ lon_key LONGITUDE
   field SLP SLP
 
 
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=SF&startDate={today}&endDate={today}&includeAttributes=false&format=json
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=SF&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json
 ttl 86400
 force thermal
 at sun 1.0
@@ -22102,4 +22102,3 @@ lon_key site.geography.coordinates.0
   field site.datasets.0.datasetid dataset_id
   field site.datasets.0.agerange.0.ageyoung age_young_yr
   field site.datasets.0.agerange.0.ageold age_old_yr
-
