@@ -833,3 +833,83 @@ note McGill magnetar catalog: no live API URL in pre-CDN history. CDN asset neve
 
 dead phantom
 note KOERI Turkey earthquakes: no live API URL in pre-CDN history. CDN asset never uploaded (404).
+
+parser-def
+url https://www.waterqualitydata.us/data/Result/search?siteType=Stream&characteristicName=Nitrate&lat={lat}&long={lon}&radius=25&mimeType=json
+note waterquality_nitrate_local: HTTP Error 406: Not Acceptable
+
+dead 404
+url https://argovis-api.colorado.edu/argo?center={lon},{lat}&radius=100&startDate={yesterday}T00:00:00Z&endDate={today}T23:59:59Z
+note argovis_local_profiles: HTTP Error 404: Not Found
+
+dead 404
+url https://www.xeno-canto.org/api/2/recordings?query=lat:{lat},lon:{lon}
+note xenocanto_local_birds: HTTP Error 404: Not Found
+
+dead 404
+url https://gcn.nasa.gov/circulars.json?limit=10
+note nasa_gcn_circulars: HTTP Error 404: Not Found
+
+dead
+url https://api.ioda.caida.org/v2/outages/asn/?from=-3600&to=now
+note caida_internet_outages: <urlopen error timed out>
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00060&siteStatus=active
+note usgs_streamflow_local: HTTP Error 400: 
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00010&siteStatus=active
+note usgs_water_temp_local: HTTP Error 400: 
+
+dead 400
+url https://erddap.emodnet-physics.eu/erddap/tabledap/GLODAPv2_2023.json?&salinity,pH&distinct()
+note glodap_ocean_ph_measurements: HTTP Error 400: 
+
+dead 404
+url https://mesonet.agron.iastate.edu/api/1/nldn.geojson?sts={yesterday}T00:00:00Z&ets={today}T00:00:00Z
+note iem_nldn_lightning_us: HTTP Error 404: Not Found
+
+parser-def
+url https://meri.digitraffic.fi/api/ais/v1/locations
+note digitraffic_ais_finland: HTTP Error 406: Not Acceptable
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00095&siteStatus=active
+note usgs_water_conductivity_local: HTTP Error 400: 
+
+dead
+url https://fdsnws.raspberryshakedata.com/fdsnws/station/1/query?format=text&latitude={lat}&longitude={lon}&maxradius=5
+note raspberry_shake_local: <urlopen error [Errno -2] Name or service not known>
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=72019&siteStatus=active
+note usgs_groundwater_local: HTTP Error 400: 
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00400&siteStatus=active
+note usgs_ph_local: HTTP Error 400: 
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=63680&siteStatus=active
+note usgs_turbidity_local: HTTP Error 400: 
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00300&siteStatus=active
+note usgs_dissolved_oxygen_local: HTTP Error 400: 
+
+dead 404
+url https://api.met.no/weatherapi/observationdata/2.0/?source=SN18700&referencetime=latest&elements=precipitation_amount
+note met_norway_oslo_precip: HTTP Error 404: Not Found
+
+dead 400
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=50&hasCoordinate=true&eventDate=LAST_30_DAYS&limit=0
+note gbif_recent_30d: HTTP Error 400: Bad Request
+
+dead 404
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&startDate={yesterday}T00:00:00Z&endDate={today}T23:59:59Z&format=json
+note giro_fof2_vienna_24h: HTTP Error 404: 
+
+dead 404
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=hmF2&startDate={yesterday}T00:00:00Z&endDate={today}T23:59:59Z&format=json
+note giro_hmf2_vienna_24h: HTTP Error 404: 

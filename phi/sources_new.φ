@@ -1788,3 +1788,345 @@ lon_key sourceInfo.geoLocation.geogLocation.longitude
   field_in sourceInfo.siteName site_name
   field_in variable.variableName variable_name
   field_in values.0.value.0.value value
+
+
+url https://api.blitzortung.org/v1/strikes/latest?lat={lat}&lon={lon}&radius=100
+ttl 60
+count . atmosphere_lightning_strikes_count_100km
+
+url https://geomag.usgs.gov/ws/data/?id=BOU&type=adjusted&starttime={today}T00:00:00&endtime={today}T23:59:59&format=json&sampling_period=60
+ttl 60
+field BOU.0.0.0 magnetometer_x_bou_nt
+field BOU.0.0.1 magnetometer_y_bou_nt
+field BOU.0.0.2 magnetometer_z_bou_nt
+
+url https://www.waterqualitydata.us/data/Result/search?siteType=Stream&characteristicName=Nitrate&lat={lat}&long={lon}&radius=25&mimeType=json
+ttl 3600
+count value hydrosphere_nitrate_measurements_count_25km
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=Mauna_Loa&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
+ttl 86400
+format csv
+last_row AOD_500nm atmosphere_aerosol_optical_depth_mauna_loa
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdMH1chla1day.json?chlorophyll[(last)][(0.0)][({lat})][({lon})]
+ttl 86400
+path table.rows.0.4 biosphere_chlorophyll_satellite_mgm3
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8724580&product=wind&time_zone=gmt&units=metric&format=json&date=latest
+ttl 300
+on earth 0 0
+first data.0.s atmosphere_wind_speed_keywest_ms
+first data.0.dr atmosphere_wind_dir_keywest_deg
+
+url https://argovis-api.colorado.edu/argo?center={lon},{lat}&radius=100&startDate={yesterday}T00:00:00Z&endDate={today}T23:59:59Z
+ttl 86400
+count . hydrosphere_argo_profiles_count_100km
+
+url http://cosmicrays.oulu.fi/phi/Pulu_1min.txt
+ttl 3600
+format csv
+last_row 5 cosmic_neutron_flux_oulu_cpm
+
+url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
+ttl 300
+format csv
+last_row WTMP hydrosphere_buoy_51001_water_temp
+last_row WVHT hydrosphere_buoy_51001_wave_height
+last_row DPD hydrosphere_buoy_51001_dominant_period
+
+url https://service.iris.edu/fdsnws/station/1/query?format=text&latitude={lat}&longitude={lon}&maxradius=5
+ttl 2592000
+count lines geosphere_seismic_stations_5deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=PUG1511&product=currents&time_zone=gmt&units=metric&format=json&date=latest
+ttl 300
+on earth 0 0
+first data.0.speed hydrosphere_current_speed_puget_ms
+first data.0.direction hydrosphere_current_dir_puget_deg
+
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=FRN&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+ttl 300
+field X magnetosphere_x_frn_nt
+field Y magnetosphere_y_frn_nt
+field Z magnetosphere_z_frn_nt
+
+url https://www.xeno-canto.org/api/2/recordings?query=lat:{lat},lon:{lon}
+ttl 86400
+field numRecordings biosphere_bird_sounds_local_count
+
+url https://gcn.nasa.gov/circulars.json?limit=10
+ttl 300
+count circulars cosmic_gcn_alerts_count
+
+url https://api.ioda.caida.org/v2/outages/asn/?from=-3600&to=now
+ttl 300
+count data technosphere_global_outage_events
+
+url https://gml.noaa.gov/aftp/data/hats/cfcs/cfc11/combined/HATS_global_F11.txt
+ttl 2592000
+format csv
+last_row global_mean atmosphere_cfc11_global_ppt
+
+url https://gml.noaa.gov/aftp/data/hats/cfcs/cfc12/combined/HATS_global_F12.txt
+ttl 2592000
+format csv
+last_row global_mean atmosphere_cfc12_global_ppt
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00060&siteStatus=active
+ttl 300
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_river_flow_cfs
+
+url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
+ttl 300
+count . atmosphere_local_pm_sensors_count
+
+url https://network.satnogs.org/api/observations/?format=json&limit=1
+ttl 300
+field count technosphere_satnogs_total_observations
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00010&siteStatus=active
+ttl 300
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_water_temp_c
+
+url http://www.nmdb.eu/nest/dynamics.php?stations=NEWK&output=json&resolution=60&history=300
+ttl 3600
+path data.NEWK.1h.0.1 cosmic_neutron_flux_newk
+
+url https://www.ndbc.noaa.gov/data/realtime2/44065.txt
+ttl 300
+format csv
+last_row WTMP hydrosphere_buoy_44065_water_temp
+last_row WVHT hydrosphere_buoy_44065_wave_height
+last_row DPD hydrosphere_buoy_44065_dominant_period
+
+url https://erddap.emodnet-physics.eu/erddap/tabledap/GLODAPv2_2023.json?&salinity,pH&distinct()
+ttl 2592000
+count table.rows hydrosphere_glodap_global_ph_samples_count
+
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=HON&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+ttl 300
+field X magnetosphere_x_hon_nt
+field Y magnetosphere_y_hon_nt
+field Z magnetosphere_z_hon_nt
+
+url https://api.weather.gov/stations/KJFK/observations/latest
+ttl 300
+path properties.temperature.value atmosphere_temp_jfk_c
+path properties.barometricPressure.value atmosphere_pressure_jfk_pa
+path properties.windSpeed.value atmosphere_wind_speed_jfk_ms
+
+url https://mesonet.agron.iastate.edu/api/1/nldn.geojson?sts={yesterday}T00:00:00Z&ets={today}T00:00:00Z
+ttl 3600
+count features atmosphere_lightning_strikes_us_24h
+
+url https://api.met.no/weatherapi/observationdata/2.0/?source=SN18700&referencetime=latest&elements=air_temperature
+ttl 3600
+header User-Agent "omegaflow"
+path data.observations.0.value atmosphere_temp_oslo_c
+
+url https://meri.digitraffic.fi/api/ais/v1/locations
+ttl 60
+count . technosphere_ships_tracking_finland
+
+url https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Global_24h.csv
+ttl 10800
+format csv
+count lines geosphere_global_active_fires_24h
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00095&siteStatus=active
+ttl 300
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_water_conductivity_uscm
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getElevatedVolcanoes
+ttl 3600
+count . geosphere_elevated_volcanoes_us
+
+url https://fdsnws.raspberryshakedata.com/fdsnws/station/1/query?format=text&latitude={lat}&longitude={lon}&maxradius=5
+ttl 2592000
+count lines geosphere_raspberry_shake_stations_5deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=72019&siteStatus=active
+ttl 3600
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_groundwater_depth_ft
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00400&siteStatus=active
+ttl 3600
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_river_ph
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=63680&siteStatus=active
+ttl 3600
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_turbidity_fnu
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00300&siteStatus=active
+ttl 3600
+path value.timeSeries.0.values.0.value.0.value hydrosphere_local_dissolved_oxygen_mgl
+
+url https://www.ndbc.noaa.gov/data/realtime2/41001.spec
+ttl 300
+format csv
+last_row SwH hydrosphere_swell_height_41001_m
+last_row SwP hydrosphere_swell_period_41001_s
+
+url http://www.nmdb.eu/nest/dynamics.php?stations=SPO&output=json&resolution=60&history=300
+ttl 3600
+path data.SPO.1h.0.1 cosmic_neutron_flux_south_pole
+
+url https://api.met.no/weatherapi/observationdata/2.0/?source=SN18700&referencetime=latest&elements=precipitation_amount
+ttl 3600
+header User-Agent "omegaflow"
+path data.observations.0.value atmosphere_precipitation_oslo_mm
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8454000&product=air_temperature&date=latest&time_zone=gmt&units=metric&format=json
+ttl 300
+on earth 0 0
+first v atmosphere_air_temp_providence_c
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.txt
+ttl 86400
+format csv
+last_row value atmosphere_co2_daily_mlo_ppm
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+ttl 2592000
+format csv
+last_row average atmosphere_co2_monthly_mlo_ppm
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 2592000
+format csv
+last_row average atmosphere_ch4_monthly_global_ppb
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 2592000
+format csv
+last_row average atmosphere_n2o_monthly_global_ppb
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+ttl 2592000
+format csv
+last_row average atmosphere_sf6_monthly_global_ppt
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co/co_mm_gl.txt
+ttl 2592000
+format csv
+last_row average atmosphere_co_monthly_global_ppb
+
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=10&limit=0
+ttl 86400
+field count biosphere_gbif_records_10km
+
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=50&hasCoordinate=true&eventDate=LAST_30_DAYS&limit=0
+ttl 3600
+field count biosphere_gbif_recent_50km
+
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+ttl 3600
+field total_results biosphere_inaturalist_research_10km
+
+url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+ttl 86400
+field count biosphere_obis_species_50km
+
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,swell_wave_height
+ttl 600
+field current.wave_height hydrosphere_wave_height_m
+field current.wave_direction hydrosphere_wave_direction_deg
+field current.wave_period hydrosphere_wave_period_s
+field current.wind_wave_height hydrosphere_wind_wave_height_m
+field current.swell_wave_height hydrosphere_swell_wave_height_m
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=soil_temperature_0_to_7cm,soil_moisture_0_to_7cm&forecast_hours=1&timezone=auto
+ttl 3600
+first hourly.soil_temperature_0_to_7cm geosphere_soil_temp_7cm_c
+first hourly.soil_moisture_0_to_7cm geosphere_soil_moisture_7cm_m3m3
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=cape,lifted_index,convective_inhibition&forecast_hours=1&timezone=auto
+ttl 3600
+first hourly.cape atmosphere_cape_jkg
+first hourly.lifted_index atmosphere_lifted_index
+first hourly.convective_inhibition atmosphere_cin_jkg
+
+url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+ttl 2592000
+field elevation geosphere_elevation_m
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplMURSST41.json?analysed_sst[(last)][(0.0)][({lat})][({lon})]
+ttl 86400
+path table.rows.0.4 hydrosphere_sst_satellite_c
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.json?degree_heating_week[(last)][({lat})][({lon})]
+ttl 86400
+path table.rows.0.4 biosphere_coral_degree_heating_weeks
+
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
+ttl 2592000
+path properties.phh2o.depths.0.values.mean geosphere_soil_ph_0_5cm
+
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
+ttl 2592000
+path properties.clay.depths.0.values.mean geosphere_soil_clay_0_5cm_gkg
+
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
+ttl 2592000
+path properties.soc.depths.0.values.mean geosphere_soil_organic_carbon_0_5cm
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=10
+ttl 86400
+count data cosmic_fireball_count
+
+url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=100
+ttl 3600
+count events geosphere_eonet_open_events
+
+url https://www.ndbc.noaa.gov/data/realtime2/62001.txt
+ttl 300
+on earth 0 0
+format csv
+last_row WTMP hydrosphere_buoy_62001_water_temp
+last_row WVHT hydrosphere_buoy_62001_wave_height
+last_row PRES hydrosphere_buoy_62001_pressure
+
+url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
+ttl 300
+on earth 0 0
+format csv
+last_row WTMP hydrosphere_buoy_46001_water_temp
+last_row WVHT hydrosphere_buoy_46001_wave_height
+last_row PRES hydrosphere_buoy_46001_pressure
+
+url https://www.ndbc.noaa.gov/data/realtime2/51004.txt
+ttl 300
+on earth 0 0
+format csv
+last_row WTMP hydrosphere_buoy_51004_water_temp
+last_row WVHT hydrosphere_buoy_51004_wave_height
+
+url https://www.ndbc.noaa.gov/data/realtime2/23001.txt
+ttl 300
+on earth 0 0
+format csv
+last_row WTMP hydrosphere_buoy_23001_water_temp
+last_row WVHT hydrosphere_buoy_23001_wave_height
+
+url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+ttl 300
+on earth 0 0
+format csv
+last_row WTMP hydrosphere_buoy_42001_water_temp
+last_row WVHT hydrosphere_buoy_42001_wave_height
+last_row PRES hydrosphere_buoy_42001_pressure
+
+url https://services.swpc.noaa.gov/json/ionospheric_foF2.json
+ttl 300
+last fof2 ionosphere_fof2_global_mhz
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_tec_global.json
+ttl 300
+last value ionosphere_tec_global_tecu
+
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&startDate={yesterday}T00:00:00Z&endDate={today}T23:59:59Z&format=json
+ttl 900
+
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=hmF2&startDate={yesterday}T00:00:00Z&endDate={today}T23:59:59Z&format=json
+ttl 900
