@@ -14,7 +14,7 @@ export function getRto() {
     return Math.max(100, Math.min(transport.srtt + 4 * Math.max(transport.rttvar, 1), 5000));
 }
 
-export async function syncFrame(inputs, queries) {
+export async function syncFrame(inputs, queries, presence) {
     inputs = inputs || [];
     queries = queries || [];
     const emptyResp = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
@@ -81,9 +81,15 @@ export async function syncFrame(inputs, queries) {
         const absorption = dvRes.getFloat64(o, true); o += 8;
 
         const fOff = i * 8;
-        field[fOff] = x;
-        field[fOff + 1] = y;
-        field[fOff + 2] = z;
+        if (presence) {
+            field[fOff] = Math.fround(x - presence.x);
+            field[fOff + 1] = Math.fround(y - presence.y);
+            field[fOff + 2] = Math.fround(z - presence.z);
+        } else {
+            field[fOff] = x;
+            field[fOff + 1] = y;
+            field[fOff + 2] = z;
+        }
         field[fOff + 3] = val;
         field[fOff + 4] = t;
         field[fOff + 5] = ttl;

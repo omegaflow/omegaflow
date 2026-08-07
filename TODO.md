@@ -1,41 +1,12 @@
 # TODO
 
-All entries are session-sized — each group produces a complete, testable artifact. Rejected and deferred items are recorded at the bottom. No separate documents. AGENTS.md is the primary constraint matrix.
+AGENTS.md is the primary constraint matrix. Git is the history. This file contains only pending work.
 
 ---
 
-## Session 1: Immediate Rust Fixes (Items 19, 20, 21) — ✅ DONE e84b380
+## Touchpad / Touch Control (Item 6)
 
-Three independent but co-located fixes in `src/main.rs`. One session.
-
-### Item 19: Auth Credential Substitution — ✅
-
-`load_env()` reads `.env` only. `render_url()` has no `{SECRET_NAME}` substitution.
-Code: `load_env()`, `render_url()`.
-
-Action: `load_env()` reads `.secrets.local` after `.env` (`.env` takes precedence when both define a key). New `resolve_secret()` function replaces any remaining `{SECRET_NAME}` in URLs from env vars. Called as final pass in `render_source_url()` after all known template substitutions. Verification: `{NASA_API_KEY}` resolves from `.secrets.local`. Missing secrets resolve to empty string (no crash). `cargo check` zero errors, zero warnings.
-
-### Item 20: DEMO_KEY Hardcoded — ✅
-
-Line 3337: `.replace("{nasa_key}", "DEMO_KEY")`. Hardcoded placeholder.
-Code: `render_url()` at line 3337.
-
-Action: Removed hardcoded line. `resolve_secret()` at end of `render_source_url()` generically resolves `{nasa_key}` from env var. Verification: `grep DEMO_KEY src/main.rs` returns 0 (zero). `cargo check` clean.
-
-### Item 21: "earth" Test Literals — ✅
-
-Three test functions use `"earth"` as body_name in test fixtures. Per C3 (every planet equal), test code must not privilege Earth.
-Code: `test_render_source_url_substitutions`, `test_post_body_rendering`, `test_erddap_argo_map_extract`.
-
-Action: Replaced all three `"earth"` literals with `"body_test"`. Verification: `grep '"earth"' src/main.rs` returns zero results. `cargo test` 12/12 passing. `cargo check` clean.
-
----
-
-## Session 2: Touchpad / Touch Control (Item 6)
-
-Isolated to `static/index.html`. One session.
-
-### Item 6: Intuitive Touchpad/Touch Control
+Isolated to `static/index.html`.
 
 Spec: `docs/concepts/INTUITIVE TOUCHPAD- & TOUCH-STEUERUNG.md`. Diagonal pinch → zoom. 2-finger horizontal → time. 2-finger vertical → spatial forward/back. `pointers.size < 3` condition in tThrust reset → `< 2`.
 Code: `static/index.html` — pointer event handlers, tThrust reset condition, gesture state machine.

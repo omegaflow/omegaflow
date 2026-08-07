@@ -615,7 +615,7 @@ field generated hydrosphere_rain_radar_generated_time
 
 url https://github.com/omegaflow/sources/releases/download/gbif.org/gbif_occurrences_global_occurrence_search_{latest}.json
 ttl 300
-force diffusion
+force biotic
 at sun 1.0
 cmap .
 ra_key decimalLatitude
@@ -631,7 +631,7 @@ field eventDate observation_date
 
 url https://github.com/omegaflow/sources/releases/download/api.obis.org/obis_marine_occurrences_recent_{latest}.json
 ttl 300
-force diffusion
+force biotic
 at sun 1.0
 cmap results
 ra_key decimalLatitude
