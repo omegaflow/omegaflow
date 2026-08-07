@@ -17650,7 +17650,7 @@ at sun 1.0
 map .
 lat_key lat
 lon_key lon
-  field elevation elevation
+
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+*+FROM+tevcat
 ttl 604800
@@ -18570,8 +18570,8 @@ ttl 604800
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.Name Name
 
 url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
@@ -18588,8 +18588,8 @@ ttl 604800
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mass mass
   field properties.name name
 
