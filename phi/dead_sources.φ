@@ -423,3 +423,30 @@ note XRISM DARTS returns HTML portal not JSON. X-ray sources em. Research DARTS 
 parser-def html-app
 url https://darts.isas.jaxa.jp/astro/xrism/api/v1/xtend_sources?format=json&release=DR1&snr_min=5&limit=500
 note Same XRISM DARTS HTML issue.
+parser-def html
+url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form?itype=ymd&yr={year}&mo={month}&dy=01&otype=ndk
+note GlobalCMT form returns HTML search page. Seismic moment tensors would need ndk text parsing.
+
+dead 404
+url https://grdc.bafg.de/GRDC/EN/04_spcldtfmts/41_ArcGIS/GRDC_Stations.zip.json
+note GRDC stations zip.json path 404. Research current GRDC station data endpoint.
+
+parser-def html-app
+url https://www.fripon.org/api/events?format=json&limit=100&year={year}&month={month}
+note FRIPON returns HTML refresh redirect not JSON. Bolide network events.
+
+parser-def html-app
+url https://sepem.eu/api/events/?format=json&limit=200
+note SEPEM unreachable HTTP 000. Solar Energetic Particle Event Monitor.
+
+dead 404
+url https://saber.gats-inc.com/saw3.php?date={today}&type=daily&format=json&version=2.0&vars=o3_96
+note SABER ozone 404 (File not found). Research current SABER v2 endpoint.
+
+parser-def html-app
+url https://www.e-callisto.org/api/v1/events?format=json&start={today}&type=II,III,IV&limit=200
+note e-Callisto API 404. Solar radio spectrometer events (em).
+
+dead 404
+url https://exofop.ipac.caltech.edu/tess/download_confirmed.php?output=csv
+note ExoFOP download_confirmed.php 404. Research current TESS confirmed planets API.
