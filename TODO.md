@@ -40,31 +40,38 @@ renaming are unnecessary when the CI Archivar writes timestamped snapshots to
 the CDN — the naming convention IS the resolver. The full architecture is
 described in `docs/dual_mode_architecture.md`.
 
-### Session 1: CI-mode flag + naming convention + local file output
-Code: `src/main.rs` — new `ci_mode_main()` below `verify_sources_main()`.
-Action: `--ci-mode` flag loads `sources_live.φ`, fetches via `fetch_one`,
-extracts via `extract_pending`, writes raw body to
-`out/{netloc}/{source_prefix}_{iso8601utc}.json`.
-Verification: `cargo run -- --ci-mode` produces assets in `out/`. `cargo check`
-0 warnings.
+### Session 1: CI-mode flag + naming convention + local file output — DONE
+Commit: upcoming. `src/main.rs:5791-5894` — `ci_mode_main()`, `extract_netloc`,
+`source_name_from_url`, `utc_iso8601_now`, `file_fresh`. CLI dispatch at
+`main():5896-5903`. Uses `{name}.json` (no timestamp) for Session 1 freshness.
+Verified: `cargo check` 0 errors 0 warnings, 14/14 tests, `--ci-mode` writes
+to `out/{netloc}/{name}.json`. `out/` added to `.gitignore`.
+Next session entry point: extend `ci_mode_main()` to call `gh release upload`.
 
-### Session 2: CDN upload integration
-Code: `src/main.rs` — extend `ci_mode_main()` to call
-`gh release upload` via `Command::new("gh")`.
-CI workflow: new `.github/workflows/mirror-cdn.yml` — `cargo run -- --ci-mode`
-on push + schedule. No Python. `GH_TOKEN` from `OMEGAFLOW_TOKEN` secret.
-Verification: CI run creates assets on `omegaflow/sources` release.
+### Session 2: CDN upload integration — DONE
+Commit: upcoming. `src/main.rs:5795-5859` — `gh release create` + `gh release
+upload --clobber` after each successful write. Token guard: skips if neither
+`GH_TOKEN` nor `OMEGAFLOW_TOKEN` set. Upload counter in log line.
+`.github/workflows/mirror-cdn.yml` — `cargo run -- --ci-mode` on push +
+`*/5 * * * *` schedule. Verified: `cargo check` 0/0, 14/14 tests, local run
+without token skips uploads gracefully.
+Next session entry point: modify `fetch_one` for CDN-first TTL-fallback.
 
-### Session 3: Local CDN-first fetch with TTL-fallback
-Code: `src/main.rs` — modify `fetch_one` / `spawn_task_curl` to construct CDN
-URL from naming convention, check asset age against TTL, fall back to live API.
-Verification: `cargo run` uses CDN-first path, logs `CDN fresh` / `CDN stale →
-LIVE` / `LIVE only`.
+### Session 3: Local CDN-first fetch with TTL-fallback — DONE
+Commit: upcoming. `src/main.rs:2203-2258` — `fetch_raw` (pure curl), `fetch_one`
+(CDN-first wrapper: try `releases/download/{netloc}/{name}.json`, fall through
+to `fetch_raw`). `ci_mode_main()` uses `fetch_raw` directly (CI is the writer).
+`warm_cache` consumer: CDN pre-scan at `:5567-5585` (sequential CDN tries per
+chunk before spawn loop), pre-filled tasks skip `spawn_task_curl` and are
+processed at `:5588-5650`. No TTL comparison needed — CI cadence (TTL/Φ)
+guarantees CDN freshness. `cargo check` 0/0, 14/14 tests.
+Next session entry point: collapse `sources_cdn.φ` into `sources_live.φ`.
 
-### Session 4: Collapse source files
-Code: `phi/sources_cdn.φ` merged into `phi/sources_live.φ` — single
-`sources.φ`. `load_sources()` reads single file. CDN/live is runtime.
-Verification: same source count. `cargo check` clean.
+### Session 4: Collapse source files — DONE
+Code: `phi/sources_cdn.φ` + `phi/sources_live.φ` → `phi/sources.φ` (3510 blocks
+= 1770+1740). `load_sources()` at `src/main.rs:2792` reads single
+`phi/sources.φ`. `main()` eprintln updated. `cargo check` 0/0, 14/14 tests.
+Next session entry point: excise Python CDN scripts, only Rust CI remains.
 
 ### Session 5: Excise Python CDN scripts
 Delete: `migrate_live_to_cdn.py`, `tap_to_cdn.py`, `shard_catalog.py`,

@@ -5932,7 +5932,7 @@ fn ci_mode_main() -> i32 {
             failed += 1;
             continue;
         }
-        let out_path = format!("{}/{}/{}.json", out_dir, netloc, utc_iso8601_now());
+        let out_path = format!("{}/{}/{}.json", out_dir, netloc, name);
         if file_fresh(&out_path, src.ttl) {
             skipped += 1;
             continue;
@@ -6013,7 +6013,9 @@ fn extract_netloc(url: &str) -> Option<&str> {
 fn source_name_from_url(url: &str) -> String {
     let path = url.split('?').next().unwrap_or(url);
     let last = path.rsplit('/').next().unwrap_or("");
-    last.chars()
+    let stripped = last.strip_suffix(".json").unwrap_or(last);
+    stripped
+        .chars()
         .filter(|c| c.is_ascii_alphanumeric() || *c == '_' || *c == '-' || *c == '.')
         .take(64)
         .collect()

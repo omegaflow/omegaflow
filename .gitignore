@@ -21,3 +21,4 @@ scripts/__pycache__/
 server.log
 /target
 /tmp/
+/out/
