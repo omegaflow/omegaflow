@@ -1,9 +1,5 @@
 import struct, subprocess, sys, numpy as np, urllib.request, urllib.parse, json, ssl, math, re
-
-try:
-    import spiceypy as spice
-except ImportError:
-    spice = None
+import spiceypy as spice
 
 GRANULE_DAYS = 32.0
 DEGREE = 17
@@ -339,7 +335,7 @@ def _fit_granule_from_samples(samples, t0_jd, half_jd):
     return cx, cy, cz
 
 
-def generate_from_horizons(command, body_name, months=12, lookback=30):
+def generate_from_horizons(command, body_name, months: float = 12, lookback=30):
     jd_now = _current_jd()
     t_start = jd_now - lookback
     t_stop = jd_now + months * 30.44

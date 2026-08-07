@@ -47,6 +47,15 @@ A commit is a checkmark. Every commit closes a TODO item, opens one, or narrows 
 Name = Implementation. TODO entries carry no numeric identifiers. The heading is the identifier.
 `cargo check` must produce zero errors AND zero warnings. A warning is a dead code path, an unused import, a neglected binding — it is code rot. Never silence a warning with `#[allow(...)]` or a leading underscore. Fix the code so the warning does not exist. `cargo check` verifies Rust syntax only — it does not verify function. Manual verification is mandatory (see Verification section below).
 
+## Source Curation
+
+Before touching any `phi/` source file, read `docs/source_curation.md` — it is
+the self-contained protocol for the ongoing source recovery and verification
+effort. It explains the two source files, the Force Gate, the classification
+system, the per-block testing workflow, and the pending list at
+`phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`. A new session has zero prior
+context; that document is the handoff.
+
 ## Stack
 
 Rust `std`-only + `curl`. Vanilla JS ES modules. WebGPU WGSL. Binary φ(x,y,z,t) protocol (0xCF 0x86 v2, little-endian). φ suffix for config files.
