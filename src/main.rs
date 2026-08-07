@@ -946,21 +946,6 @@ enum PendingPosition {
         track: f64,
         vrate: f64,
     },
-    Surface {
-        body_name: String,
-        lat: f64,
-        lon: f64,
-        alt: f64,
-    },
-    SurfaceFlow {
-        body_name: String,
-        lat: f64,
-        lon: f64,
-        alt: f64,
-        speed: f64,
-        track: f64,
-        vrate: f64,
-    },
     StateVector {
         p: [f64; 3],
         v: [f64; 3],
@@ -2993,6 +2978,83 @@ fn load_sources() -> Vec<SourceConfig> {
                         ));
                     }
                 }
+                "xml_count" => {
+                    if parts.len() >= 3 {
+                        cur_extracts.push(Extract::XmlCount(
+                            parts[1].to_string(),
+                            parts[2].to_string(),
+                        ));
+                    }
+                }
+                "ephemeris" => {
+                    if parts.len() >= 2 {
+                        cur_extracts.push(Extract::Ephemeris(parts[1].to_string()));
+                    }
+                }
+                "vectors" => {
+                    if parts.len() >= 2 {
+                        cur_extracts.push(Extract::Vectors(parts[1].to_string()));
+                    }
+                }
+                "flatten" => {
+                    if parts.len() >= 2 {
+                        cur_extracts.push(Extract::Flatten {
+                            arr_path: parts[1].to_string(),
+                            geom_path: "geometry".to_string(),
+                            epoch_key: String::new(),
+                            fields: Vec::new(),
+                        });
+                    }
+                }
+                "cmr_polygon" => {
+                    if parts.len() >= 2 {
+                        cur_extracts.push(Extract::CmrPolygon {
+                            arr_path: parts[1].to_string(),
+                            fields: Vec::new(),
+                            epoch_key: String::new(),
+                            alt_key: String::new(),
+                            val_key: String::new(),
+                        });
+                    }
+                }
+                "celestial_polygon" => {
+                    if parts.len() >= 2 {
+                        cur_extracts.push(Extract::CelestialPolygon {
+                            arr_path: parts[1].to_string(),
+                            radius: 0.0,
+                            fields: Vec::new(),
+                            epoch_key: String::new(),
+                            val_key: String::new(),
+                        });
+                    }
+                }
+                "kepler_map" => {
+                    if parts.len() >= 2 {
+                        cur_extracts.push(Extract::KeplerMap {
+                            arr_path: parts[1].to_string(),
+                            a_key: String::new(),
+                            e_key: String::new(),
+                            i_key: String::new(),
+                            om_key: String::new(),
+                            w_key: String::new(),
+                            ma_key: String::new(),
+                            epoch_key: String::new(),
+                            fields: Vec::new(),
+                        });
+                    }
+                }
+                "hapi" => {
+                    if parts.len() >= 3 {
+                        let param = parts[1].to_string();
+                        let name = parts[2].to_string();
+                        if let Some(Extract::Hapi(fields)) = cur_extracts.last_mut() {
+                            fields.push((param, name));
+                        } else {
+                            cur_extracts.push(Extract::Hapi(vec![(param, name)]));
+                        }
+                    }
+                }
+
                 "geojson" => {
                     if parts.len() >= 5 && parts[1] == "events" {
                         cur_extracts.push(Extract::GeojsonEvents {
@@ -4806,49 +4868,6 @@ fn materialize(
     let vmax_floor = 0.0f64;
     let motion = match &pend.position {
         PendingPosition::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
-        PendingPosition::Surface {
-            body_name,
-            lat,
-            lon,
-            alt,
-        } => {
-            if eph
-                .get(body_name.as_str())
-                .and_then(|e| e.props.as_ref())
-                .is_none()
-            {
-                return vec![];
-            }
-            Motion::Surface {
-                body_name: body_name.clone(),
-                lat: *lat,
-                lon: *lon,
-                alt: *alt,
-            }
-        }
-        PendingPosition::SurfaceFlow {
-            body_name,
-            lat,
-            lon,
-            alt,
-            speed,
-            track,
-            vrate,
-        } => {
-            if eph
-                .get(body_name.as_str())
-                .and_then(|e| e.props.as_ref())
-                .is_none()
-            {
-                return vec![];
-            }
-            match surface_motion(
-                body_name, *lat, *lon, *alt, *speed, *track, *vrate, pend.epoch, eph,
-            ) {
-                Some(m) => m,
-                None => return vec![],
-            }
-        }
         PendingPosition::Geodetic { lat, lon, alt } => Motion::Surface {
             body_name: "earth".into(),
             lat: *lat,
@@ -5715,6 +5734,8 @@ fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64)> {
 }
 
 mod tests {
+    use super::*;
+    use std::collections::HashMap;
 
     #[test]
     fn test_parse_json_skips_jina_header() {
