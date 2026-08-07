@@ -167,6 +167,57 @@ blocks (these are CDN candidates — the test should skip them like it skips
 `github.com/omegaflow/sources`) and by the frame/refusal cases above. The
 fixes are per-block, using the golden archive as reference.
 
+### 2026-08-07 session results (93 -> 193 ok of 200)
+
+The extraction test now reports **193 ok, 7 fail** (was 29 ok / 171 fail at
+the start of the day). The single most impactful fix:
+
+- **`field_in` vs `field` migration regression** (commit `9c16f8a`): the
+  CDN-switch commit `fcd1468` renamed every `field_in` to `field`, but the
+  parser only attaches `field_in` to `map`/`cmap`/`rows` extracts (the
+  `field` arm pushes a top-level scalar extract). Map rows with empty field
+  lists are all skipped -> 0 samples. Reverted across `sources_live.φ` and
+  `sources_cdn.φ` (7130 line pairs). This fixed ~90 of the 107 FAILs by itself.
+
+Remaining per-family fixes (commit `7cfe37e`):
+- wmo buoys (`services6.arcgis.com`): live schema uses `_1_` fields
+  (`sea_surface_temperature_1__degr`, `sea_water_speed_1__cm_s_1_`), NOT
+  `_0_` as the older handoff claimed for a different host; stations
+  42084/42091/42095/42098/42099 have NO `sea_water_speed` field at all.
+  ArcGIS returns HTTP 200 WITH `{"error":{"code":400}}` on invalid outFields —
+  that 200-with-error body yields zero features. Frames: `on earth 0 0`.
+- swpc GOES flux feeds (`bb24b40`): positionless arrays (no lat/lon) —
+  `map .` can never produce samples; use scalar `last flux` at the
+  `at sun` frame. `solar_regions`/`ovation` carry real position (`lat_key
+  latitude`/`0`, `lon_key longitude`/`1`). `alerts.json` is message strings
+  only (no numeric measurement) -> declined.
+- `api.weather.gov/stations`: `format=json` and `cursor=` params are
+  unrecognized (400). Drop them.
+- `tidesandcurrents`: `application=batch16` -> `omegaflow`; data is
+  `{data:[{t,v,f}]}` at a fixed station — `map data` needs lat/lon, use
+  scalar `last data.v` (dot path: parent `data` array, last element's `v`).
+- `gracedb`: `last superevents.far` (dot path into the array).
+- `NOAA_METAR` `f=json` variant: geometry is `{x,y}` not GeoJSON — `lat_key
+  geometry.y`, `lon_key geometry.x`.
+
+Declined / dead (documented in `phi/dead_sources.φ`): weather.gov alerts
+(text warnings, Force Gate), volcano HANS routes (only `getUSVolcanoes`
+exists and it is a static station catalog), blitzortung (binary/HTML),
+emsc/tmd/dead NASA meteorite endpoint, heasarc integralburst (VOTable-only
+TAP), ssd cad (positionless array-of-arrays, already CDN-mirrored), scedc
+(text-rows only, no geodetic map), cdaweb/irsc (unreachable).
+
+The 7 remaining FAILs are NOT source defects:
+- 5 USGS earthquake feeds legitimately empty today (no M5.5+/pager/
+  aftershock-forecast products, no quakes near Berlin in the last hour) —
+  they produce samples when events occur.
+- DONKI needs `NASA_API_KEY` in `phi/.secrets.local` (operational) and had
+  no flares on the test date.
+- 2 USGS `waterservices` bBox blocks use `{lon_min}...` presence-window
+  templates the test cannot substitute (`bBox=,,,` -> 400); the Archivar
+  substitutes them at runtime from the presence window (verified working
+  with a real 1-degree window).
+
 ### The separate Python verifier (deprecated but kept)
 
 `scripts/verify_sources.py` (tracked, default input `phi/sources_live.φ`)
@@ -181,9 +232,17 @@ authoritative verifier. Command:
 
 ### Known API facts (learned, hard-won)
 
-- HEASARC TAP: `FORMAT=csv` works; `FORMAT=votable` 400s. Restore csv.
-- ArcGIS wmo buoys: real fields are `sea_surface_temperature_0__degr` +
-  `sea_water_speed_0__cm_s_1_` (index `_0_`), NOT `_1__degr`.
+- HEASARC TAP: `FORMAT=csv`/`json` are NOT accepted for all catalogs — the
+  integralburst query returned VOTable XML for both. Verify each catalog's
+  accepted formats (`SELECT TOP 1 *` first); VOTable-only catalogs are
+  `parser-def` (no VOTable row extract).
+- ArcGIS wmo buoys (services6.arcgis.com/2DGR1sZBUvcPcd8Z): live schema is
+  `sea_surface_temperature_1__degr` + `sea_water_speed_1__cm_s_1_` (index
+  `_1_`), and some stations (42084/42091/42095/42098/42099) have NO
+  `sea_water_speed` field. Query `outFields=*` to see a station's real
+  schema before declaring outFields. An outFields naming a missing field
+  returns HTTP 200 with `{"error":{"code":400}}` -> zero features.
+  (Earlier handoff claimed `_0_` — that was a different host/era.)
 - Open-Meteo split hosts: `archive-api.open-meteo.com`, `flood-api`,
   `marine-api`, `air-quality-api`, `ensemble-api` — never the
   `api.open-meteo.com/v1/<x>/v1/<x>` double-path form.
@@ -199,7 +258,7 @@ authoritative verifier. Command:
 - AviationWeather METAR/TAF/sigmet: flat arrays with `lat`/`lon` keys —
   do NOT rewrite to `geometry.coordinates`.
 
-### Current source inventory (2026-08-07)
+### Current source inventory (2026-08-07, end of day)
 
 - `phi/sources_live.φ`: 1767 blocks. `phi/sources_cdn.φ`: 1770 blocks.
   Golden archives: `phi/recovery/pre_cdn.φ` (the reference),
@@ -208,76 +267,45 @@ authoritative verifier. Command:
   `sources_new.φ`, `sources_backup_20260719.φ` (copied from
   `~/Schreibtisch/Archiv` into `phi/recovery/`).
 - `load_sources()` reads both φ files and merges (~3505 sources).
+- Extraction test: **193 ok / 7 fail** of the first 200 non-CDN live sources
+  (was 29 ok / 171 fail at the start of the day). See the session-results
+  section above for what was fixed and why the 7 remaining FAILs are
+  data-availability/test-coverage artifacts, not source defects.
 
 ### NEXT SESSION — EXPLICIT TASK (imperative, not context)
 
-Your assignment: **run the parser-verified source repair and curate the
-untested backlog until both pass.**
+Your assignment: **drive the parser-verified source repair to zero FAILs and
+curate the untested backlog.**
+
+The 107-FAIL inventory from the previous handoff is RESOLVED (see session
+results above). Current state: 193 ok / 7 fail of 200. The 7 remaining are
+verified data-availability artifacts (empty USGS quake feeds, DONKI needs
+`NASA_API_KEY` in `phi/.secrets.local`, and 2 USGS waterservices bBox
+templates that only the runtime presence window can substitute).
 
 DO THIS, IN ORDER:
 
 1. Run `cargo test test_live_sources_extract -- --nocapture` and capture the
-   full output.
-2. Take every `FAIL <url> no samples` line. The current fail inventory
-   (2026-08-07, 107 fails of 200 tested) by family, with the verified fix:
-
-   - services6.arcgis.com (32, mostly wmo buoys): outFields must be
-     `sea_surface_temperature_0__degr` + `sea_water_speed_0__cm_s_1_`
-     (index `_0_`); field directives match outFields; frame must be
-     terrestrial (`on earth`), NOT `at sun` — map extract with barycenter
-     frame yields `no samples`.
-   - earthquake.usgs.gov (14): GeoJSON feeds need `map features` +
-     terrestrial frame; `lat_key geometry.coordinates.1`, `lon_key
-     geometry.coordinates.0`; `properties.depth` does not exist — depth is
-     `geometry.coordinates.2`.
-   - services.swpc.noaa.gov (9): xrays-3-day/7-day elements are
-     `{time_tag, satellite, flux, energy, observed_flux}`; `flux` is an
-     array `[short, long]`; `begin_time`/`peak_time`/`class` belong to
-     xray-flares-latest only; `alerts.json` keys are `message_id,
-     message_type, message_issue_time, message_url, message_body`.
-   - services9/services/services1/2/5.arcgis.com (14): query
-     `FeatureServer/0?f=json` for real `fields[].name`; declared
-     `properties.*` must exist in outFields.
-   - api.adsb.lol (3): response `{ac:[...], msg, now}` — `map ac`, fields
-     `hex, flight, alt_baro, gs, track, baro_rate` live inside `ac`.
-   - api.weather.gov (3): `map features`; drop empty `cursor=` param
-     (422); `lat_key geometry.coordinates.1`.
-   - api.tidesandcurrents.noaa.gov (3): `application=batch16` 400s — use
-     `application=omegaflow`; `map data` + `t`/`v`/`q`.
-   - www.ndbc.noaa.gov (3): text realtime — `format text` + `field_in`
-     column indices, or `last_row` for latest line.
-   - waterservices.usgs.gov (2): `format=json,1.1` invalid — `format=json`.
-   - blitzortung (2): compressed binary — `parser-def`, move to
-     dead_sources.φ.
-   - api.nasa.gov DONKI, data.nasa.gov, volcanoes.usgs.gov (3):
-     `{nasa_key}` resolves via `resolve_secret` — verify key present.
-   - Seismic singles (geonet, ingv, scedc, p2pquake, tmd, gracedb,
-     seismicportal, emsc-csem, irsc): GeoJSON feeds need `map features` +
-     terrestrial frame; lat/lon from geometry.
-   - heasarc, ssd-api cad, ssd.jpl Horizons, cdaweb OMNI (4): now
-     CURATABLE with the restored parser; heasarc `FORMAT=csv`; Horizons
-     `hapi`/`ephemeris` variant; cdaweb `format=json` + `parameters=`.
-   - api.wolfx.jp, tadas.afad.gov.tr (2): array-indexed — check
-     `real_keys`, use `map .` + index paths.
-   - opensky-network.org (1): `map states`; rows are
-     `[icao24, callsign, origin_country, time_position, last_contact, lon,
-     lat, ...]` — `field_in` indices.
-   - aviationweather.gov METAR (1): flat array with `lat`/`lon` keys.
-   - reg.bom.gov.au (1): endpoint moved — research replacement host.
-   - www.ncei.noaa.gov (1): daily data lags ~30 days.
-
-   Fix the live block's extract directives to match (golden reference:
-   `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ`). Re-run the
-   test until the FAIL list is empty. Then raise the test's source limit
-   (`let mut limit = 200usize;` in `test_live_sources_extract`) to the
-   next chunk and repeat until the whole file is clean.
-3. Then open `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`. For each block,
-   apply the per-block curation workflow (fill templates → curl → structure →
-   Force Gate → classify). Add accepted blocks to `phi/sources_live.φ`,
+   full output. Confirm it is at/near 193 ok / 7 fail.
+2. Raise the test's source limit (`let mut limit = 200usize;` in
+   `test_live_sources_extract`) to the next chunk (e.g. 400) and iterate,
+   fixing every new `FAIL <url> no samples` per the fix recipes in the
+   session-results section above (they apply generically: positionless feeds
+   -> scalar `last <dot.path>` at the frame; GeoJSON -> `map features` +
+   `geometry.coordinates.N` + `on earth`/`body earth`; array-of-arrays with
+   row positions -> index lat/lon keys; fixed-station scalar feeds -> `last
+   <container>.<field>`; text-warning/metadata feeds -> decline under the
+   Force Gate).
+3. Also fix the load-time refusals: every `source refused (pos without body
+   directive)` / `(no reference frame)` line in the test output names a block
+   that loads zero samples. Add `body earth` / `on earth` / `at sun` as the
+   source's world requires (never invent a body in the parser). Many are
+   `raw.githubusercontent.com/omegaflow/catalogs` celestial catalogs that
+   need `at sun 1` (barycentric) — or a working URL.
+4. Then open `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`. For each block,
+   apply the per-block curation workflow (fill templates -> curl -> structure ->
+   Force Gate -> classify). Add accepted blocks to `phi/sources_live.φ`,
    rejected ones to `phi/dead_sources.φ`.
-4. Do not stop until both (a) the extract test has zero FAILs and (b) the
-   untested list is empty or you have documented every remaining block as
-   dead/parser-def/decline/key-needed with a research note.
 5. `cargo check` must stay at zero errors AND zero warnings throughout.
 6. Commit per logical unit (TODO.md updated in the same commit).
 

@@ -461,16 +461,23 @@ Code: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, `sources_live.φ`
 ## NEXT SESSION ENTRY POINT: Untested Blocks
 
 Read `docs/source_curation.md` first — it is the full session handoff with
-the parser status, the parser-as-verifier method, and the concrete 107-FAIL
-inventory with per-family fix recipes.
+the parser status, the parser-as-verifier method, and the session results.
+
+STATUS (2026-08-07 end of day): extraction test = **193 ok / 7 fail** of the
+first 200 non-CDN live sources (was 29 ok / 171 fail). The 7 remaining are
+verified data-availability/test-coverage artifacts (empty USGS quake feeds,
+DONKI needs `NASA_API_KEY` in `phi/.secrets.local`, 2 USGS waterservices
+bBox templates that only the runtime presence window substitutes). The
+previous 107-FAIL inventory is RESOLVED — the decisive fix was reverting the
+`field_in`->`field` migration error (commit 9c16f8a).
 
 TASK: run `cargo test test_live_sources_extract -- --nocapture` (~150s).
-It loads both φ files, fetches the first 200 non-CDN live URLs, and prints
-`FAIL <url> no samples`. Fix every FAIL per the recipes in source_curation.md
-(ArcGIS wmo `_0__degr`, USGS `map features`+geometry.coordinates, SWPC
-flux-array keys, adsb `map ac`, TAP/HAPI now curatable, etc.). Re-run until
-0 fail, then raise the test limit (line ~6275 `let mut limit = 200usize;`)
-and repeat chunk by chunk until the whole file is clean.
+Confirm 193 ok / 7 fail, then raise the test limit (`let mut limit =
+200usize;` in `test_live_sources_extract`) to the next chunk and repeat,
+fixing every new `FAIL <url> no samples` with the generic recipes in
+source_curation.md (positionless -> `last <dot.path>` at frame; GeoJSON ->
+`map features` + `geometry.coordinates.N` + `on earth`/`body earth`; fixed
+station -> `last <container>.<field>`; metadata/text-warning -> decline).
 
 Then continue curation with `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`
 (423 blocks). PROGRESS TRACKING: when a block is tested, add it to
