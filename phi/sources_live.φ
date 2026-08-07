@@ -6813,7 +6813,7 @@ field_in AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
 
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto
 ttl 600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
   path latitude lat
@@ -6827,7 +6827,7 @@ pos atmosphere_lat atmosphere_lon
 
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=ammonia,dust,aerosol_optical_depth,formaldehyde
 ttl 600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
   path latitude lat
@@ -6839,7 +6839,7 @@ pos atmosphere_lat atmosphere_lon
 
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
 ttl 600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
   path latitude lat
@@ -8704,7 +8704,7 @@ lon_key Site_Longitude(Degrees)
 
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth,dust,pm2_5,pm10
 ttl 3600
-force em
+force diffusion
 at sun 1.0
 pos atmosphere_lat atmosphere_lon
   path latitude lat
@@ -9011,7 +9011,7 @@ on earth -25.0 135.0
 
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
 ttl 3600
-force em
+force diffusion
 on earth 19.5 -155.6
   path current.carbon_dioxide co2_mauna_loa_ppm
 
