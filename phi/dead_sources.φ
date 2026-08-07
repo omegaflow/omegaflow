@@ -122,3 +122,32 @@ note IRSA NEOWISE same spatial=box error.
 dead registry
 url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
 note AERONET site list = station registry, no force. Decline per Force Gate.
+dead 404-html
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
+note SDSS SearchTools/sql?format=json returns HTML search page (direct) and Jina markdown, not JSON. SqlSearch WS endpoint fails HTTP 000. Research correct JSON API (SkyserverWS/SqlSearch?format=json with proper URL-encoding, or CasJobs DR18 API).
+
+dead 404-html
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
+note SDSS Star query same SearchTools/sql HTML issue.
+dead 400-votable
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
+note HEASARC TAP only supports FORMAT=votable (csv/json unsupported). Query also fails: column flux_density does not exist in fermilpsc. Research correct fermilpsc column names. TAP VOTable parser is a DEFER item.
+
+dead 400-votable
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5+name,ra,dec,flux_density,signif_avg+FROM+fermilpsc
+note VOTable works but column flux_density missing from fermilpsc. Correct schema needed.
+dead 400-votable
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','bll','FSRQ','fsrq','BCU','bcu')+ORDER+BY+flux_density+DESC
+note Same fermilpsc issue: csv unsupported, flux_density column missing. Same research note as heasarc_fermi_4fgl_all.
+dead 400-votable
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3500+name,ra,dec,redshift,flux1000,nu_syn_peak,class,assoc_name+FROM+fermilac+WHERE+redshift+IS+NOT+NULL+AND+redshift%3E0+ORDER+BY+flux1000+DESC
+note fermilac same issue: csv unsupported, flux1000 column missing. Correct schema needed.
+dead 400-votable
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_aper_b,significance,hard_hm,var_inter_hard_flag+FROM+csc2master+WHERE+flux_aper_b+IS+NOT+NULL+AND+significance%3E3+ORDER+BY+flux_aper_b+DESC
+note csc2master table does not exist. Correct Chandra CSC2 table name + column schema needed. TAP VOTable-only.
+
+# NOTE: remaining heasarc_* arena blocks (maxi, integral, swift, rxte, nicer,
+# xmm, batse, pulsar, etc.) share the same defects: FORMAT=csv unsupported
+# (VOTable only) and batch-01 table/column names are fabricated. All need
+# schema discovery via heasarc.gsfc.nasa.gov/xamin/vo/tap/sync with correct
+# table list before any can be curated. Do NOT trust batch table names.

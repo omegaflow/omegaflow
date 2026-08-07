@@ -8436,9 +8436,7 @@ lon_key Site_Longitude(Degrees)
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-10.0&lon1=60.0&lat2=55.0&lon2=150.0
 ttl 1800
-force diffusion
-at sun 1
-format universal
+force em
 rows
 lat_key Site_Latitude(Degrees)
 lon_key Site_Longitude(Degrees)
