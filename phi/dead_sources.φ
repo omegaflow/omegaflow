@@ -567,3 +567,27 @@ note GML radiocarbon 14CO2 404.
 dead 404
 url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}
 note LGDC GIRO DIDB foF2 404. Ionosonde foF2 = em. Research current LGDC/GIRO API path.
+dead 404
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/tsunamis?minYear=1900&maxResults=1000&format=json
+note NGDC hazel API has no tsunamis/events endpoint (404). Only volcanoes and earthquakes exist.
+
+dead 404
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/events?maxResults=100&sort=date&format=json&startYear=1900
+note NGDC hazel events 404.
+dead 404
+url https://habsos.noaa.gov/data/habsos_all.json
+note HABSOS 404. Harmful algal bloom observations (biotic).
+
+dead 404
+url https://satepsanone.nesdis.noaa.gov/HMS/web/HMS_Fire_{today}.json
+note HMS smoke/fire json 404 (date format or path). Research current HMS fire product.
+dead 404
+url https://coastwatch.noaa.gov/erddap/griddap/gpmIMERGHHF.csv?precipitation%5Blast%5D%5B(-60.0):(60.0):4%5D%5B(0.0):(360.0):4%5D
+note GPM IMERG datasetID gpmIMERGHHF unknown on coastwatch. Research correct ERDDAP ID.
+decline aggregate-index
+url https://psl.noaa.gov/data/correlation/amon.us.data
+note PSL AMO index = aggregate climate index (single scalar time series, no position). Council: derived aggregates without position DECLINE.
+
+dead 404
+url https://www.ncei.noaa.gov/access/marine-debris/observations?format=json&bbox={lon_min},{lat_min},{lon_max},{lat_max}&limit=500
+note NCEI marine debris observations 404. Research current marine debris endpoint.
