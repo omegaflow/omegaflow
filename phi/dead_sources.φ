@@ -129,20 +129,35 @@ note SDSS SearchTools/sql?format=json returns HTML search page (direct) and Jina
 dead 404-html
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
 note SDSS Star query same SearchTools/sql HTML issue.
-dead 400-votable
+parser-def votable-tap
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
 note HEASARC TAP only supports FORMAT=votable (csv/json unsupported). Query also fails: column flux_density does not exist in fermilpsc. Research correct fermilpsc column names. TAP VOTable parser is a DEFER item.
 
-dead 400-votable
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
+note HEASARC TAP only supports FORMAT=votable (csv/json unsupported). Query also fails: column flux_density does not exist in fermilpsc. Research correct fermilpsc column names. TAP VOTable parser is a DEFER item.
+
+parser-def votable-tap
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5+name,ra,dec,flux_density,signif_avg+FROM+fermilpsc
 note VOTable works but column flux_density missing from fermilpsc. Correct schema needed.
-dead 400-votable
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5+name,ra,dec,flux_density,signif_avg+FROM+fermilpsc
+note VOTable works but column flux_density missing from fermilpsc. Correct schema needed.
+parser-def votable-tap
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','bll','FSRQ','fsrq','BCU','bcu')+ORDER+BY+flux_density+DESC
 note Same fermilpsc issue: csv unsupported, flux_density column missing. Same research note as heasarc_fermi_4fgl_all.
-dead 400-votable
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','bll','FSRQ','fsrq','BCU','bcu')+ORDER+BY+flux_density+DESC
+note Same fermilpsc issue: csv unsupported, flux_density column missing. Same research note as heasarc_fermi_4fgl_all.
+parser-def votable-tap
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3500+name,ra,dec,redshift,flux1000,nu_syn_peak,class,assoc_name+FROM+fermilac+WHERE+redshift+IS+NOT+NULL+AND+redshift%3E0+ORDER+BY+flux1000+DESC
 note fermilac same issue: csv unsupported, flux1000 column missing. Correct schema needed.
-dead 400-votable
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3500+name,ra,dec,redshift,flux1000,nu_syn_peak,class,assoc_name+FROM+fermilac+WHERE+redshift+IS+NOT+NULL+AND+redshift%3E0+ORDER+BY+flux1000+DESC
+note fermilac same issue: csv unsupported, flux1000 column missing. Correct schema needed.
+parser-def votable-tap
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_aper_b,significance,hard_hm,var_inter_hard_flag+FROM+csc2master+WHERE+flux_aper_b+IS+NOT+NULL+AND+significance%3E3+ORDER+BY+flux_aper_b+DESC
+note csc2master table does not exist. Correct Chandra CSC2 table name + column schema needed. TAP VOTable-only.
+
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_aper_b,significance,hard_hm,var_inter_hard_flag+FROM+csc2master+WHERE+flux_aper_b+IS+NOT+NULL+AND+significance%3E3+ORDER+BY+flux_aper_b+DESC
 note csc2master table does not exist. Correct Chandra CSC2 table name + column schema needed. TAP VOTable-only.
 

@@ -19,3 +19,17 @@ lat_key Site_Latitude(Degrees)
 lon_key Site_Longitude(Degrees)
 field AOD_440nm aod_440
 field AOD_675nm aod_675
+
+# =====================================================================
+# PARSER-PENDING — reachable endpoints awaiting Extract capability
+#
+# These sources respond correctly but the Archivar parser cannot yet
+# consume their format. Move to live once the matching Extract type is
+# implemented (see TODO: New Extract Types / Dead Extract Variants).
+#
+# parser-def votable-tap: heasarc TAP returns VOTable XML. Requires
+#   Extract::XmlCount/VOTable parsing. Schema also needs discovery
+#   (batch table/column names fabricated).
+# parser-def html-extract: SDSS SearchTools/sql returns HTML page, not
+#   JSON. Requires HtmlExtract or correct JSON endpoint research.
+# =====================================================================
