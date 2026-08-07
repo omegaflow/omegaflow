@@ -164,7 +164,6 @@ vr_key baro_rate
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 ttl 60
 force seismic-body
-at sun 1.0
 map features
 lat_key geometry.coordinates.1
 lon_key geometry.coordinates.0
@@ -172,7 +171,7 @@ lon_key geometry.coordinates.0
   field properties.time time
   field properties.mag mag
   field properties.depth depth
-  field properties.region region
+  field properties.flynn_region region
 
 
 url https://api.geonet.org.nz/quake?MMI=3
