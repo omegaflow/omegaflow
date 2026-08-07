@@ -684,3 +684,7 @@ note GBIF limit=0 count-only. DECLINE.
 decline bare-count
 url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
 note GBIF monthly count limit=0. DECLINE.
+
+decline text-warnings
+url https://services.swpc.noaa.gov/products/alerts.json
+note SWPC alerts feed is text warnings only (message/issue_datetime strings, no numeric measurement). Force Gate: text warnings/alerts auto-declined.
