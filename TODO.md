@@ -230,16 +230,6 @@ Code: `phi/recovery/pre_cdn.φ` (inventory), `phi/sources_cdn.φ`, `phi/sources_
 
 ---
 
-## Dead Extract Variants in `Extract` enum
-
-`cargo check` warns: 8 `Extract` enum variants are never constructed — `Flatten`, `CmrPolygon`, `CelestialPolygon`, `KeplerMap`, `Hapi`, `XmlCount`, `Ephemeris`, `Vectors`. These are planned extract types (Kepler orbital elements, Horizons state vectors, generic array flattening) that were declared but never implemented. AGENTS.md: a warning is code rot; never silence with `#[allow]`.
-
-Action: Either implement each variant (parser + materializer path) or remove it. Kepler/Vectors/Flatten are pending feature TODOs; Hapi/XmlCount/CmrPolygon/CelestialPolygon/Ephemeris are legacy. Decide per variant: implement or excise. Goal: `cargo check` zero warnings.
-Code: `src/main.rs` `Extract` enum (~line 1834)
-Verification: `cargo check` reports no warnings. Remaining variants are all constructed and matched.
-
----
-
 ## Sources Live Schema Drift Canonicalization
 
 `sources_live.φ` carries inconsistent field naming patterns across source blocks. Example: `field properties.mag mag` vs `field properties.mag event_magnitude` for identical USGS earthquake magnitude fields. Schema drift compounds with each added block.
@@ -446,19 +436,25 @@ Code: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, `sources_live.φ`
 
 ## NEXT SESSION ENTRY POINT: Untested Blocks
 
-Continue curation with `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ` (423 blocks).
-This is the authoritative list of blocks NOT yet tested — none appear in
-dead_sources.φ, sources_live.φ, or sources_cdn.φ.
+Read `docs/source_curation.md` first — it now contains the full session
+handoff (parser status, verifier method, known API facts, inventory).
 
-PROGRESS TRACKING: when a block is tested, add it to dead_sources.φ (dead/
-parser-def/decline/key-needed) or sources_live.φ (verified). The next session
-re-reads UNTESTED_blocks.φ and diffs against dead/live/cdn to find the still-open
-subset. UNTESTED_index.txt shows remaining by domain.
+The parser has FULL pre-CDN intelligence (commits 188dd76/2cc6d5e — 23
+Extract variants: Hapi, XmlCount, KeplerMap, Vectors, Ephemeris, Flatten,
+CmrPolygon, CelestialPolygon + all directive arms). `cargo check` zero
+warnings, 13 tests pass. All prior "parser-def" classifications
+(vizier-tap ~200, heasarc ~28) are now CURATABLE.
 
-KEY CHANGE: the parser now has full intelligence (commits 2cc6d5e/188dd76 -
-23 Extract variants: Hapi, XmlCount, KeplerMap, Vectors, Ephemeris, VOTable).
-All prior "parser-def" classifications (vizier-tap ~200, heasarc ~28) are now
-CURATABLE - VOTable/HAPI parsing exists. Re-test these with the new parser.
+Entry point: run `cargo test test_live_sources_extract -- --nocapture`
+(~150s, network). It loads both φ files, fetches the first 200 non-CDN live
+URLs, and lists `FAIL <url> no samples` — the actionable list of blocks whose
+extract directives mismatch the live response. Fix each against the golden
+version in `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ`.
+
+Continue curation with `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`
+(423 blocks). PROGRESS TRACKING: when a block is tested, add it to
+dead_sources.φ (dead/parser-def/decline/key-needed) or sources_live.φ
+(verified). UNTESTED_index.txt shows remaining by domain.
 
 Also open:
 - 5 poorer blocks: co2_global_network(7vs10), nsidc_arctic/antarctic(5vs6),
@@ -466,4 +462,5 @@ Also open:
   extract from ALL_lost_blocks_richest.φ
 - 93 HAPI blocks: consider switching manual path 1.0 extracts to native
   `hapi` Extract variant
-- test_live_sources_extract hangs >60s - fix the test
+- the FAIL list from test_live_sources_extract (see source_curation.md
+  handoff for the diagnosis patterns and per-block fixes)

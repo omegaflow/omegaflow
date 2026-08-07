@@ -112,6 +112,117 @@ Tracking mechanism:
 5. `phi/recovery/pre_cdn_history/UNTESTED_index.txt` lists remaining blocks by
    API domain for orientation.
 
+## SESSION HANDOFF (2026-08-07) — read this first
+
+The Archivar parser was restored to FULL pre-CDN intelligence. This is the
+single most important fact for the next session.
+
+### Parser status (DONE)
+
+- `src/main.rs` `extract_pending()` is the full pre-CDN 23-variant function
+  (52,705 chars), restored verbatim in commits `188dd76` + `2cc6d5e`.
+- All 23 `Extract` variants have extraction arms: Field, First, Last, Count,
+  LastRow, LastObj, LastLine, ObjLast, GeojsonEvents, Path, Deep, Regex, Map,
+  CelestialMap, Rows, Flatten, CmrPolygon, CelestialPolygon, KeplerMap, Hapi,
+  XmlCount, Ephemeris, Vectors.
+- All 8 formerly-scaffold directive arms are wired (`flatten`, `cmr_polygon`,
+  `celestial_polygon`, `kepler_map`, `hapi`, `xml_count`, `ephemeris`,
+  `vectors`).
+- Helpers restored: `horizons_nums`, `ecliptic_to_field`,
+  `flatten_geojson_coords`, `parse_horizons_ephemeris`, `tdb_to_jd`,
+  `jfirst`, `jdeep_find_num`, `j2d_last_row`, `text_last_col`,
+  `extract_regex_val` (hand-rolled std regex engine with char-class ranges),
+  `parse_quoted_args`.
+- `PendingPosition` uses the pre-CDN `Geodetic`/`GeodeticFlow` variants;
+  the current-only `Surface`/`SurfaceFlow` variants were excised (dead).
+- `cargo check`: zero errors AND zero warnings. `cargo test`: 13 passed.
+- The `parse_json` entry point skips Jina metadata headers (commit `2bcbe79`).
+
+### How to verify sources with the parser itself (the real verifier)
+
+There is a diagnostic test `tests::test_live_sources_extract` in `src/main.rs`.
+It loads BOTH φ files, substitutes URL templates with fixed dates (2026-08-07),
+fetches each live URL via `fetch_one` (curl), runs `extract_pending`, and
+counts sources whose extraction yields zero samples as FAIL.
+
+Run: `cargo test test_live_sources_extract -- --nocapture`
+Takes ~150s (network-bound, first 200 non-CDN sources). Output lines:
+- `FAIL <url> no samples` — parser extracted nothing from a 200 response.
+  This is the actionable list: the block's extract directives do not match
+  the live response. Fix the block (compare against the golden version in
+  `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ`).
+- `source refused (pos without body directive)` — block uses data-carried
+  `pos` but declares no `body`. Fix the SOURCE (add `body earth` or a proper
+  frame), never invent a body in the parser.
+- `source refused (no reference frame)` — block has no frame at all.
+- `warning: map extract with non-surface frame` — map extract needs a
+  terrestrial surface frame; the block uses `at sun`/barycenter. The golden
+  sources used `wgs84` (→ `on earth`); migration mislabeled them.
+
+Diagnosis from 2026-08-07 run (200 live sources): 29 ok, 171 fail. Fail
+reasons were dominated by `no samples` on raw.githubusercontent.com catalog
+blocks (these are CDN candidates — the test should skip them like it skips
+`github.com/omegaflow/sources`) and by the frame/refusal cases above. The
+fixes are per-block, using the golden archive as reference.
+
+### The separate Python verifier (deprecated but kept)
+
+`scripts/verify_sources.py` (tracked, default input `phi/sources_live.φ`)
+is a JSON-path checker: it fetches each unique URL and compares declared
+`field`/`path`/`lat_key`/`lon_key` keys against the live response. It handles
+rate limits (per-host semaphore, jina fallback `https://r.jina.ai/`),
+TAP/columnar metadata (`metadata`+`data`, `fields`+`data`), CSV/VOTable/HTML
+headers, empty-container tolerance, and optional-field matching across array
+elements. It is useful for bulk triage, but the parser test above is the
+authoritative verifier. Command:
+`python3 scripts/verify_sources.py phi/sources_live.φ --parallel 8 --host-max 2`
+
+### Known API facts (learned, hard-won)
+
+- HEASARC TAP: `FORMAT=csv` works; `FORMAT=votable` 400s. Restore csv.
+- ArcGIS wmo buoys: real fields are `sea_surface_temperature_0__degr` +
+  `sea_water_speed_0__cm_s_1_` (index `_0_`), NOT `_1__degr`.
+- Open-Meteo split hosts: `archive-api.open-meteo.com`, `flood-api`,
+  `marine-api`, `air-quality-api`, `ensemble-api` — never the
+  `api.open-meteo.com/v1/<x>/v1/<x>` double-path form.
+- BGS HAPI: requires `format=json`; station-specific `stop` dates (each
+  station's last-data timestamp differs); `best-avail` has latency.
+- tapvizier: broken queries reference columns not in the catalog
+  (`AllWISE` etc.) — verify SELECT columns against `SELECT TOP 1 *`.
+- NCEI `global-summary-of-the-*`: `countries=` 2-letter codes 400;
+  `dataTypes=TEMP,DEWP,WDSP,P` truncated forms 400; daily data lags ~30 days.
+- GBIF: `results` array is the map container (`map results`); `count` is
+  top-level (`map .`). `stateProvince`/`occurrenceDate` are optional per
+  record — absent in the first record is NOT a schema error.
+- AviationWeather METAR/TAF/sigmet: flat arrays with `lat`/`lon` keys —
+  do NOT rewrite to `geometry.coordinates`.
+
+### Current source inventory (2026-08-07)
+
+- `phi/sources_live.φ`: 1767 blocks. `phi/sources_cdn.φ`: 1770 blocks.
+  Golden archives: `phi/recovery/pre_cdn.φ` (the reference),
+  `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ` (5701 lost blocks
+  with richest extract params), `sources_3_kopie.md`, `sources_4_kopie.md`,
+  `sources_new.φ`, `sources_backup_20260719.φ` (copied from
+  `~/Schreibtisch/Archiv` into `phi/recovery/`).
+- `load_sources()` reads both φ files and merges (~3505 sources).
+
+### Next session: what to do
+
+1. Run `cargo test test_live_sources_extract -- --nocapture`; collect the
+   `FAIL ... no samples` list.
+2. For each FAIL block, find the golden version in
+   `ALL_lost_blocks_richest.φ` and adopt its richer extract directives.
+   Convert format: `source <name>` header → drop; `wgs84 <lat> <lon>` →
+   `on earth <lat> <lon>`; `ecliptic` → `at sun`; add `body earth` where the
+   source uses data-carried `pos`.
+3. The test currently only exercises the first 200 non-CDN live sources —
+   raise `limit` or iterate until the FAIL list is empty.
+4. Curate the remaining `UNTESTED_blocks.φ` per the workflow above; many
+   prior `parser-def` dispositions (VOTable TAP, HAPI) are now CURATABLE.
+5. Keep `cargo check` at zero warnings and do not add code comments
+   (Name = Implementation).
+
 ## Why this work exists: the CDN-switch loss
 
 Historically, all sources lived in a single `sources.φ` with direct API URLs.
