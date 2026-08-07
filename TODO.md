@@ -98,7 +98,7 @@ Verification: Warning emitted when actual oscillator spread exceeds declared ext
 The presence window currently has no temporal or spatial aperture limits. The sensor should be able to bound what it sees in time and space.
 Code: `src/main.rs` — sense_buffer, presence frame, WebSocket response. `static/index.html` — window state.
 
-Action: Add `t_from` / `t_until` temporal bound parameters to the presence frame (deep-linkable via `#x,y,z,t,tFrom,tUntil` or separate controls). Add `x_from/x_until/y_from/y_until` spatial bounds (frustum crop). Oscillators outside temporal/spatial window are excluded from the response array. Bounds are properties of the sensor (C8), not the oscillators.
+Action: Add `t_from` / `t_until` temporal bound parameters to the presence frame (deep-linkable via `#x,y,z,t,tFrom,tUntil` or separate controls). Add `x_from/x_until/y_from/y_until` spatial bounds (frustum crop). Oscillators outside temporal/spatial window are excluded from the response array. Bounds are properties of the sensor (query properties emerge from the observer), not the oscillators.
 Verification: Deep-link with temporal bounds excludes oscillators outside the range. Spatial bounds exclude oscillators outside the frustum. Bounds are reset on `s` (halt) or explicit clear. `cargo check` clean. Render confirms bounded window.
 
 ---
@@ -205,20 +205,20 @@ Blocks in `sources.φ` carry `{latest}` suffix → 404 without resolver. Covered
 
 ### Temporal Topology (TDA, Takens, Transfer Entropy)
 
-PREREQUISITE: AGENTS.md C6 amendment. `fieldPermeability = exponential relaxation (naturalLatencyTicks as τ)` must be replaced or extended. C2 clarification: does "topology analysis belong to the Mathematikerin" mean GPU-side computation of TDA/TE kernels, or does it require a new architectural layer?
+PREREQUISITE: AGENTS.md amendment. `fieldPermeability = exponential relaxation (naturalLatencyTicks as τ)` must be replaced or extended. Clarification needed: does "topology analysis belong to the Mathematikerin" mean GPU-side computation of TDA/TE kernels, or does it require a new architectural layer?
 Scoped as: WGSL compute shader implementing Takens delay embedding on the temporal oscillator stream. Transfer entropy between force-type channels. Persistent homology on the point cloud across time.
 Not implementable in one session without architectural decisions.
 
 ### Field Permeability without TE (`tanh(vC/g)`)
 
-PREREQUISITE: AGENTS.md C6 amendment. The current `fieldPermeability = exponential relaxation` would be replaced by `tanh(vC/g)` where v is the propagation velocity for the force type, C is a coherence scalar, and g is the local field gradient. This changes the fundamental evaluation formula.
+PREREQUISITE: AGENTS.md amendment. The current `fieldPermeability = exponential relaxation` would be replaced by `tanh(vC/g)` where v is the propagation velocity for the force type, C is a coherence scalar, and g is the local field gradient. This changes the fundamental evaluation formula.
 Scoped as: WGSL shader modification to compute tanh-based permeability kernel. Requires defining the coherence scalar C and the local gradient g from the oscillator field.
-Not implementable until C6 is amended.
+Not implementable until AGENTS.md is amended.
 
 ### Visionary
 
 - **Water Metaphor:** Visualization concept. Could be approached as a rendering refinement when the presence window is mapped to fluid dynamics visualization. Deferred until rendering pipeline is stable.
-- **Total Coherence:** New scalar metric. Does not emerge from oscillator properties — introduces new abstraction layer. Requires C8 amendment or reformulation.
+- **Total Coherence:** New scalar metric. Does not emerge from oscillator properties — introduces new abstraction layer. Requires AGENTS.md amendment or reformulation.
 - **Temporal Manifestation / Retro-Active:** Changes fundamental time model. Requires block universe physics rewrite. Deferred indefinitely.
 - **Global Station Web via Nostr:** Protocol integration. Requires station-to-station communication architecture. Separate infrastructure project. Unclear how it emerges from oscillator `canRadiate`/`canSense` properties without new protocol machinery.
 
@@ -228,9 +228,9 @@ Not part of this repository. `docs/omegaflow_sense_hardware.yaml` specifies hard
 
 ---
 
-## Rejected — AGENTS.md C4 Conflict
+## Rejected — AGENTS.md conflict
 
 ### Unknown-Force Soft Fallback to `em`
 
-REJECTED. AGENTS.md C4: "Frameless and forceless sources are refused at load." The code at line 2635 implements this: `force_id_of(&cur_force).is_none()` → source refused with `eprintln!`. Soft fallback to `em` would silently assign electromagnetic propagation physics to an unknown force type. A = A: an acoustic oscillator is not an electromagnetic oscillator. The physics is incorrect.
-If a force type is needed, it must be added to `force_id_of()` and `force_extent()` explicitly, with defined propagation constants. The AGENTS.md C4 constraint is architectural, not negotiable.
+REJECTED. AGENTS.md: "Frameless and forceless sources are refused at load." The code at line 2635 implements this: `force_id_of(&cur_force).is_none()` → source refused with `eprintln!`. Soft fallback to `em` would silently assign electromagnetic propagation physics to an unknown force type. A = A: an acoustic oscillator is not an electromagnetic oscillator. The physics is incorrect.
+If a force type is needed, it must be added to `force_id_of()` and `force_extent()` explicitly, with defined propagation constants. This constraint is architectural, not negotiable.
