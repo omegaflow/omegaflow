@@ -220,7 +220,17 @@ Reclassification of the 2,189 pre_cdn.φ source blocks:
 - DEFER: ~10% (parser support, TLE extract, TAP protocol, live URL verification)
 - DROP: ~2% (MarineTraffic, SentinelHub/Planet/GEE, LeoLabs, CTBTO, DSN Now, MBARI MARS)
 
-Code: `phi/recovery/pre_cdn.φ` (inventory), `phi/sources_cdn.φ`, `phi/sources_live.φ`, `phi/sources_biosphere.φ`
+Code: `phi/recovery/pre_cdn.φ` (inventory), `phi/sources_cdn.φ`, `phi/sources_live.φ`
+
+---
+
+## Dead Extract Variants in `Extract` enum
+
+`cargo check` warns: 8 `Extract` enum variants are never constructed — `Flatten`, `CmrPolygon`, `CelestialPolygon`, `KeplerMap`, `Hapi`, `XmlCount`, `Ephemeris`, `Vectors`. These are planned extract types (Kepler orbital elements, Horizons state vectors, generic array flattening) that were declared but never implemented. AGENTS.md: a warning is code rot; never silence with `#[allow]`.
+
+Action: Either implement each variant (parser + materializer path) or remove it. Kepler/Vectors/Flatten are pending feature TODOs; Hapi/XmlCount/CmrPolygon/CelestialPolygon/Ephemeris are legacy. Decide per variant: implement or excise. Goal: `cargo check` zero warnings.
+Code: `src/main.rs` `Extract` enum (~line 1834)
+Verification: `cargo check` reports no warnings. Remaining variants are all constructed and matched.
 
 ---
 
