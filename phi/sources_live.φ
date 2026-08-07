@@ -1410,13 +1410,20 @@ force acoustic
 on earth 19.63 -156.49
 format universal
 rows
-  field 0 name meteorite_name
-  field 1 id meteorite_id
-  field 2 name_type classification_status
-  field 3 class meteorite_class
-  field 4 mass_g
-  field 5 fall fall_or_find
-  field 6 year year
+  last_row HEIGHT tsunami_buoy_51407_height_m
+
+url https://data.nasa.gov/docs/legacy/meteorite_landings/Meteorite_Landings.json
+ttl 86400
+force gravity
+on earth 0 0
+map .
+lat_key reclat
+lon_key reclong
+  field 8 name meteorite_name
+  field 11 recclass meteorite_class
+  field 12 mass_grams meteorite_mass_g
+  field 13 fall meteorite_fall_type
+  field 14 year meteorite_fall_year
 
 
 url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json

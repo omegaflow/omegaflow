@@ -207,3 +207,64 @@ note Endpoint alive (Jina returns 5.9MB TLE JSON; direct curl times out HTTP 000
 parser-def tle-kepler
 url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=json
 note Same as celestrak_active_satellites: TLE needs Kepler parser, Jina route required. GROUP=starlink.
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=oneweb&FORMAT=json
+note Same as celestrak_active_satellites: TLE needs Kepler parser, Jina route. GROUP=oneweb.
+
+# celestrak group - 13 remaining TLE blocks, same parser-def tle-kepler
+# direct curl times out (Jina route works); TLE needs Extract::Kepler for ICRS position.
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=cosmos-2251-debris&FORMAT=json
+note celestrak_debris_cosmos2251. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/SOCRATES/query.php?FRAGMENTATION=Y&FORMAT=json&LIMIT=500
+note celestrak_debris_fragmentation_events. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?SPECIAL=DECAYING&FORMAT=json
+note celestrak_decaying. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=galileo&FORMAT=json
+note celestrak_galileo. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=glonass-ops&FORMAT=json
+note celestrak_glonass. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=goes&FORMAT=json
+note celestrak_goes. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=json
+note celestrak_gps_ops. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=iridium-NEXT&FORMAT=json
+note celestrak_iridium. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=noaa&FORMAT=json
+note celestrak_noaa_weather. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=radar&FORMAT=json
+note celestrak_radar. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=json
+note celestrak_science. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/SOCRATES/query.php?CATNR=&TIMEFRAME=24&MAX_PROB=0.001&LIMIT=200&FORMAT=json
+note celestrak_socrates_conjunction_data. Same as celestrak_active_satellites.
+
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=space-stations&FORMAT=json
+note celestrak_space_stations. Same as celestrak_active_satellites.
+
+dead 404-migrated
+url https://data.nasa.gov/resource/gh4g-9sfh.json?\$limit=50000&\$order=mass+DESC&\$where=reclat+IS+NOT+NULL
+note data.nasa.gov migrated Socrata->CKAN. gh4g-9sfh Socrata endpoint 404. Working JSON: https://data.nasa.gov/docs/legacy/meteorite_landings/Meteorite_Landings.json (12.6MB, 45716 rows, columns: name,id,nametype,recclass,mass (g),fall,year,reclat,reclong at data[]. Force should be gravity (meteorite masses), not seismic-body.
