@@ -98,3 +98,27 @@ dead conn-refused
 url http://www.nmdb.eu/nest/dynamics.php?stations=SPO&output=json&resolution=60&history=300
 note nmdb.eu dynamics only HTTP, connection refused
 
+# --- batch_01 curation results (2026-08-07) ---
+dead 404-html
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
+note SDSS SearchTools/sql returns Bootstrap HTML, not JSON. Research correct cmd encoding or use CasJobs/DR18 API.
+
+dead 404-html
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
+note SDSS Star query same issue.
+
+dead 400
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=fp_psc&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=ra,dec,j_m,h_m,k_m&outrows=5000
+note IRSA Gator spatial=box param invalid (error: corners usage). Research cone/polygon syntax or TAP endpoint.
+
+dead 400
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=ra,dec,w1mpro,w2mpro,w3mpro,w4mpro&outrows=5000
+note IRSA AllWISE same spatial=box error.
+
+dead 400
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=neowiser_p1bs_psd&spatial=box&ra=0.0&dec=0.0&size=3600&outfmt=1&selcols=ra,dec,w1mpro,w2mpro,mjd&outrows=2000&constraints=mjd%3E59000
+note IRSA NEOWISE same spatial=box error.
+
+dead registry
+url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
+note AERONET site list = station registry, no force. Decline per Force Gate.

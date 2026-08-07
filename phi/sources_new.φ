@@ -9,3 +9,13 @@
 # geomag_boulder, aeronet_mauna_loa, noaa_wind_keywest,
 # noaa_airtemp_providence, cfc11, cfc12, co2_daily, ndbc_41001.spec,
 # nws_asos_jfk
+
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-10.0&lon1=60.0&lat2=55.0&lon2=150.0
+ttl 1800
+force diffusion
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440
+field AOD_675nm aod_675
