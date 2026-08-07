@@ -289,3 +289,12 @@ note type=SEN5X returns 0 sensors (rare/legacy). Use type=SDS011 (18780 sensors,
 dead 400
 url https://api.geonet.org.nz/strong-motion/site
 note strong-motion/site path invalid (400). Station registry anyway = metadata DECLINE. GeoNet working endpoints: api.geonet.org.nz/quake (FeatureCollection, coordinates=[lon,lat]) and volcano/val. Research correct station API if needed.
+dead 404
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v3.0.csv
+note Path 404. Also sea ice EXTENT is aggregate area count without individual pixel records - council: DECLINE (bare counts no force). Research current G02135 daily extent path if revived; would need per-pixel concentration to carry thermal force.
+parser-def html-extract
+url https://www.nohrsc.noaa.gov/interactive/html/graph.html?station=CEMR&wy=2024&pc=&type=1&o=a&ff=1&nw=0&t=0&nodata=0&var=WTEQ&var=SNWD&var=PREC&var=TEMP&state=&q=&r=&format=csv
+note Returns HTML graph page (format=csv ignored), not CSV. NOHRSC CSV alternatives 404. Would need HtmlExtract + reliable data endpoint. Research NOHRSC station data API.
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?parameterCd=72019&statCd=00001&siteType=GW&siteStatus=active&period=PT24H&format=json
+note NWIS 400 HTML error. siteType=GW without sites= param rejected. Needs specific site codes or bbox. USGS_WATER_KEY in .secrets.local for higher-rate access. Research valid query (sites or bBox+parameterCd).
