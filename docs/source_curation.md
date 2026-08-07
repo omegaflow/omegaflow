@@ -34,6 +34,8 @@ lat_key latitude
 lon_key longitude
   field value my_measurement
 ```
+(`on earth` is one example; any body works — `on mars 14.0 90.0` is the same
+construct with a different body name.)
 
 Mandatory per block: `url`, `ttl`, `force`. The Archivar refuses blocks missing
 force or frame at load.
@@ -152,12 +154,12 @@ Takes ~150s (network-bound, first 200 non-CDN sources). Output lines:
   the live response. Fix the block (compare against the golden version in
   `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ`).
 - `source refused (pos without body directive)` — block uses data-carried
-  `pos` but declares no `body`. Fix the SOURCE (add `body earth` or a proper
-  frame), never invent a body in the parser.
+  `pos` but declares no `body`. Fix the SOURCE (add `body <body>` matching the
+  source's world, or a proper frame), never invent a body in the parser.
 - `source refused (no reference frame)` — block has no frame at all.
 - `warning: map extract with non-surface frame` — map extract needs a
   terrestrial surface frame; the block uses `at sun`/barycenter. The golden
-  sources used `wgs84` (→ `on earth`); migration mislabeled them.
+  sources used `wgs84` (→ `on <body>`); migration mislabeled them.
 
 Diagnosis from 2026-08-07 run (200 live sources): 29 ok, 171 fail. Fail
 reasons were dominated by `no samples` on raw.githubusercontent.com catalog
@@ -207,21 +209,31 @@ authoritative verifier. Command:
   `~/Schreibtisch/Archiv` into `phi/recovery/`).
 - `load_sources()` reads both φ files and merges (~3505 sources).
 
-### Next session: what to do
+### NEXT SESSION — EXPLICIT TASK (imperative, not context)
 
-1. Run `cargo test test_live_sources_extract -- --nocapture`; collect the
-   `FAIL ... no samples` list.
-2. For each FAIL block, find the golden version in
-   `ALL_lost_blocks_richest.φ` and adopt its richer extract directives.
-   Convert format: `source <name>` header → drop; `wgs84 <lat> <lon>` →
-   `on earth <lat> <lon>`; `ecliptic` → `at sun`; add `body earth` where the
-   source uses data-carried `pos`.
-3. The test currently only exercises the first 200 non-CDN live sources —
-   raise `limit` or iterate until the FAIL list is empty.
-4. Curate the remaining `UNTESTED_blocks.φ` per the workflow above; many
-   prior `parser-def` dispositions (VOTable TAP, HAPI) are now CURATABLE.
-5. Keep `cargo check` at zero warnings and do not add code comments
-   (Name = Implementation).
+Your assignment: **run the parser-verified source repair and curate the
+untested backlog until both pass.**
+
+DO THIS, IN ORDER:
+
+1. Run `cargo test test_live_sources_extract -- --nocapture` and capture the
+   full output.
+2. Take every `FAIL <url> no samples` line. For each, find the golden block in
+   `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ` and fix the live
+   block's extract directives to match. Re-run the test until the FAIL list is
+   empty (raise the test's source limit if needed — the test currently only
+   checks the first 200 non-CDN live sources).
+3. Then open `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`. For each block,
+   apply the per-block curation workflow (fill templates → curl → structure →
+   Force Gate → classify). Add accepted blocks to `phi/sources_live.φ`,
+   rejected ones to `phi/dead_sources.φ`.
+4. Do not stop until both (a) the extract test has zero FAILs and (b) the
+   untested list is empty or you have documented every remaining block as
+   dead/parser-def/decline/key-needed with a research note.
+5. `cargo check` must stay at zero errors AND zero warnings throughout.
+6. Commit per logical unit (TODO.md updated in the same commit).
+
+This is the task. The context below is reference material you read as needed.
 
 ## Why this work exists: the CDN-switch loss
 
@@ -254,6 +266,16 @@ This means previously-`parser-def` groups (e.g. VOTable TAP catalogs, HAPI
 magnetometer feeds) may now be curatable.
 
 Known good patterns:
+- Frame semantics (from parser `src/main.rs`): frames are body-agnostic —
+  `on <body> <lat> <lon> [alt]` = fixed geodetic point on any body (e.g.
+  `on earth`, `on mars`, `on moon`); `at <body> <scale>` = barycentric frame
+  of that body (e.g. `at sun 1.0`, `at earth 1.0`); `body <body>` + `lat_key`/
+  `pos` = DATA-CARRIED position (each record carries its own coords — GBIF,
+  iNaturalist, USGS bBox). No body is privileged; the body name is just data.
+  `body <planet>` in ephemeris/Horizons blocks declares the queried body (the
+  COMMAND target), NOT a frame — keep it. `body {json}` on STAC/method=post
+  blocks is a JSON POST payload, not a frame — keep it. Never mix `body` with
+  `at`/`on` in the same block.
 - HAPI magnetometer (BGS InterMagnet, ESA Swarm): `format=json`, response
   `data[]` rows + `parameters[]`. Verified endpoints:
   `https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json`
