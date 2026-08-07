@@ -298,3 +298,12 @@ note Returns HTML graph page (format=csv ignored), not CSV. NOHRSC CSV alternati
 dead 400
 url https://waterservices.usgs.gov/nwis/iv/?parameterCd=72019&statCd=00001&siteType=GW&siteStatus=active&period=PT24H&format=json
 note NWIS 400 HTML error. siteType=GW without sites= param rejected. Needs specific site codes or bbox. USGS_WATER_KEY in .secrets.local for higher-rate access. Research valid query (sites or bBox+parameterCd).
+dead 404
+url https://ggis.un-igrac.org/api/v1/well/?format=json&limit=2000
+note IGRAC GeoNode API 404. Also GGMN station registry = metadata, no force. Research current GGMN groundwater monitoring portal if revived.
+decline derived-satellite
+url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson
+note App path returns HTML. GeoServer WFS works (deter_amz, 29MB FeatureCollection MultiPolygon). But DETER is a derived satellite deforestation product - council: tree cover loss / vegetation indices are processed beyond raw measurement, DECLINE. Also polygons need centroid extraction.
+dead 404
+url http://reg.bom.gov.au/fwo/IDN60901.json
+note BOM reg.bom.gov.au retired (404). New API api.weather.bom.gov.au/v1/locations/<geohash>/observations needs 6-char geohash. Research BOM geohash-based API for NSW stations.
