@@ -1,7 +1,4 @@
-AGENTS.md
-.continue/
 debug/
-/docs/concepts/
 .env
 *.log
 omegaflow.wasm

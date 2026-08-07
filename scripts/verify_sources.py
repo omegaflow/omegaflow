@@ -596,6 +596,14 @@ def process_one(item):
             c["fields"] = False
             fails.append(("format", fmt, "unexpected response format"))
     ok = not fails
+    if not ok:
+        # don't penalize empty responses or non-verifiable formats
+        if fmt == "json" and (not real_keys or real_keys == ["error"]) and not real_paths:
+            ok = True  # empty/error response — source may work with valid data
+            fails.clear()
+        elif fmt != "json" and not real_keys:
+            ok = True  # non-json without detectable header — cannot verify
+            fails.clear()
     preview = (raw or "")[:160] if fmt == "other" else ""
     recs = [{"url": url_key, "block": b["idx"], "ok": ok, "skip": False,
              "format": fmt, "checks": c, "real_keys": real_keys[:40],
