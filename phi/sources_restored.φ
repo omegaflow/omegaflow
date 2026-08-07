@@ -172,8 +172,6 @@ lon_key geometry.coordinates.0
   field properties.time time
   field properties.depth depth
   field properties.mmi mmi
-lat_key lat
-lon_key lon
   field properties.publicID publicID
 
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
@@ -399,10 +397,10 @@ url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.ge
 ttl 60
 force seismic-surface
 on earth 39.749 -105.221
-  path features.0.properties.rms rms
+  field properties.rms rms
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.sig sig
 
@@ -496,13 +494,8 @@ map .
   field Kp Kp
   field a_running a_running
   field station_count station_count
-field kp_index kp_index
-field estimated_kp kp_estimated
-  path -1.Kp Kp
-  path -1.a_running a_running
-last Kp magnetosphere_kp_index_noaa
-  field kp kp
-  field running_avg_kp running_avg_kp
+    last Kp magnetosphere_kp_index_noaa
+    field running_avg_kp running_avg_kp
 
 url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=Fobs
 ttl 300
@@ -546,14 +539,13 @@ ttl 300
 force gravity
 at sun 1.0
 map data
-lat_key null
-lon_key null
-  field des des
-  field dist_min dist_min
-  field v_rel v_rel
-  field h_mag h_mag
-  field diameter diameter
-  field epoch epoch
+field_in 0 designation
+field_in 1 orbit_id
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 5 distance_min_au
+field_in 7 velocity_km_s
+field_in 10 h_mag
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
 ttl 300
@@ -655,8 +647,8 @@ ttl 300
 force diffusion
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.value value
   field properties.value_2 value_2
 
@@ -690,8 +682,8 @@ ttl 300
 force seismic-body
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.f4 f4
   field properties.f5 f5
   field properties.f6 f6
@@ -743,8 +735,8 @@ ttl 300
 force thermal
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.FRP FRP
 
 url https://services5.arcgis.com/t2t1phUp5Bj3z8Lp/arcgis/rest/services/Satellite_Point/FeatureServer/0/query?where=1%3D1&outFields=sat_name,altitude_km,velocity_kmps,inclination,norad_cat_id&outSR=4326&f=geojson&resultRecordCount=5000
@@ -752,8 +744,8 @@ ttl 300
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.altitude_km altitude_km
   field properties.velocity_kmps velocity_kmps
   field properties.inclination inclination
@@ -797,20 +789,20 @@ url https://api.wolfx.jp/cenc_eqlist.json
 ttl 300
 force em
 at sun 1
-  field 1.latitude latitude
-  field 1.longitude longitude
-  field 1.magnitude magnitude
-  field 1.depth depth
-  field 1.time time
-  field 1.location location
+  field No1.latitude latitude
+  field No1.longitude longitude
+  field No1.magnitude magnitude
+  field No1.depth depth
+  field No1.time time
+  field No1.location location
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
 ttl 300
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.flynn_region flynn_region
   field properties.time time
@@ -966,8 +958,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -977,8 +969,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -988,8 +980,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -999,8 +991,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1010,8 +1002,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1021,8 +1013,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1043,8 +1035,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1054,8 +1046,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1065,8 +1057,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1076,8 +1068,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1087,8 +1079,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1098,8 +1090,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1120,8 +1112,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1142,8 +1134,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1153,8 +1145,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1164,8 +1156,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1186,8 +1178,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1197,8 +1189,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1208,8 +1200,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1219,8 +1211,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.depth__m_ depth__m_
   field properties.sea_surface_temperature_0__degr sea_surface_temperature_0__degr
   field properties.sea_water_speed_0__cm_s_1_ sea_water_speed_0__cm_s_1_
@@ -1448,8 +1440,8 @@ ttl 300
 force seismic-body
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.place place
   field properties.time time
@@ -1463,8 +1455,8 @@ ttl 300
 force acoustic
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.place place
   field properties.time time
@@ -1492,8 +1484,8 @@ ttl 300
 force seismic-body
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.place place
   field properties.time time
@@ -6865,7 +6857,7 @@ url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&form
 ttl 600
 force acoustic
 at sun 1
-map
+map .
 lat_key lat
 lon_key lon
   field icaoId icaoId
@@ -6875,7 +6867,7 @@ lon_key lon
   field wspd wspd
   field fltLvl fltLvl
   field wxString wxString
-  field receipTime receipTime
+  field receiptTime receipTime
   field obsTime obsTime
   field rawOb rawOb
 
@@ -6883,7 +6875,7 @@ url https://aviationweather.gov/api/data/airsigmet?format=json&hours=3
 ttl 600
 force acoustic
 at sun 1
-map
+map .
 lat_key coords.0.lat
 lon_key coords.0.lon
   field seriesId seriesId
@@ -6945,8 +6937,8 @@ ttl 600
 force em
 on earth 0 0
 map .
-lat_key lat
-lon_key lon
+lat_key coords.0.lat
+lon_key coords.0.lon
   field altitudeHi1 altitudeHi1
   field movementDir movementDir
   field movementSpd movementSpd
@@ -7158,8 +7150,8 @@ ttl 600
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.flynn_region flynn_region
   field properties.time time
@@ -7424,8 +7416,8 @@ ttl 600
 force seismic-body
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.time time
   field properties.place place
@@ -7471,8 +7463,8 @@ ttl 600
 force seismic-surface
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.sig sig
 
@@ -7481,8 +7473,8 @@ ttl 600
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.flynn_region flynn_region
   field properties.time time
@@ -7518,8 +7510,8 @@ ttl 600
 force seismic-surface
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.sig sig
 
@@ -7835,7 +7827,7 @@ url https://aviationweather.gov/api/data/taf?ids=KJFK&format=json
 ttl 1800
 force em
 at sun 1
-map
+map .
 lat_key lat
 lon_key lon
   field icaoId icaoId
@@ -8253,15 +8245,22 @@ ttl 3600
 force gravity
 at sun 1.0
 map data
-lat_key lat
-lon_key lon
-  field date date
-  field time time
-  field alt alt
-  field v v
-  field energy energy
-field geometry.coordinates.1 lat
-field geometry.coordinates.0 lon
+lat_key 3
+lon_key 5
+  
+  
+  
+  
+  
+
+
+field_in 0 event_date
+field_in 1 energy_j
+field_in 2 impact_e_j
+field_in 3 latitude_deg
+field_in 5 longitude_deg
+field_in 7 altitude_km
+field_in 8 velocity_kms
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date
 ttl 3600
@@ -8481,17 +8480,24 @@ ttl 3600
 force gravity
 at sun 1.0
 map data
-lat_key lat
-lon_key lon
-  field date date
-  field time time
-  field alt alt
-  field v v
-  field vx vx
-  field vy vy
-  field vz vz
-  field energy energy
-  field imp imp
+lat_key 3
+lon_key 5
+  
+  
+  
+  
+  
+  
+  
+  
+  
+field_in 0 event_date
+field_in 1 energy_j
+field_in 2 impact_e_j
+field_in 3 latitude_deg
+field_in 5 longitude_deg
+field_in 7 altitude_km
+field_in 8 velocity_kms
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ttl 3600
@@ -9838,12 +9844,12 @@ force em
 on earth 0 0
 header Accept application/vnd.geo+json;version=2
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.volcanoID volcanoID
   field properties.volcanoTitle volcanoTitle
   field properties.level level
-  field properties.aviationColourCode aviationColourCode
+  field properties.level aviationColourCode
   field properties.activity activity
 
 url https://eonet.gsfc.nasa.gov/api/v3/events
@@ -11975,14 +11981,14 @@ ttl 86400
 force gravity
 at sun 1.0
 map data
-lat_key null
-lon_key null
-  field des des
-  field dist_min dist_min
-  field v_rel v_rel
-  field h_mag h_mag
-  field diameter diameter
-  field epoch epoch
+field_in 0 designation
+field_in 1 orbit_id
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 5 distance_min_au
+field_in 7 velocity_km_s
+field_in 10 h_mag
+field_in 11 diameter_km
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
 ttl 86400
@@ -12692,15 +12698,13 @@ ttl 86400
 force gravity
 at sun 1.0
 map data
-lat_key null
-lon_key null
-  field des des
-  field ip ip
-  field ps_max ps_max
-  field date_range date_range
-  field v_inf v_inf
-  field h h
-  field diameter diameter
+  
+  field_in 1 ip
+  field_in 2 ps_max
+  field_in 3 date_range
+  field_in 4 v_inf
+  field_in 5 h
+  field_in 6 diameter
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
 ttl 86400
@@ -12825,6 +12829,13 @@ ttl 86400
 force em
 on earth 34.201 -118.171
   field count count
+field_in 0 event_date
+field_in 1 energy_j
+field_in 2 impact_e_j
+field_in 3 latitude_deg
+field_in 5 longitude_deg
+field_in 7 altitude_km
+field_in 8 velocity_kms
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=599&OBJ_DATA=YES
 ttl 86400
@@ -12861,6 +12872,10 @@ ttl 86400
 force em
 on earth 34.201 -118.171
   field count count
+field_in 0 des
+field_in 1 ip
+field_in 2 ps_max
+field_in 6 diameter
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=799&OBJ_DATA=YES
 ttl 86400
@@ -14628,8 +14643,8 @@ ttl 86400
 force gravity
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.totalDeath totalDeath
   field properties.totalAffected totalAffected
   field properties.numberInjured numberInjured
@@ -14714,8 +14729,8 @@ ttl 86400
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.station station
   field properties.network network
   field properties.type type
@@ -15561,8 +15576,8 @@ ttl 86400
 force em
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.mag mag
   field properties.place place
   field properties.time time
@@ -18635,8 +18650,8 @@ ttl 604800
 force seismic-surface
 on earth 0 0
 map features
-lat_key lat
-lon_key lon
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
   field properties.ELEV ELEV
 
 url https://raw.githubusercontent.com/arijguest/3D-meteorite-viewer/main/earth-impact-craters-v2.geojson
