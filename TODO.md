@@ -414,3 +414,13 @@ Not part of this repository. `docs/omegaflow_sense_hardware.yaml` specifies hard
 
 REJECTED. AGENTS.md: "Frameless and forceless sources are refused at load." The code at line 2635 implements this: `force_id_of(&cur_force).is_none()` → source refused with `eprintln!`. Soft fallback to `em` would silently assign electromagnetic propagation physics to an unknown force type. A = A: an acoustic oscillator is not an electromagnetic oscillator. The physics is incorrect.
 If a force type is needed, it must be added to `force_id_of()` and `force_extent()` explicitly, with defined propagation constants. This constraint is architectural, not negotiable. |
+
+## CDN-Switch Loss Analysis
+
+`Archiv/sources.sorted.φ` (2412 urls) was the pre-CDN original. Comparison with current live+cdn (3514 urls) found 1524 urls absent. Analysis:
+- DELIBERATELY REMOVED (council decisions): worldbank(230), yahoo(37), pdg(38), heasarc/inspirehep metadata, cmems model, celestrak TLE
+- TRUE LOSSES to recover: simbad(84, em catalogues - original used wrong col main_type, correct is otype), ssd.jpl.nasa.gov(48, gravity Horizons), gea.esac.esa.int(50, Gaia em), overpass.openstreetmap.fr(235), nmdb.eu(41 - but HTTP-only, likely dead), api.geonet.org.nz(12)
+- BGS-HAPI: 92 observatories present in live but had dead hardcoded timestamps (fixed to {yesterday}..{yesterday}T23:59). 2 missing (mcg, nag). Original used {today} template which fails (1405 - best-avail has latency).
+
+Action: recover SIMBAD (curate with otype), JPL-SSD (Horizons, parser-def), Gaia. Verify each.
+Code: `phi/recovery/research/arena/` inventory, `phi/sources_live.φ`
