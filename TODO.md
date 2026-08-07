@@ -10,12 +10,15 @@ AGENTS.md is the primary constraint matrix. Git is the history. This file contai
 
 ---
 
-## Sources Split: CDN / Live
+## Collapse CDN/Live split → single `sources.φ`
 
-The Archivar now loads `phi/sources_cdn.φ` and `phi/sources_live.φ`. Currently only `sources_cdn.φ` exists (renamed from `sources_restored.φ`). The `sources_live.φ` must be populated with live-API-only source blocks that are NOT served from CDN. Each file is canonical — no overlap, no ambiguity. The Archivar loads both and merges the sources at startup.
-
-Action: Identify which source blocks in `sources_cdn.φ` should instead live in `sources_live.φ` (live APIs with no CDN mirror). Extract them to `sources_live.φ`. After extraction, verify `cargo run` loads from both files.
-Code: `phi/sources_cdn.φ`, `phi/sources_live.φ` (to create), `src/main.rs` (load_sources already handles both).
+SUPERSEDES "Sources Split: CDN / Live" — council verdict 2026-08-07. After
+the CI Archivar populates the CDN (session 4 of the dual-mode roadmap),
+`sources_cdn.φ` and `sources_live.φ` collapse into a single `sources.φ`. The
+CDN/live distinction becomes a runtime decision: the Archivar tries CDN first
+for every source, falls back to live API. See `docs/dual_mode_architecture.md`
+for the full roadmap.
+Code: `phi/sources_live.φ`, `src/main.rs:2644`
 
 ---
 
@@ -29,24 +32,45 @@ Verification: Two-finger pinch zooms in/out (scale changes). Two-finger horizont
 
 ---
 
-## Archivar `{latest}` Resolver
+## Archivar Dual-Mode Architecture — 5-Session Roadmap
 
-`sources.φ` URLs may carry `{latest}` suffix. The Archivar must resolve this to the most recent timestamped asset from the CDN release. GitHub Releases API: `GET /repos/omegaflow/sources/releases/tags/{netloc}` → filter assets by the name prefix (everything before `_{latest}`) → select asset with highest alphanumeric sort → substitute URL.
-Code: New function `resolve_latest(url: &str) -> String` in `src/main.rs`. Uses `Command::new("curl")` + pure-Rust string parsing. No serde. No external HTTP library.
+SUPERSEDES "Archivar `{latest}` Resolver" and "CDN Asset Renaming". Council
+verdict 2026-08-07 (unanimous, 5 voices). The `{latest}` resolver and CDN
+renaming are unnecessary when the CI Archivar writes timestamped snapshots to
+the CDN — the naming convention IS the resolver. The full architecture is
+described in `docs/dual_mode_architecture.md`.
 
-Action: Implement `resolve_latest()` that: extracts netloc and base name from URL, curls GitHub API, filters and sorts assets by name (timestamps sort alphanumerically), returns substituted URL. Call from the fetch loop before `spawn_task_curl`. Cache resolved URLs per source per ttl window.
-Verification: Source with `{latest}` in URL resolves and fetches successfully. Non-`{latest}` URLs pass through unchanged. Cache hit returns previous resolution. `cargo check` clean. Watch server log for `Resolved {latest}: ...` lines during fetch cycle.
+### Session 1: CI-mode flag + naming convention + local file output
+Code: `src/main.rs` — new `ci_mode_main()` below `verify_sources_main()`.
+Action: `--ci-mode` flag loads `sources_live.φ`, fetches via `fetch_one`,
+extracts via `extract_pending`, writes raw body to
+`out/{netloc}/{source_prefix}_{iso8601utc}.json`.
+Verification: `cargo run -- --ci-mode` produces assets in `out/`. `cargo check`
+0 warnings.
 
----
+### Session 2: CDN upload integration
+Code: `src/main.rs` — extend `ci_mode_main()` to call
+`gh release upload` via `Command::new("gh")`.
+CI workflow: new `.github/workflows/mirror-cdn.yml` — `cargo run -- --ci-mode`
+on push + schedule. No Python. `GH_TOKEN` from `OMEGAFLOW_TOKEN` secret.
+Verification: CI run creates assets on `omegaflow/sources` release.
 
-## CDN Asset Renaming
+### Session 3: Local CDN-first fetch with TTL-fallback
+Code: `src/main.rs` — modify `fetch_one` / `spawn_task_curl` to construct CDN
+URL from naming convention, check asset age against TTL, fall back to live API.
+Verification: `cargo run` uses CDN-first path, logs `CDN fresh` / `CDN stale →
+LIVE` / `LIVE only`.
 
-CDN assets carry old sphere-prefix names. Must be renamed to immutable format.
-Rule: Release tag = netloc. Asset = `{api_delivered_filename}_{iso8601_utc}.json`. No `--clobber`.
-Code: `.github/workflows/rename-cdn-assets.yml`, `scripts/migrate_live_to_cdn.py`.
+### Session 4: Collapse source files
+Code: `phi/sources_cdn.φ` merged into `phi/sources_live.φ` — single
+`sources.φ`. `load_sources()` reads single file. CDN/live is runtime.
+Verification: same source count. `cargo check` clean.
 
-Action: CI workflow reads `phi/live_url_map.json`, original filename = last path segment of API URL, `gh release upload` with timestamped name. `migrate_live_to_cdn.py`: `asset_name = f"{delivered_filename}_{iso_utc}.json"`.
-Verification: CI run on a fresh release creates assets with `_{iso8601_utc}.json` suffix. No duplicate uploads. Assets are immutable.
+### Session 5: Excise Python CDN scripts
+Delete: `migrate_live_to_cdn.py`, `tap_to_cdn.py`, `shard_catalog.py`,
+`refresh_catalogs.py`, `restore_all_live.py`. Keep `generate_ephemerides.py`
+(SPICE) and `verify_sources.py` (audit). CI workflow only runs
+`cargo run -- --ci-mode` + ephemeris generation.
 
 ### CI Script URL-First Migration
 
