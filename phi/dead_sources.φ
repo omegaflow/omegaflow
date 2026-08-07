@@ -666,3 +666,6 @@ note Pangaea API 404 + dataset SEARCH = metadata catalog (study references, not 
 parser-def api
 url https://mast.stsci.edu/api/v0/invoke?request=%7B%22service%22%3A%22Mast.Catalogs.Filtered.Position%22%2C%22params%22%3A%7B%22ra%22%3A10.6847%2C%22dec%22%3A41.2688%2C%22radius%22%3A0.01%2C%22catalog%22%3A%22gaia_dr3%22%7D%7D
 note MAST v0 invoke service name wrong (500). Research correct MAST TAP/catalog service. Gaia DR3 = em.
+key-needed edl-auth
+url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/hyrax/OMI_L2_OMSO2/daily/{year}/{year}-{month}-{day}/OMI-Aura_L2-OMSO2_{year}m{month}{day}t0000-o63123_v004.h5.json
+note GESDISC OMI-SO2 401 (EDL auth form different from Bearer). EARTHDATA_EDL_TOKEN present but needs EDL login flow. SO2 = diffusion.
