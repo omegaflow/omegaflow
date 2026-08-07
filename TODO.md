@@ -443,3 +443,27 @@ Action: curate 873 new blocks (reachability + structure + force-gate
 one-by-one). For 160 known, compare arena vs lost richest version and
 use the richer. Every source tested individually.
 Code: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, `sources_live.φ`
+
+## NEXT SESSION ENTRY POINT: Untested Blocks
+
+Continue curation with `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ` (423 blocks).
+This is the authoritative list of blocks NOT yet tested — none appear in
+dead_sources.φ, sources_live.φ, or sources_cdn.φ.
+
+PROGRESS TRACKING: when a block is tested, add it to dead_sources.φ (dead/
+parser-def/decline/key-needed) or sources_live.φ (verified). The next session
+re-reads UNTESTED_blocks.φ and diffs against dead/live/cdn to find the still-open
+subset. UNTESTED_index.txt shows remaining by domain.
+
+KEY CHANGE: the parser now has full intelligence (commits 2cc6d5e/188dd76 -
+23 Extract variants: Hapi, XmlCount, KeplerMap, Vectors, Ephemeris, VOTable).
+All prior "parser-def" classifications (vizier-tap ~200, heasarc ~28) are now
+CURATABLE - VOTable/HAPI parsing exists. Re-test these with the new parser.
+
+Also open:
+- 5 poorer blocks: co2_global_network(7vs10), nsidc_arctic/antarctic(5vs6),
+  swpc_solar_wind_dscovr(5vs7), nist_codata(4vs5) - rebuild with richer
+  extract from ALL_lost_blocks_richest.φ
+- 93 HAPI blocks: consider switching manual path 1.0 extracts to native
+  `hapi` Extract variant
+- test_live_sources_extract hangs >60s - fix the test
