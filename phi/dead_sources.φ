@@ -660,3 +660,9 @@ note NOIRLab DataLab query returns 'Hello World' - wrong query API path. LSST ca
 dead 404
 url https://coastwatch.noaa.gov/erddap/griddap/tropomiCH4daily.csv?methane_mixing_ratio_bias_corrected%5Blast%5D%5B0%5D%5B(48.2)%5D%5B(16.4)%5D
 note TROPOMI CH4 datasetID unknown on coastwatch. CH4 = diffusion.
+decline metadata-catalog
+url https://www.pangaea.de/api/datasets?format=json&maxResults=200&query=total+organic+carbon+DSDP+ODP+sediment
+note Pangaea API 404 + dataset SEARCH = metadata catalog (study references, not measurements). Council: metadata catalogs DECLINE. 18 blocks in group.
+parser-def api
+url https://mast.stsci.edu/api/v0/invoke?request=%7B%22service%22%3A%22Mast.Catalogs.Filtered.Position%22%2C%22params%22%3A%7B%22ra%22%3A10.6847%2C%22dec%22%3A41.2688%2C%22radius%22%3A0.01%2C%22catalog%22%3A%22gaia_dr3%22%7D%7D
+note MAST v0 invoke service name wrong (500). Research correct MAST TAP/catalog service. Gaia DR3 = em.
