@@ -7690,15 +7690,10 @@ extent 7.77e-6
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt,sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
 ttl 3600
 force em
-at sun 1.0
-verify false
-format json
 map data
   field_in main_id main_id
   field_in otype_txt otype_txt
   field_in sp_type sp_type
-lat_key ra
-lon_key dec
 
 url https://fireball.fripon.org/ajax/liste_multiple.ajax.php
 ttl 3600
@@ -7715,11 +7710,7 @@ lon_key geometry.coordinates.0
 url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
 ttl 3600
 force em
-at sun 1.0
-verify false
 map .
-lat_key ra
-lon_key dec
   field_in object object
 field_in instrument instrument
 field_in observation_id observation_id
@@ -7760,16 +7751,10 @@ extent 5.45e-6
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
 ttl 3600
 force em
-at sun 1.0
-verify false
-format universal
+cmap .
 map data
   field_in name name
   field_in t_scid t_scid
-lat_key ra
-lon_key dec
-lat_key latitude
-lon_key longitude
   field_in date date
   field_in altitude altitude
   field_in ext525 ext525
@@ -7785,7 +7770,7 @@ dec_key dec
 field_in target_name target_name
   field_in duration duration
 field_in revolution revolution
-cmap data
+cmap .
   field_in energy_tev energy_tev
   field_in error_radius_deg error_radius_deg
 
@@ -7795,7 +7780,7 @@ force em
 at sun 1.0
 format universal
 map .
-lat_key ra
+ra_key ra
 lon_key dec
   field_in name name
   field_in obsid obsid
@@ -7830,7 +7815,7 @@ url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD&date-min={today}&limit=10
 ttl 3600
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 field_in 0 designation
 field_in 1 orbit_id
@@ -7934,9 +7919,6 @@ extent 4.78e-6
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1&FORMAT=json
 ttl 3600
 force em
-at sun 1.0
-verify false
-format json
 map data
   field_in s_ra s_ra
   field_in s_dec s_dec
@@ -7946,8 +7928,6 @@ map data
 field_in filters filters
   field_in target_name target_name
   field_in calib_level calib_level
-lat_key s_ra
-lon_key s_dec
 
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+calib_level%3D3+AND+obs_id+LIKE+%27jw01727%25%27+ORDER+BY+t_exptime+DESC
 ttl 3600
@@ -8060,14 +8040,9 @@ format universal
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
 ttl 3600
 force em
-at sun 1.0
-verify false
-format json
 map data
   field_in main_id main_id
   field_in otype_txt otype_txt
-lat_key ra
-lon_key dec
 
 url https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json
 ttl 3600
@@ -10172,7 +10147,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQ
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10217,7 +10192,7 @@ ttl 86400
 force em
 on earth 49.321 -122.573
 last_line exosphere_chime_frb_count
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
   field_in Name Name
@@ -10300,7 +10275,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQ
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10327,7 +10302,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -10338,7 +10313,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 10
 dec_key 11
@@ -10349,7 +10324,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10362,7 +10337,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10373,7 +10348,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10384,7 +10359,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10395,7 +10370,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10406,7 +10381,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10418,7 +10393,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10431,7 +10406,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10444,7 +10419,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10455,7 +10430,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10466,7 +10441,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10478,7 +10453,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10489,7 +10464,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10500,7 +10475,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10511,7 +10486,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10524,7 +10499,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10535,7 +10510,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -10688,7 +10663,7 @@ force em
 at sun 1.0
 format universal
 map .
-lat_key ra
+ra_key ra
 lon_key dec
   field_in obsid obsid
   field_in exposure exposure
@@ -10701,7 +10676,7 @@ force em
 at sun 1.0
 format universal
 map .
-lat_key ra
+ra_key ra
 lon_key dec
   field_in obsid obsid
   field_in exposure exposure
@@ -11126,8 +11101,7 @@ map results
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=fp_psc&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,j_m,h_m,k_m,ph_qual,gal_contam
 ttl 86400
 force em
-at sun 1.0
-format text
+cmap .
 rows
 ra_key ra
 dec_key dec
@@ -11143,13 +11117,11 @@ dec_key dec
   field_in mag8_0 mag8_0
   field_in e_mag3_6 e_mag3_6
   field_in sqf_3_6 sqf_3_6
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 field_in 3 universe_2mass_gaia_g_mag
 map data
-lat_key ra
-lon_key dec
 
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,ph_qual
 ttl 86400
@@ -11325,9 +11297,6 @@ rows
 url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr={target}
 ttl 86400
 force em
-at sun 1.0
-verify false
-target Ceres
 map object
   field_in fullname fullname
   field_in spkid spkid
@@ -11472,7 +11441,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 86400
 force gravity
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -11657,7 +11626,7 @@ dec_key dec
   field_in pl_eqt pl_eqt
   field_in st_teff st_teff
 dist_key sy_distan
-cmap data
+cmap .
 tau_key _dist_m
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
@@ -11675,7 +11644,7 @@ dec_key dec
   field_in disc_year disc_year
 dist_key sy_dist
 tau_key _dist_m
-cmap data
+cmap .
 tau_key _dist_m
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+toi,ra,dec,sy_dist,pl_orbper,pl_rade,tfopwg_disp+FROM+toi+WHERE+ra+IS+NOT+NULL+AND+tfopwg_disp+IN+(%27PC%27,%27KP%27,%27CP%27)+ORDER+BY+sy_dist+ASC
@@ -11691,16 +11660,13 @@ dec_key dec
   field_in tfopwg_disp tfopwg_disp
 dist_key sy_dist
 tau_key _dist_m
-cmap data
+cmap .
 tau_key _dist_m
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
 ttl 86400
 force em
-at sun 1.0
 map .
-lat_key ra
-lon_key dec
   field_in toi toi
   field_in pl_orbper pl_orbper
   field_in pl_rade pl_rade
@@ -11708,9 +11674,7 @@ lon_key dec
   field_in pl_trandur pl_trandur
   field_in st_teff st_teff
 dist_key sy_dist
-tau_key _dist_m
-cmap data
-tau_key _dist_m
+cmap .
 
 url https://heasarc.gsfc.nasa.gov/db-perl/W3Browse/w3query.pl?tablehead=name%3Dfermigtrig&Action=More+Options&ResultRange=1&order=desc&field=from&field=0+1+2+3
 ttl 86400
@@ -11762,7 +11726,7 @@ url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 1
 dec_key 2
@@ -11774,7 +11738,7 @@ url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&
 ttl 86400
 force gravity
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 1
 dec_key 2
@@ -11786,7 +11750,7 @@ url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 1
 dec_key 2
@@ -11810,7 +11774,7 @@ dec_key dec
 tau_key _dist_m
 dist_key sy_dist
   field_in disc_year disc_year
-cmap data
+cmap .
 tau_key _dist_m
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+5000+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_rvamp,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Radial+Velocity'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
@@ -11832,7 +11796,7 @@ dec_key dec
 tau_key _dist_m
 dist_key sy_dist
   field_in disc_year disc_year
-cmap data
+cmap .
 tau_key _dist_m
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+5000+pl_name,ra,dec,pl_radj,pl_bmassj,pl_trandep,pl_tranmid,pl_orbper,st_teff,st_rad,st_mass,sy_dist+FROM+ps+WHERE+pl_trandep+IS+NOT+NULL+AND+ra+IS+NOT+NULL+ORDER+BY+pl_trandep+DESC&FORMAT=csv
@@ -11853,7 +11817,7 @@ dec_key dec
   field_in sy_dist sy_dist
 tau_key _dist_m
 dist_key sy_dist
-cmap data
+cmap .
 tau_key _dist_m
 
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}0101&end={year}1231&format=JSON
@@ -11970,10 +11934,6 @@ dec_key DEJ2000
 url https://api.astrocats.space/{target}/
 ttl 86400
 force em
-at sun 1.0
-verify false
-target SN2014J
-pos ra_deg dec_deg
   field ra ra
   field dec dec
 field name name
@@ -12111,7 +12071,7 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -12289,7 +12249,7 @@ dec_key DEJ2000
   field_in W4mag W4mag
   field_in var_flg var_flg
   field_in ex ex
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 field_in 3 universe_panstarrs_gaia_g_mag
@@ -12432,7 +12392,7 @@ lon_key _DE
   field_in NHI NHI
   field_in z z
   field_in imag imag
-cmap data
+cmap .
 ra_key _RA
 dec_key _DE
   field_in Mass Mass
@@ -12509,7 +12469,7 @@ dec_key DECJ
   field_in DM DM
   field_in Type Type
 dist_key DIST
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
   field_in recno recno
@@ -12532,7 +12492,7 @@ dec_key DECJ
   field_in Binary Binary
   field_in Type Type
 dist_key DIST
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -12558,7 +12518,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 1
 dec_key 2
@@ -12579,7 +12539,7 @@ ra_key _RA
 dec_key _DE
   field_in SpType SpType
   field_in Dist Dist
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
   field_in recno recno
@@ -12785,7 +12745,7 @@ dec_key DEJ2000
   field_in VLSR VLSR
   field_in Sint Sint
   field_in Peak Peak
-cmap data
+cmap .
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,VarType,magMax,Min1,Period,SpType,pmRA,pmDE,VarName+FROM+%22B/gcvs/gcvs_cat%22+WHERE+RAJ2000+IS+NOT+NULL+AND+magMax<16+ORDER+BY+magMax+ASC
 ttl 86400
@@ -12816,7 +12776,7 @@ dec_key DEJ2000
   field_in alpha alpha
   field_in e_alpha e_alpha
   field_in Fpwide Fpwide
-cmap data
+cmap .
   field_in bckwide bckwide
   field_in lrmswide lrmswide
 
@@ -12849,7 +12809,7 @@ dec_key DEJ2000
   field_in MVt MVt
   field_in RV RV
 dist_key Rsun
-cmap data
+cmap .
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,HRV,D,W1mag,W2mag+FROM+"J/MNRAS/506/1896/hecate"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+D+ASC
 ttl 86400
@@ -12873,7 +12833,7 @@ dec_key GLAT
   field_in NHI NHI
   field_in VLSR VLSR
   field_in FWHM FWHM
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -13054,15 +13014,12 @@ field_in S1_4 flux_1400mhz_mjy
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Reg,RAJ2000,DEJ2000,Dist,SimbadName+FROM+%22J/ApJS/229/28/table1%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Dist+ASC
 ttl 86400
 force em
-at sun 1.0
-format universal
+cmap .
 map .
-lat_key RAJ2000
-lon_key DEJ2000
   field_in Reg Reg
   field_in Dist Dist
   field_in SimbadName SimbadName
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
   field_in recno recno
@@ -13167,7 +13124,7 @@ z_key zsp
   field_in rmag rmag
   field_in gmag gmag
   field_in imag imag
-cmap data
+cmap .
 ra_key ra
 dec_key dec
   field_in phot_g_mean_mag phot_g_mean_mag
@@ -13275,7 +13232,7 @@ dec_key DEJ2000
   field_in Period Period
   field_in max max
   field_in min min
-cmap data
+cmap .
   field_in recno recno
   field_in OID OID
   field_in V V
@@ -13321,7 +13278,7 @@ dec_key _DE_icrs
   field_in GLAT GLAT
   field_in Rad Rad
   field_in HIIName HIIName
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 
@@ -13329,7 +13286,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 86400
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 1
 dec_key 2
@@ -15923,7 +15880,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -15935,7 +15892,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -15946,7 +15903,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -15974,7 +15931,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16053,7 +16010,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16102,7 +16059,7 @@ ttl 604800
 force em
 at sun 1.0
 format universal
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -16118,7 +16075,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16129,7 +16086,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16141,7 +16098,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16160,7 +16117,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16171,7 +16128,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16184,7 +16141,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16197,7 +16154,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16209,7 +16166,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16221,7 +16178,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16236,7 +16193,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16251,7 +16208,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16273,7 +16230,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16284,7 +16241,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16296,7 +16253,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16307,7 +16264,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16319,7 +16276,7 @@ url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=asteroid&phys-par=1&limit=1000
 ttl 604800
 force gravity
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16333,7 +16290,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16346,7 +16303,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16357,7 +16314,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16368,7 +16325,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16391,7 +16348,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16402,7 +16359,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16413,7 +16370,7 @@ url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra=
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16428,7 +16385,7 @@ url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra=
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16442,7 +16399,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16453,7 +16410,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -16462,7 +16419,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -16472,7 +16429,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -16485,7 +16442,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -16494,7 +16451,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -16503,7 +16460,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -16512,7 +16469,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -16522,7 +16479,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -16531,7 +16488,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16542,7 +16499,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16570,7 +16527,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16762,7 +16719,7 @@ url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQ
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -16772,7 +16729,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -16783,7 +16740,7 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -17403,7 +17360,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -17417,7 +17374,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -17431,7 +17388,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -17446,7 +17403,7 @@ url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMA
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -17471,7 +17428,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -17482,7 +17439,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -17493,7 +17450,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17502,7 +17459,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17512,7 +17469,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17522,7 +17479,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17531,7 +17488,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17540,7 +17497,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17549,7 +17506,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17558,7 +17515,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17567,7 +17524,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17576,7 +17533,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17585,7 +17542,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -17594,7 +17551,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -17605,7 +17562,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -17616,7 +17573,7 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -17742,9 +17699,6 @@ lon_key longitude
 url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
 ttl 2592000
 force em
-at sun 1.0
-verify false
-format universal
 map data
 field_in 0 agc_nr
 field_in 1 name
@@ -17761,19 +17715,11 @@ field_in 11 snr
 field_in 12 rms
 field_in 13 dist_mpc
 field_in 14 log_m_sun
-lat_key 2
-lon_key 3
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+"{catalog}"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 ttl 2592000
 force em
-at sun 1.0
-verify false
-format universal
 map data
-catalog I/355/gaiadr3
-lat_key RAJ2000
-lon_key DEJ2000
 
 url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum
 ttl 2592000
@@ -17955,7 +17901,7 @@ reach_ttl 86400
 catalog_epoch 504921600.0
 abs_mag_from mag_g
 force em
-cmap data
+cmap .
 tau_key _dist_m
 ra_key 0
 dec_key 1
@@ -17970,7 +17916,7 @@ flux_from_mag celestial_gaia_nearby_g_magnitude
 force gravity
 at sun 1.0
 format universal
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -18174,7 +18120,7 @@ url https://api.neotomadb.org/v2/data/datasets?limit=500
 ttl 86400
 force diffusion
 at sun 1.0
-cmap data
+cmap .
 ra_key site.geography.lat
 dec_key site.geography.lng
 field_in datasetid dataset_id
@@ -18188,7 +18134,7 @@ url https://api.neotomadb.org/v2/data/datasets?datasettype=ostracode&limit=500&o
 ttl 86400
 force diffusion
 at sun 1.0
-cmap data
+cmap .
 ra_key site.geography.latitude
 dec_key site.geography.longitude
 field_in site.sitename site_name
@@ -18198,7 +18144,7 @@ url https://api.neotomadb.org/v2/data/datasets?datasettype=plant+macrofossil&lim
 ttl 86400
 force diffusion
 at sun 1.0
-cmap data
+cmap .
 ra_key site.geography.latitude
 dec_key site.geography.longitude
 field_in site.sitename site_name
@@ -18207,7 +18153,7 @@ url https://api.neotomadb.org/v2/data/sites?limit=500
 ttl 86400
 force diffusion
 at sun 1.0
-cmap data
+cmap .
 ra_key site.geography.lat
 dec_key site.geography.lng
 field_in siteid site_id
@@ -18319,7 +18265,7 @@ url https://raw.githubusercontent.com/omegaflow/sources/main/gaia_wide_parallax4
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -19428,15 +19374,11 @@ field k_m mag_k
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+designation,+j_m,+h_m,+k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 ttl 604800
 force em
-at sun 1.0
-format votable
 map data
 field_in designation name
 field_in j_m mag_j
 field_in h_m mag_h
 field_in k_m mag_k
-lat_key ra
-lon_key dec
 
 url https://api.inaturalist.org/v1/observations?per_page=1
 ttl 300
@@ -20130,7 +20072,7 @@ ttl 86400
 force em
 at sun 1.0
 format universal
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20153,7 +20095,7 @@ field_in properties.aseismic_slip_factor aseismic_factor
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20163,7 +20105,7 @@ field_in flux_64 batse_grb_flux_64
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20172,7 +20114,7 @@ field_in obsid batse_pulsar_obsid
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20198,7 +20140,7 @@ field_in class astro_chandra_master_class
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20275,7 +20217,7 @@ field_in analysis_flags astro_fermi_4fgl_analysis_flags
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20322,7 +20264,7 @@ ttl 604800
 force em
 at sun 1.0
 format universal
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -20336,7 +20278,7 @@ field_in SpInd frb_spectral_index
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20345,7 +20287,7 @@ field_in phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20355,7 +20297,7 @@ field_in bp_rp astro_gaia_blue_supergiants_bp_rp
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20372,7 +20314,7 @@ field_in bp_rp astro_gaia_bright_vmag7_bp_rp
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20381,7 +20323,7 @@ field_in phot_g_mean_mag astro_gaia_bright_vmag9_phot_g_mean_mag
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20392,7 +20334,7 @@ field_in teff_gspphot astro_gaia_giants_teff_gspphot
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20403,7 +20345,7 @@ field_in pmdec astro_gaia_high_pm_pmdec
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20413,7 +20355,7 @@ field_in radial_velocity astro_gaia_hypervelocity_radial_velocity
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20423,7 +20365,7 @@ field_in mh_gspphot astro_gaia_metal_poor_mh_gspphot
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20436,7 +20378,7 @@ field_in radial_velocity astro_gaia_nearby_plx10_radial_velocity
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20449,7 +20391,7 @@ field_in radial_velocity astro_gaia_nearby_plx50_radial_velocity
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20459,7 +20401,7 @@ field_in bp_rp astro_gaia_white_dwarfs_bp_rp
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20468,7 +20410,7 @@ field_in sb_flux integral_agn_flux
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20478,7 +20420,7 @@ field_in isgri_hard_rate integral_hard_rate
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20487,7 +20429,7 @@ field_in distance integral_isgri_distance
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20497,7 +20439,7 @@ field_in var_20_40kev integral_variability
 ttl 604800
 force gravity
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20509,7 +20451,7 @@ field_in i_deg asteroid_inclination_deg
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20520,7 +20462,7 @@ field_in excess_variance maxi_excess_variance
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20529,7 +20471,7 @@ field_in time maxi_master_time
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20538,7 +20480,7 @@ field_in sb_flux maxi_ssc_flux
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20547,7 +20489,7 @@ field_in exposure nicer_exposure_s
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20556,7 +20498,7 @@ field_in exposure rxte_exposure_s
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20565,7 +20507,7 @@ field_in stop_time rxte_slew_stop_time
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20578,7 +20520,7 @@ field_in fiberID astro_sdss_galaxies_fiberID
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20590,7 +20532,7 @@ field_in psfMag_r astro_sdss_stars_psfMag_r
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20616,7 +20558,7 @@ field_in source_type astro_swift_bat_source_type
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20811,7 +20753,7 @@ tau_key _dist_m
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key RAJ2000
 dec_key DEJ2000
@@ -20827,7 +20769,7 @@ field_in Aflg astro_twomass_psc_Aflg
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20839,7 +20781,7 @@ field_in w4mpro astro_wise_allsky_w4mpro
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -20848,7 +20790,7 @@ field_in flux_b8 xmm_slew_flux_b8
 ttl 604800
 force em
 at sun 1.0
-cmap data
+cmap .
 tau_key _dist_m
 ra_key ra
 dec_key dec
@@ -21367,7 +21309,7 @@ field_in year data_year
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_batse_grb.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21377,7 +21319,7 @@ field_in flux_64 batse_grb_flux_64
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_batse_pulsar.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21386,7 +21328,7 @@ field_in obsid batse_pulsar_obsid
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/chandra_master.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21412,7 +21354,7 @@ field_in class astro_chandra_master_class
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/fermi_4fgl.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21489,7 +21431,7 @@ field_in analysis_flags astro_fermi_4fgl_analysis_flags
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/fermi_4lac.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 field_in name astro_fermi_4lac_name
@@ -21534,7 +21476,7 @@ field_in highest_energy_photon astro_fermi_4lac_highest_energy_photon
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_frb.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
@@ -21548,7 +21490,7 @@ field_in SpInd frb_spectral_index
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_binaries.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21557,7 +21499,7 @@ field_in phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_blue_supergiants.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21567,7 +21509,7 @@ field_in bp_rp astro_gaia_blue_supergiants_bp_rp
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag7.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21584,7 +21526,7 @@ field_in bp_rp astro_gaia_bright_vmag7_bp_rp
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21593,7 +21535,7 @@ field_in phot_g_mean_mag astro_gaia_bright_vmag9_phot_g_mean_mag
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_giants.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21604,7 +21546,7 @@ field_in teff_gspphot astro_gaia_giants_teff_gspphot
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_high_pm.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21615,7 +21557,7 @@ field_in pmdec astro_gaia_high_pm_pmdec
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_hypervelocity.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21625,7 +21567,7 @@ field_in radial_velocity astro_gaia_hypervelocity_radial_velocity
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_metal_poor.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21635,7 +21577,7 @@ field_in mh_gspphot astro_gaia_metal_poor_mh_gspphot
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21648,7 +21590,7 @@ field_in radial_velocity astro_gaia_nearby_plx10_radial_velocity
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx50.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21661,7 +21603,7 @@ field_in radial_velocity astro_gaia_nearby_plx50_radial_velocity
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_white_dwarfs.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
@@ -21671,7 +21613,7 @@ field_in bp_rp astro_gaia_white_dwarfs_bp_rp
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_icecube.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 dist_key dist_mpc
@@ -21681,7 +21623,7 @@ field_in error_radius_deg icecube_error_radius_deg
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_agn.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21690,7 +21632,7 @@ field_in sb_flux integral_agn_flux
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_bsc.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21700,7 +21642,7 @@ field_in isgri_hard_rate integral_hard_rate
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_isgri4yr.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21709,7 +21651,7 @@ field_in distance integral_isgri_distance
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_var.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21719,7 +21661,7 @@ field_in var_20_40kev integral_variability
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/jpl_asteroids.json
 ttl 604800
 force gravity
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 dist_key dist_au
@@ -21730,7 +21672,7 @@ field_in i_deg asteroid_inclination_deg
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_gsc7yr.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21741,7 +21683,7 @@ field_in excess_variance maxi_excess_variance
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_master.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21750,7 +21692,7 @@ field_in time maxi_master_time
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_ssc.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21759,7 +21701,7 @@ field_in sb_flux maxi_ssc_flux
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_nicer_master.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21785,7 +21727,7 @@ path data.-1.missing arctic_seaice_missing
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_master.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21794,7 +21736,7 @@ field_in exposure rxte_exposure_s
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_slew.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21803,7 +21745,7 @@ field_in stop_time rxte_slew_stop_time
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_galaxies.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 field_in zerr astro_sdss_galaxies_zerr
@@ -21815,7 +21757,7 @@ field_in fiberID astro_sdss_galaxies_fiberID
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_stars.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -21827,7 +21769,7 @@ field_in psfMag_r astro_sdss_stars_psfMag_r
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/swift_bat.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 field_in source_number astro_swift_bat_source_number
@@ -21852,7 +21794,7 @@ field_in source_type astro_swift_bat_source_type
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/swift_grb.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 field_in name astro_swift_grb_name
@@ -22034,7 +21976,7 @@ field_in comments astro_swift_grb_comments
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/tevcat.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 field_in source_number astro_tevcat_source_number
@@ -22056,7 +21998,7 @@ field_in tevcat_url astro_tevcat_tevcat_url
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/twomass_psc.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
@@ -22072,7 +22014,7 @@ field_in Aflg astro_twomass_psc_Aflg
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_2qz_recno
@@ -22083,7 +22025,7 @@ field_in intName vizier_2qz_intName
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_6dfgs.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in 6dFGS vizier_6dfgs_6dFGS
@@ -22094,7 +22036,7 @@ field_in bJmag vizier_6dfgs_bJmag
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_apass.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in e_RAJ2000 astro_vizier_apass_e_RAJ2000
@@ -22123,7 +22065,7 @@ field_in u_e_i'mag astro_vizier_apass_u_e_i'mag
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_carmenes.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_carmenes_recno
@@ -22134,7 +22076,7 @@ field_in Type vizier_carmenes_Type
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_cosmic_voids.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_cosmic_voids_recno
@@ -22145,7 +22087,7 @@ field_in p-value vizier_cosmic_voids_p-value
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_distant_halo.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
@@ -22153,7 +22095,7 @@ plx_key default_plx
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_dla.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key _RA
 dec_key _DE
 plx_key default_plx
@@ -22163,7 +22105,7 @@ field_in NHI dla_neutral_hydrogen
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_first.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_first_recno
@@ -22174,7 +22116,7 @@ field_in Fpeak vizier_first_Fpeak
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_gcvs_variables_recno
@@ -22185,7 +22127,7 @@ field_in GCVS vizier_gcvs_variables_GCVS
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 dist_key Dist
@@ -22212,7 +22154,7 @@ field_in Flag3 astro_vizier_glade_Flag3
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 dist_key Dist
@@ -22224,7 +22166,7 @@ field_in HyperLEDA vizier_glade2_HyperLEDA
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gleam.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
@@ -22234,7 +22176,7 @@ field_in lrmswide gleam_peak_flux_wide
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hecate.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_hecate_recno
@@ -22245,7 +22187,7 @@ field_in NED vizier_hecate_NED
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hi4pi.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 plx_key default_plx
@@ -22253,7 +22195,7 @@ plx_key default_plx
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_lotss_dr3.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_lotss_dr3_recno
@@ -22264,7 +22206,7 @@ field_in e_DEJ2000 vizier_lotss_dr3_e_DEJ2000
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_nvss.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_nvss_recno
@@ -22275,7 +22217,7 @@ field_in Ypos vizier_nvss_Ypos
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_orion_region.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_orion_region_recno
@@ -22286,7 +22228,7 @@ field_in CTot vizier_orion_region_CTot
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_prigozhin_pulsars_recno
@@ -22297,7 +22239,7 @@ field_in zphot vizier_prigozhin_pulsars_zphot
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_qso_variable.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key _RA
 dec_key _DE
 plx_key default_plx
@@ -22307,7 +22249,7 @@ field_in Dist qso_variable_dist_pc
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_sdss_qso.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_sdss_qso_recno
@@ -22318,7 +22260,7 @@ field_in e_umag vizier_sdss_qso_e_umag
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_snrs_recno
@@ -22329,7 +22271,7 @@ field_in MinDiam vizier_snrs_MinDiam
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_tycho2.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAmdeg
 dec_key DEmdeg
 plx_key default_plx
@@ -22373,7 +22315,7 @@ field_in corr astro_vizier_tycho2_corr
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_ucac5.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in SrcIDgaia astro_vizier_ucac5_SrcIDgaia
@@ -22398,7 +22340,7 @@ field_in Kmag astro_vizier_ucac5_Kmag
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_variable_stars.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key _RA
 dec_key _DE
 plx_key default_plx
@@ -22409,7 +22351,7 @@ field_in i variable_star_inclination
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_vsx_variables.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_vsx_variables_recno
@@ -22420,7 +22362,7 @@ field_in V vizier_vsx_variables_V
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_xmm4d13s.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RA_ICRS
 dec_key DE_ICRS
 plx_key default_plx
@@ -22430,7 +22372,7 @@ field_in Flux2 xmm4d13_flux2
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_young_stars.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key RAJ2000
 dec_key DEJ2000
 field_in recno vizier_young_stars_recno
@@ -22441,7 +22383,7 @@ field_in SName vizier_young_stars_SName
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/wise_allsky.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -22453,7 +22395,7 @@ field_in w4mpro astro_wise_allsky_w4mpro
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_xmm_slew.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 plx_key default_plx
@@ -22462,7 +22404,7 @@ field_in flux_b8 xmm_slew_flux_b8
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/xmm_sources.json
 ttl 604800
 force em
-cmap data
+cmap .
 ra_key ra
 dec_key dec
 field_in srcid astro_xmm_sources_srcid
@@ -22969,7 +22911,7 @@ field_in 2 chandra_exposure_sec
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,F1000i,PLGam+FROM+%22IX/67/4fgldr3%22
 ttl 86400
 force em
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 field_in 2 agn_gamma_flux_1000
@@ -22996,7 +22938,7 @@ last_line exosphere_chime_frb_count
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
 ttl 86400
 force em
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 plx_key 3
@@ -23007,7 +22949,7 @@ field_in 4 ruwe
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+phot_g_mean_mag+<+8+AND+parallax+IS+NOT+NULL+AND+parallax+<+2+ORDER+BY+random_index
 ttl 86400
 force em
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 plx_key 3
@@ -23047,7 +22989,7 @@ field phot_rp_mean_mag rp_magnitude
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+phot_g_mean_mag+<+8+AND+parallax+IS+NOT+NULL+AND+parallax+<+2+ORDER+BY+random_index
 ttl 86400
 force em
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 plx_key 3
@@ -23070,7 +23012,7 @@ field phot_g_mean_mag g_magnitude
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
 ttl 86400
 force em
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 plx_key 3
@@ -23082,7 +23024,7 @@ radvel_key 4 1000
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%200.5%20AND%20phot_g_mean_mag%20%3C%2014%20AND%20parallax%20%3E%202
 ttl 86400
 force em
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 plx_key 3
@@ -23091,7 +23033,7 @@ field_in 2 bp_rp
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
 ttl 86400
 force em
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 plx_key 3
@@ -23100,7 +23042,7 @@ field_in 2 mag_g
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cmag_g%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
 ttl 86400
 force em
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 plx_key 3
@@ -23109,7 +23051,7 @@ field_in 2 mag_g
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
 ttl 86400
 force em
-cmap data
+cmap .
 ra_key 0
 dec_key 1
 plx_key 3
