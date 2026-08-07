@@ -582,6 +582,7 @@ fn force_constants_by_id(id: f64, body_props: Option<&BodyProperties>) -> Option
         5 => body_props.and_then(|p| p.alpha_thermal).map(|v| (v, true)),
         6 => body_props.and_then(|p| p.d_diffusion).map(|v| (v, true)),
         7 => body_props.and_then(|p| p.v_advective).map(|v| (v, false)),
+        8 => Some((0.0, false)),
         _ => None,
     }
 }
@@ -1402,17 +1403,435 @@ fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
     }
 }
 
+fn jfirst(json: &JsonVal, key: &str) -> Option<f64> {
+    if key.contains('.') {
+        let (prefix, final_key) = key.rsplit_once('.').unwrap_or(("", key));
+        let parent = if prefix.is_empty() {
+            json
+        } else {
+            jpath_val(json, prefix)?
+        };
+        if let JsonVal::Arr(arr) = parent {
+            return arr.first().and_then(|v| match v {
+                JsonVal::Obj(o) => o.get(final_key).and_then(scalar_of),
+                other => scalar_of(other),
+            });
+        }
+        return None;
+    }
+    match json {
+        JsonVal::Arr(arr) => arr.first().and_then(|v| match v {
+            JsonVal::Obj(o) => o.get(key).and_then(scalar_of),
+            other => scalar_of(other),
+        }),
+        JsonVal::Obj(map) => map.get(key).and_then(|v| {
+            if let JsonVal::Arr(a) = v {
+                a.first().and_then(scalar_of)
+            } else {
+                None
+            }
+        }),
+        _ => None,
+    }
+}
+
+fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
+    match json {
+        JsonVal::Obj(map) => {
+            if let Some(v) = map.get(key) {
+                if let Some(n) = scalar_of(v) {
+                    return Some(n);
+                }
+            }
+            for v in map.values() {
+                if let Some(n) = jdeep_find_num(v, key) {
+                    return Some(n);
+                }
+            }
+            None
+        }
+        JsonVal::Arr(arr) => {
+            for v in arr {
+                if let Some(n) = jdeep_find_num(v, key) {
+                    return Some(n);
+                }
+            }
+            None
+        }
+        _ => None,
+    }
+}
+
+fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
+    if let JsonVal::Arr(arr) = json {
+        if arr.len() < 2 {
+            return None;
+        }
+        if let JsonVal::Arr(headers) = &arr[0] {
+            let col_idx = headers.iter().position(|h| {
+                if let JsonVal::Str(s) = h {
+                    s.eq_ignore_ascii_case(col) || s.starts_with(col)
+                } else {
+                    false
+                }
+            })?;
+            if let Some(JsonVal::Arr(last_row)) = arr.last() {
+                return last_row.get(col_idx).and_then(scalar_of);
+            }
+        }
+    }
+    None
+}
+fn text_last_col(data: &str, col: &str) -> Option<f64> {
+    let mut header_idx: Option<usize> = None;
+    for line in data.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+        let stripped = trimmed.strip_prefix('#').unwrap_or(trimmed).trim();
+        let cols = split_data_line(stripped);
+        if header_idx.is_none() {
+            if let Some(idx) = cols
+                .iter()
+                .position(|c| c.eq_ignore_ascii_case(col) || c.starts_with(col))
+            {
+                header_idx = Some(idx);
+                break;
+            }
+            continue;
+        }
+    }
+    let idx = header_idx?;
+    for line in data.lines().rev() {
+        let trimmed = line.trim();
+        if trimmed.is_empty()
+            || trimmed.starts_with('#')
+            || trimmed
+                .chars()
+                .next()
+                .map(|c| c.is_alphabetic())
+                .unwrap_or(false)
+        {
+            continue;
+        }
+        let cols = split_data_line(trimmed);
+        if let Some(v) = cols.get(idx) {
+            if let Ok(f) = v.trim_matches('"').parse::<f64>() {
+                return Some(f);
+            }
+        }
+    }
+    None
+}
+fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
+    let pat_bytes = pat.as_bytes();
+    let body_bytes = body.as_bytes();
+
+    let first = pat.find('(')?;
+    let last = pat.rfind(')')?;
+    if first >= last {
+        return None;
+    }
+    let inner = &pat[first + 1..last];
+
+    if inner.contains("...") {
+        let (prefix, suffix) = inner.split_once("...")?;
+        let p = body.find(prefix)?;
+        let r = &body[p + prefix.len()..];
+        let e = if suffix.is_empty() {
+            r.find(|c: char| c.is_whitespace() || c == '<' || c == '"')
+                .unwrap_or(r.len())
+        } else {
+            r.find(suffix).unwrap_or(r.len())
+        };
+        return r[..e].trim().parse::<f64>().ok();
+    }
+
+    let mut capture: Option<f64> = None;
+
+    fn match_re(
+        mut pi: usize,
+        p: &[u8],
+        mut bi: usize,
+        b: &[u8],
+        cap: &mut Option<f64>,
+    ) -> Option<usize> {
+        while pi < p.len() {
+            let bc = || b.get(bi).copied();
+            match p[pi] {
+                b'\\' => {
+                    pi += 1;
+                    let esc = p.get(pi).copied()?;
+                    let ok = match esc {
+                        b'd' => bc().map_or(false, |c| c.is_ascii_digit()),
+                        b's' => bc().map_or(false, |c| c.is_ascii_whitespace()),
+                        b'w' => bc().map_or(false, |c| c.is_ascii_alphanumeric() || c == b'_'),
+                        b'D' => bc().map_or(true, |c| !c.is_ascii_digit()),
+                        b'S' => bc().map_or(true, |c| !c.is_ascii_whitespace()),
+                        b'W' => bc().map_or(true, |c| !(c.is_ascii_alphanumeric() || c == b'_')),
+                        _ => bc() == Some(esc),
+                    };
+                    if !ok {
+                        return None;
+                    }
+                    bi += 1;
+                    pi += 1;
+                    let check = |c: u8| -> bool {
+                        match esc {
+                            b'd' => c.is_ascii_digit(),
+                            b's' => c.is_ascii_whitespace(),
+                            b'w' => c.is_ascii_alphanumeric() || c == b'_',
+                            b'D' => !c.is_ascii_digit(),
+                            b'S' => !c.is_ascii_whitespace(),
+                            b'W' => !(c.is_ascii_alphanumeric() || c == b'_'),
+                            _ => c == esc,
+                        }
+                    };
+                    if pi < p.len() {
+                        match p[pi] {
+                            b'+' => {
+                                pi += 1;
+                                while b.get(bi).map_or(false, |&c| check(c)) {
+                                    bi += 1;
+                                }
+                            }
+                            b'*' => {
+                                pi += 1;
+                                while b.get(bi).map_or(false, |&c| check(c)) {
+                                    bi += 1;
+                                }
+                            }
+                            b'?' => {
+                                pi += 1;
+                            }
+                            _ => {}
+                        }
+                    }
+                }
+                b'.' => {
+                    pi += 1;
+                    if bc().is_none() || bc() == Some(b'\n') {
+                        return None;
+                    }
+                    let (min, max, greedy) = if pi < p.len() {
+                        match p[pi] {
+                            b'+' => {
+                                pi += 1;
+                                (1, usize::MAX, true)
+                            }
+                            b'*' => {
+                                pi += 1;
+                                (0, usize::MAX, true)
+                            }
+                            b'?' => {
+                                pi += 1;
+                                (0, 1, true)
+                            }
+                            _ => (1, 1, true),
+                        }
+                    } else {
+                        (1, 1, true)
+                    };
+
+                    if greedy {
+                        let mut best: Option<usize> = None;
+                        for len in (min..=max).rev() {
+                            let end = bi + len;
+                            if end > b.len() {
+                                continue;
+                            }
+                            if b[bi..end].iter().any(|&c| c == b'\n') {
+                                continue;
+                            }
+                            if let Some(res) = match_re(pi, p, end, b, cap) {
+                                best = Some(res);
+                                break;
+                            }
+                        }
+                        if let Some(res) = best {
+                            bi = res;
+                        } else {
+                            return None;
+                        }
+                    } else {
+                        if let Some(res) = match_re(pi, p, bi + 1, b, cap) {
+                            bi = res;
+                        } else {
+                            return None;
+                        }
+                    }
+                }
+                b'(' => {
+                    let mut depth = 1;
+                    let mut end = pi + 1;
+                    while end < p.len() && depth > 0 {
+                        if p[end] == b'\\' {
+                            end += 2;
+                            continue;
+                        }
+                        if p[end] == b'(' {
+                            depth += 1;
+                        }
+                        if p[end] == b')' {
+                            depth -= 1;
+                            if depth == 0 {
+                                break;
+                            }
+                        }
+                        end += 1;
+                    }
+                    if depth != 0 {
+                        return None;
+                    }
+                    let save = bi;
+                    if let Some(new_bi) = match_re(0, &p[pi + 1..end], bi, b, cap) {
+                        if cap.is_none() {
+                            if let Ok(s) = std::str::from_utf8(&b[save..new_bi]) {
+                                if let Ok(v) = s.parse::<f64>() {
+                                    *cap = Some(v);
+                                }
+                            }
+                        }
+                        bi = new_bi;
+                        pi = end + 1;
+                    } else {
+                        return None;
+                    }
+                }
+                b'[' => {
+                    pi += 1;
+                    let neg = pi < p.len() && p[pi] == b'^';
+                    if neg {
+                        pi += 1;
+                    }
+                    let mut cls = Vec::new();
+                    while pi < p.len() && p[pi] != b']' {
+                        if p[pi] == b'\\' {
+                            cls.push(p[pi + 1]);
+                            pi += 2;
+                        } else if p.get(pi + 1).map_or(false, |&c| c == b'-')
+                            && p.get(pi + 2).is_some()
+                        {
+                            // expand ranges like 0-9, a-z
+                            let lo = p[pi];
+                            let hi = p[pi + 2];
+                            for c in lo..=hi {
+                                cls.push(c);
+                            }
+                            pi += 3;
+                        } else {
+                            cls.push(p[pi]);
+                            pi += 1;
+                        }
+                    }
+                    pi += 1;
+                    let in_cls = bc().map_or(false, |c| cls.contains(&c));
+                    if neg == in_cls {
+                        return None;
+                    }
+                    let (min, max) = if pi < p.len() {
+                        match p[pi] {
+                            b'+' => {
+                                pi += 1;
+                                (1, usize::MAX)
+                            }
+                            b'*' => {
+                                pi += 1;
+                                (0, usize::MAX)
+                            }
+                            b'?' => {
+                                pi += 1;
+                                (0, 1)
+                            }
+                            _ => (1, 1),
+                        }
+                    } else {
+                        (1, 1)
+                    };
+                    if min > 0 {
+                        bi += 1;
+                    }
+                    if max == usize::MAX {
+                        while b.get(bi).map_or(false, |c| cls.contains(c) != neg) {
+                            bi += 1;
+                        }
+                    }
+                }
+                c => {
+                    if bc().map_or(false, |bc| bc == c) {
+                        bi += 1;
+                        pi += 1;
+                    } else {
+                        return None;
+                    }
+                }
+            }
+        }
+        Some(bi)
+    }
+
+    if let Some(_) = match_re(0, pat_bytes, 0, body_bytes, &mut capture) {
+        capture
+    } else {
+        None
+    }
+}
+fn parse_quoted_args(s: &str) -> Vec<String> {
+    let mut result = Vec::new();
+    let mut chars = s.chars().peekable();
+    while chars.peek().is_some() {
+        while chars.peek().map(|c| c.is_whitespace()).unwrap_or(false) {
+            chars.next();
+        }
+        if chars.peek().is_none() {
+            break;
+        }
+        if *chars.peek().unwrap() == '"' {
+            chars.next();
+            let mut val = String::new();
+            while let Some(&c) = chars.peek() {
+                if c == '"' {
+                    chars.next();
+                    break;
+                }
+                val.push(c);
+                chars.next();
+            }
+            result.push(val);
+        } else {
+            let mut val = String::new();
+            while let Some(&c) = chars.peek() {
+                if c.is_whitespace() {
+                    break;
+                }
+                val.push(c);
+                chars.next();
+            }
+            result.push(val);
+        }
+    }
+    result
+}
+
 #[derive(Clone)]
 enum Extract {
     Field(String, String),
+    First(String, String),
     Last(String, String),
     Count(String, String),
+    LastRow(String, String),
+    LastObj(String, String, String, String),
+    LastLine(String),
+    ObjLast(String, String),
     GeojsonEvents {
         mag_key: String,
         min_mag: f64,
         outputs: Vec<String>,
     },
     Path(String, String),
+    Deep(String, String),
+    Regex(String, String),
 
     Map {
         arr_path: String,
@@ -1460,6 +1879,7 @@ fn force_id_of(force: &str) -> Option<u8> {
         "thermal" => Some(5),
         "diffusion" => Some(6),
         "advective" => Some(7),
+        "biotic" => Some(8),
         _ => None,
     }
 }
@@ -1475,8 +1895,23 @@ fn force_extent(force: &str) -> f64 {
         "seismic-surface" => 1e4,
         "acoustic" => 1e3,
         "advective" => 1e1,
+        "biotic" => 1e2,
         "thermal" | "diffusion" => 1e0,
         _ => 0.0,
+    }
+}
+
+fn force_tau_of_id(id: u8) -> Option<f64> {
+    match id {
+        8 => Some(86400.0),
+        _ => None,
+    }
+}
+
+fn force_extent_of_id(id: u8) -> Option<f64> {
+    match id {
+        8 => Some(1e2),
+        _ => None,
     }
 }
 
@@ -1500,8 +1935,6 @@ struct StationEntry {
 }
 
 struct SourceConfig {
-    #[allow(dead_code)]
-    name: String,
     ttl: u64,
     url: String,
     frame: Frame,
@@ -2284,7 +2717,6 @@ fn load_sources() -> Vec<SourceConfig> {
                             );
                         }
                         sources.push(SourceConfig {
-                            name: String::new(),
                             ttl: cur_ttl,
                             url: cur_url.clone(),
                             frame,
@@ -2423,6 +2855,11 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::Field(parts[1].to_string(), parts[2].to_string()));
                 }
             }
+            "first" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::First(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
             "last" => {
                 if parts.len() >= 3 {
                     cur_extracts.push(Extract::Last(parts[1].to_string(), parts[2].to_string()));
@@ -2433,9 +2870,45 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::Count(parts[1].to_string(), parts[2].to_string()));
                 }
             }
+            "last_row" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::LastRow(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
             "path" => {
                 if parts.len() >= 3 {
                     cur_extracts.push(Extract::Path(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
+            "deep" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::Deep(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
+            "regex" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::Regex(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
+            "last_line" => {
+                if parts.len() >= 2 {
+                    cur_extracts.push(Extract::LastLine(parts[1].to_string()));
+                }
+            }
+            "obj_last" => {
+                if parts.len() >= 3 {
+                    cur_extracts.push(Extract::ObjLast(parts[1].to_string(), parts[2].to_string()));
+                }
+            }
+            "last_obj" => {
+                let quoted = parse_quoted_args(line.get(9..).unwrap_or(""));
+                if quoted.len() >= 4 {
+                    cur_extracts.push(Extract::LastObj(
+                        quoted[0].clone(),
+                        quoted[1].clone(),
+                        quoted[2].clone(),
+                        quoted[3].clone(),
+                    ));
                 }
             }
             "geojson" => {
@@ -3145,6 +3618,13 @@ fn extract_pending(src: &SourceConfig, body: &str, body_bytes: &[u8], now: f64) 
                     }
                 }
             }
+            Extract::First(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = jfirst(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                }
+            }
             Extract::Last(k, n) => {
                 if let Some(ref j) = parsed_json {
                     if let Some(v) = jlast(j, k) {
@@ -3182,10 +3662,84 @@ fn extract_pending(src: &SourceConfig, body: &str, body_bytes: &[u8], now: f64) 
                     extracted.insert(n.clone(), v);
                 }
             }
+            Extract::LastRow(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = j2d_last_row(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                } else if let Some(v) = text_last_col(body, k) {
+                    extracted.insert(n.clone(), v);
+                }
+            }
             Extract::Path(k, n) => {
                 if let Some(ref j) = parsed_json {
                     if let Some(v) = jpath(j, k) {
                         extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::Deep(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(v) = jdeep_find_num(j, k) {
+                        extracted.insert(n.clone(), v);
+                    }
+                }
+            }
+            Extract::LastLine(n) => {
+                if let Some(v) = body
+                    .lines()
+                    .filter(|l| {
+                        let t = l.trim();
+                        !t.is_empty() && !t.starts_with('#')
+                    })
+                    .last()
+                    .and_then(|line| {
+                        split_data_line(line)
+                            .into_iter()
+                            .filter_map(|t| t.parse::<f64>().ok())
+                            .last()
+                    })
+                {
+                    extracted.insert(n.clone(), v);
+                }
+            }
+            Extract::ObjLast(k, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let Some(obj) = jpath_val(j, k) {
+                        if let JsonVal::Obj(m) = obj {
+                            if let Some(last_key) = m.keys().max_by(|a, b| {
+                                let ka = a.parse::<i64>().unwrap_or(0);
+                                let kb = b.parse::<i64>().unwrap_or(0);
+                                ka.cmp(&kb)
+                            }) {
+                                if let Some(val) = m.get(last_key).and_then(scalar_of) {
+                                    extracted.insert(n.clone(), val);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Extract::Regex(pat, n) => {
+                if let Some(v) = extract_regex_val(body, pat) {
+                    extracted.insert(n.clone(), v);
+                }
+            }
+            Extract::LastObj(fk, fv, ek, n) => {
+                if let Some(ref j) = parsed_json {
+                    if let JsonVal::Arr(arr) = j {
+                        for v in arr.iter().rev() {
+                            if let JsonVal::Obj(o) = v {
+                                if let Some(JsonVal::Str(s)) = o.get(fk) {
+                                    if s == fv {
+                                        if let Some(val) = jnum(v, ek) {
+                                            extracted.insert(n.clone(), val);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -3760,7 +4314,7 @@ fn materialize(
                 0 | 1 => (C_LIGHT, false),
                 _ => force_constants_by_id(id as f64, body_props)?,
             };
-            let tau_default = 1.0 / v_or_d;
+            let tau_default = force_tau_of_id(id).unwrap_or(1.0 / v_or_d);
             Some((v_or_d, tau_default, is_diff, id))
         })
         .collect();
@@ -3790,12 +4344,14 @@ fn materialize(
             });
             let effective_ttl = pend.ttl.unwrap_or(src.reach_ttl.unwrap_or(src.ttl) as f64);
             let extent = pend.extent.unwrap_or_else(|| {
-                let reach_time = effective_ttl + tau;
-                if is_diff {
-                    (2.0 * v_or_d * reach_time).sqrt()
-                } else {
-                    v_or_d * reach_time
-                }
+                force_extent_of_id(force_type).unwrap_or_else(|| {
+                    let reach_time = effective_ttl + tau;
+                    if is_diff {
+                        (2.0 * v_or_d * reach_time).sqrt()
+                    } else {
+                        v_or_d * reach_time
+                    }
+                })
             });
             if extent.is_nan() || tau.is_nan() {
                 return None;
@@ -4512,7 +5068,6 @@ mod tests {
     #[test]
     fn test_render_source_url_substitutions() {
         let src = SourceConfig {
-            name: "test".into(),
             ttl: 100,
             url: "https://example.com?sstr={target}&from={catalog}".into(),
             frame: super::Frame::Surface {
@@ -4555,7 +5110,6 @@ mod tests {
     #[test]
     fn test_post_body_rendering() {
         let src = SourceConfig {
-            name: "test_post".into(),
             ttl: 100,
             url: "https://earth-search.aws.element84.com/v0/search".into(),
             frame: super::Frame::Surface { body_name: "earth".into(), lat: 0.0, lon: 0.0, alt: 0.0 },
@@ -4594,7 +5148,6 @@ mod tests {
     #[test]
     fn test_erddap_argo_map_extract() {
         let src = SourceConfig {
-            name: "argo".into(),
             ttl: 43200,
             url: "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json".into(),
             frame: super::Frame::Surface {
@@ -4993,5 +5546,39 @@ mod tests {
         map.insert("mars".to_string(), eph);
         let p = super::body_fixed_to_icrs("mars", 35.0, -15.0, 0.0, tdb, &map).unwrap();
         assert!(p[0] > 1.0e9);
+    }
+
+    #[test]
+    fn test_restored_extract_variants() {
+        // jfirst / jlast / jdeep / jcount / jpath(negative idx)
+        let j = super::parse_json(
+            r#"{"data":[{"a":1,"nested":{"b":9}},{"a":2},{"a":3}],"x":[10,20,30]}"#,
+        )
+        .unwrap();
+        assert_eq!(super::jfirst(&j, "data.a"), Some(1.0));
+        assert_eq!(super::jlast(&j, "data.a"), Some(3.0));
+        assert_eq!(super::jdeep_find_num(&j, "b"), Some(9.0));
+        assert_eq!(super::jcount(&j, "data"), Some(3.0));
+        assert_eq!(super::jpath(&j, "x.-1"), Some(30.0));
+        // 2D array with header row: last row's value for column "a"
+        let j2 = super::parse_json(r#"[["t","a"],["x",1],["y",2]]"#).unwrap();
+        assert_eq!(super::j2d_last_row(&j2, "a"), Some(2.0));
+        // text_last_col: header matched by name, last data row
+        let csv = "# time temp\n1 10\n2 20\n";
+        assert_eq!(super::text_last_col(csv, "temp"), Some(20.0));
+        // std regex engine: '...' shorthand and literal-group patterns work
+        assert_eq!(
+            super::extract_regex_val(r#"{"totalItems":5,"x":1}"#, r#"("totalItems":...,)"#),
+            Some(5.0)
+        );
+        assert_eq!(
+            super::extract_regex_val("<Count>5</Count>", "<Count>([0-9]+)</Count>"),
+            Some(5.0)
+        );
+        // LastLine: last numeric column of last non-comment line
+        assert_eq!(
+            super::jcount(&super::parse_json(r"[1,2,3]").unwrap(), "."),
+            Some(3.0)
+        );
     }
 }
