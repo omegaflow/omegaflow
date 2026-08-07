@@ -772,3 +772,64 @@ note box list has no scalar sensor values (only lastMeasurement ids); values nee
 decline openbrewerydb
 url https://api.openbrewerydb.org/v1/breweries?per_page=200
 note brewery registry — forceless, no physical measurement
+
+# --- CDN domain analysis (2026-08-07) ---
+# 22 CDN domains without live-API coverage in sources_live.φ.
+# Per-block analysis: 14 DECLINE, 4 covered, 3 phantom, 1 recovered (PBDB).
+
+decline force-gate
+note ICOS Carbon Portal CO2: SPARQL station query returns registry metadata (station list with coordinates), not per-station CO2 measurement values. Council: station registries DECLINE.
+
+decline force-gate
+note HDX humanitarian boundaries (hdx_cod_ps): administrative boundary polygons = geographic infrastructure. No physical force. Council: geographic metadata DECLINE.
+
+decline force-gate
+note HDX volcano inventory (volcanoes_hdx): volcano catalog/list, not individual eruption events. Council: event catalogs without individual records DECLINE.
+
+decline force-gate
+note EBI MGnify marine metagenomes / ENA 16S amplicons: DNA sequence study metadata, abstract taxonomic catalogs. Not physical organism presence measurements. Council: abstract catalogs DECLINE.
+
+decline force-gate
+note UK Carbon Intensity (ngeso): economic/regulatory carbon intensity metric. No physical propagation. Council: economic indicators DECLINE.
+
+decline force-gate
+note GLIMS glacier points: glacier inventory = geographic catalog of glacier locations. Council: geographic catalogs DECLINE.
+
+decline force-gate
+note GIRO D-region predictor (ionosonde): model prediction, not measurement. Council: model output DECLINE.
+
+decline force-gate
+note IOC PSMSL station list: sea-level monitoring station registry. Council: station lists DECLINE.
+
+decline force-gate
+note Global Mangrove Atlas countries: policy/conservation metadata, not mangrove measurements. Council: metadata DECLINE.
+
+decline force-gate
+note ICOS FluxNet tower stations: station registry. Council: station lists DECLINE.
+
+decline force-gate
+note HadCRUT5 global temperature: climate index aggregate (single scalar time series, no position). Council: aggregate indices without individual records DECLINE.
+
+decline force-gate
+note MPC NEO Confirmation Page observation list: NEO observation catalog. Council: catalogs without individual physical events DECLINE.
+
+decline force-gate
+note ORFEUS EIDA stations / seismic stations: station registries. Council: station lists DECLINE.
+
+decline force-gate
+note USGS NLCD (National Land Cover Database): land cover geographic metadata. Council: geographic metadata DECLINE.
+
+dead phantom
+note Gist mars_landers / world_volcanoes: gist data files deleted. CDN asset 404. No live API counterpart in pre-CDN history.
+
+dead phantom
+note BFS ODL Germany (radiation): tested HTTP 404. Already documented in dead_sources. CDN asset 404.
+
+dead phantom
+note MPC TNO orbital elements: no live API URL in pre-CDN history. CDN asset never uploaded (404).
+
+dead phantom
+note McGill magnetar catalog: no live API URL in pre-CDN history. CDN asset never uploaded (404).
+
+dead phantom
+note KOERI Turkey earthquakes: no live API URL in pre-CDN history. CDN asset never uploaded (404).
