@@ -646,3 +646,17 @@ note CDDIS GNSS sp3 200 but HTML login page (needs NASA Earthdata auth). GNSS pr
 decline reference
 url https://cdms.astro.uni-koeln.de/cgi-bin/cdmsinfo?file=e028503.cat&version=current
 note CDMS molecular spectroscopy catalog = reference data (molecule spectral lines), no position. Reference catalogue DECLINE.
+dead 400
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-radiosonde&dataTypes=HGHT,TEMP,UWND&stations=72494&startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&format=json
+note NCEI global-radiosonde unsupported. Research correct radiosonde dataset name.
+
+dead 404
+url https://gong.nso.edu/DataArchive/GongDataArchive.pl?type=json&query=stations
+note GONG archive 404. Solar magnetogram stations. Research current GONG data API.
+
+parser-def query
+url https://datalab.noirlab.edu/query?sql=SELECT+TOP+3000+ls_id,ra,dec,type,z_phot_median,mag_r,mag_g
+note NOIRLab DataLab query returns 'Hello World' - wrong query API path. LSST catalog = em.
+dead 404
+url https://coastwatch.noaa.gov/erddap/griddap/tropomiCH4daily.csv?methane_mixing_ratio_bias_corrected%5Blast%5D%5B0%5D%5B(48.2)%5D%5B(16.4)%5D
+note TROPOMI CH4 datasetID unknown on coastwatch. CH4 = diffusion.
