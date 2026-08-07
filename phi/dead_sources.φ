@@ -177,3 +177,33 @@ note xmmssc table exists but column 'iauname' missing. VOTable-only. Schema disc
 # FORMAT=csv unsupported (VOTable-only) + fabricated table/column names.
 # All require heasarc schema discovery + XmlCount/VOTable Extract parser.
 # blocks: heasarc_3fhl_high_energy_catalog, heasarc_4fgl_blazars_only, heasarc_4fgl_dr4_gamma_ray_catalog, heasarc_batse_large_spectral_catalog_grb, heasarc_bepposax_grb_catalog, heasarc_chandra_galactic_center, heasarc_comptel_mev_source_catalog, heasarc_einstein_ipc_source_catalog, heasarc_einstein_probe_ep1_source_catalog, heasarc_exosat_point_source_catalog, heasarc_fermi_3fgl_third_source_catalog, heasarc_fermi_gbm_tte_trigger_catalog, heasarc_fermi_lat_tev_blazar_qg_candidates, heasarc_gomos_envisat_ozone_profiles_l3, heasarc_hess_galactic_plane_survey, heasarc_icecube_10yr_ps_catalog, heasarc_integral_ibis, heasarc_integral_ibis_17yr_hard_xray, heasarc_integral_ibis_grb_catalog, heasarc_integral_spi_nucleosynthesis, heasarc_maxi_gsc_catalog, heasarc_nicer_master_source_catalog, heasarc_nustar_hard_xray_catalog, heasarc_rosat_2rxs, heasarc_rosat_bright_source_catalog, heasarc_rosat_bsc, heasarc_rosat_xclass_clusters, heasarc_rxte_asm_xray_sources, heasarc_rxte_hexte_hard_xray_sources, heasarc_sage2_stratospheric_aerosol, heasarc_swift_bat105m, heasarc_swift_uvot_galaxy_survey, heasarc_swift_xrt_gw170817_afterglow, heasarc_tevcat_ground_based, heasarc_xmm_obs, heasarc_xrb_catalog, heasarc_xrism_resolve_source_catalog
+dead 400-schema
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel&outrows=5000&constraints=ngoodobsrel%3E50+AND+magrms%3E0.05
+note IRSA Gator: column 'filterid' invalid (ORA-00904). Also spatial=none exceeds table size limit - needs spatial=cone with objstr/radius. Research correct ZTF DR20 column names (oid,ra,dec,medianmag,magrms,ngoodobsrel confirmed valid; filterid wrong).
+dead 400-schema
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,filterid,medianmag,magrms,refmag&outrows=3000&constraints=magrms%3E0.3+AND+ngoodobsrel%3E100
+note Same as irsa_ztf_objects: filterid invalid + spatial=none size limit. refmag/medianmag/magrms valid. Fix: remove filterid, use spatial=cone.
+
+# IRSA Gator group: all ztf/2mass/allwise/neowise Gator blocks need
+# spatial=cone (spatial=none hits size limit) and correct selcols.
+key-needed lasair-token
+url https://lasair-ztf.lsst.ac.uk/api/cone/?ra=180.0&dec=30.0&radius=10.0&requestedColumns=objectId,ramean,decmean,gmag,rmag,classification&token=
+note HTTP 401 Authentication credentials not provided. Lasair requires free registration token (lasair.roe.ac.uk). In Key-Acquisition TODO. Also ra/dec fixed, not presence-bound - would need {lat}/{lon} template or deep-link region.
+key-needed lasair-token
+url https://lasair-ztf.lsst.ac.uk/api/cone/?ra=60.0&dec=-30.0&radius=10.0&requestedColumns=objectId,ramean,decmean,gmag,rmag,classification&token=
+note Same as lasair_ztf_alerts_north: 401 without Lasair token. Free registration. ra/dec fixed.
+dead 400-votable
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+600+TNS,RAJ2000,DEJ2000,DM,Width,Fluence,SNR+FROM+%22J/ApJS/257/59/catalog%22+ORDER+BY+SNR+DESC
+note VizieR table J/ApJS/257/59/catalog not found. Research correct CHIME FRB catalog reference (likely J/ApJS/257/59 with correct table name). TAPVizieR FORMAT=csv returns VOTable on error.
+dead 400-votable
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+FRB,RAJ2000,DEJ2000,DM,z,Telescope+FROM+%22J/MNRAS/475/1427/frbcat%22+ORDER+BY+DM+DESC
+note VizieR table J/MNRAS/475/1427/frbcat not found. Research correct FRBCAT reference. TAPVizieR FORMAT=csv returns VOTable on error.
+dead 400-schema
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-class=APO,AMO,ATE,IEO&sb-kind=a&limit=5000&limit-from=0&sort=H&order=asc
+note sbdb_query: sb-class and fields class/neo invalid (400). Also block has NO position (no ra/dec, no orbital elements) - H/diameter alone are forceless metadata without ICRS state. Needs Kepler/orbital-element fields (a,e,i,om,ma) + Extract::Kepler, or a NEO cad close-approach source instead.
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json
+note Endpoint alive (Jina returns 5.9MB TLE JSON; direct curl times out HTTP 000 - needs Jina route). But TLE orbital elements (MEAN_MOTION, ECCENTRICITY, etc.) have no ICRS position without Extract::Kepler orbital->position conversion. Needs Kepler parser. Use FORMAT=json, GROUP=active.
+parser-def tle-kepler
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=json
+note Same as celestrak_active_satellites: TLE needs Kepler parser, Jina route required. GROUP=starlink.
