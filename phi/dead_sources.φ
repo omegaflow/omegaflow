@@ -635,3 +635,14 @@ note OMNIWeb date format wrong (no hyphens). Research YYYYMMDD format. Solar win
 decline model
 url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date=2015-01-01&end_date=2020-01-01&daily=temperature_2m_mean
 note open-meteo climate archive = reanalysis model - council: model DECLINE.
+decline aggregate-index
+url http://www.bom.gov.au/climate/mjo/graphics/rmm.74toRealtime.txt
+note BOM MJO RMM = climate index (single scalar time series, no position). Council: aggregate indices DECLINE.
+
+parser-def html
+url https://cddis.nasa.gov/archive/gnss/products/{year}{day}/igs{year}{day}.sp3.Z
+note CDDIS GNSS sp3 200 but HTML login page (needs NASA Earthdata auth). GNSS precise orbits = gravity.
+
+decline reference
+url https://cdms.astro.uni-koeln.de/cgi-bin/cdmsinfo?file=e028503.cat&version=current
+note CDMS molecular spectroscopy catalog = reference data (molecule spectral lines), no position. Reference catalogue DECLINE.
