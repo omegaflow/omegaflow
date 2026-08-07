@@ -373,3 +373,12 @@ note GCN circulars API 400 (server error) on this query. Also circulars are TEXT
 dead 404
 url https://api.openaq.org/v3/measurements?parameter_id=2&limit=1000&date_from={today}T00:00:00Z&date_to={today}T23:59:59Z&order_by=datetime&sort_order=desc
 note OpenAQ v3 /measurements 404 (path requires locations_id or different route). /v3/parameters/2 works (PM2.5 confirmed). Research correct v3 measurements path. OPENAQ_API_KEY present. PM2.5 = diffusion.
+# HEASARC - Gemini-verified schemas (2026-08-07)
+# All tables CONFIRMED via TAP (no query preprocessing errors):
+#   chanmaster, xmmmaster, fermilpsc, batsegrb, swiftmastr
+# Real columns via TAP_SCHEMA discovery (NOT batch names):
+#   fermilpsc: name,ra,dec,flux_1_100_gev,flux_1_100_gev_error,
+#     detection_significance,spectr_um_type,assoc_name
+# Format: FORMAT=votable ONLY (BINARY base64). Needs VOTable Extract
+#   parser. Schema discovery before each query:
+#   SELECT column_name FROM TAP_SCHEMA.columns WHERE table_name='X'

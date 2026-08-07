@@ -22449,3 +22449,14 @@ lon_key sourceInfo.geoLocation.geogLocation.longitude
   field sourceInfo.siteCode.0.value site_code
   field values.0.value.0.value hydrosphere_local_dissolved_oxygen_mgl
 
+
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?dataset=ngk/best-avail/PT1M/xyzf&parameters=Field_Magnitude&time.min={yesterday}T00:00:00Z&time.max={now}Z
+ttl 300
+force gravity
+on earth 52.07 12.68
+format csv
+rows
+  field Field_Magnitude magnetosphere_f_ngk_nt
+  field Time timestamp_utc
+
