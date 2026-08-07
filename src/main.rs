@@ -1325,6 +1325,125 @@ fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
     Some(current)
 }
 
+#[cfg(test)]
+fn json_has_content(v: &JsonVal) -> bool {
+    match v {
+        JsonVal::Arr(arr) => !arr.is_empty() || arr.iter().any(json_has_content),
+        JsonVal::Obj(map) => map.values().any(json_has_content),
+        JsonVal::Null | JsonVal::Bool(_) | JsonVal::Str(_) | JsonVal::Num(_) => false,
+    }
+}
+
+#[cfg(test)]
+fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
+    let parsed = parse_json(body);
+    match parsed {
+        None => {
+            let trimmed = body.trim();
+            if trimmed.is_empty() {
+                "empty-response (empty body)".to_string()
+            } else {
+                "data-present (non-JSON body: HTML/XML/text)".to_string()
+            }
+        }
+        Some(j) => {
+            let mut arr_has_rows = false;
+            let mut key_found = false;
+            for ext in &src.extracts {
+                match ext {
+                    Extract::Map {
+                        arr_path,
+                        lat_key,
+                        lon_key,
+                        fields,
+                        ..
+                    } => {
+                        if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path) {
+                            if !arr.is_empty() {
+                                arr_has_rows = true;
+                            }
+                        }
+                        for fk in [lat_key.as_str(), lon_key.as_str()] {
+                            if jpath_val(&j, fk).is_some() {
+                                key_found = true;
+                            }
+                        }
+                        for (fk, _) in fields {
+                            if jpath_val(&j, fk).is_some() {
+                                key_found = true;
+                            }
+                        }
+                    }
+                    Extract::CelestialMap {
+                        arr_path, fields, ..
+                    }
+                    | Extract::Flatten {
+                        arr_path, fields, ..
+                    }
+                    | Extract::CmrPolygon {
+                        arr_path, fields, ..
+                    }
+                    | Extract::CelestialPolygon {
+                        arr_path, fields, ..
+                    }
+                    | Extract::KeplerMap {
+                        arr_path, fields, ..
+                    } => {
+                        if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path) {
+                            if !arr.is_empty() {
+                                arr_has_rows = true;
+                            }
+                        }
+                        for (fk, _) in fields {
+                            if jpath_val(&j, fk).is_some() {
+                                key_found = true;
+                            }
+                        }
+                    }
+                    Extract::Rows { .. } | Extract::GeojsonEvents { .. } | Extract::Hapi(_) => {
+                        if json_has_content(&j) {
+                            arr_has_rows = true;
+                        }
+                    }
+                    Extract::Field(k, _)
+                    | Extract::First(k, _)
+                    | Extract::Last(k, _)
+                    | Extract::Count(k, _)
+                    | Extract::Path(k, _)
+                    | Extract::Deep(k, _)
+                    | Extract::LastRow(k, _)
+                    | Extract::ObjLast(k, _)
+                    | Extract::Regex(k, _) => {
+                        if jpath_val(&j, k).is_some()
+                            || jpath_val(&j, k.split('.').next().unwrap_or(k)).is_some()
+                        {
+                            key_found = true;
+                        }
+                    }
+                    Extract::LastObj(_, _, _, _)
+                    | Extract::LastLine(_)
+                    | Extract::Ephemeris(_)
+                    | Extract::Vectors(_)
+                    | Extract::XmlCount(_, _) => {
+                        if json_has_content(&j) {
+                            key_found = true;
+                        }
+                    }
+                }
+            }
+            if arr_has_rows {
+                "data-present (container array has rows but extract yielded nothing)".to_string()
+            } else if key_found {
+                "data-present (keys exist but no rows extracted)".to_string()
+            } else if json_has_content(&j) {
+                "data-present (JSON has content but declared keys absent)".to_string()
+            } else {
+                "empty-response (JSON parsed but all containers empty)".to_string()
+            }
+        }
+    }
+}
+
 fn jnum(json: &JsonVal, key: &str) -> Option<f64> {
     if key.contains('.') {
         return jpath_val(json, key).and_then(scalar_of);
@@ -6471,14 +6590,16 @@ mod tests {
             match super::extract_pending(s, &body, now) {
                 super::ExtractResult::Samples(v) => {
                     if v.is_empty() {
-                        fail.push((url, "no samples".into()));
+                        let diag = super::diagnose_no_samples(s, &body);
+                        fail.push((url, format!("no samples ({})", diag)));
                     } else {
                         ok += 1;
                     }
                 }
                 super::ExtractResult::WithEphemeris(v, _) => {
                     if v.is_empty() {
-                        fail.push((url, "no samples".into()));
+                        let diag = super::diagnose_no_samples(s, &body);
+                        fail.push((url, format!("no samples ({})", diag)));
                     } else {
                         ok += 1;
                     }
@@ -6494,5 +6615,71 @@ mod tests {
         for (u, why) in fail.iter() {
             eprintln!("  FAIL {}  {}", u, why);
         }
+    }
+
+    #[test]
+    fn test_diagnose_no_samples() {
+        let base = super::SourceConfig {
+            ttl: 60,
+            url: "https://example.com/q".into(),
+            frame: super::Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            force: "seismic-body".into(),
+            tau: None,
+            tau_key: None,
+            format: "json".into(),
+            extracts: vec![super::Extract::Map {
+                arr_path: "features".into(),
+                lat_key: "geometry.coordinates.1".into(),
+                lon_key: "geometry.coordinates.0".into(),
+                alt_key: String::new(),
+                epoch_key: String::new(),
+                val_key: String::new(),
+                alt_sign: 1.0,
+                vel_key: String::new(),
+                trk_key: String::new(),
+                vr_key: String::new(),
+                fields: vec![("properties.mag".into(), "mag".into())],
+                lon_sign: None,
+                lat_sign: None,
+            }],
+            headers: vec![],
+            post_body: None,
+            method: "GET".into(),
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            reach_ttl: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+        };
+        let empty_geojson =
+            r#"{"type":"FeatureCollection","metadata":{"api":"2.7","count":0},"features":[]}"#;
+        let d_empty = super::diagnose_no_samples(&base, empty_geojson);
+        eprintln!("empty geojson -> {}", d_empty);
+        assert!(d_empty.contains("empty-response"), "got: {}", d_empty);
+
+        let filled_geojson = r#"{"type":"FeatureCollection","features":[{"geometry":{"coordinates":[-104.0,39.5,10.0]},"properties":{"mag":3.2}}]}"#;
+        let d_filled = super::diagnose_no_samples(&base, filled_geojson);
+        eprintln!("filled geojson -> {}", d_filled);
+        assert!(d_filled.contains("data-present"), "got: {}", d_filled);
+
+        let html = "<html>GraceDB down</html>";
+        let d_html = super::diagnose_no_samples(&base, html);
+        eprintln!("html -> {}", d_html);
+        assert!(d_html.contains("non-JSON"), "got: {}", d_html);
     }
 }
