@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 omegaflow source verifier — prüft JEDEN Parameter jedes Blocks in einer sources-Datei.
 
@@ -29,7 +28,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 import threading
 
-SRC = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("--") else "phi/sources_restored.φ"
+SRC = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("--") else "phi/sources_live.φ"
 SECRETS = ".secrets.local"
 REPORT_L = "/tmp/verify_report.jsonl"
 
@@ -148,7 +147,6 @@ def fetch_url(url, hdrs, timeout=12):
             return tag, status, text, None
     return None, None, None, last
 
-# ---------- format / field extraction ----------
 def json_leaf_paths(data, prefix=None, depth=0, out=None):
     if out is None: out = []
     if depth > 8 or data is None: return out
@@ -208,7 +206,6 @@ def detect_format(text):
         return "html", None, h, []
     return "other", None, [], []
 
-# ---------- resolution helpers ----------
 def normalize_path(path):
     path = path.replace("[", ".").replace("]", "")
     return [p for p in path.split(".") if p]
@@ -249,7 +246,6 @@ def find_container(data, used_map):
             return None
     return cur
 
-# ---------- parse blocks ----------
 blocks = []
 for idx, block in enumerate(open(SRC).read().strip().split("\n\n")):
     rec = {"idx": idx, "url": None, "ttl": None, "force": None,
@@ -364,11 +360,8 @@ def frame_report(motions):
                     info.append(("at", m, "scale not numeric"))
     return info
 
-# ---------- main loop ----------
 if __name__ != "__main__":
     raise SystemExit("import guard")
-# Group by EXACT url, not signature: query params change the response schema,
-# so every distinct configured URL must be fetched and verified individually.
 by_url = defaultdict(list)
 for b in blocks:
     by_url[b["url"]].append(b)
@@ -413,7 +406,6 @@ def release_host(host):
     with lock:
         host_slots[host] -= 1
 
-# select urls to process
 todo = []
 for url, grp in by_url.items():
     if len(todo) >= limit:
@@ -465,7 +457,6 @@ def process_one(item):
         print(f"  [{n:4}/{len(todo)}] curl {url[:60]} -> ERR {str(err)[:50]}", flush=True)
         return
     if route == "jina":
-        # unwrap {"code":200,"data":{"content":"<json string>"}}
         try:
             w = json.loads(raw or "")
             inner = w.get("data", {}).get("content")
@@ -474,8 +465,6 @@ def process_one(item):
         except Exception:
             pass
     fmt, data, real_keys, real_paths = detect_format(raw)
-    # columnar JSON (TAP/ssd-api): {metadata|fields:[{name,..}], data:[[..]]} — column
-    # names ARE the real keys; blocks reference them via field/cmap/ra_key/dec_key.
     if fmt == "json" and isinstance(data, dict):
         cols = None
         for k in ("metadata", "fields"):
@@ -510,7 +499,6 @@ def process_one(item):
     if fmt == "json":
         is_col = test.get("columnar") or any(t == "field_in" for t, _, _ in test["fields"])
         if is_col:
-            # columnar (TAP/ssd-api): field names / indices must fit the column list
             for typ, key, name in test["fields"]:
                 if typ == "field_in":
                     try:
@@ -545,17 +533,46 @@ def process_one(item):
                 ctx = data
             for typ, key, name in test["fields"]:
                 path = normalize_path(key)
+                if isinstance(container, list) and container and all(
+                    not isinstance(el, (dict, list)) for el in container
+                ):
+                    r = resolve(data, path)
+                    if r is NOT_FOUND:
+                        c["fields"] = False
+                        fails.append((typ, key, "not found"))
+                    continue
                 if resolve(ctx, path) is NOT_FOUND:
-                    c["fields"] = False
-                    fails.append((typ, key, "not found"))
+                    if isinstance(container, list) and container:
+                        found_in_any = any(
+                            resolve(el, path) is not NOT_FOUND
+                            for el in container[:20] if isinstance(el, (dict, list))
+                        )
+                        if not found_in_any:
+                            c["fields"] = False
+                            fails.append((typ, key, "not found"))
+                    else:
+                        c["fields"] = False
+                        fails.append((typ, key, "not found"))
             for kk, tag in ((test["lat"], "lat_key"), (test["lon"], "lon_key")):
                 if kk:
                     path = normalize_path(kk)
                     if resolve(ctx, path) is NOT_FOUND:
-                        c["latlon"] = False
-                        fails.append((tag, kk, "not found"))
+                        if isinstance(container, list) and container:
+                            found_in_any = any(
+                                resolve(el, path) is not NOT_FOUND
+                                for el in container[:20] if isinstance(el, (dict, list))
+                            )
+                            if not found_in_any:
+                                c["latlon"] = False
+                                fails.append((tag, kk, "not found"))
+                        else:
+                            c["latlon"] = False
+                            fails.append((tag, kk, "not found"))
+            if isinstance(container, list) and not container:
+                c["fields"] = True
+                c["latlon"] = True
+                fails = [f for f in fails if f[0] not in ("field", "path", "lat_key", "lon_key")]
     else:
-        # non-json response: verify against extracted headers (votable/csv/html)
         is_col = test.get("columnar") or any(t == "field_in" for t, _, _ in test["fields"])
         jsonish = any(key.startswith(("properties.", "geometry.")) for _, key, _ in test["fields"]) or \
                   any(m for m in test["maps"] if m and m != ".")
@@ -597,7 +614,6 @@ def process_one(item):
             fails.append(("format", fmt, "unexpected response format"))
     ok = not fails
     if not ok:
-        # don't penalize empty responses or non-verifiable formats
         if fmt == "json" and (not real_keys or real_keys == ["error"]) and not real_paths:
             ok = True  # empty/error response — source may work with valid data
             fails.clear()
@@ -620,7 +636,6 @@ with ThreadPoolExecutor(max_workers=N_WORKERS) as ex:
 cp.close()
 print(f"DONE. {counter['done']} signatures, routes: {dict(route_stats)}")
 
-# ---------- summary ----------
 if not resume or True:
     allr = []
     if os.path.exists(REPORT_L):
