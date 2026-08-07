@@ -110,19 +110,11 @@ lon_key lon
   field_in track track
 
 
-url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&api_key={nasa_key}
+url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&api_key={NASA_API_KEY}
 ttl 60
 force em
 at sun 1.0
-  field 0.current_int_xrlong current_int_xrlong
-  field 0.current_class current_class
-map result
-lat_key hgs_y
-lon_key hgs_x
-  field_in event_starttime event_starttime
-  field_in event_peaktime event_peaktime
-  field_in fl_goescls fl_goescls
-  field_in ar_noaanum ar_noaanum
+regex classType":"X... solar_flare_xray_class
 
 
 url https://api.adsb.lol/v2/point/{lat}/{lon}/500
@@ -1357,7 +1349,7 @@ lon_key sourceInfo.geoLocation.geogLocation.longitude
 
 
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=00400,00095,00300,63680&siteStatus=active&bbox=-125,24,-66,50&siteType=ST
+url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=00400,00095,00300,63680&siteStatus=active&bBox={lon_min},{lat_min},{lon_max},{lat_max}&siteType=ST
 ttl 300
 force diffusion
 body earth

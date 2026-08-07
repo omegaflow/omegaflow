@@ -2630,7 +2630,11 @@ fn resolve_secret(url: &str) -> String {
         rest = &rest[start + 1..];
         if let Some(end) = rest.find('}') {
             let key = &rest[..end];
-            let val = std::env::var(key).unwrap_or_default();
+            let upper = key.to_uppercase();
+            let val = std::env::var(key)
+                .ok()
+                .or_else(|| std::env::var(&upper).ok())
+                .unwrap_or_default();
             result.push_str(&val);
             rest = &rest[end + 1..];
         } else {
@@ -6432,14 +6436,20 @@ mod tests {
                 ("{year}", "2026"),
                 ("{month}", "08"),
                 ("{day}", "07"),
-                ("{lat}", "52.52"),
-                ("{lon}", "13.41"),
+                ("{lat}", "29.5"),
+                ("{lon}", "-95.0"),
                 ("{ra}", "0.0"),
                 ("{dec}", "0.0"),
                 ("{target}", "Ceres"),
                 ("{week_ago}", "2026-07-31"),
                 ("{hour_ago}", "2026-08-07T11:00:00Z"),
                 ("{body}", "ISS"),
+                ("{lon_min}", "-95.0"),
+                ("{lon_max}", "-94.0"),
+                ("{lat_min}", "29.0"),
+                ("{lat_max}", "30.0"),
+                ("{grid}", "29.5,-95.0|29.6,-95.0"),
+                ("{nearest_station}", "8518750"),
             ] {
                 url = url.replace(k, v);
             }
