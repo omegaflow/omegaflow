@@ -473,3 +473,28 @@ note OpenQuake GEM_GLOBAL_v2023.1 model 404. Research current hazard model ID.
 dead 404
 url https://data.humdata.org/api/3/action/datastore_search?resource_id=13ac0b40-5e3e-4a01-8b3b-85fe6a0b47e7&limit=3
 note HDX datastore resource_id 404. Research current humanitarian data resource.
+dead 404
+url https://wdc.bgs.ac.uk/api/v1/data?observatories=ESK&elements=X,Y,Z,F&sampling_period=minute&format=json
+note WDC-BGS API 404 (fabricated path). Working alternative: imag-data.bgs.ac.uk/GIN_V1/hapi (already curated 93 observatories).
+
+dead 404
+url https://odlinfo.bfs.de/daten/odl-status-de.json
+note BFS radiation status 404. Research current BFS ODL endpoint.
+decline model
+url https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml?model=IGRF&lat={lat}&lon={lon}&startYear={year}&resultFormat=json
+note IGRF model calculator (HTML form). IGRF = geomagnetic MODEL prediction, not measurement - council: model DECLINE. Real measurements via BGS-HAPI/InterMagnet.
+dead 404
+url https://icecube.wisc.edu/data-releases/2023/07/icecube-hese-12-year-data-release/hese_12yr_events.csv
+note IceCube HESE data-release path 404. Research current IceCube neutrino event data endpoint.
+
+decline model
+url http://icgem.gfz-potsdam.de/calcgrid?model=EGM2020&lat={lat}&lon={lon}&height=0&functional=height_over_ellipsoid
+note ICGEM EGM2020 gravity model calculator (HTML/POST). Gravity MODEL not measurement - council: model DECLINE. Real gravity via BGS-HAPI/GRACE.
+
+dead 404
+url https://www.hydrosheds.org/api/v1/rivers?bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=5
+note HydroSheds rivers/basins are geographic infrastructure - DECLINE anyway. Also API 404.
+
+parser-def html
+url https://hsaf.meteoam.it/Products/Detail?prod=H25&format=json&date={today}
+note H-SAF product returns HTML detail page. Satellite precipitation (H25) would be diffusion/advective if API found.
