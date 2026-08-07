@@ -239,7 +239,7 @@ If a force type is needed, it must be added to `force_id_of()` and `force_extent
 
 ## Reference — Archived Concepts & Plans
 
-Original detailed specifications. Moved to `/home/johannes/projects/archive/omegaflow/` during 2026-08-07 consolidation. Recoverable for context when working on related TODO items.
+Original detailed specifications. Moved to `docs/reference/` during 2026-08-07 consolidation. Recoverable for context when working on related TODO items.
 
 ### docs/concepts/
 

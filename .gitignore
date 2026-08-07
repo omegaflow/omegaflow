@@ -12,7 +12,7 @@ phi/health.json
 phi/kernels/
 *.py
 !scripts/verify_sources.py
-reference/
+/reference/
 scripts/__pycache__/
 .secrets.local
 server.log
