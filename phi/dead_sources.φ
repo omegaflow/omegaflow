@@ -764,3 +764,11 @@ note irsc.ut.ac.ir unreachable (connect timeout) from this network.
 parser-def positionless
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=50
 note CAD close-approach data is {fields, data:[[...]]} without ra/dec/lat/lon — no position to place samples. Data already CDN-mirrored (jpl_cad_neo_recent_approaches).
+
+parser-def open-sense-map
+url https://api.opensensemap.org/boxes?bbox={lon_min},{lat_min},{lon_max},{lat_max}&limit=100
+note box list has no scalar sensor values (only lastMeasurement ids); values need per-sensor fetch — not single-URL extractable
+
+decline openbrewerydb
+url https://api.openbrewerydb.org/v1/breweries?per_page=200
+note brewery registry — forceless, no physical measurement
