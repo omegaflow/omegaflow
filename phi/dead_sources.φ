@@ -450,3 +450,26 @@ note e-Callisto API 404. Solar radio spectrometer events (em).
 dead 404
 url https://exofop.ipac.caltech.edu/tess/download_confirmed.php?output=csv
 note ExoFOP download_confirmed.php 404. Research current TESS confirmed planets API.
+dead 500
+url https://kp.gfz-potsdam.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp,ap,Cp
+note GFZ Kp API 500 on all date formats. Kp/geomagnetic index (gravity).
+
+dead 404
+url https://gravis.gfz-potsdam.de/api/v1/timeseries/?product=GRACE_LOD&format=json
+note GRAVIS GRACE_LOD 404. GRACE Earth orientation (gravity).
+
+dead 400
+url https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=500&orderby=time
+note GEOFON fdsnws does not support geojson format (like seismicportal). Use format=json.
+
+dead 404
+url https://www.globalfiredata.org/api/v5/burned_area?start={year}-{month}-01&end={year}-{month}-{day}&bbox=-180,-90,180,90
+note GlobalFireData API v5 burned_area 404. Research GFED5/GWIS current API.
+
+dead 404
+url https://api.openquake.org/v1/hazard/pga/?model=GEM_GLOBAL_v2023.1&poe=0.02&investigation_time=50&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+note OpenQuake GEM_GLOBAL_v2023.1 model 404. Research current hazard model ID.
+
+dead 404
+url https://data.humdata.org/api/3/action/datastore_search?resource_id=13ac0b40-5e3e-4a01-8b3b-85fe6a0b47e7&limit=3
+note HDX datastore resource_id 404. Research current humanitarian data resource.
