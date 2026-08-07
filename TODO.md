@@ -305,22 +305,6 @@ Code: `phi/sources_cdn.φ`
 
 ---
 
-## Residual Force-Gate Classification
-
-The first Force-Gate re-audit corrected the large violations (weather→advective/thermal, air-quality→diffusion, gas concentrations→diffusion, ephemeris/masses→gravity, biotic occurrences→biotic, station/metadata/count blocks→DECLINED). A residual set of ambiguous single blocks awaits final classification:
-
-- `getUSVolcanoes` (USGS volcano list — catalog or seismic-surface?)
-- `fireball.api` (JPL bolide records — em or gravity?)
-- `getUSVolcanoes` / `esri_monitored_volcanos` vs pure volcano catalogs
-- `marine_daily`/`marine_sst` in live (forecast or measurement?)
-- Remaining `force em` blocks on ocean/SST/terrain in live file
-
-Action: Present the residual list to the Council. Bind each. Apply final corrections.
-Code: `phi/sources_cdn.φ`, `phi/sources_live.φ`
-Verification: Every source's force is physically accurate. `cargo check` clean.
-
----
-
 ## Pre-CDN Format Migration: EM Force — TAP Astronomy
 
 Migrate TAP/VizieR astronomical catalog source blocks.

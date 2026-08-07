@@ -8198,7 +8198,7 @@ field_in 7 v_rel_kms
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
 ttl 3600
-force gravity
+force em
 at sun 1.0
 map data
 lat_key 3
@@ -8215,7 +8215,7 @@ field_in 8 velocity_kms
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date
 ttl 3600
-force gravity
+force em
 at sun 1.0
 map data
 field_in 2 date
@@ -8428,7 +8428,7 @@ obj_last value biosphere_solar_radiation_power
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&date-min=2020-01-01
 ttl 3600
-force gravity
+force em
 at sun 1.0
 map data
 lat_key 3
@@ -15473,22 +15473,6 @@ lon_key dec_long_va
   field peak_dt peak_dt
   field peak_va peak_va
   field gage_ht gage_ht
-
-url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
-ttl 86400
-force em
-at sun 1.0
-map .
-lat_key latitude
-lon_key longitude
-  field volcano_name volcano_name
-  field region region
-  field elevation_meters elevation_meters
-  field nvews_threat nvews_threat
-  field icao_coordinates icao_coordinates
-lat_key 2.latitude
-lon_key 2.latitude
-  field vnum vnum
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 ttl 86400

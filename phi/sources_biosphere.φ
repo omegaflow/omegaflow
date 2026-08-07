@@ -622,7 +622,7 @@ lon_key decimalLongitude
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=500&date-min=2010-01-01
 ttl 86400
-force gravity
+force em
 at sun 1.0
 format universal
 rows data
