@@ -16018,7 +16018,7 @@ field_in 1 month
 field_in 2 pdo_index
 
 
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,SNWD&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json&limit=10000
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW&stations=USW00013739&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json&limit=10000
 ttl 86400
 force thermal
 at sun 1.0
@@ -16110,7 +16110,7 @@ field_in WMO_PRES min_pressure_hpa
 field_in BASIN basin_code
 
 
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=CH&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&stations=USW00013739&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json
 ttl 86400
 force thermal
 at sun 1.0
@@ -16127,7 +16127,7 @@ lon_key LONGITUDE
   field SLP SLP
 
 
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=SF&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&stations=USW00094728&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json
 ttl 86400
 force thermal
 at sun 1.0
@@ -16172,7 +16172,7 @@ lon_key site.0.geo.geometry.coordinates.0
   field species.0.speciesCode speciesCode
 
 
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&stations=USW00013739&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
 ttl 86400
 force thermal
 at sun 1.0
@@ -22136,3 +22136,271 @@ lon_key longitude
   field acq_date acquisition_date
   field acq_time acquisition_time
 
+
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&month={month}&year={year}
+ttl 86400
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+  field species species_name
+  field genus genus
+  field family family
+  field kingdom kingdom
+  field year obs_year
+  field month obs_month
+  field country country_code
+  field stateProvince state_province
+
+
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}
+ttl 86400
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field iucnRedListCategory iucn_category
+field year obs_year
+field country country_code
+
+
+url https://api.gbif.org/v1/occurrence/search?establishmentMeans=INVASIVE&hasCoordinate=true&limit=300&mediaType=StillImage&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field kingdom kingdom
+field family family_name
+field establishmentMeans establishment_means
+field stateProvince region
+field country country_code
+field mediaCount image_count
+field occurrenceDate observation_date
+
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=4867&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field stateProvince region
+field country country_code
+field occurrenceDate observation_date
+field individualCount flock_size
+
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION&year={year}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field stateProvince region
+field country country_code
+field occurrenceDate observation_date
+field recordedBy observer
+
+
+url https://api.gbif.org/v1/occurrence/search?establishmentMeans=INVASIVE&hasCoordinate=true&limit=300&habitat=marine&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field kingdom kingdom_name
+field family family_name
+field establishmentMeans establishment_status
+field country country_code
+field occurrenceDate observation_date
+field waterBody water_body
+
+
+url https://api.gbif.org/v1/occurrence/search?classKey=358&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field stateProvince region
+field occurrenceDate observation_date
+
+
+url https://api.gbif.org/v1/occurrence/search?classKey=212,359,358,131,186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field class taxon_class
+field country country_code
+field occurrenceDate observation_date
+field individualCount population_count_proxy
+field recordedBy observer
+
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=797&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field stateProvince region
+field occurrenceDate observation_date
+field individualCount individual_count
+
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=221&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,PRESERVED_SPECIMEN&year={year}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field order order_name
+field country country_code
+field occurrenceDate observation_date
+field waterBody ocean_basin
+field depth depth_m
+
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=145&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field stateProvince region
+field occurrenceDate observation_date
+field waterBody water_body
+
+
+url https://api.gbif.org/v1/occurrence/search?kingdomKey=5&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field phylum phylum_name
+field country country_code
+field stateProvince region
+field occurrenceDate observation_date
+field kingdom kingdom_name
+
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=4887&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field waterBody sea_basin
+field occurrenceDate observation_date
+field stateProvince coastal_region
+
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=1571&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field waterBody ocean_basin
+field occurrenceDate observation_date
+field depth depth_m
+
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=104&hasCoordinate=true&depth=500,5000&limit=300&basisOfRecord=PRESERVED_SPECIMEN&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field depth depth_m
+field waterBody ocean_region
+field occurrenceDate collection_date
+field country country_code
+
+
+url https://api.gbif.org/v1/occurrence/search?classKey=137&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,PRESERVED_SPECIMEN&year={year}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field order order_name
+field country country_code
+field depth depth_m
+field waterBody ocean_basin
+field occurrenceDate observation_date
+
+
+url https://api.gbif.org/v1/occurrence/search?classKey=359&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&habitat=terrestrial&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field stateProvince region
+field occurrenceDate observation_date
+field individualCount group_size
+
+
+url https://api.gbif.org/v1/occurrence/search?kingdomKey=6&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field phylum phylum_name
+field country country_code
+field stateProvince region
+field occurrenceDate observation_date
+
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=9247&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field country country_code
+field waterBody ocean_habitat
+field occurrenceDate observation_date
+field depth nesting_depth_cm
