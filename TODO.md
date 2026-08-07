@@ -210,6 +210,151 @@ Blocks in `sources.φ` carry `{latest}` suffix → 404 without resolver. Covered
 
 ---
 
+## Sources Inventory Reclassification
+
+Operator correction: "auth required" was applied too broadly. The only obstacle is PAID. Free keys and free registrations are NOT obstacles. `.secrets.local` already contains working keys for nearly every source previously marked "auth required."
+
+Reclassification of the 2,189 pre_cdn.φ source blocks:
+- IMPLEMENT-NOW: ~85% (keyless or key in .secrets.local)
+- ACQUIRE-KEY: ~3% (10 free-registration APIs, operator work)
+- DEFER: ~10% (parser support, TLE extract, TAP protocol, live URL verification)
+- DROP: ~2% (MarineTraffic, SentinelHub/Planet/GEE, LeoLabs, CTBTO, DSN Now, MBARI MARS)
+
+Code: `phi/recovery/pre_cdn.φ` (inventory), `phi/sources_cdn.φ`, `phi/sources_live.φ`, `phi/sources_biosphere.φ`
+
+---
+
+## Sources Live Schema Drift Canonicalization
+
+`sources_live.φ` carries inconsistent field naming patterns across source blocks. Example: `field properties.mag mag` vs `field properties.mag event_magnitude` for identical USGS earthquake magnitude fields. Schema drift compounds with each added block.
+
+Rule: force + frame are already canonicalized. Field keywords must follow: `field <json_path> <canonical_name>` where canonical_name is force-prefixed and describes the physical quantity, not the source-specific abbreviation.
+
+Action: One-pass canonicalization of `sources_live.φ` field keywords. Apply the same naming discipline used in `sources_cdn.φ`. Incremental — run after each session that adds new live blocks, not a blocking prerequisite.
+Verification: `grep -oP 'field \S+ \K\S+' phi/sources_live.φ | sort | uniq -c | sort -rn` shows consistent naming (no duplicate patterns for the same physical quantity). `cargo check` clean.
+
+---
+
+## Pre-CDN Format Migration: Acoustic Force
+
+Migrate remaining acoustic-force source blocks from `pre_cdn.φ` old format to url-first format in `sources_cdn.φ` (ttl≥86400) or `sources_live.φ` (ttl<86400).
+
+Scope: 105 acoustic blocks. NDBC buoys (39, CSV format, keyless), NOAA CO-OPS (130 blocks across acoustic/thermal split), GCOOS buoys (30, ArcGIS, keyless), METAR stations, rain radar, aviation weather.
+
+Format conversion: `source <name>` → remove, `wgs84 <lat> <lon>` → `on earth <lat> <lon>`, `ecliptic 1` → `at sun 1.0`, add `body earth` where missing. Canonical field keywords. No overlapping blocks with existing `sources_cdn.φ`/`sources_live.φ` — deduplicate.
+
+Verification: All migrated blocks parse without error. `cargo run` loads from both files. `cargo check` clean. Acoustic oscillators appear in render window.
+
+---
+
+## Pre-CDN Format Migration: Diffusion Force
+
+Migrate remaining diffusion-force source blocks from `pre_cdn.φ` to canonical format.
+
+Scope: 186 diffusion blocks. USGS water quality (21, USGS_WATER_KEY in .secrets.local), AERONET aerosol (18, DEFER — needs AERONET parser research first, move to DEFER), BOM NSW weather, Open-Meteo air quality, ArcGIS PM2.5, NOAA electron/proton flux, GOES SEP proton flux.
+
+Approach: IMPLEMENT-NOW blocks first (~140). DEFER blocks to separate TODO.
+
+Verification: Diffusion oscillators appear in render window. `cargo check` clean.
+
+---
+
+## Pre-CDN Format Migration: Gravity Force — BGS Magnetic
+
+Migrate the British Geological Survey magnetic data blocks from `pre_cdn.φ`.
+
+Scope: 162 blocks from `imag-data.bgs.ac.uk`. All keyless. Force `gravity`. Each block is a single magnetic observatory or model grid point with lat/lon and field component values.
+
+Format: url-first with `on earth` frame, `force gravity`. CDN candidates (ttl≥86400 implied by static nature). Canonical field keywords: `field <path> gravity_bgs_<component>`.
+
+Verification: All 162 blocks parse. `cargo check` clean. Magnetic field oscillators appear in render window with force `gravity`.
+
+---
+
+## Pre-CDN Format Migration: Gravity Force — JPL SSD / NEO
+
+Migrate JPL Solar System Dynamics and NEO close-approach blocks.
+
+Scope: 78 SSD blocks + 26 NEO blocks. Keyless. Force `gravity`. Position via orbital elements or state vectors. May require `Extract::HorizonsVec` or `Extract::Kepler` (existing TODOs). Simple blocks (CAD NEO) are rows with `ra_key`/`dec_key`.
+
+Approach: Simple CAD NEO blocks first (IMPLEMENT-NOW). Ephemeris blocks DEFER until extract types exist.
+
+Verification: NEO oscillators appear at correct ICRS positions. `cargo check` clean.
+
+---
+
+## Pre-CDN Format Migration: EM Force — World Bank Indicators
+
+Migrate the 228 World Bank API source blocks. Largest single-domain batch.
+
+Scope: 228 economic/development indicators. Keyless. Force `em`. Each block fetches a single country or global indicator. Static data with ttl≥86400 → `sources_cdn.φ`. Frame: `on earth <country_capital_lat> <country_capital_lon>` or `at sun 1.0` for global indicators.
+
+Design pattern: canonical `field` declarations with consistent `biosphere_wb_<indicator>` prefix. Template-based generation acceptable — all blocks follow identical pattern differing only in URL indicator code and field name.
+
+Verification: Random sample of 10 blocks parses and produces oscillators. All 228 blocks parse without error. `cargo check` clean.
+
+---
+
+## Pre-CDN Format Migration: EM Force — TAP Astronomy
+
+Migrate TAP/VizieR astronomical catalog source blocks.
+
+Scope: 79 TAP VizieR blocks, 51 HEASARC blocks. ASTROQUERY TAP protocol. CDS_API_KEY in `.secrets.local`. Force `em`.
+
+Status: TAP response format (VOTable XML) needs parser support. Blocks are IMPLEMENT-NOW for key access but DEFER for parser. Add as `format universal` with `rows` extract where CDS API returns simple JSON. TAP-specific VOTable → DEFER.
+
+Verification: JSON-returning CDS blocks parse. VOTable blocks skip gracefully with format warning. `cargo check` clean.
+
+---
+
+## Pre-CDN Format Migration: EM Force — PDG Particle Data
+
+Migrate Particle Data Group fundamental physics constants.
+
+Scope: 38 blocks from `pdgapi.lbl.gov`. Keyless. Force `em`. Each block is a single particle mass, width, or decay constant. Static data, ttl≥604800 → `sources_cdn.φ`. Frame: `on earth` at LBNL coordinates (37.877, -122.247).
+
+Approach: url-first format, `force em`, canonical `field pdg_values.0.value <name>`. Single-session implementation.
+
+Verification: All 38 blocks parse. `cargo check` clean. PDG mass values confirmed against published PDG review.
+
+---
+
+## Pre-CDN Format Migration: Seismic Force Deduplication
+
+Migrate remaining seismic-body and seismic-surface blocks, deduplicating against already-active sources.
+
+Scope: 46 seismic-body + 67 seismic-surface = 113 blocks. USGS (48 — mostly duplicates of active), EMSC, EarthScope, INGV, KOERI, historical yearly quake catalogs, volcano activity.
+
+Work: Compare each pre_cdn.φ seismic block against sources_cdn.φ and sources_live.φ. Blocks with identical URL → drop (already migrated). Blocks with different URL but same data → merge (canonical URL). Blocks with new data → migrate.
+
+Verification: No duplicate URLs between CDN and live files. No duplicate data streams. `cargo check` clean.
+
+---
+
+## Pre-CDN Format Migration: Thermal Force — Historical Climate
+
+Migrate remaining thermal force blocks.
+
+Scope: 73 thermal blocks. NCEI climate (NOAA_CDO_TOKEN in .secrets.local), NSIDC sea ice (EARTHDATA_EDL_TOKEN), FIRMS fire (FIRMS_MAP_KEY in .secrets.local), Archive Open-Meteo (25, keyless, CDN candidates), ArcGIS METAR.
+
+CDN candidates: all blocks with ttl≥86400 are static archives → mirror to CDN.
+
+Verification: Thermal oscillators appear. `cargo check` clean.
+
+---
+
+## Key Acquisition: Free Registration Blitz
+
+Operator action (not code). Register for 10 free-API keys not yet in `.secrets.local`.
+
+APIs: ENTSO-E, Electricity Maps, TNS (wis-tns.org), Lasair (lasair.roe.ac.uk), Movebank, OpenTopography (portal.opentopography.org), CAMS ADS (ads.atmosphere.copernicus.eu), FRED (api.stlouisfed.org), Global Fishing Watch, Meteostat free tier.
+
+Process: Visit each registration URL from `docs/plans/AUTH_APIS.md`. Obtain key. Enter in `.secrets.local` (gitignored). Enter in GitHub Actions Secrets.
+
+Verification: `.secrets.local` contains non-empty values for all 10 keys. `grep -c '=$' .secrets.local` returns 0 (no empty values for these keys).
+
+---
+
 ## Deferred — Require AGENTS.md Amendment
 
 ### Temporal Topology (TDA, Takens, Transfer Entropy)

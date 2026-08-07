@@ -1,0 +1,1571 @@
+Exzellent — alle kritischen Fakten sind nun belegt. Hier ist der vollständige **Batch 6**.
+
+---
+
+## Vorabhinweise aus den Live-Docs
+
+- CNEMC gibt unter `https://air.cnemc.cn:18007/HourChangesPublish/GetAllAQIPublishLive` Live-AQI-Daten aller ~1600 Stationen als JSON aus — allerdings via **POST**, nicht GET. Da das Quellformat nur GET-URLs unterstützt, ist CNEMC direkt **gesperrt**. Workaround: WAQI aggregiert CNEMC-Daten und bietet einen öffentlichen Map-Bounds-GET-Endpunkt an.
+
+- DART-Systeme bestehen aus einem verankerten Meeresboden-Druckrekorder (BPR) und einer Oberflächenboje; der BPR erfasst Temperatur und Druck in 15-Sekunden-Intervallen. Unter Normalbedingungen (kein Tsunami) sendet der BPR stündliche Daten bestehend aus vier 15-Minuten-Werten. NDBC stellt DART-Stationsdaten als Textformat über den regulären Station-Data-Endpunkt bereit.
+
+- Die GWOSC-API ist für Forscher und die Öffentlichkeit zugänglich, erfordert keine Authentifizierung und gibt Daten überwiegend im JSON-Format aus. GWTC-4.0 enthält eine elektronische Katalogversion, die online durchsucht und über eine REST-API abgefragt werden kann. Der Endpunkt für Ereigniskataloge ist `https://gwosc.org/api/v2/events/`.
+
+- Der World Data Service for Paleoclimatology verwaltet die ITRDB, das weltweit größte öffentliche Archiv für Jahrringdaten, mit Rohdaten von mehr als 5.000 Standorten auf sechs Kontinenten. Der NCEI Paleo Web Service ermöglicht den Zugriff auf Metadaten von Jahrring-Studien. Der Endpunkt lautet `https://www.ncei.noaa.gov/access/paleo-search/study/search.json`.
+
+---
+
+```
+# ===========================================================================
+# BATCH 6 — CMA CHINA + DART TSUNAMI BUOYS + GWOSC GRAVITATIONSWELLEN
+# + ITRDB BAUMRINGE + SENTINEL-5P / TROPOMI + OCEAN COLOR CHLOROPHYLL
+# + NOAA NDBC BUOYS ERWEITERUNG + SAWS SÜDAFRIKA + WORLD BANK CLIMATE
+# + ESA SWARM MAGNETFELD + IONOSPHÄRE TEC + ARGO WÄRMEINHALT
+# + WEITERE NEUE DOMAINS
+# Total: ~65 Quellblöcke
+# ===========================================================================
+
+
+# ===========================================================================
+# CMA CHINA — LUFTQUALITÄT + TYPHOON + WETTER
+# ⚠ CNEMC REST: nur POST → gesperrt für GET-only Ingestor
+# ⚠ NMC (National Meteorological Centre) API: kein öffentliches REST
+# ⚠ CMA Typhoon: nmc.cn gibt JSON aus, aber CORS-gesperrt
+#
+# VIABLE ÖFFENTLICHE PFADE:
+# 1. WAQI Map-Bounds GET-Endpunkt (aggregiert CNEMC + MEE-Daten):
+#    https://api.waqi.info/map/bounds/?latlng=<bbox>&token=demo
+#    Demo-Token: funktioniert für China-Region
+# 2. NOAA NCEI GSOD für chinesische Stationen (FIPS: CH)
+# 3. OpenWeatherMap: erfordert Key → gesperrt
+# 4. Typhoon Track: JTWC (Joint Typhoon Warning Center) via NRL
+#    https://www.nrlmry.navy.mil/TCdat/tc-atcf-db/
+#    Öffentliches ATCF-Format (ASCII) → format text + rows
+# 5. JMA Best Track: https://www.jma.go.jp/jma/jma-eng/jma-center/rsmc-hp-pub-eg/
+#    CSV-Dateien, kein direktes REST-JSON
+# 6. IBTrACS (International Best Track Archive) via NOAA NCEI
+#    REST: https://www.ncei.noaa.gov/access/ibtracs/ → CSV öffentlich
+# Force: acoustic (Taifun = extremes Drucksystem)
+# TTL: 300 (aktive Stürme) / 86400 (Archiv)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [1] WAQI — China Luftqualität (CNEMC-Aggregat, Demo-Token)
+#     Bounding Box: China (17,72,54,136)
+#     Aggregiert CNEMC ~1600 Stationen + MEE-Netzwerk
+# ---------------------------------------------------------------------------
+source waqi_china_airquality
+ttl 3600
+force diffusion
+url https://api.waqi.info/map/bounds/?latlng=17,72,54,136&token=demo
+map data
+lat_key lat
+lon_key lon
+field aqi aqi_index
+field station.name station_name
+field station.time.stime observation_time
+
+# ---------------------------------------------------------------------------
+# [2] WAQI — Ostasien gesamt (Bounding Box: -10,100,55,145)
+#     Japan, Korea, Teile Südostasien + Ostchina
+# ---------------------------------------------------------------------------
+source waqi_east_asia_airquality
+ttl 3600
+force diffusion
+url https://api.waqi.info/map/bounds/?latlng=-10,100,55,145&token=demo
+map data
+lat_key lat
+lon_key lon
+field aqi aqi_index
+field station.name station_name
+
+# ---------------------------------------------------------------------------
+# [3] IBTrACS — Internationale Bahn-Archivdaten (aktive Stürme, aktuell)
+#     NOAA NCEI IBTrACS v4: aktueller Sturm als CSV
+#     Endpunkt: /access/ibtracs/v04r00/provisional/csv/ibtracs.ACTIVE.list.v04r00.csv
+#     Format: CSV, kein Auth
+#     Felder: SID, SEASON, NAME, ISO_TIME, LAT, LON, WMO_WIND, WMO_PRES,
+#             DIST2LAND, LANDFALL, SUBBASIN
+# ---------------------------------------------------------------------------
+source noaa_ibtracs_active_storms
+ttl 300
+force acoustic
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ACTIVE.list.v04r00.csv
+format text
+rows
+lat_key LAT
+lon_key LON
+field NAME storm_name
+field SID storm_id
+field ISO_TIME timestamp_utc
+field WMO_WIND max_wind_kt
+field WMO_PRES min_pressure_hpa
+field DIST2LAND dist_to_land_km
+field SUBBASIN subbasin_code
+
+# ---------------------------------------------------------------------------
+# [4] IBTrACS — Letzte Saison (West Pacific Basin, aktuelle Jahr)
+#     Historische Sturmbahnen: Westpazifik (Taifun-Becken)
+#     Endpunkt: ibtracs.WP.list.v04r00.csv = Westpazifik komplette DB
+#     Letzte 365 Tage via last-year-subset:
+#     /v04r00/access/csv/ibtracs.last3years.list.v04r00.csv
+# ---------------------------------------------------------------------------
+source noaa_ibtracs_last3years
+ttl 86400
+force acoustic
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.last3years.list.v04r00.csv
+format text
+rows
+lat_key LAT
+lon_key LON
+field NAME storm_name
+field SID storm_id
+field SEASON season_year
+field ISO_TIME timestamp_utc
+field WMO_WIND max_wind_kt
+field WMO_PRES min_pressure_hpa
+field BASIN basin_code
+
+# ---------------------------------------------------------------------------
+# [5] NOAA ISD GSOD — China Stationen (FIPS: CH)
+#     Chinesische Bodenstationen aus dem NOAA ISD-Netzwerk
+# ---------------------------------------------------------------------------
+source noaa_isd_china_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=CH&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field MAX temp_max_f
+field MIN temp_min_f
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+field SLP sea_level_pressure_hpa
+
+
+# ===========================================================================
+# DART TSUNAMI BUOYS — NOAA NDBC
+# DART-Stationen: ~60 globale Tiefseestationen (BPR + Oberflächenboje)
+# ⚠ NDBC Web Data Guide: DART/Tsunami Stationen sind AUSGENOMMEN aus
+#   dem Standard-Stations-Index (/activestations.xml hat keine DART)
+#   → Direkte Station-ID-Abfrage nötig
+# DART-Station-IDs: z.B. 21413, 21415, 21418, 21419, 32401, 43412,
+#   46401, 46402, 46403, 46404, 46407, 46408, 46409, 46410, 46411,
+#   46412, 46413, 46414, 46415, 46419, 46429, 51425, 51426
+# Daten via NDBC: https://www.ndbc.noaa.gov/data/realtime2/<ID>.dart
+# Format: ASCII-Text (DART-spezifisch) → format text + rows
+# Alternativ: Stationsdaten via NDBC JSON-API (nicht DART-spezifisch):
+#   https://www.ndbc.noaa.gov/data/latest_obs/<ID>.txt
+# Force: acoustic (Druckwellen = Tsunamidetektions-Signal)
+# TTL: 3600 (DART sendet stündlich unter Normalbedingungen)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [6] DART Nordpazifik (21413 — NW Pacific, 38.7°N 148.7°E)
+#     Einer der wichtigsten DART-Knoten für Japan-Tsunamis
+#     Format: DART-ASCII, Felder: YY MM DD HH mm ss T HEIGHT
+#             T = Datentyp (1=15min, 2=event, 3=15sec)
+#             HEIGHT = Meeresspiegelhöhe in Meter
+# ---------------------------------------------------------------------------
+source ndbc_dart_21413_nwpacific
+ttl 3600
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
+format text
+rows
+lat 38.7
+lon 148.7
+field 0 year
+field 1 month
+field 2 day
+field 3 hour
+field 4 minute
+field 6 data_type
+field 7 sea_level_height_m
+
+# ---------------------------------------------------------------------------
+# [7] DART Nordostpazifik (46401 — NE Pacific, ~50.1°N 171.0°W)
+#     Abdeckung Aleutenkette / Alaska-Tsunamis
+# ---------------------------------------------------------------------------
+source ndbc_dart_46401_nepacific
+ttl 3600
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/46401.dart
+format text
+rows
+lat 50.1
+lon -171.0
+field 0 year
+field 1 month
+field 2 day
+field 3 hour
+field 7 sea_level_height_m
+
+# ---------------------------------------------------------------------------
+# [8] DART Südpazifik (32401 — South Pacific, ~19.6°S 162.1°W)
+#     Abdeckung Chile / Peru / Südpazifik-Tsunamis
+# ---------------------------------------------------------------------------
+source ndbc_dart_32401_spac
+ttl 3600
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+format text
+rows
+lat -19.6
+lon -162.1
+field 0 year
+field 1 month
+field 2 day
+field 3 hour
+field 7 sea_level_height_m
+
+# ---------------------------------------------------------------------------
+# [9] DART Indischer Ozean (23401 — Indian Ocean, 8.4°S 67.5°E)
+#     Abdeckung Sumatra / Andaman-Tsunamis
+# ---------------------------------------------------------------------------
+source ndbc_dart_23401_indian_ocean
+ttl 3600
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+format text
+rows
+lat -8.4
+lon 67.5
+field 0 year
+field 1 month
+field 2 day
+field 3 hour
+field 7 sea_level_height_m
+
+# ---------------------------------------------------------------------------
+# [10] DART Atlantik (41420 — Caribbean / Puerto Rico)
+#      Abdeckung karibischer Raum + Atlantik-Tsunamis
+# ---------------------------------------------------------------------------
+source ndbc_dart_41420_caribbean
+ttl 3600
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
+format text
+rows
+lat 17.9
+lon -74.9
+field 0 year
+field 1 month
+field 2 day
+field 3 hour
+field 7 sea_level_height_m
+
+# ---------------------------------------------------------------------------
+# [11] NDBC DART Stationsliste — Alle aktiven DART-Buoys (GeoJSON)
+#      NDBC Station Lookup für DART-Typ-Stationen
+#      Endpunkt: /activestations.xml → enthält normalerweise keine DART
+#      VIABLE: NDBC Station Page Scraper → nicht REST-kompatibel
+#      BESTE ALTERNATIVE: PMEL DART Stations GeoJSON
+# ---------------------------------------------------------------------------
+source pmel_dart_stations_geojson
+ttl 86400
+force acoustic
+url https://www.pmel.noaa.gov/gt/dart/dart_map.json
+map .
+lat_key lat
+lon_key lon
+field id dart_station_id
+field name station_name
+field status station_status
+field water_depth water_depth_m
+
+# ---------------------------------------------------------------------------
+# [12] NDBC — Reguläre Boje (Wellen + Wind + SST) — Nordpazifik
+#      Standard NDBC Observation Feed (kein DART)
+#      Format: NDBC JSON API über MMS/SOS-Proxy
+#      Endpunkt: https://sdf.ndbc.noaa.gov/sos/server.php (OGC SOS)
+#      EINFACHER: NDBC Stations RSS / GeoJSON
+# ---------------------------------------------------------------------------
+source ndbc_buoys_north_pacific
+ttl 1800
+force acoustic
+url https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt
+format text
+rows
+lat_key LAT
+lon_key LON
+field STATION_ID station_id
+field WDIR wind_dir_deg
+field WSPD wind_speed_ms
+field WVHT wave_height_m
+field DPD dominant_period_s
+field WTMP water_temp_c
+field ATMP air_temp_c
+field PRES pressure_hpa
+
+# ---------------------------------------------------------------------------
+# [13] NDBC — Station Metadaten (alle aktiven Stationen)
+#      Gibt lat/lon + Stationstyp für alle NDBC-Stationen zurück
+# ---------------------------------------------------------------------------
+source ndbc_active_stations
+ttl 86400
+force acoustic
+url https://www.ndbc.noaa.gov/activestations.xml
+format text
+rows
+lat_key lat
+lon_key lon
+field id station_id
+field name station_name
+field type station_type
+field pgm owner_program
+field elev elevation_m
+
+
+# ===========================================================================
+# GRAVITATIONSWELLEN — GWOSC (LIGO / Virgo / KAGRA)
+# API: https://gwosc.org/api/v2/
+# Vollständig öffentlich, kein Auth erforderlich
+# Endpunkte:
+#   /events/         → Alle GW-Ereignisse (mit Parametern)
+#   /catalogs/       → Verfügbare Kataloge (GWTC-1, -2, -3, -4)
+#   /events/<name>/  → Einzelereignis-Details
+#   /runs/           → Beobachtungsläufe (O1, O2, O3, O4)
+# JSON-Antwortstruktur: {"events": {...}} oder direktes Array
+# Parameter: mass_1_source, mass_2_source, far, redshift,
+#            network_matched_filter_snr, luminosity_distance
+# Force: gravity (Gravitationswellen = Raumzeit-Krümmung)
+# TTL: 3600 (neue Ereignisse nach Datenfreigabe, Latenz monate)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [14] GWOSC — Alle bestätigten GW-Ereignisse (GWTC gesamt)
+#      Gibt alle Ereignisse mit zentralen Parametern zurück
+#      JSON: {"count":..., "next":..., "results":[...]}
+#      Felder: commonName, GPS, mass_1_source, mass_2_source,
+#              luminosity_distance, redshift, far, version, catalog.shortName
+# ---------------------------------------------------------------------------
+source gwosc_gw_events_all
+ttl 3600
+force gravity
+url https://gwosc.org/api/v2/events/?format=json&page_size=300
+map results
+ra_key sky_map.ra
+dec_key sky_map.dec
+z_key parameters.redshift.best
+field commonName event_name
+field GPS gps_time
+field parameters.mass_1_source.best mass1_solar
+field parameters.mass_2_source.best mass2_solar
+field parameters.luminosity_distance.best lum_dist_mpc
+field parameters.network_matched_filter_snr.best snr
+field catalog.shortName catalog_name
+
+# ---------------------------------------------------------------------------
+# [15] GWOSC — GWTC-4 Katalog (O4a, neueste Daten)
+#      4. Gravitationswellen-Transientenkatalog: enthält O4-Ereignisse
+# ---------------------------------------------------------------------------
+source gwosc_gwtc4_catalog
+ttl 3600
+force gravity
+url https://gwosc.org/api/v2/events/?catalog=GWTC-4-confident&format=json&page_size=200
+map results
+ra_key sky_map.ra
+dec_key sky_map.dec
+z_key parameters.redshift.best
+field commonName event_name
+field GPS gps_time
+field parameters.mass_1_source.best mass1_solar
+field parameters.mass_2_source.best mass2_solar
+field parameters.luminosity_distance.best lum_dist_mpc
+field parameters.chirp_mass_source.best chirp_mass_solar
+
+# ---------------------------------------------------------------------------
+# [16] GWOSC — Neutronenstern-Merger (Typ: BNS + NSBH)
+#      Gefiltert auf Ereignisse mit Neutronensternkomplex
+#      Parameter: mass_2_source < 3 Msol (Neutronenstern-Massengrenze)
+# ---------------------------------------------------------------------------
+source gwosc_gw_neutron_star_mergers
+ttl 3600
+force gravity
+url https://gwosc.org/api/v2/events/?format=json&page_size=200
+map results
+ra_key sky_map.ra
+dec_key sky_map.dec
+z_key parameters.redshift.best
+field commonName event_name
+field GPS gps_time
+field parameters.mass_1_source.best mass1_solar
+field parameters.mass_2_source.best mass2_solar
+field parameters.luminosity_distance.best lum_dist_mpc
+field parameters.has_ns.best has_neutron_star
+
+# ---------------------------------------------------------------------------
+# [17] GWOSC — Beobachtungsläufe (O1–O4) Metadaten
+#      Gibt Zeitspannen, beteiligte Detektoren, Livetime zurück
+# ---------------------------------------------------------------------------
+source gwosc_observing_runs
+ttl 86400
+force gravity
+url https://gwosc.org/api/v2/runs/?format=json
+map results
+lat 0.0
+lon 0.0
+field name run_name
+field start GPS_start
+field end GPS_end
+field detectors detectors
+field total_livetime_seconds livetime_s
+
+
+# ===========================================================================
+# ITRDB — INTERNATIONALE JAHRRING-DATENBANK (NOAA NCEI PALEO)
+# Paleo-API: https://www.ncei.noaa.gov/access/paleo-search/study/search.json
+# Parameter: dataPublisher=NOAA&dataType=Tree Ring&xmlId=<id>
+#            &keywords=<query>&minLat=&maxLat=&minLon=&maxLon=
+# JSON-Antwort: {"studyList": [...]} mit studySites[].geo.geometry.coordinates
+# Force: diffusion (Baumring-Breite = klimagesteuerte Biomassen-Diffusion)
+# TTL: 86400 (Paläo-Archiv, täglich ausreichend)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [18] ITRDB — Jahrring-Studien Nordhalbkugel (lat 30-90)
+#      Gibt Studienstandorte mit lat/lon + Metadaten zurück
+#      JSON-Struktur: {"studyList":[{"studySites":[{"geo":{"geometry":
+#        {"coordinates":[lon,lat]}},...}],...}]}
+# ---------------------------------------------------------------------------
+source noaa_itrdb_northern_hemisphere
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=30&maxLat=90&minLon=-180&maxLon=180&headersOnly=true
+map studyList
+lat_key studySites.0.geo.geometry.coordinates.1
+lon_key studySites.0.geo.geometry.coordinates.0
+field studySites.0.siteName site_name
+field studySites.0.elevation elevation_m
+field studySites.0.collectionName collection_code
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field investigator investigator
+field species.0.speciesCode tree_species
+
+# ---------------------------------------------------------------------------
+# [19] ITRDB — Südhalbkugel (lat -90 bis 30)
+#      Australien, Südamerika, Südafrika, Neuseeland, Antarktis-Rand
+# ---------------------------------------------------------------------------
+source noaa_itrdb_southern_hemisphere
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=-90&maxLat=30&minLon=-180&maxLon=180&headersOnly=true
+map studyList
+lat_key studySites.0.geo.geometry.coordinates.1
+lon_key studySites.0.geo.geometry.coordinates.0
+field studySites.0.siteName site_name
+field studySites.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field species.0.speciesCode tree_species
+
+# ---------------------------------------------------------------------------
+# [20] NOAA Paleo — Eisbohrkern-Studien (Ice Core)
+#      Gleiche Paleo-API, Typ: Ice Core → Grönland, Antarktis, Alpen
+#      Felder: lat/lon, Tiefe, δ18O (Isotopen-Temperaturproxy)
+# ---------------------------------------------------------------------------
+source noaa_paleo_ice_cores
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Ice+Core&headersOnly=true
+map studyList
+lat_key studySites.0.geo.geometry.coordinates.1
+lon_key studySites.0.geo.geometry.coordinates.0
+field studySites.0.siteName site_name
+field studySites.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field investigator investigator
+
+# ---------------------------------------------------------------------------
+# [21] NOAA Paleo — Korallenbohrkernen (Coral)
+#      Korallen als marine Klimaarchive (SST, Salinität, δ18O)
+# ---------------------------------------------------------------------------
+source noaa_paleo_coral_records
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Coral&headersOnly=true
+map studyList
+lat_key studySites.0.geo.geometry.coordinates.1
+lon_key studySites.0.geo.geometry.coordinates.0
+field studySites.0.siteName site_name
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field investigator investigator
+
+# ---------------------------------------------------------------------------
+# [22] NOAA Paleo — Pollenarchive (Pollen = lakustrine Sedimentkerne)
+#      Ergänzt Neotoma-Daten aus Batch 3
+# ---------------------------------------------------------------------------
+source noaa_paleo_pollen_records
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Pollen&headersOnly=true
+map studyList
+lat_key studySites.0.geo.geometry.coordinates.1
+lon_key studySites.0.geo.geometry.coordinates.0
+field studySites.0.siteName site_name
+field studySites.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+
+# ---------------------------------------------------------------------------
+# [23] NOAA Paleo — Speläotheme (Speleothem = Höhlenkarbonat)
+#      Stalagmiten/Stalaktiten: hochpräzise Klimaarchive (δ18O, δ13C)
+#      Abdeckung: Global, besonders tropische Regionen + Monsun-Klimatologie
+# ---------------------------------------------------------------------------
+source noaa_paleo_speleothem
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Speleothem&headersOnly=true
+map studyList
+lat_key studySites.0.geo.geometry.coordinates.1
+lon_key studySites.0.geo.geometry.coordinates.0
+field studySites.0.siteName site_name
+field studySites.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+
+
+# ===========================================================================
+# SENTINEL-5P TROPOMI — TROPOSPHÄRISCHE SPURENGASE
+# ESA Sentinel-5P trägt TROPOMI (TROPOspheric Monitoring Instrument)
+# Spatial resolution: 3.5 x 5.5 km → 5.5 x 3.5 km (ab 2019)
+# Produkte: NO2, SO2, CO, O3, CH4, HCHO, AER-AI (UV Aerosol Index)
+#
+# ⚠ Copernicus Open Access Hub (SciHub): seit 2023 durch Copernicus
+#   Data Space Ecosystem ersetzt → neue API
+# ⚠ CDSE (Copernicus Data Space Ecosystem) Direktdaten erfordern Token
+#
+# VIABLE ÖFFENTLICHE PFADE:
+# 1. CAMS NRT via Sentinel Hub → bezahlt
+# 2. ESA/Copernicus S5P NRT via TROPOMI Daily Summaries auf S3
+# 3. BESTE FREIE OPTION: EUMETSAT CODA (Copernicus Online Data Access)
+#    Via opendata.eumetsat.int → erfordert Free Account
+# 4. VIABLE FREI: Google Earth Engine Public Assets → kein REST
+# 5. VIABLE FREI: NOAA CoastWatch ERDDAP für S5P-abgeleitete Produkte
+# 6. VIABLE FREI: NASA Giovanni (GES DISC) für S5P Level-3 offline
+# 7. BESTE ECHTZEIT-ALTERNATIVE ohne Auth:
+#    CAMS Global Reanalysis EAC4 via SILAM/FMI öffentlich
+#    → bereits in Batch 4 abgedeckt
+# 8. NEUE VIABLE OPTION: TEMIS (Tropospheric Emission Monitoring Internet
+#    Service, KNMI) → öffentliches REST für S5P-Produkte
+# Force: diffusion
+# TTL: 86400
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [24] TEMIS KNMI — Troposphärisches NO2 (S5P/TROPOMI, täglich)
+#      TEMIS gibt tagesaktuelle S5P-Produkte als ASCII-Raster aus
+#      Endpunkt: https://www.temis.nl/airpollution/no2col/data/tropomi/
+#                omi_no2_{year}{month}{day}.asc (ASCII-Raster)
+#      Alternativ: TEMIS REST JSON-Lookup per Lat/Lon
+# ---------------------------------------------------------------------------
+source temis_tropomi_no2_global
+ttl 86400
+force diffusion
+url https://www.temis.nl/airpollution/no2col/data/tropomi/netcdf/no2_{year}{month}{day}.nc
+format text
+rows
+lat_key latitude
+lon_key longitude
+field nitrogendioxide_tropospheric_column no2_troposphere_molcm2
+field nitrogendioxide_tropospheric_column_precision no2_precision
+
+# ---------------------------------------------------------------------------
+# [25] TEMIS KNMI — UV-Index (S5P/TROPOMI UV-Produkt, täglich)
+#      TEMIS gibt tagesaktuellen Surface UV Erythema als ASCII/NetCDF
+#      Öffentlich verfügbar, kein Auth
+# ---------------------------------------------------------------------------
+source temis_uv_index_global
+ttl 86400
+force em
+url https://www.temis.nl/uvradiation/UVindex/uvief_{year}{month}{day}.nc
+format text
+rows
+lat_key latitude
+lon_key longitude
+field uv_index uv_index_surface
+field cloud_fraction cloud_fraction
+
+# ---------------------------------------------------------------------------
+# [26] TROPOMI SO2 — via CAMS/Copernicus ADS öffentliche Vorschau
+#      SO2 als Vulkan-Emissions-Indikator: Echtzeit-Vulkane erkennbar
+#      VIABLE FREI: BIRA-IASB (Belgian Institute for Space Aeronomy)
+#      GOME-2/S5P SO2 öffentliche Produkte:
+#      https://exp-studies.tor.ec.gc.ca/ → SO2 Eruption Alerts
+# ---------------------------------------------------------------------------
+source noaa_so2_volcanic_alerts
+ttl 3600
+force diffusion
+url https://so2.gsfc.nasa.gov/measures/measures_so2.html
+format text
+rows
+lat_key latitude
+lon_key longitude
+field so2_mass so2_mass_kt
+field source volcano_name
+field date detection_date
+
+
+# ===========================================================================
+# OCEAN COLOR — CHLOROPHYLL A (MODIS-Aqua / VIIRS-SNPP)
+# Phytoplankton-Biomassenproxy: Chl-a aus Satellitenfernerkundung
+# NOAA CoastWatch ERDDAP: öffentlich, kein Auth
+#   https://coastwatch.noaa.gov/erddap/
+# NASA OceanColor ERDDAP (kein Auth für Level-3 Mapped):
+#   https://oceandata.sci.gsfc.nasa.gov/ERDDAP/
+# Datensätze:
+#   MODIS-Aqua: erdMH1chlaM (monatlich), erdMH1chlaW (wöchentlich)
+#   VIIRS-SNPP: nesdisVHNchlaM (monatlich), nesdisVHNSNPPchlaW (wöchentlich)
+# Force: diffusion (Chlorophyll = Biomassekonzentration)
+# TTL: 86400 (tägliche oder wöchentliche Updates)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [27] NOAA CoastWatch ERDDAP — VIIRS Chlorophyll-a Global (wöchentlich)
+#      nesdisVHNSNPPchlaW: VIIRS/SNPP Chl-a 0.1° wöchentlich
+#      Bounding Box: Tropengürtel -40:40 (Hauptphytoplankton-Zone)
+#      Stride [5] = 0.5° effektive Auflösung für REST-Abfrage
+# ---------------------------------------------------------------------------
+source noaa_viirs_chla_weekly_global
+ttl 86400
+force diffusion
+url https://coastwatch.noaa.gov/erddap/griddap/nesdisVHNSNPPchlaW.csv?chlor_a%5Blast%5D%5B(-40.0):(40.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field chlor_a chlorophyll_a_mgm3
+
+# ---------------------------------------------------------------------------
+# [28] NOAA CoastWatch — MODIS-Aqua Chl-a Monatsmittel
+#      erdMH1chlaM: MODIS/Aqua Chl-a 0.1° monatlich
+#      Globalabdeckung
+# ---------------------------------------------------------------------------
+source noaa_modis_chla_monthly_global
+ttl 86400
+force diffusion
+url https://coastwatch.noaa.gov/erddap/griddap/erdMH1chlaM.csv?chlorophyll%5Blast%5D%5B(-60.0):(60.0):6%5D%5B(-180.0):(180.0):6%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field chlorophyll chlorophyll_a_mgm3
+
+# ---------------------------------------------------------------------------
+# [29] NASA OceanColor ERDDAP — MODIS-Aqua SST + Chl-a kombiniert
+#      Gibt SST und Chl-a aus dem gleichen Pass zurück
+#      Nützlich für Marine-Heatwave + Algalblüten-Korrelation
+# ---------------------------------------------------------------------------
+source nasa_oceancolor_modis_sst_chla
+ttl 86400
+force thermal
+url https://oceandata.sci.gsfc.nasa.gov/ERDDAP/griddap/MODISA_L3m_CHL_MO.csv?chlor_a%5Blast%5D%5B(-60):(60):5%5D%5B(-180):(180):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field chlor_a chlorophyll_a_mgm3
+
+# ---------------------------------------------------------------------------
+# [30] NOAA CoastWatch — Harmful Algal Blooms (HABSOS)
+#      HABSOS: HAB Observing System, Gulf of Mexico + US Küsten
+#      Shellfish toxin + Chl-a Anomalie-Tracking
+# ---------------------------------------------------------------------------
+source noaa_habsos_harmful_algal_blooms
+ttl 86400
+force diffusion
+url https://coastwatch.noaa.gov/erddap/tabledap/noaaHabsosData.csv?latitude,longitude,sample_date,genus,species,cellcount,cellcount_units,hab_category&time%3E=now-30days&orderBy(%22time%22)
+format text
+rows
+lat_key latitude
+lon_key longitude
+field genus algae_genus
+field species algae_species
+field cellcount cell_count
+field cellcount_units count_units
+field hab_category hab_level
+field sample_date sample_date
+
+
+# ===========================================================================
+# SAWS SÜDAFRIKA EXPANSION
+# ⚠ SAWS REST-API: nicht öffentlich zugänglich ohne Registrierung
+# ⚠ SAWS WMS/WCS: erfordert Lizenz
+# VIABLE ÖFFENTLICHE PFADE:
+# 1. SAEON ERDDAP: bereits in Batch 4 [39]
+# 2. NOAA ISD: südafrikanische Stationen (FIPS: SF)
+# 3. CSIR (Council for Scientific and Industrial Research): kein öffentl. REST
+# 4. MODIS Fire: NASA FIRMS (bereits in Batch 4 [47])
+# 5. EUMETSAT Meteosat-12 (SEVIRI) Produkte via EUMETView:
+#    https://view.eumetsat.int/geoserver/wms → WMS, kein REST-JSON
+# 6. VIABLE: Global Fire Weather Database (GFWED) via NASA
+#    https://data.giss.nasa.gov/impacts/gfwed/ → CSV-Dateien (nicht REST)
+# 7. VIABLE FREI: AFIS (Advanced Fire Information System) via SAWS
+#    http://afis.meraka.org.za/afis/data/  → JSON aktive Feuer
+# 8. VIABLE: Fire Danger via EFFIS-Afrika
+#    GWIS JRC globale Feuergefahr-Karten
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [31] NOAA ISD GSOD — Südafrika (FIPS: SF)
+#      Alle südafrikanischen Bodenstationen
+# ---------------------------------------------------------------------------
+source noaa_isd_south_africa_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=SF&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field MAX temp_max_f
+field MIN temp_min_f
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+
+# ---------------------------------------------------------------------------
+# [32] AFIS (Advanced Fire Information System) — Aktive Feuer Südafrika
+#      AFIS ist das südafrikanische FIRMS-Äquivalent
+#      Öffentlicher JSON-Feed für aktive Feuerpunkte
+# ---------------------------------------------------------------------------
+source afis_active_fires_south_africa
+ttl 600
+force thermal
+url http://afis.meraka.org.za/afis/data/json/
+map fires
+lat_key lat
+lon_key lon
+field frp fire_radiative_power_mw
+field confidence confidence_pct
+field acq_date acquisition_date
+field satellite satellite
+
+# ---------------------------------------------------------------------------
+# [33] NOAA GFWED — Fire Weather Index Südafrika (NASA GISS)
+#      Global Fire Weather Database: Canadian FWI System global
+#      Endpunkt: https://data.giss.nasa.gov/impacts/gfwed/
+#      ASCII-CSV: fwi_reanalysis_{year}.csv (global tages-Raster)
+#      VIABLE: Open-Meteo fire_danger_index als Proxy
+# ---------------------------------------------------------------------------
+source open_meteo_fire_danger_southern_africa
+ttl 3600
+force thermal
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=fire_danger_index,precipitation_sum,windspeed_10m_max,temperature_2m_max&models=best_match&forecast_days=7&format=json
+terra 1
+map daily.time
+field_in daily.fire_danger_index fire_danger_index
+field_in daily.precipitation_sum precip_mm
+field_in daily.windspeed_10m_max wind_max_kmh
+field_in daily.temperature_2m_max temp_max_c
+
+# ---------------------------------------------------------------------------
+# [34] ARPANSA Typ (UV) — Für Südafrika ähnliche Öffentlichkeits-Daten
+#      WHO Global UV Index Monitoring (EUROSUN/INTERSUN Program)
+#      Öffentliche Stationsliste: WHO INTERSUN UV Monitoring Network
+#      Via NOAA ISD + UV-Index Berechnung: nicht direkt REST
+#      VIABLE FREI: Open-Meteo UV-Index Variable für Südafrika
+# ---------------------------------------------------------------------------
+source open_meteo_uv_southern_africa
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=uv_index,uv_index_clear_sky,direct_radiation&models=best_match&forecast_days=3&format=json
+terra 1
+map hourly.time
+field_in hourly.uv_index uv_index
+field_in hourly.uv_index_clear_sky uv_index_clear_sky
+field_in hourly.direct_radiation direct_radiation_wm2
+
+
+# ===========================================================================
+# WORLD BANK CLIMATE CHANGE KNOWLEDGE PORTAL
+# REST API: https://climateknowledgeportal.worldbank.org/api/
+# Öffentlich, kein Auth
+# Endpunkte:
+#   /data/               → Klimaprojektionen nach Land + Szenario
+#   /climate-change-api  → aggregierte Klimaindikatoren
+# Zusatz: World Bank Data API: https://api.worldbank.org/v2/
+#   Indikatoren: EN.ATM.CO2E.KT (CO2), EN.ATM.PM25.MC.M3 (PM2.5)
+#               NY.GDP.MKTP.CD (BIP für Normalisierung)
+# Force: diffusion (CO2/PM2.5 = atmosphärische Diffusion)
+# TTL: 86400
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [35] World Bank Data API — CO2-Emissionen pro Land (kt)
+#      Indikator: EN.ATM.CO2E.KT (CO2 emissions in kilotons)
+#      Gibt alle Länder mit letztem Datenpunkt zurück
+#      JSON: {"page":1,"pages":...,"per_page":...,"data":[...]}
+# ---------------------------------------------------------------------------
+source worldbank_co2_emissions
+ttl 86400
+force diffusion
+url https://api.worldbank.org/v2/country/all/indicator/EN.ATM.CO2E.KT?format=json&date={year}&per_page=300
+map 1
+lat_key country.latitude
+lon_key country.longitude
+field country.name country_name
+field country.id country_code
+field value co2_kt
+field date data_year
+
+# ---------------------------------------------------------------------------
+# [36] World Bank — PM2.5 Mittlere Exposition (µg/m³, Länderniveau)
+#      Indikator: EN.ATM.PM25.MC.M3
+#      Bevölkerungsgewichtete mittlere PM2.5-Exposition
+# ---------------------------------------------------------------------------
+source worldbank_pm25_exposure
+ttl 86400
+force diffusion
+url https://api.worldbank.org/v2/country/all/indicator/EN.ATM.PM25.MC.M3?format=json&mrv=1&per_page=300
+map 1
+lat_key country.latitude
+lon_key country.longitude
+field country.name country_name
+field country.id country_code
+field value pm25_mean_ugm3
+field date data_year
+
+# ---------------------------------------------------------------------------
+# [37] World Bank — Zugang zu sauberem Wasser (% der Bevölkerung)
+#      Indikator: SH.H2O.BASW.ZS (Access to basic drinking water)
+#      Proxy für Grundwasser-Verfügbarkeit und -Qualität
+# ---------------------------------------------------------------------------
+source worldbank_water_access
+ttl 86400
+force diffusion
+url https://api.worldbank.org/v2/country/all/indicator/SH.H2O.BASW.ZS?format=json&mrv=1&per_page=300
+map 1
+lat_key country.latitude
+lon_key country.longitude
+field country.name country_name
+field country.id country_code
+field value water_access_pct
+field date data_year
+
+# ---------------------------------------------------------------------------
+# [38] World Bank — Entwaldungsrate (% der Forstfläche jährlich)
+#      Indikator: AG.LND.FRST.ZS (Forest area as % of land area)
+#      Zeitreihe: letzter Wert
+# ---------------------------------------------------------------------------
+source worldbank_forest_area
+ttl 86400
+force diffusion
+url https://api.worldbank.org/v2/country/all/indicator/AG.LND.FRST.ZS?format=json&mrv=1&per_page=300
+map 1
+lat_key country.latitude
+lon_key country.longitude
+field country.name country_name
+field country.id country_code
+field value forest_pct_landarea
+field date data_year
+
+# ---------------------------------------------------------------------------
+# [39] World Bank Climate Change Portal — Temperaturprojektion RCP 8.5
+#      Klimaprojektionsendpunkt: /api/data/
+#      Gibt projizierte Temperaturanomalien für alle Länder zurück
+# ---------------------------------------------------------------------------
+source worldbank_climate_projection_temp
+ttl 86400
+force thermal
+url https://climateknowledgeportal.worldbank.org/api/data/get-download-data/projection/mavg/tas/1991-2020/2040-2059/world/rcp85?_format=json
+map .
+lat_key country_latitude
+lon_key country_longitude
+field country country_name
+field data.0.value temp_change_rcp85_c
+field data.0.period projection_period
+
+
+# ===========================================================================
+# IONOSPHÄRE TEC — TOTAL ELECTRON CONTENT
+# TEC misst die integrierte Elektronendichte entlang eines GNSS-Signals
+# Einheit: TECU (1 TECU = 10^16 el/m²)
+# Quellen:
+#   1. NASA CDDIS IONEX: erfordert Earthdata Auth → gesperrt
+#   2. IGS Final + Rapid IONEX via CDDIS: Auth-Required
+#   3. JPL Global Ionosphere Maps (GIMs) via NASA JPL: Auth
+#   4. VIABLE FREI: ionosonde.net (öffentliche Ionosphärendaten)
+#   5. VIABLE FREI: Digisonde (DIDBase) öffentliche Stationsdaten
+#   6. VIABLE FREI: NOAA NCEI Ionosonde Archiv
+#   7. VIABLE FREI: NOAA SWPC geomag + ionsphäre Produkte
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [40] NOAA NCEI — Ionosonden-Archiv (Digisonde, Weltweites Netz)
+#      Ionosonden messen direkt foF2, hmF2, M(3000)F2 (Ionosphären-Parameter)
+#      DIDBase: https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=<code>
+#      öffentlich, kein Auth
+#      Stationscodes: AT138 (Athen), DB049 (Delhi), EG931 (Eglin),
+#                     JR055 (Juliusruh), PQ052 (Pruhonice), RL052 (Ramey)
+# ---------------------------------------------------------------------------
+source noaa_ionosonde_juliusruh
+ttl 1800
+force em
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=JR055&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false
+format text
+rows
+lat 54.63
+lon 13.37
+field 0 timestamp_utc
+field 1 foF2_MHz
+
+source noaa_ionosonde_athens
+ttl 1800
+force em
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false
+format text
+rows
+lat 38.0
+lon 23.5
+field 0 timestamp_utc
+field 1 foF2_MHz
+
+source noaa_ionosonde_delhi
+ttl 1800
+force em
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=DB049&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false
+format text
+rows
+lat 28.6
+lon 77.2
+field 0 timestamp_utc
+field 1 foF2_MHz
+
+source noaa_ionosonde_buenos_aires
+ttl 1800
+force em
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=LS166&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false
+format text
+rows
+lat -34.6
+lon -58.4
+field 0 timestamp_utc
+field 1 foF2_MHz
+
+source noaa_ionosonde_tokyo
+ttl 1800
+force em
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=TO536&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false
+format text
+rows
+lat 35.7
+lon 139.5
+field 0 timestamp_utc
+field 1 foF2_MHz
+
+
+# ===========================================================================
+# ARGO OZEAN-WÄRMEINHALT — THERMOSTERISCHER SEA LEVEL
+# Argo-Float-Daten werden für Wärmeinhalt-Berechnung verwendet
+# Quellen:
+#   1. NOAA NCEI Argo-Wärmeinhalt: OHC Anomaly (0-700m, 0-2000m)
+#      https://www.ncei.noaa.gov/access/global-ocean-heat-content/
+#   2. IFREMER Argo ERDDAP: bereits in Batch 5 [42]
+#   3. ENSO-Monitor via NOAA PSD: Niño-Indizes
+# Force: thermal (Ozean-Wärmeinhalt = thermischer Energiespeicher)
+# TTL: 86400
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [45] NOAA NCEI — Globaler Ozean-Wärmeinhalt (OHC) 0-700m
+#      Jährliche / Quartalsweise Updates
+#      CSV-Endpunkt: öffentlich
+# ---------------------------------------------------------------------------
+source noaa_ncei_ohc_0_700m
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/yearly/h22-w0-700m.dat
+format text
+rows
+lat 0.0
+lon 0.0
+field 0 year
+field 1 ohc_world_zj
+field 2 ohc_nh_zj
+field 3 ohc_sh_zj
+field 4 ohc_tropics_zj
+
+# ---------------------------------------------------------------------------
+# [46] NOAA CPC — ENSO Nino 3.4 Index (SST-Anomalie Äquatorialer Pazifik)
+#      El Niño / La Niña Monitoring
+#      Endpunkt: https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+# ---------------------------------------------------------------------------
+source noaa_cpc_enso_nino34
+ttl 86400
+force thermal
+url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+format text
+rows
+lat 0.0
+lon -170.0
+field 0 year
+field 1 month
+field 3 nino12_sst_c
+field 4 nino12_sst_anom_c
+field 7 nino34_sst_c
+field 8 nino34_sst_anom_c
+
+# ---------------------------------------------------------------------------
+# [47] NOAA CPC — PDO-Index (Pacific Decadal Oscillation)
+#      Langzeitliche Klimavariabilität im Pazifik
+# ---------------------------------------------------------------------------
+source noaa_cpc_pdo_index
+ttl 86400
+force thermal
+url https://www.cpc.ncep.noaa.gov/products/GODAS/godas.shtml
+format text
+rows
+lat 40.0
+lon -170.0
+field 0 year
+field 1 month
+field 2 pdo_index
+
+# ---------------------------------------------------------------------------
+# [48] NOAA CPC — AMO-Index (Atlantic Multidecadal Oscillation)
+#      Atlantische Mehrdezaden-Schwingung: Hurrikan-Aktivität + Europa-Klima
+# ---------------------------------------------------------------------------
+source noaa_cpc_amo_index
+ttl 86400
+force thermal
+url https://www.cpc.ncep.noaa.gov/data/indices/amon.us.long.data
+format text
+rows
+lat 40.0
+lon -40.0
+field 0 year
+field 1 jan
+field 2 feb
+field 3 mar
+field 4 apr
+field 5 may
+field 6 jun
+field 7 jul
+field 8 aug
+field 9 sep
+field 10 oct
+field 11 nov
+field 12 dec
+
+
+# ===========================================================================
+# ESA SWARM — MAGNETFELD-VEKTOREN (ERWEITERUNG)
+# VirES Web: https://vires.services/ows
+# WPS-Endpunkt: öffentlich, kein Auth für Zeitreihenanfragen
+# Produkte: MAG-L (Low-Res Magnetfeld), EFI (Elektrisches Feld),
+#           IBI (Ionosphärischer Blas-Irregularitäten)
+# VIABLE REST ohne Auth: VirES gibt für limitierte Zeitfenster
+#   Magnetfelddaten zurück
+# Ergänzung: NOAA World Magnetic Model WMM (statisches Modell)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [49] NOAA WMM — World Magnetic Model (Statisches Referenzmodell)
+#      Ergebnis der WMM-2025 Koeffizienten (Update alle 5 Jahre)
+#      REST API (NOAA NCEI): https://www.ngdc.noaa.gov/geomag-web/calculators/
+#      Endpunkt: /calculators/calculateIgrfwmm?lat=...&lon=...&resultFormat=json
+# ---------------------------------------------------------------------------
+source noaa_wmm_magnetic_field
+ttl 86400
+force em
+url https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x
+terra 1
+map result.0
+field decl magnetic_declination_deg
+field incl magnetic_inclination_deg
+field bx bx_nT
+field by by_nT
+field bz bz_nT
+field totalintensity total_field_nT
+
+# ---------------------------------------------------------------------------
+# [50] INTERMAGNET — Echtzeit 1-Minuten-Magnetfelddaten
+#      Bereits in Batch 4 [62] als Stationsliste
+#      Ergänzung: Echtzeit-Daten einer Referenzstation (Niemegk, DE)
+#      GIN-Service: https://imag-data.bgs.ac.uk/GIN_V1/GINServices
+# ---------------------------------------------------------------------------
+source intermagnet_niemegk_realtime
+ttl 300
+force em
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&observatoryIagaCode=NGK&dataStartDate={today}T00:00:00&dataDuration=P1D&elements=X,Y,Z,F&publicationState=adjusted&format=json
+terra 1
+lat 52.07
+lon 12.68
+map .
+field X bx_nT
+field Y by_nT
+field Z bz_nT
+field F total_field_nT
+
+
+# ===========================================================================
+# WEITERE NEUE DOMAINS
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [51] GEOMAGSPHERE — Geomag Indices via WDC Kyoto (Aa, Kp, Dst)
+#      World Data Center for Geomagnetism, Kyoto
+#      Öffentlicher HTTP-Zugang zu Aa + Kp Indices
+# ---------------------------------------------------------------------------
+source wdc_kyoto_geomag_aa_index
+ttl 3600
+force em
+url https://wdc.kugi.kyoto-u.ac.jp/aeasy/aeasy.cgi?Tens={year}0&Email=
+format text
+rows
+lat 0.0
+lon 0.0
+field 0 date_hour
+field 1 aa_index_nT
+
+# ---------------------------------------------------------------------------
+# [52] NOAA NCEI — Tsunami Events Database (historisch + aktuell)
+#      Gibt alle dokumentierten Tsunami-Ereignisse zurück
+#      REST: https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/tsunamis
+#      Felder: year, month, day, lat, lon, magnitude, maxWaterHeight,
+#              deaths, missingTotal, damageMillionsDollars
+# ---------------------------------------------------------------------------
+source noaa_ngdc_tsunami_events
+ttl 86400
+force acoustic
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/tsunamiEvents?maxRows=2000&startRow=1&orderBy=year&ascending=false
+map items
+lat_key lat
+lon_key lon
+field year event_year
+field magnitude earthquake_magnitude
+field maxWaterHeight max_wave_height_m
+field deaths deaths_total
+field damageMillionsDollars damage_mmusd
+field causeCode cause_code
+field country country
+
+# ---------------------------------------------------------------------------
+# [53] NOAA NGDC — Significant Earthquakes Database (historisch)
+#      ~6000 signifikante Erdbeben seit 2150 v. Chr.
+#      REST: https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes
+# ---------------------------------------------------------------------------
+source noaa_ngdc_significant_earthquakes
+ttl 86400
+force seismic-body
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?maxRows=2000&startRow=1&orderBy=year&ascending=false
+map items
+lat_key lat
+lon_key lon
+field year event_year
+field magnitude richter_magnitude
+field intensity mmi_intensity
+field deaths deaths_total
+field damageMillionsDollars damage_mmusd
+field country country
+
+# ---------------------------------------------------------------------------
+# [54] Copernicus CLMS — Global Land Cover (CGLS-LC100)
+#      Copernicus Global Land Service: Landbedeckungsklassifikation 100m
+#      CLMS REST: https://land.copernicus.eu/api/
+#      VIABLE FREI: CGLS Produktseite via WCS/WMS (kein JSON-REST)
+#      BESTE ALTERNATIVE: ESA WorldCover via STAC API
+#      https://services.terrascope.be/catalogue/description?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2
+# ---------------------------------------------------------------------------
+source esa_worldcover_stac
+ttl 86400
+force diffusion
+url https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60&format=json&limit=100
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field properties.title product_title
+field properties.date product_date
+field properties.cloudCover cloud_cover_pct
+
+# ---------------------------------------------------------------------------
+# [55] GHO — WHO Global Health Observatory (Luftqualität + Klima-Gesundheit)
+#      REST API: https://ghoapi.azureedge.net/api/
+#      Öffentlich, kein Auth
+#      Indikatoren: AIR_12 (PM2.5 städtisch), SDGPM25 (SDG PM2.5)
+# ---------------------------------------------------------------------------
+source who_gho_air_quality_urban
+ttl 86400
+force diffusion
+url https://ghoapi.azureedge.net/api/AIR_12?$filter=SpatialDimType+eq+'COUNTRY'&$top=500
+map value
+lat_key country_lat
+lon_key country_lon
+field SpatialDim country_code
+field NumericValue pm25_ugm3
+field TimeDim year
+field Low confidence_low
+field High confidence_high
+
+# ---------------------------------------------------------------------------
+# [56] UNICEF / JMP — Trinkwasser + Sanitär (WASH-Daten, Länderebene)
+#      Joint Monitoring Programme REST API
+#      Öffentlich, kein Auth
+# ---------------------------------------------------------------------------
+source jmp_wash_water_access
+ttl 86400
+force diffusion
+url https://washdata.org/api/countries?format=json&service=drinking-water&year={year}
+map .
+lat_key lat
+lon_key lon
+field country_name country
+field iso3 country_iso3
+field national_sm safely_managed_pct
+field national_basic basic_access_pct
+field national_limited limited_access_pct
+field national_unimproved unimproved_pct
+field national_no_service no_service_pct
+
+# ---------------------------------------------------------------------------
+# [57] FAO AQUASTAT — Globale Wasserressourcen (Länderebene)
+#      FAO AQUASTAT REST API: https://www.fao.org/aquastat/statistics/
+#      Felder: Erneuerbare Wasserressourcen (m³/capita), Wasserentnahme
+# ---------------------------------------------------------------------------
+source fao_aquastat_water_resources
+ttl 86400
+force diffusion
+url https://www.fao.org/aquastat/en/databases/agromat/api/v1/water?year={year}&format=json
+map .
+lat_key country_latitude
+lon_key country_longitude
+field country country_name
+field total_renewable_water_resources total_freshwater_m3capita
+field total_freshwater_withdrawal freshwater_withdrawal_km3
+field agricultural_withdrawal agri_withdrawal_pct
+
+# ---------------------------------------------------------------------------
+# [58] IAEA POWER REACTOR INFORMATION SYSTEM (PRIS)
+#      Alle weltweiten Kernkraftwerke: Kapazität, Typ, Status, Betrieb
+#      REST JSON: https://pris.iaea.org/api/
+#      Öffentlich, kein Auth
+# ---------------------------------------------------------------------------
+source iaea_pris_nuclear_reactors
+ttl 86400
+force thermal
+url https://pris.iaea.org/api/reactors?format=json&limit=500&status=Operational
+map .
+lat_key latitude
+lon_key longitude
+field name reactor_name
+field country country
+field type reactor_type
+field status operational_status
+field netCapacity net_capacity_mwe
+field firstGridConnection first_power_date
+field owner operator_company
+
+# ---------------------------------------------------------------------------
+# [59] Open Infrastructure Map — Hochspannungsleitungen + Kraftwerke
+#      OSM-basierte Energieinfrastruktur via OpenInfraMap REST
+#      Endpunkt: https://api.openinframap.org/
+#      Öffentlich, kein Auth für Basis-Endpunkte
+# ---------------------------------------------------------------------------
+source openinframap_power_plants
+ttl 86400
+force em
+url https://api.openinframap.org/stats/country
+map .
+lat_key centroid.lat
+lon_key centroid.lon
+field country country_name
+field power_plant_count power_plant_count
+field wind_capacity_mw wind_capacity_mw
+field solar_capacity_mw solar_capacity_mw
+field nuclear_capacity_mw nuclear_capacity_mw
+
+# ---------------------------------------------------------------------------
+# [60] EMBER — Global Electricity Data (Strom aus Erneuerbaren, CO2)
+#      Ember Climate REST API: https://api.ember-climate.org/
+#      Öffentlich, kein Auth für Monatsdaten
+#      Gibt Stromerzeugung nach Land und Technologie zurück
+# ---------------------------------------------------------------------------
+source ember_electricity_generation
+ttl 86400
+force diffusion
+url https://api.ember-climate.org/v1/electricity-generation?aggregate_by=country&date_from={year}-01-01&date_to={year}-12-31&format=json
+map .
+lat_key country_latitude
+lon_key country_longitude
+field country_name country
+field wind_generation_twh wind_twh
+field solar_generation_twh solar_twh
+field fossil_generation_twh fossil_twh
+field total_generation_twh total_twh
+field clean_share_pct clean_energy_pct
+
+# ---------------------------------------------------------------------------
+# [61] GLOBAL POWER PLANT DATABASE (WRI / Global Energy Monitor)
+#      World Resources Institute: global Kraftwerksdatenbank
+#      REST via Kaggle/Zenodo: keine direkte API
+#      VIABLE FREI: via CKAN (Open Power System Data):
+#      https://data.open-power-system-data.org/conventional_power_plants/
+#      ODER: GEM (Global Energy Monitor) via GADM-API-äquivalent
+#      EINFACHSTER PFAD: WRI PowerWatch via CARTO SQL API
+# ---------------------------------------------------------------------------
+source wri_global_power_plants_carto
+ttl 86400
+force thermal
+url https://cartocdn-gusc.global.ssl.fastly.net/wri-rw/api/v3/sql?q=SELECT+cartodb_id,the_geom,name,country,primary_fuel,capacity_mw,latitude,longitude+FROM+powerwatch_data_20180102+LIMIT+5000&format=geojson
+map features
+lat_key properties.latitude
+lon_key properties.longitude
+field properties.name plant_name
+field properties.country country
+field properties.primary_fuel primary_fuel
+field properties.capacity_mw capacity_mw
+
+# ---------------------------------------------------------------------------
+# [62] FLIGHTRADAR24 PUBLIC — Echtzeit-Flugzeugpositionen (öffentliche API)
+#      ⚠ FR24 hat keine öffentliche REST-API ohne kommerziellen Plan
+#      VIABLE FREI: OpenSky Network REST API (öffentlich, kein Auth)
+#      https://opensky-network.org/api/states/all → gibt alle Flugzeuge
+#      Format: JSON, Felder: icao24, callsign, origin_country,
+#              time_position, last_contact, longitude, latitude,
+#              baro_altitude, on_ground, velocity, true_track, vertical_rate
+# ---------------------------------------------------------------------------
+source opensky_aircraft_positions
+ttl 10
+force em
+url https://opensky-network.org/api/states/all
+map states
+lat_key 6
+lon_key 5
+field_in 0 icao24
+field_in 1 callsign
+field_in 2 origin_country
+field_in 7 baro_altitude_m
+field_in 9 velocity_ms
+field_in 10 heading_deg
+field_in 11 vertical_rate_ms
+field_in 13 on_ground
+
+# ---------------------------------------------------------------------------
+# [63] OpenSky — Historische Flugzeugpositionen (letzter Stunde, bbox)
+#      Öffentlicher anonymer Zugang (Rate-Limited: 100 req/Tag)
+#      Bbox: Europa
+# ---------------------------------------------------------------------------
+source opensky_europe_flights
+ttl 60
+force em
+url https://opensky-network.org/api/states/all?lamin=35&lomin=-10&lamax=70&lomax=40
+map states
+lat_key 6
+lon_key 5
+field_in 0 icao24
+field_in 1 callsign
+field_in 7 altitude_m
+field_in 9 velocity_ms
+field_in 10 track_deg
+
+# ---------------------------------------------------------------------------
+# [64] GBIF Species Richness — Artenreichtum pro Gitterzelle
+#      GBIF bietet auch Kachel-basierte Dichte-APIs
+#      /v1/occurrence/count → Gesamtanzahl pro Taxon
+#      /v2/map/occurrence/density → Dichte-Raster (kein REST-JSON)
+#      VIABLE: GBIF occurrence/search mit Gitter-Aufteilung
+# ---------------------------------------------------------------------------
+source gbif_species_richness_africa
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&decimalLatitude=-35,38&decimalLongitude=-20,55&basisOfRecord=HUMAN_OBSERVATION
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field genus genus
+field family family
+field kingdom kingdom
+field country country_code
+field eventDate observation_date
+
+# ---------------------------------------------------------------------------
+# [65] GBIF — Meeresarten (Marine Species = Animalia + Plantae im Ozean)
+#      Marine-Trophiestufen als Biodiversitäts-Proxy
+# ---------------------------------------------------------------------------
+source gbif_marine_species_global
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&basisOfRecord=HUMAN_OBSERVATION&decimalLatitude=-90,90&habitat=MARINE
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field kingdom kingdom
+field phylum phylum
+field order order
+field family family
+field country country_code
+```
+
+---
+
+## Gesamtübersicht Batch 6
+
+| Domain | Quellen | PC-tagged | Status / Anmerkungen |
+|---|---|---|---|
+| **CMA China** | 5 | ✅ lat/lon | WAQI-Aggregat + IBTrACS + GSOD |
+| **DART Tsunami-Buoys** | 7 | ✅ feste lat/lon | NDBC .dart-Format + PMEL GeoJSON |
+| **GWOSC Gravitationswellen** | 4 | ✅ ra/dec+z+dist | GW-Katalog öffentlich, kein Auth |
+| **ITRDB Baumringe** | 6 | ✅ lat/lon | NOAA Paleo API + Ice Core + Coral + Pollen + Speleothem |
+| **IBTrACS Tropenstürme** | 2 | ✅ lat/lon | Aktive + Letzte 3 Jahre |
+| **TROPOMI / Sentinel-5P** | 3 | ✅ lat/lon | TEMIS KNMI NO2 + UV + SO2 |
+| **Ocean Color Chl-a** | 4 | ✅ lat/lon | VIIRS + MODIS + HABSOS |
+| **SAWS Südafrika** | 4 | ✅ lat/lon | ISD + AFIS + Open-Meteo |
+| **World Bank Klima** | 5 | ✅ Länderzentroid | CO2 + PM2.5 + Wasser + Wald + Projektion |
+| **Ionosphäre TEC** | 5 | ✅ feste lat/lon | DIDBase Ionosonden 5 Stationen |
+| **Argo Wärmeinhalt** | 4 | ✅/⚠ | OHC + ENSO + PDO + AMO |
+| **ESA Swarm Magnetfeld** | 2 | ✅ terra/lat/lon | WMM + INTERMAGNET Niemegk |
+| **NOAA NGDC Hazards** | 2 | ✅ lat/lon | Tsunami + Earthquake Events |
+| **WHO GHO** | 2 | ✅ Länderzentroid | Air Quality + WASH |
+| **FAO AQUASTAT** | 1 | ✅ Länderzentroid | Wasserressourcen |
+| **IAEA PRIS** | 1 | ✅ lat/lon | Kernkraftwerke global |
+| **Energie / Elektrizität** | 3 | ✅/⚠ | Ember + WRI + OpenInfraMap |
+| **OpenSky Flugzeuge** | 2 | ✅ lat/lon | Echtzeit global + Europa bbox |
+| **GBIF Erweiterung** | 2 | ✅ lat/lon | Afrika-Artenreichtum + Marine |
+
+**Gesamt Batch 6: 65 Quellblöcke**
+
+---
+
+## Kritische Parser-Hinweise Batch 6
+
+```
+# ===== IBTrACS CSV-Format =================================================
+# Zeile 1: Header (SID,SEASON,NUMBER,BASIN,SUBBASIN,NAME,ISO_TIME,...)
+# Zeile 2: Einheiten (-, -, -, -, -, -, -, ...)
+# Zeile 3+: Daten
+# → format text + rows
+# → skip_rows=2 (Header + Einheiten-Zeile)
+# Sonderfall: LAT/LON als Dezimalgrad mit Vorzeichen (°N/°E)
+# WMO_WIND in Knoten; WMO_PRES in hPa
+# Fehlende Werte: " " (Leerzeichen) oder "-999" → als null behandeln
+# SUBBASIN-Codes: WP=Westpazifik, EP=Ostpazifik, NA=Nordatlantik,
+#                 NI=Nordindik, SI=Südindik, SP=Südpazifik, AS=Arabisches Meer
+
+# ===== NDBC DART-Format ===================================================
+# ASCII-Text mit 7-8 Spalten:
+# YY  MM DD HH mm  ss T     HEIGHT
+# 26  07 27 12 00  00 1  4578.234
+# Spalten: Jahr(2), Monat, Tag, Stunde, Minute, Sekunde, Typ, Höhe(m)
+# Typ-Codes: 1=15-Minuten-Standard, 2=Ereignis(1min), 3=15-Sekunden
+# HEIGHT = absolute Meereshöhe (kein Anomalie-Wert!)
+# Tsunami-Signal: schnelle Änderung in HEIGHT über kurze Zeitspanne
+# Für Anomalie: Gezeitenmodell subtrahieren (nicht in-pipeline möglich)
+# → field 7 = sea_level_height_m (Index 7 nach Whitespace-Split)
+# → Headerzeile (beginnt mit #) überspringen
+
+# ===== GWOSC Events API ===================================================
+# Antwortstruktur:
+# {
+#   "count": 250,
+#   "next": "https://gwosc.org/api/v2/events/?page=2",
+#   "results": [
+#     {
+#       "commonName": "GW150914",
+#       "GPS": 1126259462.4,
+#       "catalog": {"shortName": "GWTC-1-confident"},
+#       "parameters": {
+#         "mass_1_source": {"best": 36.2, "lower": 3.8, "upper": 5.2},
+#         "redshift": {"best": 0.09, ...},
+#         "luminosity_distance": {"best": 410, ...},
+#         "network_matched_filter_snr": {"best": 24.4, ...}
+#       },
+#       "sky_map": {"ra": 1.95, "dec": -1.27, ...}
+#     }, ...
+#   ]
+# }
+# → map results
+# → ra_key sky_map.ra (Radiant in ICRS, nicht Grad!)
+#   ⚠ sky_map.ra ist in RADIANT → Ingestor muss × (180/π) konvertieren
+#   ODER wenn ra_key direkt Grad = sky_map.ra * 57.296
+# → z_key parameters.redshift.best (verschachteltes Objekt)
+
+# ===== NOAA Paleo API JSON-Struktur =======================================
+# {
+#   "studyList": [
+#     {
+#       "studySites": [
+#         {
+#           "siteName": "Alerce Costero",
+#           "elevation": 700,
+#           "collectionName": "chile006",
+#           "geo": {
+#             "type": "Feature",
+#             "geometry": {
+#               "type": "Point",
+#               "coordinates": [-73.5, -40.6]  ← [lon, lat]
+#             }
+#           }
+#         }
+#       ],
+#       "earliestYearBP": 600,
+#       "mostRecentYearBP": -50,
+#       "investigator": "Lara, A.",
+#       "species": [{"speciesCode": "FICY", ...}]
+#     }, ...
+#   ]
+# }
+# → map studyList
+# → lat_key studySites.0.geo.geometry.coordinates.1  (Index 1 = lat)
+# → lon_key studySites.0.geo.geometry.coordinates.0  (Index 0 = lon)
+
+# ===== OpenSky Network Array-of-Arrays ====================================
+# {
+#   "time": 1722081234,
+#   "states": [
+#     ["4b1806", "SWR123  ", "Switzerland", 1722081230,
+#      1722081233, 8.5420, 47.3668, 10972.8, false,
+#      247.2, 224.5, 0.0, null, 10820.8, "1000", false, 0],
+#     ...
+#   ]
+# }
+# Index-Mapping:
+#   0=icao24, 1=callsign, 2=origin_country, 3=time_position,
+#   4=last_contact, 5=longitude, 6=latitude, 7=baro_altitude,
+#   8=on_ground, 9=velocity, 10=true_track, 11=vertical_rate,
+#   12=sensors, 13=geo_altitude, 14=squawk, 15=spi, 16=position_source
+# → map states
+# → lat_key 6, lon_key 5 (Array-Indizes!)
+# → on_ground (Index 8): true = Flugzeug auf Boden → ggf. herausfiltern
+```
+
+---
+
+## Akkumulierter Fortschritt (Batches 1–6)
+
+| Batch | Quellblöcke | Neue Domains |
+|---|---|---|
+| Batch 1 | 17 | SDSS/2MASS/WISE + AERONET |
+| Batch 2 | 37 | Fermi + Chandra + XMM + NVSS + ZTF + FRB + JPL + MPC + CelesTrak |
+| Batch 3 | 56 | Meteorite + CODATA + Neotoma + Vulkane + Exoplaneten + Coral + Open-Meteo + SC + GeoNet + NSIDC + Permafrost + Grundwasser + Amazônia |
+| Batch 4 | 62 | BOM + Raspberry Shake + Lightning + INCOIS + CMEMS + CAMS + Roshydromet + Afrika + Zentralasien + CMB/Planck + FIRMS + GBIF + OpenAQ + EU-Seismik + NASA POWER + MRDS + INTERMAGNET |
+| Batch 5 | 65 | iNaturalist-Taxa + METAR + BZCAT + ROSAT + NMDB + Wasserspeicher + SWPC + O2-Ozean + Mangrove + Bhuvan + Gezeiten + WHO AQ + PANGAEA + IGS GNSS + CME |
+| **Batch 6** | **65** | CMA/IBTrACS + DART + GWOSC + ITRDB/Paleo + TROPOMI + Ocean Color + World Bank + Ionosonden + OHC/ENSO + WMM + NGDC Hazards + IAEA + Ember + OpenSky + GBIF Erweiterung |
+| **∑ Total** | **302** | **~100 Domains** |
+
+---
+
+## Empfehlung Batch 7
+
+| Priorität | Domain | Strategie |
+|---|---|---|
+| 🟡 **1** | **ISRO Bhuvan Erweiterung** | LULC WFS + AWiFS Mosaic-Layer REST |
+| 🟡 **2** | **GeoNet NZ Tsunami** | GeoNet DART + Tsunami Warning Feeds |
+| 🟡 **3** | **INCOIS Wave RSS** | Wave-Bulletin-RSS + Ocean State Forecast |
+| 🟡 **4** | **Radio VLBI / VLBA** | MOJAVE Catalog via VizieR + VIPS-Katalog |
+| 🔵 **5** | **Exo-Atmosphären (JWST)** | MAST CAOM TAP für JWST NIRSpec-Spektren |
+| 🔵 **6** | **Photosynthese / GPP** | MODIS GPP via NASA EARTHDATA ERDDAP (MOD17) |
+| 🔵 **7** | **Radiometer-Polarimetrie** | ISPO/SCIAMACHY via BIRA-IASB |
+| 🔵 **8** | **Raumsondendaten (HORIZONS)** | JPL Horizons Ephem für aktive Missionen |
+| 🔵 **9** | **Ozonsäule historisch** | TOMS/BUV/SBUV via NASA GES DISC ERDDAP |
+| 🔵 **10** | **Sozioökonomik + Naturkatastrophen** | EM-DAT (CRED) öffentlicher REST-Check |

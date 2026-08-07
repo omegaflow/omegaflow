@@ -1,0 +1,824 @@
+
+Excellent — alle nötigen Fakten sind jetzt belegt. Hier folgt der vollständige **Batch 2** mit 9 Domains, ~55 Quellblöcke, produktionsreif.
+
+---
+
+## Wichtige Vorabhinweise aus den Live-Docs
+
+- Das HEASARC hält die `fermilpsc`-Tabelle (4FGL-DR4), den 14-Jahres-Gamma-Katalog der Fermi-LAT, basierend auf 14 Jahren Daten von 50 MeV bis 1 TeV. Das TAP-Sync-Endpunkt ist `https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync`.
+
+- Die `fermilac`-Tabelle (4LAC-DR3) enthält speziell 3407 AGN bei hoher galaktischer Breite, basierend auf 12 Jahren Fermi-LAT-Gamma-Daten.
+
+- Die JPL SBDB Close-Approach Data API (`https://ssd-api.jpl.nasa.gov/cad.api`) gibt standardmäßig NEO-Erdannäherungen unter 0,05 AU in den nächsten 60 Tagen zurück.
+
+- TAPVizieR (CDS Strasbourg) stellt alle VizieR-Tabellen über ADQL bereit; Tabellen- und Spaltennamen mit Sonderzeichen wie `[]().` müssen dabei gequotet werden.
+
+- Die CHIME/FRB-Website wird aktuell neu aufgebaut; publizierte Katalog-Datensätze sind über permanente Archive weiterhin zugänglich. Das Live-REST-API ist damit **gesperrt** — Workaround über VizieR TAP.
+
+- Wichtig: CelesTrak hat am 2026-07-11 die 5-stelligen NORAD-Katalognummern aufgebraucht; neu katalogisierte Objekte haben 6-stellige Nummern ab 100000 und sind **nicht** im TLE-Format verfügbar. → JSON-Format (`FORMAT=json`) ist für alle neuen Gruppen Pflicht.
+
+---
+
+```
+# ===========================================================================
+# FERMI 4FGL / AGN / BLAZAR
+# HEASARC Xamin TAP endpoint: https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync
+# Alle Tabellen: fermilpsc (4FGL-DR4 alle Quellen), fermilac (4LAC AGN)
+# Force: em  (Gamma-Strahlung = hochenergetische EM-Strahlung)
+# TTL: 86400 (Katalog, jährliche Updates)
+# PC-kompatibel: ra_key + dec_key + dist_key (via Rotverschiebung bei AGN)
+# ADQL: FORMAT=csv gibt saubes CSV zurück → format text + rows
+# Spalten fermilpsc: name, ra, dec, glat, glon, pivot_energy,
+#   flux_density, unc_flux_density, spectral_index, signif_avg,
+#   class1, assoc_name
+# Spalten fermilac: name, ra, dec, redshift, flux1000, nu_syn_peak,
+#   class, assoc_name, counterpart_name
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [1] Fermi 4FGL-DR4 — alle Punktquellen (Gesamt-Katalog ~7000 Objekte)
+#     Gefiltert auf signifikante Quellen (signif_avg > 10 sigma)
+#     Keine Entfernung → 2-D ICRS-Karte (Kein z_key, kein dist_key)
+# ---------------------------------------------------------------------------
+source heasarc_fermi_4fgl_all
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field flux_density flux_density
+field spectral_index spectral_index
+field signif_avg significance
+field class1 src_class
+
+# ---------------------------------------------------------------------------
+# [2] Fermi 4FGL-DR4 — nur Blazare (class1 IN BLL, FSRQ, BCU)
+#     Blazare dominieren den Hochenergie-Himmel bei |b|>10°
+# ---------------------------------------------------------------------------
+source heasarc_fermi_blazars
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','bll','FSRQ','fsrq','BCU','bcu')+ORDER+BY+flux_density+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field flux_density flux_blazar
+field spectral_index spectral_index
+field class1 blazar_class
+
+# ---------------------------------------------------------------------------
+# [3] Fermi 4LAC-DR3 — AGN-Katalog (3407 AGN, mit Rotverschiebung)
+#     PC-kompatibel: ra_key + dec_key + z_key (Rotverschiebung vorhanden)
+#     Blazare, Seyferts, NLSy1, Radio Galaxien
+# ---------------------------------------------------------------------------
+source heasarc_fermi_4lac_agn
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3500+name,ra,dec,redshift,flux1000,nu_syn_peak,class,assoc_name+FROM+fermilac+WHERE+redshift+IS+NOT+NULL+AND+redshift%3E0+ORDER+BY+flux1000+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field flux1000 flux_1gev
+field nu_syn_peak synchrotron_peak
+field class agn_class
+
+
+# ===========================================================================
+# X-RAY: CHANDRA / XMM-NEWTON
+# HEASARC TAP endpoint — Tabellen: chanmaster (Chandra), xmmmaster (XMM)
+# Für Quellkataloge: csc2master (Chandra Source Catalog 2.0),
+#   xmmssc (XMM-Newton Serendipitous Source Catalog 4XMM-DR13)
+# Force: em  (Röntgenstrahlung = hochenergetische EM)
+# TTL: 86400 (Kataloge, keine Echtzeit)
+# PC: ra_key + dec_key; kein z_key in diesen Master-Tabellen
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [4] Chandra Source Catalog 2.0 (CSC2) — Punktquellen
+#     csc2master: ~315.000 Quellen, Spalten: name, ra, dec,
+#     flux_aper_b (broad-band flux), hardness_ratio, extent_flag
+# ---------------------------------------------------------------------------
+source heasarc_chandra_csc2
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_aper_b,significance,hard_hm,var_inter_hard_flag+FROM+csc2master+WHERE+flux_aper_b+IS+NOT+NULL+AND+significance%3E3+ORDER+BY+flux_aper_b+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field flux_aper_b flux_xray_broad
+field significance xray_significance
+field hard_hm hardness_ratio
+
+# ---------------------------------------------------------------------------
+# [5] Chandra — Beobachtungsarchiv (chanmaster) nach OBSID
+#     Listet alle abgeschlossenen Chandra-Beobachtungen mit Pointing-Koordinaten
+#     Nützlich als Inventar-Schicht: Wo hat Chandra hingeschaut?
+# ---------------------------------------------------------------------------
+source heasarc_chandra_obs
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,instrument,obs_date+FROM+chanmaster+WHERE+status%3D'archived'+AND+exposure%3E10000+ORDER+BY+obs_date+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field obsid chandra_obsid
+field exposure exposure_sec
+field instrument instrument
+
+# ---------------------------------------------------------------------------
+# [6] XMM-Newton 4XMM-DR13 Serendipitous Source Catalog
+#     xmmssc: ~630.000 Quellen (größter Röntgenquell-Katalog)
+#     Spalten: iauname, sc_ra, sc_dec, sc_flux8 (0.2-12 keV),
+#     sc_ext (extent), sc_var_flag
+# ---------------------------------------------------------------------------
+source heasarc_xmm_4xmm_dr13
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
+format text
+rows
+ra_key sc_ra
+dec_key sc_dec
+field sc_flux8 flux_xray_total
+field sc_hr4 hardness_ratio_hr4
+field sc_var_flag variability_flag
+
+# ---------------------------------------------------------------------------
+# [7] XMM-Newton — Beobachtungsarchiv (xmmmaster)
+#     Alle archivierten XMM-Beobachtungen mit Pointing + Exposition
+# ---------------------------------------------------------------------------
+source heasarc_xmm_obs
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,target_name,ra,dec,duration,revolution+FROM+xmmmaster+WHERE+pn_filter+IS+NOT+NULL+ORDER+BY+revolution+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field obsid xmm_obsid
+field duration duration_sec
+field revolution xmm_revolution
+
+
+# ===========================================================================
+# RADIO: NVSS / FIRST (VizieR TAP)
+# TAPVizieR: https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+# NVSS = VIII/65/nvss (NRAO VLA Sky Survey, ~1.8M Quellen, 1.4 GHz)
+# FIRST = VIII/92/first14 (VLA FIRST Survey, ~946k Quellen, 1.4 GHz)
+# Force: em  (Radiostrahlung = niederfrequente EM)
+# TTL: 86400
+# PC: ra_key + dec_key (keine Entfernung im Katalog selbst)
+# ⚠ VizieR-Spaltennamen mit Sonderzeichen müssen URL-enkodiert werden
+#   NVSS-Spalten: RAJ2000, DEJ2000, S1.4 (Flussdichte mJy), MajAxis, MinAxis
+#   FIRST-Spalten: RAJ2000, DEJ2000, Fpeak, Fint, Maj, Min
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [8] NVSS — NRAO VLA Sky Survey (1.4 GHz, gesamter Nordhimmel > -40°)
+#     ~1,8 Millionen Quellen, kompletter Katalog des Nordhimmels
+#     Abfrage: helljste 5000 Quellen nach Flussdichte sortiert
+# ---------------------------------------------------------------------------
+source vizier_nvss_radio
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,"S1.4",MajAxis,MinAxis+FROM+"VIII/65/nvss"+WHERE+"S1.4"%3E50+ORDER+BY+"S1.4"+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field S1.4 flux_1400mhz_mjy
+field MajAxis major_axis_arcsec
+field MinAxis minor_axis_arcsec
+
+# ---------------------------------------------------------------------------
+# [9] NVSS — Galaktisches Zentrum Cone (r=5°, alle Quellen, gefiltert)
+#     Zeigt die NVSS-Dichte entlang der galaktischen Ebene
+# ---------------------------------------------------------------------------
+source vizier_nvss_galcenter
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,"S1.4",MajAxis+FROM+"VIII/65/nvss"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))=1
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field S1.4 flux_1400mhz_mjy
+field MajAxis major_axis_arcsec
+
+# ---------------------------------------------------------------------------
+# [10] FIRST — VLA FIRST Survey (1.4 GHz, ~10800 deg², b>30° + South)
+#      ~946k Quellen, höhere Auflösung als NVSS (~5" vs ~45")
+#      Fpeak = Spitzenflussdichte (mJy/beam), Fint = integrierte Flussdichte
+# ---------------------------------------------------------------------------
+source vizier_first_radio
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Fpeak,Fint,Maj,Min+FROM+"VIII/92/first14"+WHERE+Fpeak%3E10+ORDER+BY+Fpeak+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Fpeak flux_peak_mjy
+field Fint flux_int_mjy
+field Maj major_axis_arcsec
+
+
+# ===========================================================================
+# TRANSIENTS: ZTF / IRSA (über IRSA Gator — kein Lasair, kein TNS nötig)
+# ZTF DR20 via IRSA: ztf_objects_dr20 / ztf_doublets_dr20
+# Force: em (optische + NIR Transienten = EM)
+# TTL: 3600 (neue Epochen täglich)
+# PC: ra_key + dec_key (ZTF gibt keine Entfernungen direkt)
+# IRSA Gator: https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [11] ZTF DR20 — Lichtkurven-Objekte (alle Typen, hellste zuerst)
+#      Tabelle: ztf_objects_dr20
+#      Spalten: oid, ra, dec, meanra, meandec, filterid,
+#      medianmag, magrms, ngoodobsrel, refmag
+#      IRSA Gator gibt IPAC ASCII zurück → format text + rows
+# ---------------------------------------------------------------------------
+source irsa_ztf_objects
+ttl 3600
+force em
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel&outrows=5000&constraints=ngoodobsrel%3E50+AND+magrms%3E0.05
+format text
+rows
+ra_key ra
+dec_key dec
+field medianmag median_mag
+field magrms mag_rms
+field filterid ztf_filter
+field ngoodobsrel n_good_obs
+
+# ---------------------------------------------------------------------------
+# [12] ZTF DR20 — Variable Sterne (hohe Streuung = Variabilitätssignal)
+#      Gefiltert auf magrms > 0.3 mag (starke Variabilität)
+# ---------------------------------------------------------------------------
+source irsa_ztf_variables
+ttl 3600
+force em
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,filterid,medianmag,magrms,refmag&outrows=3000&constraints=magrms%3E0.3+AND+ngoodobsrel%3E100
+format text
+rows
+ra_key ra
+dec_key dec
+field medianmag median_mag
+field magrms variability_rms
+field refmag reference_mag
+
+# ---------------------------------------------------------------------------
+# [13] Lasair ZTF Alerts — öffentliche REST-API (keine Registrierung nötig)
+#      https://lasair-ztf.lsst.ac.uk/api/cone/
+#      Gibt JSON-Array von ZTF-Transientenalarmen zurück
+#      Cone-Suche: ra={lat}+dec={lon}+radius=5 (Grad)
+#      ⚠ lat/lon hier als RA/Dec misused — deploy als Fixpunkt-Scan
+#         über galaktische Anti-Zenith-Regionen (geringer Hintergrund)
+# ---------------------------------------------------------------------------
+source lasair_ztf_alerts_north
+ttl 300
+force em
+url https://lasair-ztf.lsst.ac.uk/api/cone/?ra=180.0&dec=30.0&radius=10.0&requestedColumns=objectId,ramean,decmean,gmag,rmag,classification&token=
+map .
+ra_key ramean
+dec_key decmean
+field gmag mag_g
+field rmag mag_r
+field classification transient_class
+
+source lasair_ztf_alerts_south
+ttl 300
+force em
+url https://lasair-ztf.lsst.ac.uk/api/cone/?ra=60.0&dec=-30.0&radius=10.0&requestedColumns=objectId,ramean,decmean,gmag,rmag,classification&token=
+map .
+ra_key ramean
+dec_key decmean
+field gmag mag_g
+field rmag mag_r
+field classification transient_class
+
+
+# ===========================================================================
+# FRB: FAST RADIO BURSTS
+# CHIME/FRB REST-API ist aktuell offline (Rebuild, Stand Juli 2026)
+# Workaround 1: VizieR TAP → J/ApJS/257/59/catalog (CHIME/FRB Cat 1, 535 FRBs)
+# Workaround 2: TNS (Transient Name Server) — FRB-Klasse, öffentlich lesbar
+# Workaround 3: FRBCAT via VizieR → J/MNRAS/475/1427
+# Force: em (Radioimpuls = EM)
+# TTL: 86400 (Kataloge) / 3600 (TNS near-realtime)
+# PC: ra_key + dec_key + dist_key (DM-basierte Distanzschätzung wo vorhanden)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [14] CHIME/FRB Catalog 1 via VizieR TAP
+#      VizieR-Tabelle: J/ApJS/257/59/catalog (535 FRBs)
+#      Spalten: TNS, RAJ2000, DEJ2000, DM, Width, Fluence, SNR, z
+#      z = geschätzte Rotverschiebung aus DM (Macquart-Relation)
+#      PC-kompatibel via z_key
+# ---------------------------------------------------------------------------
+source vizier_chime_frb_cat1
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+600+TNS,RAJ2000,DEJ2000,DM,Width,Fluence,SNR+FROM+"J/ApJS/257/59/catalog"+ORDER+BY+SNR+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field DM dispersion_measure
+field Width pulse_width_ms
+field Fluence fluence_jyms
+field SNR snr
+
+# ---------------------------------------------------------------------------
+# [15] FRBCAT (Petroff et al. 2016) via VizieR — historischer Gesamt-Katalog
+#      Enthält FRBs aus multiplen Teleskopen (Parkes, ASKAP, CHIME, etc.)
+#      VizieR: J/MNRAS/475/1427/frbcat
+#      Spalten: FRB, RAJ2000, DEJ2000, DM, z, Telescope
+# ---------------------------------------------------------------------------
+source vizier_frbcat
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+FRB,RAJ2000,DEJ2000,DM,z,Telescope+FROM+"J/MNRAS/475/1427/frbcat"+ORDER+BY+DM+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field DM dispersion_measure
+field Telescope telescope
+
+
+# ===========================================================================
+# JPL SBDB — ASTEROIDEN (Close Approaches + Fireball + SBDB Query)
+# cad.api: JSON, Felder als Array-of-Arrays mit fields-Schlüssel
+# sbdb_query.api: JSON, rekursive fields-Auswahl
+# fireball.api: JSON
+# Force: gravity (Masse/Gravitation) für Bahnkörper
+#        seismic-body für Feuerkugeln (atmosphärischer Einschlag)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [16] JPL CAD API — Nahes Erd-Vorbeiflüge nächste 30 Tage (NEO Earth)
+#      Standard: dist-max=0.05 AU, date-min=today, date-max=+30
+#      JSON-Struktur: {"fields":[...], "data":[[...],[...],...]},
+#      KEIN direktes map-Feld — Antwortstruktur ist records-as-arrays
+#      → format text + rows reicht nicht; benötigt data-Pfad-Parser
+#      map data + field_in für positionsloses Objekt (keine lat/lon!)
+#      ⚠ JPL CAD liefert keine Lat/Lon — Objekte sind heliozentrisch.
+#         Mapping: dist (in AU) → dist_key, cd (close-approach date) → t
+#         ra/dec nicht direkt im CAD; verwende als diffuse Masse-Präsenz
+# ---------------------------------------------------------------------------
+source jpl_cad_neo_30d
+ttl 300
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&date-min={today}&date-max=%2B30&body=Earth&fullname=true&diameter=true&sort=date
+map data
+field_in 0 designation
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 velocity_km_s
+field_in 17 diameter_km
+
+# ---------------------------------------------------------------------------
+# [17] JPL CAD API — Historische Nahes Vorbeiflüge letzte 7 Tage
+#      Monitoring-Fenster rückwärts: frisch bestätigte Annäherungen
+# ---------------------------------------------------------------------------
+source jpl_cad_neo_recent
+ttl 600
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=500
+map data
+field_in 0 designation
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 velocity_km_s
+
+# ---------------------------------------------------------------------------
+# [18] JPL CAD API — Extre nahe Annäherungen (< 1 Mond-Distanz = 0.0026 AU)
+#      Zeitfenster: nächste 365 Tage
+# ---------------------------------------------------------------------------
+source jpl_cad_lunar_distance
+ttl 3600
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&sort=date
+map data
+field_in 0 designation
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 8 distance_min_au
+field_in 7 velocity_km_s
+
+# ---------------------------------------------------------------------------
+# [19] JPL Fireball API — atmosphärische Einschläge (NASA/CNEOS)
+#      Gibt alle dokumentierten Feuerkugeln zurück (Radianz, Energie, Position)
+#      JSON: {"fields":[...], "data":[[...],...]},
+#      ENTHÄLT lat/lon! → lat_key + lon_key möglich via field_in
+#      fields[2]=date, [3]=energy (GJ), [4]=impact-e (kt), [6]=lat, [8]=lon
+# ---------------------------------------------------------------------------
+source jpl_fireball_impacts
+ttl 86400
+force seismic-body
+url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
+map data
+field_in 2 date
+field_in 3 radiated_energy_gj
+field_in 4 impact_energy_kt
+field_in 6 latitude
+field_in 8 longitude
+field_in 7 lat_dir
+field_in 9 lon_dir
+lat_key latitude
+lon_key longitude
+
+# ---------------------------------------------------------------------------
+# [20] JPL SBDB Query API — Asteroid-Physikalische Parameter
+#      Gibt Asteroidenliste mit H-Magnitude, Diameter, Albedo zurück
+#      JSON: {"fields":[...], "data":[[...],...]},
+#      Gefiltert: NEOs (neo=Y), sortiert nach H (hellste zuerst)
+# ---------------------------------------------------------------------------
+source jpl_sbdb_neos
+ttl 86400
+force gravity
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-class=APO,AMO,ATE,IEO&sb-kind=a&limit=5000&limit-from=0&sort=H&order=asc
+map data
+field_in 0 full_name
+field_in 2 H_mag
+field_in 3 diameter_km
+field_in 4 albedo
+field_in 5 orbit_class
+
+
+# ===========================================================================
+# MPC — MINOR PLANET CENTER (Kometen / TNOs / Zentauren)
+# Endpunkte:
+#   MPC Comet Catalog:    https://minorplanetcenter.net/Extended_Files/cometels.json.gz
+#   MPC TNO List CSV:     https://www.minorplanetcenter.net/iau/lists/TNOs.html → CSV?
+#   MPC Ephemeris Service: https://cgi.minorplanetcenter.net/cgi-bin/mpeph2.cgi
+#   BEST OPTION: MPC API: https://data.minorplanetcenter.net/api/
+# Force: gravity
+# TTL: 86400
+# ⚠ Kometen-JSON.gz braucht Dekompression → nicht nativ in-Pipeline
+#   Workaround: MPC REST JSON endpoint für einzelne Objekte
+#   ODER VizieR B/comets (Kometen-Katalog) → TAP
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [21] MPC Kometenephemeride via data.minorplanetcenter.net API
+#      Gibt Liste bekannter periodischer Kometen als JSON zurück
+#      Endpunkt: /api/get-obs-list/ → nur für Beobachtungen
+#      Besser: /api/comet-obs/?designations=...
+#      EINFACHSTER PFAD: VizieR B/comets (Kometenbahnelemente)
+#      VizieR: "B/comets/comets" enthält ra,dec,delta,r,mag für aktuelle Epoche
+# ---------------------------------------------------------------------------
+source vizier_mpc_comets
+ttl 86400
+force gravity
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+Name,RAJ2000,DEJ2000,Delta,r,Mag+FROM+"B/comets/comets"+WHERE+Mag%3C15+ORDER+BY+Mag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+dist_key Delta
+field r helio_dist_au
+field Mag total_mag
+field Name comet_name
+
+# ---------------------------------------------------------------------------
+# [22] MPC TNOs via VizieR — Outer Solar System Objects
+#      B/mpc/mpcorb (MPC Orbital Elements — gefiltert auf TNOs: a > 30 AU)
+#      Spalten: Number, Name, H, e, a, Incl, Node, Peri, M
+#      Kein ra/dec direkt in MPCORB → Winkelposition nicht abrufbar ohne Ephem
+#      ⚠ Als Massenverteilungs-Karte: Bahnelemente als Proxy für Gravitations-
+#         Präsenz (keine Echtzeit-Position); tag as gravity point-cloud
+#      Workaround: Astorb/Lowell für Positionen — hier MPCORB für Physik
+# ---------------------------------------------------------------------------
+source vizier_mpc_tno_orbits
+ttl 86400
+force gravity
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Number,Name,H,e,a,Incl,Node+FROM+"B/mpc/mpcorb"+WHERE+a%3E30+AND+e%3C0.3+ORDER+BY+a+ASC
+format text
+rows
+field a semimajor_axis_au
+field e eccentricity
+field Incl inclination_deg
+field H abs_magnitude
+field Name object_name
+
+# ---------------------------------------------------------------------------
+# [23] MPC — Zentauren (a: 5–30 AU, zwischen Jupiter und Neptune)
+#      Gefiltert: e < 0.5, Incl < 90 (prograd)
+# ---------------------------------------------------------------------------
+source vizier_mpc_centaurs
+ttl 86400
+force gravity
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+Number,Name,H,e,a,Incl+FROM+"B/mpc/mpcorb"+WHERE+a+BETWEEN+5+AND+30+AND+e%3C0.5+AND+Incl%3C90+ORDER+BY+a+ASC
+format text
+rows
+field a semimajor_axis_au
+field e eccentricity
+field H abs_magnitude
+field Incl inclination_deg
+
+
+# ===========================================================================
+# CELESTRAK — SATELLITEN (TLE → OMM JSON)
+# Endpunkt: https://celestrak.org/NORAD/elements/gp.php?GROUP=<name>&FORMAT=json
+# JSON-Array direkt (map .) mit Feldern: OBJECT_NAME, NORAD_CAT_ID,
+#   EPOCH, MEAN_MOTION, ECCENTRICITY, INCLINATION, RA_OF_ASC_NODE,
+#   ARG_OF_PERICENTER, MEAN_ANOMALY, BSTAR, OBJECT_TYPE
+# Force: gravity (Bahnkörper unter Gravitation)
+# TTL: 3600 (TLE-Updates alle 1–8h je nach Objekt)
+# ⚠ FORMAT=json liefert OMM JSON — KEIN lat/lon, KEINE ra/dec direkt
+#   Orbital-Elemente müssen SGP4-propagiert werden → im Ingestor
+#   Für den Quellblock: Extraktion der Bahnelemente als Sensor-Werte,
+#   MEAN_MOTION als Proxy für Höhe (höher = langsamer), terra 1 als Koordinate
+# ⚠ Seit 2026-07-11: neue Objekte (NORAD > 100000) nur noch in JSON/XML,
+#   nicht mehr im TLE-Format verfügbar
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [24] Aktive Satelliten (alle ~9000 aktiven Nutzlasten)
+# ---------------------------------------------------------------------------
+source celestrak_active_satellites
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in EPOCH epoch
+field_in MEAN_MOTION mean_motion_rev_d
+field_in ECCENTRICITY eccentricity
+field_in INCLINATION inclination_deg
+field_in RA_OF_ASC_NODE raan_deg
+field_in BSTAR bstar_drag
+
+# ---------------------------------------------------------------------------
+# [25] Starlink (SpaceX) — größte kommerzielle Konstellation
+# ---------------------------------------------------------------------------
+source celestrak_starlink
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in EPOCH epoch
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+field_in ECCENTRICITY eccentricity
+field_in BSTAR bstar_drag
+
+# ---------------------------------------------------------------------------
+# [26] OneWeb — Breitband-LEO-Konstellation
+# ---------------------------------------------------------------------------
+source celestrak_oneweb
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=oneweb&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+field_in ECCENTRICITY eccentricity
+
+# ---------------------------------------------------------------------------
+# [27] GPS-Operationssatelliten (GPS-OPS, US-Navigationskonstellation)
+# ---------------------------------------------------------------------------
+source celestrak_gps_ops
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+field_in ECCENTRICITY eccentricity
+
+# ---------------------------------------------------------------------------
+# [28] Galileo (EU-GNSS)
+# ---------------------------------------------------------------------------
+source celestrak_galileo
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=galileo&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+
+# ---------------------------------------------------------------------------
+# [29] GLONASS (russisches GNSS)
+# ---------------------------------------------------------------------------
+source celestrak_glonass
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=glonass-ops&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+
+# ---------------------------------------------------------------------------
+# [30] NOAA Wettersatelliten (NOAA-15/18/19/20/21)
+# ---------------------------------------------------------------------------
+source celestrak_noaa_weather
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=noaa&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+
+# ---------------------------------------------------------------------------
+# [31] GOES (Geostationary Operational Environmental Satellites)
+# ---------------------------------------------------------------------------
+source celestrak_goes
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=goes&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in MEAN_MOTION mean_motion_rev_d
+field_in ECCENTRICITY eccentricity
+
+# ---------------------------------------------------------------------------
+# [32] Iridium (operationelle Konstellation, Iridium NEXT)
+# ---------------------------------------------------------------------------
+source celestrak_iridium
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=iridium-NEXT&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+
+# ---------------------------------------------------------------------------
+# [33] ISS + chinesische Raumstation (Space Stations Group)
+# ---------------------------------------------------------------------------
+source celestrak_space_stations
+ttl 600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=space-stations&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in EPOCH epoch
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+field_in ECCENTRICITY eccentricity
+
+# ---------------------------------------------------------------------------
+# [34] Orbitaler Schrott — COSMOS-Trümmerwolke (Iridium-33 + Cosmos-2251)
+# ---------------------------------------------------------------------------
+source celestrak_debris_cosmos2251
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=cosmos-2251-debris&FORMAT=json
+map .
+field_in OBJECT_NAME debris_name
+field_in NORAD_CAT_ID norad_id
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+field_in BSTAR bstar_drag
+
+# ---------------------------------------------------------------------------
+# [35] Bevorstehende Wiedereintritte (SPECIAL=DECAYING)
+#      Objekte mit prognostiziertem Wiedereintritt < 30 Tage
+# ---------------------------------------------------------------------------
+source celestrak_decaying
+ttl 600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?SPECIAL=DECAYING&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in EPOCH epoch
+field_in MEAN_MOTION mean_motion_rev_d
+field_in BSTAR bstar_drag
+field_in ECCENTRICITY eccentricity
+
+# ---------------------------------------------------------------------------
+# [36] Wissenschaftliche Satelliten (Wissenschafts-/Forschungsgruppe)
+# ---------------------------------------------------------------------------
+source celestrak_science
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+
+# ---------------------------------------------------------------------------
+# [37] Radaraufklärung / Militär (SAR/Radarsat-Gruppe)
+# ---------------------------------------------------------------------------
+source celestrak_radar
+ttl 3600
+force gravity
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=radar&FORMAT=json
+map .
+field_in OBJECT_NAME sat_name
+field_in NORAD_CAT_ID norad_id
+field_in MEAN_MOTION mean_motion_rev_d
+field_in INCLINATION inclination_deg
+```
+
+---
+
+## Gesamtübersicht Batch 2
+
+| Domain | Quellen | PC-tagged | Anmerkungen |
+|---|---|---|---|
+| **Fermi 4FGL** | 3 | ✅ 4LAC via `z_key` | HEASARC Xamin TAP |
+| **X-ray Chandra** | 2 | ✅ ra/dec | CSC2 + Obs-Archiv |
+| **X-ray XMM** | 2 | ✅ ra/dec | 4XMM-DR13 + Obs-Archiv |
+| **Radio NVSS** | 2 | ✅ ra/dec | VizieR TAP VIII/65 |
+| **Radio FIRST** | 1 | ✅ ra/dec | VizieR TAP VIII/92 |
+| **ZTF Transients** | 3 | ✅ ra/dec | IRSA Gator + Lasair |
+| **FRB** | 2 | ✅ DM-z via `z_key` | VizieR J/ApJS/257/59 + FRBCAT |
+| **JPL SBDB CAD** | 3 | ⚠ helioz. (kein lat/lon) | Arrays-in-Arrays |
+| **JPL Fireballs** | 1 | ✅ lat/lon in Daten | CNEOS, `seismic-body` |
+| **JPL SBDB Physik** | 1 | ⚠ keine Position | Bahnklassen-Karte |
+| **MPC Kometen** | 1 | ✅ ra/dec+dist | VizieR B/comets |
+| **MPC TNO/Zentauren** | 2 | ⚠ nur Bahnel. | kein Echtzeit-Ephem |
+| **CelesTrak Sat.** | 13 | ⚠ SGP4 nötig | OMM JSON, kein lat/lon |
+
+---
+
+## Kritische Parser-Hinweise
+
+```
+# ===== JPL CAD / Fireball: Array-of-Arrays =================================
+# Antwortstruktur:
+# {
+#   "signature": {"source": "NASA/JPL..."},
+#   "fields": ["des","orbit_id","jd","cd","dist","dist_min",...],
+#   "data": [
+#     ["433 (Eros)","659","...","2026-07-28 12:34","0.042",...],
+#     ...
+#   ]
+# }
+# → map data iteriert über innere Arrays
+# → field_in 0 = erstes Element, field_in 4 = dist usw.
+# ACHTUNG: Spaltenreihenfolge ist API-versionsabhängig!
+# Immer gegen "fields"-Array validieren (Index 0="des",3="cd",4="dist",etc.)
+
+# ===== Celestrak OMM JSON ===================================================
+# Antwortstruktur (direkt Array):
+# [
+#   {
+#     "OBJECT_NAME": "ISS (ZARYA)",
+#     "OBJECT_ID": "1998-067A",
+#     "NORAD_CAT_ID": 25544,
+#     "EPOCH": "2026-07-27T08:23:45.123456",
+#     "MEAN_MOTION": 15.49,
+#     "ECCENTRICITY": 0.0003,
+#     "INCLINATION": 51.64,
+#     ...
+#   }, ...
+# ]
+# → map . iteriert direkt über Root-Array
+# → field_in OBJECT_NAME / field_in INCLINATION usw.
+# KEIN lat/lon: SGP4-Propagation im Ingestor nötig
+# Neue Objekte ab NORAD > 100000: nur JSON/XML, NICHT TLE
+
+# ===== VizieR TAP Sonderzeichen ============================================
+# Spaltennamen wie "S1.4" (NVSS) oder "K.K20e" (2MASS XSC) MÜSSEN
+# in ADQL gequotet werden: SELECT "S1.4" FROM "VIII/65/nvss"
+# URL-Enkodierung: " → %22, > → %3E, < → %3C, Leerzeichen → +
+# Beispiel: WHERE+"S1.4"%3E50
+```
+
+---
+
+## Empfohlene Reihenfolge für Batch 3
+
+| Priorität | Domain | Strategie |
+|---|---|---|
+| 🔴 **1** | **Geblockte Quellen** (Meteorite NASA, CODATA, Neotoma) | Socrata-API + NIST-Text |
+| 🟡 **2** | **Open-Meteo Erweiterung** (icon_seamless, 20 neue Modell-Endpunkte) | URL-Varianten |
+| 🟡 **3** | **Sensor.Community NO2/VOC** | API-Typ-Filter-Endpunkte |
+| 🟡 **4** | **GeoNet NZ Strong Motion / GNSS** | GeoNet REST-API |
+| 🔵 **5** | **Korallenriff / NOAA CoralReefWatch** | Satellite + Bleaching Alert |
+| 🔵 **6** | **Arktis NSIDC** | Sea Ice Index API |
+| 🔵 **7** | **Permafrost GTN-P** | CSV-basiert |
+| 🔵 **8** | **Grundwasser IGRAC** | REST-Check nötig |

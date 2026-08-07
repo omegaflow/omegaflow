@@ -1,0 +1,20 @@
+Echte Lücken (0 in Name UND URL, inkl. Mirrors) — ~75 Domains
+Erdsystem/Dynamik: emdat, geodetic, psmsl, ghg, iagos, ierslod, dislocation, jerk, sea_floor, movebank, galaxyzoo
+
+Atmosphäre: openaq, sensor.community, mrms, tropomi, oceancolor, emep, radnet, edgar, earlinet, saber, tccon, mopitt2, turbulenz
+
+Ozean/Kryo: hycom, ocean_noise, socat, ascat, deepargo, mjo, wgms/glims/imbie, cryosat, ocean_gliders, mesocosm, kilonova
+
+Astro/Teilchen: eRosita, lsst, meerkat, skao, euclid, spherex, lamost, desi_survey, uhecr/auger, tns, stereo, soho, faraday, ogle, cdms, bicep, keck, pantheon/sh0es, solardynamo, vlm, filaments, laduma, hera21, rednovae, mangas
+
+Energie/Infrastruktur: electricitymaps, eia, iaea, roshydromet, centralasia, raspberry, incois, overpass_osm
+
+Fazit
+Die Batches 4–6, 13–18 sind fast komplett unrealisiert — die Tabelle listet sie als geplant, real existieren sie nicht. Von ~335 gelisteten Domains fehlen real ~75. Die technisch schnellsten Gewinne mit keyless APIs:
+
+OpenAQ (eine Source)
+eRosita über VizieR (Muster existiert mit vizier-Sources)
+WGMS/GLIMS Gletscher (keyless CSV/GeoJSON)
+EM-DAT (keyless JSON)
+IAGOS Flugzeugprofile
+Soll ich eine davon jetzt konkret anlegen?

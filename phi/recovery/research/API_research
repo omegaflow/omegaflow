@@ -1,0 +1,102 @@
+```markdown
+You are filling gaps in a real-time spatial data ingestion system. The system consumes REST APIs (JSON, CSV, TXT) and maps them to a flat 72-byte sample array `[x, y, z, val, extent, t, ttl, tau, force_type]` where every active sample × field is a sensor presence in ICRS space.
+
+## Source Format
+Every source follows this template:
+```
+source <name_with_underscores>
+ttl <seconds>          # re-fetch interval
+force <em|gravity|acoustic|seismic-body|seismic-surface|thermal|diffusion>
+url <api_endpoint_with_{lat}_{lon}_{today}_template_vars>
+[lat/lon/terra]        # static position, or terra <scale> for earth-fixed
+[header X-Key {val}]   # auth headers
+[map <path>]           # iterate JSON array at path
+[cmap <path>]          # celestial map
+[lat_key <path>]       # latitude in response
+[lon_key <path>]       # longitude
+[ra_key/dec_key]       # ICRS right ascension/declination
+[plx_key/dist_key/z_key] # distance via parallax/distance/redshift
+[field <path> <name>]  # extract single value
+[field_in <key> <name>] # extract from map iteration
+[path <path> <name>]   # extract nested path
+[format text]          # plain text, not JSON
+[rows]                 # line-by-line iteration
+```
+
+## Rules
+- NO auth/private keys — every source must work with public APIs or DEMO_KEY (NASA only). Skip endpoints requiring registration.
+- Point-cloud compatible: sources with `map`+`lat_key/lon_key` or `map`+`ra_key/dec_key` plus distance → PC tagged.
+- Force types: choose based on physical domain (seismic-body for earthquakes, em for EM radiation, gravity for mass, thermal for temperature, acoustic for pressure/sound, diffusion for concentrations).
+- TTL: 60-300 for real-time (earthquakes/flares), 600-3600 for hourly, 86400 for static catalogs.
+- Template variables available: `{lat} {lon} {lat_min} {lat_max} {lon_min} {lon_max} {today} {yesterday} {tomorrow} {year} {month} {day} {hour} {nasa_key}`.
+- Use `map .` when the root is the array.
+
+## Target: 100% coverage on each domain below
+
+### 🟢 High Priority (existing partial, need more)
+
+| Domain | Current | Potential | Missing endpoints |
+|--------|---------|-----------|-------------------|
+| SDSS/2MASS/WISE | 0 | ~5 | Find REST wrappers for photometric catalog queries (e.g. https://skyserver.sdss.org/dr18/SearchTools/basic, 2MASS Image Server, WISE API) |
+| AGN/Blazar (4FGL) | 0 | ~3 | Fermi LAT 4FGL catalog via https://fermi.gsfc.nasa.gov/ssc/data/access/lat/ or HEASARC TAP service |
+| Transients (ZTF/ATLAS) | 0 | ~3 | Lasair ZTF alerts API, ATLAS forced photometry API, TNS API (needs registration — note if locked) |
+| AERONET | 1 | 10 | https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?lat={lat}&lon={lon}&dur=7 (AOD 440nm), site list at https://aeronet.gsfc.nasa.gov/aeronet_lookup_v3.txt |
+| METAR | 2 | 5 | https://aviationweather.gov/api/data/dataserver or ADDS text endpoints |
+| iNaturalist | 7 | 10 | https://api.inaturalist.org/v1/observations with lat/lon bounds or taxon filters |
+| WAQI | 1 | 3 | https://api.waqi.info/feed/geo:{lat};{lon}/ (needs token — check if public) |
+| IceCube | 0 | ~2 | https://gcn.nasa.gov/ or https://icecube.wisc.edu/realtime (HEASARC/BTS) |
+| Radio (NVSS/FIRST) | 0 | ~2 | Vizier TAP or CDS cross-match service |
+| X-ray (Chandra/XMM) | 0 | ~3 | HEASARC TAP endpoint or XMM-Newton SASS |
+| FRB (CHIME/ASKAP) | 0 | ~2 | https://www.chime-frb.ca/api, https://av-frb.astrolabs.ai |
+| Asteroiden (JPL SBDB) | 9 | ~1.2M | https://ssd-api.jpl.nasa.gov/sbdb_query.api with limit/orderby for recent close approaches |
+| MPC Kometen/TNO | 0 | ~3 | Minor Planet Center ephemeris or observations — check format compatibility (⚠ note if CSV/JSON) |
+| Satelliten (Celestrak) | 20 | ~25k | TLE via https://celestrak.org/NORAD/elements/gp.php?GROUP=... — one source per group |
+
+### 🟡 New domains in Batch 5 needing expansion
+
+| Domain | Current | Target | Missing |
+|--------|---------|--------|---------|
+| Sensor.Community | 3 | 5+ | Add endpoint for NO2, VOC sensors, sensor type IDs |
+| BOM Australia | 3 | 5 | Marine warnings, UV index, water temperature |
+| CMA China | 3 | 5 | Air quality index, typhoon track, radar mosaic |
+| SAWS South Africa | 2 | 5 | Fire danger index, UV, marine forecast |
+| CAMS/Copernicus | 3 | 6 | https://ads.atmosphere.copernicus.eu/api/retrieve/v1/ collections |
+| Open-Meteo | 11 | 30+ | Add more model-specific endpoints (icon_seamless, glaze, etc.) |
+| Raspberry Shake | 2 | 5 | Add regional station queries |
+| INCOIS India | 2 | 5 | Add wave forecast RSS, ocean state forecast |
+| ISRO Bhuvan | 1 | 3 | Add specific data layer endpoints (LULC, AWiFS mosaics) |
+| GeoNet NZ | 3 | 5 | Add strong motion, GNSS stations |
+
+### 🔴 Blocked (need workaround)
+
+| Domain | Problem | Possible solution |
+|--------|---------|-------------------|
+| Smithsonian Volcanoes | 403 | Check mirror at https://volcano.si.edu/gefs/ or BGS volcanoes |
+| NASA Meteorites | 404 | Try https://data.nasa.gov/resource/gh4g-9sfh.json (Socrata API) |
+| CODATA | Parser issue | Generate from https://physics.nist.gov/cuu/Constants/Table/allascii.txt |
+| IODP/DSDP | File-based | Janus API at https://web.iodp.tamu.edu/janus3/ |
+| Tree Rings (ITRDB) | File-based | NOAA Paleo API at https://www.ncdc.noaa.gov/paleo-search/ |
+| Pollen (Neotoma) | Complex API | https://api.neotomadb.org/v2/data/ |
+
+### 🔵 Empty domains not yet in table (find sources)
+
+| Domain | Why | Search hints |
+|--------|-----|--------------|
+| Mosambik/Äthiopien Wetter | Africa gap | INAM, NMA Ethiopia |
+| Russland Roshydromet | Europe/Asia gap | meteorf.gov.ru open data |
+| Kasachstan/Usbekistan | Central Asia | Kazhydromet, Uzhydromet |
+| Arktis | Polar data | https://arcticdata.io, https://nsidc.org/api/ |
+| Amazon deforestation | Brazil-specific | https://terrabrasilis.dpi.inpe.br/dashboard/ (API exists?) |
+| Coral reef monitoring | Marine | https://coralreefwatch.noaa.gov/satellite/index.php |
+| Global lightning (WWLLN) | Atmospheric | http://wwlln.net/ real-time data |
+| Permafrost | Climate | GTN-P database |
+| Groundwater | Hydrosphere | IGRAC global groundwater monitoring |
+| Cosmic microwave background | Astrophysics | Planck/ACT accessible data |
+
+## Expected output format
+For each domain, produce source blocks exactly as shown above (one per API endpoint). Test URLs mentally for template variable compatibility. Prioritize JSON APIs, then CSV (`format text` + `rows`), then TXT. Group by domain with clear section comments.
+
+Start with **SDSS/2MASS/WISE** and **AERONET** — those have the clearest existing REST endpoints.
+```
+
+Fertig. Gib das an ein beliebiges Recherche-LLM — es weiß genau, was zu tun ist.

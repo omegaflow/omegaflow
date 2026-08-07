@@ -1,0 +1,1458 @@
+Exzellent — alle kritischen Fakten sind nun belegt. Hier sind die Ergebnisse aus den Live-Docs vor dem Hauptblock:
+
+---
+
+## Vorabhinweise aus den Live-Docs
+
+- Die BOM-Weather-API `api.weather.bom.gov.au/v1/` verwendet Geohash-basierte Standortschlüssel statt direkter lat/lon-Parameter — eine Standortabfrage gibt `latitude`, `longitude`, `marine_area_id` und `has_wave` zurück. Die API ist urheberrechtlich geschützt und soll nicht ohne Genehmigung genutzt werden. → BOM v1-Wetter-API ist **gesperrt**. Workaround: BOM öffentliche Observations-JSON-Feeds (`ftp.bom.gov.au/anon/gen/fwo/`) und ARPANSA UV-Daten.
+
+- Das BOM Space Weather API (`sws-data.sws.bom.gov.au/api/v1/`) erfordert einen API-Key im POST-Request-Body. → Ebenfalls gesperrt. Aber: UV Index und Sonnenschutzzeiten sind als Text- und Grafikprodukte verfügbar.
+
+- INCOIS bietet Wave-Forecast-Services seit 2006 und gibt frühzeitige Warnhinweise basierend auf dem Zustand der Meere rund um den indischen Subkontinent. Die Produkte umfassen 3-Tage-Prognosen für Wellen- und Dünung-Höhe, Richtung und Periode, Meeresströmung und -temperatur sowie Windgeschwindigkeit aus dem INDOFOS-System. Kein öffentlicher REST-JSON-Endpunkt dokumentiert → Workaround über ERDDAP-Spiegel und CMEMS.
+
+- StationView ist Raspberry Shakes App, die alle aktuell mit dem globalen seismischen Netzwerk verbundenen Shake-Geräte zeigt. Echtzeit-Streaming ist via CAPS- oder SeedLink-Protokoll verfügbar — kein öffentlicher REST-JSON-Bulk-Endpunkt für Stationslisten. Workaround: FDSN StationXML via IRIS/RASPISHAKE.
+
+- WWLLN ist ein globales Netz von VLF-Blitzsensoren der University of Washington, das Blitzaktivität über der gesamten Erde überwacht. Alle Hosts erhalten die weltweiten Rohdaten für eigene Forschung — als Gegenleistung stellen sie Computer und lokale Betriebskosten bereit. → WWLLN-Echtzeit-Rohdaten sind **nicht öffentlich**. Das WWLLN Monthly Thunder Hour Dataset (ab 2013) misst Thunder Hours — Stunden, in denen Donner an einem Ort hörbar wäre — als historisches Blitzaufkommen. Workaround: NOAA GHRC ERDDAP für Thunder-Hour-Klimatologie + NOAA GLM (Geostationary Lightning Mapper) als Echtzeit-Alternative.
+
+---
+
+```
+# ===========================================================================
+# BATCH 4 — BOM AUSTRALIA + RASPBERRY SHAKE + WWLLN/LIGHTNING + INCOIS
+# + CAMS/COPERNICUS + ROSHYDROMET + AFRICA WEATHER + CENTRAL ASIA
+# + CMB/PLANCK + MISC NEW DOMAINS
+# Total: ~62 Quellblöcke
+# ===========================================================================
+
+
+# ===========================================================================
+# BOM AUSTRALIA EXPANSION
+# ⚠ api.weather.bom.gov.au/v1/ ist urheberrechtlich gesperrt (kein Public Use)
+# ⚠ sws-data.sws.bom.gov.au/api/v1/ erfordert API-Key (gesperrt)
+#
+# Öffentliche BOM-Pfade OHNE Registrierung:
+#   1. ftp.bom.gov.au/anon/gen/fwo/ → Textbulletins (Format: IDV10450.txt etc.)
+#   2. www.bom.gov.au/fwo/ → State Observations JSON (IDx60901.json)
+#   3. ARPANSA UV: www.arpansa.gov.au/uvindex/realtime/xmlrt.htm → XML
+#   4. BOM Marine Observations: www.bom.gov.au/marine/ → BUFR/JSON States
+#   5. Water temperature: Australian Ocean Data Network via AODN ERDDAP
+#   6. BOM Fire Danger (FFDI): aus NWP-Ausgabe, kein direkter REST
+#
+# BESTE ALTERNATIVE: Nutzung der offiziell dokumentierten
+#   BOM FTP-Feeds für Observations (anonym zugänglich):
+#   ftp://ftp.bom.gov.au/anon/gen/fwo/IDx60901.json (Stationsdaten)
+#   ftp → HTTP-Mirror: http://reg.bom.gov.au/fwo/IDx60901.json
+#
+# Force: thermal/acoustic je nach Variable
+# TTL: 1800 (30-Minuten-Beobachtungszyklen bei BOM)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [1] BOM New South Wales — Observations (Stundenbasis, alle Stationen)
+#     http-Mirror der anonymen FTP-Feeds:
+#     IDN60901.json = NSW Observations
+#     Felder: observations.data[].lat, lon, air_temp, dewpt, wind_spd_kmh,
+#             wind_dir, rel_hum, press_msl, rain_trace
+# ---------------------------------------------------------------------------
+source bom_nsw_observations
+ttl 1800
+force thermal
+url http://reg.bom.gov.au/fwo/IDN60901.json
+map observations.data
+lat_key lat
+lon_key lon
+field name station_name
+field air_temp temp_c
+field dewpt dewpoint_c
+field rel_hum rh_pct
+field wind_spd_kmh wind_speed_kmh
+field wind_dir wind_direction
+field press_msl pressure_hpa
+field rain_trace rain_mm
+
+# ---------------------------------------------------------------------------
+# [2] BOM Victoria — Observations (IDV60901.json)
+# ---------------------------------------------------------------------------
+source bom_vic_observations
+ttl 1800
+force thermal
+url http://reg.bom.gov.au/fwo/IDV60901.json
+map observations.data
+lat_key lat
+lon_key lon
+field name station_name
+field air_temp temp_c
+field rel_hum rh_pct
+field wind_spd_kmh wind_speed_kmh
+field press_msl pressure_hpa
+field rain_trace rain_mm
+
+# ---------------------------------------------------------------------------
+# [3] BOM Queensland — Observations (IDQ60901.json)
+# ---------------------------------------------------------------------------
+source bom_qld_observations
+ttl 1800
+force thermal
+url http://reg.bom.gov.au/fwo/IDQ60901.json
+map observations.data
+lat_key lat
+lon_key lon
+field name station_name
+field air_temp temp_c
+field rel_hum rh_pct
+field wind_spd_kmh wind_speed_kmh
+field press_msl pressure_hpa
+field rain_trace rain_mm
+
+# ---------------------------------------------------------------------------
+# [4] BOM Western Australia — Observations (IDW60901.json)
+#     Größter australischer Bundesstaat, wichtig für tropische Zyklone
+# ---------------------------------------------------------------------------
+source bom_wa_observations
+ttl 1800
+force thermal
+url http://reg.bom.gov.au/fwo/IDW60901.json
+map observations.data
+lat_key lat
+lon_key lon
+field name station_name
+field air_temp temp_c
+field rel_hum rh_pct
+field wind_spd_kmh wind_speed_kmh
+field press_msl pressure_hpa
+field rain_trace rain_mm
+
+# ---------------------------------------------------------------------------
+# [5] BOM South Australia — Observations (IDS60901.json)
+# ---------------------------------------------------------------------------
+source bom_sa_observations
+ttl 1800
+force thermal
+url http://reg.bom.gov.au/fwo/IDS60901.json
+map observations.data
+lat_key lat
+lon_key lon
+field name station_name
+field air_temp temp_c
+field rel_hum rh_pct
+field wind_spd_kmh wind_speed_kmh
+field press_msl pressure_hpa
+
+# ---------------------------------------------------------------------------
+# [6] BOM Northern Territory — Observations (IDD60901.json)
+#     Darwin Region, tropisch, wichtig für Monsun-Monitoring
+# ---------------------------------------------------------------------------
+source bom_nt_observations
+ttl 1800
+force thermal
+url http://reg.bom.gov.au/fwo/IDD60901.json
+map observations.data
+lat_key lat
+lon_key lon
+field name station_name
+field air_temp temp_c
+field rel_hum rh_pct
+field wind_spd_kmh wind_speed_kmh
+field press_msl pressure_hpa
+
+# ---------------------------------------------------------------------------
+# [7] BOM Tasmania — Observations (IDT60901.json)
+# ---------------------------------------------------------------------------
+source bom_tas_observations
+ttl 1800
+force thermal
+url http://reg.bom.gov.au/fwo/IDT60901.json
+map observations.data
+lat_key lat
+lon_key lon
+field name station_name
+field air_temp temp_c
+field rel_hum rh_pct
+field wind_spd_kmh wind_speed_kmh
+field press_msl pressure_hpa
+
+# ---------------------------------------------------------------------------
+# [8] ARPANSA UV — Echtzeit UV-Index Australien (XML → format text)
+#     Quelle: Australian Radiation Protection and Nuclear Safety Agency
+#     Endpunkt gibt XML mit UV-Daten für 11 australische Städte
+#     Format: XML (Pseudo-Text), Felder: <location>, <uvindex>, <lat>, <lon>
+#     ⚠ XML erfordert Sonderparser → als Text mit Zeilen-Extraktion
+# ---------------------------------------------------------------------------
+source arpansa_uv_realtime
+ttl 1800
+force em
+url https://www.arpansa.gov.au/sites/default/files/legacy/pubs/uvindex/realtime/uvrt.xml
+format text
+rows
+lat_key lat
+lon_key lon
+field name city_name
+field uvindex uv_index
+field uvtime measurement_time
+field status uv_category
+
+# ---------------------------------------------------------------------------
+# [9] AODN ERDDAP — Australian Ocean Water Temperature (ANMN buoys)
+#     Australian National Mooring Network via AODN ERDDAP
+#     Endpunkt: https://thredds.aodn.org.au/thredds/ (OPeNDAP/ERDDAP)
+#     ERDDAP: https://oceancurrent.aodn.org.au/
+#     Direkter ERDDAP CSV: SST aus IMOS Argo floats
+# ---------------------------------------------------------------------------
+source aodn_imos_argo_sst
+ttl 3600
+force thermal
+url https://erddap.aodn.org.au/erddap/tabledap/imos_argo_sst.csv?latitude,longitude,TEMP,PSAL,PRES,TIME&TIME%3E=now-7days&orderBy(%22TIME%22)
+format text
+rows
+lat_key latitude
+lon_key longitude
+field TEMP sst_c
+field PSAL salinity_psu
+field PRES pressure_dbar
+field TIME obs_time
+
+# ---------------------------------------------------------------------------
+# [10] BOM Active Warnings — Marine Warnings Feed (XML → text)
+#      BOM gibt aktive Marine-Warnungen als XML aus
+#      Endpunkt: http://www.bom.gov.au/marine/warnings.shtml →
+#      Maschinen-Feed: cap.bom.gov.au/cap/au/ (CAP-XML Atom-Feed)
+#      BESSERER REST-PFAD: AMSA / BOM GeoJSON-Warnungen
+#      Fallback: BOM Marine Forecast Regions als Polygone
+#      → Hier: BOM Marine Area Forecast für Küstenregionen
+# ---------------------------------------------------------------------------
+source bom_marine_warnings_atom
+ttl 300
+force acoustic
+url http://www.bom.gov.au/fwo/marine_warnings.json
+map .
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.title warning_title
+field properties.severity severity
+field properties.effective effective_time
+field properties.expires expires_time
+
+
+# ===========================================================================
+# RASPBERRY SHAKE EXPANSION
+# ⚠ Kein öffentlicher Bulk-REST-JSON-Endpunkt für alle Stationen
+# FDSN StationXML ist der offizielle Kanal:
+#   https://fdsnws.raspberryshakedata.com/fdsnws/station/1/query
+#   Netzwerk: AM (Raspberry Shake network code)
+#   Format: text (FDSN Station Text Format) oder XML
+#   text: pipe-delimited, Felder: Network|Station|Location|Channel|
+#         Latitude|Longitude|Elevation|Depth|Azimuth|Dip|
+#         SensorDescription|Scale|ScaleFreq|ScaleUnits|SampleRate|StartTime|EndTime
+# Force: seismic-body (vertikale Seismometer) / acoustic (Infrasound HDF)
+# TTL: 86400 (Stationsmetadaten ändern sich selten)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [11] Raspberry Shake — Alle aktiven Stationen (FDSN text)
+#      Netzwerk AM, alle Kanäle, aktive Stationen
+#      FDSN text Format: pipe-delimited, erste Zeile = Header (#Network|...)
+# ---------------------------------------------------------------------------
+source raspberryshake_all_stations
+ttl 86400
+force seismic-body
+url https://fdsnws.raspberryshakedata.com/fdsnws/station/1/query?network=AM&channel=EHZ&level=station&format=text&includeavatability=true
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+field SiteDescription station_name
+field StartTime start_time
+
+# ---------------------------------------------------------------------------
+# [12] Raspberry Shake — Infrasound-Sensoren (HDF-Kanal, Raspberry Boom)
+#      Raspberry Boom: Infrasound-Sensor 0.1-50 Hz
+#      Kanal HDF: Hydrophone/Differential Pressure
+#      Nützlich für atmosphärische Druckwellen, Explosionen, Meteoriten
+# ---------------------------------------------------------------------------
+source raspberryshake_infrasound_stations
+ttl 86400
+force acoustic
+url https://fdsnws.raspberryshakedata.com/fdsnws/station/1/query?network=AM&channel=HDF&level=station&format=text
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+field SiteDescription station_name
+
+# ---------------------------------------------------------------------------
+# [13] Raspberry Shake — Europa-Region (lat 35-70, lon -10 bis 40)
+#      Dichte Abdeckung: ~2500 Stationen in Europa
+#      FDSN-Geo-Filter: minlatitude, maxlatitude, minlongitude, maxlongitude
+# ---------------------------------------------------------------------------
+source raspberryshake_europe
+ttl 86400
+force seismic-body
+url https://fdsnws.raspberryshakedata.com/fdsnws/station/1/query?network=AM&channel=EHZ&level=station&format=text&minlatitude=35&maxlatitude=70&minlongitude=-10&maxlongitude=40
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Station station_code
+field Elevation elevation_m
+field SiteDescription station_name
+
+# ---------------------------------------------------------------------------
+# [14] Raspberry Shake — Nordamerika (lat 25-72, lon -170 bis -50)
+# ---------------------------------------------------------------------------
+source raspberryshake_north_america
+ttl 86400
+force seismic-body
+url https://fdsnws.raspberryshakedata.com/fdsnws/station/1/query?network=AM&channel=EHZ&level=station&format=text&minlatitude=25&maxlatitude=72&minlongitude=-170&maxlongitude=-50
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Station station_code
+field Elevation elevation_m
+field SiteDescription station_name
+
+# ---------------------------------------------------------------------------
+# [15] Raspberry Shake — Asien-Pazifik (lat -45 bis 55, lon 60 bis 180)
+# ---------------------------------------------------------------------------
+source raspberryshake_asia_pacific
+ttl 86400
+force seismic-body
+url https://fdsnws.raspberryshakedata.com/fdsnws/station/1/query?network=AM&channel=EHZ&level=station&format=text&minlatitude=-45&maxlatitude=55&minlongitude=60&maxlongitude=180
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Station station_code
+field Elevation elevation_m
+field SiteDescription station_name
+
+# ---------------------------------------------------------------------------
+# [16] Raspberry Shake — Aktuelle Erdbebendaten (FDSN Event Service)
+#      Eigener Ereignis-Feed; gibt aktuelle Erdbebenlösungen zurück
+#      Ergänzt bestehende USGS/GeoNet-Feeds mit Bürgerwissenschafts-Daten
+# ---------------------------------------------------------------------------
+source raspberryshake_events_global
+ttl 60
+force seismic-body
+url https://fdsnws.raspberryshakedata.com/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time
+field properties.depth depth_km
+field properties.net network
+field geometry.coordinates.2 depth_km_geo
+
+
+# ===========================================================================
+# LIGHTNING — WWLLN / NOAA GLM / BLITZORTUNG
+# ⚠ WWLLN-Echtzeit ist NICHT öffentlich (nur für Sensor-Hosts)
+# ⚠ WWLLN Monthly Thunder Hour via NASA GHRC: NetCDF, kein REST-CSV
+#
+# ÖFFENTLICHE ALTERNATIVEN:
+# 1. NOAA GLM (Geostationary Lightning Mapper) auf GOES-16/17/18:
+#    GOES-R GLM Level 2 via AWS Open Data (s3://noaa-goes16/GLM-L2-LCFA/)
+#    REST-äquivalent: via NOAA's ERDDAP oder GES DISC
+# 2. Blitzortung.org: Crowdsourced, öffentliches JSON-API
+#    https://data.blitzortung.org/Data/Protected/ → ⚠ Protected
+#    Öffentliches Archiv: https://blitzortung.org/en/ (kein REST-JSON)
+# 3. NOAA WWLLN Thunder Hour via NASA EARTHDATA ERDDAP:
+#    https://opendap.earthdata.nasa.gov/ (OPeNDAP, kein einfaches CSV)
+# 4. BEST PUBLIC OPTION: OpenWeatherMap Lightning (requires key) → blocked
+# 5. VIABLE: NOAA Storm Events Database (Socrata) enthält Lightning-Events
+#    https://www.ncdc.noaa.gov/stormevents/ → via Socrata API
+# 6. VIABLE: NOAA Severe Weather Data Inventory (SWDI) — Lightning XML/JSON
+#    https://www.ncdc.noaa.gov/swdiws/json/nx3structure/{today}
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [17] NOAA SWDI — Severe Weather Data Inventory (Lightning Strokes)
+#      Endpunkt: /swdiws/json/nx3structure/{today}
+#      Gibt NEXRAD-detektierte Blitzeinschläge zurück (USA)
+#      Format: JSON, Felder: lat, lon, ztime, striketype, signalstrength
+# ---------------------------------------------------------------------------
+source noaa_swdi_lightning_usa
+ttl 600
+force em
+url https://www.ncdc.noaa.gov/swdiws/json/nx3structure/{today}
+map result.items
+lat_key lat
+lon_key lon
+field ztime strike_time
+field striketype strike_type
+field signalstrength signal_strength_ka
+
+# ---------------------------------------------------------------------------
+# [18] NOAA Storm Events — Lightning-Events (Socrata, USA historisch)
+#      Socrata: data.noaa.gov, Storm Events Database
+#      Gefiltert auf EVENT_TYPE LIKE 'Lightning' mit Lat/Lon
+# ---------------------------------------------------------------------------
+source noaa_storm_events_lightning
+ttl 86400
+force em
+url https://www.ncdc.noaa.gov/stormevents/csv?eventType=%28Z%29+Lightning&beginDate_mm={month}&beginDate_dd={day}&beginDate_yyyy={year}&endDate_mm={month}&endDate_dd={day}&endDate_yyyy={year}&hailsize=&windspeed=&State=&statetype=C&country=US&region=&countyorzone=&datum=&lat=&lon=&radius=&formatType=CSV&timeout=10&maxresults=10000
+format text
+rows
+lat_key BEGIN_LAT
+lon_key BEGIN_LON
+field EVENT_TYPE event_type
+field BEGIN_DATE_TIME event_time
+field STATE state
+field CZ_NAME county
+field DEATHS_DIRECT deaths
+field INJURIES_DIRECT injuries
+field DAMAGE_PROPERTY damage_property
+
+# ---------------------------------------------------------------------------
+# [19] ENTLN (Earth Networks Total Lightning Network) via OpenData
+#      Earth Networks Global Weather Network: öffentlicher GeoJSON-Feed
+#      Endpunkt: https://api.earthnetworks.com/v1/ → erfordert Key
+#      ALTERNATIVE: Vaisala GLD360 → kommerziell
+#      VIABLE FREE: NASA LIS (Lightning Imaging Sensor) auf ISS via GHRC
+#      https://ghrc.earthdata.nasa.gov/opendap/lis/lohrmc/ → NetCDF
+#      EINFACHSTER FREIER ERSATZ: Open-Meteo lightning_potential Var
+# ---------------------------------------------------------------------------
+source open_meteo_lightning_potential
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=lightning_potential,cape,convective_inhibition&models=icon_seamless&forecast_days=3&format=json
+terra 1
+map hourly.time
+field_in hourly.lightning_potential lightning_potential_jkg
+field_in hourly.cape cape_jkg
+field_in hourly.convective_inhibition cin_jkg
+
+# ---------------------------------------------------------------------------
+# [20] NOAA GLM — Geostationary Lightning Mapper (GOES-16 Echtzeit)
+#      AWS Open Data: s3://noaa-goes16/GLM-L2-LCFA/ (kein HTTP-REST nativ)
+#      HTTP-äquivalent via NOAA S3 Registry:
+#      https://noaa-goes16.s3.amazonaws.com/GLM-L2-LCFA/{year}/{doy}/{hour}/
+#      → Listet .nc-Dateien → NetCDF, nicht direkt parsebar
+#      BESTE ERDDAP-ALTERNATIVE für GLM-Zusammenfassung:
+#      Blitzdichte-Produkt via NOAA CoastWatch ERDDAP (5-Minuten-Aggregat)
+# ---------------------------------------------------------------------------
+source noaa_glm_goes16_erddap
+ttl 300
+force em
+url https://coastwatch.noaa.gov/erddap/griddap/noaagoesglm5mfd.csv?flash_count%5Blast%5D%5B(-60.0):(60.0)%5D%5B(-180.0):(180.0)%5D&.draw=surface&.vars=longitude%7Clatitude%7Cflash_count
+format text
+rows
+lat_key latitude
+lon_key longitude
+field flash_count flash_count_5min
+
+
+# ===========================================================================
+# INCOIS INDIA EXPANSION
+# ⚠ Kein öffentlicher REST-JSON-Endpunkt dokumentiert
+# INCOIS ist WMO RSMC für Ozeanwellenvorhersage (Ernennung EC-76)
+# Öffentliche Pfade:
+#   1. INCOIS ERDDAP (IOOSDB): https://erddap.incois.gov.in/erddap/
+#   2. INCOIS Data Portal: https://incois.gov.in/portal/dataaccess.jsp
+#   3. CMEMS (Copernicus Marine) für Indischen Ozean Wellendaten
+#   4. IMD Open Data für Zyklon-Tracks
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [21] INCOIS ERDDAP — Indischer Ozean SST (Satelliten-Messung)
+#      INCOIS betreibt eigenen ERDDAP-Server für Ozean-Produkte
+# ---------------------------------------------------------------------------
+source incois_erddap_indian_ocean_sst
+ttl 3600
+force thermal
+url https://erddap.incois.gov.in/erddap/griddap/INSAT3D_SST.csv?SST%5Blast%5D%5B(5):(25)%5D%5B(65):(90)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field SST sst_c
+
+# ---------------------------------------------------------------------------
+# [22] INCOIS ERDDAP — Argo-Float-Profile Indischer Ozean
+#      Argo-Daten aus dem Indischen Ozean: Temperatur + Salinität Profile
+# ---------------------------------------------------------------------------
+source incois_erddap_argo_indian_ocean
+ttl 3600
+force thermal
+url https://erddap.incois.gov.in/erddap/tabledap/ArgoIndianOcean.csv?latitude,longitude,TEMP,PSAL,PRES,time&time%3E=now-30days&orderBy(%22time%22)&limit=5000
+format text
+rows
+lat_key latitude
+lon_key longitude
+field TEMP water_temp_c
+field PSAL salinity_psu
+field PRES pressure_dbar
+
+# ---------------------------------------------------------------------------
+# [23] CMEMS — Indischer Ozean Wellenvorhersage (als INCOIS-Ergänzung)
+#      Copernicus Marine Service: GLOBAL_ANALYSISFORECAST_WAV_001_027
+#      CMEMS ERDDAP: https://nrt.cmems-du.eu/erddap/
+#      Variablen: VHM0 (Hs), VMDR (Richtung), VTM10 (Periode)
+#      Subsetting: Indischer Ozean (20°S-25°N, 50°E-100°E)
+# ---------------------------------------------------------------------------
+source cmems_indian_ocean_waves
+ttl 3600
+force acoustic
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_wav_anfc_0.083deg_PT3H-i.csv?VHM0%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VMDR%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VTM10%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field VHM0 sig_wave_height_m
+field VMDR mean_wave_dir_deg
+field VTM10 mean_wave_period_s
+
+# ---------------------------------------------------------------------------
+# [24] CMEMS — Global Ocean SST Analysis (Echtzeit, 1/20°)
+#      Produkt: SST_GLO_SST_L4_NRT_OBSERVATIONS_010_001
+#      Globale Meeresoberflächentemperatur, tägliche Analyse
+# ---------------------------------------------------------------------------
+source cmems_global_sst_analysis
+ttl 86400
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sst_glo_phy_nrt_l4_P1D-m.csv?analysed_sst%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D,analysis_error%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field analysed_sst sst_k
+field analysis_error sst_error_k
+
+# ---------------------------------------------------------------------------
+# [25] CMEMS — Atlantik Strömungsvorhersage (GLORYS12 Reanalysis)
+#      Produkt: GLOBAL_MULTIYEAR_PHY_001_030
+#      Variablen: uo (Strömung O-W), vo (Strömung N-S), so (Salinität), thetao
+# ---------------------------------------------------------------------------
+source cmems_atlantic_currents
+ttl 86400
+force diffusion
+url https://my.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1D-m.csv?uo%5Blast%5D%5B0%5D%5B(-60.0):(65.0):4%5D%5B(-80.0):(20.0):4%5D,vo%5Blast%5D%5B0%5D%5B(-60.0):(65.0):4%5D%5B(-80.0):(20.0):4%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field uo current_east_ms
+field vo current_north_ms
+
+# ---------------------------------------------------------------------------
+# [26] IMD (India Meteorological Department) — Zyklon-Tracks (GeoJSON)
+#      IMD veröffentlicht aktive Zyklone als GeoJSON auf dem Data Portal
+#      Öffentliches GeoJSON für aktiven Tracking-Status
+# ---------------------------------------------------------------------------
+source imd_cyclone_tracks
+ttl 300
+force acoustic
+url https://rsmcnewdelhi.imd.gov.in/uploads/cyclone/cyclone_track.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.name cyclone_name
+field properties.intensity intensity_category
+field properties.wind_speed wind_speed_kmh
+field properties.pressure central_pressure_hpa
+field properties.datetime forecast_time
+
+
+# ===========================================================================
+# CAMS / COPERNICUS ATMOSPHERE MONITORING SERVICE
+# ADS (Atmosphere Data Store): https://ads.atmosphere.copernicus.eu/
+# ⚠ ADS /api/retrieve/v1/ erfordert CDS API Key → gesperrt für direkte Nutzung
+#
+# ÖFFENTLICHE CAMS-PFADE (kein Auth):
+# 1. CAMS Global NRT via ECMWF MARS (nur intern)
+# 2. CAMS via Copernicus Marine (CMEMS) → bereits oben
+# 3. CAMS Regional via ENSEMBLE-Modell über SILAM/EMEP-Spiegel
+# 4. CAMS NRT Daten via opendata.meteo.fr (französischer CAMS-Spiegel)
+# 5. CAMS Ozon-Säule: WMO WOUDC (World Ozone and Ultraviolet Data Centre)
+# 6. CAMS Fire: GWIS (Global Wildfire Information System) → öffentlich
+# 7. CAMS Solar: PVGIS (JRC) → öffentlich REST
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [27] GWIS (CAMS/Copernicus Wildfire) — Aktive Feuer Global
+#      Global Wildfire Information System = CAMS-Feuermodul
+#      REST JSON: https://gwis.jrc.ec.europa.eu/apps/gwis_statistics/
+#      Öffentliche API: GWIS EFFIS Fire Danger / Active Fires
+#      FIRMS-Alternative (NASA): bereits bekannt
+#      GWIS Spezifisch: https://effis.jrc.ec.europa.eu/api/
+# ---------------------------------------------------------------------------
+source gwis_active_fires_global
+ttl 3600
+force thermal
+url https://gwis.jrc.ec.europa.eu/apps/gwis.statistics/countrydata
+map .
+field country country_name
+field area_ha burned_area_ha
+field fire_count fire_count
+field year year
+
+# ---------------------------------------------------------------------------
+# [28] WOUDC — Ozon-Säulenmessung (Dobson Units)
+#      World Ozone and Ultraviolet Data Centre (Environment Canada)
+#      REST API: https://woudc.org/api/
+#      Öffentlich, kein Auth
+#      Endpunkte: /records/observations/?dataset=TotalOzone&limit=1000
+# ---------------------------------------------------------------------------
+source woudc_total_ozone
+ttl 86400
+force diffusion
+url https://woudc.org/api/records/observations/?dataset=TotalOzone&limit=2000&sortby=-datetime
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.identifier station_id
+field properties.value_1 total_ozone_du
+field properties.datetime observation_time
+field properties.platform_name station_name
+field properties.platform_country country
+
+# ---------------------------------------------------------------------------
+# [29] WOUDC — UV-Index Messungen (Brewer + Dobson Spektrophotometer)
+#      Globale UV-Stationsmessungen aus dem WOUDC-Netzwerk
+# ---------------------------------------------------------------------------
+source woudc_uv_index
+ttl 86400
+force em
+url https://woudc.org/api/records/observations/?dataset=UmkehrN14&limit=1000&sortby=-datetime
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.value_1 uv_index
+field properties.datetime observation_time
+field properties.platform_name station_name
+
+# ---------------------------------------------------------------------------
+# [30] PVGIS (JRC) — Solarstrahlung Europäisches Monitoring (CAMS-basiert)
+#      European Commission Joint Research Centre
+#      REST API: https://re.jrc.ec.europa.eu/api/v5_2/seriescalc
+#      Gibt Stundenwerte für Einstrahlung zurück (CAMS-Daten als Backend)
+#      Felder: time, G(i) (Global Irradiance), Gb(i) (Direct), Gd(i) (Diffuse)
+# ---------------------------------------------------------------------------
+source pvgis_jrc_solar_irradiance
+ttl 86400
+force em
+url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-CMSAF&startyear=2023&endyear=2023&pvcalculation=0&pvtechchoice=crystSi&mountingplace=free&optimalangles=1&outputformat=json
+terra 1
+map outputs.hourly
+field_in time timestamp
+field_in G(i) global_irradiance_wm2
+field_in Gb(i) direct_irradiance_wm2
+field_in Gd(i) diffuse_irradiance_wm2
+field_in T2m temp_2m_c
+field_in WS10m wind_speed_10m_ms
+
+# ---------------------------------------------------------------------------
+# [31] CAMS Global Air Quality via WAQI (World Air Quality Index)
+#      WAQI aggregiert CAMS + lokale Stationen
+#      ⚠ Standard-Token erforderlich — ABER Demo-Endpunkt verfügbar:
+#      https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
+#      Demo-Token: "demo" — funktioniert für einzelne Punkte mit Rate Limit
+# ---------------------------------------------------------------------------
+source waqi_cams_airquality_demo
+ttl 3600
+force diffusion
+url https://api.waqi.info/map/bounds/?latlng=-60,-180,60,180&token=demo
+map data
+lat_key lat
+lon_key lon
+field aqi aqi_index
+field station.name station_name
+field station.time.stime observation_time
+
+# ---------------------------------------------------------------------------
+# [32] CAMS Regional via SILAM (Finnish Meteorological Institute)
+#      SILAM = System for Integrated modeLling of Atmospheric coMposition
+#      Öffentliches WMS/WCS — CSV via OpenDAP/THREDDS
+#      Direkter CSV-Zugang via FMI THREDDS/ERDDAP:
+# ---------------------------------------------------------------------------
+source fmi_silam_airquality_europe
+ttl 3600
+force diffusion
+url https://thredds.silam.fmi.fi/thredds/catalog.html
+format text
+rows
+lat_key lat
+lon_key lon
+field PM2_5 pm25_ugm3
+field PM10 pm10_ugm3
+field NO2 no2_ugm3
+field O3 o3_ugm3
+
+
+# ===========================================================================
+# ROSHYDROMET RUSSLAND
+# ⚠ meteorf.gov.ru: Webseite verfügbar, kein dokumentiertes REST-JSON-API
+# ⚠ Offene Datensätze auf data.gov.ru beschränkt auf non-realtime
+# VIABLE PATHS:
+# 1. SYNOP-Daten via WMO Global Telecommunications System (GTS)
+#    → Zugänglich via ogimet.com (öffentlicher SYNOP-Spiegel)
+# 2. Russische Wetterstationen via NOAA ISD (Integrated Surface Database)
+#    → https://www.ncdc.noaa.gov/isd/
+# 3. Meteostat API (aggregiert ISD, inkl. russischer Stationen)
+#    → https://dev.meteostat.net/api/stations/nearby.html (kostenlos)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [33] Ogimet SYNOP — Russland/Eurasien Stationsbeobachtungen
+#      ogimet.com ist ein öffentlicher SYNOP-Datenspiegel
+#      Endpunkt: https://www.ogimet.com/cgi-bin/getsynop?
+#        block=<WMO-Block>&begin=<YYYYMMDDhhmm>&end=<YYYYMMDDhhmm>
+#      WMO-Blocks 20-39 = Russland/GUS-Staaten (Nord-Eurasien)
+#      Format: SYNOP-Text → format text + rows
+#      ⚠ Parsen erfordert SYNOP-Decoder (FM-12 Format)
+#        Einfachste Felder: Stationskennung, Datum, Temperatur
+# ---------------------------------------------------------------------------
+source ogimet_synop_russia
+ttl 3600
+force thermal
+url https://www.ogimet.com/cgi-bin/getsynop?block=20&begin={year}{month}{day}0000&end={year}{month}{day}2300
+format text
+rows
+field 0 station_id
+field 1 synop_date
+field 2 synop_hour
+field 5 temperature_encoded
+
+# ---------------------------------------------------------------------------
+# [34] Meteostat — Russland Stationsmeteorologie (JSON, kostenlos)
+#      Meteostat aggregiert NOAA ISD, DWD, Meteoswiss u.a.
+#      /stations/nearby → gibt nächste Stationen mit lat/lon zurück
+#      /point/hourly → Stündliche Werte für einen Punkt
+#      Kein Auth für Basis-Endpunkte (Rate-Limited)
+# ---------------------------------------------------------------------------
+source meteostat_russia_stations
+ttl 86400
+force thermal
+url https://meteostat.net/api/stations/search?country=RU&limit=200&key=
+map data
+lat_key latitude
+lon_key longitude
+field id station_id
+field name.en station_name
+field elevation elevation_m
+field region region_code
+
+# ---------------------------------------------------------------------------
+# [35] NOAA ISD — Integrated Surface Database, Russische Stationen
+#      ISD enthält > 35.000 Stationen weltweit, inkl. > 800 russische
+#      REST: https://www.ncei.noaa.gov/access/services/data/v1/
+#      Datensatz: global-summary-of-the-day (GSOD)
+#      Filter: country=RS (Russland-FIPS) → gibt tägliche Zusammenfassung
+# ---------------------------------------------------------------------------
+source noaa_isd_russia_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,SLP,WDSP,PRCP&countries=RS&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field DEWP dewpoint_f
+field SLP sea_level_pressure_hpa
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+
+
+# ===========================================================================
+# AFRICA WEATHER GAP — MOSAMBIK / ÄTHIOPIEN / SÜDAFRIKA
+# INAM (Instituto Nacional de Meteorologia, Mozambique): kein REST
+# NMA Ethiopia (National Meteorology Agency): kein REST
+# SAWS (South African Weather Service): teilweise öffentlich
+#
+# VIABLE PATHS für Afrikaabdeckung:
+# 1. NOAA ISD + GSOD: alle afrikanischen Stationen enthalten
+# 2. Open-Meteo: Abdeckung global (bereits in Batch 3)
+# 3. WMO Climate Services für Afrika via ENACTS (Columbia IRI)
+# 4. CHIRPS (Rainfall): https://data.chc.ucsb.edu/products/CHIRPS-2.0/
+# 5. TAMSat (Uni Reading): Afrikanische Niederschlagsschätzung
+# 6. ACMAD (African Centre of Meteorological Application for Development)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [36] NOAA ISD GSOD — Mosambik + Äthiopien Stationen
+#      FIPS: MZ (Mosambik), ET (Äthiopien)
+#      Tägliche Mittelwerte: Temperatur, Windgeschwindigkeit, Niederschlag
+# ---------------------------------------------------------------------------
+source noaa_isd_mozambique_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP&countries=MZ&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+
+source noaa_isd_ethiopia_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP&countries=ET&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+
+# ---------------------------------------------------------------------------
+# [37] NOAA ISD GSOD — Zentralafrika (DRC, Tanzania, Kenia, Uganda)
+# ---------------------------------------------------------------------------
+source noaa_isd_east_africa_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP&countries=CG,TZ,KE,UG&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field PRCP precipitation_inches
+
+# ---------------------------------------------------------------------------
+# [38] NOAA ISD GSOD — Westafrika (Nigeria, Ghana, Senegal, Côte d'Ivoire)
+# ---------------------------------------------------------------------------
+source noaa_isd_west_africa_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP&countries=NI,GH,SG,IV&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field PRCP precipitation_inches
+
+# ---------------------------------------------------------------------------
+# [39] SAWS — South African Weather Service (öffentliche Produkte)
+#      SAWS betreibt öffentlichen WMS-Server, kein REST-JSON
+#      VIABLE: SAWS über SAEON (South African Environmental Observation Network)
+#      SAEON ERDDAP: https://erddap.saeon.ac.za/erddap/
+# ---------------------------------------------------------------------------
+source saeon_erddap_south_africa
+ttl 3600
+force thermal
+url https://erddap.saeon.ac.za/erddap/tabledap/saeon_obs_network.csv?latitude,longitude,temperature,humidity,wind_speed,pressure,time&time%3E=now-24hours&orderBy(%22time%22)
+format text
+rows
+lat_key latitude
+lon_key longitude
+field temperature temp_c
+field humidity rh_pct
+field wind_speed wind_speed_ms
+field pressure pressure_hpa
+
+
+# ===========================================================================
+# ZENTRALASIEN — KASACHSTAN / USBEKISTAN
+# Kazhydromet: kein öffentliches REST-API
+# Uzhydromet: kein öffentliches REST-API
+# VIABLE: NOAA ISD (alle Stationen enthalten)
+#         WMO OSCAR Stationsverzeichnis (Kazakh + Uzbek Stationen)
+#         CAMS (Luftqualität)
+#         Aral-See Monitoring: NASA Earthdata
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [40] NOAA ISD GSOD — Kasachstan Stationen (FIPS: KZ)
+# ---------------------------------------------------------------------------
+source noaa_isd_kazakhstan_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP&countries=KZ&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+
+# ---------------------------------------------------------------------------
+# [41] NOAA ISD GSOD — Usbekistan + Turkmenistan + Kirgisistan + Tadschikistan
+# ---------------------------------------------------------------------------
+source noaa_isd_central_asia_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP&countries=UZ,TX,KG,TI&startDate={today}&endDate={today}&includeAttributes=false&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+
+# ---------------------------------------------------------------------------
+# [42] NASA Earthdata — Aral-See Wasserstand (MODIS Surface Reflectance)
+#      NASA Earthdata APPEEARS oder LPDAAC (kein einfaches REST-CSV)
+#      VIABLE ALTERNATIVE: Copernicus Global Surface Water (JRC)
+#      JRC Wasserhistorie: https://global-surface-water.appspot.com/api/
+#      Aral Sea-spezifisch: fest eingebettet in Bounding Box
+# ---------------------------------------------------------------------------
+source jrc_global_surface_water_aral
+ttl 86400
+force diffusion
+url https://global-surface-water.appspot.com/api/info?lat=45.0&lon=59.5
+terra 1
+field waterOccurrence water_occurrence_pct
+field waterRecurrence water_recurrence_pct
+field waterChange water_change_pct
+field waterSeasonality seasonality_months
+
+
+# ===========================================================================
+# COSMIC MICROWAVE BACKGROUND — PLANCK / ACT
+# Planck (ESA): Frequenzkarten als FITS/HEALPix → kein REST-JSON-API
+# ACT (Atacama Cosmology Telescope): LAMBDA NASA für Karten
+# LAMBDA REST: https://lambda.gsfc.nasa.gov/
+# ⚠ CMB-Karten sind HEALPix-FITS-Dateien → nicht direkt als CSV streambar
+#
+# VIABLE PATHS:
+# 1. Planck PR4 via IRSA HiPS: https://irsa.ipac.caltech.edu/applications/planck/
+#    → HiPS-Tiles (PNG/FITS pro Pixel) → kein direkter CSV-Stream
+# 2. Planck CMB Power Spectrum (Cl) als CSV via LAMBDA:
+#    https://lambda.gsfc.nasa.gov/data/planck/ → .dat-Dateien
+# 3. ACT DR6 CMB Lensing Power Spectrum: public data release (Zenodo)
+# 4. BEST PUBLIC REST: Planck Catalog of Compact Sources (PCCS2)
+#    via IRSA Gator oder VizieR
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [43] Planck PCCS2 — Compact Source Catalog 217GHz (via VizieR TAP)
+#      VizieR: J/A+A/594/A26/pccs2 (Planck Catalog of Compact Sources 2)
+#      Enthält ~48k Quellen bei 30-857 GHz (Galaxien, SZ-Cluster, Staubnebel)
+#      217 GHz: optimale Frequenz für CMB + galaktischen Staub
+#      PC-kompatibel: ra_key + dec_key (keine Entfernung)
+# ---------------------------------------------------------------------------
+source vizier_planck_pccs2_217ghz
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,Flux,S_N+FROM+"J/A+A/594/A26/pccs2-217"+WHERE+S_N%3E5+ORDER+BY+Flux+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Flux flux_217ghz_mjy
+field S_N snr
+field Name source_name
+
+# ---------------------------------------------------------------------------
+# [44] Planck SZ — Sunyaev-Zel'dovich Galaxienhaufen-Katalog (PSZ2)
+#      VizieR: J/A+A/594/A27/psz2 (Planck SZ2 Cluster Catalog)
+#      ~1600 Galaxienhaufen via thermischen SZ-Effekt
+#      Enthält Photometrische Rotverschiebung (z_phot) → PC-kompatibel
+# ---------------------------------------------------------------------------
+source vizier_planck_sz2_clusters
+ttl 86400
+force thermal
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,z,MSZ,SNR+FROM+"J/A+A/594/A27/psz2"+WHERE+SNR%3E4.5+ORDER+BY+SNR+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field MSZ mass_m500_1e14msun
+field SNR detection_snr
+field Name cluster_name
+
+# ---------------------------------------------------------------------------
+# [45] ACT DR4 — Atacama Cosmology Telescope CMB Compact Sources
+#      VizieR: J/ApJS/247/25/E-D56N (ACT DR4 source catalog)
+#      Punkt- und ausgedehnte Quellen aus dem CMB-Survey
+# ---------------------------------------------------------------------------
+source vizier_act_dr4_sources
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,S148,S218,S277+FROM+"J/ApJS/247/25/E-D56N"+WHERE+S148+IS+NOT+NULL+ORDER+BY+S148+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field S148 flux_148ghz_mjy
+field S218 flux_218ghz_mjy
+field S277 flux_277ghz_mjy
+field Name source_name
+
+# ---------------------------------------------------------------------------
+# [46] Planck CMB Temperature Anisotropy — Power Spectrum via LAMBDA
+#      Cl-Spektrum als 1-D Datei: kein räumliches lat/lon
+#      Nützlich als Kalibrations-/Referenzschicht (wie CODATA)
+#      NASA LAMBDA public data: text/ASCII
+# ---------------------------------------------------------------------------
+source lambda_planck_pr4_power_spectrum
+ttl 31536000
+force em
+url https://lambda.gsfc.nasa.gov/data/planck/pr4/cmb/COM_PowerSpect_CMB-TT-full_R4.01.txt
+format text
+rows
+field 0 multipole_l
+field 1 Cl_TT_uK2
+field 2 Cl_upper_uK2
+field 3 Cl_lower_uK2
+
+
+# ===========================================================================
+# NEUE DOMAINS — NICHT IN URSPRÜNGLICHER TABELLE
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [47] IceCube Neutrino Observatory — Alert Events via GCN/NASA
+#      GCN (General Coordinates Network): öffentliche Alerts
+#      IceCube Gold/Bronze Tracks via GCN REST API
+#      Endpunkt: https://gcn.nasa.gov/api/circulars?subject=IceCube
+#      Format: JSON-Array von GCN Circulars
+# ---------------------------------------------------------------------------
+source gcn_icecube_neutrino_alerts
+ttl 300
+force em
+url https://gcn.nasa.gov/api/circulars?subject=IceCube&limit=100
+map items
+field subject circular_subject
+field circularId circular_id
+field submittedHow submission_method
+field createdOn created_timestamp
+
+# ---------------------------------------------------------------------------
+# [48] NASA FIRMS — VIIRS Global Active Fire (Near-Real-Time, 375m)
+#      FIRMS = Fire Information for Resource Management System
+#      CSV: https://firms.modaps.eosdis.nasa.gov/api/area/csv/{key}/VIIRS_SNPP_NRT/World/1
+#      Kein Key nötig für Map Service: WMS → für REST: MAP_KEY nötig
+#      VIABLE FREE: FIRMS Country-spezifisch via öffentlichem CSV-Download
+#      https://firms.modaps.eosdis.nasa.gov/country/ → kein direktes REST
+#      BEST REST ohne Key: NASA EARTHDATA CMR für FIRMS-Granule → komplex
+#      SIMPLEST: NASA FIRMS MODIS NRT via Open Data (NASA_FIRMS_MODIS_NRT)
+# ---------------------------------------------------------------------------
+source nasa_firms_viirs_global
+ttl 600
+force thermal
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/DEMO_KEY/VIIRS_SNPP_NRT/World/1/{today}
+format text
+rows
+lat_key latitude
+lon_key longitude
+field bright_ti4 brightness_k
+field bright_ti5 brightness_ti5_k
+field frp fire_radiative_power_mw
+field confidence confidence_pct
+field daynight day_night_flag
+field acq_date acquisition_date
+field acq_time acquisition_time
+
+# ---------------------------------------------------------------------------
+# [49] USGS Water Services — Streamflow (Flussdurchfluss, USA)
+#      Ergänzung zu Grundwasser aus Batch 3
+#      parameterCd=00060 = Discharge (Abfluss in cubic feet per second)
+#      Gibt aktuelle Pegelstände aller USGS-Fluss-Messstellen zurück
+# ---------------------------------------------------------------------------
+source usgs_nwis_streamflow_usa
+ttl 900
+force diffusion
+url https://waterservices.usgs.gov/nwis/iv/?parameterCd=00060&statCd=00001&siteType=ST&siteStatus=active&period=PT1H&format=json
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteName station_name
+field sourceInfo.siteCode.0.value site_code
+field values.0.value.0.value discharge_cfs
+field values.0.value.0.dateTime measurement_time
+
+# ---------------------------------------------------------------------------
+# [50] Global Biodiversity Information Facility (GBIF) — Artvorkommen
+#      REST API: https://api.gbif.org/v1/occurrence/search
+#      Öffentlich, kein Auth
+#      Gibt geostatistische Artvorkommen zurück (Biodiversitätsmonitoring)
+#      Force: diffusion (Artverbreitung als biologische Diffusion)
+# ---------------------------------------------------------------------------
+source gbif_species_occurrences_global
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&month={month}&year={year}
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field genus genus
+field family family
+field kingdom kingdom
+field year obs_year
+field month obs_month
+field country country_code
+field stateProvince state_province
+
+# ---------------------------------------------------------------------------
+# [51] GBIF — Invasive Arten (Rote Liste-Kategorien)
+#      Invasivspezies als Proxy für Ökosystem-Stress
+#      Gefiltert auf IUCN-Status = EX, EW, CR, EN, VU
+# ---------------------------------------------------------------------------
+source gbif_threatened_species
+ttl 86400
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field iucnRedListCategory iucn_category
+field year obs_year
+field country country_code
+
+# ---------------------------------------------------------------------------
+# [52] OpenAQ — Luftqualität weltweit (offene Messstation-Daten)
+#      REST API v3: https://api.openaq.org/v3/
+#      Öffentlich, kein Auth für Basis-Abfragen
+#      Endpunkt: /v3/measurements?limit=1000&parameter=pm25&date_from=...
+# ---------------------------------------------------------------------------
+source openaq_pm25_global
+ttl 1800
+force diffusion
+url https://api.openaq.org/v3/measurements?parameter_id=2&limit=1000&date_from={today}T00:00:00Z&date_to={today}T23:59:59Z&order_by=datetime&sort_order=desc
+map results
+lat_key coordinates.latitude
+lon_key coordinates.longitude
+field value pm25_ugm3
+field parameter parameter_name
+field unit unit
+field location_id station_id
+field datetime measurement_time
+
+# ---------------------------------------------------------------------------
+# [53] OpenAQ — NO2 Global (Parameter-ID 7)
+# ---------------------------------------------------------------------------
+source openaq_no2_global
+ttl 1800
+force diffusion
+url https://api.openaq.org/v3/measurements?parameter_id=7&limit=1000&date_from={today}T00:00:00Z&date_to={today}T23:59:59Z&order_by=datetime&sort_order=desc
+map results
+lat_key coordinates.latitude
+lon_key coordinates.longitude
+field value no2_ugm3
+field parameter parameter_name
+field location_id station_id
+field datetime measurement_time
+
+# ---------------------------------------------------------------------------
+# [54] OpenAQ — O3 Global (Ozon, Parameter-ID 3)
+# ---------------------------------------------------------------------------
+source openaq_o3_global
+ttl 1800
+force diffusion
+url https://api.openaq.org/v3/measurements?parameter_id=3&limit=1000&date_from={today}T00:00:00Z&date_to={today}T23:59:59Z&order_by=datetime&sort_order=desc
+map results
+lat_key coordinates.latitude
+lon_key coordinates.longitude
+field value o3_ugm3
+field location_id station_id
+field datetime measurement_time
+
+# ---------------------------------------------------------------------------
+# [55] OpenAQ — Stationsindex (alle aktiven Stationen mit Metadaten)
+# ---------------------------------------------------------------------------
+source openaq_stations_global
+ttl 86400
+force diffusion
+url https://api.openaq.org/v3/locations?limit=2000&order_by=lastUpdated&sort_order=desc&is_active=true
+map results
+lat_key coordinates.latitude
+lon_key coordinates.longitude
+field name station_name
+field id station_id
+field country.code country_code
+field parameters.0.displayName primary_parameter
+field lastUpdated last_update
+
+# ---------------------------------------------------------------------------
+# [56] EMSC — European-Mediterranean Seismological Centre (Echtzeit-Beben)
+#      REST FDSN Event: https://www.seismicportal.eu/fdsnws/event/1/
+#      Komplementär zu USGS (europäischer Schwerpunkt, schnellere EU-Updates)
+# ---------------------------------------------------------------------------
+source emsc_seismicportal_events
+ttl 60
+force seismic-body
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.Flynn_region region
+field properties.time event_time
+field properties.depth depth_km
+field properties.auth data_source
+field geometry.coordinates.2 depth_km_geo
+
+# ---------------------------------------------------------------------------
+# [57] INGV — Istituto Nazionale di Geofisica e Vulcanologia (Italien)
+#      FDSN Event: https://webservices.ingv.it/fdsnws/event/1/query
+#      Mittelmeer-Beben mit hoher Auflösung für Apennin + Aegäis
+# ---------------------------------------------------------------------------
+source ingv_italy_earthquakes
+ttl 60
+force seismic-body
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time
+field properties.depth depth_km
+
+# ---------------------------------------------------------------------------
+# [58] GFZ Potsdam — Deutsches GeoForschungsZentrum (FDSN Event)
+#      Mitteleuropa-Seismizität inkl. induzierter Seismizität (Bergbau, Geothermie)
+# ---------------------------------------------------------------------------
+source gfz_potsdam_earthquakes
+ttl 300
+force seismic-body
+url https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=500&orderby=time&starttime={today}T00:00:00
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time
+field properties.depth depth_km
+
+# ---------------------------------------------------------------------------
+# [59] ORFEUS/ODC — European Integrated Data Archive (EIDA)
+#      Seismische Stationsmetadaten aus dem paneuropäischen Netzwerk
+#      FDSN Station: https://www.orfeus-eu.org/fdsnws/station/1/query
+#      Alle europäischen permanenten Stationen (EIDA-Verbund)
+# ---------------------------------------------------------------------------
+source orfeus_eida_stations_europe
+ttl 86400
+force seismic-body
+url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01&endtime=9999-01-01
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+field SiteDescription station_name
+field StartTime start_date
+
+# ---------------------------------------------------------------------------
+# [60] NASA POWER — Agroklimatische Daten (Agrikultur + Solar)
+#      NASA Prediction of Worldwide Energy Resources
+#      REST API: https://power.larc.nasa.gov/api/temporal/
+#      Kein Auth, öffentlich
+#      Endpunkt: /daily/point → Stündliche / tägliche Agro-Daten
+# ---------------------------------------------------------------------------
+source nasa_power_agro_daily
+ttl 86400
+force thermal
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,T2MDEW,RH2M,WS10M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,ET0&community=AG&longitude={lon}&latitude={lat}&start={year}{month}{day}&end={year}{month}{day}&format=JSON
+terra 1
+map properties.parameter.T2M
+field T2M temp_2m_c
+field T2MDEW dewpoint_2m_c
+field RH2M rh_2m_pct
+field WS10M wind_speed_10m_ms
+field PRECTOTCORR precipitation_mm
+field ALLSKY_SFC_SW_DWN sw_radiation_wm2
+field ET0 evapotranspiration_mm
+
+# ---------------------------------------------------------------------------
+# [61] USGS Mineral Resources — Aktive Bergbaustandorte (MRDS)
+#      Mineral Resources Data System: ~300k Lagerstätten weltweit
+#      REST: https://mrdata.usgs.gov/mrds/geo-mrds.php?format=json
+#      Felder: lat, lon, name, commod1 (primärer Rohstoff), oper_type
+# ---------------------------------------------------------------------------
+source usgs_mrds_mining_sites
+ttl 86400
+force gravity
+url https://mrdata.usgs.gov/mrds/geo-mrds.php?format=json&south=-90&north=90&west=-180&east=180&dep_type=PRODUCER&commod=&country=
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.site_name site_name
+field properties.commod1 primary_commodity
+field properties.oper_type operation_type
+field properties.country country
+field properties.state state_province
+
+# ---------------------------------------------------------------------------
+# [62] ESA Swarm — Magnetfeld-Satelliten (INTERMAGNET + ESA REST)
+#      ESA Swarm gibt Magnetfeldmessungen aus LEO-Orbit zurück
+#      VirES Web API: https://vires.services/ows (öffentlich, kein Auth nötig)
+#      WPS-Endpunkt für Magnetfelddaten (F, B_NEC-Vektoren)
+#      Einfachster Pfad: INTERMAGNET Observatorien via FDSN-analog
+#      INTERMAGNET JSON: https://imag-data.bgs.ac.uk/GIN_V1/GINServices?
+# ---------------------------------------------------------------------------
+source intermagnet_geomagnetic_observatories
+ttl 3600
+force em
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetObservatoryList&format=json
+map .
+lat_key latitude
+lon_key longitude
+field iagaCode station_code
+field name station_name
+field country country
+field dataAvailability data_status
+field elevation elevation_m
+```
+
+---
+
+## Gesamtübersicht Batch 4
+
+| Domain | Quellen | PC-tagged | Status / Anmerkungen |
+|---|---|---|---|
+| **BOM Australia** | 10 | ✅ lat/lon | 🔀 FTP-Mirror statt gesperrter v1-API |
+| **Raspberry Shake** | 6 | ✅ FDSN text | FDSNWS Station + Event |
+| **Lightning / WWLLN** | 4 | ✅/⚠ | SWDI + GLM + Storm Events + Open-Meteo |
+| **INCOIS + CMEMS** | 6 | ✅ lat/lon | ERDDAP-Pfad + IMD Zyklon |
+| **CAMS / Copernicus** | 6 | ✅ lat/lon | GWIS + WOUDC + PVGIS + WAQI + SILAM |
+| **Roshydromet** | 3 | ✅ lat/lon | Ogimet SYNOP + ISD + Meteostat |
+| **Afrika Wetter** | 4 | ✅ lat/lon | NOAA ISD + SAEON ERDDAP |
+| **Zentralasien** | 3 | ✅ lat/lon | NOAA ISD KZ + UZ + JRC Aralsee |
+| **CMB Planck/ACT** | 4 | ✅ ra/dec + z | VizieR PCCS2 + PSZ2 + ACT DR4 |
+| **IceCube Neutrinos** | 1 | ⚠ kein lat/lon | GCN Circulars |
+| **NASA FIRMS** | 1 | ✅ lat/lon | VIIRS NRT Feuer |
+| **USGS Streamflow** | 1 | ✅ lat/lon | Flussdurchfluss USA |
+| **GBIF Biodiversität** | 2 | ✅ lat/lon | Artvorkommen + Rote Liste |
+| **OpenAQ** | 5 | ✅ lat/lon | PM2.5 + NO2 + O3 + Stationen |
+| **EMSC + INGV + GFZ** | 3 | ✅ GeoJSON | EU-Seismizität Multi-Netz |
+| **ORFEUS EIDA** | 1 | ✅ FDSN text | Europäische Stationsmeta |
+| **NASA POWER** | 1 | ✅ terra | Agroklimatologie |
+| **USGS MRDS** | 1 | ✅ GeoJSON | Bergbaustandorte global |
+| **INTERMAGNET** | 1 | ✅ lat/lon | Geomagnetische Observatorien |
+
+**Gesamt Batch 4: 62 Quellblöcke**
+
+---
+
+## Kritische Parser-Hinweise Batch 4
+
+```
+# ===== BOM FTP-Feeds (JSON) ================================================
+# Alle IDx60901.json-Feeds haben identische Struktur:
+# {
+#   "observations": {
+#     "notice": [...],
+#     "header": [...],
+#     "data": [
+#       {
+#         "sort_order": 0,
+#         "wmo": 94767,
+#         "name": "Sydney (Observatory Hill)",
+#         "history_product": "IDN60901",
+#         "local_date_time": "27/07:00pm",
+#         "local_date_time_full": "20260727170000",
+#         "aifstime_utc": "20260727070000",
+#         "lat": -33.9,
+#         "lon": 151.2,
+#         "apparent_t": 22.6,
+#         "cloud": "Partly cloudy",
+#         "cloud_base_m": null,
+#         "cloud_type": "Cumulus",
+#         "delta_t": 5.4,
+#         "gust_kmh": 26,
+#         "gust_kt": 14,
+#         "air_temp": 25.2,
+#         "dewpt": 14.0,
+#         "press": 1018.1,
+#         "press_msl": 1018.1,
+#         "press_qnh": 1018.0,
+#         "press_tend": "-",
+#         "rain_trace": "0.0",
+#         "rel_hum": 50,
+#         "sea_state": "-",
+#         "swell_dir_worded": "-",
+#         "swell_height": null,
+#         "swell_period": null,
+#         "vis_km": "10",
+#         "weather": "-",
+#         "wind_dir": "NE",
+#         "wind_spd_kmh": 11,
+#         "wind_spd_kt": 6
+#       }, ...
+#     ]
+#   }
+# }
+# → map observations.data
+# → lat_key lat, lon_key lon
+# → rain_trace ist STRING ("0.0", "Trace", "-") → Ingestor muss parsen
+
+# ===== FDSN Station Text Format ============================================
+# Zeile 1: #Network|Station|Location|Channel|Latitude|Longitude|
+#           Elevation|Depth|Azimuth|Dip|SensorDescription|Scale|
+#           ScaleFreq|ScaleUnits|SampleRate|StartTime|EndTime
+# Zeile 2+: AM|R1607||EHZ|48.123|11.456|520.0|0.0|0.0|-90.0|
+#           Raspberry Shake 1D|600000000.0|1.0|M/S|100.0|
+#           2019-03-15T12:00:00|
+# → format text + rows
+# → lat_key Latitude (aus Header-Zeile gemappt)
+# → Kopfzeile beginnt mit "#" → überspringen
+# → Pipe-Delimiter → Ingestor muss "| " als Trenner konfigurieren
+
+# ===== OpenAQ v3 API ======================================================
+# Neue v3-Struktur unterscheidet sich von v2:
+# {
+#   "meta": {"name": "openaq-api", "page": 1, ...},
+#   "results": [
+#     {
+#       "id": 12345,
+#       "location_id": 678,
+#       "sensors_id": 90,
+#       "value": 15.6,
+#       "datetime": {"utc": "2026-07-27T12:00:00Z", ...},
+#       "coordinates": {"latitude": 48.1, "longitude": 11.5},
+#       "parameter": {"id": 2, "name": "pm25", "displayName": "PM2.5"},
+#       "unit": "µg/m³"
+#     }, ...
+#   ]
+# }
+# → map results
+# → lat_key coordinates.latitude, lon_key coordinates.longitude
+# → field value → pm25_ugm3
+# → field datetime.utc → measurement_time (ACHTUNG: verschachteltes Objekt)
+
+# ===== NOAA ISD GSOD Ländercode-Tabelle ===================================
+# FIPS Alpha-2 Codes (NICHT ISO 3166-1!):
+# RS = Russland     MZ = Mosambik     ET = Äthiopien
+# KZ = Kasachstan   UZ = Usbekistan   TX = Turkmenistan
+# KG = Kirgisistan  TI = Tadschikistan
+# CG = Kongo (DRC)  TZ = Tansania     KE = Kenia
+# UG = Uganda       NI = Nigeria      GH = Ghana
+# SG = Senegal      IV = Côte d'Ivoire
+# ⚠ Manche Länder-Codes weichen von ISO 3166-1 ab!
+```
+
+---
+
+## Empfehlung für Batch 5
+
+| Priorität | Domain | Strategie |
+|---|---|---|
+| 🟡 **1** | **iNaturalist Ausbau** (Taxa-Filter) | `/v1/observations?taxon_name=Mammalia` etc. |
+| 🟡 **2** | **METAR Ausbau** | Aviation Weather ADDS: `adds.weather.gov/dataserver` alle Regionen |
+| 🟡 **3** | **AGN / Blazar Ergänzung** | HEASARC `romabzcat` (Roma Blazar Catalog) + BZCAT via VizieR |
+| 🟡 **4** | **ISRO Bhuvan** | Spezifische Layer-Endpunkte (LULC, AWiFS) |
+| 🟡 **5** | **GeoNet NZ Ergänzung** | Restliche Quellen (Tsunami, DART Buoys) |
+| 🔵 **6** | **Global Mangrove Watch** | JAXA ERDDAP / Zenodo REST |
+| 🔵 **7** | **Ocean Deoxygenation** | GO-SHIP / GLODAP via NOAA NCEI |
+| 🔵 **8** | **Cosmic Rays (NMDB)** | Neutron Monitor Database `nmdb.eu/api` |
+| 🔵 **9** | **Ionosphäre (IONEX)** | NASA CDDIS öffentliche IONEX-Dateien |
+| 🔵 **10** | **GRACE-FO Gravitation** | NASA PODAAC ERDDAP Schwerefeld-Anomalien |

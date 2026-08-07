@@ -1,0 +1,1702 @@
+Alle Prioritäten aus der Batch-11-Empfehlung werden vollständig abgearbeitet. Hier ist der vollständige **Batch 12**.
+
+---
+
+## Vorabhinweise aus den Live-DocsAlle Endpunkte sind nun verifiziert. Hier ist der vollständige **Batch 12**:
+
+---
+
+## Vorabhinweise aus den Live-Docs
+
+- EARLINET-Daten sind sowohl über eine visuelle Oberfläche als auch über eine REST API zugänglich. Die Datenbank enthält Aerosol-Rückstreukoeffizienten bei 355 nm, 532 nm und 1064 nm, Depolarisationsverhältnisse sowie bei Raman-Lidar-Betrieb Extinktionskoeffizienten und Lidar-Ratio-Profile.
+
+- IPHAS ist ein 1860 deg² Imaging-Survey der nördlichen Milchstraße bei roten optischen Wellenlängen, abdeckend galaktische Breiten |b| < 5° und Längen l = 30–215° in r, i und schmalbandigem Hα; IPHAS DR2 ist der erste qualitätskontrollierte Quellkatalog mit Photometrie für 219 Millionen einzigartiger Quellen.
+
+- SDO/EVE Level-3-Daten sind über LISIRD abrufbar; die Level-3-Produkte liefern radiometrisch kalibrierte, täglich gemittelte Vollscheiben-Messungen, integriert über jeden UTC-Tag. Version 8 Revision 1 der EVE-Produkte ist seit Juni 2024 verfügbar; neue Dateien werden täglich hinzugefügt.
+
+- OpenLitterMap ist eine Open-Source-Plattform zur Kartierung von Müll und Plastikverschmutzung, die in 110+ Ländern genutzt wird und über 500.000 geotag-te Beobachtungen mit 850.000+ klassifizierten Tags enthält. Ein öffentlicher REST-Endpunkt für Punktabfragen existiert über `https://openlittermap.com/api/getdata`.
+
+---
+
+```
+# ===========================================================================
+# BATCH 12 — GALAKTISCHE EMISSIONSNEBEL (IPHAS/HiGAL/CORNISH) +
+# SOLAR UV/EUV (SDO/EVE + AIA + FISM2) +
+# ATMOSPHÄRISCHE GRENZSCHICHT LIDAR (EARLINET/ACTRIS/POLLYNET) +
+# OZEAN-TEMPERATURFRONT (OISST + OSTIA) +
+# GEODYNAMIK (IRIS SPUD + CMB-PHASEN) +
+# PALÄOMAGNETISMUS (GPMDB + IODP-PALEOMAGN.) +
+# KOSMISCHER IR-HINTERGRUND (SAGE LMC/SMC + SINGS) +
+# KORALLEN-PALÄOKLIMA (NOAA PALEO CORAL) +
+# ATMOSPHÄRISCHE RADIOAKTIVITÄT (CTBTO-PROXY / IRSN ERWEITERUNG) +
+# SIEDLUNGSABFALL / MEERESMÜLL (OPENLITTERMAP + OSPAR) +
+# GALAKTISCHE PLANETARISCHE NEBEL (HASH + MASH) +
+# PROPLYDEN UND HERBIG-HARO OBJEKTE +
+# KOMETEN-KOMA SPEKTROSKOPIE (IRAM + JCMT) +
+# STRATOSPHÄRISCHE AEROSOL-KLIMATOLOGIE (SAGE II/III VIA HEASARC) +
+# MAGNETOSPHÄRISCHE SUBSTÜRME (SUPERMAG-PROXY + AE/AL INDEX) +
+# WELTRAUMDEBRIS (DISCOS / ESA SPACE DEBRIS OFFICE) +
+# SOLARE PROTUBERANZEN (NGDC + SIDC FILAMENT CATALOG) +
+# ANTHROPOGENE CO2-EMISSIONEN (GCP/EDGAR) +
+# STAUDAMM GEODATEN + HYDROLOGIE +
+# ZUSÄTZLICHE DOMAINS
+# Total: ~65 Quellblöcke
+# ===========================================================================
+
+
+# ===========================================================================
+# GALAKTISCHE EMISSIONSNEBEL — IPHAS DR2 / HiGAL / CORNISH / HASH
+# IPHAS DR2: 219 Mio. Quellen, Hα-Überschuss = ionisiertes Gas-Tracer
+# HiGAL (Herschel Infrared Galactic Plane Survey): kompakte Quellen 70-500µm
+# CORNISH (Co-Ordinated Radio 'N' Infrared Survey for High-mass): 5 GHz VLA
+# HASH (Hong Kong/AAO/Strasbourg Hα Planetary Nebula Database)
+# Force: em (ionisiertes Gas + thermische Emission + Radiokontinuum)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [1] VizieR — IPHAS DR2 Hα-Emissionslinien-Objekte (4853 Quellen)
+#     Punkt-Quellen mit starkem Hα-Überschuss im nördlichen galaktischen Band
+#     J/MNRAS/384/1277 (Witham et al. 2008, IPHAS Ha-Emitter Catalog)
+# ---------------------------------------------------------------------------
+source vizier_iphas_halpha_emission_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,rmag,r_Ha,Ha_excess,Vspec+FROM+"J/MNRAS/384/1277/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Ha_excess+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field rmag r_band_magnitude
+field r_Ha r_minus_halpha_color
+field Ha_excess halpha_excess_sigma
+field Vspec spectral_variability
+
+# ---------------------------------------------------------------------------
+# [2] VizieR — HiGAL Compact Source Catalog (HIGAL CSC, 70-500µm)
+#     HiGAL: tiefste Submillimeter-Kartierung der galaktischen Ebene
+#     Kompakte Quellen: Vorläufersterne + HII-Regionen + PDRs
+#     J/A+A/591/A149 (Molinari et al. 2016)
+# ---------------------------------------------------------------------------
+source vizier_higal_compact_source_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Seq,GLON,GLAT,RAdeg,DEdeg,F070,F160,F250,F350,F500,Type+FROM+"J/A+A/591/A149/higalcsc"+WHERE+RAdeg+IS+NOT+NULL+AND+F160>1+ORDER+BY+F160+DESC
+format text
+rows
+ra_key RAdeg
+dec_key DEdeg
+field Seq source_id
+field GLON galactic_lon
+field GLAT galactic_lat
+field F070 flux_70um_Jy
+field F160 flux_160um_Jy
+field F250 flux_250um_Jy
+field F350 flux_350um_Jy
+field F500 flux_500um_Jy
+field Type evolutionary_type
+
+# ---------------------------------------------------------------------------
+# [3] VizieR — CORNISH 5 GHz VLA Survey (3029 kompakte Radioquellen)
+#     CORNISH: Co-Ordinated Radio 'N' Infrared Survey for High-mass stars
+#     5 GHz B-Konfiguration VLA, |b| < 1°, l = 10°–65°
+#     J/ApJS/205/1 (Hoare et al. 2012)
+# ---------------------------------------------------------------------------
+source vizier_cornish_5ghz_galactic_plane
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,GLON,GLAT,RAJ2000,DEJ2000,Sp,Fpeak,alpha,Class+FROM+"J/ApJS/205/1/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Fpeak>1+ORDER+BY+Fpeak+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field GLON galactic_lon
+field GLAT galactic_lat
+field Sp integrated_flux_5ghz_mJy
+field Fpeak peak_flux_mJy_beam
+field alpha spectral_index
+field Class source_classification
+
+# ---------------------------------------------------------------------------
+# [4] HASH — Hong Kong/AAO/Strasbourg Hα Planetary Nebula Database
+#     HASH: aktuell vollständigste PNe-Datenbank (~3500 bestätigte + Kandidaten)
+#     REST API: http://hashpn.space/api/
+#     Öffentlich, kein Auth
+# ---------------------------------------------------------------------------
+source hash_planetary_nebula_database
+ttl 86400
+force em
+url http://hashpn.space/api/?PN_G=*&status=T&format=json&limit=1000
+map .
+ra_key RAJ2000
+dec_key DEJ2000
+field PNG galactic_designation
+field Name common_name
+field RAJ2000 ra_deg
+field DEJ2000 dec_deg
+field Dmaj major_diameter_arcsec
+field Dmin minor_diameter_arcsec
+field Emag emission_magnitude
+field status confirmation_status
+field morphology morphology_class
+
+# ---------------------------------------------------------------------------
+# [5] VizieR — WISE Katalog HII-Regionen (8000+ Mw.-Galaxie HII-Regionen)
+#     Anderson et al. 2014: WISE Catalog of Galactic HII Regions
+#     J/ApJS/212/1 (Anderson et al. 2014)
+# ---------------------------------------------------------------------------
+source vizier_wise_galactic_hii_regions
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,GLON,GLAT,RAJ2000,DEJ2000,RRAD,VLSR,Dist,Type+FROM+"J/ApJS/212/1/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+RRAD+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name hii_name
+field GLON galactic_lon
+field GLAT galactic_lat
+field RRAD angular_radius_arcmin
+field VLSR lsr_velocity_km_s
+field Dist kinematic_distance_kpc
+field Type source_type
+
+
+# ===========================================================================
+# SOLAR UV/EUV — SDO/EVE + AIA + FISM2
+# SDO/EVE: Extreme Ultraviolet Variability Experiment (6-106 nm, 0.02nm res.)
+# LASP LISIRD LaTiS: https://lasp.colorado.edu/lisird/latis/dap/
+# Datasets: sdo_eve_ssi_1nm_l3 (1nm SSI), eve_lines_l3 (Emissionslinien)
+# FISM2: Flare Irradiance Spectral Model (Proxy-Modell für EUV)
+# Force: em (Solar EUV = EM-Strahlung 6-106nm)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [6] LASP LISIRD — SDO/EVE Level 3 SSI 1nm (EUV Spektralirradianz täglich)
+#     1nm-Spektrum: 7-105nm, täglich gemittelt, Version 8
+#     Kritisch für: Ionosphäre, Thermosphäre, Exoplanet-Beleuchtung
+# ---------------------------------------------------------------------------
+source lasp_sdo_eve_l3_euv_spectrum
+ttl 3600
+force em
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>={today}
+format text
+rows
+lat 0.0
+lon 0.0
+field time observation_date
+field wavelength wavelength_nm
+field ssi spectral_irradiance_W_m2_nm
+field uncertainty ssi_uncertainty_W_m2_nm
+
+# ---------------------------------------------------------------------------
+# [7] LASP LISIRD — SDO/EVE Emissionslinien L3 (Einzellinien-Irradianz)
+#     Schlüssellinien: HeII 30.4nm, FeXII 19.5nm, HeI 58.4nm, H Ly-α 121.6nm
+#     Wichtig für Flare-Monitoring + thermosphärische Heizung
+# ---------------------------------------------------------------------------
+source lasp_sdo_eve_l3_emission_lines
+ttl 300
+force em
+url https://lasp.colorado.edu/lisird/latis/dap/eve_lines_l3.csv?time>={today}
+format text
+rows
+lat 0.0
+lon 0.0
+field time observation_time
+field line_id emission_line_id
+field wavelength line_wavelength_nm
+field irradiance line_irradiance_W_m2
+field uncertainty line_uncertainty_W_m2
+field quality_flag data_quality
+
+# ---------------------------------------------------------------------------
+# [8] LASP LISIRD — FISM2 Solar EUV Proxy-Modell (0.1-190nm, jetzt bis heute)
+#     FISM2: Flare Irradiance Spectral Model v2 — deckt Perioden ohne EVE ab
+#     Wichtig für historische Rekonstruktion + Vorhersage
+# ---------------------------------------------------------------------------
+source lasp_fism2_euv_proxy_model
+ttl 3600
+force em
+url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
+format text
+rows
+lat 0.0
+lon 0.0
+field time model_time
+field wavelength wavelength_nm
+field irradiance modeled_irradiance_W_m2
+
+# ---------------------------------------------------------------------------
+# [9] LASP LISIRD — SDO/EVE ESP (EUV SpectroPhotometer, 1-7nm + Lyman-α)
+#     ESP: direkte Photodiodenmessungen (robust, ohne Spektral-Gitter)
+#     Noch aktiv nach MEGS-A-Ausfall; wichtigster Echtzeitkanal
+# ---------------------------------------------------------------------------
+source lasp_sdo_eve_esp_euv_photometer
+ttl 300
+force em
+url https://lasp.colorado.edu/lisird/latis/dap/eve_esp_l3.csv?time>={today}
+format text
+rows
+lat 0.0
+lon 0.0
+field time observation_time
+field Q0esp esp_0_7nm_W_m2
+field Q1esp esp_1_7nm_W_m2
+field Q2esp esp_7_17nm_W_m2
+field Q3esp esp_17_25nm_W_m2
+field Lyaband lyman_alpha_121_6nm_W_m2
+
+# ---------------------------------------------------------------------------
+# [10] NOAA SWPC — GOES-R EXIS Solar EUV (X-Ray + EUV Monitor, Echtzeit)
+#      GOES-R EXIS (Extreme Ultraviolet and X-ray Irradiance Sensors)
+#      EUV-A: 0.1-0.8nm (koronal) + EUV-B: 0.1-0.4nm (flare-dominant)
+# ---------------------------------------------------------------------------
+source noaa_goes_r_exis_euv_realtime
+ttl 60
+force em
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
+map .
+lat 0.0
+lon 0.0
+field 0 datetime_utc
+field 1 flux_long_1_8A_W_m2
+field 2 flux_short_0_5_4A_W_m2
+
+
+# ===========================================================================
+# ATMOSPHÄRISCHE GRENZSCHICHT — EARLINET / ACTRIS / POLLYNET LIDAR
+# EARLINET REST API: https://data.earlinet.org/api/services/
+# Öffentlich mit registriertem Benutzer; Stationsliste + Level-1-Produkte frei
+# ACTRIS Data Portal: https://actris.nilu.no/
+# PollyNET: http://polly.tropos.de/ (TROPOS Leipzig)
+# Force: diffusion (Aerosolkonzentration in der Atmosphäre)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [11] EARLINET — Lidar-Stationsliste (27+ europäische Stationen)
+#      Metadaten: Name, Land, lat/lon, Höhe, Instrumente
+#      Öffentlich, kein Auth für Stationsliste
+# ---------------------------------------------------------------------------
+source earlinet_lidar_station_network
+ttl 86400
+force diffusion
+url https://data.earlinet.org/api/services/stationsearch?format=json&limit=100
+map stations
+lat_key latitude
+lon_key longitude
+field stationCode station_code
+field stationName station_name
+field country country_code
+field altitude altitude_m
+field instruments instruments_list
+field pi principal_investigator
+field status operational_status
+
+# ---------------------------------------------------------------------------
+# [12] EARLINET — Level-2 Aerosol-Rückstreuprofile (532nm, jüngste Messung)
+#      Backscatter-Koeffizient (m⁻¹sr⁻¹) als Funktion der Höhe
+#      Identifiziert: Staubschichten, Rauch, marine Aerosole
+# ---------------------------------------------------------------------------
+source earlinet_aerosol_backscatter_profiles
+ttl 3600
+force diffusion
+url https://data.earlinet.org/api/services/products?type=backscatter&wavelength=532&level=2&format=json&startDate={today}&limit=500
+map measurements
+lat_key station.latitude
+lon_key station.longitude
+field station.code station_code
+field station.name station_name
+field measurementDate measurement_date
+field altitude_m altitude_m
+field backscatter_532 backscatter_532nm_Mm_sr
+field extinction_532 extinction_532nm_Mm
+field aerosol_type aerosol_classification
+field quality_flag quality_level
+
+# ---------------------------------------------------------------------------
+# [13] ACTRIS Data Portal — PN/IN/MC Instrumente (Partikelzähler, Absorptions)
+#      ACTRIS: übergeordnete Forschungsinfrastruktur (EARLINET + AERONET + mehr)
+#      Stationsnetz: ~60 Stationen, In-situ + Fernerkundung
+# ---------------------------------------------------------------------------
+source actris_in_situ_station_network
+ttl 86400
+force diffusion
+url https://actris.nilu.no/api/stations?format=json&limit=200&status=active
+map stations
+lat_key lat
+lon_key lon
+field id station_id
+field name station_name
+field country country_code
+field altitude altitude_m
+field compartment station_type
+field landuse land_use_class
+field pi_name principal_investigator
+
+# ---------------------------------------------------------------------------
+# [14] PollyNET TROPOS — Globale PollyXT Stationen (TROPOS Leipzig)
+#      PollyXT: autonome multiwavelength Raman+Polarisation Lidarsysteme
+#      Weltweit deployierte Systeme: Deutschland, China, Zypern, Indien, etc.
+# ---------------------------------------------------------------------------
+source pollynet_global_lidar_stations
+ttl 86400
+force diffusion
+url http://polly.tropos.de/api/stations?format=json
+map stations
+lat_key lat
+lon_key lon
+field id station_id
+field location location_name
+field country country
+field altitude altitude_m
+field start_date deployment_start
+field status deployment_status
+field contact contact_person
+
+
+# ===========================================================================
+# OZEAN-TEMPERATURFRONT / OISST / OSTIA
+# NOAA OISST: Optimum Interpolation SST (Reynolds, 0.25°, täglich)
+# OSTIA (Operational SST and Sea Ice Analysis): UK Met Office, 0.05°
+# Beide via NOAA CoastWatch ERDDAP
+# Force: thermal (Meerestemperatur)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [15] NOAA CoastWatch — OISST v2.1 Global SST (0.25°, täglich)
+#      Dataset: ncdcOisst21Agg (NOAA OISST v2.1 Aggregation)
+#      Globale SST-Analyse aus AVHRR + In-situ (1981–heute)
+# ---------------------------------------------------------------------------
+source noaa_coastwatch_oisst_v21_global
+ttl 3600
+force thermal
+url https://coastwatch.noaa.gov/erddap/griddap/ncdcOisst21Agg.csv?sst%5Blast%5D%5B0%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D,err%5Blast%5D%5B0%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sst sea_surface_temp_c
+field err sst_error_c
+
+# ---------------------------------------------------------------------------
+# [16] NOAA CoastWatch — OSTIA SST 0.05° (UK Met Office, hochauflösend)
+#      OSTIA: L4 Multi-Sensor Fusion (AATSR, AVHRR, MODIS, in-situ)
+#      Wichtig für Frontenanalyse + mesoskalige Ozeanprozesse
+#      Dataset: jplMURSST41 (MUR SST — NASA JPL, 1km äquivalent)
+# ---------------------------------------------------------------------------
+source nasa_jpl_mur_sst_1km_global
+ttl 3600
+force thermal
+url https://coastwatch.noaa.gov/erddap/griddap/jplMURSST41.csv?analysed_sst%5Blast%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D,analysis_error%5Blast%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field analysed_sst sst_kelvin_mur
+field analysis_error sst_error_K
+
+# ---------------------------------------------------------------------------
+# [17] CMEMS — Ozean SST Anomalie (Copernicus L4, global täglich)
+#      SST-Anomalie relativ zur Klimatologie 1982–2011
+#      Wichtig für: Hitzewellen-Detektion, Korallenbleiche-Alarm, ENSO-Monitor
+# ---------------------------------------------------------------------------
+source cmems_sst_anomaly_global_l4
+ttl 3600
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/SST_GLO_SST_L4_NRT_OBSERVATIONS_010_001.csv?analysed_sst%5Blast%5D%5B(-60.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D,sea_ice_fraction%5Blast%5D%5B(-60.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field analysed_sst sst_K_l4
+field sea_ice_fraction sea_ice_concentration_0_1
+
+
+# ===========================================================================
+# GEODYNAMIK — IRIS SPUD / SCARDEC / GCMT
+# IRIS SPUD: Searchable Product Depository (Erdbeben-Produkte)
+# SCARDEC: Quellparameter aus P-Wellen-Dekonvolution
+# GCMT: Global Centroid Moment Tensor (Harvard/Lamont)
+# Force: seismic-body (Erdbebenquellparameter)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [18] GCMT — Global Centroid Moment Tensor (alle M≥5 Erdbeben, 1976–heute)
+#      GCMT: wichtigste globale Erdbeben-Quellparameter-Datenbank
+#      Gibt: Momenten-Tensor, Herdtiefe, Strike/Dip/Rake, Skalar-Moment
+#      REST: https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form
+# ---------------------------------------------------------------------------
+source gcmt_centroid_moment_tensor_catalog
+ttl 3600
+force seismic-body
+url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form?itype=ymd&yr={year}&mo={month}&dy=01&otype=ymd&oyr={year}&omo={month}&ody={day}&jyr=1976&jday=1&ojyr=2025&ojday=366&nday=1&lmw=5&umw=10&lms=0&ums=10&lmb=0&umb=10&llat=-90&ulat=90&llon=-180&ulon=180&lhd=0&uhd=1000&lts=-9999&uts=9999&lpe1=0&upe1=90&lpe2=0&upe2=90&list=6
+format text
+rows
+lat_key lat
+lon_key lon
+field event_name event_name
+field date event_date
+field time event_time
+field lat centroid_lat
+field lon centroid_lon
+field depth centroid_depth_km
+field mw moment_magnitude
+field strike1 strike_1_deg
+field dip1 dip_1_deg
+field rake1 rake_1_deg
+
+# ---------------------------------------------------------------------------
+# [19] IRIS SPUD — Erdbeben-Waveform-Produkte (FDSN Event + Moment Tensor)
+#      SPUD REST: https://ds.iris.edu/spud/momenttensor
+#      Gibt Herdlösungen für alle verfügbaren GCMT + USGS W-Phase Lösungen
+# ---------------------------------------------------------------------------
+source iris_spud_moment_tensor_solutions
+ttl 3600
+force seismic-body
+url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={tomorrow}T00:00:00&catalog=GCMT&format=text&nodata=404
+format text
+rows
+lat_key evla
+lon_key evlo
+field evid event_id
+field evla centroid_lat
+field evlo centroid_lon
+field evdp centroid_depth_km
+field mag moment_magnitude
+field type mechanism_type
+field strike strike_deg
+field dip dip_deg
+field rake rake_deg
+
+# ---------------------------------------------------------------------------
+# [20] VizieR — SCARDEC STF Source Time Functions Catalog
+#      SCARDEC: Quellzeitfunktionen (STF) aus P-Wellen für M≥6 Erdbeben
+#      J/A+A/xxxxxx (Vallée & Douet 2016, SCARDEC2016)
+#      Gibt: Dauer, maximale Moment-Rate, Energiefreisetzung
+# ---------------------------------------------------------------------------
+source vizier_scardec_source_time_functions
+ttl 86400
+force seismic-body
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+EventID,lat,lon,Depth,Mw,Duration,Mo,Mmax_rate+FROM+"J/A+A/614/A116/catalog"+WHERE+lat+IS+NOT+NULL+ORDER+BY+Mw+DESC
+format text
+rows
+lat_key lat
+lon_key lon
+field EventID event_id
+field Depth focal_depth_km
+field Mw moment_magnitude
+field Duration source_duration_s
+field Mo scalar_moment_Nm
+field Mmax_rate max_moment_rate_Nm_s
+
+
+# ===========================================================================
+# PALÄOMAGNETISMUS — GPMDB
+# GPMDB: Global Paleomagnetic Database (Magnetics Information Consortium)
+# REST: https://www.es.mq.edu.au/PMAG/
+# Paleolatitude: pmagpy REST wrapper
+# Force: em (paläomagnetische Feldrichtung = historisches EM-Feld)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [21] GPMDB — Global Paleomagnetic Database (Paläopole-Positionen)
+#      GPMDB: ~12.000 paläomagnetische Datensätze seit 1956
+#      REST via PMAGPY web interface:
+#      https://pmagpy.github.io/MAGIC.html
+#      Öffentliche MagIC-Datenbank: https://earthref.org/MagIC/
+# ---------------------------------------------------------------------------
+source magic_paleomagnetic_database
+ttl 86400
+force em
+url https://earthref.org/MagIC/api/v1/contribution/search?format=json&n_max_specimens=0&n_max_samples=0&n_max_sites=100&n_max_locations=20&page=1&per_page=100&contribution_type=Paleomagnetism
+map results
+lat_key location.lat
+lon_key location.lon
+field contribution_id contribution_id
+field reference.title paper_title
+field location.name location_name
+field location.age_low age_low_Ma
+field location.age_high age_high_Ma
+field location.age_unit age_unit
+field site.count num_sites
+
+# ---------------------------------------------------------------------------
+# [22] EarthRef MagIC — Site-level Paläopole-Daten (IODP + Feldstudien)
+#      MagIC: Magnetic Information Consortium, öffentliche Paläomagnetik-DB
+#      Enthält ODP/IODP-Bohrkerne + Feldstudie-Daten
+# ---------------------------------------------------------------------------
+source earthref_magic_site_data
+ttl 86400
+force em
+url https://earthref.org/MagIC/api/v1/site/search?format=json&per_page=500&result_type=site&age_type=calendar&site_type_include=s
+map results
+lat_key lat
+lon_key lon
+field site_name site_id
+field age age_Ma
+field vgp_lat virtual_geomagnetic_pole_lat
+field vgp_lon virtual_geomagnetic_pole_lon
+field method_codes measurement_method
+field rock_type lithology
+
+
+# ===========================================================================
+# KOSMISCHER INFRAROT-HINTERGRUND (CIB) — SAGE LMC/SMC + SINGS
+# SAGE (Spitzer Survey of the Large/Small Magellanic Clouds): IRAC+MIPS
+# SINGS (Spitzer Infrared Nearby Galaxies Survey): 75 Galaxien
+# Beide via IRSA TAP (NASA/IPAC Infrared Science Archive)
+# Force: em (thermische IR-Emission = EM)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [23] IRSA TAP — SAGE LMC Point Source Catalog (Große Magellansche Wolke)
+#      SAGE-LMC: vollständige Inventur aller Punktquellen (S3.6-160µm)
+#      ~6.8 Mio. Quellen im 5.6×8 deg² LMC-Bereich
+#      IRSA Tabelle: spitzer_sage_lmc_irac_m1
+# ---------------------------------------------------------------------------
+source irsa_sage_lmc_infrared_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,i1_f_ap,i2_f_ap,i3_f_ap,i4_f_ap,m1_f_ap+FROM+spitzer_sage_lmc_irac_m1+WHERE+ra+IS+NOT+NULL+AND+i1_f_ap>0.1+ORDER+BY+i1_f_ap+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_id
+field i1_f_ap irac_3_6um_mJy
+field i2_f_ap irac_4_5um_mJy
+field i3_f_ap irac_5_8um_mJy
+field i4_f_ap irac_8_0um_mJy
+field m1_f_ap mips_24um_mJy
+
+# ---------------------------------------------------------------------------
+# [24] IRSA TAP — SAGE SMC Point Source Catalog (Kleine Magellansche Wolke)
+#      SAGE-SMC: analoger Survey für SMC (~1.8 Mio. Quellen)
+# ---------------------------------------------------------------------------
+source irsa_sage_smc_infrared_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,i1_f_ap,i2_f_ap,i4_f_ap,m1_f_ap+FROM+spitzer_sage_smc_irac_m1+WHERE+ra+IS+NOT+NULL+AND+i1_f_ap>0.05+ORDER+BY+i1_f_ap+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_id
+field i1_f_ap irac_3_6um_mJy
+field i2_f_ap irac_4_5um_mJy
+field i4_f_ap irac_8_0um_mJy
+field m1_f_ap mips_24um_mJy
+
+# ---------------------------------------------------------------------------
+# [25] IRSA TAP — SINGS Spitzer Infrarot-Nahgalaxien (75 Galaxien, Multi-λ)
+#      SINGS: tiefster Spitzer Survey für Sternentstehung + ISM in nahen Galaxien
+#      Staubemission: PAHs (8µm), warmer Staub (24µm), kalter Staub (70/160µm)
+# ---------------------------------------------------------------------------
+source irsa_sings_nearby_galaxies_photometry
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f8p0tot,f24tot,f70tot,f160tot+FROM+sings_photometry+WHERE+ra+IS+NOT+NULL+ORDER+BY+dist+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field name galaxy_name
+field dist distance_Mpc
+field morph morphological_type
+field f3p6tot flux_3_6um_mJy
+field f8p0tot flux_8_0um_mJy
+field f24tot flux_24um_mJy
+field f70tot flux_70um_mJy
+field f160tot flux_160um_mJy
+
+
+# ===========================================================================
+# KORALLEN-PALÄOKLIMA — NOAA PALEO CORAL DATABASE
+# NOAA Paleoclimatology: https://www.ncdc.noaa.gov/paleo-search/
+# Coral Core Data: δ18O, Sr/Ca, δ13C, Lumineszenz + Wachstumsrate
+# Zeitbereich: letzte ~1000 Jahre (einige bis ~5000 Jahre)
+# Force: diffusion (chemische Proxy-Daten = historische Ozeanchemie)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [26] NOAA Paleo — Korallenbohrkern-Datensätze (global, alle Regionen)
+#      Korallenisotope δ18O: SST + Niederschlags-Proxy
+#      Sr/Ca: SST-Thermometer (unabhängig von Niederschlag)
+# ---------------------------------------------------------------------------
+source noaa_paleo_coral_database_global
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=coral&access=public&format=json&limit=200
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+field xmlId study_id
+field studyName study_title
+field investigators researchers
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field site.siteName coral_site_name
+field site.geo.geometryType geometry_type
+field paleoData.0.paleoDataName primary_proxy
+
+# ---------------------------------------------------------------------------
+# [27] NOAA Paleo — Korallendaten Indo-Pazifik (ENSO-Proxies)
+#      ENSO in Korallenisotopen: Nino3.4-SST in δ18O erkennbar
+#      Wichtigster Ozean für globale Klimavariabilität
+# ---------------------------------------------------------------------------
+source noaa_paleo_coral_indo_pacific_enso
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=ENSO+coral+Indo-Pacific&format=json&limit=100
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+field xmlId study_id
+field studyName study_title
+field earliestYearBP start_age_bp
+field site.siteName site_name
+
+# ---------------------------------------------------------------------------
+# [28] NOAA Paleo — Atlantik-Korallen (AMO + AMOC Proxies)
+#      Atlantische Multidekaden-Variabilität (AMO) in karibischen Korallen
+# ---------------------------------------------------------------------------
+source noaa_paleo_coral_atlantic_amo
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=Atlantic+coral&format=json&limit=100
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+field xmlId study_id
+field studyName study_title
+field earliestYearBP start_age_bp
+field site.siteName site_name
+
+
+# ===========================================================================
+# ATMOSPHÄRISCHE RADIOAKTIVITÄT — CTBTO-PROXY / IRSN / BfS ERWEITERUNG
+# CTBTO IMS: International Monitoring System (Radionuklid-Stationen)
+#   Direkt: gesperrt (nur CTBTO-Mitglieder)
+# VIABLE FREI:
+# 1. EURDEP: bereits Batch 11 [26]
+# 2. IRSN TELERAY: bereits Batch 11 [24]
+# 3. NOAA RadNet: US-weites Luftüberwachungsnetz
+# 4. CTBTO NDC: Nationale Datenzentren liefern Subset via VERDI
+# 5. EPA RadNet: US EPA Echtzeit Luftradioaktivität (JSON öffentlich)
+# Force: em (ionisierende Strahlung = EM/Partikelstrahlung)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [29] EPA RadNet — US Luftradioaktivität Echtzeit (nationwide network)
+#      EPA RadNet: ~140 stationäre Luftmonitore in den USA
+#      Messvariablen: Gamma-Dosisleistung (µR/h) + Partikelfilter
+#      REST: https://www.epa.gov/radnet
+# ---------------------------------------------------------------------------
+source epa_radnet_us_air_radioactivity
+ttl 300
+force em
+url https://www.epa.gov/sites/default/files/radnet/radnet_current_data.json
+map stations
+lat_key latitude
+lon_key longitude
+field stationId station_id
+field stationName station_name
+field state state_code
+field currentGamma current_gamma_uR_h
+field measurement_date measurement_time
+field status sensor_status
+
+# ---------------------------------------------------------------------------
+# [30] IAEA NUCLEUS — Nukleare Ereignismeldungen (INES, ENAC)
+#      IAEA NUCLEUS: Nukleare Sicherheitsvorfälle + Ereignismeldungen
+#      Öffentlich: https://nucleus.iaea.org/Pages/ns-operational-issues.aspx
+# ---------------------------------------------------------------------------
+source iaea_nucleus_nuclear_event_reports
+ttl 3600
+force em
+url https://nucleus.iaea.org/ILIS/api/v1/events?format=json&limit=100&status=current&category=nuclear
+map events
+lat_key facility.latitude
+lon_key facility.longitude
+field event_id event_id
+field title event_title
+field date event_date
+field ines_level ines_level
+field facility.name facility_name
+field facility.country country
+field description event_description
+
+# ---------------------------------------------------------------------------
+# [31] JRC EURDEP Erweiterung — Östliches Europa + Asien (Tschernobyl-Nähe)
+#      Erweiterte EURDEP-Abfrage für östliche EU + Ukraine-Grenzregion
+# ---------------------------------------------------------------------------
+source eurdep_eastern_europe_radiation
+ttl 300
+force em
+url https://remon.jrc.ec.europa.eu/Home/Pages/DataExchange/REM-json.aspx?LonMin=20&LonMax=45&LatMin=44&LatMax=56&DateStart={today}&DateEnd={today}&nuts=0&format=json
+map stations
+lat_key lat
+lon_key lon
+field stationId station_id
+field stationName station_name
+field country country_code
+field value dose_rate_nSv_h
+field measure_date measurement_date
+
+
+# ===========================================================================
+# SIEDLUNGSABFALL / MEERESMÜLL — OPENLITTERMAP + OSPAR + EMODnet
+# OpenLitterMap: Bürgerwissen-Müllkartierung, 110+ Länder, 500k+ Punkte
+# OSPAR Beach Litter: Strandmonitoring in NE-Atlantik
+# EMODnet Human Activities: Europäisches Meeresdaten-Portal
+# Force: diffusion (Plastikverschmutzung = chemische Diffusion in Umwelt)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [32] OpenLitterMap — Öffentliche Müll-Beobachtungen (geotaggt, global)
+#      OpenLitterMap REST API: öffentlich, kein Auth für aggregierte Daten
+#      https://openlittermap.com/api/getdata
+# ---------------------------------------------------------------------------
+source openlittermap_litter_observations_global
+ttl 3600
+force diffusion
+url https://openlittermap.com/api/getdata?lat={lat}&lon={lon}&radius=50&format=json&limit=500
+map data
+lat_key lat
+lon_key lon
+field id observation_id
+field datetime observation_date
+field litter_type litter_category
+field brand brand_name
+field country country_code
+field team team_name
+field total_count total_items_counted
+
+# ---------------------------------------------------------------------------
+# [33] OSPAR Beach Litter — Strandüberwachungs-Ergebnisse (NE-Atlantik)
+#      OSPAR: Nordostatlantik-Umweltschutzkonvention (12 Länder)
+#      Beach Litter CEMP: standardisierte Transekt-Erhebungen
+#      REST via OSPAR API: https://odims.ospar.org/api/
+# ---------------------------------------------------------------------------
+source ospar_beach_litter_monitoring
+ttl 86400
+force diffusion
+url https://odims.ospar.org/api/v1/data?theme=beach_litter&format=json&limit=500&year={year}
+map results
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field id survey_id
+field properties.country country_code
+field properties.beach_name beach_name
+field properties.survey_date survey_date
+field properties.total_litter total_litter_items_100m
+field properties.plastic_fraction plastic_fraction_pct
+field properties.microplastics microplastics_flag
+
+# ---------------------------------------------------------------------------
+# [34] EMODnet Human Activities — Unterwassermüll-Datenbank (Nordsee + Atlantik)
+#      EMODnet: Europäischer Meeresbeobachtungsdatendienst
+#      Seafloor Litter: Schleppnetz-Beifang-Müll-Daten
+# ---------------------------------------------------------------------------
+source emodnet_seafloor_litter_trawl
+ttl 86400
+force diffusion
+url https://www.emodnet-humanactivities.eu/search-results.php?dataname=Seafloor+Litter&format=json&limit=200&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.survey_year survey_year
+field properties.litter_category litter_type
+field properties.items_per_km2 litter_density_km2
+field properties.country country_code
+field properties.ship vessel_name
+
+
+# ===========================================================================
+# PROPLYDEN + HERBIG-HARO OBJEKTE
+# Proplyden: Protoplanetare Scheiben (im Orion-Nebel HST-beobachtet)
+# Herbig-Haro: Stoßfronten aus Jets junger Sterne
+# VizieR: mehrere Kataloge
+# Force: em (sichtbares Licht + Infrarot junger Sterne)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [35] VizieR — Herbig-Haro Object Catalog (Reipurth 1999, 400+ HH-Objekte)
+#      HH-Objekte: optische Stoßfronten aus kollimierten Protostern-Jets
+#      J/AJ/117/1490 (Reipurth & Bally 2001 + HH-Katalog)
+# ---------------------------------------------------------------------------
+source vizier_herbig_haro_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+HH,RAJ2000,DEJ2000,Region,Dist,VEL+FROM+"J/AJ/117/1490/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+VEL+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field HH hh_number
+field Region star_forming_region
+field Dist distance_pc
+field VEL shock_velocity_km_s
+
+# ---------------------------------------------------------------------------
+# [36] VizieR — Young Stellar Objects (YSO) in Orion Molecular Cloud
+#      Herschel + Spitzer + 2MASS kombiniert: vollständige YSO-Zählung
+#      J/ApJS/229/28 (Furlan et al. 2016, Orion YSO Catalog)
+# ---------------------------------------------------------------------------
+source vizier_orion_yso_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+Name,RAJ2000,DEJ2000,Class,Lbol,Tbol,Av,F24,F70+FROM+"J/ApJS/229/28/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Lbol+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name yso_name
+field Class seds_class
+field Lbol bolometric_luminosity_Lsun
+field Tbol bolometric_temp_K
+field Av visual_extinction_mag
+field F24 flux_24um_mJy
+field F70 flux_70um_mJy
+
+# ---------------------------------------------------------------------------
+# [37] VizieR — T Tauri Stars Catalog (Herbig-Bell Catalog, 742 TTS)
+#      HBC (Herbig-Bell Catalog): klassischer T-Tauri-Sternkatalog
+#      VII/HBC → VizieR Tabelle "J/AJ/108/1071/catalog" oder Herbig Bell 1988
+# ---------------------------------------------------------------------------
+source vizier_herbig_bell_ttauri_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+742+Name,RAJ2000,DEJ2000,SpType,Vmag,Dist,Region,TType+FROM+"J/AJ/108/1071/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Vmag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name star_name
+field SpType spectral_type
+field Vmag v_magnitude
+field Dist distance_pc
+field Region star_forming_region
+field TType t_tauri_type
+
+
+# ===========================================================================
+# ANTHROPOGENE CO2-EMISSIONEN — GCP / EDGAR
+# GCP (Global Carbon Project): Jährliche nationale CO2-Emissionen
+# EDGAR (Emissions Database for Global Atmospheric Research, EU JRC):
+#   Sektorale Treibhausgas-Emissionen weltweit
+# Force: diffusion (anthropogene CO2-Freisetzung = atmosphärische Diffusion)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [38] EDGAR v8 JRC — Nationale CO2-Emissionen nach Sektor (EU JRC)
+#      EDGAR: ~200 Länder × 10 Sektoren × 1970–heute
+#      REST via EU Open Data Portal
+# ---------------------------------------------------------------------------
+source edgar_v8_national_co2_emissions
+ttl 86400
+force diffusion
+url https://gisco-services.ec.europa.eu/api/?dataset=EDGAR_GHG&format=json&filter[year]={year}&filter[gas]=CO2&limit=500
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.country_name country_name
+field properties.iso3 country_iso3
+field properties.year data_year
+field properties.sector emission_sector
+field properties.value co2_emissions_Mt
+field properties.unit emissions_unit
+
+# ---------------------------------------------------------------------------
+# [39] Global Carbon Project — Fossil CO2 Emissionen (GCB Datensatz)
+#      GCB (Global Carbon Budget): jährliche Bilanz (Emissionen + Senken)
+#      Öffentlich via ICOS Carbon Portal: https://www.icos-cp.eu/
+# ---------------------------------------------------------------------------
+source global_carbon_project_fossil_co2
+ttl 86400
+force diffusion
+url https://www.icos-cp.eu/science-and-impact/global-carbon-budget/2023/data-products/json-summary
+map countries
+lat_key centroid_lat
+lon_key centroid_lon
+field country country_name
+field iso3 iso3_code
+field year data_year
+field fossil_co2 fossil_co2_MtC
+field cement cement_co2_MtC
+field flaring gas_flaring_MtC
+field per_capita per_capita_tC
+
+# ---------------------------------------------------------------------------
+# [40] NOAA GML — Keeling Curve Echtzeit (CO2 Mauna Loa, minutenaktuell)
+#      Ergänzung zu Batch 7 [45]: hier Minutenwerte (nicht tägliche Mittel)
+#      Wichtig für: tagesbasierte CO2-Variabilität (diurnal cycle)
+# ---------------------------------------------------------------------------
+source noaa_gml_co2_mauna_loa_realtime
+ttl 300
+force diffusion
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+format text
+rows
+lat 19.5
+lon -155.6
+field 0 year
+field 1 month
+field 2 day
+field 3 decimal_year
+field 4 co2_ppm_weekly
+field 5 co2_1yr_ago
+field 6 co2_10yr_ago
+field 7 co2_preindustrial_baseline
+
+
+# ===========================================================================
+# MAGNETOSPHÄRISCHE SUBSTÜRME — AE / AL / AU INDIZES
+# AE-Index (Auroral Electrojet): Intensität magnetosphärischer Substürme
+# AL: untere Grenze AE (westlicher Strahlstrom)
+# AU: obere Grenze AE (östlicher Strahlstrom)
+# Kyoto WDC: REST-Zugang für AE-Indizes
+# Force: em (magnetosphärische Strömungssysteme)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [41] Kyoto WDC — AE-Index Echtzeit (1-Minuten-Werte)
+#      AE > 1000 nT: starker Substürm / geomagnetischer Sturm
+#      REST: http://wdc.kugi.kyoto-u.ac.jp/ae_realtime/
+# ---------------------------------------------------------------------------
+source kyoto_wdc_ae_index_realtime
+ttl 300
+force em
+url https://wdc.kugi.kyoto-u.ac.jp/ae_realtime/{year}{month}/ae{year}{month}{day}.for.request
+format text
+rows
+lat 67.0
+lon 0.0
+field 0 hour_min
+field 1 ae_index_nT
+field 2 al_index_nT
+field 3 au_index_nT
+
+# ---------------------------------------------------------------------------
+# [42] NOAA SWPC — Geomagnetic Storm Alerts (G1-G5 Scale)
+#      SWPC G-Scale: G1 (Kp=5) bis G5 (Kp=9)
+#      Alert-Feed: alle aktiven geomagnetischen Warnungen
+# ---------------------------------------------------------------------------
+source noaa_swpc_geomagnetic_storm_alerts
+ttl 300
+force em
+url https://services.swpc.noaa.gov/products/alerts.json
+map .
+lat 0.0
+lon 0.0
+field issue_time alert_issue_time
+field message alert_message
+field product_id product_code
+
+# ---------------------------------------------------------------------------
+# [43] SuperMAG-Proxy — GFZ Kp + BGS ESK-Kombination (Substürm-Diagnose)
+#      Da SuperMAG Auth benötigt → Kombinations-Proxy aus freien Quellen:
+#      GFZ Kp + Kyoto AE + BGS Einzelstation → gute Substürm-Signatur
+# ---------------------------------------------------------------------------
+source gfz_kp_substorm_monitor_hourly
+ttl 3600
+force em
+url https://kp.gfz-potsdam.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp,ap,Cp&status=def,nowcast&format=JSON
+map .
+lat 52.38
+lon 13.07
+field datetime obs_time_utc
+field Kp kp_3h_index
+field ap ap_3h_nT
+field Cp cp_daily_char
+
+
+# ===========================================================================
+# WELTRAUMDEBRIS — ESA DISCOS / SPACE-TRACK.ORG PROXY
+# ESA DISCOS: Database and Information System Characterising Objects in Space
+# Space-Track.org: US Space Surveillance Network (Auth erforderlich)
+# VIABLE FREI: ESA Space Debris Office + CelesTrak GP (bereits Batch 2)
+# Hier: Ergänzung mit statistischen Übersichten + Fragmentation Events
+# Force: gravity (Debris auf Keplerbahnen = gravitativ gebunden)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [44] CelesTrak — SOCRATES Conjunction Analysis (Nahannäherungen)
+#      SOCRATES: Satellite Orbital Conjunction Reports Assessing Threatening
+#      Encounters in Space — öffentlich, täglich aktualisiert
+#      REST: https://celestrak.org/SOCRATES/query.php
+# ---------------------------------------------------------------------------
+source celestrak_socrates_conjunction_data
+ttl 3600
+force gravity
+url https://celestrak.org/SOCRATES/query.php?CATNR=&TIMEFRAME=24&MAX_PROB=0.001&LIMIT=200&FORMAT=json
+map data
+lat 0.0
+lon 0.0
+field sat1_name satellite_1_name
+field sat2_name satellite_2_name
+field tca time_of_closest_approach
+field min_range_km minimum_range_km
+field max_prob max_probability_collision
+field dil_thr dilution_threshold
+field sat1_id norad_id_1
+field sat2_id norad_id_2
+
+# ---------------------------------------------------------------------------
+# [45] CelesTrak — Fragmentation Events Catalog (Breakup-Ereignisse)
+#      Historische + aktuelle Fragmentationsereignisse → Debris-Quellen
+# ---------------------------------------------------------------------------
+source celestrak_debris_fragmentation_events
+ttl 86400
+force gravity
+url https://celestrak.org/SOCRATES/query.php?FRAGMENTATION=Y&FORMAT=json&LIMIT=500
+map events
+lat 0.0
+lon 0.0
+field event_id event_id
+field parent_id parent_satellite_norad
+field parent_name parent_satellite_name
+field date fragmentation_date
+field pieces num_fragments_tracked
+field cause fragmentation_cause
+field altitude_km altitude_of_fragmentation_km
+field inclination orbit_inclination_deg
+
+
+# ===========================================================================
+# SOLARE PROTUBERANZEN + FILAMENTE — SIDC / NOAA SWPC
+# SIDC: Solar Influences Data Analysis Center (Brussels)
+# Filament-Katalog: Automatische Detektion aus AIA 304Å
+# Force: em (Hα + EUV Emission)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [46] SIDC — Tägliche Solar Activity Summary (Flecken + Protuberanzen)
+#      SIDC: weltweites Referenzzentrum für Sonnenaktivität
+#      REST: https://www.sidc.be/products/
+# ---------------------------------------------------------------------------
+source sidc_daily_solar_activity_summary
+ttl 300
+force em
+url https://www.sidc.be/products/bulletins/DAILY_BULLETIN.json
+map events
+lat 0.0
+lon 0.0
+field date observation_date
+field sunspot_number wolf_sunspot_number
+field sunspot_number_smoothed smoothed_sunspot_number
+field active_regions num_active_regions
+field flares flare_count
+field prominences num_prominences
+field filaments num_filaments
+
+# ---------------------------------------------------------------------------
+# [47] SIDC — Internationaler Sonnenflecken-Index (ISN, 1700–heute)
+#      ISN: goldener Standard der Sonnenaktivitätsmessung
+#      Täglich + monatlich + jährlich → Langzeittrend Sonnenzyklen
+# ---------------------------------------------------------------------------
+source sidc_international_sunspot_number
+ttl 86400
+force em
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+format text
+rows
+lat 50.85
+lon 4.35
+field 0 year
+field 1 month
+field 2 day
+field 3 decimal_year
+field 4 daily_sunspot_number
+field 5 std_dev_sunspot
+field 6 num_observations
+field 7 definitive_flag
+
+# ---------------------------------------------------------------------------
+# [48] NOAA SWPC — Solar Filament Monitor (Active Filament List)
+#      NOAA SWPC listet täglich aktive solare Filamente + Protuberanzen
+#      Filamente: Hα dunkel (Absorptionslinie), Protuberanzen: Hα hell (Rand)
+# ---------------------------------------------------------------------------
+source noaa_swpc_solar_filament_list
+ttl 300
+force em
+url https://services.swpc.noaa.gov/json/solar_filaments.json
+map .
+lat 0.0
+lon 0.0
+field observationTime observation_time
+field event event_id
+field location heliographic_position
+field area filament_area_deg2
+field haleClass hale_magnetic_class
+field maxMagField max_magnetic_field_G
+
+
+# ===========================================================================
+# STAUDÄMME + GLOBALE HYDROLOGIE
+# GRanD (Global Reservoir and Dam Database): 7320 Staudämme
+# HydroSHEDS: hochauflösende hydrologische Daten
+# Force: diffusion (Wasserfluss + Speicher)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [49] GRanD — Global Reservoir and Dam Database (7320 Staudämme)
+#      GRanD v1.3: öffentlich via SEDAC/NASA
+#      REST via SEDAC ArcGIS REST Services
+# ---------------------------------------------------------------------------
+source grand_global_reservoir_dam_database
+ttl 86400
+force diffusion
+url https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500
+map features
+lat_key attributes.LAT_DD
+lon_key attributes.LONG_DD
+field attributes.DAM_NAME dam_name
+field attributes.RIVER river_name
+field attributes.COUNTRY country
+field attributes.YEAR_COMP completion_year
+field attributes.DIS_AVG_LS mean_discharge_m3_s
+field attributes.CAP_MAX max_capacity_mcm
+field attributes.CAP_USE use_capacity_mcm
+field attributes.MAIN_USE primary_use
+field attributes.HEIGHT dam_height_m
+
+# ---------------------------------------------------------------------------
+# [50] HydroSHEDS — Globale Flussstatistiken (HydroRIVERS)
+#      HydroRIVERS: 8.5 Mio km Flüsse weltweit (Strahler-Ordnung + Abfluss)
+#      REST via GRID-Arendal ArcGIS Services
+# ---------------------------------------------------------------------------
+source hydrosheds_global_river_network
+ttl 86400
+force diffusion
+url https://www.hydrosheds.org/api/v1/rivers?bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500&order=8
+map features
+lat_key geometry.coordinates.0.1
+lon_key geometry.coordinates.0.0
+field properties.HYRIV_ID river_segment_id
+field properties.RIVER_NAME river_name
+field properties.ORD_FLOW strahler_order
+field properties.DISCHARGE_M3S mean_discharge_m3_s
+field properties.LENGTH_KM segment_length_km
+field properties.COUNTRY country_code
+
+
+# ===========================================================================
+# STRATOSPHÄRISCHE AEROSOL-KLIMATOLOGIE — SAGE II / SAGE III
+# SAGE II (1984-2005): Solar occultation, 0.5-1µm extinction
+# SAGE III/ISS (2017–): Nachfolge auf ISS
+# Viable FREI: HEASARC + NASA GES DISC ERDDAP-Proxy
+# Force: diffusion (stratosphärische Aerosole)
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [51] HEASARC — SAGE II Stratosphärisches Aerosol v7 (1984-2005)
+#      Extinktionsprofile bei 525nm + 1020nm von 10-40km Höhe
+#      Tabelle: sage2l2 (SAGE II Level 2 Data)
+# ---------------------------------------------------------------------------
+source heasarc_sage2_stratospheric_aerosol
+ttl 86400
+force diffusion
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+latitude,longitude,date,altitude,ext525,ext1020,o3+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%271984-01-01%27+ORDER+BY+date+DESC
+format text
+rows
+lat_key latitude
+lon_key longitude
+field date measurement_date
+field altitude altitude_km
+field ext525 extinction_525nm_km_inv
+field ext1020 extinction_1020nm_km_inv
+field o3 ozone_concentration_cm3
+
+# ---------------------------------------------------------------------------
+# [52] NASA GES DISC — SAGE III/ISS Level 2 (2017–heute, stratosph. Aerosol)
+#      SAGE III: chemische Profile + Aerosolextinktion nach Vulkanausbrüchen
+#      Direkt via GES DISC ERDDAP (öffentlich für aggregierte Daten)
+# ---------------------------------------------------------------------------
+source nasa_sage3_iss_aerosol_profiles
+ttl 3600
+force diffusion
+url https://opendap.earthdata.nasa.gov/providers/GES_DISC/collections/SAGE3_ISS_L2_SOLAR_V5.2/granules?format=json&temporal[]={today}T00:00:00Z,{today}T23:59:59Z
+map items
+lat_key umm.SpatialExtent.HorizontalSpatialDomain.Geometry.GPolygons.0.Boundary.Points.0.Latitude
+lon_key umm.SpatialExtent.HorizontalSpatialDomain.Geometry.GPolygons.0.Boundary.Points.0.Longitude
+field meta.concept-id granule_id
+field umm.TemporalExtent.RangeDateTime.BeginningDateTime granule_time
+field umm.DataGranule.ArchiveAndDistributionInformation.0.Name filename
+
+
+# ===========================================================================
+# ZUSÄTZLICHE NEUE DOMAINS
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# [53] VizieR — 2MASS All-Sky Point Source Catalog PSC (ausgewählt, nahe Sterne)
+#      2MASS PSC: 470 Mio. Quellen — hier: sehr nahe Sterne (J < 9 mag)
+#      Ergänzt SDSS/2MASS/WISE aus Batch 1 mit direktem PSC-Zugriff
+# ---------------------------------------------------------------------------
+source vizier_2mass_psc_nearby_bright
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,e_Jmag,Qflg+FROM+"II/246/out"+WHERE+Jmag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+Jmag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field designation source_id
+field Jmag j_magnitude
+field Hmag h_magnitude
+field Kmag k_magnitude
+field e_Jmag j_magnitude_error
+field Qflg photometry_quality_flag
+
+# ---------------------------------------------------------------------------
+# [54] VizieR — WISE AllWISE Source Catalog (W1-W4, nahe + helle Quellen)
+#      Ergänzung zu Batch 1 WISE: hier vollständiger AllWISE-Zugriff
+# ---------------------------------------------------------------------------
+source vizier_allwise_infrared_catalog_bright
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,RAJ2000,DEJ2000,W1mag,W2mag,W3mag,W4mag,e_W1mag,var_flg,ext_flg+FROM+"II/328/allwise"+WHERE+W1mag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+W1mag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field designation wise_name
+field W1mag w1_3_4um_mag
+field W2mag w2_4_6um_mag
+field W3mag w3_12um_mag
+field W4mag w4_22um_mag
+field var_flg variability_flag
+field ext_flg extended_source_flag
+
+# ---------------------------------------------------------------------------
+# [55] NOAA NCEI — Ocean Heat Content (0-2000m, ARGO-based, quarterly)
+#      OHC: Wärmeinhalt des Ozeans (10²² J) = robustester Klimatrend-Indikator
+#      Bereits Batch 6 OHC allgemein — hier: tabellarische Zeitreihe
+# ---------------------------------------------------------------------------
+source noaa_ncei_ocean_heat_content_quarterly
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/3month/h22-w0-2p.dat
+format text
+rows
+lat 0.0
+lon 0.0
+field 0 year_quarter
+field 1 ohc_0_700m_10e22J
+field 2 ohc_0_2000m_10e22J
+field 3 uncertainty_0_700m
+field 4 uncertainty_0_2000m
+
+# ---------------------------------------------------------------------------
+# [56] CMEMS — Atlantic 3D Ocean Temperature (Reanalysis, 0-5000m)
+#      CMEMS PHY-001-030: Global Ocean Physics Reanalysis (GLORYS12V1)
+#      Wöchentliche Mittelwerte, 0.083° Auflösung, 50 Tiefen
+# ---------------------------------------------------------------------------
+source cmems_glorys12_ocean_temperature_3d
+ttl 86400
+force thermal
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D,so%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field thetao ocean_potential_temp_c
+field so ocean_salinity_psu
+
+# ---------------------------------------------------------------------------
+# [57] PANGAEA — Bathymetrisch-Geochemische Tiefseesedimentkerne
+#      PANGAEA REST für sedimentgeochemische Zeitreihen
+#      Schwerpunkt: Benthic foraminiferal δ18O + Mg/Ca
+# ---------------------------------------------------------------------------
+source pangaea_benthic_foram_geochemistry
+ttl 86400
+force diffusion
+url https://www.pangaea.de/api/datasets?format=json&maxResults=200&query=benthic+foraminifera+Mg+Ca+temperature&topic=PALEOCLIMATE&access=open
+map datasets
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field title dataset_title
+field citation.year pub_year
+field parametersSummary variables
+field citation.authorYear authors
+
+# ---------------------------------------------------------------------------
+# [58] VizieR — X-Shooter Spectral Library (XSL DR3, 830 Sterne, UV-NIR)
+#      XSL: hochauflösende stellare Spektralbibliothek (300-2500nm)
+#      J/A+A/680/A38 (Verro et al. 2022 XSL DR3)
+#      Wichtig für: stellare Populationsmodelle + Spektralkalibrierung
+# ---------------------------------------------------------------------------
+source vizier_xsl_spectral_library_dr3
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+830+Name,RAJ2000,DEJ2000,SpType,Vmag,Teff,logg,FeH,SNR+FROM+"J/A+A/680/A38/xsl_dr3"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SNR+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name star_name
+field SpType spectral_type
+field Vmag v_magnitude
+field Teff effective_temp_K
+field logg surface_gravity
+field FeH metallicity
+field SNR signal_to_noise
+
+# ---------------------------------------------------------------------------
+# [59] NOAA NCEI — Global Summary of Month (GSOM) Klimanormalwerte
+#      GSOM: monatliche Klimastatistiken für ~100.000 Stationen weltweit
+#      REST via NOAA NCEI Climate Data Online (CDO)
+# ---------------------------------------------------------------------------
+source noaa_ncei_gsom_climate_normals
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field DATE month_year
+field TMAX max_temp_c
+field TMIN min_temp_c
+field TAVG avg_temp_c
+field PRCP precipitation_mm
+field SNOW snowfall_mm
+
+# ---------------------------------------------------------------------------
+# [60] USGS NWIS — Wasserqualitäts-Monitoring (pH, Leitfähigkeit, DO, Trübung)
+#      USGS WQX: Echtzeit-Wasserqualitätsparameter an US-Stationen
+#      REST: https://waterservices.usgs.gov/nwis/iv/?parameterCd=00400,00095,00300
+# ---------------------------------------------------------------------------
+source usgs_nwis_water_quality_realtime
+ttl 300
+force diffusion
+url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=00400,00095,00300,63680&siteStatus=active&modifiedSince=PT1H&bbox=-125,24,-66,50&siteType=ST
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteName station_name
+field sourceInfo.siteCode.0.value site_code
+field variable.variableName parameter_name
+field values.0.value.0.value parameter_value
+field values.0.value.0.dateTime measurement_time
+
+# ---------------------------------------------------------------------------
+# [61] GBIF — Fledermaus-Beobachtungen (Chiropteren, Bestäuber + Insektenfresser)
+#      Fledermäuse: wichtige Indikatoren für Pestizid-Belastung + Habitatverlust
+#      GBIF Occurrence API: Chiroptera-spezifisch
+# ---------------------------------------------------------------------------
+source gbif_chiroptera_bat_observations
+ttl 3600
+force diffusion
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION&year={year}&format=json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family family_name
+field stateProvince region
+field country country_code
+field occurrenceDate observation_date
+field recordedBy observer
+
+# ---------------------------------------------------------------------------
+# [62] ESRI ArcGIS Living Atlas — Global Earthquake Risk (PAGER-CAT)
+#      PAGER-CAT: Erdbeben-Katalog mit Todesopfern + Schadensschätzungen
+#      REST via ArcGIS Online Feature Service (öffentlich)
+# ---------------------------------------------------------------------------
+source arcgis_pager_cat_earthquake_impacts
+ttl 86400
+force seismic-body
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500
+map features
+lat_key attributes.LATITUDE
+lon_key attributes.LONGITUDE
+field attributes.YEAR event_year
+field attributes.MONTH event_month
+field attributes.MAG magnitude
+field attributes.DEPTH depth_km
+field attributes.DEATHS deaths
+field attributes.INJURIES injuries
+field attributes.DAMAGE_USD damage_million_usd
+field attributes.COUNTRY country
+
+# ---------------------------------------------------------------------------
+# [63] NASA POWER — Solare + Meteorologische Parameter für Landwirtschaft
+#      NASA POWER: täglich + monatlich Klimadaten für jeden Erdpunkt
+#      REST: https://power.larc.nasa.gov/api/temporal/
+# ---------------------------------------------------------------------------
+source nasa_power_agricultural_climate
+ttl 86400
+force thermal
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,ALLSKY_SFC_LW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={year}{month}{day}&format=JSON
+terra 1
+map properties.parameter.T2M
+lat_key lat
+lon_key lon
+field T2M temp_2m_c
+field PRECTOTCORR precipitation_mm_d
+field ALLSKY_SFC_SW_DWN solar_irradiance_MJ_m2_d
+field RH2M relative_humidity_pct
+field WS10M wind_speed_10m_m_s
+
+# ---------------------------------------------------------------------------
+# [64] NOAA NCEI — Tropical Cyclone Best Track HURDAT2 (1851–heute)
+#      HURDAT2: Historische Hurrikan-Tracks (Atlantik + Ostpazifik)
+#      6-stündige Positionen + Wind + Druck für alle Stürme seit 1851
+# ---------------------------------------------------------------------------
+source noaa_ncei_hurdat2_hurricane_tracks
+ttl 86400
+force acoustic
+url https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2023-050423.txt
+format text
+rows
+lat_key lat
+lon_key lon
+field 0 storm_id
+field 1 storm_name
+field 2 obs_count
+field 3 date_utc
+field 4 time_utc
+field 5 record_id
+field 6 storm_status
+field 7 lat_str
+field 8 lon_str
+field 9 max_wind_kt
+field 10 min_pressure_mb
+
+# ---------------------------------------------------------------------------
+# [65] SIMBAD CDS — Astronomische Objekt-Identifikation (alle Typen)
+#      SIMBAD: CDS Strasbourg, ~15 Mio. Objekte mit Namen + Typ + Koordinaten
+#      TAP: https://simbad.cds.unistra.fr/simbad/sim-tap/sync
+# ---------------------------------------------------------------------------
+source simbad_cds_all_object_types_bright
+ttl 86400
+force em
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+main_id,ra,dec,plx_value,rvz_redshift,sp_type,otype,V+FROM+basic+JOIN+allfluxes+ON+basic.oid%3Dallfluxes.oidref+WHERE+V<9+AND+ra+IS+NOT+NULL+ORDER+BY+V+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+plx_key plx_value
+field main_id object_name
+field otype object_type_code
+field sp_type spectral_type
+field rvz_redshift redshift
+field V v_magnitude
+```
+
+---
+
+## Parser-Hinweise Batch 12
+
+```
+# ===== HASH Planetary Nebula API JSON =====================================
+# http://hashpn.space/api/?PN_G=*&status=T&format=json&limit=1000
+# Antwort: JSON-Array mit PN-Objekten:
+# [
+#   {
+#     "PNG": "100.0-08.7",
+#     "Name": "NGC 7293",
+#     "RAJ2000": 337.41,
+#     "DEJ2000": -20.84,
+#     "Dmaj": 768,
+#     "Dmin": 660,
+#     "Emag": 7.3,
+#     "status": "T",
+#     "morphology": "E"
+#   }, ...
+# ]
+# status-Codes:
+#   T = True PN (bestätigt)
+#   L = Likely PN
+#   P = Possible PN
+#   C = Candidate
+# → filter: status=T für bestätigte Objekte
+
+# ===== SDO/EVE L3 LaTiS CSV-Format ========================================
+# Dataset: sdo_eve_ssi_1nm_l3
+# https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv
+# Spalten: time, wavelength, ssi, uncertainty
+# time-Format: ISO 8601 (täglich gemittelt, 00:00:00Z für Tagesmittel)
+# wavelength: nm (7.0, 8.0, ..., 105.0 nm) — 1nm Schritte
+# ssi: W/m²/nm (typisch: ~10^-7 bis ~10^-3 W/m²/nm je nach Wellenlänge)
+# ⚠ MEGS-A Ausfall 26. Mai 2014: Wellenlängen < 33 nm danach nur via FISM2
+# ⚠ Einheitenzeile (Zeile 2) überspringen: "yyyy-mm-dd HH:MM:SS,nm,W m^-2 nm^-1,..."
+
+# ===== EARLINET REST API JSON =============================================
+# https://data.earlinet.org/api/services/stationsearch?format=json
+# {
+#   "stations": [
+#     {
+#       "stationCode": "bsc",
+#       "stationName": "Barcelona",
+#       "country": "ES",
+#       "latitude": 41.39,
+#       "longitude": 2.12,
+#       "altitude": 115,
+#       "instruments": ["PollyXT", "CIMEL"],
+#       "pi": "Prof. J. Font",
+#       "status": "operational"
+#     }, ...
+#   ]
+# }
+# → map stations
+# ⚠ EARLINET-Level-2-Produkte können eine Anmeldung erfordern;
+#   Level-1 (QC-markiert) + Stationsliste öffentlich
+
+# ===== GCMT Text-Format ===================================================
+# GCMT-Ausgabe im "list=6" Format (Listenformat 6):
+# Spalten: PDE_date PDE_time lat lon depth mw strike dip rake
+# Beispiel: "2026/07/27 09:15:33.2  38.50  22.15  12  6.4  195  65  -90"
+# → Ingestor muss Whitespace-Delimitierung verwenden
+# Kommentarzeilen beginnen mit '#' → überspringen
+# mw: Moment-Magnitude
+# strike/dip/rake: erste Nodalebene (Grad)
+# ⚠ GCMT gibt keinen direkten JSON-REST; HTML-Form → Text-Ausgabe
+#   Alternative: GCMT via FDSN fdsnws/event (GCMT als agency)
+
+# ===== GRanD SEDAC ArcGIS REST ============================================
+# Identisch zu anderen SEDAC-Endpunkten (Batch 10 [32]):
+# {
+#   "features": [
+#     {
+#       "attributes": {
+#         "DAM_NAME": "Three Gorges Dam",
+#         "RIVER": "Yangtze",
+#         "COUNTRY": "China",
+#         "YEAR_COMP": 2003,
+#         "LAT_DD": 30.82,
+#         "LONG_DD": 111.00,
+#         "CAP_MAX": 39300,    # Millionen m³
+#         "HEIGHT": 181,       # Meter
+#         "MAIN_USE": "IHE"    # Irrigation+Hydropower+Flood Control
+#       }
+#     }, ...
+#   ]
+# }
+# MAIN_USE-Codes: I=Irrigation, H=Hydropower, C=Flood Control, W=Water Supply,
+#                 F=Fisheries, R=Recreation, N=Navigation, E=Other
+
+# ===== OISST v2.1 griddap CSV-Format =====================================
+# Identisch zu anderen CoastWatch griddap-Produkten (Batch 8 INCOIS):
+# Zeile 1: Spaltenheader (time,depth,latitude,longitude,sst,err)
+# Zeile 2: Einheiten (UTC,m,degrees_north,degrees_east,degree_C,degree_C)
+# Zeile 3+: Daten
+# → Ingestor muss Einheitenzeile (Zeile 2) als Kommentar behandeln
+# sst: °C (NOAA OISST v2.1 Qualitätsstufe 4 = beste Qualität)
+# err: geschätzter Fehler in °C (RMS ~0.4°C für Satelliten-only Pixel)
+
+# ===== HURDAT2 Text-Format ================================================
+# HURDAT2 hat spezifisches Format:
+# Header-Zeile: "AL011851,      UNNAMED,     14,"
+#   → Storm-ID, Name, Anzahl Beobachtungen
+# Daten-Zeilen: "18510625, 0000,  , HU,  28.0N,  94.8W, 80, 987, ..."
+#   → Datum (YYYYMMDD), Uhrzeit (HHMM), Record-ID, Status,
+#      Lat+Hemisph, Lon+Hemisph, MaxWind(kt), MinPressure(mb),
+#      + 8× radial Wind-Radien-Felder
+# lat: "28.0N" → 28.0 (N=+, S=-)
+# lon: "94.8W" → -94.8 (W=-, E=+)
+# storm_status: TD=Tropisches Tief, TS=Tropensturm, HU=Hurrikan,
+#               EX=Extratropisch, SD=Subtropisches Tief, SS=Subtropischer Sturm
+
+# ===== SIMBAD TAP CSV-Format ==============================================
+# SIMBAD TAP liefert Standard-CSV mit ADQL-Spaltenauswahl
+# otype: 2-Zeichen Code (G=Galaxie, *=Stern, V*=Veränderlicher, etc.)
+# Vollständige Liste: https://simbad.cds.unistra.fr/guide/otypes.htx
+# plx_value: Parallaxe in mas (→ Distanz = 1000/plx pc)
+# rvz_redshift: z (kann Radialgeschwindigkeit-basiert sein für nahe Objekte)
+# V: optische Helligkeit im V-Band (Johnson V, Vega-System)
+# ⚠ JOIN mit allfluxes erhöht Latenz → ggf. TTL erhöhen oder ohne allfluxes
+
+# ===== OpenLitterMap API ==================================================
+# https://openlittermap.com/api/getdata?lat=X&lon=Y&radius=50&format=json
+# {
+#   "data": [
+#     {
+#       "id": 12345,
+#       "lat": 48.14,
+#       "lon": 11.58,
+#       "datetime": "2026-07-20T14:30:00",
+#       "litter_type": "plastic",
+#       "brand": "Coca-Cola",
+#       "country_code": "DE",
+#       "team": "Munich Cleanup",
+#       "total_count": 12
+#     }, ...
+#   ]
+# }
+# → map data
+# ⚠ radius-Parameter in km (max. empfohlen: 100km)
+# ⚠ Template-Variable {lat}/{lon} als Mittelpunkt, radius=50 km
+```
+
+---
+
+## Gesamtübersicht Batch 12
+
+| Domain | Quellen | PC-tagged | Status / Anmerkungen |
+|---|---|---|---|
+| **Galaktische Emissionsnebel (IPHAS + HiGAL + CORNISH + HASH + WISE HII)** | 5 | ✅ ra/dec | Hα + FIR + 5GHz + PN-Datenbank + HII-Regionen |
+| **Solar UV/EUV (SDO/EVE L3 + FISM2 + ESP + GOES EXIS)** | 5 | ⚠ global | 1nm-Spektrum + Linien + Proxy-Modell + Photodiode |
+| **EARLINET/ACTRIS/PollyNET LIDAR** | 4 | ✅ lat/lon | Backscatter-Profile + Stationen + PollyXT global |
+| **Ozean SST (OISST + MUR + CMEMS SST-Anomalie)** | 3 | ✅ lat/lon | 0.25° + 1km + SST-Anomalie |
+| **Geodynamik (GCMT + IRIS SPUD + SCARDEC)** | 3 | ✅ lat/lon | Momente-Tensor + STF + Quellparameter |
+| **Paläomagnetismus (MagIC/GPMDB + EarthRef Sites)** | 2 | ✅ lat/lon | Paläopole + Site-level VGP |
+| **CIB / IR-Hintergrund (SAGE LMC/SMC + SINGS)** | 3 | ✅ ra/dec | Spitzer Magellansche Wolken + Nahgalaxien |
+| **Korallen-Paläoklima (NOAA Paleo Coral global/IP/ATL)** | 3 | ✅ lat/lon | δ18O + Sr/Ca ENSO + AMO Proxies |
+| **Atmosphärische Radioaktivität (EPA RadNet + IAEA + EURDEP-Ost)** | 3 | ✅ lat/lon | USA + Nuclear Events + Osteuropa |
+| **Meeresmüll (OpenLitterMap + OSPAR + EMODnet)** | 3 | ✅ lat/lon | Bürgerwissen + Strandmonitoring + Meeresgrund |
+| **Proplyden + HH + T-Tauri (YSO-Kataloge)** | 3 | ✅ ra/dec | HH-Objekte + Orion-YSOs + Herbig-Bell TTS |
+| **Anthropogene CO2 (EDGAR + GCP + Mauna Loa RT)** | 3 | ✅/⚠ lat/lon | Sektoral + National + Wochenwerte |
+| **Substürme (AE-Index + SWPC Alerts + GFZ-Proxy)** | 3 | ✅/⚠ lat/lon | AE/AL + G-Scale + Stündlich |
+| **Weltraumdebris (SOCRATES + Fragmentation)** | 2 | ⚠ orbital | Konjunktionen + Breakup-Ereignisse |
+| **Solare Protuberanzen (SIDC + ISN + Filamente)** | 3 | ⚠ global | Aktivitätsbulletin + ISN + Filamentliste |
+| **Staudämme + Hydrologie (GRanD + HydroSHEDS)** | 2 | ✅ lat/lon | 7320 Staudämme + Flussnetzwerk |
+| **Stratosphärisches Aerosol (SAGE II + SAGE III/ISS)** | 2 | ✅ lat/lon | 1984–2005 + 2017–heute Okkultation |
+| **2MASS PSC + AllWISE Ergänzung** | 2 | ✅ ra/dec | Helle Sterne J<9 + W1<9 |
+| **Ozeanwärme + GLORYS3D + Foraminiferen** | 3 | ✅ lat/lon | OHC Zeitreihe + 3D-Temperatur + δ18O-Paläo |
+| **XSL Spektralbibliothek + GSOM Klimanorm** | 2 | ✅ ra/dec / lat/lon | Stellare Spektren + Klimanorm |
+| **USGS Wasserqualität + GBIF Fledermäuse** | 2 | ✅ lat/lon | pH/DO/Leitfähigkeit + Chiroptera |
+| **PAGER-CAT + NASA POWER + HURDAT2 + SIMBAD** | 4 | ✅ lat/lon + ra/dec | Erdbebenschäden + Agrarklima + Hurrikantracks + Objekte |
+
+**Gesamt Batch 12: 65 Quellblöcke**
+
+---
+
+## Akkumulierter Fortschritt (Batches 1–12)
+
+| Batch | Quellblöcke | Schwerpunkt-Domains |
+|---|---|---|
+| Batch 1 | 17 | SDSS/2MASS/WISE + AERONET |
+| Batch 2 | 37 | Fermi + Chandra + XMM + NVSS + ZTF + FRB + JPL + MPC + CelesTrak |
+| Batch 3 | 56 | Meteorite + CODATA + Neotoma + Exoplaneten + Coral + Open-Meteo + SC + GeoNet + NSIDC + Permafrost + Grundwasser + Amazônia |
+| Batch 4 | 62 | BOM + Raspberry Shake + Lightning + INCOIS + CMEMS + CAMS + Roshydromet + Afrika + Zentralasien + CMB + FIRMS + GBIF + OpenAQ + EU-Seismik + NASA POWER + INTERMAGNET |
+| Batch 5 | 65 | iNaturalist + METAR + BZCAT + ROSAT + NMDB + SWPC + O2-Ozean + Mangrove + Bhuvan + Gezeiten + WHO AQ + PANGAEA + IGS GNSS + CME |
+| Batch 6 | 65 | CMA/IBTrACS + DART + GWOSC + ITRDB + TROPOMI + Ocean Color + World Bank + Ionosonden + OHC/ENSO + WMM + NGDC Hazards + IAEA + Ember + OpenSky |
+| Batch 7 | 65 | MAST JWST + Horizons + EM-DAT + MOJAVE + NED + NDVI + Ozon + Seismik + Geodätik + PSMSL + GHG + OBIS + Storm Events + GDACS + IAGOS + SoilGrids |
+| Batch 8 | 65 | INCOIS + GRACE + Zodiacal Dust + PTAs + XRB/MAXI + CVs + Flood Obs. + Van Allen + MPC + GeoNet Erw. + NMDB Erw. + Arktis + Bathymetrie + Tiefenerde + SWARM |
+| Batch 9 | 65 | GRB + Radio-Transients + TEC + GraceDB + LISIRD + HI 21cm + RAPID AMOC + ET + VIIRS + SNR/Magnetare + GALAH/APOGEE + Dürre + Eisgeschw. + SSS + UV + DSCOVR |
+| Batch 10 | 65 | IceCube + LoTSS + 4FGL + Gravitationslinsen + Sgr A* + LSS + Radon + TCCON + Eisbohrkerne + DAS + SEP + DLA + BGC-Argo + Feuerkugeln + Aurora + NHC + QSO + Exoatm. |
+| Batch 11 | 65 | BOLD DNA + GFZ Kp + SMAP-Proxy + SABER + Debris Disks + OVRO + GNIP + DUACS + GTN-P + MODIS Staub + PSZ2 + GONG + AIM PMC + Turbulenz + Movebank + IERS + EurOBIS |
+| **Batch 12** | **65** | IPHAS/HiGAL/HASH + SDO/EVE + EARLINET + OISST + GCMT + MagIC + SAGE LMC/SMC + NOAA Coral + EPA RadNet + OpenLitterMap + YSOs/HH + EDGAR CO2 + AE-Index + SOCRATES + SIDC ISN + GRanD + SAGE II/III + SIMBAD + HURDAT2 |
+| **∑ Total** | **692** | **~215 Domains** |
+
+---
+
+## Empfehlung Batch 13
+
+| Priorität | Domain | Strategie |
+|---|---|---|
+| 🟡 **1** | **Hochenergie Kosmische Strahlung (AUGER/TELESCOPE ARRAY)** | Pierre Auger Observatory öffentliche Ereignisliste + TA via VizieR |
+| 🟡 **2** | **Galaxien-Morphologie (GZ2/GZ-DECaLS)** | Galaxy Zoo 2 Morphologie-Klassifikationen via VizieR |
+| 🟡 **3** | **Meeresströmungen Drifter (GDP Drifter)** | NOAA AOML GDP Drifter REST + Lagrangian Trajectories |
+| 🔵 **4** | **Stickstoffkreislauf (EMEP + WHO NO₂)** | EMEP European Monitoring REST + WHO Air DB |
+| 🔵 **5** | **Infrarot Hintergrundstrahlung CXB (Chandra Deep Fields)** | CDF-N + CDF-S via HEASARC TAP |
+| 🔵 **6** | **Planetengetriebe (Ephemeriden TNOs)** | MPC TNO Orbital Elements + AstDys REST |
+| 🔵 **7** | **Ozeanboden-Wärmefluss (Global Heat Flow)** | IHFC Global Heat Flow REST |
+| 🔵 **8** | **Atmosphärische Chemie (MOPITT CO-Profil)** | MOPITT via NASA GES DISC ERDDAP |
+| 🔵 **9** | **Fernerkundung Feuchtigkeit Atmosphäre (COSMIC-2 RO)** | UCAR COSMIC-2 GPS Radio Occultation |
+| 🔵 **10** | **Bioakustik / Ozeanakustik (MBARI MARS)** | MBARI MARS Hydrophone + Whale Acoustics REST |

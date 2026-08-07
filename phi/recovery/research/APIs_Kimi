@@ -1,0 +1,240 @@
+Der Benutzer möchte, dass ich die bereitgestellten Quellen analysiere und prüfe, ob weitere relevante Quellen fehlen.
+Das Dokument sources2.φ.md enthält eine umfangreiche Liste von Datenquellen für ein System namens "Omegaflow" (oder ähnlich). Die Quellen sind in verschiedene Kategorien unterteilt:
+
+    Kosmisch/Orbital (ISS, Satelliten, Planeten, Asteroiden, etc.)
+    Geosphäre (Erdbeben, Vulkane, Gezeiten, etc.)
+    Atmosphäre (Wetter, Luftqualität, etc.)
+    Hydrosphäre (Ozeane, Flüsse, Gezeiten, etc.)
+    Biosphäre (Biodiversität, Wildfires, etc.)
+    Magnetosphäre (Sonnenwind, geomagnetische Daten, etc.)
+    Technosphäre/Anthroposphäre (GitHub, Wikipedia, Finanzdaten, etc.)
+    Kryosphäre (Meereis, etc.)
+    Ionosphäre (TEC, etc.)
+
+Ich sollte:
+
+    Die bestehenden Quellen analysieren und kategorisieren
+    Lücken identifizieren
+    Vorschläge für zusätzliche Quellen machen
+
+Lassen Sie mich zuerst die Struktur verstehen. Es scheint ein Konfigurationsformat zu sein mit:
+
+    source <name> - Name der Quelle
+    ttl <seconds> - Time-to-live
+    force <category> - Kategorie/Physikalische Domäne
+    lat/lon/alt - Koordinaten
+    url - API-Endpunkt
+    field/path/count/map - Extraktionsregeln
+
+Kategorien die ich sehe:
+
+    em - elektromagnetisch/technologisch
+    seismic-surface - seismisch
+    acoustic - akustisch
+    gravity - Gravitation/Gezeiten
+    diffusion - Ausbreitung
+    terra - terrestrisch/global
+
+Lassen Sie mich die Quellen systematisch durchgehen und dann Lücken identifizieren.
+Bereits abgedeckte Bereiche:
+
+    Orbital/Kosmisch: ISS Position, Planetenephemeriden (viele), JWST, Voyager, NEOs, Asteroiden, Exoplaneten, Sonne, Solar Flares, CMEs
+    Magnetosphäre: Kp-Index, Dst, GOES Magnetometer, ACE, IMF, NOAA SWPC Daten
+    Sonnenaktivität: Sonnenflecken, Radio Flux, X-Ray, EUV, Solar Wind
+    Kosmische Strahlung: Neutronenmonitore (viele Stationen NMDB), Protonenflux, Elektronenflux
+    Geosphäre: USGS Earthquakes (mehrere Endpunkte), EMSC, INGV, JMA, CENC, IRIS, Vulkan USGS, GDACS, NWS Alerts, Tsunami
+    Hydrosphäre: NOAA Gezeiten (viele Stationen), NDBC Bojen (viele), USGS Streamflow, PegelOnline, EMODnet, Marine API, Flut-API
+    Atmosphäre: Open-Meteo (Wetter, Luftqualität, Druck, Wind), METAR, WAQI, Aeronet, DWD Pollen, CO2/Methan/N2O/SF6 (NOAA), UV, Strahlung
+    Biosphäre: GBIF (Artenvorkommen), iNaturalist, OBIS (Ozean), inaturalist, EONET (Wildfires, Vulkane), MODIS NDVI, Coral Bleaching
+    Kryosphäre: NSIDC Sea Ice, Permafrost
+    Technosphäre/Anthroposphäre: Yahoo Finance (viele ETFs), GitHub Events, DockerHub, NPM, Wikipedia, arXiv, Crossref, Semantic Scholar, OpenSky (Flugzeuge), Overpass/OSM (viele Kategorien), Irish Rail, Wiener Linien, Transport OpenData, iRail, RIPE BGP, INEX Traffic, Bitcoin Blocks, Copernicus, Launch Library, DSN Status, Tor Relays
+    Ionosphäre: TEC (DLR, NOAA GloTEC)
+    Quanten/Randomness: ANU QRNG, NIST Beacon, Drand
+
+Lücken/Domänen die fehlen könnten:
+
+    Weltraumwetter/Protonen: Zwar GOES, aber kein STEREO Daten
+    GNSS/GPS Störungen: Keine Scintillation oder GPS Störungsdaten
+    Blitzdaten: Keine Blitzdetektion (z.B. Blitzortung.org, WWLLN)
+    Radardaten: NEXRAD/Wetterradar fehlt
+    Hochatmosphäre/Mesosphäre: Keine Daten zur Höhenatmosphäre (z.B. MLS, SABER)
+    Gravitationswellen: LIGO/Virgo (es gibt physics_ligo_gracedb_events und physics_gcn_ligo_circulars, aber nur zählen)
+    Neutrinos: IceCube (nur GCN circulars count)
+    Gamma-Ray Bursts: Fehlen fast komplett (nur IceCube LVK coincidence)
+    Satellitenbilder: Keine direkten Satellitenbild-Quellen (GOES, Himawari, Sentinel) - nur Copernicus Count
+    Verkehr:
+        Maritime AIS fehlt (nur EMODnet vessel density und NDBC)
+        Straßenverkehr (z.B. TomTom, HERE) fehlt
+        ÖPNV ist gut abgedeckt (Bern, Zürich, Wien, Belgien, Dublin)
+    Energie:
+        Stromnetz/Grid (nur UK Carbon Intensity, ENTSOE Price, Energy Charts Renewable)
+        Keine Echtzeit-Stromerzeugung/Verbrauch pro Land (z.B. Electricity Maps, ENTSOE Transparenz)
+    Finanzen: Gut abgedeckt, aber keine Kryptowährungen außer Bitcoin Block Count, keine Devisen außer USD-Paare
+    Soziale Medien: Fast nichts (nur Wikipedia Pageviews, GDELT News Volume)
+    Cybersecurity: Nur NVD CVE Count - keine aktiven Threat Feeds
+    Pandemie/Gesundheit: CDC COVID, Monkeypox, WHO Daten - aber keine aktuellen Influenza-Daten (nur record count)
+    Landwirtschaft: Fast nichts
+    Demografie: Nur Restcountries Population Sample, Eurostat - keine echten Echtzeit-Demografie-Daten
+    Verdrängung/Flüchtlinge: UNHCR (nur record count)
+    Klimawandel: NOAA Sea Level Rise, Drought (USDM) - aber keine globalen Dürredaten
+    Luftfahrt: OpenSky gut, aber keine Flughafen-Abflugdaten (nur OSM Airports)
+    Funk/Spektrum: SatNOGS (nur count), aber keine HF-Propagation (z.B. HamQSL, PSK Reporter)
+    Lidar: 3DEP, GMRT, LOLA, MOLA - aber kein GEDI oder ICESat-2
+    Ozeanographie:
+        Keine Argo Floats
+        Keine SST außer OOI und Open-Meteo Marine
+        Keine Ozeanfarbdaten (Chlorophyll)
+        Keine Höhenmessungen (Jason, Sentinel-6)
+    Erdbeobachtung:
+        Keine NASA EOSDIS/Direct Access
+        Keine Sentinel Hub
+        Keine FIRMS (NASA Active Fire)
+    Kosmische Hintergrundstrahlung: Fehlt
+    Radioastronomie: Fast nichts (nur GCN circulars)
+
+Besonders wichtige fehlende Kategorien für ein "Earth Monitoring" System:
+
+    Blitzdetektion (WWLLN, Blitzortung)
+    Global Lightning Detection (GLM auf GOES)
+    Aktive Feuer/Satellit (NASA FIRMS / VIIRS)
+    Echtzeit-Stromdaten (Electricity Maps, ENTSOE)
+    AIS/Maritime Traffic (MarineTraffic, oder freie AIS Aggregatoren)
+    GPS/GNSS Störungen (z.B. SWPC Scintillation, oder IGS)
+    HF Radio Propagation (HamQSL, PSK Reporter)
+    Gravitationswellen Echtzeit (LIGO/Virgo GraceDB Events ist drin, aber minimal)
+    Gamma-Ray Bursts (Fermi GBM, Swift BAT)
+    Satellitenbilder Echtzeit (GOES-R, Himawari-8)
+    Argo Floats (Argo Programme)
+    Global Drifter Program (ist drin: hydrosphere_drifters_hourly)
+    Schumann Resonanz (ist drin!)
+    TLE/Space Traffic (Celestrak ist gut abgedeckt, aber kein Space-Track.org für Katalog)
+    Aurora Webcams/Forecasts (Ovation ist drin)
+    Solar Imagery (SDO, SOHO LASCO - fehlen)
+    Mars Wetter (ist drin!)
+    Radiosonden (IGRA, Wyoming) - fehlen komplett!
+    Niederschlagsradar (Rainviewer ist drin als Zeitstempel, aber keine echten Daten)
+    Flugverfolgung (OpenSky ist drin, aber ADS-B Exchange oder ähnliches fehlt)
+
+Ich sollte auch prüfen, ob einige URLs noch funktionieren könnten oder ob es bessere Alternativen gibt.
+Lassen Sie mich eine strukturierte Analyse erstellen:
+Stärken des bestehenden Systems:
+
+    Sehr umfassend in den Bereichen: Sonnenaktivität, kosmische Strahlung, Erdbeben, Gezeiten, Magnetosphäre
+    Gute Abdeckung von Finanzdaten und technosphärischen Metriken
+    Viele OpenStreetMap-basierte lokale Daten
+    Umfassende Bojen- und Gezeitenstationen
+    Viele Planetenephemeriden
+
+Schwächen/Lücken:
+
+    Atmosphärische Vertikalprofile: Keine Radiosondendaten, keine Windprofiler
+    Niederschlagsradar: Nur Rainviewer Zeitstempel, keine Niederschlagsintensitäten
+    Blitz: Keine Blitzdaten
+    Fernerkundung/Satellitenbilder: Keine direkten Bildquellen, kein FIRMS für aktive Feuer
+    Energie/Netz: Nur sehr begrenzte Stromnetzdaten
+    Verkehr: Keine Straßenverkehrsdaten, keine AIS-Schiffsdaten in Echtzeit
+    Weltraumwetter Bilder: Keine SOHO/SDO Bilder, kein LASCO
+    Hochatmosphäre: Keine Ionosphären-Sondierungen außer TEC
+    Gamma/Astrophysik: Keine GRB-Trigger, keine neutrino Echtzeit-alerts außer IceCube circulars
+
+Ich werde eine detaillierte Analyse auf Deutsch erstellen, die die vorhandenen Quellen kategorisiert und konkrete Vorschläge für fehlende Quellen macht.
+Ich sollte auch prüfen, ob ich tatsächlich weitere Quellen "finde" - der Benutzer fragt "ob du noch weitere findest". Da ich Web-Suche nutzen kann, könnte ich nach spezifischen APIs suchen, die in den identifizierten Lückenbereichen relevant sind.
+Lassen Sie mich einige konkrete fehlende Quellen recherchieren:
+
+    NASA FIRMS API
+    Blitzortung / WWLLN
+    Electricity Maps API
+    ENTSO-E Transparency Platform API
+    SOHO/LASCO (NASA)
+    SDO (Solar Dynamics Observatory)
+    Fermi GBM Alerts
+    Argo Floats
+    IGRA Radiosonden
+    PSK Reporter
+    HamQSL
+    ADS-B Exchange
+    MarineTraffic oder ähnlich
+    Space-Track (TLE)
+    DSCOVR (ist teilweise drin als EPIC, aber kein Plasma)
+    STEREO (fehlt komplett)
+
+Aber Achtung: Ich habe nur 25 Schritte. Eine umfassende Web-Suche für jede einzelne fehlende Quelle würde zu viele Schritte verbrauchen. Ich sollte gezielt nach den wichtigsten suchen oder mein Wissen nutzen.
+Da ich bereits umfangreiches Wissen über diese APIs habe, kann ich die meisten Vorschläge aus dem Gedächtnis machen und nur bei Unsicherheit suchen.
+Lassen Sie mich die Analyse strukturieren:
+
+    Zusammenfassung der vorhandenen Quellen (nach Sphären)
+    Identifizierte Lücken (nach Priorität)
+    Konkrete Quellenvorschläge mit URLs
+    Hinweise zu Datenqualität/Verfügbarkeit
+
+Wichtige fehlende APIs die ich kenne:
+
+    NASA FIRMS (Fire Information for Resource Management System): https://firms.modaps.eosdis.nasa.gov/api/
+    World Wide Lightning Location Network (WWLLN): Keine öffentliche API bekannt, aber Blitzortung.org hat keine offene API. Es gibt Open-Meteo Lightning Potential (ist drin). Vielleicht GLM (GOES Lightning Mapper) über AWS?
+    Electricity Maps: https://api.electricitymap.org/ (oder Electricity Maps API v3)
+    ENTSO-E Transparency Platform: https://transparency.entsoe.eu/api
+    SOHO/LASCO: https://soho.nascom.nasa.gov/data/RealTime/ oder https://services.swpc.noaa.gov/products/animations/ (fehlt)
+    SDO: https://sdo.gsfc.nasa.gov/data/ (oder direkt Bild-URLs)
+    Fermi GBM: https://gcn.nasa.gov/ (über GCN ist möglich, aber spezifisch für GRBs)
+    Argo: https://argo.ucsd.edu/data/ (oder ERDDAP: https://coastwatch.pfeg.noaa.gov/erddap/tabledap/ArgoFloats.html)
+    IGRA: https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/ (nicht echtzeitfähig)
+    PSK Reporter: https://pskreporter.info/ (Web API verfügbar)
+    MarineTraffic: Kostenpflichtig, aber AIS Hub oder VesselFinder? Freie AIS: https://aisstream.io/ oder über MarineCadastre? Oder Vessel Traffic über NOAA?
+    ADS-B: TheAirTraffic oder ADSB.lol? OpenSky ist bereits drin. ADS-B Exchange hat keine offene API mehr.
+    Space-Track: https://www.space-track.org/ (erfordert Account)
+    DSCOVR: Plasma Daten sind über NOAA verfügbar (ist teilweise als ACE/SWEPAM drin, aber DSCOVR spezifisch fehlt)
+    STEREO: https://stereo-ssc.nascom.nasa.gov/ (oder Daten über NASA)
+    HAM Radio Beacons: NCDXF/IARU Beacon Network?
+    River discharge global: Global Runoff Data Centre? Oder GloFAS (Copernicus): https://cds.climate.copernicus.eu/ (nicht echtzeit-API-freundlich)
+    Global Flood Awareness System: https://www.globalfloods.eu/
+    USGS 3D Elevation Program: Bereits als EPQS drin
+    Sentinel Hub: https://www.sentinel-hub.com/ (erfordert Account)
+    MODIS/VIIRS Active Fire: NASA FIRMS ist der beste Weg
+    Global Forest Watch: https://www.globalforestwatch.org/ (API verfügbar)
+    OpenAQ: https://api.openaq.org/ (Luftqualität - WAQI und Open-Meteo sind drin, aber OpenAQ ist umfassender historisch/global)
+    WMO OSCAR: Wetterstationsmetadata
+    Radio Solar Telescope Network (RSTN): Fehlt
+    Ionosonden: z.B. GIRO (Global Ionospheric Radio Observatory) - https://giro.uml.edu/
+    Madrigal Database: https://openmadrigal.org/ (Ionosphäre, Incoherent Scatter Radar)
+    SuperDARN: https://superdarn.ca/ (Radardaten Polarregionen)
+    AMPERE: https://ampere.jhuapl.edu/ (Birkeland currents)
+    Parker Solar Probe: Echtzeit-Status? Eher nicht öffentlich als Stream.
+    Solar Orbiter: Ephemeriden sind drin, aber keine Instrumentendaten als Echtzeit-Stream.
+    JWST: Ephemeriden sind drin, keine Bildmetadaten (außer als "distance").
+    Gaia: DR3 Sample ist drin.
+    TLE Updates: Space-Track ist der offizielle Quelle, Celestrak ist drin.
+
+Ich denke, die sinnvollsten Ergänzungen für ein "Global Awareness" System wie Omegaflow wären:
+Kritisch (Echtzeit/Nahe-Echtzeit):
+
+    NASA FIRMS (aktive Feuer)
+    GLM / Blitz (z.B. via NOAA SWPC oder AWS Open Data)
+    Electricity Maps / ENTSO-E (Stromnetze)
+    OpenAQ (globale Luftqualität als Ergänzung)
+    DSCOVR Plasma (Ersatz/ergänzend zu ACE)
+    SOHO/LASCO (CME Bilder)
+    SDO (Sonnenbilder)
+    Fermi GBM (GRB Trigger)
+    GloFAS / Global Flood Awareness
+    Argo Floats (Ozean)
+
+Nützlich:
+11. Radiosonden (Wyoming Soundings für aktuelle Aufstiege)
+12. PSK Reporter (HF Ausbreitung)
+13. SuperDARN (Polar Ionosphäre)
+14. GIRO (Ionosonden)
+15. AIS (Maritime Traffic) - z.B. via MarineCadastre oder aisstream
+Ich werde eine strukturierte Antwort auf Deutsch erstellen. Da der Benutzer die Datei auf Deutsch analysieren möchte ("bitte analysiere"), antworte ich auf Deutsch.
+Ich sollte nicht zu viele Web-Suchen machen, da ich nur 25 Schritte habe. Ich werde mein Wissen nutzen und nur bei Bedarf suchen. Eine Suche nach "NASA FIRMS API" und "Electricity Maps API" und "OpenAQ API" sollte ausreichen, um die URLs zu verifizieren.
+Aber eigentlich kann ich die meisten URLs direkt nennen. Lassen Sie mich nur bei denen suchen, bei denen ich mir nicht 100% sicher bin.
+Warte - ich sollte vielleicht auch prüfen, ob es neuere/bessere Versionen der bereits vorhandenen APIs gibt. Aber das ist sekundär.
+Lassen Sie mich die Analyse in deutscher Sprache verfassen.
+Struktur:
+
+    Executive Summary
+    Analyse nach Sphären (was ist gut, was fehlt)
+    Top-Empfehlungen für fehlende Quellen (mit konkreten URLs und Parametern)
+    Format-Vorschläge für die Integration
+
+Ich werde NICHT alle 400+ Quellen einzeln auflisten, sondern clusterweise analysieren.
+Lassen Sie mich mit der Antwort beginnen.

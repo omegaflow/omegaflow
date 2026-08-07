@@ -1,0 +1,1509 @@
+## Vorabhinweise aus den Live-Docs
+
+Verifizierte Fakten für Batch 5:
+
+
+- Die iNaturalist API v1 ist vollständig dokumentiert unter `http://api.inaturalist.org/v1/docs/`. Filterung ist möglich nach `taxon_id` oder `taxon_name` — `taxon_name` selektiert auch alle Descendant-Taxa. Bounding-Box-Parameter lauten `nelat`, `nelng`, `swlat`, `swlng`.
+
+
+- NMDB (`nmdb.eu`) stellt seit 2008 Echtzeit-Daten von Neutronenmonitoren weltweit bereit; Daten werden von einzelnen Stationsbetreibern eingepflegt und können über das NEST-Interface abgerufen werden. Für Echtzeit-Nutzung stellt NMDB die Daten der letzten Stunde aller Stationen als einfache Textdatei über `rt.nmdb.eu` bereit, abrufbar mit curl oder wget. Ab Juli 2025 soll für NEST-Abfragen `www.nmdb.eu/nest` statt `nest.nmdb.eu` verwendet werden; das HTTPS-URL-Schema erlaubt die vollständige Parameterübergabe direkt in der Adresse.
+
+
+- GRACE-FO Level-3 Landmassen-Gitter bei PODAAC enthalten Wassermassenanomalien als äquivalente Wassersäule — abgeleitet aus zeitvariablen Schwerefelddaten — repräsentieren Boden-, Schnee-, Oberflächen- und Grundwasserspeicher zusammen. PODAAC-Daten liegen in geschützten S3-Buckets — Zugriff erfordert Earthdata-Login. → Workaround: GFZ G3P-Produkt und NOAA/GRACE Tellus über öffentliches HTTP.
+
+
+- Das GFZ G3P-Projekt (Global Gravity-based Groundwater Product) liefert global verteilte, monatlich aufgelöste Grundwasserspeichervariationen durch Kombination von GRACE/GRACE-FO-Schwereanomalie-Daten mit anderen Copernicus-Produkten.
+
+
+---
+
+
+```
+# ===========================================================================
+# BATCH 5 — iNATURALIST AUSBAU + METAR + AGN/BLAZAR ERGÄNZUNG
+# + NMDB KOSMISCHE STRAHLUNG + GRACE-FO GRAVITATION + IONOSPHÄRE
+# + OCEAN DEOXYGENATION + GLOBAL MANGROVE + ISRO BHUVAN
+# + BZCAT BLAZAR + HEASARC ROSAT / RXTE + DIVERSE NEUE DOMAINS
+# Total: ~65 Quellblöcke
+# ===========================================================================
+
+
+
+
+# ===========================================================================
+# iNATURALIST AUSBAU — Taxa-Filter + Regionale Bounding Boxes
+# API: https://api.inaturalist.org/v1/observations
+# Öffentlich, kein Auth für Read-Only
+# Parameter: taxon_name, iconic_taxa, nelat/nelng/swlat/swlng,
+#            quality_grade=research, per_page=200, order_by=created_at
+# JSON-Antwort: {"total_results":..., "results":[{"id":...,"location":"lat,lon",...}]}
+# lat/lon: "location" = "lat,lon" als String → Ingestor muss splitten
+#          ODER: geojson=true → GeoJSON FeatureCollection
+# Force: diffusion (Artverbreitung = biologische Diffusion)
+# TTL: 3600 (neue Beobachtungen stündlich)
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# [1] iNaturalist — Säugetiere (Mammalia) weltweit, Research Grade
+#     taxon_name=Mammalia filtert auf alle ~6500 Säugetierarten
+#     order_by=observed_on, aktuellste zuerst
+# ---------------------------------------------------------------------------
+source inaturalist_mammalia_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?taxon_name=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+map results
+lat_key location.0
+lon_key location.1
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+field taxon.conservation_status.status iucn_status
+
+
+# ---------------------------------------------------------------------------
+# [2] iNaturalist — Reptilien (Reptilia) weltweit
+#     Wichtig für Klimawandelmonitoring (ektotherme Indikatoren)
+# ---------------------------------------------------------------------------
+source inaturalist_reptilia_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?taxon_name=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+map results
+lat_key location.0
+lon_key location.1
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+
+# ---------------------------------------------------------------------------
+# [3] iNaturalist — Amphibien (Amphibia) weltweit
+#     Amphibien sind hochsensible Bioindikatoren für Habitatqualität
+# ---------------------------------------------------------------------------
+source inaturalist_amphibia_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?taxon_name=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+map results
+lat_key location.0
+lon_key location.1
+field taxon.name species_name
+field observed_on observation_date
+field taxon.conservation_status.status iucn_status
+
+
+# ---------------------------------------------------------------------------
+# [4] iNaturalist — Gefährdete Arten (IUCN CR + EN + VU) via Taxon-ID
+#     iNaturalist bietet Conservation-Status-Filter: threatened=true
+#     Gibt Beobachtungen aller gefährdeten Arten zurück
+# ---------------------------------------------------------------------------
+source inaturalist_threatened_species
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+map results
+lat_key location.0
+lon_key location.1
+field taxon.name species_name
+field taxon.conservation_status.status iucn_status
+field taxon.conservation_status.authority iucn_authority
+field observed_on observation_date
+field place_guess locality
+
+
+# ---------------------------------------------------------------------------
+# [5] iNaturalist — Pilze (Fungi) weltweit
+#     Fungi als Ökosystem-Indikatoren (Mykorrhiza, Saprobionten)
+# ---------------------------------------------------------------------------
+source inaturalist_fungi_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?taxon_name=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+map results
+lat_key location.0
+lon_key location.1
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+
+# ---------------------------------------------------------------------------
+# [6] iNaturalist — Schadinsekten + Invasive Arten (iconic_taxa=Insecta)
+#     Kombination: invasive=true + iconic_taxa=Insecta
+# ---------------------------------------------------------------------------
+source inaturalist_invasive_insects
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true
+map results
+lat_key location.0
+lon_key location.1
+field taxon.name species_name
+field taxon.establishment_means establishment_means
+field observed_on observation_date
+field place_guess locality
+
+
+# ---------------------------------------------------------------------------
+# [7] iNaturalist — Meeresorganismen (iconic_taxa=Actinopterygii)
+#     Knochenfische als Meeresgesundheitsindikator
+# ---------------------------------------------------------------------------
+source inaturalist_marine_fish
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&place_id=10
+map results
+lat_key location.0
+lon_key location.1
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+
+
+# ---------------------------------------------------------------------------
+# [8] iNaturalist — Europa (Bounding Box, alle Arten, aktuell)
+#     swlat=35, swlng=-10, nelat=70, nelng=40
+# ---------------------------------------------------------------------------
+source inaturalist_europe_recent
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&swlat=35&swlng=-10&nelat=70&nelng=40
+map results
+lat_key location.0
+lon_key location.1
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field observed_on observation_date
+field place_guess locality
+
+
+# ---------------------------------------------------------------------------
+# [9] iNaturalist — Amazonas-Region (Bounding Box, Tropenwaldmonitoring)
+#     swlat=-20, swlng=-80, nelat=5, nelng=-45
+# ---------------------------------------------------------------------------
+source inaturalist_amazon_biodiversity
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
+map results
+lat_key location.0
+lon_key location.1
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field observed_on observation_date
+field taxon.conservation_status.status iucn_status
+
+
+# ---------------------------------------------------------------------------
+# [10] iNaturalist — Arten-Identifikationsqualität (needs_id=true)
+#      Frische Meldungen die noch auf Bestätigung warten
+#      Nützlich für Echtzeit-Erstsichtungen + invasive Neufunde
+# ---------------------------------------------------------------------------
+source inaturalist_needs_id_global
+ttl 1800
+force diffusion
+url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&d1={today}
+map results
+lat_key location.0
+lon_key location.1
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field created_at submission_time
+field place_guess locality
+
+
+
+
+# ===========================================================================
+# METAR AUSBAU — Aviation Weather ADDS
+# Primary REST: https://aviationweather.gov/api/data/metar
+# Parameter: ids=<ICAO> | bbox=<lat_min,lon_min,lat_max,lon_max>
+#            format=json | hours=<lookback>
+# JSON-Array direkt (root oder wrapped)
+# Felder: stationId, lat, lon, temp, dewpoint, windDir, windSpeed,
+#         visibility, altim (QNH), wxString, clouds, rawOb
+# Force: acoustic (Druck/Wind) / thermal (Temperatur)
+# TTL: 1800 (METAR alle 30-60 Min aktualisiert)
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# [11] METAR — Europa (bbox=35,-10,70,40)
+#      Alle aktiven METAR-Stationen in Europa
+# ---------------------------------------------------------------------------
+source metar_europe_bbox
+ttl 1800
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=35,-10,70,40&format=json&hours=2
+map .
+lat_key lat
+lon_key lon
+field stationId icao_code
+field temp temp_c
+field dewpoint dewpoint_c
+field windDir wind_dir_deg
+field windSpeed wind_speed_kt
+field altim pressure_hpa
+field visibility visibility_sm
+field wxString weather_string
+field rawOb raw_metar
+
+
+# ---------------------------------------------------------------------------
+# [12] METAR — Nordamerika (bbox=25,-170,72,-50)
+# ---------------------------------------------------------------------------
+source metar_north_america_bbox
+ttl 1800
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=25,-170,72,-50&format=json&hours=2
+map .
+lat_key lat
+lon_key lon
+field stationId icao_code
+field temp temp_c
+field dewpoint dewpoint_c
+field windDir wind_dir_deg
+field windSpeed wind_speed_kt
+field altim pressure_hpa
+field visibility visibility_sm
+field wxString weather_string
+
+
+# ---------------------------------------------------------------------------
+# [13] METAR — Asien-Pazifik (bbox=-10,60,55,150)
+# ---------------------------------------------------------------------------
+source metar_asia_pacific_bbox
+ttl 1800
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=-10,60,55,150&format=json&hours=2
+map .
+lat_key lat
+lon_key lon
+field stationId icao_code
+field temp temp_c
+field dewpoint dewpoint_c
+field windDir wind_dir_deg
+field windSpeed wind_speed_kt
+field altim pressure_hpa
+field wxString weather_string
+
+
+# ---------------------------------------------------------------------------
+# [14] METAR — Afrika + Mittlerer Osten (bbox=-35,-20,38,65)
+# ---------------------------------------------------------------------------
+source metar_africa_mideast_bbox
+ttl 1800
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=-35,-20,38,65&format=json&hours=2
+map .
+lat_key lat
+lon_key lon
+field stationId icao_code
+field temp temp_c
+field windDir wind_dir_deg
+field windSpeed wind_speed_kt
+field altim pressure_hpa
+field wxString weather_string
+
+
+# ---------------------------------------------------------------------------
+# [15] METAR — Südamerika + Arktis + Antarktis (bbox=-90,-180,90,180)
+#      Global-Scan aber mit hours=1 für minimale Datenmenge
+# ---------------------------------------------------------------------------
+source metar_polar_regions
+ttl 3600
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
+map .
+lat_key lat
+lon_key lon
+field stationId icao_code
+field temp temp_c
+field windDir wind_dir_deg
+field windSpeed wind_speed_kt
+field altim pressure_hpa
+
+
+# ---------------------------------------------------------------------------
+# [16] TAF (Terminal Aerodrome Forecast) — Kurzfrist-Luftfahrtprognosen
+#      Vorhersage für 24-30h, ICAO-basiert
+#      Endpunkt: https://aviationweather.gov/api/data/taf
+# ---------------------------------------------------------------------------
+source taf_global_forecasts
+ttl 3600
+force acoustic
+url https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid
+map .
+lat_key lat
+lon_key lon
+field stationId icao_code
+field fcsts.0.windDir forecast_wind_dir
+field fcsts.0.windSpeed forecast_wind_kt
+field fcsts.0.visib forecast_visibility_sm
+field validTimeFrom valid_from
+field validTimeTo valid_to
+
+
+
+
+# ===========================================================================
+# AGN / BLAZAR ERGÄNZUNG — BZCAT + ROSAT + HEASARC
+# BZCAT (Roma Blazar Catalog 5th edition): via VizieR
+#   VizieR: J/A+A/534/A130/bzcat5 (3561 Blazare mit z, Flux, Typ)
+# ROSAT All-Sky Survey (RASS): HEASARC rass2rxs (2RXS) oder rassbsc
+# RXTE Pulsar Monitoring: HEASARC via TAP
+# Force: em
+# TTL: 86400
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# [17] BZCAT 5th Edition — Roma Blazar Catalog (alle 3561 Blazare)
+#      VizieR: VII/274/bzcat5
+#      Felder: Name, RAJ2000, DEJ2000, z, Bmag, LogFlux, Type
+#      Type: BLL (BL Lac), FSRQ, BCU (Blazar Candidate Uncertain)
+#      PC-kompatibel: ra_key + dec_key + z_key
+# ---------------------------------------------------------------------------
+source vizier_bzcat5_blazars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+4000+Name,RAJ2000,DEJ2000,z,Bmag,LogFlux,Type+FROM+"VII/274/bzcat5"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+LogFlux+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field Bmag optical_mag_b
+field LogFlux log_radio_flux
+field Type blazar_type
+field Name source_name
+
+
+# ---------------------------------------------------------------------------
+# [18] ROSAT 2RXS — ROSAT All-Sky Survey 2nd Reprocessing (140k Quellen)
+#      HEASARC TAP: Tabelle rass2rxs
+#      Felder: name, ra, dec, count_rate, ext_ml (Ausdehnung), vigcorr_rate
+#      Weiche Röntgenquellen 0.1-2.4 keV
+# ---------------------------------------------------------------------------
+source heasarc_rosat_2rxs
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,count_rate,ext_ml,vigcorr_rate,like_source+FROM+rass2rxs+WHERE+count_rate%3E0.05+AND+like_source%3E10+ORDER+BY+count_rate+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field count_rate xray_count_rate_cts
+field ext_ml extent_ml
+field vigcorr_rate vignetting_corr_rate
+field name source_name
+
+
+# ---------------------------------------------------------------------------
+# [19] ROSAT Bright Source Catalog (RASSBSC) — 18.811 helle Röntgenquellen
+#      HEASARC Tabelle: rassbsc
+#      Felder: name, ra, dec, count_rate, hr1, hr2 (Härte-Ratios)
+# ---------------------------------------------------------------------------
+source heasarc_rosat_bsc
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field count_rate xray_count_rate
+field hr1 hardness_ratio_1
+field hr2 hardness_ratio_2
+field ext source_extent
+field name source_name
+
+
+# ---------------------------------------------------------------------------
+# [20] HEASARC — INTEGRAL IBIS/ISGRI Hard X-ray Survey (17-100 keV)
+#      HEASARC Tabelle: intscatt (INTEGRAL Soft Gamma-Ray Survey)
+#      Harteste kontinuierliche Röntgenquellensurvey der Gegenwart
+# ---------------------------------------------------------------------------
+source heasarc_integral_ibis
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_20_40,flux_40_100,type+FROM+intscatt+WHERE+flux_20_40+IS+NOT+NULL+ORDER+BY+flux_20_40+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field flux_20_40 flux_20_40kev
+field flux_40_100 flux_40_100kev
+field type source_type
+field name source_name
+
+
+# ---------------------------------------------------------------------------
+# [21] HEASARC — Swift-BAT 105-Month Hard X-ray Survey (14-195 keV)
+#      HEASARC Tabelle: swiftbat105m (1632 detektierte Quellen)
+#      Swift/BAT ist der sensitivste Hard X-ray All-Sky Survey
+# ---------------------------------------------------------------------------
+source heasarc_swift_bat105m
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_14_195,type,redshift+FROM+swiftbat105m+WHERE+flux_14_195+IS+NOT+NULL+ORDER+BY+flux_14_195+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field flux_14_195 flux_14_195kev
+field type source_type
+field name source_name
+
+
+
+
+# ===========================================================================
+# NMDB — NEUTRONENMONITORE / KOSMISCHE STRAHLUNG
+# Öffentliche Endpunkte:
+#   1. rt.nmdb.eu → Echtzeit-CSV aller Stationen (letzte Stunde)
+#   2. www.nmdb.eu/nest/draw_graph.php → ASCII-Datenabruf via HTTPS-URL
+#      Parameter: stations[]=<CODE>, output=ascii, tabchoice=ori,
+#                 dtype=corr_for_efficiency, date_choice=last,
+#                 last_days=1, tresolution=60, yunits=0
+# Stationscodes: JUNG (Jungfraujoch, CH), KIEL (Kiel, DE),
+#   OULU (Oulu, FI), THUL (Thule, GL), MCMD (McMurdo, AQ),
+#   NEWK (Newark, US), MXCO (Mexico City, MX), APTY (Apatity, RU),
+#   KERG (Kerguelen, FR), HRMS (Hermanus, ZA), MAWC (Mawson, AQ)
+# Force: em (Kosmische Strahlung = geladene Teilchen / EM-Schauer)
+# TTL: 60 (1-Minuten-Echtzeit) / 3600 für Stundenwerte
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# [22] NMDB Echtzeit — Alle Stationen, letzte Stunde (CSV)
+#      rt.nmdb.eu gibt CSV mit allen online Stationen aus
+#      Format: Datetime, Station1_counts, Station2_counts, ...
+#      Header-Zeile enthält Stationsnamen
+#      ⚠ Breiten-/Längengrad NICHT in der CSV-Datei enthalten!
+#         Stationskoordinaten müssen aus Stationsmetadaten gecacht werden
+#         (unten als separater Metadata-Block gelöst)
+# ---------------------------------------------------------------------------
+source nmdb_realtime_all_stations
+ttl 60
+force em
+url https://rt.nmdb.eu
+format text
+rows
+field 0 timestamp_utc
+field 1 JUNG_counts
+field 2 KIEL_counts
+field 3 OULU_counts
+field 4 THUL_counts
+field 5 MCMD_counts
+field 6 NEWK_counts
+
+
+# ---------------------------------------------------------------------------
+# [23] NMDB NEST — Jungfraujoch (JUNG, 3475m, CH) Stundenwerte
+#      Hochgebirgsstation: primärer Europäischer CR-Referenzpunkt
+#      lat=46.55, lon=7.98, alt=3475m
+# ---------------------------------------------------------------------------
+source nmdb_nest_jungfraujoch
+ttl 3600
+force em
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=JUNG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows
+lat 46.55
+lon 7.98
+field 0 timestamp_utc
+field 1 count_rate_cps
+
+
+# ---------------------------------------------------------------------------
+# [24] NMDB NEST — Oulu (OULU, 15m, FI) — Subpolare Referenz
+#      lat=65.05, lon=25.47, alt=15m
+# ---------------------------------------------------------------------------
+source nmdb_nest_oulu
+ttl 3600
+force em
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows
+lat 65.05
+lon 25.47
+field 0 timestamp_utc
+field 1 count_rate_cps
+
+
+# ---------------------------------------------------------------------------
+# [25] NMDB NEST — Thule (THUL, 260m, Grönland) — Arktische Station
+#      lat=76.50, lon=-68.70, alt=260m
+# ---------------------------------------------------------------------------
+source nmdb_nest_thule
+ttl 3600
+force em
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=THUL&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows
+lat 76.50
+lon -68.70
+field 0 timestamp_utc
+field 1 count_rate_cps
+
+
+# ---------------------------------------------------------------------------
+# [26] NMDB NEST — McMurdo (MCMD, 48m, Antarktis) — Polare Südstation
+#      lat=-77.85, lon=166.72, alt=48m
+# ---------------------------------------------------------------------------
+source nmdb_nest_mcmurdo
+ttl 3600
+force em
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MCMD&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows
+lat -77.85
+lon 166.72
+field 0 timestamp_utc
+field 1 count_rate_cps
+
+
+# ---------------------------------------------------------------------------
+# [27] NMDB NEST — Hermanus (HRMS, 26m, Südafrika) — Südatlantik-Anomalie
+#      lat=-34.42, lon=19.22, alt=26m
+#      Wichtig für Monitoring der Südatlantischen Magnetanomalie
+# ---------------------------------------------------------------------------
+source nmdb_nest_hermanus
+ttl 3600
+force em
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=HRMS&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows
+lat -34.42
+lon 19.22
+field 0 timestamp_utc
+field 1 count_rate_cps
+
+
+# ---------------------------------------------------------------------------
+# [28] NMDB NEST — Kerguelen (KERG, 33m, FR) — Südindischer Ozean
+#      lat=-49.35, lon=70.25, alt=33m
+# ---------------------------------------------------------------------------
+source nmdb_nest_kerguelen
+ttl 3600
+force em
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=KERG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows
+lat -49.35
+lon 70.25
+field 0 timestamp_utc
+field 1 count_rate_cps
+
+
+# ---------------------------------------------------------------------------
+# [29] NMDB NEST — Apatity (APTY, 177m, RU) — Russischer Sektor
+#      lat=67.55, lon=33.33, alt=177m
+# ---------------------------------------------------------------------------
+source nmdb_nest_apatity
+ttl 3600
+force em
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=APTY&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows
+lat 67.55
+lon 33.33
+field 0 timestamp_utc
+field 1 count_rate_cps
+
+
+# ---------------------------------------------------------------------------
+# [30] NMDB NEST — Mexico City (MXCO, 2274m, MX) — Äquatornahe Station
+#      lat=19.33, lon=-99.18, alt=2274m
+# ---------------------------------------------------------------------------
+source nmdb_nest_mexico
+ttl 3600
+force em
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MXCO&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows
+lat 19.33
+lon -99.18
+field 0 timestamp_utc
+field 1 count_rate_cps
+
+
+
+
+# ===========================================================================
+# GRACE-FO GRAVITATION / TERRESTRISCHER WASSERSPEICHER
+# ⚠ PODAAC-Primärdaten erfordern Earthdata-Login → gesperrt für direkten
+#   anonymen REST-Zugriff (NetCDF in S3-Protected-Bucket)
+#
+# VIABLE ÖFFENTLICHE PFADE:
+# 1. GFZ GRAVIS — öffentliche Web-API für G3P Grundwasserspeicher-Anomalien
+#    https://gravis.gfz.de/api/ → JSON/CSV pro Grid-Punkt
+# 2. GRACE Tellus via JPL öffentlichem HTTP-Mirror
+#    https://grace.jpl.nasa.gov/data/get-data/ → FTP-Dateien (nicht REST)
+# 3. NASA GESDISC OPeNDAP (erfordert Earthdata) → gesperrt
+# 4. VIABLE FREI: Global Land Data Assimilation System (GLDAS)
+#    via NASA GESDISC anonymen Preview-Service → ERDDAP
+# 5. VIABLE FREI: ESA CCI Soil Moisture via THREDDS (kein Auth)
+# Force: gravity (Massenanomalien = Gravitationssignal)
+# TTL: 86400*30 (monatliche GRACE-FO-Updates, ~45 Tage Latenz)
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# [31] GLDAS-2.2 — Global Land Data Assimilation System (Noah-Modell)
+#      NASA GESDISC ERDDAP: öffentlich via Giovanni oder ERDDAP
+#      Variablen: SoilMoi0_10cm_inst, SoilMoi10_40cm_inst,
+#                 GWS_inst (Grundwasser), TWS_inst (Gesamtwasserspeicher)
+#      ERDDAP: https://hydro1.gesdisc.eosdis.nasa.gov/dods/GLDAS_NOAH025_M.2.1/
+#      CSV via ERDDAP: gesdisc-NASA öffentlicher Zugang
+# ---------------------------------------------------------------------------
+source nasa_gldas_soil_moisture_global
+ttl 86400
+force diffusion
+url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilMoi0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT(-0.0,%200.0)&type=asc2
+terra 1
+format text
+rows
+field 0 timestamp_utc
+field 1 soil_moisture_0_10cm_kgm2
+
+
+# ---------------------------------------------------------------------------
+# [32] ESA CCI Soil Moisture — Combined Product (THREDDS, kein Auth)
+#      ESA Climate Change Initiative Bodenfeuchtigkeit
+#      Kombiniert aktive + passive Mikrowellen-Fernerkundung
+#      THREDDS: https://dap.ceda.ac.uk/thredds/dodsC/neodc/esacci/
+#      ERDDAP-Spiegel: via NEODAAS oder COPERNICUS
+#      Direkter OpenDAP: öffentlich über CEDA (kein Auth für anonymen Zugang)
+# ---------------------------------------------------------------------------
+source esa_cci_soil_moisture_erddap
+ttl 86400
+force diffusion
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_mynrt_l4_P1D-m.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sla sea_level_anomaly_m
+
+
+# ---------------------------------------------------------------------------
+# [33] NOAA Physical Sciences Lab — 20CR Reanalyse, Bodendruck global
+#      PSD ERDDAP: https://psl.noaa.gov/data/gridded/data.20thC_ReanV3.html
+#      ERDDAP: https://psl.noaa.gov/thredds/dodsC/Datasets/20thC_ReanV3/
+#      Echtzeit-Proxy: NOAA NCEP/NCAR Reanalyse-Tagesfelder
+# ---------------------------------------------------------------------------
+source noaa_psd_ncep_surface_pressure
+ttl 86400
+force acoustic
+url https://psl.noaa.gov/thredds/ncss/Datasets/ncep.reanalysis.dailyavgs/surface/slp.{year}.nc?var=slp&north=90&west=-180&east=180&south=-90&disableLLSubset=on&disableProjSubset=on&horizStride=4&time_start={year}-{month}-{day}T00%3A00%3A00Z&time_end={year}-{month}-{day}T23%3A59%3A59Z&timeStride=1&accept=csv
+format text
+rows
+lat_key lat
+lon_key lon
+field slp sea_level_pressure_pa
+
+
+
+
+# ===========================================================================
+# IONOSPHÄRE — IONEX / SWPC / GOES Proton Events
+# Ionosphärische Elektronendichte-Karten (IONEX = IONosphere map EXchange)
+# Quellen:
+#   1. NASA CDDIS IONEX: erfordert Earthdata → gesperrt
+#   2. SWPC (NOAA Space Weather Prediction Center): Echtzeit-Daten, öffentlich
+#      https://services.swpc.noaa.gov/products/ → JSON-Arrays
+#   3. GOES Proton Event: https://services.swpc.noaa.gov/json/goes/primary/
+#   4. Dst-Index (Geomagnetischer Sturm): World Data Center via HTTP
+# Force: em (Ionosphäre = EM-Interaktion)
+# TTL: 60-300 (Weltraumwetter, hochdynamisch)
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# [34] NOAA SWPC — Solar Wind (ACE/DSCOVR Echtzeit)
+#      Solarer Wind an L1-Lagrange-Punkt (DSCOVR-Satellit)
+#      Felder: propagated_time_tag, bx_gsm, by_gsm, bz_gsm, speed, density
+# ---------------------------------------------------------------------------
+source noaa_swpc_solar_wind_dscovr
+ttl 60
+force em
+url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
+map .
+lat 0.0
+lon 0.0
+field_in 0 timestamp_utc
+field_in 1 bx_gsm_nT
+field_in 2 by_gsm_nT
+field_in 3 bz_gsm_nT
+field_in 6 bt_total_nT
+
+
+# ---------------------------------------------------------------------------
+# [35] NOAA SWPC — Solar Wind Plasma (Geschwindigkeit, Dichte, Temperatur)
+# ---------------------------------------------------------------------------
+source noaa_swpc_solar_wind_plasma
+ttl 60
+force em
+url https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json
+map .
+lat 0.0
+lon 0.0
+field_in 0 timestamp_utc
+field_in 1 density_proton_cm3
+field_in 2 speed_km_s
+field_in 3 temperature_k
+
+
+# ---------------------------------------------------------------------------
+# [36] NOAA SWPC — Kp-Index (Geomagnetische Aktivität, 3h-Werte)
+#      Kp=0 ruhig, Kp=9 extreme geomagnetische Sturm
+# ---------------------------------------------------------------------------
+source noaa_swpc_kp_index
+ttl 180
+force em
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+map .
+lat 0.0
+lon 0.0
+field_in 0 timestamp_utc
+field_in 1 kp_index
+field_in 2 kp_status
+
+
+# ---------------------------------------------------------------------------
+# [37] NOAA SWPC — GOES Proton Events (Strahlungssturm)
+#      GOES-16 + GOES-18 Energetische Protonen (>10 MeV, >100 MeV)
+# ---------------------------------------------------------------------------
+source noaa_swpc_goes_proton_primary
+ttl 60
+force em
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+lat 0.0
+lon 0.0
+field_in 0 timestamp_utc
+field_in 1 flux_10mev_p_cm2s
+field_in 2 flux_50mev_p_cm2s
+field_in 3 flux_100mev_p_cm2s
+
+
+# ---------------------------------------------------------------------------
+# [38] NOAA SWPC — GOES X-Ray Flux (Sonnenflares, 1-8 Ångström)
+#      Echtzeit 1-min-Werte, Klassen: A, B, C, M, X
+# ---------------------------------------------------------------------------
+source noaa_swpc_goes_xray_primary
+ttl 60
+force em
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+map .
+lat 0.0
+lon 0.0
+field_in 0 timestamp_utc
+field_in 1 flux_short_wm2
+field_in 2 flux_long_wm2
+field_in 3 satellite_id
+
+
+# ---------------------------------------------------------------------------
+# [39] NOAA SWPC — Flare-Ereignisliste (letzter Monat)
+#      Listet alle klassifizierten Sonnenflares mit Start/Peak/End
+# ---------------------------------------------------------------------------
+source noaa_swpc_solar_flares
+ttl 600
+force em
+url https://services.swpc.noaa.gov/json/solar_events/solar_events.json
+map .
+lat 0.0
+lon 0.0
+field eventName event_name
+field beginTime start_time
+field peakTime peak_time
+field xrayClass xray_class
+field region active_region
+
+
+# ---------------------------------------------------------------------------
+# [40] NOAA SWPC — Dst-Index (Geomagnetischer Sturm-Intensitäts-Index)
+#      Misst Ring-Strom-Stärke (1h-Auflösung)
+#      Quelle: World Data Center Kyoto via SWPC Mirror
+# ---------------------------------------------------------------------------
+source noaa_swpc_dst_index
+ttl 3600
+force em
+url https://services.swpc.noaa.gov/products/kyoto-dst.json
+map .
+lat 0.0
+lon 0.0
+field_in 0 timestamp_utc
+field_in 1 dst_index_nT
+
+
+# ---------------------------------------------------------------------------
+# [41] NOAA SWPC — Aurora Oval (Borealis + Australis Grenze)
+#      30-Minuten-Nowcast der Oval-Position
+#      GeoJSON-Polygone → Centroid-Extraktion
+# ---------------------------------------------------------------------------
+source noaa_swpc_aurora_oval_north
+ttl 1800
+force em
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat_key 1
+lon_key 0
+field 2 aurora_probability_pct
+
+
+
+
+# ===========================================================================
+# OCEAN DEOXYGENATION — WODB / GLODAP / GO-SHIP
+# Ozean-Sauerstoffgehalt: Sinkende O2-Konzentrationen = kritischer Klimaindikator
+# Quellen:
+#   1. WOD (World Ocean Database): NOAA NCEI REST
+#      https://www.ncei.noaa.gov/access/world-ocean-database-select/
+#   2. GLODAP (Global Ocean Data Analysis Project): via NOAA NCEI
+#   3. ARGO-O2: Profil-Float-Sauerstoffmessungen via IFREMER Argo ERDDAP
+# Force: diffusion (Sauerstoffkonzentration als gelöstes Gas)
+# TTL: 86400
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# [42] ARGO-O2 — Sauerstoffprofile aus Argo-Floats (IFREMER ERDDAP)
+#      IFREMER ERDDAP: https://erddap.ifremer.fr/erddap/
+#      Datensatz: ArgoFloats-index oder ArgoFloats-profiles
+#      Variablen: latitude, longitude, DOXY (O2 µmol/kg), TEMP, PSAL, PRES
+# ---------------------------------------------------------------------------
+source ifremer_argo_oxygen_profiles
+ttl 3600
+force diffusion
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy(%22time%22)&limit=3000
+format text
+rows
+lat_key latitude
+lon_key longitude
+field DOXY dissolved_oxygen_umolkg
+field TEMP water_temp_c
+field PSAL salinity_psu
+field PRES pressure_dbar
+field time obs_time
+
+
+# ---------------------------------------------------------------------------
+# [43] NOAA NCEI WOD — Sauerstoff-Profil-Daten (World Ocean Database)
+#      REST Select Interface für O2-Daten mit Bounding Box
+#      Endpunkt: /access/world-ocean-database-select/wparms.json
+# ---------------------------------------------------------------------------
+source noaa_wod_oxygen_select
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/wparms.json?dataset=OSD&variables=oxygen&time_from={year}-{month}-01&time_to={year}-{month}-{day}&lat_from=-90&lat_to=90&lon_from=-180&lon_to=180&depth_from=0&depth_to=1000&format=json
+map .
+lat_key latitude
+lon_key longitude
+field oxygen dissolved_oxygen_umolkg
+field temperature water_temp_c
+field salinity salinity_psu
+field depth depth_m
+field timestamp obs_time
+
+
+# ---------------------------------------------------------------------------
+# [44] Copernicus Marine — Globaler Ozean-Sauerstoff (PISCES Biogeochemie)
+#      CMEMS: GLOBAL_ANALYSISFORECAST_BGC_001_028
+#      Variablen: o2 (mmol/m³), no3, po4, si
+#      ERDDAP: nrt.cmems-du.eu
+# ---------------------------------------------------------------------------
+source cmems_global_ocean_oxygen
+ttl 86400
+force diffusion
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D,no3%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field o2 oxygen_mmol_m3
+field no3 nitrate_mmol_m3
+
+
+
+
+# ===========================================================================
+# GLOBAL MANGROVE WATCH — JAXA / GLOBALMANGROVEWATCH
+# Mangroven als Küsten-Kohlenstoffspeicher + Biodiversitätshotspot
+# JAXA GMW: https://www.jaxa.jp/projects/sat/alos2/
+# Öffentliche Daten: via Global Mangrove Alliance / SMApp
+# REST: https://mangrove-atlas.sei.org/api/  (Stanford/SEI Mangrove Atlas)
+# Force: diffusion (Biomasseverteilung)
+# TTL: 86400
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# [45] Global Mangrove Atlas API (SEI/Stanford) — Mangroven-Flächen
+#      REST JSON: gibt Mangroven-Biomasse pro Location zurück
+#      Endpunkt: /api/widgets/mangrove-cover/?location_id=worldwide
+# ---------------------------------------------------------------------------
+source global_mangrove_atlas_global
+ttl 86400
+force diffusion
+url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=worldwide&startYear=2020&endYear=2020
+terra 1
+field area_m2 mangrove_area_m2
+field gain_m2 mangrove_gain_m2
+field loss_m2 mangrove_loss_m2
+field year year
+field percentage coverage_pct
+
+
+# ---------------------------------------------------------------------------
+# [46] Global Mangrove Atlas — Länder-spezifische Mangroven-Daten
+#      Gibt pro Land Mangrovenbedeckung + Veränderungsrate zurück
+# ---------------------------------------------------------------------------
+source global_mangrove_atlas_countries
+ttl 86400
+force diffusion
+url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=country&startYear=2020&endYear=2020
+map data
+lat_key centroid_lat
+lon_key centroid_lon
+field area_m2 mangrove_area_m2
+field loss_m2 mangrove_loss_m2
+field country_iso country_iso
+field year year
+
+
+# ---------------------------------------------------------------------------
+# [47] NOAA NCEI — Global Mangrove Ecosystems (GMFAO-Daten)
+#      NOAA Ocean Service: Mangrove-Bedeckungsdaten global als CSV
+#      Öffentlicher Socrata-Endpunkt
+# ---------------------------------------------------------------------------
+source noaa_mangrove_global_extent
+ttl 86400
+force diffusion
+url https://api.fisheries.noaa.gov/api/mangrove-cover-index?format=json&limit=1000
+map results
+lat_key latitude
+lon_key longitude
+field country country
+field area_km2 mangrove_area_km2
+field year survey_year
+field loss_rate annual_loss_rate_pct
+
+
+
+
+# ===========================================================================
+# ISRO BHUVAN EXPANSION
+# Bhuvan = ISRO's National Geoportal (India)
+# WMS/WFS Endpunkte: https://bhuvan.nrsc.gov.in/bhuvan/
+# Öffentliche REST-API: https://bhuvan-app1.nrsc.gov.in/disaster/
+# OGC WFS: https://bhuvan-vec2.nrsc.gov.in/bhuvan/wfs
+# Bhuvan Data API für spezifische Datasets:
+#   https://bhuvan.nrsc.gov.in/bhuvan_links.php
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# [48] ISRO Bhuvan — Flood Inundation (WFS GeoJSON)
+#      Bhuvan Disaster Management Support Services
+#      Endpunkt: Flutmonitoring-WFS für aktuelle Überschwemmungen Indien
+# ---------------------------------------------------------------------------
+source isro_bhuvan_flood_india
+ttl 3600
+force diffusion
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.district district_name
+field properties.state state_name
+field properties.area_ha inundated_area_ha
+field properties.date flood_date
+field properties.source data_source
+
+
+# ---------------------------------------------------------------------------
+# [49] ISRO Bhuvan — Landslide Susceptibility Zones (WFS)
+#      National Landslide Susceptibility Mapping via Bhuvan
+# ---------------------------------------------------------------------------
+source isro_bhuvan_landslide_india
+ttl 86400
+force seismic-surface
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=landslide&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.district district_name
+field properties.state state_name
+field properties.susceptibility_class susceptibility_class
+field properties.date event_date
+
+
+# ---------------------------------------------------------------------------
+# [50] ISRO Bhuvan — Drought Monitoring (NDVI-basiert)
+#      Vegetationsindex-basiertes Dürre-Monitoring für Indien
+#      Bhuvan Drought Monitor REST-Endpoint
+# ---------------------------------------------------------------------------
+source isro_bhuvan_drought_ndvi
+ttl 86400
+force diffusion
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=drought&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.district district_name
+field properties.state state_name
+field properties.ndvi_anomaly ndvi_anomaly
+field properties.drought_class drought_severity_class
+field properties.date assessment_date
+
+
+
+
+# ===========================================================================
+# DIVERSE NEUE DOMAINS — NICHT IN URSPRÜNGLICHER TABELLE
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# [51] NOAA Tides and Currents — Gezeiten-Pegel (CO-OPS API)
+#      Echtzeitpegel aus dem NOAA CO-OPS Netzwerk (~200 Stationen USA)
+#      REST: https://api.tidesandcurrents.noaa.gov/api/prod/datagetter
+#      Produkttyp: water_level, wind, air_pressure, water_temperature
+# ---------------------------------------------------------------------------
+source noaa_coops_water_levels_usa
+ttl 360
+force acoustic
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&application=batch5&format=json&station=8518750
+terra 1
+map data
+field_in t timestamp_utc
+field_in v water_level_m
+field_in q data_quality_flag
+
+
+# ---------------------------------------------------------------------------
+# [52] NOAA CO-OPS — Wassertemperatur (Meerestemperatur-Messstationen)
+#      Alle aktiven CO-OPS Temperaturmessstellen
+# ---------------------------------------------------------------------------
+source noaa_coops_water_temp_network
+ttl 3600
+force thermal
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?expand=details&type=watertemp
+map stations
+lat_key lat
+lon_key lng
+field id station_id
+field name station_name
+field state state
+field details.shefcode shef_code
+
+
+# ---------------------------------------------------------------------------
+# [53] Global Fishing Watch — AIS Schiffsverkehr (öffentliche API)
+#      Global Fishing Watch REST API v3
+#      Öffentlich mit kostenlosem Account-Token
+#      Endpoint: /vessels/search + /events/fishing
+#      ⚠ Erfordert Token (freie Registrierung) → als gesperrt markieren
+#      ALTERNATIVE: MarineTraffic ersetzt durch openAIS / AISHub
+#      AISHub: http://www.aishub.net/api → kostenpflichtig
+#      VIABLE FREE: VesselFinder open feed (begrenzt)
+#      VIABLE FREE: OpenSeaMap AIS über NMEA-Decoder
+#      BESTES FREI: aprs.fi-ähnliche Marine AIS nicht existierend
+#      → Workaround: Marine Traffic via NOAA VIIRS boat detection
+# ---------------------------------------------------------------------------
+source noaa_viirs_boat_detection
+ttl 86400
+force em
+url https://coastwatch.noaa.gov/erddap/tabledap/noaaVIIRSboatdetect.csv?latitude,longitude,time,bright_ti4&time%3E=now-24hours&orderBy(%22time%22)&limit=5000
+format text
+rows
+lat_key latitude
+lon_key longitude
+field bright_ti4 thermal_brightness_k
+field time detection_time
+
+
+# ---------------------------------------------------------------------------
+# [54] USGS Volcano Hazards — Aktuelle Vulkanwarnungen USA
+#      REST JSON: https://volcanoes.usgs.gov/vhp/feeds/
+#      GeoJSON-Feed aller aktiven US-Vulkane mit VAL (Alert Level)
+# ---------------------------------------------------------------------------
+source usgs_volcano_hazards_usa
+ttl 300
+force seismic-body
+url https://volcanoes.usgs.gov/vhp/feeds/vaalatom.xml
+format text
+rows
+field title volcano_name
+field summary alert_description
+field updated update_time
+field georss:point location_lat_lon
+
+
+# ---------------------------------------------------------------------------
+# [55] Smithsonian GVP — Weekly Volcanic Activity Report (RSS)
+#      Wöchentlicher Bericht aller weltweit aktiven Vulkane
+#      URL: https://volcano.si.edu/news/WeeklyVolcanoRSS.xml
+# ---------------------------------------------------------------------------
+source smithsonian_gvp_weekly_rss
+ttl 86400
+force seismic-body
+url https://volcano.si.edu/news/WeeklyVolcanoRSS.xml
+format text
+rows
+field title volcano_report_title
+field description activity_description
+field pubDate publication_date
+
+
+# ---------------------------------------------------------------------------
+# [56] NOAA NCEI — Global Historical Climatology Network Daily (GHCND)
+#      Tägl. Klimabeobachtungen von > 100.000 Stationen weltweit
+#      REST: https://www.ncei.noaa.gov/access/services/data/v1
+#      Dataset: daily-summaries; Felder: TMAX, TMIN, PRCP, SNOW, SNWD
+# ---------------------------------------------------------------------------
+source noaa_ghcnd_global_daily
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,SNWD&startDate={today}&endDate={today}&includeAttributes=false&format=json&limit=10000
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TMAX tmax_tenths_c
+field TMIN tmin_tenths_c
+field PRCP precipitation_tenths_mm
+field SNOW snowfall_mm
+field SNWD snow_depth_mm
+
+
+# ---------------------------------------------------------------------------
+# [57] NOAA NCEI — Klimaextreme (Record-Brechende Ereignisse)
+#      Dataset: global-summary-of-the-month
+#      Gefiltert auf Stationen mit extremen Anomalien
+# ---------------------------------------------------------------------------
+source noaa_ncei_climate_extremes_monthly
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TMAX monthly_tmax_tenths_c
+field TMIN monthly_tmin_tenths_c
+field TAVG monthly_tavg_tenths_c
+field PRCP monthly_prcp_tenths_mm
+
+
+# ---------------------------------------------------------------------------
+# [58] GOES-East/West SUVI — Solar Ultraviolet Imager (Sonnenkorona)
+#      NOAA SWPC SUVI-Produkt: öffentliche PNG + JSON-Header
+#      GOES-R SUVI Level-2 Flux: https://data.ngdc.noaa.gov/platforms/
+#      REST JSON-Summary: SWPC Solar Region Summary
+# ---------------------------------------------------------------------------
+source noaa_swpc_solar_regions
+ttl 3600
+force em
+url https://services.swpc.noaa.gov/json/solar_regions.json
+map .
+lat 0.0
+lon 0.0
+field region_number active_region_id
+field latitude helio_latitude
+field longitude helio_longitude
+field area sunspot_area_msh
+field z_class z_classification
+field mag_class magnetic_class
+field observed_date observation_date
+
+
+# ---------------------------------------------------------------------------
+# [59] SeaDataNet — Ozeanographische Station Data (PANGAEA-Spiegel)
+#      PANGAEA REST: https://www.pangaea.de/api/
+#      Gibt DataSets mit lat/lon zurück (Sediment, CTD, Profil-Daten)
+# ---------------------------------------------------------------------------
+source pangaea_ocean_datasets
+ttl 86400
+force diffusion
+url https://www.pangaea.de/api/catalog?q=CTD+ocean+oxygen&count=500&type=dataset&maxDate={today}T00:00:00&minDate={year}-01-01T00:00:00
+map results
+lat_key minLongitude
+lon_key minLatitude
+field citation dataset_title
+field URI dataset_uri
+field minElevation min_depth_m
+field maxElevation max_depth_m
+field datasetParameter.0.name primary_parameter
+
+
+# ---------------------------------------------------------------------------
+# [60] EUREF Permanent GNSS Network — Europäisches Referenznetz
+#      EPN = European Reference Frame Permanent Network
+#      Station-Koordinaten + Residuen: Krustenbewegungsmessung mm-genau
+#      REST: https://www.epncb.oma.be/ → keine direkte JSON-API
+#      VIABLE: IGS (International GNSS Service) Stationsliste
+#      https://network.igs.org/api/public/stations?format=json
+# ---------------------------------------------------------------------------
+source igs_gnss_stations_global
+ttl 86400
+force seismic-surface
+url https://network.igs.org/api/public/stations?format=json
+map .
+lat_key lat
+lon_key lon
+field site_code station_code
+field name station_name
+field country country
+field is_active active_status
+field network network_name
+field elevation elevation_m
+
+
+# ---------------------------------------------------------------------------
+# [61] WHO Air Quality Database — Öffentliche PM2.5-Richtwerte Städte
+#      WHO Global Air Quality Database 2022 (aktuellste öffentliche)
+#      Socrata-basiert über data.who.int
+# ---------------------------------------------------------------------------
+source who_airquality_database
+ttl 86400
+force diffusion
+url https://data.who.int/api/3/action/datastore_search?resource_id=air-quality-pm25&limit=5000
+map result.records
+lat_key lat
+lon_key lon
+field city city_name
+field country country
+field year measurement_year
+field pm25_concentration pm25_ugm3
+field pm25_tempcov temporal_coverage_pct
+field who_ms who_membership
+
+
+# ---------------------------------------------------------------------------
+# [62] CNES/JPL TOPEX/JASON — Meeresspiegel-Anomalie (Sea Level Anomaly)
+#      AVISO+ via CMEMS: Altimetrie-basierter Meeresspiegel global
+#      Bereits teilweise via CMEMS abgedeckt (SLA oben in [32])
+#      Ergänzung: Absolute Dynamic Topography (ADT)
+# ---------------------------------------------------------------------------
+source cmems_sla_global_adt
+ttl 86400
+force gravity
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-ssh_nrt_allsat-l4-duacs-0.25deg_P1D.csv?adt%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field adt absolute_dynamic_topography_m
+
+
+# ---------------------------------------------------------------------------
+# [63] NSIDC — Glacier Velocity (ITS_LIVE, NASA/JPL)
+#      ITS_LIVE: Inter-Mission Time Series of Land Ice Velocity and Elevation
+#      REST API: https://its-live-data.s3.amazonaws.com/
+#      ERDDAP: https://nsidc.org/apps/itslive-regional-velocities
+#      Öffentliche Regional-CSV: via ITS_LIVE API
+# ---------------------------------------------------------------------------
+source itslive_glacier_velocity_greenland
+ttl 86400
+force gravity
+url https://its-live-regional.s3.amazonaws.com/v02/GRE/GRE_G0240_2021.zarr/.zmetadata
+terra 1
+field vx glacier_velocity_east_ms
+field vy glacier_velocity_north_ms
+field v glacier_speed_ms
+field date_dt date_interval_days
+
+
+# ---------------------------------------------------------------------------
+# [64] AERONET Version 3 — Inversion v3 Refractive Index Produkt
+#      Komplexer Brechungsindex: Real + Imaginär (Absorption)
+#      Gibt Aerosol-Komposition-Proxy zurück
+# ---------------------------------------------------------------------------
+source aeronet_inv3_refractive_index
+ttl 3600
+force diffusion
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1&lat1=-90&lon1=-180&lat2=90&lon2=180
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field Real_part_of_Refractive_Index[440nm] ri_real_440
+field Imaginary_part_of_Refractive_Index[440nm] ri_imag_440
+field Sphericity_Parameter sphericity_pct
+field Asymmetry_Factor-Total[440nm] asymmetry_factor_440
+
+
+# ---------------------------------------------------------------------------
+# [65] ESA SOHO/LASCO — Coronagraph CME Events (CDAW Catalog)
+#      CDAW Data Center: Coronal Mass Ejection Catalog
+#      REST: https://cdaw.gsfc.nasa.gov/CME_list/
+#      Öffentlich, JSON-Export vorhanden
+# ---------------------------------------------------------------------------
+source nasa_cdaw_cme_catalog
+ttl 3600
+force em
+url https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL/json/univ_{year}{month}.json
+map .
+lat 0.0
+lon 0.0
+field date cme_date
+field time cme_time
+field cpa central_position_angle_deg
+field width angular_width_deg
+field speed linear_speed_kms
+field accel acceleration_ms2
+field mass_cme mass_gram
+field ke kinetic_energy_erg
+```
+
+
+---
+
+
+## Gesamtübersicht Batch 5
+
+
+| Domain | Quellen | PC-tagged | Status / Anmerkungen |
+|---|---|---|---|
+| **iNaturalist Taxa** | 10 | ✅ lat/lon | Mammalia, Reptilia, Amphibia, Fungi, Invasive, Marine, BB-Filter |
+| **METAR Ausbau** | 6 | ✅ lat/lon | Europa, N-Amerika, Asien, Afrika, Polar, TAF |
+| **BZCAT Blazare** | 1 | ✅ ra+dec+z | VizieR VII/274 |
+| **ROSAT / INTEGRAL** | 3 | ✅ ra/dec | 2RXS + BSC + IBIS |
+| **Swift-BAT** | 1 | ✅ ra+dec+z | 105-Monats-Survey |
+| **NMDB Kosmische Strahlung** | 9 | ✅ feste lat/lon | rt.nmdb.eu + NEST HTTPS |
+| **GRACE-FO / Wasserspeicher** | 3 | ✅ lat/lon | GLDAS + ESA CCI + PSL |
+| **NOAA SWPC Weltraumwetter** | 8 | ⚠ L1/helioz. | Solar Wind, Kp, Proton, XRay, Flares, Dst, Aurora |
+| **Ozean-Sauerstoff** | 3 | ✅ lat/lon | Argo-O2, WOD, CMEMS PISCES |
+| **Global Mangrove Watch** | 3 | ✅ lat/lon | SEI Atlas + NOAA |
+| **ISRO Bhuvan** | 3 | ✅ GeoJSON | Flood + Landslide + Drought |
+| **NOAA Gezeiten CO-OPS** | 2 | ✅ lat/lon | Pegel + Wassertemp |
+| **NOAA VIIRS Boat** | 1 | ✅ lat/lon | AIS-Ersatz |
+| **Vulkane USGS + GVP** | 2 | ✅/⚠ | USA-Alerts + RSS |
+| **NOAA GHCND/NCEI** | 2 | ✅ lat/lon | Daily + Monthly Climate |
+| **GOES SUVI / Solar Regions** | 1 | ⚠ helioz. | Aktive Sonnenregionen |
+| **PANGAEA Ozean** | 1 | ✅ lat/lon | CTD + Sediment-Daten |
+| **IGS GNSS global** | 1 | ✅ lat/lon | Globales Referenznetz |
+| **WHO Luftqualität** | 1 | ✅ lat/lon | PM2.5-Datenbank |
+| **CMEMS ADT** | 1 | ✅ lat/lon | Absolute Dynamic Topography |
+| **ITS_LIVE Gletscher** | 1 | ⚠ Zarr/S3 | Grönland Geschwindigkeit |
+| **AERONET Inv. Brechungsindex** | 1 | ✅ lat/lon | Aerosol-Komposition |
+| **NASA CDAW CME** | 1 | ⚠ L1/helioz. | Korona-Massenauswürfe |
+
+
+**Gesamt Batch 5: 65 Quellblöcke**
+
+
+---
+
+
+## Kritische Parser-Hinweise Batch 5
+
+
+```
+# ===== iNaturalist location-Feld ==========================================
+# v1 API gibt "location" als String "lat,lon" zurück:
+# {
+#   "id": 123456789,
+#   "location": "48.1234,11.5678",   ← STRING, kein Array
+#   "taxon": {"name": "Ursus arctos", ...},
+#   "observed_on": "2026-07-27",
+#   ...
+# }
+# → Ingestor muss "location" splitten: lat = location.split(",")[0]
+# → lat_key location.0 = erstes Element nach Split
+# → lon_key location.1 = zweites Element nach Split
+#
+# ALTERNATIVE: URL-Parameter geojson=true → GeoJSON FeatureCollection
+# Dann: lat_key geometry.coordinates.1, lon_key geometry.coordinates.0
+
+
+# ===== NMDB NEST ASCII-Format =============================================
+# Ausgabe-Format draw_graph.php?output=ascii:
+# -------------------------------------------------------------------------
+# # created: 2026-07-27 12:00:00 UTC
+# # station: JUNG
+# # resolution: 60 minutes
+# # -------------------------------------------------------------------------
+# startdate,julian_day,JUNG_ori
+# 2026-07-27 00:00:00,2461219.5,6234.5
+# 2026-07-27 01:00:00,2461219.54167,6198.2
+# ...
+# -------------------------------------------------------------------------
+# → format text + rows
+# → Header-Zeilen mit "#" überspringen
+# → CSV mit Komma-Delimiter
+# → Spalte 0 = Datetime, Spalte 2 = Zählrate
+# → Ingestor: skip_lines_starting_with="#,startdate"
+
+
+# ===== NOAA SWPC JSON Array-of-Arrays =====================================
+# Viele SWPC-Produkte haben Format:
+# [
+#   ["time_tag","bx_gsm","by_gsm","bz_gsm","lon_gsm","lat_gsm","bt"],
+#   ["2026-07-27 12:00:00.000","2.1","-3.4","5.6","...","...","6.7"],
+#   ...
+# ]
+# → Zeile 0 = Header-Array → überspringen
+# → map . → iteriert über alle Zeilen inkl. Header
+# → field_in 0 = timestamp, field_in 3 = bz_gsm usw.
+# → ACHTUNG: erste Zeile (Header) muss übersprungen werden!
+# → Ingestor: skip_first_row=true für SWPC Array-of-Arrays
+
+
+# ===== PANGAEA API Koordinaten ============================================
+# PANGAEA Katalog-API gibt minLongitude/maxLongitude/minLatitude/maxLatitude
+# als Bounding-Box-Felder zurück — kein einzelner Punkt.
+# → lat_key minLatitude = Süd-Grenze der BBox (als Proxy für Zentroid)
+# → lon_key minLongitude = West-Grenze
+# → Für Punkt-Datensätze: min==max → kein Fehler
+# → Für Flächen-Datensätze: Mittelpunkt = (min+max)/2 im Ingestor berechnen
+```
+
+
+---
+
+
+## Akkumulierter Fortschritt (Batches 1-5)
+
+
+| Batch | Quellblöcke | Neue Domains |
+|---|---|---|
+| Batch 1 | 17 | SDSS/2MASS/WISE + AERONET |
+| Batch 2 | 37 | Fermi + Chandra + XMM + NVSS + ZTF + FRB + JPL + MPC + CelesTrak |
+| Batch 3 | 56 | Meteorite + CODATA + Neotoma + Vulkane + Exoplaneten + Coral + Open-Meteo + SC + GeoNet + NSIDC + Permafrost + Grundwasser + Mangrove + Amazônia |
+| Batch 4 | 62 | BOM + Raspberry Shake + Lightning + INCOIS + CMEMS + CAMS + Roshydromet + Afrika + Zentralasien + CMB/Planck + IceCube + FIRMS + GBIF + OpenAQ + EU-Seismik + NASA POWER + MRDS + INTERMAGNET |
+| **Batch 5** | **65** | iNaturalist-Taxa + METAR + BZCAT + ROSAT + NMDB + Wasserspeicher + SWPC + O2-Ozean + Mangrove + Bhuvan + Gezeiten + WHO AQ + PANGAEA + IGS GNSS + CME |
+| **∑ Total** | **237** | **~85 Domains** |
+
+
+---
+
+
+## Empfehlung Batch 6
+
+
+| Priorität | Domain | Strategie |
+|---|---|---|
+| 🟡 **1** | **CMA China** (AQI + Typhoon) | CNEMC REST + NMC Typhoon GeoJSON |
+| 🟡 **2** | **SAWS Südafrika** (Fire Danger + UV) | SADC Climate Services + NOAA ISD |
+| 🟡 **3** | **Tree Rings ITRDB** | NOAA Paleo API `ncdc.noaa.gov/paleo-search` REST |
+| 🟡 **4** | **IODP/DSDP weitere Tabellen** | Janus API Lithologie + Sediment-Chemie |
+| 🔵 **5** | **Global Ocean Color (MODIS/VIIRS)** | NOAA CoastWatch ERDDAP `chl_a` Chlorophyll |
+| 🔵 **6** | **ESA Sentinel-5P (TROPOMI)** | CAMS/Sentinel Hub (NO2, SO2, CO) |
+| 🔵 **7** | **NOAA DART Buoys** (Tsunami-Früherkennung) | `ndbc.noaa.gov/dart/` JSON |
+| 🔵 **8** | **Gravitationswellen LIGO/Virgo** | GW Event API `gwosc.org/api` |
+| 🔵 **9** | **Ionosphäre TEC-Karten** | NASA JPL GNSS-TEC via IONEX public mirror |
+| 🔵 **10** | **Global Ocean Argo Heat Content** | NOAA NCEI via Argo ERDDAP Thermosteric |

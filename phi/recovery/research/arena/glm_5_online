@@ -1,0 +1,2646 @@
+source sensor_community_air
+ttl 300
+res 3
+url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
+field 0.sensordatavalues.0.value technosphere_pm25_ugm3
+field 0.sensordatavalues.1.value technosphere_pm10_ugm3
+
+source iss_position
+ttl 10
+res 4
+url https://api.wheretheiss.at/v1/satellites/25544
+field latitude orbital_iss_lat
+field longitude orbital_iss_lon
+field altitude orbital_iss_alt_km
+
+source opensky_states
+ttl 30
+res 3
+header User-Agent "omegaflow"
+url https://opensky-network.org/api/states/all
+map states
+lat_key 6
+lon_key 5
+alt_key 7
+field_in 9 technosphere_aircraft_velocity
+field_in 11 technosphere_aircraft_vertical_rate
+field_in 13 technosphere_aircraft_geo_altitude
+
+source rain_radar
+ttl 300
+res 4
+url https://api.rainviewer.com/public/weather-maps.json
+field generated hydrosphere_rain_radar_generated_time
+
+source mercury_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='199'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_mercury_vectors_raw
+
+source venus_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='299'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_venus_vectors_raw
+
+source mars_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_mars_vectors_raw
+
+source jupiter_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_jupiter_vectors_raw
+
+source saturn_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_saturn_vectors_raw
+
+source uranus_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='799'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_uranus_vectors_raw
+
+source neptune_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='899'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_neptune_vectors_raw
+
+source pluto_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='999'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_pluto_vectors_raw
+
+source moon_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='301'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_moon_vectors_raw
+
+source sun_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='10'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_sun_vectors_raw
+
+source ceres_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Ceres'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_ceres_vectors_raw
+
+source vesta_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Vesta'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_vesta_vectors_raw
+
+source eris_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Eris'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_eris_vectors_raw
+
+source haumea_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Haumea'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_haumea_vectors_raw
+
+source makemake_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Makemake'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_makemake_vectors_raw
+
+source callisto_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='504'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@599'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_callisto_vectors_raw
+
+source europa_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='502'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@599'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_europa_vectors_raw
+
+source ganymede_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='503'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@599'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_ganymede_vectors_raw
+
+source io_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='501'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@599'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_io_vectors_raw
+
+source enceladus_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='602'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@699'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_enceladus_vectors_raw
+
+source titan_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='606'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@699'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_titan_vectors_raw
+
+source triton_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='801'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@899'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_triton_vectors_raw
+
+source apophis_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_apophis_vectors_raw
+
+source bennu_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES=2101955'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_bennu_vectors_raw
+
+source atlas_3i_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='3I'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_atlas_3i_vectors_raw
+
+source encke_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='90000031'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_encke_vectors_raw
+
+source halley_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='90000001'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_halley_vectors_raw
+
+source juno_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-61'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_juno_probe_vectors_raw
+
+source jwst_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-170'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_jwst_vectors_raw
+
+source new_horizons_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-98'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_new_horizons_vectors_raw
+
+source parker_solar_probe_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_parker_vectors_raw
+
+source solar_orbiter_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-144'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_solar_orbiter_vectors_raw
+
+source voyager1_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_voyager1_vectors_raw
+
+source voyager2_vectors
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1 d'
+format text
+field result orbital_voyager2_vectors_raw
+
+source nasa_fireballs
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd-api.jpl.nasa.gov/fireball.api
+field count technosphere_fireball_event_count
+
+source jpl_atmospheric_fireballs
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd-api.jpl.nasa.gov/fireball.api
+field count technosphere_atmospheric_fireball_count
+
+source cneos_close_approaches
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd-api.jpl.nasa.gov/cad.api
+field count cneos_close_approach_count
+
+source cneos_asteroids_inside_lunar_orbit
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD
+field count cneos_inside_lunar_orbit_count
+
+source nasa_sentry
+ttl 3600
+lat 34.201
+lon -118.171
+url https://ssd-api.jpl.nasa.gov/sentry.api
+field count nasa_sentry_risk_object_count
+
+source nasa_neows
+ttl 3600
+lat 34.201
+lon -118.171
+url https://api.nasa.gov/neo/rest/v1/feed
+field element_count nasa_neo_element_count
+
+source nasa_exoplanet_total
+ttl 86400
+lat 34.136
+lon -118.127
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT%20COUNT(*)%20FROM%20ps&format=json
+field 0.count(*) nasa_exoplanet_total_count
+
+source nasa_hot_jupiters
+ttl 86400
+lat 34.136
+lon -118.127
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT%20COUNT(*)%20FROM%20ps%20WHERE%20pl_orbper%3C1&format=json
+field 0.count(*) nasa_hot_jupiter_count
+
+source nasa_eonet
+ttl 3600
+lat 38.992
+lon -76.848
+url https://eonet.gsfc.nasa.gov/api/v3/events
+field events biosphere_eonet_event_count
+
+source nasa_eonet_fires
+ttl 3600
+lat 38.992
+lon -76.848
+url https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires
+field events biosphere_eonet_wildfire_count
+
+source nasa_donki_cme
+ttl 3600
+lat 38.992
+lon -76.848
+url https://api.nasa.gov/DONKI/CME
+last startTime magnetosphere_cme_latest_time
+
+source nasa_donki_flares
+ttl 3600
+lat 38.992
+lon -76.848
+url https://api.nasa.gov/DONKI/FLR
+last classType magnetosphere_flare_latest_class
+
+source nasa_donki_gstorms
+ttl 3600
+lat 38.992
+lon -76.848
+url https://api.nasa.gov/DONKI/GST
+last kpIndex magnetosphere_geomagnetic_storm_latest_kp
+
+source nasa_donki_hss
+ttl 3600
+lat 38.992
+lon -76.848
+url https://api.nasa.gov/DONKI/HSS
+last eventTime magnetosphere_hss_latest_time
+
+source nasa_donki_ips
+ttl 3600
+lat 38.992
+lon -76.848
+url https://api.nasa.gov/DONKI/IPS
+last eventTime magnetosphere_ips_latest_time
+
+source nasa_donki_mpc
+ttl 3600
+lat 38.992
+lon -76.848
+url https://api.nasa.gov/DONKI/MPC
+last eventTime magnetosphere_mpc_latest_time
+
+source nasa_donki_rbe
+ttl 3600
+lat 38.992
+lon -76.848
+url https://api.nasa.gov/DONKI/RBE
+last eventTime magnetosphere_rbe_latest_time
+
+source nasa_donki_sep
+ttl 3600
+lat 38.992
+lon -76.848
+url https://api.nasa.gov/DONKI/SEP
+last eventTime magnetosphere_sep_latest_time
+
+source nasa_donki_xflares
+ttl 3600
+lat 38.992
+lon -76.848
+url https://api.nasa.gov/DONKI/FLR?classType=X
+last classType magnetosphere_xflare_latest_class
+
+source swpc_solar_events
+ttl 300
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/edited_events.json
+last event magnetosphere_swpc_latest_event
+
+source aurora_forecast
+ttl 300
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+field Observation_Time magnetosphere_aurora_forecast_time
+
+source aurora_nowcast_north
+ttl 300
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+field Forecast_Time magnetosphere_aurora_nowcast_north_time
+
+source ionosphere_tec_global
+ttl 300
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
+field features atmosphere_ionosphere_tec_feature_count
+
+source noaa_integral_protons
+ttl 300
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+last flux magnetosphere_integral_proton_flux
+
+source noaa_solar_indices
+ttl 3600
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
+last ssn solar_sunspot_number_observed
+
+source noaa_solar_radio_measured
+ttl 3600
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+last flux solar_radio_flux_measured
+
+source noaa_sunspots
+ttl 3600
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/json/solar_regions.json
+field length solar_active_region_count
+
+source swpc_geomag_forecast
+ttl 3600
+lat 40.015
+lon -105.271
+url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
+format text
+last line magnetosphere_geomag_forecast_raw
+
+source noaa_methane
+ttl 86400
+lat 40.037
+lon -105.245
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+format csv
+last line atmosphere_methane_ppb
+
+source noaa_n2o
+ttl 86400
+lat 40.037
+lon -105.245
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+format csv
+last line atmosphere_n2o_ppb
+
+source noaa_sf6
+ttl 86400
+lat 40.037
+lon -105.245
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+format csv
+last line atmosphere_sf6_ppt
+
+source seismic
+ttl 60
+lat 39.749
+lon -105.221
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
+field metadata.count seismic_count_hour
+
+source usgs_earthquakes_24h
+ttl 300
+lat 39.749
+lon -105.221
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+field metadata.count seismic_count_24h
+
+source usgs_deep_earthquakes
+ttl 3600
+lat 39.749
+lon -105.221
+url https://earthquake.usgs.gov/fdsnws/event/1/query?mindepth=600&format=text
+format text
+count lines seismic_deep_count
+
+source usgs_significant_rms
+ttl 3600
+lat 39.749
+lon -105.221
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+field metadata.count seismic_significant_count
+
+source usgs_streamflow
+ttl 900
+lat 38.949
+lon -77.365
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000
+last value.value hydrosphere_streamflow_cfs
+
+source usgs_volcano_alerts
+ttl 3600
+lat 38.949
+lon -77.365
+url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
+field features geosphere_volcano_alert_count
+
+source nsidc_sea_ice
+ttl 86400
+lat 40.008
+lon -105.263
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+format csv
+last line cryosphere_sea_ice_extent_north_raw
+
+source cryosphere_sea_ice_north
+ttl 86400
+lat 40.008
+lon -105.263
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+format csv
+last line cryosphere_sea_ice_extent_north_mkm2
+
+source cryosphere_sea_ice_south
+ttl 86400
+lat -75.250
+lon -0.071
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v3.0.csv
+format csv
+last line cryosphere_sea_ice_extent_south_mkm2
+
+source cryosphere_glacier_count
+ttl 604800
+lat 46.818
+lon 8.227
+url https://www.glims.org/mapservice/wfs?service=WFS&request=GetFeature&typeName=glaciers&outputFormat=application/json&maxFeatures=1
+field numberMatched cryosphere_glacier_count
+
+source cern_alice_pbpb
+ttl 86400
+lat 46.233
+lon 6.055
+url https://opendata.cern.ch/api/records/?q=experiment:ALICE&size=1
+field aggregations.collision_type technosphere_cern_alice_pbpb_count
+
+source cern_cms_data
+ttl 86400
+lat 46.233
+lon 6.055
+url https://opendata.cern.ch/api/records/?q=experiment:CMS&size=1
+field aggregations.experiment.buckets technosphere_cern_cms_record_count
+
+source cern_open_data
+ttl 86400
+lat 46.233
+lon 6.055
+url https://opendata.cern.ch/api/records/?size=1
+field aggregations.experiment.buckets technosphere_cern_total_record_count
+
+source superk_proton_decay
+ttl 86400
+lat 36.428
+lon 137.310
+url https://inspirehep.net/api/literature?q=find%20t%20proton%20decay&size=0
+field hits.total physics_proton_decay_paper_count
+
+source gaia_total_measured_stars
+ttl 604800
+lat 40.443
+lon -3.951
+url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT%20COUNT(*)%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E0&format=json
+field data.0.0 gaia_total_measured_star_count
+
+source gaia_nearby_stars
+ttl 604800
+lat 40.443
+lon -3.951
+url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT%20COUNT(*)%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E100&format=json
+field data.0.0 gaia_nearby_star_count
+
+source gaia_variable_stars
+ttl 604800
+lat 40.443
+lon -3.951
+url https://gea.esac.esa.int/tap-server/tap/sync?query=SELECT%20COUNT(*)%20FROM%20gaiadr3.vari_classifier_result&format=json
+field data.0.0 gaia_variable_star_count
+
+source copernicus_sentinel2_count
+ttl 3600
+lat 41.827
+lon 12.674
+url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$top=1&$count=true
+field @odata.count copernicus_sentinel2_product_count
+
+source simbad_total_objects
+ttl 604800
+lat 48.583
+lon 7.751
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?query=SELECT%20COUNT(*)%20FROM%20basic&format=json
+field data.0.0 simbad_total_object_count
+
+source simbad_white_dwarfs
+ttl 604800
+lat 48.583
+lon 7.751
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?query=SELECT%20COUNT(*)%20FROM%20basic%20WHERE%20otype='WD*'&format=json
+field data.0.0 simbad_white_dwarf_count
+
+source simbad_quasars
+ttl 604800
+lat 48.583
+lon 7.751
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?query=SELECT%20COUNT(*)%20FROM%20basic%20WHERE%20otype='QSO'&format=json
+field data.0.0 simbad_quasar_count
+
+source simbad_pulsars
+ttl 604800
+lat 48.583
+lon 7.751
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?query=SELECT%20COUNT(*)%20FROM%20basic%20WHERE%20otype='Psr'&format=json
+field data.0.0 simbad_pulsar_count
+
+source simbad_galaxies
+ttl 604800
+lat 48.583
+lon 7.751
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?query=SELECT%20COUNT(*)%20FROM%20basic%20WHERE%20otype='G'&format=json
+field data.0.0 simbad_galaxy_count
+
+source simbad_novae
+ttl 604800
+lat 48.583
+lon 7.751
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?query=SELECT%20COUNT(*)%20FROM%20basic%20WHERE%20otype='No*'&format=json
+field data.0.0 simbad_nova_count
+
+source simbad_supernovae
+ttl 604800
+lat 48.583
+lon 7.751
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?query=SELECT%20COUNT(*)%20FROM%20basic%20WHERE%20otype='SN*'&format=json
+field data.0.0 simbad_supernova_count
+
+source simbad_highest_redshift_quasar
+ttl 604800
+lat 48.583
+lon 7.751
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?query=SELECT%20TOP%201%20rvz_redshift%20FROM%20basic%20WHERE%20otype='QSO'%20AND%20rvz_redshift%20IS%20NOT%20NULL%20ORDER%20BY%20rvz_redshift%20DESC&format=json
+field data.0.0 simbad_highest_redshift_quasar_z
+
+source celestrak_gps
+ttl 3600
+lat 40.034
+lon -75.630
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=csv
+format csv
+count lines technosphere_gps_satellite_count
+
+source celestrak_satellites
+ttl 3600
+lat 40.034
+lon -75.630
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=csv
+format csv
+count lines technosphere_active_satellite_count
+
+source celestrak_debris
+ttl 3600
+lat 40.034
+lon -75.630
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=iridium-33-debris&FORMAT=csv
+format csv
+count lines technosphere_debris_object_count
+
+source celestrak_starlink
+ttl 3600
+lat 40.034
+lon -75.630
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=csv
+format csv
+count lines technosphere_starlink_satellite_count
+
+source spacex_latest_launch
+ttl 3600
+lat 33.921
+lon -118.326
+url https://api.spacexdata.com/v5/launches/latest
+field name technosphere_spacex_latest_launch_name
+field date_utc technosphere_spacex_latest_launch_date
+
+source launch_library
+ttl 3600
+lat 33.921
+lon -118.326
+url https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1
+field count technosphere_upcoming_launch_count
+
+source satnogs_radio_observations
+ttl 300
+lat 37.983
+lon 23.727
+url https://network.satnogs.org/api/observations/?format=json
+field count technosphere_satnogs_observation_count
+
+source who_influenza
+ttl 86400
+lat 46.234
+lon 6.140
+url https://xmart-api-public.who.int/FLUMART/VIW_FNT
+field value anthroposphere_influenza_record_count
+
+source who_cholera
+ttl 86400
+lat 46.234
+lon 6.140
+url https://ghoapi.azureedge.net/api/CHOLERA_0000000001
+field value anthroposphere_cholera_record_count
+
+source who_gho_tuberculosis
+ttl 86400
+lat 46.234
+lon 6.140
+url https://ghoapi.azureedge.net/api/MDG_0000000020
+field value anthroposphere_tuberculosis_record_count
+
+source unhcr_displacement
+ttl 86400
+lat 46.234
+lon 6.140
+url https://api.unhcr.org/population/v1/population/?limit=1
+field items anthroposphere_displacement_record
+
+source worldbank_co2_emissions
+ttl 604800
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.GHG.CO2.MT.CE.AR5?format=json
+field 1.0.value worldbank_co2_emissions_value
+
+source worldbank_population
+ttl 604800
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.TOTL?format=json
+field 1.0.value anthroposphere_worldbank_population_total
+
+source worldbank_gdp_growth_ABW
+ttl 604800
+lat 12.52
+lon -70.02
+url https://api.worldbank.org/v2/country/ABW/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ABW
+
+source worldbank_gdp_growth_AFG
+ttl 604800
+lat 34.55
+lon 69.20
+url https://api.worldbank.org/v2/country/AFG/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_AFG
+
+source worldbank_gdp_growth_AGO
+ttl 604800
+lat -8.83
+lon 13.28
+url https://api.worldbank.org/v2/country/AGO/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_AGO
+
+source worldbank_gdp_growth_ALB
+ttl 604800
+lat 41.32
+lon 19.81
+url https://api.worldbank.org/v2/country/ALB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ALB
+
+source worldbank_gdp_growth_AND
+ttl 604800
+lat 42.50
+lon 1.52
+url https://api.worldbank.org/v2/country/AND/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_AND
+
+source worldbank_gdp_growth_ARE
+ttl 604800
+lat 24.45
+lon 54.37
+url https://api.worldbank.org/v2/country/ARE/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ARE
+
+source worldbank_gdp_growth_ARG
+ttl 604800
+lat -34.60
+lon -58.38
+url https://api.worldbank.org/v2/country/ARG/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ARG
+
+source worldbank_gdp_growth_ARM
+ttl 604800
+lat 40.17
+lon 44.49
+url https://api.worldbank.org/v2/country/ARM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ARM
+
+source worldbank_gdp_growth_ASM
+ttl 604800
+lat -14.27
+lon -170.70
+url https://api.worldbank.org/v2/country/ASM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ASM
+
+source worldbank_gdp_growth_ATG
+ttl 604800
+lat 17.12
+lon -61.84
+url https://api.worldbank.org/v2/country/ATG/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ATG
+
+source worldbank_gdp_growth_AUS
+ttl 604800
+lat -35.28
+lon 149.13
+url https://api.worldbank.org/v2/country/AUS/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_AUS
+
+source worldbank_gdp_growth_AUT
+ttl 604800
+lat 48.20
+lon 16.37
+url https://api.worldbank.org/v2/country/AUT/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_AUT
+
+source worldbank_gdp_growth_AZE
+ttl 604800
+lat 40.40
+lon 49.86
+url https://api.worldbank.org/v2/country/AZE/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_AZE
+
+source worldbank_gdp_growth_BDI
+ttl 604800
+lat -3.42
+lon 29.93
+url https://api.worldbank.org/v2/country/BDI/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BDI
+
+source worldbank_gdp_growth_BEL
+ttl 604800
+lat 50.85
+lon 4.35
+url https://api.worldbank.org/v2/country/BEL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BEL
+
+source worldbank_gdp_growth_BEN
+ttl 604800
+lat 6.49
+lon 2.62
+url https://api.worldbank.org/v2/country/BEN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BEN
+
+source worldbank_gdp_growth_BFA
+ttl 604800
+lat 12.37
+lon -1.51
+url https://api.worldbank.org/v2/country/BFA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BFA
+
+source worldbank_gdp_growth_BGD
+ttl 604800
+lat 23.81
+lon 90.41
+url https://api.worldbank.org/v2/country/BGD/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BGD
+
+source worldbank_gdp_growth_BGR
+ttl 604800
+lat 42.69
+lon 23.32
+url https://api.worldbank.org/v2/country/BGR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BGR
+
+source worldbank_gdp_growth_BHR
+ttl 604800
+lat 26.22
+lon 50.58
+url https://api.worldbank.org/v2/country/BHR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BHR
+
+source worldbank_gdp_growth_BHS
+ttl 604800
+lat 25.03
+lon -77.39
+url https://api.worldbank.org/v2/country/BHS/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BHS
+
+source worldbank_gdp_growth_BIH
+ttl 604800
+lat 43.85
+lon 18.41
+url https://api.worldbank.org/v2/country/BIH/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BIH
+
+source worldbank_gdp_growth_BLR
+ttl 604800
+lat 53.90
+lon 27.55
+url https://api.worldbank.org/v2/country/BLR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BLR
+
+source worldbank_gdp_growth_BLZ
+ttl 604800
+lat 17.25
+lon -88.75
+url https://api.worldbank.org/v2/country/BLZ/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BLZ
+
+source worldbank_gdp_growth_BMU
+ttl 604800
+lat 32.29
+lon -64.78
+url https://api.worldbank.org/v2/country/BMU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BMU
+
+source worldbank_gdp_growth_BOL
+ttl 604800
+lat -16.48
+lon -68.11
+url https://api.worldbank.org/v2/country/BOL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BOL
+
+source worldbank_gdp_growth_BRA
+ttl 604800
+lat -15.78
+lon -47.92
+url https://api.worldbank.org/v2/country/BRA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BRA
+
+source worldbank_gdp_growth_BRB
+ttl 604800
+lat 13.11
+lon -59.59
+url https://api.worldbank.org/v2/country/BRB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BRB
+
+source worldbank_gdp_growth_BRN
+ttl 604800
+lat 4.90
+lon 114.93
+url https://api.worldbank.org/v2/country/BRN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BRN
+
+source worldbank_gdp_growth_BTN
+ttl 604800
+lat 27.47
+lon 89.63
+url https://api.worldbank.org/v2/country/BTN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BTN
+
+source worldbank_gdp_growth_BWA
+ttl 604800
+lat -24.62
+lon 25.92
+url https://api.worldbank.org/v2/country/BWA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_BWA
+
+source worldbank_gdp_growth_CAF
+ttl 604800
+lat 4.39
+lon 18.55
+url https://api.worldbank.org/v2/country/CAF/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CAF
+
+source worldbank_gdp_growth_CAN
+ttl 604800
+lat 45.42
+lon -75.69
+url https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CAN
+
+source worldbank_gdp_growth_CHE
+ttl 604800
+lat 46.94
+lon 7.44
+url https://api.worldbank.org/v2/country/CHE/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CHE
+
+source worldbank_gdp_growth_CHI
+ttl 604800
+lat 49.18
+lon -2.10
+url https://api.worldbank.org/v2/country/CHI/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CHI
+
+source worldbank_gdp_growth_CHL
+ttl 604800
+lat -33.44
+lon -70.66
+url https://api.worldbank.org/v2/country/CHL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CHL
+
+source worldbank_gdp_growth_CHN
+ttl 604800
+lat 39.90
+lon 116.40
+url https://api.worldbank.org/v2/country/CHN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CHN
+
+source worldbank_gdp_growth_CIV
+ttl 604800
+lat 6.82
+lon -5.28
+url https://api.worldbank.org/v2/country/CIV/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CIV
+
+source worldbank_gdp_growth_CMR
+ttl 604800
+lat 3.84
+lon 11.50
+url https://api.worldbank.org/v2/country/CMR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CMR
+
+source worldbank_gdp_growth_COD
+ttl 604800
+lat -4.44
+lon 15.26
+url https://api.worldbank.org/v2/country/COD/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_COD
+
+source worldbank_gdp_growth_COG
+ttl 604800
+lat -4.26
+lon 15.24
+url https://api.worldbank.org/v2/country/COG/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_COG
+
+source worldbank_gdp_growth_COL
+ttl 604800
+lat 4.71
+lon -74.07
+url https://api.worldbank.org/v2/country/COL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_COL
+
+source worldbank_gdp_growth_COM
+ttl 604800
+lat -11.71
+lon 43.24
+url https://api.worldbank.org/v2/country/COM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_COM
+
+source worldbank_gdp_growth_CPV
+ttl 604800
+lat 14.93
+lon -23.51
+url https://api.worldbank.org/v2/country/CPV/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CPV
+
+source worldbank_gdp_growth_CRI
+ttl 604800
+lat 9.92
+lon -84.09
+url https://api.worldbank.org/v2/country/CRI/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CRI
+
+source worldbank_gdp_growth_CUB
+ttl 604800
+lat 23.11
+lon -82.36
+url https://api.worldbank.org/v2/country/CUB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CUB
+
+source worldbank_gdp_growth_CUW
+ttl 604800
+lat 12.10
+lon -68.93
+url https://api.worldbank.org/v2/country/CUW/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CUW
+
+source worldbank_gdp_growth_CYM
+ttl 604800
+lat 19.28
+lon -81.36
+url https://api.worldbank.org/v2/country/CYM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CYM
+
+source worldbank_gdp_growth_CYP
+ttl 604800
+lat 35.18
+lon 33.38
+url https://api.worldbank.org/v2/country/CYP/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CYP
+
+source worldbank_gdp_growth_CZE
+ttl 604800
+lat 50.07
+lon 14.43
+url https://api.worldbank.org/v2/country/CZE/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_CZE
+
+source worldbank_gdp_growth_DEU
+ttl 604800
+lat 52.52
+lon 13.40
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_DEU
+
+source worldbank_gdp_growth_DJI
+ttl 604800
+lat 11.57
+lon 43.14
+url https://api.worldbank.org/v2/country/DJI/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_DJI
+
+source worldbank_gdp_growth_DMA
+ttl 604800
+lat 15.30
+lon -61.37
+url https://api.worldbank.org/v2/country/DMA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_DMA
+
+source worldbank_gdp_growth_DNK
+ttl 604800
+lat 55.67
+lon 12.56
+url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_DNK
+
+source worldbank_gdp_growth_DOM
+ttl 604800
+lat 18.48
+lon -69.93
+url https://api.worldbank.org/v2/country/DOM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_DOM
+
+source worldbank_gdp_growth_DZA
+ttl 604800
+lat 36.75
+lon 3.05
+url https://api.worldbank.org/v2/country/DZA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_DZA
+
+source worldbank_gdp_growth_ECU
+ttl 604800
+lat -0.18
+lon -78.46
+url https://api.worldbank.org/v2/country/ECU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ECU
+
+source worldbank_gdp_growth_EGY
+ttl 604800
+lat 30.04
+lon 31.23
+url https://api.worldbank.org/v2/country/EGY/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_EGY
+
+source worldbank_gdp_growth_ERI
+ttl 604800
+lat 15.32
+lon 38.92
+url https://api.worldbank.org/v2/country/ERI/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ERI
+
+source worldbank_gdp_growth_ESP
+ttl 604800
+lat 40.41
+lon -3.70
+url https://api.worldbank.org/v2/country/ESP/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ESP
+
+source worldbank_gdp_growth_EST
+ttl 604800
+lat 59.43
+lon 24.75
+url https://api.worldbank.org/v2/country/EST/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_EST
+
+source worldbank_gdp_growth_ETH
+ttl 604800
+lat 9.03
+lon 38.74
+url https://api.worldbank.org/v2/country/ETH/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ETH
+
+source worldbank_gdp_growth_FIN
+ttl 604800
+lat 60.16
+lon 24.93
+url https://api.worldbank.org/v2/country/FIN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_FIN
+
+source worldbank_gdp_growth_FJI
+ttl 604800
+lat -18.14
+lon 178.44
+url https://api.worldbank.org/v2/country/FJI/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_FJI
+
+source worldbank_gdp_growth_FRA
+ttl 604800
+lat 48.85
+lon 2.35
+url https://api.worldbank.org/v2/country/FRA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_FRA
+
+source worldbank_gdp_growth_FRO
+ttl 604800
+lat 62.00
+lon -6.77
+url https://api.worldbank.org/v2/country/FRO/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_FRO
+
+source worldbank_gdp_growth_FSM
+ttl 604800
+lat 6.91
+lon 158.16
+url https://api.worldbank.org/v2/country/FSM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_FSM
+
+source worldbank_gdp_growth_GAB
+ttl 604800
+lat 0.41
+lon 9.46
+url https://api.worldbank.org/v2/country/GAB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GAB
+
+source worldbank_gdp_growth_GBR
+ttl 604800
+lat 51.50
+lon -0.12
+url https://api.worldbank.org/v2/country/GBR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GBR
+
+source worldbank_gdp_growth_GEO
+ttl 604800
+lat 41.71
+lon 44.82
+url https://api.worldbank.org/v2/country/GEO/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GEO
+
+source worldbank_gdp_growth_GHA
+ttl 604800
+lat 5.60
+lon -0.18
+url https://api.worldbank.org/v2/country/GHA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GHA
+
+source worldbank_gdp_growth_GIN
+ttl 604800
+lat 9.64
+lon -13.57
+url https://api.worldbank.org/v2/country/GIN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GIN
+
+source worldbank_gdp_growth_GMB
+ttl 604800
+lat 13.45
+lon -16.57
+url https://api.worldbank.org/v2/country/GMB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GMB
+
+source worldbank_gdp_growth_GNB
+ttl 604800
+lat 11.86
+lon -15.59
+url https://api.worldbank.org/v2/country/GNB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GNB
+
+source worldbank_gdp_growth_GNQ
+ttl 604800
+lat 3.75
+lon 8.77
+url https://api.worldbank.org/v2/country/GNQ/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GNQ
+
+source worldbank_gdp_growth_GRC
+ttl 604800
+lat 37.98
+lon 23.72
+url https://api.worldbank.org/v2/country/GRC/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GRC
+
+source worldbank_gdp_growth_GRD
+ttl 604800
+lat 12.05
+lon -61.74
+url https://api.worldbank.org/v2/country/GRD/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GRD
+
+source worldbank_gdp_growth_GRL
+ttl 604800
+lat 64.18
+lon -51.72
+url https://api.worldbank.org/v2/country/GRL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GRL
+
+source worldbank_gdp_growth_GTM
+ttl 604800
+lat 14.63
+lon -90.50
+url https://api.worldbank.org/v2/country/GTM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GTM
+
+source worldbank_gdp_growth_GUM
+ttl 604800
+lat 13.47
+lon 144.75
+url https://api.worldbank.org/v2/country/GUM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GUM
+
+source worldbank_gdp_growth_GUY
+ttl 604800
+lat 6.80
+lon -58.15
+url https://api.worldbank.org/v2/country/GUY/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_GUY
+
+source worldbank_gdp_growth_HKG
+ttl 604800
+lat 22.31
+lon 114.16
+url https://api.worldbank.org/v2/country/HKG/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_HKG
+
+source worldbank_gdp_growth_HND
+ttl 604800
+lat 14.07
+lon -87.19
+url https://api.worldbank.org/v2/country/HND/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_HND
+
+source worldbank_gdp_growth_HRV
+ttl 604800
+lat 45.81
+lon 15.98
+url https://api.worldbank.org/v2/country/HRV/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_HRV
+
+source worldbank_gdp_growth_HTI
+ttl 604800
+lat 18.59
+lon -72.30
+url https://api.worldbank.org/v2/country/HTI/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_HTI
+
+source worldbank_gdp_growth_HUN
+ttl 604800
+lat 47.49
+lon 19.04
+url https://api.worldbank.org/v2/country/HUN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_HUN
+
+source worldbank_gdp_growth_IDN
+ttl 604800
+lat -6.20
+lon 106.84
+url https://api.worldbank.org/v2/country/IDN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_IDN
+
+source worldbank_gdp_growth_IND
+ttl 604800
+lat 28.61
+lon 77.20
+url https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_IND
+
+source worldbank_gdp_growth_IRL
+ttl 604800
+lat 53.34
+lon -6.26
+url https://api.worldbank.org/v2/country/IRL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_IRL
+
+source worldbank_gdp_growth_IRN
+ttl 604800
+lat 35.68
+lon 51.38
+url https://api.worldbank.org/v2/country/IRN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_IRN
+
+source worldbank_gdp_growth_IRQ
+ttl 604800
+lat 33.31
+lon 44.36
+url https://api.worldbank.org/v2/country/IRQ/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_IRQ
+
+source worldbank_gdp_growth_ISL
+ttl 604800
+lat 64.14
+lon -21.94
+url https://api.worldbank.org/v2/country/ISL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ISL
+
+source worldbank_gdp_growth_ISR
+ttl 604800
+lat 31.76
+lon 35.21
+url https://api.worldbank.org/v2/country/ISR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ISR
+
+source worldbank_gdp_growth_ITA
+ttl 604800
+lat 41.90
+lon 12.49
+url https://api.worldbank.org/v2/country/ITA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ITA
+
+source worldbank_gdp_growth_JAM
+ttl 604800
+lat 17.97
+lon -76.79
+url https://api.worldbank.org/v2/country/JAM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_JAM
+
+source worldbank_gdp_growth_JOR
+ttl 604800
+lat 31.94
+lon 35.92
+url https://api.worldbank.org/v2/country/JOR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_JOR
+
+source worldbank_gdp_growth_JPN
+ttl 604800
+lat 35.67
+lon 139.65
+url https://api.worldbank.org/v2/country/JPN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_JPN
+
+source worldbank_gdp_growth_KAZ
+ttl 604800
+lat 51.16
+lon 71.44
+url https://api.worldbank.org/v2/country/KAZ/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_KAZ
+
+source worldbank_gdp_growth_KEN
+ttl 604800
+lat -1.29
+lon 36.82
+url https://api.worldbank.org/v2/country/KEN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_KEN
+
+source worldbank_gdp_growth_KGZ
+ttl 604800
+lat 42.87
+lon 74.56
+url https://api.worldbank.org/v2/country/KGZ/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_KGZ
+
+source worldbank_gdp_growth_KHM
+ttl 604800
+lat 11.55
+lon 104.92
+url https://api.worldbank.org/v2/country/KHM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_KHM
+
+source worldbank_gdp_growth_KIR
+ttl 604800
+lat 1.33
+lon 172.97
+url https://api.worldbank.org/v2/country/KIR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_KIR
+
+source worldbank_gdp_growth_KNA
+ttl 604800
+lat 17.30
+lon -62.71
+url https://api.worldbank.org/v2/country/KNA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_KNA
+
+source worldbank_gdp_growth_KOR
+ttl 604800
+lat 37.56
+lon 126.97
+url https://api.worldbank.org/v2/country/KOR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_KOR
+
+source worldbank_gdp_growth_KWT
+ttl 604800
+lat 29.37
+lon 47.97
+url https://api.worldbank.org/v2/country/KWT/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_KWT
+
+source worldbank_gdp_growth_LAO
+ttl 604800
+lat 17.97
+lon 102.63
+url https://api.worldbank.org/v2/country/LAO/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LAO
+
+source worldbank_gdp_growth_LBN
+ttl 604800
+lat 33.89
+lon 35.50
+url https://api.worldbank.org/v2/country/LBN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LBN
+
+source worldbank_gdp_growth_LBR
+ttl 604800
+lat 6.29
+lon -10.76
+url https://api.worldbank.org/v2/country/LBR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LBR
+
+source worldbank_gdp_growth_LBY
+ttl 604800
+lat 32.88
+lon 13.19
+url https://api.worldbank.org/v2/country/LBY/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LBY
+
+source worldbank_gdp_growth_LCA
+ttl 604800
+lat 14.01
+lon -60.98
+url https://api.worldbank.org/v2/country/LCA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LCA
+
+source worldbank_gdp_growth_LIE
+ttl 604800
+lat 47.14
+lon 9.52
+url https://api.worldbank.org/v2/country/LIE/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LIE
+
+source worldbank_gdp_growth_LKA
+ttl 604800
+lat 6.90
+lon 79.97
+url https://api.worldbank.org/v2/country/LKA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LKA
+
+source worldbank_gdp_growth_LSO
+ttl 604800
+lat -29.31
+lon 27.48
+url https://api.worldbank.org/v2/country/LSO/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LSO
+
+source worldbank_gdp_growth_LTU
+ttl 604800
+lat 54.68
+lon 25.27
+url https://api.worldbank.org/v2/country/LTU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LTU
+
+source worldbank_gdp_growth_LUX
+ttl 604800
+lat 49.61
+lon 6.13
+url https://api.worldbank.org/v2/country/LUX/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LUX
+
+source worldbank_gdp_growth_LVA
+ttl 604800
+lat 56.94
+lon 24.10
+url https://api.worldbank.org/v2/country/LVA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_LVA
+
+source worldbank_gdp_growth_MAC
+ttl 604800
+lat 22.19
+lon 113.54
+url https://api.worldbank.org/v2/country/MAC/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MAC
+
+source worldbank_gdp_growth_MAR
+ttl 604800
+lat 34.02
+lon -6.84
+url https://api.worldbank.org/v2/country/MAR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MAR
+
+source worldbank_gdp_growth_MCO
+ttl 604800
+lat 43.73
+lon 7.42
+url https://api.worldbank.org/v2/country/MCO/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MCO
+
+source worldbank_gdp_growth_MDA
+ttl 604800
+lat 47.01
+lon 28.86
+url https://api.worldbank.org/v2/country/MDA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MDA
+
+source worldbank_gdp_growth_MDG
+ttl 604800
+lat -18.87
+lon 47.50
+url https://api.worldbank.org/v2/country/MDG/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MDG
+
+source worldbank_gdp_growth_MDV
+ttl 604800
+lat 4.17
+lon 73.50
+url https://api.worldbank.org/v2/country/MDV/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MDV
+
+source worldbank_gdp_growth_MEX
+ttl 604800
+lat 19.43
+lon -99.13
+url https://api.worldbank.org/v2/country/MEX/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MEX
+
+source worldbank_gdp_growth_MHL
+ttl 604800
+lat 7.11
+lon 171.18
+url https://api.worldbank.org/v2/country/MHL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MHL
+
+source worldbank_gdp_growth_MKD
+ttl 604800
+lat 41.99
+lon 21.42
+url https://api.worldbank.org/v2/country/MKD/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MKD
+
+source worldbank_gdp_growth_MLI
+ttl 604800
+lat 12.63
+lon -8.00
+url https://api.worldbank.org/v2/country/MLI/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MLI
+
+source worldbank_gdp_growth_MLT
+ttl 604800
+lat 35.89
+lon 14.51
+url https://api.worldbank.org/v2/country/MLT/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MLT
+
+source worldbank_gdp_growth_MMR
+ttl 604800
+lat 19.76
+lon 96.07
+url https://api.worldbank.org/v2/country/MMR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MMR
+
+source worldbank_gdp_growth_MNE
+ttl 604800
+lat 42.43
+lon 19.25
+url https://api.worldbank.org/v2/country/MNE/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MNE
+
+source worldbank_gdp_growth_MNG
+ttl 604800
+lat 47.88
+lon 106.90
+url https://api.worldbank.org/v2/country/MNG/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MNG
+
+source worldbank_gdp_growth_MNP
+ttl 604800
+lat 15.19
+lon 145.74
+url https://api.worldbank.org/v2/country/MNP/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MNP
+
+source worldbank_gdp_growth_MOZ
+ttl 604800
+lat -25.96
+lon 32.57
+url https://api.worldbank.org/v2/country/MOZ/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MOZ
+
+source worldbank_gdp_growth_MRT
+ttl 604800
+lat 18.07
+lon -15.95
+url https://api.worldbank.org/v2/country/MRT/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MRT
+
+source worldbank_gdp_growth_MUS
+ttl 604800
+lat -20.16
+lon 57.50
+url https://api.worldbank.org/v2/country/MUS/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MUS
+
+source worldbank_gdp_growth_MWI
+ttl 604800
+lat -13.96
+lon 33.77
+url https://api.worldbank.org/v2/country/MWI/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MWI
+
+source worldbank_gdp_growth_MYS
+ttl 604800
+lat 3.13
+lon 101.68
+url https://api.worldbank.org/v2/country/MYS/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_MYS
+
+source worldbank_gdp_growth_NAM
+ttl 604800
+lat -22.56
+lon 17.06
+url https://api.worldbank.org/v2/country/NAM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_NAM
+
+source worldbank_gdp_growth_NCL
+ttl 604800
+lat -22.27
+lon 166.45
+url https://api.worldbank.org/v2/country/NCL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_NCL
+
+source worldbank_gdp_growth_NER
+ttl 604800
+lat 13.51
+lon 2.11
+url https://api.worldbank.org/v2/country/NER/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_NER
+
+source worldbank_gdp_growth_NGA
+ttl 604800
+lat 9.07
+lon 7.39
+url https://api.worldbank.org/v2/country/NGA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_NGA
+
+source worldbank_gdp_growth_NIC
+ttl 604800
+lat 12.11
+lon -86.23
+url https://api.worldbank.org/v2/country/NIC/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_NIC
+
+source worldbank_gdp_growth_NLD
+ttl 604800
+lat 52.36
+lon 4.90
+url https://api.worldbank.org/v2/country/NLD/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_NLD
+
+source worldbank_gdp_growth_NOR
+ttl 604800
+lat 59.91
+lon 10.75
+url https://api.worldbank.org/v2/country/NOR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_NOR
+
+source worldbank_gdp_growth_NPL
+ttl 604800
+lat 27.71
+lon 85.32
+url https://api.worldbank.org/v2/country/NPL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_NPL
+
+source worldbank_gdp_growth_NRU
+ttl 604800
+lat -0.54
+lon 166.92
+url https://api.worldbank.org/v2/country/NRU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_NRU
+
+source worldbank_gdp_growth_NZL
+ttl 604800
+lat -41.28
+lon 174.77
+url https://api.worldbank.org/v2/country/NZL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_NZL
+
+source worldbank_gdp_growth_OMN
+ttl 604800
+lat 23.58
+lon 58.40
+url https://api.worldbank.org/v2/country/OMN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_OMN
+
+source worldbank_gdp_growth_PAK
+ttl 604800
+lat 33.68
+lon 73.04
+url https://api.worldbank.org/v2/country/PAK/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PAK
+
+source worldbank_gdp_growth_PAN
+ttl 604800
+lat 8.98
+lon -79.51
+url https://api.worldbank.org/v2/country/PAN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PAN
+
+source worldbank_gdp_growth_PER
+ttl 604800
+lat -12.04
+lon -77.04
+url https://api.worldbank.org/v2/country/PER/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PER
+
+source worldbank_gdp_growth_PHL
+ttl 604800
+lat 14.59
+lon 120.98
+url https://api.worldbank.org/v2/country/PHL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PHL
+
+source worldbank_gdp_growth_PLW
+ttl 604800
+lat 7.50
+lon 134.62
+url https://api.worldbank.org/v2/country/PLW/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PLW
+
+source worldbank_gdp_growth_PNG
+ttl 604800
+lat -9.44
+lon 147.18
+url https://api.worldbank.org/v2/country/PNG/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PNG
+
+source worldbank_gdp_growth_POL
+ttl 604800
+lat 52.22
+lon 21.01
+url https://api.worldbank.org/v2/country/POL/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_POL
+
+source worldbank_gdp_growth_PRI
+ttl 604800
+lat 18.46
+lon -66.10
+url https://api.worldbank.org/v2/country/PRI/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PRI
+
+source worldbank_gdp_growth_PRK
+ttl 604800
+lat 39.03
+lon 125.76
+url https://api.worldbank.org/v2/country/PRK/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PRK
+
+source worldbank_gdp_growth_PRT
+ttl 604800
+lat 38.72
+lon -9.13
+url https://api.worldbank.org/v2/country/PRT/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PRT
+
+source worldbank_gdp_growth_PRY
+ttl 604800
+lat -25.26
+lon -57.57
+url https://api.worldbank.org/v2/country/PRY/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PRY
+
+source worldbank_gdp_growth_PSE
+ttl 604800
+lat 31.89
+lon 35.20
+url https://api.worldbank.org/v2/country/PSE/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PSE
+
+source worldbank_gdp_growth_PYF
+ttl 604800
+lat -17.55
+lon -149.55
+url https://api.worldbank.org/v2/country/PYF/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_PYF
+
+source worldbank_gdp_growth_QAT
+ttl 604800
+lat 25.28
+lon 51.53
+url https://api.worldbank.org/v2/country/QAT/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_QAT
+
+source worldbank_gdp_growth_ROU
+ttl 604800
+lat 44.42
+lon 26.10
+url https://api.worldbank.org/v2/country/ROU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ROU
+
+source worldbank_gdp_growth_RUS
+ttl 604800
+lat 55.75
+lon 37.61
+url https://api.worldbank.org/v2/country/RUS/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_RUS
+
+source worldbank_gdp_growth_RWA
+ttl 604800
+lat -1.94
+lon 29.87
+url https://api.worldbank.org/v2/country/RWA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_RWA
+
+source worldbank_gdp_growth_SAU
+ttl 604800
+lat 24.71
+lon 46.67
+url https://api.worldbank.org/v2/country/SAU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SAU
+
+source worldbank_gdp_growth_SDN
+ttl 604800
+lat 15.50
+lon 32.55
+url https://api.worldbank.org/v2/country/SDN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SDN
+
+source worldbank_gdp_growth_SEN
+ttl 604800
+lat 14.71
+lon -17.46
+url https://api.worldbank.org/v2/country/SEN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SEN
+
+source worldbank_gdp_growth_SGP
+ttl 604800
+lat 1.35
+lon 103.81
+url https://api.worldbank.org/v2/country/SGP/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SGP
+
+source worldbank_gdp_growth_SLB
+ttl 604800
+lat -9.42
+lon 159.95
+url https://api.worldbank.org/v2/country/SLB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SLB
+
+source worldbank_gdp_growth_SLE
+ttl 604800
+lat 8.46
+lon -13.23
+url https://api.worldbank.org/v2/country/SLE/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SLE
+
+source worldbank_gdp_growth_SLV
+ttl 604800
+lat 13.69
+lon -89.21
+url https://api.worldbank.org/v2/country/SLV/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SLV
+
+source worldbank_gdp_growth_SMR
+ttl 604800
+lat 43.94
+lon 12.45
+url https://api.worldbank.org/v2/country/SMR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SMR
+
+source worldbank_gdp_growth_SOM
+ttl 604800
+lat 2.04
+lon 45.31
+url https://api.worldbank.org/v2/country/SOM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SOM
+
+source worldbank_gdp_growth_SRB
+ttl 604800
+lat 44.78
+lon 20.44
+url https://api.worldbank.org/v2/country/SRB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SRB
+
+source worldbank_gdp_growth_SSD
+ttl 604800
+lat 4.85
+lon 31.58
+url https://api.worldbank.org/v2/country/SSD/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SSD
+
+source worldbank_gdp_growth_STP
+ttl 604800
+lat 0.33
+lon 6.67
+url https://api.worldbank.org/v2/country/STP/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_STP
+
+source worldbank_gdp_growth_SUR
+ttl 604800
+lat 5.85
+lon -55.20
+url https://api.worldbank.org/v2/country/SUR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SUR
+
+source worldbank_gdp_growth_SVK
+ttl 604800
+lat 48.14
+lon 17.10
+url https://api.worldbank.org/v2/country/SVK/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SVK
+
+source worldbank_gdp_growth_SVN
+ttl 604800
+lat 46.05
+lon 14.50
+url https://api.worldbank.org/v2/country/SVN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SVN
+
+source worldbank_gdp_growth_SWE
+ttl 604800
+lat 59.32
+lon 18.06
+url https://api.worldbank.org/v2/country/SWE/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SWE
+
+source worldbank_gdp_growth_SWZ
+ttl 604800
+lat -26.30
+lon 31.13
+url https://api.worldbank.org/v2/country/SWZ/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SWZ
+
+source worldbank_gdp_growth_SXM
+ttl 604800
+lat 18.02
+lon -63.04
+url https://api.worldbank.org/v2/country/SXM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SXM
+
+source worldbank_gdp_growth_SYC
+ttl 604800
+lat -4.61
+lon 55.45
+url https://api.worldbank.org/v2/country/SYC/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SYC
+
+source worldbank_gdp_growth_SYR
+ttl 604800
+lat 33.51
+lon 36.27
+url https://api.worldbank.org/v2/country/SYR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_SYR
+
+source worldbank_gdp_growth_TCD
+ttl 604800
+lat 12.13
+lon 15.05
+url https://api.worldbank.org/v2/country/TCD/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TCD
+
+source worldbank_gdp_growth_TGO
+ttl 604800
+lat 6.17
+lon 1.23
+url https://api.worldbank.org/v2/country/TGO/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TGO
+
+source worldbank_gdp_growth_THA
+ttl 604800
+lat 13.75
+lon 100.50
+url https://api.worldbank.org/v2/country/THA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_THA
+
+source worldbank_gdp_growth_TJK
+ttl 604800
+lat 38.55
+lon 68.78
+url https://api.worldbank.org/v2/country/TJK/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TJK
+
+source worldbank_gdp_growth_TKM
+ttl 604800
+lat 37.96
+lon 58.32
+url https://api.worldbank.org/v2/country/TKM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TKM
+
+source worldbank_gdp_growth_TLS
+ttl 604800
+lat -8.55
+lon 125.56
+url https://api.worldbank.org/v2/country/TLS/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TLS
+
+source worldbank_gdp_growth_TON
+ttl 604800
+lat -21.13
+lon -175.20
+url https://api.worldbank.org/v2/country/TON/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TON
+
+source worldbank_gdp_growth_TTO
+ttl 604800
+lat 10.65
+lon -61.50
+url https://api.worldbank.org/v2/country/TTO/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TTO
+
+source worldbank_gdp_growth_TUN
+ttl 604800
+lat 36.80
+lon 10.18
+url https://api.worldbank.org/v2/country/TUN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TUN
+
+source worldbank_gdp_growth_TUR
+ttl 604800
+lat 39.93
+lon 32.85
+url https://api.worldbank.org/v2/country/TUR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TUR
+
+source worldbank_gdp_growth_TUV
+ttl 604800
+lat -8.52
+lon 179.19
+url https://api.worldbank.org/v2/country/TUV/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TUV
+
+source worldbank_gdp_growth_TZA
+ttl 604800
+lat -6.16
+lon 35.75
+url https://api.worldbank.org/v2/country/TZA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_TZA
+
+source worldbank_gdp_growth_UGA
+ttl 604800
+lat 0.34
+lon 32.58
+url https://api.worldbank.org/v2/country/UGA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_UGA
+
+source worldbank_gdp_growth_UKR
+ttl 604800
+lat 50.45
+lon 30.52
+url https://api.worldbank.org/v2/country/UKR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_UKR
+
+source worldbank_gdp_growth_URY
+ttl 604800
+lat -34.90
+lon -56.16
+url https://api.worldbank.org/v2/country/URY/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_URY
+
+source worldbank_gdp_growth_USA
+ttl 604800
+lat 38.90
+lon -77.03
+url https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_USA
+
+source worldbank_gdp_growth_UZB
+ttl 604800
+lat 41.29
+lon 69.24
+url https://api.worldbank.org/v2/country/UZB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_UZB
+
+source worldbank_gdp_growth_VCT
+ttl 604800
+lat 13.16
+lon -61.22
+url https://api.worldbank.org/v2/country/VCT/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_VCT
+
+source worldbank_gdp_growth_VEN
+ttl 604800
+lat 10.48
+lon -66.90
+url https://api.worldbank.org/v2/country/VEN/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_VEN
+
+source worldbank_gdp_growth_VGB
+ttl 604800
+lat 18.42
+lon -64.62
+url https://api.worldbank.org/v2/country/VGB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_VGB
+
+source worldbank_gdp_growth_VIR
+ttl 604800
+lat 18.34
+lon -64.93
+url https://api.worldbank.org/v2/country/VIR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_VIR
+
+source worldbank_gdp_growth_VNM
+ttl 604800
+lat 21.02
+lon 105.83
+url https://api.worldbank.org/v2/country/VNM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_VNM
+
+source worldbank_gdp_growth_VUT
+ttl 604800
+lat -17.73
+lon 168.32
+url https://api.worldbank.org/v2/country/VUT/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_VUT
+
+source worldbank_gdp_growth_WSM
+ttl 604800
+lat -13.85
+lon -171.75
+url https://api.worldbank.org/v2/country/WSM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_WSM
+
+source worldbank_gdp_growth_XKX
+ttl 604800
+lat 42.66
+lon 21.16
+url https://api.worldbank.org/v2/country/XKX/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_XKX
+
+source worldbank_gdp_growth_YEM
+ttl 604800
+lat 15.36
+lon 44.19
+url https://api.worldbank.org/v2/country/YEM/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_YEM
+
+source worldbank_gdp_growth_ZAF
+ttl 604800
+lat -25.74
+lon 28.22
+url https://api.worldbank.org/v2/country/ZAF/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ZAF
+
+source worldbank_gdp_growth_ZMB
+ttl 604800
+lat -15.38
+lon 28.32
+url https://api.worldbank.org/v2/country/ZMB/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ZMB
+
+source worldbank_gdp_growth_ZWE
+ttl 604800
+lat -17.82
+lon 31.03
+url https://api.worldbank.org/v2/country/ZWE/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value economic_gdp_growth_pct_ZWE
+
+source globalforestwatch_tree_cover_loss
+ttl 604800
+lat 38.907
+lon -77.036
+url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest/query?sql=SELECT%20SUM(area)%20FROM%20data
+field data biosphere_tree_cover_loss_ha
+
+source ecdc_monkeypox
+ttl 86400
+lat 59.365
+lon 18.016
+url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/json/data.json
+field 0 anthroposphere_monkeypox_first_record
+
+source cdc_covid_variants
+ttl 86400
+lat 33.797
+lon -84.323
+url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
+field share anthroposphere_covid_variant_share
+
+source cdc_covid_global
+ttl 3600
+lat 33.797
+lon -84.323
+url https://disease.sh/v3/covid-19/all
+field cases anthroposphere_covid_cases_global
+field deaths anthroposphere_covid_deaths_global
+
+source gbif_species_observations_count
+ttl 86400
+lat 55.685
+lon 12.571
+url https://api.gbif.org/v1/occurrence/count
+field count biosphere_gbif_observation_count
+
+source ebird_recent
+ttl 3600
+lat 55.685
+lon 12.571
+url https://api.gbif.org/v1/occurrence/search?limit=1
+field count biosphere_ebird_recent_count
+
+source obis_cetaceans
+ttl 86400
+lat 51.231
+lon 2.928
+url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&size=1
+field total hydrosphere_cetacean_observation_count
+
+source obis_statistics
+ttl 86400
+lat 51.231
+lon 2.928
+url https://api.obis.org/v3/statistics
+field records hydrosphere_obis_total_records
+
+source emodnet_vessel_density
+ttl 86400
+lat 51.231
+lon 2.928
+url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&request=GetFeature&typeName=emodnet:vesseldensity&outputFormat=application/json&maxFeatures=1
+field features technosphere_vessel_density_feature_count
+
+source gdacs_disasters
+ttl 3600
+lat 45.803
+lon 8.624
+url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH
+field features anthroposphere_gdacs_active_disaster_count
+
+source effis_fires
+ttl 3600
+lat 45.803
+lon 8.624
+url https://ies-ows.jrc.ec.europa.eu/effis?service=WFS&request=GetFeature&typeName=ms:modis.hs&outputFormat=application/json&maxFeatures=1
+field features biosphere_effis_fire_feature_count
+
+source anthroposphere_global_conflict_events_today
+ttl 86400
+lat 43.073
+lon -89.401
+url https://api.acleddata.com/acled/read?limit=1
+field count anthroposphere_conflict_event_count_today
+
+source neotoma_paleoecology
+ttl 604800
+lat 43.073
+lon -89.401
+url https://api.neotomadb.org/v2.0/data/occurrences?limit=1
+field data.count paleobiology_neotoma_occurrence_count
+
+source pbdb_paleobiology
+ttl 604800
+lat 43.073
+lon -89.401
+url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
+field records_returned paleobiology_pbdb_occurrence_count
+
+source macrostrat_ages
+ttl 604800
+lat 43.073
+lon -89.401
+url https://macrostrat.org/api/v2/units?format=json
+field success.data macrostrat_unit_count
+
+source macrostrat_timescale
+ttl 604800
+lat 43.073
+lon -89.401
+url https://macrostrat.org/api/v2/defs/timescales?format=json
+field success.data macrostrat_timescale_count
+
+source pdg_alpha_s
+ttl 2592000
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S059
+field pdg_values.0.value physics_alpha_s_value
+
+source pdg_w_boson_mass
+ttl 2592000
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S043
+field pdg_values.0.value physics_w_boson_mass_gev
+
+source pdg_z_boson_mass
+ttl 2592000
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S044
+field pdg_values.0.value physics_z_boson_mass_gev
+
+source protein_structures
+ttl 604800
+lat 40.522
+lon -74.460
+url https://data.rcsb.org/rest/v1/core/entry/1UBQ
+field entry.id biosphere_protein_structure_id
+
+source arxiv_new_papers
+ttl 3600
+lat 42.443
+lon -76.501
+url https://export.arxiv.org/api/query?search_query=all:physics&max_results=1
+field feed.opensearch:totalResults technosphere_arxiv_paper_count
+
+source crossref_dois
+ttl 86400
+lat 42.530
+lon -71.048
+url https://api.crossref.org/works?rows=0
+field message.total-results technosphere_crossref_doi_count
+
+source openalex_works
+ttl 86400
+lat 42.373
+lon -71.110
+url https://api.openalex.org/works?per-page=1
+field meta.count technosphere_openalex_work_count
+
+source microbe_census
+ttl 604800
+lat 52.079
+lon 0.187
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?page_size=1
+field meta.pagination.count biosphere_microbe_study_count
+
+source hadcrut5_temp
+ttl 2592000
+lat 50.727
+lon -3.476
+url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
+format csv
+last line atmosphere_hadcrut5_temp_anomaly_raw
+
+source global_temp_anomaly
+ttl 2592000
+lat 40.807
+lon -73.964
+url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
+format csv
+last line atmosphere_giss_temp_anomaly_raw
+
+source noaa_paleoclimate_co2
+ttl 2592000
+lat 35.595
+lon -82.551
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
+format text
+last line paleoclimate_epica_co2_raw
+
+source vostok_icecore
+ttl 2592000
+lat -78.464
+lon 106.833
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
+format text
+last line paleoclimate_vostok_co2_raw
+
+source noaa_enso_oni
+ttl 86400
+lat 38.989
+lon -76.937
+url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+format text
+last line atmosphere_enso_oni_index_raw
+
+source usdm_conus_drought
+ttl 86400
+lat 40.820
+lon -96.702
+url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByArea?aoi=conus&startdate={M}/{D}/{YYYY}&enddate={M}/{D}/{YYYY}&statisticsType=1
+field 0.DSCI hydrosphere_conus_drought_severity_index
+
+source woudc_total_ozone
+ttl 86400
+lat 43.653
+lon -79.383
+url https://api.woudc.org/collections/totalozone/items?limit=1
+field numberMatched atmosphere_total_ozone_record_count
+
+source ripe_bgp_default_route
+ttl 300
+lat 52.379
+lon 4.899
+url https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0
+field data.bgp_state technosphere_bgp_default_route_state
+
+source technosphere_tor_relays_running
+ttl 3600
+lat 42.452
+lon -71.137
+url https://onionoo.torproject.org/summary?running=true
+field relays_published technosphere_tor_relay_count
+
+source technosphere_global_ixp_count
+ttl 86400
+lat 38.899
+lon -77.043
+url https://www.peeringdb.com/api/ix
+field data technosphere_ixp_count
+
+source technosphere_submarine_cables
+ttl 604800
+lat 38.899
+lon -77.043
+url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
+field features technosphere_submarine_cable_count
+
+source wikipedia_pageviews_total
+ttl 3600
+lat 37.779
+lon -122.393
+url https://wikimedia.org/api/rest_v1/metrics/pageviews
+last items.0.views technosphere_wikipedia_pageviews_total
+
+source gdelt_news_volume
+ttl 900
+lat 38.909
+lon -77.072
+url https://api.gdeltproject.org/api/v2/doc/doc?query=climate&mode=timelinevol&format=json
+field timeline.0.data technosphere_gdelt_volume_series
+
+source exchangerate_api
+ttl 3600
+lat 40.71
+lon -74.00
+url https://api.exchangerate-api.com/v4/latest/USD
+field rates.EUR economic_usd_eur_rate
+field rates.JPY economic_usd_jpy_rate
+
+source etf_treasury_yield_10y
+ttl 60
+lat 40.712
+lon -74.006
+header User-Agent "omegaflow"
+url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX
+field chart.result.0.meta.regularMarketPrice economic_treasury_yield_10y_price
+
+source moon_phase
+ttl 3600
+lat 34.201
+lon -118.171
+url https://api.farmsense.net/v1/moonphases/
+last Phase orbital_moon_phase_name
+
+source solar_system_earth_data
+ttl 604800
+lat 46.234
+lon 6.140
+url https://api.le-systeme-solaire.net/rest.php/bodies/earth
+field mass.massValue geosphere_earth_mass_value
+field gravity geosphere_earth_gravity
+
+source planetary_computer_collections
+ttl 86400
+lat 47.643
+lon -122.137
+url https://planetarycomputer.microsoft.com/api/stac/v1/collections
+field collections technosphere_planetary_computer_collection_count
+
+source eoapi_collections
+ttl 86400
+lat 46.056
+lon 14.506
+url https://stac.eoapi.dev/collections
+field collections technosphere_eoapi_collection_count
+
+source crystallography_xrd
+ttl 604800
+lat 54.683
+lon 25.287
+url https://www.crystallography.net/cod/result.php
+format text
+count lines crystallography_cod_result_count
+
+source inaturalist_observations_count
+ttl 3600
+lat 37.767
+lon -122.466
+url https://api.inaturalist.org/v1/observations?per_page=1
+field total_results biosphere_inaturalist_observation_count
+
+source biosphere_global_vegetation_health_index
+ttl 86400
+lat 38.978
+lon -76.919
+url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/VH_ VP_ 04 _ 1981_ 2024_ 00_ 00_ 00_ 00_ 00_ 00_ 00_ 00_ 00_ 00_ 00_ 00_ 00_ 00_ 00_ 00. json
+field value biosphere_vegetation_health_index
+
+source biosphere_uv_index_global
+ttl 86400
+lat 37.087
+lon -76.387
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=RE&longitude=-76.387&latitude=37.087&start=2020&end=2024&format=JSON
+field properties.parameter.ALLSKY_SFC_UV_INDEX biosphere_uv_index_value
+
+source sdss_cosmic_web_galaxies
+ttl 604800
+lat 32.780
+lon -105.820
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?format=json&cmd=SELECT+TOP+10+*+FROM+SpecObj+WHERE+class=%27GALAXY%27+AND+z+BETWEEN+0.1+AND+0.2
+field 0.Rows sdss_cosmic_web_galaxy_records
+
