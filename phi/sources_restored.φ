@@ -6626,7 +6626,7 @@ ttl 300
 force gravity
 at sun 1.0
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json
 ttl 300
 force em
 on earth 52.07 12.68
@@ -15979,7 +15979,7 @@ on earth -12.188 96.834
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 48.025 2.26
@@ -16058,7 +16058,7 @@ on earth 70.36 -148.79
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 11.95 108.48
@@ -16078,7 +16078,7 @@ on earth 50.1 4.6
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 41.65 14.47
@@ -16088,7 +16088,7 @@ on earth 41.65 14.47
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 40.957 0.333
@@ -16187,7 +16187,7 @@ on earth 13.59 144.87
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 28.321 -16.440999999999974
@@ -16237,7 +16237,7 @@ on earth 21.32 -158.0
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 47.873 18.19
@@ -16277,7 +16277,7 @@ on earth 17.42 78.55
   path 1.1 y_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth -27.171 -109.41999999999999
@@ -16368,7 +16368,7 @@ on earth 31.42 130.88
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 5.21 -52.73000000000002
@@ -16509,7 +16509,7 @@ on earth 38.1 23.9
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 21.03 105.96
@@ -16529,7 +16529,7 @@ on earth -31.667 -63.88099999999997
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth -17.567 -149.574
@@ -16539,10 +16539,20 @@ on earth -17.567 -149.574
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth -21.206 55.576
+  path 1.0 x_nt
+  path 1.1 y_nt
+  path 1.2 z_nt
+  path 2 s_nt
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ESK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force gravity
+on earth 55.3 -3.2
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
@@ -16559,7 +16569,7 @@ on earth -77.829 166.671
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 36.667 -5.944999999999993
@@ -16618,7 +16628,7 @@ on earth 67.37 26.63
   path 1.2 z_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 39.55 -4.350000000000023
@@ -16628,7 +16638,7 @@ on earth 39.55 -4.350000000000023
   path 1.2 z_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth 44.68 26.25
@@ -16728,6 +16738,16 @@ on earth -22.4 -43.64999999999998
   path 2 s_nt
 map data
 
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force gravity
+on earth 47.931 15.866
+  path 1.0 x_nt
+  path 1.1 y_nt
+  path 1.2 z_nt
+  path 2 s_nt
+map data
+
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z&format=json
 ttl 86400
 force gravity
@@ -16738,7 +16758,7 @@ on earth 53.725 9.053
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 on earth -22.22 114.1
@@ -16748,7 +16768,7 @@ on earth -22.22 114.1
   path 2 s_nt
 map data
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:59Z&format=json
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 force gravity
 lon -12.315999999999974 A
