@@ -9040,7 +9040,7 @@ pos atmosphere_lat atmosphere_lon
   path daily.precipitation_probability_max.0 precipitation_probability_max
   path daily.windspeed_10m_max.0 windspeed_10m_max
 
-url https://api.open-meteo.com/v1/ensemble/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto
+url https://ensemble-api.open-meteo.com/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto
 ttl 3600
 force em
 at sun 1.0
@@ -9094,7 +9094,7 @@ on earth 35.0 -106.0
   field solarterrestrialdata.solarflux.Kindex Kindex
   field solarterrestrialdata.solarflux.MUF MUF
 
-url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&daily=wave_height_max,wave_period_max,swell_wave_height_max&timezone=auto
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&daily=wave_height_max,wave_period_max,swell_wave_height_max&timezone=auto
 ttl 3600
 force em
 at sun 1.0
@@ -9105,7 +9105,7 @@ pos atmosphere_lat atmosphere_lon
   path daily.wave_period_max.0 wave_period_max
   path daily.swell_wave_height_max.0 swell_wave_height_max
 
-url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,wave_height,swell_wave_height
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,wave_height,swell_wave_height
 ttl 3600
 force em
 at sun 1.0
@@ -9240,7 +9240,7 @@ map daily.time
   field daily.windspeed_10m_max windspeed_10m_max
   field daily.temperature_2m_max temperature_2m_max
 
-url https://api.open-meteo.com/v1/flood/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge,river_discharge_mean,river_discharge_max&forecast_days=16&format=json
+url https://flood-api.open-meteo.com/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge,river_discharge_mean,river_discharge_max&forecast_days=16&format=json
 ttl 3600
 force diffusion
 at sun 1.0
@@ -9328,7 +9328,7 @@ map hourly.time
   field hourly.windspeed_10m windspeed_10m
   field hourly.cape cape
 
-url https://api.open-meteo.com/v1/marine/v1/marine?latitude={lat}&longitude={lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,ocean_current_velocity&forecast_days=7&format=json
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,ocean_current_velocity&forecast_days=7&format=json
 ttl 3600
 force acoustic
 at sun 1.0
@@ -12999,7 +12999,7 @@ rows
   field 6 num_observations
   field 7 definitive_flag
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto
 ttl 86400
 force em
 at sun 1.0
@@ -14173,7 +14173,7 @@ on earth 51.0 10.0
   field content.0.Pollen.Beifuss.today today
   field content.0.Pollen.Esche.today today
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,et0_fao_evapotranspiration,shortwave_radiation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,et0_fao_evapotranspiration,shortwave_radiation_sum&timezone=auto
 ttl 86400
 force em
 at sun 1.0
@@ -14185,7 +14185,7 @@ last temperature_2m_min atmosphere_hist_temp_min_c
 last precipitation_sum atmosphere_hist_precip_sum_mm
 last sunshine_duration atmosphere_hist_sunshine_s
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=temperature_2m,relative_humidity_2m,precipitation,windspeed_10m,soil_temperature_0_to_7cm,soil_moisture_0_to_7cm&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=temperature_2m,relative_humidity_2m,precipitation,windspeed_10m,soil_temperature_0_to_7cm,soil_moisture_0_to_7cm&timezone=auto
 ttl 86400
 force em
 at sun 1.0
@@ -14196,7 +14196,7 @@ last temperature_2m atmosphere_hist_temp_c
 last precipitation atmosphere_hist_precip_mm
 last windspeed_10m atmosphere_hist_wind_ms
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=wind_speed_10m,wind_speed_100m,wind_direction_10m,wind_direction_100m,wind_gusts_10m&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=wind_speed_10m,wind_speed_100m,wind_direction_10m,wind_direction_100m,wind_gusts_10m&timezone=auto
 ttl 86400
 force em
 at sun 1.0
@@ -14239,7 +14239,7 @@ map daily
   field temperature_2m_mean temperature_2m_mean
   field precipitation_sum precipitation_sum
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={today}&hourly=temperature_2m,precipitation,windspeed_10m,relative_humidity_2m,surface_pressure&models=era5&format=json
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={today}&hourly=temperature_2m,precipitation,windspeed_10m,relative_humidity_2m,surface_pressure&models=era5&format=json
 ttl 86400
 force thermal
 at sun 1.0
@@ -14851,7 +14851,7 @@ lon_key geometry.coordinates.0
   field properties.Elevation Elevation
   field properties.Geologic_Epoch Geologic_Epoch
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto
 ttl 86400
 force em
 at sun 1.0
@@ -18228,7 +18228,7 @@ z_key redshift_zsp
   field redshift_lph_flag_zconf redshift_lph_flag_zconf
   field redshift_info_distance redshift_info_distance
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-3.47&longitude=-62.22&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=-3.47&longitude=-62.22&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth -3.47 -62.22
@@ -18239,7 +18239,7 @@ on earth -3.47 -62.22
   path daily.temperature_2m_min.9131 temperature_2m_min
   path daily.precipitation_sum.9131 precipitation_sum
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-80.0&longitude=100.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=-80.0&longitude=100.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth -80.0 100.0
@@ -18248,7 +18248,7 @@ on earth -80.0 100.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-24.0&longitude=-69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=-24.0&longitude=-69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth -24.0 -69.5
@@ -18257,7 +18257,7 @@ on earth -24.0 -69.5
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=0.5&longitude=114.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=0.5&longitude=114.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 0.5 114.0
@@ -18266,7 +18266,7 @@ on earth 0.5 114.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=30.0&longitude=31.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=30.0&longitude=31.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 30.0 31.0
@@ -18275,7 +18275,7 @@ on earth 30.0 31.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-34.0&longitude=18.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=-34.0&longitude=18.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth -34.0 18.5
@@ -18284,7 +18284,7 @@ on earth -34.0 18.5
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=0.0&longitude=18.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=0.0&longitude=18.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 0.0 18.0
@@ -18293,7 +18293,7 @@ on earth 0.0 18.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=36.5&longitude=-117.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=36.5&longitude=-117.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 36.5 -117.0
@@ -18302,7 +18302,7 @@ on earth 36.5 -117.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-18.0&longitude=178.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=-18.0&longitude=178.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth -18.0 178.0
@@ -18311,7 +18311,7 @@ on earth -18.0 178.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=44.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=44.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 44.0 105.0
@@ -18320,7 +18320,7 @@ on earth 44.0 105.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=72.0&longitude=-40.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=72.0&longitude=-40.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 72.0 -40.0
@@ -18329,7 +18329,7 @@ on earth 72.0 -40.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=64.0&longitude=-19.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=64.0&longitude=-19.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 64.0 -19.0
@@ -18338,7 +18338,7 @@ on earth 64.0 -19.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-49.5&longitude=69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=-49.5&longitude=69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth -49.5 69.5
@@ -18347,7 +18347,7 @@ on earth -49.5 69.5
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=3.0&longitude=73.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=3.0&longitude=73.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 3.0 73.0
@@ -18356,7 +18356,7 @@ on earth 3.0 73.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-19.5&longitude=23.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=-19.5&longitude=23.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth -19.5 23.5
@@ -18365,7 +18365,7 @@ on earth -19.5 23.5
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=-50.0&longitude=-72.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=-50.0&longitude=-72.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth -50.0 -72.0
@@ -18374,7 +18374,7 @@ on earth -50.0 -72.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=23.0&longitude=5.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=23.0&longitude=5.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 23.0 5.0
@@ -18383,7 +18383,7 @@ on earth 23.0 5.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=62.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=62.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 62.0 105.0
@@ -18392,7 +18392,7 @@ on earth 62.0 105.0
   path daily.temperature_2m_max.9131 temperature_2m_max
   path daily.temperature_2m_min.9131 temperature_2m_min
 
-url https://api.open-meteo.com/v1/forecast/v1/archive?latitude=32.0&longitude=86.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+url https://archive-api.open-meteo.com/v1/archive?latitude=32.0&longitude=86.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
 ttl 604800
 force em
 on earth 32.0 86.0
