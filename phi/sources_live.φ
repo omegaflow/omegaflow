@@ -21731,4 +21731,573 @@ lon_key longitude
 field elevation_m hydrosphere_ndbc_station_elevation_m
 field station_type hydrosphere_ndbc_station_type
 
+url https://api.inaturalist.org/v1/observations?per_page=1
+ttl 300
+force em
+field total_results biosphere_inaturalist_obs_count
 
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
+ttl 300
+force seismic-surface
+
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&per_page=20&order=desc&order_by=observed_on
+ttl 600
+force em
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in species_guess biosphere_inaturalist_nearby
+
+url https://api.inaturalist.org/v1/observations?per_page=1
+ttl 600
+force em
+path total_results biosphere_inaturalist_observations_total
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
+ttl 600
+force seismic-surface
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_earthquake_mag
+field_in properties.sig geosphere_earthquake_significance
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
+ttl 600
+force seismic-surface
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
+ttl 600
+force seismic-surface
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
+ttl 600
+force seismic-surface
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
+ttl 600
+force seismic-surface
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={week_ago}&endtime={today}&minmagnitude=2.5&limit=200
+ttl 600
+force seismic-surface
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
+ttl 1800
+force seismic-surface
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
+ttl 3600
+force em
+field count biosphere_birding_hotspots
+
+url https://api.gbif.org/v1/occurrence/search?limit=0
+ttl 3600
+force em
+field count biosphere_gbif_occurrence_count
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=1&hasGeospatialIssue=false
+ttl 3600
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_occurrence_key
+field_in coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m
+
+url https://api.gbif.org/v1/occurrence/count?isGeoreferenced=true
+ttl 3600
+force em
+path . biosphere_gbif_species_observations_total
+
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+ttl 3600
+force em
+path total_results biosphere_fungi_observations
+
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+ttl 3600
+force em
+field total_results biosphere_fungi_observations
+field species_count biosphere_fungi_species_count
+
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
+ttl 3600
+force em
+field total_results biosphere_verified_observations
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+ttl 3600
+force em
+field data.0.4 cosmos_neo_first_dist_au
+field data.0.7 cosmos_neo_first_v_kms
+field data.0.10 cosmos_neo_first_h_mag
+count data cosmos_neo_count
+
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
+ttl 3600
+force em
+field count biosphere_species_count
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
+ttl 3600
+force diffusion
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species species_name
+field_in kingdom kingdom_name
+field_in phylum phylum_name
+field_in class class_name
+field_in order order_name
+field_in family family_name
+field_in genus genus_name
+field_in year observation_year
+field_in month observation_month
+field_in day observation_day
+field_in eventDate observation_date
+field_in countryCode country_code
+field_in basisOfRecord basis_of_record
+field_in occurrenceStatus occurrence_status
+field_in individualCount individual_count
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force diffusion
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field iucnRedListCategory iucn_category
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+ttl 3600
+force seismic-surface
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+ttl 3600
+force seismic-surface
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
+ttl 3600
+force em
+field total_results biosphere_observations
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
+ttl 3600
+force em
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field mjd mjd_obs
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+ttl 3600
+force em
+format text
+ra_key ra
+dec_key dec
+field medianmag median_mag
+field magrms mag_variability_rms
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
+ttl 3600
+force em
+field count orbital_asteroids_closer_than_moon
+
+url https://ssd-api.jpl.nasa.gov/cad.api
+ttl 3600
+force em
+field count cneos_close_approach_count
+
+url https://ssd-api.jpl.nasa.gov/fireball.api
+ttl 3600
+force em
+field count biosphere_fireball_event_count
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_amphibian_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_arachnid_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_arthropod_key
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_biodiversity_species
+field_in kingdom biosphere_gbif_kingdom
+field_in eventDate biosphere_gbif_biodiversity_date
+field_in locality biosphere_gbif_biodiversity_locality
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_bird_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_cnidarian_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_cnidarian_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_echinoderm_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_fungi_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_insect_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_mammal_key
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_gbif_marine_species
+field_in locality biosphere_gbif_marine_locality
+field_in eventDate biosphere_gbif_marine_date
+
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
+ttl 86400
+force em
+field count biosphere_migratory_bird_records_this_month
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_mollusk_key
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_plant_key
+field_in coordinateUncertaintyInMeters biosphere_gbif_plant_uncertainty_m
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
+ttl 86400
+force em
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in key biosphere_gbif_reptile_key
+
+url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
+ttl 86400
+force em
+path total biosphere_cetacean_observations_24h
+
+url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+ttl 86400
+force em
+field total biosphere_ocean_occurrences_50km
+
+url https://api.obis.org/v3/statistics
+ttl 86400
+force em
+field taxa biosphere_ocean_species_known
+field records biosphere_ocean_records_total
+field datasets biosphere_ocean_datasets_count
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
+ttl 86400
+force em
+count data cosmos_asteroids_numbered_total
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&basisOfRecord=HUMAN_OBSERVATION&decimalLatitude=-90,90&habitat=MARINE
+ttl 86400
+force diffusion
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species species_name
+field kingdom kingdom
+field phylum phylum
+field order order
+field family family
+field country country_code
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4&limit=200
+ttl 86400
+force seismic-surface
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
+ttl 86400
+force seismic-surface
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+ttl 86400
+force em
+format text
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+ttl 86400
+force em
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field w3mpro mag_w3
+field w4mpro mag_w4
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,e_mag3_6,e_mag8_0,sqf_3_6+FROM+glimpsei_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<10+ORDER+BY+mag3_6+ASC
+ttl 86400
+force em
+format text
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+field e_mag3_6 irac_3_6um_error
+field sqf_3_6 source_quality_3_6
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
+ttl 86400
+force diffusion
+format text
+ra_key RA
+dec_key DE
+field name cluster_name
+field yn_snr sz_signal_to_noise
+field yn_mass sz_mass_10e14_msun
+field theta500 angular_radius_arcmin
+field dist distance_mpc
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
+ttl 86400
+force em
+format text
+ra_key ra
+dec_key dec
+field j_mag mag_j
+field h_mag mag_h
+field k_mag mag_k
+field ir1_mag mag_ir1
+field ir2_mag mag_ir2
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
+ttl 86400
+force em
+format text
+ra_key ra
+dec_key dec
+field name galaxy_name
+field dist distance_mpc
+field morph morphology
+field f3p6tot flux_3_6um
+field f4p5tot flux_4_5um
+field f5p8tot flux_5_8um
+field f8p0tot flux_8_0um
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+ttl 86400
+force em
+format text
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+ttl 86400
+force em
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field w3mpro mag_w3
+field w4mpro mag_w4
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+ttl 86400
+force em
+format text
+ra_key ra
+dec_key dec
+field oid object_id
+field filterid filter_id
+field medianmag median_mag
+field magrms mag_rms
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+oid,ra,dec,filterid,medianmag,magrms,refmag+FROM+ztf_objects_dr20+WHERE+magrms%3E0.3+AND+ngoodobsrel%3E100
+ttl 86400
+force em
+format text
+ra_key ra
+dec_key dec
+field oid object_id
+field filterid filter_id
+field medianmag median_mag
+field magrms mag_rms
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
+ttl 86400
+force gravity
+format text
+ra_key ra
+dec_key dec
+field object_name neo_designation
+field abs_mag absolute_magnitude
+field diameter estimated_diameter_km
+field extended extended_object_flag
+field neo_flag near_earth_flag
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+designation,+j_m,+h_m,+k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+ttl 604800
+force em
+format votable
+map data
+field_in designation name
+field_in j_m mag_j
+field_in h_m mag_h
+field_in k_m mag_k
+lat_key ra
+lon_key dec
