@@ -1,0 +1,100 @@
+# dead_sources.φ — sources rejected by reachability test
+# tested 2026-08-07. Each entry: url / error category / research note.
+# NOT loaded by the Archivar. Research these to find working endpoints.
+#
+dead 404
+url https://www.ndbc.noaa.gov/data/realtime2/62001.txt
+note NDBC buoy 62001 file not found (buoy id may not exist or path changed)
+
+dead 404
+url https://www.ndbc.noaa.gov/data/realtime2/23001.txt
+note NDBC buoy 23001 file not found (buoy id may not exist or path changed)
+
+dead 404
+url http://cosmicrays.oulu.fi/phi/Pulu_1min.txt
+note Oulu cosmic ray data path changed/dead host
+
+dead 404
+url https://gml.noaa.gov/webdata/ccgg/trends/co/co_mm_gl.txt
+note CO monthly path wrong (returned HTML 404 page)
+
+dead 404
+url https://services.swpc.noaa.gov/json/ionospheric_foF2.json
+note SWPC foF2 path wrong
+
+dead 404
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_tec_global.json
+note SWPC TEC path wrong
+
+dead 400
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdMH1chla1day.json?chlorophyll[(last)][(0.0)][({lat})][({lon})]
+note ERDDAP grid constraint syntax outdated ([(last)] brackets)
+
+dead 400
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplMURSST41.json?analysed_sst[(last)][(0.0)][({lat})][({lon})]
+note ERDDAP grid constraint syntax outdated
+
+dead 500
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.json?degree_heating_week[(last)][({lat})][({lon})]
+note ERDDAP grid constraint syntax outdated
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00060
+note USGS NWIS returned HTML error, not JSON (lat/lon params rejected)
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00010
+note USGS NWIS returned HTML error, not JSON
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00095
+note USGS NWIS returned HTML error, not JSON
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=72019
+note USGS NWIS returned HTML error, not JSON
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00400
+note USGS NWIS returned HTML error, not JSON
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=63680
+note USGS NWIS returned HTML error, not JSON
+
+dead 400
+url https://waterservices.usgs.gov/nwis/iv/?format=json&latitude={lat}&longitude={lon}&parameterCd=00300
+note USGS NWIS returned HTML error, not JSON
+
+dead 404
+url https://api.met.no/weatherapi/observationdata/2.0/?source=SN18700&referencetime=latest&elements=tair
+note met.no element 'tair' wrong (product does not exist)
+
+dead 404
+url https://api.met.no/weatherapi/observationdata/2.0/?source=SN18700&referencetime=latest&elements=precip
+note met.no element 'precip' wrong
+
+dead 404
+url https://api.met.no/weatherapi/observationdata/2.0/?source=SN18700&referencetime=latest&elements=air_temperature
+note met.no element 'air_temperature' also wrong
+
+dead 400
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=PUG1511&product=currents&time_zone=gmt&units=metric&format=json&date=latest
+note NOAA tides Puget currents station PUG1511 wrong bin number
+
+dead 400
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=FRN&id=FRN&data_products_filter=X&data_products_filter=Y&data_products_filter=Z&publication_state=best&starttime={yesterday}T00:00:00Z&endtime={now}Z
+note BGS GINServices FRN params wrong (request error page)
+
+dead 400
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=HON&id=HON&data_products_filter=X&data_products_filter=Y&data_products_filter=Z&publication_state=best&starttime={yesterday}T00:00:00Z&endtime={now}Z
+note BGS GINServices HON params wrong (request error page)
+
+dead conn-refused
+url http://www.nmdb.eu/nest/dynamics.php?stations=NEWK&output=json&resolution=60&history=300
+note nmdb.eu dynamics only HTTP, connection refused
+
+dead conn-refused
+url http://www.nmdb.eu/nest/dynamics.php?stations=SPO&output=json&resolution=60&history=300
+note nmdb.eu dynamics only HTTP, connection refused
+
