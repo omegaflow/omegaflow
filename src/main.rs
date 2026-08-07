@@ -2566,23 +2566,44 @@ fn is_leap(y: u32) -> bool {
 }
 
 fn load_env() {
-    if let Ok(content) = std::fs::read_to_string(resolve_asset(".env")) {
-        for line in content.lines() {
-            let line = line.trim();
-            if line.is_empty() || line.starts_with('#') {
-                continue;
-            }
-            if let Some(eq) = line.find('=') {
-                let key = line[..eq].trim();
-                let val = line[eq + 1..].trim();
-                if std::env::var(key).is_err() {
-                    unsafe {
-                        std::env::set_var(key, val);
+    for name in &[".env", ".secrets.local"] {
+        if let Ok(content) = std::fs::read_to_string(resolve_asset(name)) {
+            for line in content.lines() {
+                let line = line.trim();
+                if line.is_empty() || line.starts_with('#') {
+                    continue;
+                }
+                if let Some(eq) = line.find('=') {
+                    let key = line[..eq].trim();
+                    let val = line[eq + 1..].trim();
+                    if std::env::var(key).is_err() {
+                        unsafe {
+                            std::env::set_var(key, val);
+                        }
                     }
                 }
             }
         }
     }
+}
+
+fn resolve_secret(url: &str) -> String {
+    let mut result = String::with_capacity(url.len());
+    let mut rest = url;
+    while let Some(start) = rest.find('{') {
+        result.push_str(&rest[..start]);
+        rest = &rest[start + 1..];
+        if let Some(end) = rest.find('}') {
+            let key = &rest[..end];
+            let val = std::env::var(key).unwrap_or_default();
+            result.push_str(&val);
+            rest = &rest[end + 1..];
+        } else {
+            result.push('{');
+        }
+    }
+    result.push_str(rest);
+    result
 }
 
 fn load_sources() -> Vec<SourceConfig> {
@@ -3290,7 +3311,7 @@ fn render_url(
         (g.join("|"), gla.join(","), glo.join(","))
     };
 
-    template
+    let url = template
         .replace("{x}", &format!("{}", x))
         .replace("{y}", &format!("{}", y))
         .replace("{z}", &format!("{}", z))
@@ -3333,8 +3354,8 @@ fn render_url(
         .replace("{hour}", &format!("{:02}", q_hour))
         .replace("{minute}", &format!("{:02}", q_minute))
         .replace("{unix_now}", &unix_now)
-        .replace("{unix_now_plus_3600}", &unix_now_plus_3600)
-        .replace("{nasa_key}", "DEMO_KEY")
+        .replace("{unix_now_plus_3600}", &unix_now_plus_3600);
+    url
 }
 
 fn render_source_url(
@@ -3440,7 +3461,7 @@ fn render_source_url(
             }
         }
     }
-    url
+    resolve_secret(&url)
 }
 
 fn render_source_body(
@@ -5071,7 +5092,7 @@ mod tests {
             ttl: 100,
             url: "https://example.com?sstr={target}&from={catalog}".into(),
             frame: super::Frame::Surface {
-                body_name: "earth".into(),
+                body_name: "body_test".into(),
                 lat: 0.0,
                 lon: 0.0,
                 alt: 0.0,
@@ -5112,7 +5133,7 @@ mod tests {
         let src = SourceConfig {
             ttl: 100,
             url: "https://earth-search.aws.element84.com/v0/search".into(),
-            frame: super::Frame::Surface { body_name: "earth".into(), lat: 0.0, lon: 0.0, alt: 0.0 },
+            frame: super::Frame::Surface { body_name: "body_test".into(), lat: 0.0, lon: 0.0, alt: 0.0 },
             force: "em".into(),
             tau: None,
             tau_key: None,
@@ -5151,7 +5172,7 @@ mod tests {
             ttl: 43200,
             url: "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json".into(),
             frame: super::Frame::Surface {
-                body_name: "earth".into(),
+                body_name: "body_test".into(),
                 lat: 0.0,
                 lon: 0.0,
                 alt: 0.0,
