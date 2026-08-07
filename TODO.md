@@ -424,3 +424,22 @@ If a force type is needed, it must be added to `force_id_of()` and `force_extent
 
 Action: recover SIMBAD (curate with otype), JPL-SSD (Horizons, parser-def), Gaia. Verify each.
 Code: `phi/recovery/research/arena/` inventory, `phi/sources_live.φ`
+
+## Remaining Curation Backlog (post-recovery comparison)
+
+`ALL_lost_blocks_richest.φ` (5701 recovered) vs arena blocks still unchecked (1033):
+- 873 blocks NOT in lost history = truly new, completely unchecked
+  (saved: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, 13658 lines)
+  Largest: tapvizier 249, ncei 47, heasarc 39, coastwatch 20, pangaea 18,
+  celestrak 16, cdaweb 15, cmems 13, mast 11, irsa 10, inaturalist 10,
+  gml 10...
+- 160 blocks ARE in lost history (known): 127 equal richness, 28 arena
+  richer, 5 arena POORER (noaa_gml_co2_global_network 7vs10, nsidc_seaice
+  arctic/antarctic 5vs6, swpc_solar_wind_dscovr 5vs7, nist_codata 4vs5)
+- Lost endpoint example: co2_surface-flask_ccgg_text.txt (rich, 8 fields)
+  now 404 (GML restructured) - not all recovered endpoints still live.
+
+Action: curate 873 new blocks (reachability + structure + force-gate
+one-by-one). For 160 known, compare arena vs lost richest version and
+use the richer. Every source tested individually.
+Code: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, `sources_live.φ`
