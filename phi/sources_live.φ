@@ -22110,3 +22110,13 @@ lon_key site.geography.coordinates.0
   field site.datasets.0.datasetid dataset_id
   field site.datasets.0.agerange.0.ageyoung age_young_yr
   field site.datasets.0.agerange.0.ageold age_old_yr
+
+
+url https://coastwatch.noaa.gov/erddap/griddap/noaacrwbaa7dDaily.csv?bleaching_alert_area%5Blast%5D%5B(0.0):(30.0)%5D%5B(0.0):(60.0)%5D
+ttl 86400
+force thermal
+map .
+lat_key latitude
+lon_key longitude
+  field bleaching_alert_area bleach_alert_level
+

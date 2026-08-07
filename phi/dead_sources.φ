@@ -271,3 +271,12 @@ note data.nasa.gov migrated Socrata->CKAN. gh4g-9sfh Socrata endpoint 404. Worki
 decline forceless-reference
 url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
 note CODATA fundamental constants = reference values, not measurements. Council binding: "reference values that rest unchanged are the mountain's memory of measurement, not measurement itself." force diffusion is a false assignment. Decline per Force Gate.
+dead 404
+url https://web.iodp.tamu.edu/janusWeb/api/janus/site
+note IODP Janus API 404 (retired). Also drilling station registry = metadata, no force. Would need modern IODP data portal (expedition-specific) if revived.
+dead 404
+url https://api.coral.tsr.lol/stations/great_barrier_reef_north/current
+note Station not found (404). Third-party coral.tsr.lol domain unreliable. NOAA Coral Reef Watch official API path also 404 on probe. Research current NOAA CRW GBR endpoint.
+dead 404
+url https://coastwatch.noaa.gov/erddap/griddap/noaacrwdhwdaily.csv?degree_heating_week%5Blast%5D%5B-30:10:30%5D%5B-180:10:180%5D
+note DatasetID noaacrwdhwdaily unknown (404). CRW ERDDAP dataset IDs are versioned (e.g. CRW_sst_v2_0). Research current coastwatch.noaa.gov/erddap info/ dataset list for DHW dataset ID.
