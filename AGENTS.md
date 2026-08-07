@@ -43,7 +43,8 @@ Behavior emerges from properties.
 Name = Implementation.
 Code is self-documenting.
 A council session leaves no document of its own. Council decisions exist only as code, as a rule in this file, or as a line in TODO.md.
-A commit is a checkmark. Every commit closes a TODO item, opens one, or narrows it. The TODO is updated in the same commit that changes the code.
+A commit is a checkmark. Every commit closes a TODO item, opens one, or narrows it. The TODO is updated in the same commit that changes the code. Completed items are removed — TODO contains only pending work. Git is the history.
+Name = Implementation. TODO entries carry no numeric identifiers. The heading is the identifier.
 `cargo check` must produce zero errors AND zero warnings. A warning is a dead code path, an unused import, a neglected binding — it is code rot. Never silence a warning with `#[allow(...)]` or a leading underscore. Fix the code so the warning does not exist. `cargo check` verifies Rust syntax only — it does not verify function. Manual verification is mandatory (see Verification section below).
 
 ## Stack
