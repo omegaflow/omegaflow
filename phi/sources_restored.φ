@@ -6630,12 +6630,11 @@ url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&sta
 ttl 300
 force em
 on earth 52.07 12.68
-map .
-  field 0 quantity_name
-  field 1 symbol
-  field 2 value
-  field 3 uncertainty
-  field 4 unit
+map data
+  path 1.0 x_nt
+  path 1.1 y_nt
+  path 1.2 z_nt
+  path 2 s_nt
 
 url https://www.ionosonde.iap-kborn.de/actuellz.htm
 ttl 300
@@ -16474,14 +16473,14 @@ on earth 48.27 -117.12
 map data
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z&format=json
-ttl 86400
-force gravity
+ttl 300
+force em
 on earth 52.07 12.68
+map data
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
-map data
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={today}T23:59:59Z&format=json
 ttl 86400
@@ -16676,6 +16675,7 @@ url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&sta
 ttl 86400
 force gravity
 on earth 77.47 -69.22699999999998
+  path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
   path 2 s_nt
