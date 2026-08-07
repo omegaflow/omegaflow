@@ -436,22 +436,19 @@ Code: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, `sources_live.φ`
 
 ## NEXT SESSION ENTRY POINT: Untested Blocks
 
-Read `docs/source_curation.md` first — it now contains the full session
-handoff (parser status, verifier method, known API facts, inventory).
+Read `docs/source_curation.md` first — it is the full session handoff with
+the parser status, the parser-as-verifier method, and the concrete 107-FAIL
+inventory with per-family fix recipes.
 
-The parser has FULL pre-CDN intelligence (commits 188dd76/2cc6d5e — 23
-Extract variants: Hapi, XmlCount, KeplerMap, Vectors, Ephemeris, Flatten,
-CmrPolygon, CelestialPolygon + all directive arms). `cargo check` zero
-warnings, 13 tests pass. All prior "parser-def" classifications
-(vizier-tap ~200, heasarc ~28) are now CURATABLE.
+TASK: run `cargo test test_live_sources_extract -- --nocapture` (~150s).
+It loads both φ files, fetches the first 200 non-CDN live URLs, and prints
+`FAIL <url> no samples`. Fix every FAIL per the recipes in source_curation.md
+(ArcGIS wmo `_0__degr`, USGS `map features`+geometry.coordinates, SWPC
+flux-array keys, adsb `map ac`, TAP/HAPI now curatable, etc.). Re-run until
+0 fail, then raise the test limit (line ~6275 `let mut limit = 200usize;`)
+and repeat chunk by chunk until the whole file is clean.
 
-Entry point: run `cargo test test_live_sources_extract -- --nocapture`
-(~150s, network). It loads both φ files, fetches the first 200 non-CDN live
-URLs, and lists `FAIL <url> no samples` — the actionable list of blocks whose
-extract directives mismatch the live response. Fix each against the golden
-version in `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ`.
-
-Continue curation with `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`
+Then continue curation with `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`
 (423 blocks). PROGRESS TRACKING: when a block is tested, add it to
 dead_sources.φ (dead/parser-def/decline/key-needed) or sources_live.φ
 (verified). UNTESTED_index.txt shows remaining by domain.
@@ -462,5 +459,3 @@ Also open:
   extract from ALL_lost_blocks_richest.φ
 - 93 HAPI blocks: consider switching manual path 1.0 extracts to native
   `hapi` Extract variant
-- the FAIL list from test_live_sources_extract (see source_curation.md
-  handoff for the diagnosis patterns and per-block fixes)

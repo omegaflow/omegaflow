@@ -4863,10 +4863,11 @@ fn materialize(
         return vec![];
     }
     let vmax_floor = 0.0f64;
+    let body_name = frame_body_name(&src.frame);
     let motion = match &pend.position {
         PendingPosition::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
         PendingPosition::Geodetic { lat, lon, alt } => Motion::Surface {
-            body_name: "earth".into(),
+            body_name: body_name.clone(),
             lat: *lat,
             lon: *lon,
             alt: *alt,
@@ -4880,7 +4881,7 @@ fn materialize(
             vrate,
         } => {
             match surface_motion(
-                "earth", *lat, *lon, *alt, *speed, *track, *vrate, pend.epoch, eph,
+                &body_name, *lat, *lon, *alt, *speed, *track, *vrate, pend.epoch, eph,
             ) {
                 Some(m) => m,
                 None => return vec![],
@@ -6265,6 +6266,69 @@ mod tests {
     }
 
     #[test]
+    fn test_materialize_body_agnostic() {
+        use std::collections::HashMap;
+        let frame = super::Frame::Surface {
+            body_name: "mars".into(),
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+        };
+        let src = super::SourceConfig {
+            ttl: 3600,
+            url: "https://example.com".into(),
+            frame,
+            force: "gravity".into(),
+            tau: None,
+            tau_key: None,
+            format: "json".into(),
+            extracts: vec![],
+            headers: vec![],
+            post_body: None,
+            method: "get".into(),
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: Some("mars".into()),
+            stations_url: None,
+            stations_path: "stations".into(),
+            stations_lat: "lat".into(),
+            stations_lon: "lon".into(),
+            stations_id: "id".into(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            reach_ttl: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+        };
+        let pend = super::PendingSample {
+            epoch: 0.0,
+            position: super::PendingPosition::Geodetic {
+                lat: 14.0,
+                lon: 90.0,
+                alt: 0.0,
+            },
+            fields: vec![("v".to_string(), 1.0)],
+            extent: None,
+            ttl: None,
+            tau: None,
+        };
+        let eph = HashMap::new();
+        let mut origins = HashMap::new();
+        let samples = super::materialize(&src, (0, 0, 0), None, pend, &mut origins, &eph);
+        assert_eq!(samples.len(), 1, "expected one sample");
+        if let super::Motion::Surface { body_name, .. } = &samples[0].motion {
+            assert_eq!(
+                body_name, "mars",
+                "body must come from frame, not earth fallback"
+            );
+        } else {
+            panic!("expected Surface motion");
+        }
+    }
+
+    #[test]
     fn test_live_sources_extract() {
         let srcs = super::load_sources();
         eprintln!("load_sources returned {} sources", srcs.len());
@@ -6272,6 +6336,7 @@ mod tests {
         let mut ok = 0usize;
         let mut fail: Vec<(String, String)> = Vec::new();
         let mut limit = 200usize;
+        super::load_env();
         for s in srcs.iter() {
             let mut url = s.url.clone();
             for (k, v) in [
@@ -6293,6 +6358,7 @@ mod tests {
             ] {
                 url = url.replace(k, v);
             }
+            url = super::resolve_secret(&url);
             if url.starts_with("https://github.com/omegaflow/sources") {
                 continue;
             }
@@ -6330,8 +6396,8 @@ mod tests {
             fail.len(),
             ok + fail.len()
         );
-        for (u, why) in fail.iter().take(60) {
-            eprintln!("  FAIL {}  {}", u.chars().take(70).collect::<String>(), why);
+        for (u, why) in fail.iter() {
+            eprintln!("  FAIL {}  {}", u, why);
         }
     }
 }

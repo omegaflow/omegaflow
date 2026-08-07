@@ -218,11 +218,59 @@ DO THIS, IN ORDER:
 
 1. Run `cargo test test_live_sources_extract -- --nocapture` and capture the
    full output.
-2. Take every `FAIL <url> no samples` line. For each, find the golden block in
-   `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ` and fix the live
-   block's extract directives to match. Re-run the test until the FAIL list is
-   empty (raise the test's source limit if needed — the test currently only
-   checks the first 200 non-CDN live sources).
+2. Take every `FAIL <url> no samples` line. The current fail inventory
+   (2026-08-07, 107 fails of 200 tested) by family, with the verified fix:
+
+   - services6.arcgis.com (32, mostly wmo buoys): outFields must be
+     `sea_surface_temperature_0__degr` + `sea_water_speed_0__cm_s_1_`
+     (index `_0_`); field directives match outFields; frame must be
+     terrestrial (`on earth`), NOT `at sun` — map extract with barycenter
+     frame yields `no samples`.
+   - earthquake.usgs.gov (14): GeoJSON feeds need `map features` +
+     terrestrial frame; `lat_key geometry.coordinates.1`, `lon_key
+     geometry.coordinates.0`; `properties.depth` does not exist — depth is
+     `geometry.coordinates.2`.
+   - services.swpc.noaa.gov (9): xrays-3-day/7-day elements are
+     `{time_tag, satellite, flux, energy, observed_flux}`; `flux` is an
+     array `[short, long]`; `begin_time`/`peak_time`/`class` belong to
+     xray-flares-latest only; `alerts.json` keys are `message_id,
+     message_type, message_issue_time, message_url, message_body`.
+   - services9/services/services1/2/5.arcgis.com (14): query
+     `FeatureServer/0?f=json` for real `fields[].name`; declared
+     `properties.*` must exist in outFields.
+   - api.adsb.lol (3): response `{ac:[...], msg, now}` — `map ac`, fields
+     `hex, flight, alt_baro, gs, track, baro_rate` live inside `ac`.
+   - api.weather.gov (3): `map features`; drop empty `cursor=` param
+     (422); `lat_key geometry.coordinates.1`.
+   - api.tidesandcurrents.noaa.gov (3): `application=batch16` 400s — use
+     `application=omegaflow`; `map data` + `t`/`v`/`q`.
+   - www.ndbc.noaa.gov (3): text realtime — `format text` + `field_in`
+     column indices, or `last_row` for latest line.
+   - waterservices.usgs.gov (2): `format=json,1.1` invalid — `format=json`.
+   - blitzortung (2): compressed binary — `parser-def`, move to
+     dead_sources.φ.
+   - api.nasa.gov DONKI, data.nasa.gov, volcanoes.usgs.gov (3):
+     `{nasa_key}` resolves via `resolve_secret` — verify key present.
+   - Seismic singles (geonet, ingv, scedc, p2pquake, tmd, gracedb,
+     seismicportal, emsc-csem, irsc): GeoJSON feeds need `map features` +
+     terrestrial frame; lat/lon from geometry.
+   - heasarc, ssd-api cad, ssd.jpl Horizons, cdaweb OMNI (4): now
+     CURATABLE with the restored parser; heasarc `FORMAT=csv`; Horizons
+     `hapi`/`ephemeris` variant; cdaweb `format=json` + `parameters=`.
+   - api.wolfx.jp, tadas.afad.gov.tr (2): array-indexed — check
+     `real_keys`, use `map .` + index paths.
+   - opensky-network.org (1): `map states`; rows are
+     `[icao24, callsign, origin_country, time_position, last_contact, lon,
+     lat, ...]` — `field_in` indices.
+   - aviationweather.gov METAR (1): flat array with `lat`/`lon` keys.
+   - reg.bom.gov.au (1): endpoint moved — research replacement host.
+   - www.ncei.noaa.gov (1): daily data lags ~30 days.
+
+   Fix the live block's extract directives to match (golden reference:
+   `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ`). Re-run the
+   test until the FAIL list is empty. Then raise the test's source limit
+   (`let mut limit = 200usize;` in `test_live_sources_extract`) to the
+   next chunk and repeat until the whole file is clean.
 3. Then open `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`. For each block,
    apply the per-block curation workflow (fill templates → curl → structure →
    Force Gate → classify). Add accepted blocks to `phi/sources_live.φ`,
