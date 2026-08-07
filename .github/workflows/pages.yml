@@ -21,20 +21,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
-      with:
-        toolchain: stable
-        target: wasm32-unknown-unknown
-    - name: Build WASM
-      run: cargo build --lib --target wasm32-unknown-unknown --release
     - name: Setup Pages
       uses: actions/configure-pages@v4
     - name: Build site
       run: |
         mkdir _site
         cp static/landing.html _site/index.html
-        cp target/wasm32-unknown-unknown/release/omegaflow.wasm _site/omegaflow.wasm
-        cp static/app.html _site/app.html
         cp CNAME _site/CNAME
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3

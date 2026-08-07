@@ -47,20 +47,3 @@ jobs:
         files: target/${{ matrix.target }}/release/${{ matrix.artifact }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-wasm:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
-      with:
-        toolchain: stable
-        target: wasm32-unknown-unknown
-    - name: Build
-      run: cargo build --lib --release --target wasm32-unknown-unknown
-    - name: Upload to Release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: target/wasm32-unknown-unknown/release/omegaflow.wasm
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
