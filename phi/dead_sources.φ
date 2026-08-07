@@ -352,3 +352,9 @@ note SILAM is chemistry-transport MODEL output - council: model output DECLINE. 
 parser-def synop-decode
 url https://www.ogimet.com/cgi-bin/getsynop?block=20&begin={year}{month}{day}0000&end={year}{month}{day}2300
 note OGIMET works (real SYNOP observations, CSV with WMO-coded AAXX groups). Temperature encoded in WMO groups (10005 = +0.5C). Needs SYNOP decoder - parser lacks this. Real thermal measurements otherwise.
+key-needed meteostat-key
+url https://meteostat.net/api/stations/search?country=RU&limit=200&key=
+note Meteostat station search requires API key (empty key=), free tier. Also station registry = metadata, no force. Use Meteostat point observations API with key for real measurements.
+dead 400
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,SLP,WDSP,PRCP&countries=RS&startDate={today}&endDate={today}&includeAttributes=false&format=json
+note NCEI data service requires explicit stations= (countries alone -> 400 'A station is required'). Works with stations=<ISD-ID>. Research ISD station IDs for Russia. GHCND/ISD are real measurements (thermal) once station list known.
