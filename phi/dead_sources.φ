@@ -412,3 +412,14 @@ note Argovis returns SPA HTML. API path behind app. Research correct API (likely
 dead service-missing
 url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=5
 note PAGER_CAT service not in GVgbJbqm8hXASVYi account (506 services listed, only 2020_Earthquakes). Research correct PAGER service/account.
+parser-def html-app
+url https://globalplasticwatch.org/api/v1/detections?bbox={lon_min},{lat_min},{lon_max},{lat_max}&startDate={today}&endDate={today}
+note GlobalPlasticWatch returns SPA HTML. Plastic detections would be diffusion (marine debris) if API found.
+
+parser-def html-app
+url https://darts.isas.jaxa.jp/astro/xrism/api/v1/observations?format=json&release=DR1&status=public&limit=50
+note XRISM DARTS returns HTML portal not JSON. X-ray sources em. Research DARTS API path.
+
+parser-def html-app
+url https://darts.isas.jaxa.jp/astro/xrism/api/v1/xtend_sources?format=json&release=DR1&snr_min=5&limit=500
+note Same XRISM DARTS HTML issue.

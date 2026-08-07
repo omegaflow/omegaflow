@@ -16644,15 +16644,6 @@ epoch_key datetime
   field stac_eo_cloud_cover stac_eo_cloud_cover
 
 
-url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude&start={today}T00:00:00Z&stop={tomorrow}T00:00:00Z&format=json
-ttl 86400
-force gravity
-at sun 1.0
-format text
-rows
-lat_key Latitude
-lon_key Longitude
-
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
 ttl 86400
@@ -20337,15 +20328,6 @@ lon_key geometry.coordinates.0
 
 
 
-url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude&start={today}T00:00:00Z&stop={tomorrow}T00:00:00Z
-ttl 86400
-force gravity
-at sun 1.0
-format text
-rows
-lat_key Latitude
-lon_key Longitude
-
 
 
 
@@ -22205,4 +22187,17 @@ rows data
   lon_sign 6 lon_dir
   field_in 7 altitude_km
   field_in 8 velocity_kms
+
+
+
+url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude,B_NEC&time.min=2026-08-03T00:00:00Z&time.max=2026-08-03T23:59:59Z
+ttl 3600
+force gravity
+rows
+lat_key 1
+lon_key 2
+  field_in 0 timestamp_utc
+  field_in 5 swarm_mag_bx_nt
+  field_in 6 swarm_mag_by_nt
+  field_in 7 swarm_mag_bz_nt
 
