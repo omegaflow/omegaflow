@@ -322,3 +322,9 @@ note Raspberry Shake station registry (level=station = list of stations, not mea
 dead 404-schema
 url https://www.ncdc.noaa.gov/swdiws/json/nx3structure/{today}
 note SWDI works but {today} must be yyyymmdd (not yyyy-mm-dd, else 500). nx3structure is RADAR structure product (CELL_ID, MAX_REFLECT, VIL) - NOT lightning, no lat/lon. Batch fields (lat,lon,striketype,signalstrength) don't match. Lightning dataset would be nx3strikes. Research correct SWDI lightning endpoint.
+dead 400
+url https://www.ncdc.noaa.gov/stormevents/csv?eventType=%28Z%29+Lightning&beginDate_mm={month}&beginDate_dd={day}&beginDate_yyyy={year}&endDate_mm={month}&endDate_dd={day}&endDate_yyyy={year}&hailsize=&windspeed=&State=&statetype=C&country=US&region=&countyorzone=&datum=&lat=&lon=&radius=&formatType=CSV&timeout=10&maxresults=10000
+note Storm Events CSV export 400 (validates date/params poorly). Also storm event reports (damage/injury) are event metadata more than direct lightning measurement. Research NWS/GLM lightning feed instead.
+dead 404
+url https://coastwatch.noaa.gov/erddap/griddap/noaagoesglm5mfd.csv?flash_count%5Blast%5D%5B(-60.0):(60.0)%5D%5B(-180.0):(180.0)%5D&.draw=surface&.vars=longitude%7Clatitude%7Cflash_count
+note GLM datasetID noaagoesglm5mfd unknown on coastwatch (no GLM datasets there). GOES GLM data is at GES DISC (EDL-gated, EARTHDATA_EDL_TOKEN). Research correct GLM ERDDAP/grid source.
