@@ -16885,13 +16885,14 @@ map data
 
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
+ttl 300
 force gravity
 on earth 17.294 78.919
+map data
   path 1.0 x_nt
   path 1.1 y_nt
+  path 1.2 z_nt
   path 2 s_nt
-map data
 
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
@@ -17038,13 +17039,14 @@ map data
 
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
+ttl 300
 force gravity
 on earth 44.633 20.767
+map data
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-map data
+  path 2 s_nt
 
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
@@ -17368,16 +17370,6 @@ on earth 48.27 -117.12
 map data
 
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 300
-force gravity
-on earth 52.07 12.68
-map data
-  path 1.0 x_nt
-  path 1.1 y_nt
-  path 1.2 z_nt
-  path 2 s_nt
-
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
 ttl 86400
@@ -17556,13 +17548,14 @@ map data
 
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
+ttl 300
 force gravity
 on earth 67.37 26.63
+map data
   path 1.0 x_nt
   path 1.1 y_nt
   path 1.2 z_nt
-map data
+  path 2 s_nt
 
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
@@ -20436,171 +20429,6 @@ lon_key Longitude
 
 
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 48.025 2.26
-path 1.0 magnetosphere_intermagnet_clf_x_nt
-path 1.1 magnetosphere_intermagnet_clf_y_nt
-path 1.2 magnetosphere_intermagnet_clf_z_nt
-path 2 magnetosphere_intermagnet_clf_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 11.95 108.48
-path 1.0 magnetosphere_intermagnet_dlt_x_nt
-path 1.1 magnetosphere_intermagnet_dlt_y_nt
-path 1.2 magnetosphere_intermagnet_dlt_z_nt
-path 2 magnetosphere_intermagnet_dlt_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 41.65 14.47
-path 1.0 magnetosphere_intermagnet_dur_x_nt
-path 1.1 magnetosphere_intermagnet_dur_y_nt
-path 1.2 magnetosphere_intermagnet_dur_z_nt
-path 2 magnetosphere_intermagnet_dur_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 40.957 0.333
-path 1.0 magnetosphere_intermagnet_ebr_x_nt
-path 1.1 magnetosphere_intermagnet_ebr_y_nt
-path 1.2 magnetosphere_intermagnet_ebr_z_nt
-path 2 magnetosphere_intermagnet_ebr_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 28.321 -16.440999999999974
-path 1.0 magnetosphere_intermagnet_gui_x_nt
-path 1.1 magnetosphere_intermagnet_gui_y_nt
-path 1.2 magnetosphere_intermagnet_gui_z_nt
-path 2 magnetosphere_intermagnet_gui_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 47.873 18.19
-path 1.0 magnetosphere_intermagnet_hrb_x_nt
-path 1.1 magnetosphere_intermagnet_hrb_y_nt
-path 1.2 magnetosphere_intermagnet_hrb_z_nt
-path 2 magnetosphere_intermagnet_hrb_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth -27.171 -109.41999999999999
-path 1.0 magnetosphere_intermagnet_ipm_x_nt
-path 1.1 magnetosphere_intermagnet_ipm_y_nt
-path 1.2 magnetosphere_intermagnet_ipm_z_nt
-path 2 magnetosphere_intermagnet_ipm_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 5.21 -52.73000000000002
-path 1.0 magnetosphere_intermagnet_kou_x_nt
-path 1.1 magnetosphere_intermagnet_kou_y_nt
-path 1.2 magnetosphere_intermagnet_kou_z_nt
-path 2 magnetosphere_intermagnet_kou_s_nt
-
-
-
-
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 21.03 105.96
-path 1.0 magnetosphere_intermagnet_phu_x_nt
-path 1.1 magnetosphere_intermagnet_phu_y_nt
-path 1.2 magnetosphere_intermagnet_phu_z_nt
-path 2 magnetosphere_intermagnet_phu_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth -17.567 -149.574
-path 1.0 magnetosphere_intermagnet_ppt_x_nt
-path 1.1 magnetosphere_intermagnet_ppt_y_nt
-path 1.2 magnetosphere_intermagnet_ppt_z_nt
-path 2 magnetosphere_intermagnet_ppt_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth -21.206 55.576
-path 1.0 magnetosphere_intermagnet_reu_x_nt
-path 1.1 magnetosphere_intermagnet_reu_y_nt
-path 1.2 magnetosphere_intermagnet_reu_z_nt
-path 2 magnetosphere_intermagnet_reu_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ESK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 55.3 -3.2
-path 1.0 magnetosphere_esk_x_nt
-path 1.1 magnetosphere_esk_y_nt
-path 1.2 magnetosphere_esk_z_nt
-path 2 magnetosphere_esk_f_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 36.667 -5.944999999999993
-path 1.0 magnetosphere_intermagnet_sfs_x_nt
-path 1.1 magnetosphere_intermagnet_sfs_y_nt
-path 1.2 magnetosphere_intermagnet_sfs_z_nt
-path 2 magnetosphere_intermagnet_sfs_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 39.55 -4.350000000000023
-path 1.0 magnetosphere_intermagnet_spt_x_nt
-path 1.1 magnetosphere_intermagnet_spt_y_nt
-path 2 magnetosphere_intermagnet_spt_s_nt
-
-
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 44.68 26.25
-path 1.0 magnetosphere_intermagnet_sua_x_nt
-path 1.1 magnetosphere_intermagnet_sua_y_nt
-path 1.2 magnetosphere_intermagnet_sua_z_nt
-path 2 magnetosphere_intermagnet_sua_s_nt
 
 
 
@@ -20610,14 +20438,36 @@ path 2 magnetosphere_intermagnet_sua_s_nt
 
 
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
-ttl 86400
-force gravity
-on earth 47.931 15.866
-path 1.0 magnetosphere_intermagnet_wic_x_nt
-path 1.1 magnetosphere_intermagnet_wic_y_nt
-path 1.2 magnetosphere_intermagnet_wic_z_nt
-path 2 magnetosphere_intermagnet_wic_s_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -22405,3 +22255,17 @@ format csv
 rows
   field Field_Magnitude magnetosphere_f_ngk_nt
   field Time timestamp_utc
+
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQ/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 300
+force gravity
+on earth -54.5 158.95
+map data
+  path 1.0 x_nt
+  path 1.1 y_nt
+  path 1.2 z_nt
+  path 2 s_nt
+
+
+
