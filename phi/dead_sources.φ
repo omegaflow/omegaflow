@@ -334,3 +334,12 @@ note erddap.incois.gov.in unreachable (HTTP 000, host check also fails). Indian 
 decline model-analysis
 url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_wav_anfc_0.083deg_PT3H-i.csv?VHM0%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VMDR%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VTM10%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D
 note CMEMS mod_glo_wav_anfc is model analysis/forecast - council: CMEMS model analysis DECLINE. Also nrt.cmems-du.eu returns HTML auth page (needs CMEMS_USER/PASS). Even with auth, model output has no force.
+dead 404
+url https://rsmcnewdelhi.imd.gov.in/uploads/cyclone/cyclone_track.geojson
+note IMD cyclone_track.geojson 404 (path wrong or moved). Research current RSMC New Delhi cyclone track data feed. Cyclone tracks = storm positions (advective if weather data).
+decline count-aggregate
+url https://gwis.jrc.ec.europa.eu/apps/gwis.statistics/countrydata
+note GWIS countrydata is HTML app page (no direct JSON), and country-level fire_count/burned_area aggregates are counts without individual event records - council: bare counts no force, DECLINE. No position keys either.
+parser-def nested-array
+url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-CMSAF&startyear=2023&endyear=2023&pvcalculation=0&pvtechchoice=crystSi&mountingplace=free&optimalangles=1&outputformat=json
+note PVGIS-CMSAF invalid (use SARAH2 2005-2020 / ERA5 / NSRDB). works with SARAH2+2020: outputs.hourly[] array of {time,G(i),T2m,WS10m}. Needs nested array field_in. Also SARAH2 is satellite reanalysis (council considers reanalysis borderline - solar EM flux is real though). PVGIS returns solar radiation = em.
