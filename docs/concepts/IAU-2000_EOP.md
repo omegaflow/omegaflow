@@ -1,3 +1,5 @@
+STATUS: PARTIALLY DEPLOYED
+
 Das ist eine hervorragende Frage, die genau das Herz der Astrophysik berührt. 
 
 Die kurze Antwort ist: **Das IAU-2000 EOP-Modell gilt ausschließlich für die Erde.** Aber die *architektonische Lösung* (die CI berechnet eine flache 3x3 Matrix und Rust multipliziert nur) wenden wir auf alle Himmelskörper an.

@@ -4,6 +4,15 @@ AGENTS.md is the primary constraint matrix. Git is the history. This file contai
 
 ---
 
+## Sources Split: CDN / Live
+
+The Archivar now loads `phi/sources_cdn.φ` and `phi/sources_live.φ`. Currently only `sources_cdn.φ` exists (renamed from `sources_restored.φ`). The `sources_live.φ` must be populated with live-API-only source blocks that are NOT served from CDN. Each file is canonical — no overlap, no ambiguity. The Archivar loads both and merges the sources at startup.
+
+Action: Identify which source blocks in `sources_cdn.φ` should instead live in `sources_live.φ` (live APIs with no CDN mirror). Extract them to `sources_live.φ`. After extraction, verify `cargo run` loads from both files.
+Code: `phi/sources_cdn.φ`, `phi/sources_live.φ` (to create), `src/main.rs` (load_sources already handles both).
+
+---
+
 ## Touchpad / Touch Control
 
 Spec: `docs/concepts/INTUITIVE TOUCHPAD- & TOUCH-STEUERUNG.md`. Diagonal pinch → zoom. 2-finger horizontal → time. 2-finger vertical → spatial forward/back. `pointers.size < 3` condition in tThrust reset → `< 2`.

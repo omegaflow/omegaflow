@@ -1,3 +1,5 @@
+STATUS: DEPLOYED
+
 Das ist ein absolut legitimes Anliegen. Die Trennung von Raum (Z-Achse), Zeit und Skala ist essenziell für die Navigation im 4D-Block. Wenn Touchpad-Bewegungen ungewollt den Zoom verändern, zerstört das die Präzision der Präsenz.
 
 Wir implementieren exakt dein gewünschtes Schema:

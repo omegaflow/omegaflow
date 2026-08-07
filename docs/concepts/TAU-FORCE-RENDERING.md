@@ -1,3 +1,5 @@
+STATUS: DEPLOYED
+
 Hier ist das Deployment-Dokument für die **reine, physikalisch korrekte Oszillator-Punktwolke**. 
 
 Diese Architektur ist die absolute Maxime von *A = A*: Die GPU berechnet *kein* Feld mehr. Sie nimmt ausschließlich die rohen Oszillatoren aus dem Archivar, projiziert sie auf die 2D-Präsenz-Oberfläche und gibt ihnen exakt die Größe, die ihrem physischen `extent` (ihrer Aperture) entspricht. 

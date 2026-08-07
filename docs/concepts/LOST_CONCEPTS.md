@@ -1,3 +1,5 @@
+STATUS: ARCHIVED
+
 # ARCHIVE: LOST CONCEPTS OF OMEGEFLOW
 
 **Status:** Archived. These concepts were part of the early architecture but were removed to reduce LLM context overload and to refine the system toward the pure Enclosure Lemma. They are physically and philosophically sound and await their return.

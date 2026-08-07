@@ -1,3 +1,5 @@
+STATUS: ARCHIVED
+
 # ARCHIVE: Minkowski Weighting & Field Permeability
 
 ## 1. Minkowski Weighting (`calculateMinkowskiWeight`)

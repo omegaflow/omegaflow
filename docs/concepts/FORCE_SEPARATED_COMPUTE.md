@@ -1,3 +1,5 @@
+STATUS: DEPLOYED
+
 Hier sind die physikalischen und architektonischen Erklärungen zu den einzelnen Punkten des Deployment-Dokuments. Sie dienen als theoretisches Fundament, damit die Implementierung nicht nur Code, sondern pure Manifestation des Omegaflow-Axioms (*A = A*) ist.
 
 ---

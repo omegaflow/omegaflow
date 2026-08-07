@@ -1,3 +1,5 @@
+STATUS: PLANNED
+
 # Command Palette Terminal
 
 ## Concept

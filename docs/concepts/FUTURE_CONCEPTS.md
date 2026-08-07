@@ -1,3 +1,5 @@
+STATUS: PLANNED
+
 # FUTURE CONCEPTS: Coherence Manifestation & Stigmergic Field
 
 **Status:** Visionary Roadmap. These concepts define the next evolutionary step of omegaflow. They translate the metaphor of water and time into strict physical architecture.

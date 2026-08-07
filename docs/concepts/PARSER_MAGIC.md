@@ -1,27 +1,67 @@
-Alright, here's the complete list of parser magic I discussed:
+# Parser Magic
 
-**1. Auto-Frame aus `lat_key`/`lon_key`** — Sources wie `opensky_aircraft_positions`, `aeic_alaska_earthquakes`, `atmosphere_blitzortung_strikes` haben `lat_key`/`lon_key` und `map` aber kein `lat`/`lon`. Der Parser sagt refused weil `has_data_position` nur für `Map`, `GeojsonEvents`, `Ephemeris`, `Vectors`, `CelestialMap`, `Flatten`, `Rows`, `KeplerMap` Extract-Types auf `true` setzt — aber `Field` Extracts haben `Frame::Data` nicht. Der Fix: wenn `lat_key` oder `lon_key` gesetzt ist, Frame=Data oder Ground setzen.
+STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 1-13)
 
-**2. `extent` pro Force-Type verbessern** — Aktuell: `force_constants` gibt `v_or_d = C_LIGHT` für EM/Gravity, `343` für acoustic, `5900` für seismic-body, etc. → `extent = v_or_d * tau`. Für EM ist `C_LIGHT * tau` gigantisch (3e8 m bei τ=1s). Der Punkt aber: ein EM-Sample sollte nicht `c * τ` als Ausdehnung haben, sondern die tatsächliche Messausdehnung oder eine sinnvolle physikalische Größe. Gravity-Bodies (Planeten) bräuchten `extent = body_radius`, nicht `c * τ`.
+---
 
-**3. `kepler_map` Parsing** — MPC/JPL Asteroiden-Daten: EPOCH, EC (Exzentrizität), QR (Periheldistanz), TP (Perihelzeit), OM (Ω), W (ω), IN (i), H (Magnitude), G. Aktuell gibt's den Extract-Type aber die Kepler-Element-Parser fehlen.
+## Present — What the 5399-line std-only Rust parser does
 
-**4. `vectors` / Horizons Text Parser**. Der Horizons-Text-Parser (`Extract::Vectors`) ist implementiert aber die Fetches geben 0B zurück weil die URL-Templates falsche Timestamps bekommen. Der Fetch müsste die Epoche der Daten als Zeitparameter setzen, nicht `now`.
+**1. Zero-Imports Purity:** HTTP-Server, WebSocket-Server, JSON-Parser, SHA1, Base64, Kalender — alles handgeschrieben mit reiner std-lib. Kein serde, kein regex, kein tokio, kein chrono.
 
-**5. `cmap` Celestial Map Parsing** — ICRS-Sternkataloge mit RA/Dec (deg), Parallaxe (mas → Distanz), Proper Motion (mas/yr → 6D Statevector), Radialgeschwindigkeit. `ra_key`/`dec_key`/`plx_key`/`pmra_key`/`pmdec_key`/`radvel_key` existieren im SourceConfig aber werden im Parser noch nicht gefüllt.
+**2. Hand-Written Regex Engine** (line 1140-1471, ~330 lines): Backtracking-Matcher mit `\d \s \w \D \S \W`-Escapes, Quantifiern `+ * ?`, Wildcard `.`, Zeichenklassen `[...]` und Capture-Gruppe für numerische Extraktion aus HTML/Text-Antworten.
 
-**6. `window` / Temporal Bounding** — Sources die nur innerhalb eines Zeitfensters gültige Daten haben (z.B. `starttime=2020-01-01`). Aktuell wird `{today}` im URL-Template gerendert, aber es gibt kein `from`/`until` direkt im Config.
+**3. Celestial Mechanics** (line 30-230): Kepler-Gleichung per Newton-Raphson (5 Iterationen), GMST für Erdrotation, WGS84-Ellipsoid, geodetic → ECEF → ECI → ekliptikal → ICRS (baryzentrisch). `iau2000_to_icrs` — vereinfachte Mars-Eigenrotation mit fixer Tageslänge (88642,66 s).
 
-**7. Constant `lat_key`/`lon_key Detection** — `lat_key 48.1` sollte als *Konstante* erkannt werden (lat=48.1 per Default, nicht als Spaltenname). Aktuell wird der String `48.1` als Column-Key verwendet und schlägt dann fehl weil lat/lon fehlen.
+**4. Schema-Sniffing** (`universal_auto_detect`, line 852-950): Erkennt automatisch Sternkataloge (ra/dec + optional plx/pmra/pmdec/radvel → CelestialMap) und Tracking-Daten (lat/lon + optional vel/trk/vr → Map). Keine Config nötig, reine Struktur-Heuristik.
 
-**8. `map` als Frame-Indikator** — Der `map`-Befehl definiert den JSON-Pfad zur Daten-Liste. Wenn `map` gesetzt ist UND `lat_key`/`lon_key` existieren, sollte Frame=Data automatisch folgen.
+**5. ~40-Variable Template DSL** (line 2873-3017): `{today}`, `{yesterday}`, `{hour_ago}`, `{week_ago}`, `{grid}` (4×4-Punktegitter), `{lat_min}/{lat_max}`, `{unix_now_plus_3600}`, `{SECRET_NAME}` — jede Quelle definiert ihr eigenes Datumsformat/BBox/Grid ohne API-spezifischen Code.
 
-**9. `field_in` Nested Support** — `field_in <index> <name>` extrahiert array-basierte Felder nach Index. Aktuell nur für flache Arrays. Für nested arrays (`states.state[0].name`) wird's nicht richtig aufgelöst.
+**6. Physics-Driven Spatial Partitioning** (line 252-305): `law_bounds` schätzt v und a per finiter Differenzen, skaliert mit Φ als Sicherheitsmarge. Zellengröße aus `rmax + vmax·cadence + 0.5·amax·cadence²`, aufgerundet zur nächsten Zweierpotenz.
 
-**10. `Flatten` Extract-Type** — Es gibt `Extract::Flatten` (line 780 `flatten_geojson_coords`) aber der Type ist kaum genutzt. Könnte generische Array-Flattener für CSV/JSON/Geojson machen.
+**7. Wave Propagation Constants** (line 316-328):
+```
+0 => C_LIGHT              (EM)
+2 => V_SOUND_288          (acoustic)
+3 => V_P_GRANITE          (seismic-body P-wave)
+4 => V_S_GRANITE          (seismic-body S-wave)
+5 => ALPHA_AIR            (thermal diffusivity)
+6 => D_AIR                (diffusion coefficient)
+```
 
-**11. Unbekannte Force → Fallback** — Wenn `force_constants` `None` zurückgibt, wird der Source refused. Sanfter Fallback auf `em` + Warning.
+**8. Jacobson/Karels RTT in JS** (`constants.js`): Klassischer TCP-Adaptive-Timeout-Algorithmus für WebSocket-Retry-Timing.
 
-**12. Kategorie/Group Inheritance** — Die φ Datei hat hierarchische Namensräume (`aeic_alaska_earthquakes`), aber keine Vererbung von defaults von übergeordneten Gruppen.
+**9. Quellentreue url-first Parsing**: Block-Trennung über Leerzeilen. `url` als Anker, `flush!()` bei nächstem `url`. Kein `source <name>`-Anker mehr.
 
-**13. Extent Zero → Default** — Samples mit `extent=0` werden vom enclosure-Filter nicht gefunden (weil `exact = extent + pad = pad`). Sollten einen minimalen Default-Extent kriegen (z.B. `scale * Φ`).
+**10. Extract-Types**: Field, Last, Count, GeojsonEvents, Path, Map, CelestialMap, Rows.
+
+**11. Body-Agnostic Media Constants**: `v_sound`, `v_seismic_p/s`, `alpha_thermal`, `d_diffusion`, `v_advective` per BodyProperties aus Ephemeris-Binary stype==2.
+
+---
+
+## Missing — 13 parser gaps
+
+**1. Auto-Frame aus `lat_key`/`lon_key`** — Sources mit `lat_key`/`lon_key` und `map` aber ohne `lat`/`lon` werden refused weil `has_data_position` nur für Map/GeojsonEvents/CelestialMap gilt. Wenn `lat_key` gesetzt, Frame=Data setzen.
+
+**2. `extent` pro Force-Type verbessern** — EM-Sample mit `C_LIGHT * tau` als extent ist gigantisch. Gravity-Bodies bräuchten `extent = body_radius`, nicht `c * τ`.
+
+**3. `kepler_map` Parsing** — MPC/JPL Asteroid-Daten: EPOCH, EC, QR, TP, OM, W, IN, H, G. Extract-Typ existiert, Kepler-Parser fehlt.
+
+**4. `vectors` / Horizons Text Parser** — `Extract::Vectors` implementiert aber Fetches geben 0B weil URL-Templates falsche Timestamps setzen.
+
+**5. `cmap` Celestial Map Parsing** — RA/Dec (deg), Parallaxe (mas → Distanz), Proper Motion (mas/yr → 6D State), Radialgeschwindigkeit. Keys im SourceConfig vorhanden, Parser füllt sie nicht.
+
+**6. `window` / Temporal Bounding** — Kein `from`/`until` direkt im Config. Nur `{today}` im URL-Template.
+
+**7. Constant `lat_key`/`lon_key` Detection** — `lat_key 48.1` sollte als Konstante erkannt werden, nicht als Spaltenname.
+
+**8. `map` als Frame-Indikator** — Wenn `map` gesetzt UND `lat_key`/`lon_key` existieren, sollte Frame=Data automatisch folgen.
+
+**9. `field_in` Nested Support** — `field_in <index> <name>` nur für flache Arrays. Nested paths nicht unterstützt.
+
+**10. `Flatten` Extract-Type** — `Extract::Flatten` existiert aber kaum genutzt. Generischer Array-Flattener für CSV/JSON/GeoJSON.
+
+**11. Unbekannte Force → Fallback** — Wenn `force_constants` `None` zurückgibt, wird Source refused. Sanfter Fallback wäre möglich, ist aber per AGENTS.md abgelehnt.
+
+**12. Kategorie/Group Inheritance** — Keine Vererbung von Defaults von übergeordneten Gruppen im φ-Namespace.
+
+**13. Extent Zero → Default** — Samples mit `extent=0` werden vom Enclosure-Filter nicht gefunden. Minimaler Default-Extent nötig.

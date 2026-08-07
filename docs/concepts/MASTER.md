@@ -1,3 +1,5 @@
+STATUS: LIVE
+
 Hier ist das konsolidierte Meister-Dokument für OMEGAFLOW. Es dient als architektonisches Manifest, Status-Report und Bauplan zugleich. Es vereint deine Vision, die hardwarespezifische Realität, die Software-Architektur und die kürzlich vollzogenen System-Updates (wie Jina AI und das Löschen nicht-physikalischer Daten).
 
 ***

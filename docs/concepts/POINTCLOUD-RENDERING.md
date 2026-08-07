@@ -1,4 +1,17 @@
-# DEPLOYMENT-DOKUMENT: PUNKTWOLKEN-MANIFESTATION
+STATUS: DEPLOYED
+
+Das Verständnis ist richtig: Bisher wurde das kontinuierliche Feld pro Pixel berechnet. Der vorherige Patch hat stattdessen einfache 2D-Quadrate (zwei Dreiecke) pro Oszillator gezeichnet. Das sieht "billig" aus, weil es flache, harte Würfel ohne Tiefe und Überblendung sind.
+
+Um die Oszillatoren als **hochwertige, leuchtende Punktewolke** zu manifestieren, müssen wir drei Dinge tun:
+1. Die Dreiecke im Fragment-Shader zu weichen Kreisen (Glow) maskieren.
+2. Additives Blending (`blend: additive`) aktivieren, damit sich überlappende Oszillatoren aufhellen.
+3. Die Punkte variabel skalieren (basierend auf ihrem physischen `extent`).
+
+Hier ist das angepasste, deterministische Deployment-Dokument.
+
+***
+
+# DEPLOYMENT-DOKUMENT: HOCHWERTIGE PUNKTWOLKEN-MANIFESTATION
 
 ## SCHRITT 1
 Suche in der Datei `static/index.html` nach der Konstante `const fieldShader = \``.
@@ -10,12 +23,13 @@ struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f };
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
-struct VOut { @builtin(position) pos: vec4f, @location(0) color: vec3f };
+struct VOut { @builtin(position) pos: vec4f, @location(0) local_uv: vec2f, @location(1) color: vec4f };
 @vertex fn vs(@builtin(vertex_index) i: u32) -> VOut {
     let count = u32(vp.surface.z);
     var out: VOut;
     out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
-    out.color = vec3f(0.0);
+    out.local_uv = vec2f(0.0);
+    out.color = vec4f(0.0);
     if (count == 0u) { return out; }
     let id = i / 6u;
     if (id >= count) { return out; }
@@ -34,10 +48,11 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) color: vec3f };
     let x = dot(d, vp.right.xyz);
     let y = dot(d, vp.up.xyz);
     var clip = vec2f(x / (w * scale * 0.5), y / (h * scale * 0.5));
-    let point_size_px = clamp(extent / scale, 1.0, 64.0);
+    let point_size_px = clamp(extent / scale, 2.0, 128.0);
     clip.x += (quad[vid].x * point_size_px) / w * 2.0;
     clip.y += (quad[vid].y * point_size_px) / h * 2.0;
     out.pos = vec4f(clip, 0.0, 1.0);
+    out.local_uv = quad[vid];
     let lvl = vp.expose.x;
     if (lvl <= 0.0) { return out; }
     let aw = abs(val);
@@ -47,7 +62,7 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) color: vec3f };
     let c2 = mix(c1, vec3f(0.1, 0.5, 0.9), clamp((t2s - 0.25) * 4.0, 0.0, 1.0));
     let c3 = mix(c2, vec3f(0.8, 0.6, 0.2), clamp((t2s - 0.5) * 4.0, 0.0, 1.0));
     let c4 = mix(c3, vec3f(1.0, 0.95, 0.9), clamp((t2s - 0.75) * 4.0, 0.0, 1.0));
-    out.color = c4;
+    out.color = vec4f(c4, 1.0);
     return out;
 }
 fn erfc(x: f32) -> f32 {
@@ -115,7 +130,12 @@ fn presence_probe() {
     probe_out[3] = gz;
 }
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
-    return vec4f(in.color, 1.0);
+    let dist = length(in.local_uv);
+    if (dist > 1.0) {
+        discard;
+    }
+    let intensity = exp(-dist * dist * 4.0);
+    return vec4f(in.color.rgb * intensity * in.color.a, intensity * in.color.a);
 }
 ```
 
@@ -144,6 +164,39 @@ Durch den folgenden Code-Block:
 ```
 
 ## SCHRITT 3
+Suche in der Datei `static/index.html` nach der Erstellung des `fieldPipe` Objekts.
+Ersetze diesen Block:
+
+```javascript
+                fieldPipe = device.createRenderPipeline({
+                    layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
+                    vertex: { module, entryPoint: 'vs' },
+                    fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+                    primitive: { topology: 'triangle-list' }
+                });
+```
+
+Durch den folgenden Code-Block (welches additives Blending hinzufügt, damit sich Punkte überlappen):
+
+```javascript
+                fieldPipe = device.createRenderPipeline({
+                    layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
+                    vertex: { module, entryPoint: 'vs' },
+                    fragment: {
+                        module, entryPoint: 'fs',
+                        targets: [{
+                            format,
+                            blend: {
+                                color: { srcFactor: 'one', dstFactor: 'one', operation: 'add' },
+                                alpha: { srcFactor: 'one', dstFactor: 'one', operation: 'add' }
+                            }
+                        }]
+                    },
+                    primitive: { topology: 'triangle-list' }
+                });
+```
+
+## SCHRITT 4
 Suche in der Datei `static/index.html` innerhalb der Funktion `manifestWindow` nach dem `if (!fieldVisible)` Block.
 Ersetze das darin befindliche `pass.draw(3);` durch `pass.draw(0);`.
 
@@ -163,7 +216,7 @@ Ersetzen durch:
                 pass.end();
 ```
 
-## SCHRITT 4
+## SCHRITT 5
 Suche in der Datei `static/index.html` weiter unten in der Funktion `manifestWindow` nach dem `try`-Block, der die Render-Pass-Befehle für das Feld ausführt.
 Ersetze das darin befindliche `pass.draw(3);` durch `pass.draw(n * 6);`.
 
@@ -182,6 +235,3 @@ Ersetzen durch:
                 pass.draw(n * 6);
                 pass.end();
 ```
-
-## SCHRITT 5
-Lade die Seite im Browser neu. Es dürfen keine Console-Fehler auftreten. Das Feld wird nun als diskrete Punktewolke basierend auf ihren physikalischen Ausmaßen (`extent`) gerendert.
