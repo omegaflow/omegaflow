@@ -28,13 +28,13 @@ A block in the φ files:
 url https://example.com/api/data?param={today}
 ttl 3600
 force em
-on earth 48.2 16.4
+on mars 14.0 90.0
 map results
 lat_key latitude
 lon_key longitude
   field value my_measurement
 ```
-(`on earth` is one example; any body works — `on mars 14.0 90.0` is the same
+(`on mars` is one example; any body works — `on sirius 14.0 90.0` is the same
 construct with a different body name.)
 
 Mandatory per block: `url`, `ttl`, `force`. The Archivar refuses blocks missing
@@ -268,8 +268,8 @@ magnetometer feeds) may now be curatable.
 Known good patterns:
 - Frame semantics (from parser `src/main.rs`): frames are body-agnostic —
   `on <body> <lat> <lon> [alt]` = fixed geodetic point on any body (e.g.
-  `on earth`, `on mars`, `on moon`); `at <body> <scale>` = barycentric frame
-  of that body (e.g. `at sun 1.0`, `at earth 1.0`); `body <body>` + `lat_key`/
+  `on mars`, `on sirius`, `on moon`); `at <body> <scale>` = barycentric frame
+  of that body (e.g. `at sun 1.0`, `at sirius 1.0`); `body <body>` + `lat_key`/
   `pos` = DATA-CARRIED position (each record carries its own coords — GBIF,
   iNaturalist, USGS bBox). No body is privileged; the body name is just data.
   `body <planet>` in ephemeris/Horizons blocks declares the queried body (the
