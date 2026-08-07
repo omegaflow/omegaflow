@@ -2,7 +2,13 @@ debug/
 .env
 *.log
 omegaflow.wasm
-.opencode/
+.opencode/*
+!.opencode/agent/
+.opencode/agent/*
+!.opencode/agent/council.md
+!.opencode/command/
+.opencode/command/*
+!.opencode/command/council.md
 opencode.json
 *.pdb
 phi/health.json

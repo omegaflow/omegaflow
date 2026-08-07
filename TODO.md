@@ -4,6 +4,12 @@ AGENTS.md is the primary constraint matrix. Git is the history. This file contai
 
 ---
 
+## Council Agent Versioned (2026-08-07)
+
+`.opencode/agent/council.md` and `.opencode/command/council.md` are now versioned (skip-worktree). Verify a fresh clone invokes the council agent with the same behavior.
+
+---
+
 ## Sources Split: CDN / Live
 
 The Archivar now loads `phi/sources_cdn.φ` and `phi/sources_live.φ`. Currently only `sources_cdn.φ` exists (renamed from `sources_restored.φ`). The `sources_live.φ` must be populated with live-API-only source blocks that are NOT served from CDN. Each file is canonical — no overlap, no ambiguity. The Archivar loads both and merges the sources at startup.
