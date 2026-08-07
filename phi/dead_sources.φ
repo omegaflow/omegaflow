@@ -343,3 +343,12 @@ note GWIS countrydata is HTML app page (no direct JSON), and country-level fire_
 parser-def nested-array
 url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-CMSAF&startyear=2023&endyear=2023&pvcalculation=0&pvtechchoice=crystSi&mountingplace=free&optimalangles=1&outputformat=json
 note PVGIS-CMSAF invalid (use SARAH2 2005-2020 / ERA5 / NSRDB). works with SARAH2+2020: outputs.hourly[] array of {time,G(i),T2m,WS10m}. Needs nested array field_in. Also SARAH2 is satellite reanalysis (council considers reanalysis borderline - solar EM flux is real though). PVGIS returns solar radiation = em.
+decline tos-drop
+url https://api.waqi.info/map/bounds/?latlng=-60,-180,60,180&token=demo
+note WAQI: token=demo returns 'Invalid key'. Also council DROP: WAQI ToS prohibits CDN redistribution. air quality needs paid key otherwise.
+decline model-output
+url https://thredds.silam.fmi.fi/thredds/catalog.html
+note SILAM is chemistry-transport MODEL output - council: model output DECLINE. URL is THREDDS catalog page (HTML) not data endpoint. Would need specific .nc/OPeNDAP dataset path even if revived.
+parser-def synop-decode
+url https://www.ogimet.com/cgi-bin/getsynop?block=20&begin={year}{month}{day}0000&end={year}{month}{day}2300
+note OGIMET works (real SYNOP observations, CSV with WMO-coded AAXX groups). Temperature encoded in WMO groups (10005 = +0.5C). Needs SYNOP decoder - parser lacks this. Real thermal measurements otherwise.
