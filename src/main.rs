@@ -1000,8 +1000,6 @@ pub enum JsonVal {
 
 pub fn parse_json(s: &str) -> Option<JsonVal> {
     let bytes = s.as_bytes();
-    // Jina-style metadata headers (Title:, URL Source:, Markdown Content:) precede
-    // the payload — jump to the first structural character.
     let start = (0..bytes.len()).find(|&i| bytes[i] == b'{' || bytes[i] == b'[')?;
     let mut p = JsonParser {
         chars: bytes,
@@ -1714,7 +1712,6 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                         } else if p.get(pi + 1).map_or(false, |&c| c == b'-')
                             && p.get(pi + 2).is_some()
                         {
-                            // expand ranges like 0-9, a-z
                             let lo = p[pi];
                             let hi = p[pi + 2];
                             for c in lo..=hi {
@@ -5623,7 +5620,6 @@ fn warm_cache(archive: Arc<Archive>) {
 
 fn main() {
     load_env();
-    // reference pre-CDN constants/variants reserved for extraction arms
     {
         let _ = (ECLIPTIC_OBLIQUITY, AU, GAUSS_K);
         let _ = PendingPosition::Geodetic {
@@ -5734,7 +5730,9 @@ fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64)> {
 }
 
 mod tests {
+    #[cfg(test)]
     use super::*;
+    #[cfg(test)]
     use std::collections::HashMap;
 
     #[test]
@@ -6239,7 +6237,6 @@ mod tests {
 
     #[test]
     fn test_restored_extract_variants() {
-        // jfirst / jlast / jdeep / jcount / jpath(negative idx)
         let j = super::parse_json(
             r#"{"data":[{"a":1,"nested":{"b":9}},{"a":2},{"a":3}],"x":[10,20,30]}"#,
         )
@@ -6249,13 +6246,10 @@ mod tests {
         assert_eq!(super::jdeep_find_num(&j, "b"), Some(9.0));
         assert_eq!(super::jcount(&j, "data"), Some(3.0));
         assert_eq!(super::jpath(&j, "x.-1"), Some(30.0));
-        // 2D array with header row: last row's value for column "a"
         let j2 = super::parse_json(r#"[["t","a"],["x",1],["y",2]]"#).unwrap();
         assert_eq!(super::j2d_last_row(&j2, "a"), Some(2.0));
-        // text_last_col: header matched by name, last data row
         let csv = "# time temp\n1 10\n2 20\n";
         assert_eq!(super::text_last_col(csv, "temp"), Some(20.0));
-        // std regex engine: '...' shorthand and literal-group patterns work
         assert_eq!(
             super::extract_regex_val(r#"{"totalItems":5,"x":1}"#, r#"("totalItems":...,)"#),
             Some(5.0)
@@ -6264,10 +6258,80 @@ mod tests {
             super::extract_regex_val("<Count>5</Count>", "<Count>([0-9]+)</Count>"),
             Some(5.0)
         );
-        // LastLine: last numeric column of last non-comment line
         assert_eq!(
             super::jcount(&super::parse_json(r"[1,2,3]").unwrap(), "."),
             Some(3.0)
         );
+    }
+
+    #[test]
+    fn test_live_sources_extract() {
+        let srcs = super::load_sources();
+        eprintln!("load_sources returned {} sources", srcs.len());
+        let now = super::tdb_now();
+        let mut ok = 0usize;
+        let mut fail: Vec<(String, String)> = Vec::new();
+        let mut limit = 200usize;
+        for s in srcs.iter() {
+            let mut url = s.url.clone();
+            for (k, v) in [
+                ("{today}", "2026-08-07"),
+                ("{yesterday}", "2026-08-06"),
+                ("{tomorrow}", "2026-08-08"),
+                ("{now}", "2026-08-07T12:00:00Z"),
+                ("{year}", "2026"),
+                ("{month}", "08"),
+                ("{day}", "07"),
+                ("{lat}", "52.52"),
+                ("{lon}", "13.41"),
+                ("{ra}", "0.0"),
+                ("{dec}", "0.0"),
+                ("{target}", "Ceres"),
+                ("{week_ago}", "2026-07-31"),
+                ("{hour_ago}", "2026-08-07T11:00:00Z"),
+                ("{body}", "ISS"),
+            ] {
+                url = url.replace(k, v);
+            }
+            if url.starts_with("https://github.com/omegaflow/sources") {
+                continue;
+            }
+            if limit == 0 {
+                break;
+            }
+            limit -= 1;
+            let body = match super::fetch_one(&url, None, &[], s.ttl) {
+                Some(b) => b,
+                None => {
+                    fail.push((url, "fetch failed".into()));
+                    continue;
+                }
+            };
+            match super::extract_pending(s, &body, now) {
+                super::ExtractResult::Samples(v) => {
+                    if v.is_empty() {
+                        fail.push((url, "no samples".into()));
+                    } else {
+                        ok += 1;
+                    }
+                }
+                super::ExtractResult::WithEphemeris(v, _) => {
+                    if v.is_empty() {
+                        fail.push((url, "no samples".into()));
+                    } else {
+                        ok += 1;
+                    }
+                }
+            }
+        }
+        eprintln!(
+            "\n=== LIVE SOURCE EXTRACTION: {} ok, {} fail (of {} tested) ===",
+            ok,
+            fail.len(),
+            ok + fail.len()
+        );
+        for (u, why) in fail.iter().take(60) {
+            eprintln!("  FAIL {}  {}", u.chars().take(70).collect::<String>(), why);
+        }
     }
 }
