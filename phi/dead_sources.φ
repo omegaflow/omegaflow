@@ -498,3 +498,50 @@ note HydroSheds rivers/basins are geographic infrastructure - DECLINE anyway. Al
 parser-def html
 url https://hsaf.meteoam.it/Products/Detail?prod=H25&format=json&date={today}
 note H-SAF product returns HTML detail page. Satellite precipitation (H25) would be diffusion/advective if API found.
+parser-def html
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Lepidoptera&format=json&limit=500
+note BOLD v4 specimen API returns HTML offline page. DNA barcode specimens (biotic).
+
+dead 404
+url https://portal.boldsystems.org/api/summary/geo?format=json&limit=250
+note BOLD portal geo summary 404.
+
+dead 404
+url https://api.boldsystems.org/v3/specimen?taxon=Lepidoptera&format=json&limit=3
+note BOLD v3 API 404.
+
+parser-def html
+url https://www.bodc.ac.uk/geotraces/data/inventories/download/?format=json&section=GA01&parameter=Fe,Mn
+note BODC GEOTRACES returns HTML page not JSON. Trace metal ocean profiles (diffusion).
+parser-def unreachable
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/OMNI_HRO2_DAILY/variables/BX_GSE,BY_GSE,BZ_GSE
+note CDAWeb WS API unreachable from here (HTTP 000 all paths, Jina shows 404 path issue). Space physics magnetometer/plasma data (ACE, OMNI, RBSP, SOLO, Voyager, WIND) = gravity/em. Research correct CDASR v1 resultFormat path. 19 blocks in group.
+dead 404
+url https://atmosphere.copernicus.eu/sites/default/files/custom-uploads/CAMS-Monitoring-Products/fire/cams_global_frp.nc
+note CAMS fire NC path 404. Research current CAMS wildfire product URL.
+
+dead 404
+url https://api.bas.ac.uk/uk-pdc-catalogue/v1/items?format=json&category=environmental_monitoring&limit=500
+note BAS UK-PDC catalogue 404. Research current BAS Antarctic data catalogue API.
+dead 404
+url https://coastwatch.noaa.gov/erddap/griddap/ncdcOisst21Agg.csv?sst%5Blast%5D%5B0%5D%5B(-60.0):(75.0):4%5D%5B(0.0):(360.0):4%5D
+note OISST datasetID ncdcOisst21Agg unknown. Research current coastwatch OISST dataset ID.
+
+dead 404
+url https://www.nhc.noaa.gov/storm_graphics/api/AL012025_CONE.json
+note NHC storm cone AL012025 404 (fictional storm). Storm tracks need real active storm API.
+
+dead 404
+url https://gml.noaa.gov/aftp/data/ozwv/Dobson/dobsonNetworkData.json
+note GML Dobson ozone path 404 (GML restructured). Ozone column = diffusion.
+
+dead 404
+url https://gml.noaa.gov/webdata/atmospheric_electricity/electric_field_summary.json
+note GML atmospheric electricity 404. Fair-weather electric field = em.
+parser-def erddap-syntax
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplMURSST41.csv?analysed_sst%5Blast%5D%5B0%5D%5B48.2%5D%5B16.4%5D
+note MURSST dataset exists on pfeg but all bracket constraint forms rejected (400). Current ERDDAP needs different syntax. SST = thermal. Research current ERDDAP grid constraint syntax.
+
+dead 404
+url https://kmtnet.kasi.re.kr/ulens/event/{year}/list.json
+note KMTNet microlensing event 404. Research current KMTNet event API.
