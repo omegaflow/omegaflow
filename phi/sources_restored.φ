@@ -15069,15 +15069,6 @@ body earth
   field value value
   field resolution resolution
 
-url https://www.ncei.noaa.gov/access/paleo-search/study/params.json?dataTypeId=18
-ttl 86400
-force diffusion
-on earth 0.0 0.0
-map .
-  field name name
-  field id id
-  field units units
-
 url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataTypeId=18&limit=500
 ttl 86400
 force diffusion
@@ -15467,33 +15458,6 @@ lon_key site.0.geo.geometry.coordinates.0
   field site.0.elevation elevation
   field earliestYearBP earliestYearBP
   field mostRecentYearBP mostRecentYearBP
-
-url https://www.ncei.noaa.gov/swdiws/json/nx3hail/{today}
-ttl 86400
-force acoustic
-at sun 1.0
-map .
-  field swdiJsonResponse.status status
-  field summary.count count
-  field summary.totalTimeInSeconds totalTimeInSeconds
-
-url https://www.ncei.noaa.gov/swdiws/json/nx3meso/{today}
-ttl 86400
-force acoustic
-at sun 1.0
-map .
-  field swdiJsonResponse.status status
-  field summary.count count
-  field summary.totalTimeInSeconds totalTimeInSeconds
-
-url https://www.ncei.noaa.gov/swdiws/json/nx3structure/{today}
-ttl 86400
-force acoustic
-at sun 1.0
-map .
-  field swdiJsonResponse.status status
-  field summary.count count
-  field summary.totalTimeInSeconds totalTimeInSeconds
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
 ttl 86400
@@ -18732,8 +18696,6 @@ force em
 on earth -77.3190 39.7030
 format universal
 map data
-lat_key lat
-lon_key lon
 field_in 0 paleoclimate_domefuji_age_bp
 field_in 1 paleoclimate_domefuji_co2_ppm
 
@@ -18743,8 +18705,6 @@ force em
 on earth -75.100 123.350
 format universal
 map data
-lat_key lat
-lon_key lon
 field_in 3 paleoclimate_epica_age_bp
 field_in 4 paleoclimate_epica_co2_ppm
 
@@ -18754,8 +18714,6 @@ force em
 on earth -78.464 106.833
 format universal
 map data
-lat_key lat
-lon_key lon
 field_in 0 paleoclimate_vostok_depth_m
 field_in 1 paleoclimate_vostok_age_bp
 field_in 2 paleoclimate_vostok_co2_ppm
@@ -18780,8 +18738,6 @@ force diffusion
 on earth -75.1 123.35
 format universal
 map data
-lat_key lat
-lon_key lon
 field_in 0 depth_m
 field_in 1 age_yr_bp
 field_in 2 ch4_ppbv
@@ -18792,8 +18748,6 @@ force diffusion
 on earth -78.464 106.837
 format universal
 map data
-lat_key lat
-lon_key lon
 field_in 0 depth_m
 field_in 1 age_yr_bp
 field_in 2 deuterium_delta
@@ -18804,8 +18758,6 @@ force diffusion
 on earth -79.467 -112.085
 format universal
 map data
-lat_key lat
-lon_key lon
 field_in 0 depth_m
 field_in 1 age_yr_bp
 field_in 2 co2_ppmv
