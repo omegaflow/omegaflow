@@ -624,3 +624,14 @@ note PMEL vents API 404 (HTML page). Hydrothermal vents = thermal.
 dead 404
 url https://coastwatch.noaa.gov/erddap/tabledap/noaaVIIRSboatdetect.csv?latitude,longitude,time,bright_ti4
 note VIIRS boat detect datasetID unknown. Research correct coastwatch ID.
+parser-def api-syntax
+url https://data.oceannetworks.ca/api/locations?method=getTree&token={oceannetworks_token}&locationCode=&includeChildren=Y&depth=1
+note OceanNetworks API auth works with OCEANNETWORKS_TOKEN but param names differ (depth/includeChildren invalid). Research correct ONC v2 API params. Ocean sensors = thermal/acoustic.
+
+dead 400
+url https://omniweb.gsfc.nasa.gov/cgi/nx1.cgi?activity=retrieve&res=hour&spacecraft=omni2&start_date={today}&end_date={tomorrow}
+note OMNIWeb date format wrong (no hyphens). Research YYYYMMDD format. Solar wind = gravity/em.
+
+decline model
+url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date=2015-01-01&end_date=2020-01-01&daily=temperature_2m_mean
+note open-meteo climate archive = reanalysis model - council: model DECLINE.
