@@ -463,16 +463,19 @@ Code: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, `sources_live.φ`
 Read `docs/source_curation.md` first — it is the full session handoff with
 the parser status, the parser-as-verifier method, and the session results.
 
-STATUS (2026-08-07 end of day): extraction test = **193 ok / 7 fail** of the
-first 200 non-CDN live sources (was 29 ok / 171 fail). The 7 remaining are
-verified data-availability/test-coverage artifacts (empty USGS quake feeds,
-DONKI needs `NASA_API_KEY` in `phi/.secrets.local`, 2 USGS waterservices
-bBox templates that only the runtime presence window substitutes). The
-previous 107-FAIL inventory is RESOLVED — the decisive fix was reverting the
+STATUS (2026-08-07, post key-fix): extraction test = **194 ok / 6 fail** of
+the first 200 non-CDN live sources (was 29 ok / 171 fail). Commit `e19b47f`
+fixed DONKI (case-insensitive secret resolution + regex X-class extract),
+converted the two USGS waterservices fixed-bbox blocks to presence-window
+templates, and gave the test a Houston-TX window + `{lon_min}`..`{lat_max}`
+substitution. The 6 remaining FAILs are verified service/data availability:
+5 USGS quake feeds legitimately empty on 2026-08-07 (extract directives
+verified against data-bearing feeds), gracedb 503 scheduled maintenance.
+Previous 107-FAIL inventory RESOLVED — decisive fix was reverting the
 `field_in`->`field` migration error (commit 9c16f8a).
 
 TASK: run `cargo test test_live_sources_extract -- --nocapture` (~150s).
-Confirm 193 ok / 7 fail, then raise the test limit (`let mut limit =
+Confirm 194 ok / 6 fail, then raise the test limit (`let mut limit =
 200usize;` in `test_live_sources_extract`) to the next chunk and repeat,
 fixing every new `FAIL <url> no samples` with the generic recipes in
 source_curation.md (positionless -> `last <dot.path>` at frame; GeoJSON ->

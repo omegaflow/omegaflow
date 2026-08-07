@@ -167,9 +167,9 @@ blocks (these are CDN candidates — the test should skip them like it skips
 `github.com/omegaflow/sources`) and by the frame/refusal cases above. The
 fixes are per-block, using the golden archive as reference.
 
-### 2026-08-07 session results (93 -> 193 ok of 200)
+### 2026-08-07 session results (93 -> 194 ok of 200)
 
-The extraction test now reports **193 ok, 7 fail** (was 29 ok / 171 fail at
+The extraction test now reports **194 ok, 6 fail** (was 29 ok / 171 fail at
 the start of the day). The single most impactful fix:
 
 - **`field_in` vs `field` migration regression** (commit `9c16f8a`): the
@@ -207,16 +207,32 @@ emsc/tmd/dead NASA meteorite endpoint, heasarc integralburst (VOTable-only
 TAP), ssd cad (positionless array-of-arrays, already CDN-mirrored), scedc
 (text-rows only, no geodetic map), cdaweb/irsc (unreachable).
 
-The 7 remaining FAILs are NOT source defects:
-- 5 USGS earthquake feeds legitimately empty today (no M5.5+/pager/
-  aftershock-forecast products, no quakes near Berlin in the last hour) —
-  they produce samples when events occur.
-- DONKI needs `NASA_API_KEY` in `phi/.secrets.local` (operational) and had
-  no flares on the test date.
-- 2 USGS `waterservices` bBox blocks use `{lon_min}...` presence-window
-  templates the test cannot substitute (`bBox=,,,` -> 400); the Archivar
-  substitutes them at runtime from the presence window (verified working
-  with a real 1-degree window).
+The remaining FAILs are NOT source defects (commit `e19b47f` fixed the
+DONKI key, the waterservices bBox blocks, and added presence-window
+substitution to the test; the test now uses a Houston TX window so USGS
+bBox queries resolve):
+
+- 5 USGS earthquake feeds legitimately empty on 2026-08-07 (no M5.5+/
+  pager/aftershock-forecast products, no M2+ near Houston in the last
+  hour). Verified: `minmagnitude=6&orderby=magnitude` and `4.5_week`
+  feeds return features; the extract directives (map features +
+  geometry.coordinates.N + properties.mag) match. They produce samples
+  when events occur.
+- DONKI/FLR: `{NASA_API_KEY}` now resolves (resolve_secret matches
+  case-insensitively), block extracts the latest X-class flare via
+  `regex classType":"X...` (verified X1.1 -> 1.1). 2026-08-06 had no
+  flares (`[]`) — legitimately empty.
+- gracedb was returning 503 "scheduled maintenance" during the run
+  (transient service outage, not a source defect); `last superevents.far`
+  is correct.
+
+Parser improvements landed in `e19b47f`:
+- `resolve_secret` matches `{template}` case-insensitively against the
+  UPPERCASE env vars (`{nasa_key}` -> `NASA_API_KEY`, `{firms_map_key}` ->
+  `FIRMS_MAP_KEY`).
+- `test_live_sources_extract` substitutes `{lon_min}/{lon_max}/{lat_min}/
+  {lat_max}/{grid}/{nearest_station}` and uses a Houston TX window so
+  USGS bBox presence-window queries actually exercise extraction.
 
 ### The separate Python verifier (deprecated but kept)
 
@@ -267,7 +283,7 @@ authoritative verifier. Command:
   `sources_new.φ`, `sources_backup_20260719.φ` (copied from
   `~/Schreibtisch/Archiv` into `phi/recovery/`).
 - `load_sources()` reads both φ files and merges (~3505 sources).
-- Extraction test: **193 ok / 7 fail** of the first 200 non-CDN live sources
+- Extraction test: **194 ok / 6 fail** of the first 200 non-CDN live sources
   (was 29 ok / 171 fail at the start of the day). See the session-results
   section above for what was fixed and why the 7 remaining FAILs are
   data-availability/test-coverage artifacts, not source defects.
@@ -278,7 +294,7 @@ Your assignment: **drive the parser-verified source repair to zero FAILs and
 curate the untested backlog.**
 
 The 107-FAIL inventory from the previous handoff is RESOLVED (see session
-results above). Current state: 193 ok / 7 fail of 200. The 7 remaining are
+results above). Current state: 194 ok / 6 fail of 200. The 6 remaining are
 verified data-availability artifacts (empty USGS quake feeds, DONKI needs
 `NASA_API_KEY` in `phi/.secrets.local`, and 2 USGS waterservices bBox
 templates that only the runtime presence window can substitute).
@@ -286,7 +302,7 @@ templates that only the runtime presence window can substitute).
 DO THIS, IN ORDER:
 
 1. Run `cargo test test_live_sources_extract -- --nocapture` and capture the
-   full output. Confirm it is at/near 193 ok / 7 fail.
+   full output. Confirm it is at/near 194 ok / 6 fail.
 2. Raise the test's source limit (`let mut limit = 200usize;` in
    `test_live_sources_extract`) to the next chunk (e.g. 400) and iterate,
    fixing every new `FAIL <url> no samples` per the fix recipes in the
