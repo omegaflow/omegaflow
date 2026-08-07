@@ -22201,3 +22201,61 @@ lon_key 2
   field_in 6 swarm_mag_by_nt
   field_in 7 swarm_mag_bz_nt
 
+
+
+url https://datacenter.iers.org/data/csv/finals2000A.data.csv
+ttl 86400
+force gravity
+at sun 1.0
+format csv
+rows
+  field MJD mjd
+  field Year year
+  field Month month
+  field Day day
+  field x_pole pole_x_arcsec
+  field y_pole pole_y_arcsec
+  field UT1-UTC ut1_utc_s
+  field LOD lod_s
+  field dPsi nutation_dpsi_arcsec
+  field dEpsilon nutation_depsilon_arcsec
+
+
+
+url https://api.inaturalist.org/v1/observations?taxon_name=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc
+ttl 3600
+force biotic
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+  field id observation_id
+  field taxon.name species_name
+  field observed_on_details.date observed_date
+  field place_guess place_guess
+
+
+
+url https://api.inaturalist.org/v1/observations?taxon_name=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc
+ttl 3600
+force biotic
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+  field id observation_id
+  field taxon.name species_name
+  field observed_on_details.date observed_date
+  field place_guess place_guess
+
+
+
+url https://api.inaturalist.org/v1/observations?taxon_name=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc
+ttl 3600
+force biotic
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+  field id observation_id
+  field taxon.name species_name
+  field observed_on_details.date observed_date
+  field place_guess place_guess
+
