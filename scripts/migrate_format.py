@@ -92,6 +92,48 @@ def load_cache():
 
 UNIT_CACHE = load_cache()
 
+try:
+    IDX_NAMES = json.load(open("/tmp/idx_names.json"))
+except Exception:
+    IDX_NAMES = {}
+
+# Native column maps for known-format text/CSV APIs (from actual responses).
+# {url_substring: {column_index: (native_name, unit, force)}}
+NATIVE_COLS = {
+    "firms.modaps.eosdis.nasa.gov": {
+        0: ("latitude", "deg", "gravity"), 1: ("longitude", "deg", "gravity"),
+        2: ("bright_ti4", "K", "thermal"), 3: ("scan", "km", "em"),
+        4: ("track", "km", "em"), 5: ("acq_date", None, None),
+        6: ("acq_time", None, None), 7: ("satellite", None, None),
+        8: ("confidence", "index", "em"), 9: ("version", None, None),
+        10: ("bright_ti5", "K", "thermal"), 11: ("frp", "MW", "thermal"),
+        12: ("daynight", None, None),
+    },
+    "ourairports-data": {
+        0: ("id", None, None), 1: ("ident", None, None),
+        2: ("type", None, None), 3: ("name", None, None),
+        4: ("latitude_deg", "deg", "gravity"),
+        5: ("longitude_deg", "deg", "gravity"),
+        6: ("elevation_ft", "ft", "gravity"), 7: ("continent", None, None),
+        8: ("iso_country", None, None), 9: ("iso_region", None, None),
+        10: ("municipality", None, None), 11: ("scheduled_service", None, None),
+        12: ("icao_code", None, None), 13: ("iata_code", None, None),
+        14: ("gps_code", None, None), 15: ("local_code", None, None),
+    },
+    "hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat": {
+        0: ("date", None, None), 1: ("mjd", "mjd", "em"),
+        2: ("x_pole", "mas", "em"), 3: ("y_pole", "mas", "em"),
+        4: ("ut1_utc", "ms", "em"), 5: ("dx", "mas", "em"),
+        6: ("dy", "mas", "em"), 7: ("x_err", "mas", "em"),
+    },
+    "globalcmt.org": {
+        0: ("date", None, None), 1: ("time", None, None),
+        2: ("lat", "deg", "gravity"), 3: ("lon", "deg", "gravity"),
+        4: ("depth_km", "km", "gravity"), 5: ("mb", "mag", "seismic-body"),
+        6: ("ms", "mag", "seismic-surface"), 7: ("mw", "mag", "seismic-surface"),
+    },
+}
+
 NCEI = {
     "EMXP": "mm", "EMXT": "degC", "EMNT": "degC",
     "PRCP": "mm", "SNOW": "mm", "SNWD": "mm",
@@ -140,7 +182,7 @@ STRUCTURAL = {
     "gap", "net", "updated", "horizontal_error", "vertical_error", "depth_error",
     "magnitude_error", "line1", "line2", "line3", "line4", "sat", "satellite",
     "qualifier", "count", "number", "total", "index", "variable",
-    "depth", "latitude", "longitude", "magnitude", "lat", "lon", "magtype",
+    "magtype",
     "province", "district", "town", "village", "municipality", "filter", "detector",
     "telescope", "observatory", "config", "mode", "submode", "resolution", "quality",
     "flag", "flags", "warning", "caution", "notes", "comment", "schedule", "route",
@@ -273,12 +315,11 @@ STRUCTURAL = {
         "eqid", "morphology", "eruptionnumber", "lastknowneruption",
         "occurrencestatus", "scntfcn", "detectn", "cllct_d", "turtleid",
         "loc", "unit_of_measure", "eur", "gbp", "jpy", "features", "imp",
-        "activitycategory", "col2", "col3", "vnum", "dsci", "dmaj",
+        "activitycategory", "vnum", "dsci", "dmaj",
         "s1ghz", "preferredname", "howmany", "obsdt", "damage_usd",
         "timestamp", "commonname", "chaetoceros", "alexandriu",
         "cochlodini", "country_iso", "gain_m2",
     }
-
 
 def is_structural(name):
     if name.isdigit():
@@ -296,6 +337,46 @@ def is_structural(name):
     if re.match(r"^WT\d{2}$", name):
         return True
     return False
+
+
+# Physical units only — a field survives migration only if it carries a real
+# physical quantity. Counts, indices, scalars, codes, flags, timestamps are
+# NOT physics: they propagate nothing, occupy no field volume. Stripped.
+PHYSICAL_UNITS = {
+    # position / angle
+    "deg", "rad", "mas", "arcsec", "arcmin", "mas_yr", "deg/yr",
+    # length
+    "m", "km", "ft", "nmi", "cm", "mm", "µm", "nm",
+    "pc", "kpc", "Mpc", "au", "ly", "R_earth", "R_jup",
+    # velocity / acceleration
+    "m/s", "km/s", "knots", "kmh", "mph", "m/s2", "mGal", "m/yr", "mm/yr",
+    # temperature
+    "K", "degC", "degF",
+    # pressure
+    "Pa", "hPa", "mmHg", "inHg",
+    # EM / radiation
+    "nT", "µT", "T", "G", "W/m2", "W/m2/Hz", "Jy", "mJy", "W", "MW",
+    "sfu", "eV", "keV", "MeV", "GeV", "TeV", "J", "erg/s",
+    "Hz", "kHz", "MHz", "GHz", "mag", "z", "TECU", "GV",
+    # concentration / diffusion
+    "kg/m3", "g/cm3", "mg/m3", "µg/m3", "ppm", "ppb", "mg/l", "mol/m3",
+    "µmol/kg", "psu", "ntu", "pH", "p/cm3", "cm-2", "kg/m2",
+    "mm", "m3/s", "ft3/s", "L/s",
+    # time (epoch coordinate)
+    "s", "min", "h", "d", "yr", "ms", "mjd",
+    # area / volume / mass
+    "m2", "km2", "m3", "km3", "M_earth", "M_jup", "M_sun", "u",
+    "pc/cm3",
+}
+
+
+def physical_unit(name, path, force, url):
+    """Return the physical unit for a field, or None (stripped) if the field
+    is not a real physical quantity."""
+    u = infer_unit(name, path, force, url)
+    if u in PHYSICAL_UNITS:
+        return u
+    return None
 
 
 # Domain-specific ambiguous field resolution: same name, different unit per API.
@@ -514,6 +595,20 @@ def cache_col_unit(url, col_name):
             return uri_to_unit(meta["unit"])
         if meta.get("value") is not None:
             return value_based_unit(col_name, meta["value"], None)
+    return None
+
+
+def cache_col_by_index(url, idx):
+    """Map a column index to the nth native column name from the cached
+    API response (cache preserves the response's key order)."""
+    entry = UNIT_CACHE.get(url)
+    if not isinstance(entry, dict) or entry.get("error"):
+        return None
+    keys = [k for k in entry if k not in ("error", "header_units", "csv_columns")]
+    if not keys:
+        return None
+    if idx < len(keys):
+        return keys[idx]
     return None
 
 
@@ -953,11 +1048,11 @@ def infer_unit(name, path, force, url):
         return "deg"
     if n == "gain_m2":
         return "m2"
-    if n == "deathstotal":
+    if n in ("deathstotal", "people"):
         return "count"
     if n in ("totscatau", "totexttau", "totsctau"):
         return "index"
-    if n == "deathstotal":
+    if n in ("deathstotal", "people"):
         return "count"
     if re.match(r"^col\d+$", n):
         return "index"
@@ -1029,7 +1124,8 @@ def infer_unit(name, path, force, url):
              "bat_ra", "bat_dec", "bat_pos_err", "bat_theta", "bat_phi",
              "error_ell_major", "error_ell_minor", "error_ell_pa",
              "ramdeg", "demdeg", "q_ramdeg", "q_demdeg", "ra(icrs)",
-             "de(icrs)", "ragaia", "degaia", "e_ragaia"):
+             "de(icrs)", "ragaia", "degaia", "e_ragaia",
+             "latitude", "longitude", "lat", "lon"):
         return "deg"
     if n in ("bat_t90", "bat_t50", "bat_start", "bat_stop",
              "bat_t100_start", "bat_t100_stop"):
@@ -1105,6 +1201,8 @@ def infer_unit(name, path, force, url):
              "radius", "rad", "pl_radj", "maj", "wvht", "swh", "vhm0",
              "swell"):
         return "m"
+    if n in ("latitude", "longitude", "lat", "lon"):
+        return "deg"
     if n in ("distance", "dist", "sy_dist"):
         return "pc" if force in ("em", "em gravity") else "m"
 
@@ -1583,7 +1681,7 @@ def infer_force(name, path, block_force, url=""):
     if n in ("salinty",):
         return "diffusion"
     if n in ("emsc:depth", "unit_of_measure", "eur", "gbp", "jpy",
-             "features", "imp", "activitycategory", "col2", "col3"):
+             "features", "imp", "activitycategory"):
         return "em"
     if re.match(r"^col\d+$", n):
         return "em"
@@ -1815,7 +1913,8 @@ def infer_force(name, path, block_force, url=""):
             "bouguer", "grav", "orb", "pl_orbsmax", "pl_orbper", "pl_rade",
             "pl_bmasse", "semi_major", "eccen", "inclination", "depth",
             "elevation", "altitude", "height", "diameter", "radius",
-            "sy_dist", "dist", "distance", "pl_radj", "maj", "mhhw", "mllw")):
+            "sy_dist", "dist", "distance", "pl_radj", "maj", "mhhw", "mllw",
+            "latitude", "longitude", "lat", "lon")):
         return "gravity"
     # seismic
     if any(w in c for w in ("pga", "pgv", "shakemap", "peak_ground",
@@ -1892,6 +1991,10 @@ def main():
                 new_lines.append(ls)
                 continue
             if key in ("on", "at", "body") or (key == "pos" and " " in ls):
+                if key == "pos":
+                    # legacy data-carried position with TARGET names; fields now
+                    # carry explicit position units -> drop the redundant line
+                    continue
                 new_lines.append(ls)
                 continue
             if key == "format":
@@ -1945,14 +2048,26 @@ def main():
             if key in ("field", "field_in") and len(parts) >= 3:
                 src, tgt = parts[1], parts[2]
                 stats["total"] += 1
-                if is_structural(tgt):
-                    new_lines.append(f"field {src}")
-                    stats["structural"] += 1
-                    continue
                 unit = infer_unit(tgt, src, force, url)
                 col_name = None
+                f = None
+                native = None
+                idx_of = tgt
+                mcol = re.match(r"^col(\d+)$", tgt)
+                if mcol:
+                    idx_of = mcol.group(1)
+                for dom, tmap in NATIVE_COLS.items():
+                    if dom in url and idx_of.isdigit() and int(idx_of) in tmap:
+                        native = tmap[int(idx_of)]
+                        break
+                if native:
+                    col_name = native[0]
+                    unit = native[1]
+                    f = native[2]
                 if unit is None and tgt.isdigit():
-                    col_name = tap_cols.get(int(tgt))
+                    col_name = IDX_NAMES.get(url, {}).get(tgt) or tap_cols.get(int(tgt))
+                    if not col_name:
+                        col_name = cache_col_by_index(url, int(tgt))
                     if col_name:
                         unit = infer_unit(col_name, col_name, force, url)
                         if unit is None:
@@ -1961,18 +2076,15 @@ def main():
                         unit = cache_col_unit(url, tgt)
                 if unit is None:
                     unit, _ = cache_lookup(url, tgt)
-                f = infer_force(col_name or tgt, src, force, url)
-                if unit and f:
+                if f is None:
+                    f = infer_force(col_name or tgt, src, force, url)
+                if unit in PHYSICAL_UNITS and f:
                     new_lines.append(f"field {src} {f} {unit}")
                     stats["units"][unit] += 1
                     stats["forces"][f] += 1
-                elif unit and not f:
-                    # unit known but force unknown -> ??? on force
-                    new_lines.append(f"field {src} ??? {unit}")
-                    stats["unknown"].append((tgt, src, url, force))
                 else:
-                    new_lines.append(f"field {src} ???")
-                    stats["unknown"].append((tgt, src, url, force))
+                    # not a physical quantity -> stripped (never an oscillator)
+                    stats["structural"] += 1
                 continue
 
             if key in ("last", "first", "count", "path", "deep", "last_row",
@@ -1980,28 +2092,25 @@ def main():
                 if len(parts) >= 3:
                     src = parts[1]
                     tgt = parts[2] if len(parts) > 2 else src
-                    if is_structural(tgt):
-                        new_lines.append(f"{key} {src}")
-                    else:
-                        unit = infer_unit(tgt, src, force, url)
-                        col_name = None
-                        if unit is None and tgt.isdigit():
-                            col_name = tap_cols.get(int(tgt))
-                            if col_name:
-                                unit = infer_unit(col_name, col_name, force, url)
-                                if unit is None:
-                                    unit = cache_col_unit(url, col_name)
-                            else:
-                                unit = cache_col_unit(url, tgt)
-                        if unit is None:
-                            unit, _ = cache_lookup(url, tgt)
-                        f = infer_force(col_name or tgt, src, force, url)
-                        if unit and f:
-                            new_lines.append(f"{key} {src} {f} {unit}")
+                    unit = infer_unit(tgt, src, force, url)
+                    col_name = None
+                    if unit is None and tgt.isdigit():
+                        col_name = tap_cols.get(int(tgt)) or cache_col_by_index(url, int(tgt))
+                        if col_name:
+                            unit = infer_unit(col_name, col_name, force, url)
+                            if unit is None:
+                                unit = cache_col_unit(url, col_name)
                         else:
-                            new_lines.append(f"{key} {src} ???")
-                elif len(parts) == 2:
-                    new_lines.append(f"{key} {parts[1]} {force}")
+                            unit = cache_col_unit(url, tgt)
+                    if unit is None:
+                        unit, _ = cache_lookup(url, tgt)
+                    f = infer_force(col_name or tgt, src, force, url)
+                    if unit in PHYSICAL_UNITS and f:
+                        new_lines.append(f"{key} {src} {f} {unit}")
+                        stats["units"][unit] += 1
+                        stats["forces"][f] += 1
+                    else:
+                        stats["structural"] += 1
                 continue
 
             if key in ("last_obj", "last_line", "regex", "xml", "ephemeris",
