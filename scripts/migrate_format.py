@@ -382,6 +382,33 @@ def physical_unit(name, path, force, url):
 # Timestamp/duration metadata that is NOT a physical field quantity: how long
 # a sensor integrated, when an observation happened, epoch of a catalogue row.
 # These propagate nothing. Stripped. (True physical periods survive.)
+def position_directive(tgt, col_name, src, unit, url):
+    """If a field is a position coordinate (lat/lon/alt/ra/dec/plx/pm), return
+    the 3-token position directive; else None."""
+    n = (col_name or tgt).lower()
+    src_l = src.lower()
+    # celestial position
+    if any(w in n for w in ("ra", "right_ascension")) and unit in ("deg", "hms", "rad"):
+        return f"ra {src} deg"
+    if any(w in n for w in ("dec", "declination")) and unit in ("deg", "rad"):
+        return f"dec {src} deg"
+    if n in ("plx", "parallax") and unit in ("mas", "arcsec"):
+        return f"plx {src} mas"
+    if n in ("pmra", "pm_ra") and unit == "mas_yr":
+        return f"pmra {src} mas_yr"
+    if n in ("pmdec", "pm_dec") and unit == "mas_yr":
+        return f"pmdec {src} mas_yr"
+    # terrestrial position
+    if any(w in n for w in ("latitude", "lat")) and unit in ("deg", "rad"):
+        return f"lat {src} deg"
+    if any(w in n for w in ("longitude", "lon", "lng")) and unit in ("deg", "rad"):
+        return f"lon {src} deg"
+    if any(w in n for w in ("altitude", "elevation", "height")) and unit in ("m", "km", "ft"):
+        u = "km" if ("iss" in url or "alt" in src_l and "km" in src_l or "km" in n) else unit
+        return f"alt {src} {u}"
+    return None
+
+
 def is_time_metadata(name):
     n = name.lower()
     if n.endswith("_count") or n.endswith("_total") or n.endswith("_num") or \
@@ -1819,7 +1846,11 @@ def main():
                 # a temperature unit is always thermal — no force may override
                 if unit in ("degC", "degF", "K"):
                     f = "thermal"
-                if unit in PHYSICAL_UNITS and f and not is_time_metadata(tgt):
+                pos_dir = position_directive(tgt, col_name, src, unit, url)
+                if pos_dir:
+                    new_lines.append(pos_dir)
+                    stats["units"][unit] += 1
+                elif unit in PHYSICAL_UNITS and f and not is_time_metadata(tgt):
                     new_lines.append(f"field {src} {f} {unit}")
                     stats["units"][unit] += 1
                     stats["forces"][f] += 1
@@ -1867,6 +1898,21 @@ def main():
                 new_lines.append(ls)
                 continue
             new_lines.append(ls)
+
+        # drop empty blocks: no extractor, no position, no frame that matters
+        has_content = False
+        for l in new_lines:
+            p = l.split()
+            if p and p[0] in ("field", "last", "first", "count", "path",
+                              "deep", "last_row", "obj_last", "lat", "lon",
+                              "alt", "ra", "dec", "plx", "pmra", "pmdec",
+                              "map", "rows", "cmap", "geojson", "flatten",
+                              "kepler", "hapi", "ephemeris", "vectors"):
+                has_content = True
+                break
+        if not has_content:
+            stats["structural"] += 0
+            new_lines = []
 
         new_blocks.append("\n".join(new_lines))
 

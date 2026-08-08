@@ -1,16 +1,16 @@
 url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
 ttl 10
 at sun 1.0
-field 0.latitude gravity deg
-field 0.longitude gravity deg
-field 0.altitude gravity m
+lat 0.latitude deg
+lon 0.longitude deg
+alt 0.altitude km
 
 url https://api.wheretheiss.at/v1/satellites/25544
 ttl 10
 at sun 1.0
-field latitude gravity deg
-field longitude gravity deg
-field altitude gravity m
+lat latitude deg
+lon longitude deg
+alt altitude km
 
 url https://api.adsb.lol/v2/point/{lat}/{lon}/250
 ttl 10
@@ -22,13 +22,9 @@ field alt_baro acoustic hPa
 field gs advective m/s
 field baro_rate acoustic hPa
 
-url https://services.swpc.noaa.gov/json/edited_events.json
-ttl 60
-at sun 1.0
 
-url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
-ttl 60
-at sun 1.0
+
+
 
 url https://services.swpc.noaa.gov/json/solar-radio-flux.json
 ttl 60
@@ -73,10 +69,7 @@ lon lon deg
 field alt_baro acoustic hPa
 field gs advective m/s
 
-url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&api_key={NASA_API_KEY}
-ttl 60
-at sun 1.0
-regex classType":"X... solar_flare_xray_class
+
 
 url https://api.adsb.lol/v2/point/{lat}/{lon}/500
 ttl 60
@@ -119,8 +112,8 @@ field properties.mag em mag
 url https://api.wolfx.jp/jma_eew.json
 ttl 60
 at sun 1
-field Latitude gravity deg
-field Longitude gravity deg
+lat Latitude deg
+lon Longitude deg
 field Magnitude em mag
 field Depth gravity m
 field Hypocenter diffusion kg/m3
@@ -154,9 +147,7 @@ at sun 1
 last flux em W/m2
 field 2 em W/m2
 
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
-ttl 60
-at sun 1.0
+
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=1000&orderby=time&starttime={today}T00:00:00
 ttl 60
@@ -230,10 +221,7 @@ map .
 field dst gravity nT
 last dst gravity nT
 
-url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
-ttl 60
-on earth 0 0
-format text
+
 
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 ttl 60
@@ -250,28 +238,18 @@ ttl 60
 at sun 1
 map
 
-url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
-ttl 60
-at sun 1.0
-last_obj energy "40300-73400 keV" flux radiation_proton_flux_40mev
-last_obj energy "83700-98500 keV" flux radiation_proton_flux_80mev
 
-url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
-ttl 60
-at sun 1
+
+
 
 url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
 ttl 180
 at sun 1.0
 map .
 
-url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=Fobs
-ttl 300
-at sun 1.0
 
-url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200
-ttl 300
-at sun 1.0
+
+
 
 url https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json
 ttl 300
@@ -301,9 +279,7 @@ field altim acoustic m
 field wspd advective m/s
 field wdir acoustic deg
 
-url https://api.rainviewer.com/public/weather-maps.json
-ttl 300
-at sun 1
+
 
 url https://opensky-network.org/api/states/all
 ttl 300
@@ -371,7 +347,7 @@ field properties.WIND_SPEED advective m/s
 field properties.WIND_GUST advective m/s
 field properties.PRESSURE acoustic hPa
 field properties.VISIBILITY gravity m
-field properties.ELEVATION gravity m
+alt properties.ELEVATION m
 
 url https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Dams/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,nidHeight,damHeight&outSR=4326&f=geojson&resultRecordCount=5000
 ttl 300
@@ -379,8 +355,8 @@ on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
-field properties.nidHeight gravity m
-field properties.damHeight gravity m
+alt properties.nidHeight m
+alt properties.damHeight m
 
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/NOAA_Satellite_Fire_Detections_(v1)/FeatureServer/0/query?where=1%3D1&outFields=Lon,Lat,FRP,Satellite,Method,YearDay&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 300
@@ -396,7 +372,7 @@ on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
-field properties.altitude_km gravity km
+alt properties.altitude_km km
 field properties.velocity_kmps advective km/s
 field properties.inclination gravity deg
 
@@ -429,8 +405,8 @@ field properties.frp thermal MW
 url https://api.wolfx.jp/cenc_eqlist.json
 ttl 300
 at sun 1
-field No1.latitude gravity deg
-field No1.longitude gravity deg
+lat No1.latitude deg
+lon No1.longitude deg
 field No1.magnitude em mag
 field No1.depth gravity m
 
@@ -448,7 +424,7 @@ url https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/Current_Wi
 ttl 300
 on earth 0 0
 map features
-field attributes.elevation gravity m
+alt attributes.elevation m
 field attributes.wind_speed advective m/s
 field attributes.wind_gust advective m/s
 lat geometry.y deg
@@ -794,17 +770,11 @@ map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=omegaflow&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
-ttl 300
-on earth 40.7 -74.01
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=omegaflow&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
-ttl 300
-on earth 40.7 -74.01
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&application=omegaflow&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
-ttl 300
-on earth 40.7 -74.01
+
+
+
 
 url https://www.ndbc.noaa.gov/data/realtime2/51407.dart
 ttl 300
@@ -892,9 +862,7 @@ lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.mag em mag
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000&parameterCd=00060&siteStatus=all
-ttl 300
-on earth 38.94900000 -77.36500000
+
 
 url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
 ttl 300
@@ -4925,470 +4893,237 @@ last_row ATMP thermal degC
 last_row WTMP thermal degC
 last_row DEWP thermal degC
 
-url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/b475386c-30cc-453a-b3b7-1d17ace13595/W/measurements.json?start=P1D
-ttl 300
-on earth 52.622706 10.062164
-format universal
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1611400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 21.9544 -159.3561
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 21.3033 -157.8645
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1615680&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 20.8949 -156.4690
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617433&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 20.0366 -155.8294
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1619910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 28.2117 -177.3600
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1630000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 13.4434 144.6564
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1770000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth -14.28 -170.69
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1820000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 8.7317 167.7361
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1890000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 19.2906 166.6175
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695535&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 32.3702 -64.6957
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311030&product=water_level&datum=LWD&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 44.7028 -75.4944
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8410140&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 44.9046 -66.9829
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8413320&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 44.3922 -68.2043
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8418150&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 43.6581 -70.2442
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8443970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 42.3539 -71.0503
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447435&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 41.6885 -69.9511
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8461490&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 41.3717 -72.0956
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8516945&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 40.8103 -73.7649
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518962&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 42.0139 -73.9392
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8534720&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 39.3567 -74.4180
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551762&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 39.5822 -75.5890
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 38.3283 -75.0917
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8575512&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 38.9839 -76.4800
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8632200&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 37.1652 -75.9884
-
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 37.9961 -76.4644
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8651370&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 36.1833 -75.7467
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8654467&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 35.2086 -75.7042
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8656483&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 34.7173 -76.6707
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8658120&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 34.2267 -77.9533
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8661070&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 33.6550 -78.9180
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8665530&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 32.7808 -79.9236
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8670870&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 32.0347 -80.9030
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8679598&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 30.7781 -81.4914
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8721604&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 28.4158 -80.5931
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8722670&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 26.6128 -80.0342
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8723970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 24.7110 -81.1060
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8725114&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 26.1367 -81.7883
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726384&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 27.6387 -82.5621
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8727520&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 29.1350 -83.0320
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8728690&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 29.7244 -84.9805
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 30.2138 -85.8786
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729840&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 30.4044 -87.2112
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8741533&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 30.3678 -88.5631
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8760721&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 29.1793 -89.2588
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761927&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 30.0272 -90.1133
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764044&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 29.6675 -91.2376
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8766072&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 29.5517 -92.3052
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8767816&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 30.2236 -93.2217
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770613&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 29.6817 -94.9850
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8772985&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 28.7716 -95.6168
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773037&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 28.4069 -96.7124
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775222&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 27.8461 -97.5207
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8777812&product=water_level&datum=MSL&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 26.8012 -97.4706
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014070&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 42.6211 -82.5267
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052030&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 43.4642 -76.5118
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052076&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 43.3384 -78.7273
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063038&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 42.1539 -80.0758
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063053&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 41.7597 -81.2811
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063079&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 41.5436 -82.7314
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075014&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 43.8464 -82.6431
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075065&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 45.0630 -83.4286
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075080&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 45.7772 -84.7211
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087023&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 43.9474 -86.4415
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087031&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 42.7733 -86.2128
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 41.7297 -87.5383
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087057&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 43.0020 -87.8876
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087068&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 44.4639 -87.5010
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099018&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 46.5456 -87.3786
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 46.874443 -89.324165
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099064&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 46.7758 -92.0920
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099090&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 47.7486 -90.3413
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410170&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 32.7156 -117.1767
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410660&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 33.720 -118.270
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9411340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 34.4046 -119.6925
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9412110&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 35.1689 -120.7542
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9413450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 36.6089 -121.8914
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 37.8063 -122.4659
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416131&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 38.5622 -121.5463
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416841&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 38.9146 -123.7111
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9418767&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 40.7669 -124.2173
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9419750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 41.7456 -124.1844
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9431647&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 42.7390 -124.4980
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9435380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 44.6254 -124.0449
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9437540&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 45.5545 -123.9189
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 46.7075 -123.9669
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9442396&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 47.9128 -124.6357
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444900&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 48.1112 -122.7597
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9450460&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 55.3319 -131.6261
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451054&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 56.2467 -134.6470
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 58.2988 -134.4106
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 59.4508 -135.3280
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452634&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 58.1947 -136.3469
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9453220&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 59.5485 -139.7334
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9454050&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 60.5583 -145.7530
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455090&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 60.1193 -149.4281
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455500&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 59.4405 -151.7199
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455760&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 60.6833 -151.3980
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455920&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 61.2375 -149.8904
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457292&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 57.7317 -152.5120
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457804&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 56.8974 -154.2480
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 55.3317 -160.5043
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459881&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 55.0599 -162.3261
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 51.8606 -176.6376
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461710&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 52.2319 -174.1725
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 52.9406 -168.8713
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462620&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 53.8792 -166.5403
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9464212&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 57.1253 -170.2852
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468333&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 63.875 -160.788
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468756&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 64.4946 -165.4396
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9491094&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 67.5758 -164.0644
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9497645&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 70.4114 -148.5317
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751364&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 17.7477 -64.6984
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 18.335278 -65.63111
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 18.480528 -66.70236
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759938&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-ttl 300
-on earth 18.0893 -67.9382
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 url https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
 ttl 300
@@ -5408,9 +5143,7 @@ field 2 em nT
 field 3 em nT
 field 4 em nT
 
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min=2026-07-01T00:00:00Z&time.max=2026-07-13T23:59:59Z&parameters=Time,B1F1&format=json
-ttl 300
-at sun 1.0
+
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
 ttl 300
@@ -5430,9 +5163,7 @@ at sun 0.99
 path 0.bz_gsm em nT
 path 0.bt em nT
 
-url https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json
-ttl 300
-at sun 1.0
+
 
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json
 ttl 300
@@ -5440,11 +5171,7 @@ at sun 1.0
 map .
 field flux em W/m2
 
-url https://gcn.nasa.gov/circulars?query=icecube
-ttl 300
-on earth -90.0 0.0 2835
-header User-Agent "omegaflow"
-regex ("totalItems":...,) cosmic_icecube_alert_circular_count
+
 
 url https://gracedb.ligo.org/api/superevents/?format=json
 ttl 300
@@ -5456,10 +5183,7 @@ ttl 360
 at sun 1.0
 map data
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&station=8518750&format=json
-at sun 1.0
-ttl 600
-body earth
+
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
 ttl 600
@@ -5482,8 +5206,8 @@ ttl 600
 at sun 1.0
 format universal
 rows
-field 0 gravity deg
-field 1 gravity deg
+lat 0 deg
+lon 1 deg
 field 2 thermal K
 field 11 thermal MW
 
@@ -5492,8 +5216,8 @@ ttl 600
 at sun 1.0
 format universal
 rows
-field 0 gravity deg
-field 1 gravity deg
+lat 0 deg
+lon 1 deg
 field 2 thermal K
 field 11 thermal MW
 
@@ -5502,12 +5226,10 @@ ttl 600
 at sun 1
 map .
 field image em mag
-field centroid_coordinates.lat gravity deg
-field centroid_coordinates.lon gravity deg
+lat centroid_coordinates.lat deg
+lon centroid_coordinates.lon deg
 
-url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
-ttl 600
-at sun 1.0
+
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
 ttl 600
@@ -5593,8 +5315,8 @@ url https://services.arcgis.com/txWDfZ2LIgzmw5Ts/arcgis/rest/services/Hotspots_(
 ttl 600
 on earth 0 0
 map features
-field attributes.lat gravity deg
-field attributes.lon gravity deg
+lat attributes.lat deg
+lon attributes.lon deg
 lat attributes.lat deg
 lon attributes.lon deg
 
@@ -5618,8 +5340,8 @@ url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_stor
 ttl 600
 on earth 0 0
 map features
-field attributes.LATITUDE gravity deg
-field attributes.LONGITUDE gravity deg
+lat attributes.LATITUDE deg
+lon attributes.LONGITUDE deg
 lat attributes.lat deg
 lon attributes.lon deg
 
@@ -5627,8 +5349,8 @@ url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_stor
 ttl 600
 on earth 0 0
 map features
-field attributes.LATITUDE gravity deg
-field attributes.LONGITUDE gravity deg
+lat attributes.LATITUDE deg
+lon attributes.LONGITUDE deg
 lat attributes.lat deg
 lon attributes.lon deg
 
@@ -5660,8 +5382,8 @@ url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite
 ttl 600
 on earth 0 0
 map features
-field attributes.latitude gravity deg
-field attributes.longitude gravity deg
+lat attributes.latitude deg
+lon attributes.longitude deg
 field attributes.bright_ti4 thermal K
 field attributes.frp thermal MW
 lat attributes.lat deg
@@ -5773,7 +5495,7 @@ rows
 field 8 advective deg
 field 9 advective m/s
 field 10 advective m/s
-field 11 acoustic m
+alt 11 m
 field 14 acoustic hPa
 field 17 thermal degC
 lat 5 deg
@@ -5802,57 +5524,31 @@ map value.timeSeries
 lat sourceInfo.geoLocation.geogLocation.latitude deg
 lon sourceInfo.geoLocation.geogLocation.longitude deg
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07263295&parameterCd=00060,00065
-ttl 900
-on earth 34.74 -92.27
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09380000&parameterCd=00060,00065
-ttl 900
-on earth 36.86 -111.59
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=14105700&parameterCd=00060,00065
-ttl 900
-on earth 45.61 -121.19
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05413500&parameterCd=00060,00065
-ttl 900
-on earth 42.72 -90.82
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01358000&parameterCd=00060,00065
-ttl 900
-on earth 42.66 -73.75
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07010000&parameterCd=00060,00065
-ttl 900
-on earth 38.87 -90.18
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07289000&parameterCd=00060,00065
-ttl 900
-on earth 32.35 -90.89
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06342500&parameterCd=00060,00065
-ttl 900
-on earth 46.85 -100.78
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06934500&parameterCd=00060,00065
-ttl 900
-on earth 38.71 -91.44
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03294500&parameterCd=00060,00065
-ttl 900
-on earth 38.26 -85.66
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060,00065
-ttl 900
-on earth 38.95 -77.13
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08371000&parameterCd=00060,00065
-ttl 900
-on earth 31.80 -106.53
 
-url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03565500&parameterCd=00060,00065
-ttl 900
-on earth 35.04 -85.31
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
 ttl 900
@@ -6048,7 +5744,7 @@ format universal
 rows
 field 8 advective deg
 field 9 advective m/s
-field 11 acoustic m
+alt 11 m
 field 18 thermal degC
 field 17 thermal degC
 field 15 acoustic hPa
@@ -6076,17 +5772,9 @@ map .
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
-extent 1.34e-8
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
-extent 7.77e-6
+
+
 
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt,sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
 body earth
@@ -6115,18 +5803,14 @@ ttl 3600
 at sun 1.0
 map superevents
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
-extent 5.45e-6
+
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
 ttl 3600
 body earth
 map .
 map data
-field altitude gravity m
+alt altitude m
 ra RAJ2000 deg
 dec DEJ2000 deg
 field Energy_Flux_Band3 em W/m2
@@ -6134,7 +5818,7 @@ ra ra deg
 dec dec deg
 map .
 field energy_tev em TeV
-field error_radius_deg gravity deg
+ra error_radius_deg deg
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
 ttl 3600
@@ -6189,15 +5873,9 @@ field 2 gravity au
 field 3 gravity au
 field 4 gravity au
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
+
+
 
 url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
 ttl 3600
@@ -6230,18 +5908,14 @@ rows
 field wavelength em nm
 field irradiance em W/m2
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
-extent 4.78e-6
+
 
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1&FORMAT=json
 body earth
 ttl 3600
 map data
-field s_ra em deg
-field s_dec em deg
+ra s_ra deg
+dec s_dec deg
 
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+calib_level%3D3+AND+obs_id+LIKE+%27jw01727%25%27+ORDER+BY+t_exptime+DESC
 ttl 3600
@@ -6300,17 +5974,12 @@ format text
 rows
 field 3 gravity au
 field 4 gravity au
-field 5 gravity deg
+lon 5 deg
 field 6 em mag
 
-url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
-ttl 3600
-at sun 1.0
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
+
+
 
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
 body earth
@@ -6322,27 +5991,16 @@ ttl 3600
 at sun 1.0
 map .
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
-extent 3.34e-9
+
 
 url https://tle.ivanstanojevic.me/api/tle/?page-size=100
 ttl 3600
 at sun 1.0
 map member
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
-extent 1.76e-6
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
+
+
 
 url https://earth-search.aws.element84.com/v1/search
 ttl 3600
@@ -6354,20 +6012,11 @@ map features
 lat properties.proj:centroid.lat deg
 lon properties.proj:centroid.lon deg
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 3600
-at sun 1.0
-format universal
+
+
+
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
 ttl 3600
@@ -6460,10 +6109,7 @@ rows
 lat Site_Latitude(Degrees) deg
 lon Site_Longitude(Degrees) deg
 
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
-ttl 3600
-on earth 19.5362 -155.5763 3397
-format universal
+
 
 url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
 ttl 3600
@@ -6536,22 +6182,16 @@ map results
 lat coordinates.latitude deg
 lon coordinates.longitude deg
 
-url https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&formatted=0
-ttl 3600
-at sun 1
 
-url https://superdarn.ca/plotting/convection-maps/latest
-ttl 3600
-at sun 1.0
+
+
 
 url https://api.superdarn.ca/v1/convection/map/latest
 ttl 3600
 on earth 65.0 -147.0
 field velocity advective m/s
 
-url https://superdarn.ca/status
-ttl 3600
-at sun 1
+
 
 url https://api.superdarn.ca/v1/radars/status
 ttl 86400
@@ -6601,10 +6241,7 @@ field 0.speed advective km/s
 field 0.dens advective kg/m3
 field 0.temperature thermal degC
 
-url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=3I&discovery=true
-ttl 3600
-at sun 1.0
-format universal
+
 
 url https://geofon.gfz.de/fdsnws/event/1/query?format=geojson&minmag=3&limit=100&region=AFRICA
 ttl 3600
@@ -6675,8 +6312,8 @@ url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_
 ttl 3600
 on earth 0 0
 map features
-field attributes.LAT gravity deg
-field attributes.LON gravity deg
+lat attributes.LAT deg
+lon attributes.LON deg
 lat attributes.lat deg
 lon attributes.lon deg
 
@@ -6691,8 +6328,8 @@ url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/OADS_Moor
 ttl 3600
 at sun 1.0
 map features
-field attributes.Lon gravity deg
-field attributes.Lat gravity deg
+lon attributes.Lon deg
+lat attributes.Lat deg
 lat geometry.y deg
 lon geometry.x deg
 
@@ -6799,7 +6436,7 @@ lat 2.latitude deg
 lon 2.latitude deg
 field avg_max_monthly_mean thermal degC
 field bleaching_threshold thermal degC
-field elevation gravity m
+alt elevation m
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=USW00013739,USW00094728&startDate={week_ago}&endDate={today}&format=json
 ttl 3600
@@ -6944,10 +6581,7 @@ ttl 3600
 at sun 1.0
 map table.rows
 
-url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
-ttl 3600
-on earth 42.62682 -8.78233
-format universal
+
 
 url https://www.globalfloods.eu/glofas-forecasting/?format=json
 ttl 3600
@@ -6994,7 +6628,7 @@ on earth 38.7 148.7
 format universal
 rows
 field 1 em mag
-field 7 gravity m
+alt 7 m
 
 url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
 ttl 3600
@@ -7002,7 +6636,7 @@ on earth -8.4 67.5
 format universal
 rows
 field 1 em mag
-field 7 gravity m
+alt 7 m
 
 url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
 ttl 3600
@@ -7010,7 +6644,7 @@ on earth -19.6 -162.1
 format universal
 rows
 field 1 em mag
-field 7 gravity m
+alt 7 m
 
 url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
 ttl 3600
@@ -7018,7 +6652,7 @@ on earth 17.9 -74.9
 format universal
 rows
 field 1 em mag
-field 7 gravity m
+alt 7 m
 
 url https://data.neracoos.org/erddap/tabledap/A01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
 ttl 3600
@@ -7165,8 +6799,8 @@ rows
 lat latitude deg
 lon longitude deg
 field 0 diffusion kg/m3
-field 1 gravity deg
-field 2 gravity deg
+lat 1 deg
+lon 2 deg
 field 3 em TECU
 field 4 em TECU
 
@@ -7326,11 +6960,7 @@ map .
 field 1 em mag
 field 2 em mag
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp
-ttl 86400
-body enceladus
-at sun 1.0
-format ephemeris_binary
+
 
 url https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60
 ttl 86400
@@ -7339,11 +6969,7 @@ map features
 lat geometry.coordinates.0.0.1 deg
 lon geometry.coordinates.0.0.0 deg
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/jup365.bsp
-ttl 86400
-body europa
-at sun 1.0
-format ephemeris_binary
+
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,st_teff,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
 body earth
@@ -7422,10 +7048,7 @@ ra 10 deg
 dec 11 deg
 field 23 em pc/cm3
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000001%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 86400
-on earth 34.201 -118.171
-extent 3.34e-8
+
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_10_1000,flux_10_30,flux_30_100,flux_100_1000,spectral_index,redshift,assoc_name+FROM+fermifhl+WHERE+flux_10_1000+IS+NOT+NULL+ORDER+BY+flux_10_1000+DESC
 ttl 86400
@@ -7690,7 +7313,7 @@ dec dec deg
 field t90 em s
 field fluence em W/m2
 field peak_flux em W/m2
-field error_radius gravity deg
+ra error_radius deg
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,dist,compact_type+FROM+lmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
 ttl 86400
@@ -7715,7 +7338,7 @@ dec dec deg
 z_key redshift
 field flux_4_10 em W/m2
 field flux_3_10 em W/m2
-field error_radius gravity deg
+ra error_radius deg
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_4_10,flux_10_20,flux_20_40,n_sigma,type+FROM+maxigsc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC
 ttl 86400
@@ -7874,7 +7497,7 @@ at sun 1.0
 map .
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
-field elevation gravity m
+alt elevation m
 
 url https://www.tng-project.org/api/TNG100-1/snapshots/99/halos/?format=json&limit=500&order_by=-mass_log_msun
 ttl 86400
@@ -7916,9 +7539,7 @@ field w2mpro em mag
 field w3mpro em mag
 field w4mpro em mag
 
-url https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json
-ttl 86400
-on earth 47.3769 8.5417
+
 
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,gmag,rmag,imag,classtar,sharp
 ttl 86400
@@ -7965,7 +7586,7 @@ rows
 field 1 diffusion kg/m3
 field 3 gravity au
 field 4 gravity deg
-field 5 gravity deg
+lon 5 deg
 field 6 gravity deg
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
@@ -7980,8 +7601,8 @@ on earth 0.0 0.0
 format universal
 rows
 field 0 diffusion kg/m3
-field 1 gravity deg
-field 2 gravity deg
+ra 1 deg
+dec 2 deg
 field 3 gravity au
 field 4 gravity au
 
@@ -7991,8 +7612,8 @@ on earth 0.0 0.0
 format universal
 rows
 field 0 diffusion kg/m3
-field 1 gravity deg
-field 2 gravity deg
+ra 1 deg
+dec 2 deg
 field 3 gravity au
 field 4 gravity au
 
@@ -8002,8 +7623,8 @@ on earth 0.0 0.0
 format universal
 rows
 field 0 diffusion kg/m3
-field 1 gravity deg
-field 2 gravity deg
+ra 1 deg
+dec 2 deg
 field 3 gravity au
 field 4 gravity au
 
@@ -8051,11 +7672,7 @@ field M gravity deg
 field H em mag
 field diameter gravity m
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
-ttl 86400
-body jupiter
-at sun 1.0
-format ephemeris_binary
+
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zQSO,%22S%2FN%22+FROM+%22J/ApJ/852/22/sample%22
 ttl 86400
@@ -8087,15 +7704,9 @@ ttl 86400
 on earth 0 0
 field features.0.properties.pc:density diffusion kg/m3
 
-url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=MEGDR&output=XML
-ttl 86400
-on earth 0 0
-regex <Count>([0-9]+)</Count> lidar_mola_mars_megdr_product_count
 
-url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=PEDR&output=XML
-ttl 86400
-on earth 0 0
-regex <Count>([0-9]+)</Count> lidar_mola_mars_pedr_product_count
+
+
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,D,Mass,HRV+FROM+%22J/AJ/144/4/catalog%22
 ttl 86400
@@ -8187,30 +7798,15 @@ dec Dec deg
 field H em mag
 field G em mag
 
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=GEDI02_A&page_size=2000&sort_key=-start_date
-ttl 86400
-at sun 1.0
-format universal
 
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ATL06&page_size=2000&sort_key=-start_date
-ttl 86400
-at sun 1.0
-format universal
 
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ATL03&page_size=2000&sort_key=-start_date
-ttl 86400
-at sun 1.0
-format universal
 
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=SWOT_L2_LR_SSH_D&page_size=2000&sort_key=-start_date
-ttl 86400
-at sun 1.0
-format universal
 
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP14IMG_NRT&page_size=2000&sort_key=-start_date
-ttl 86400
-at sun 1.0
-format universal
+
+
+
+
+
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+2000+ra,dec,pl_name,pl_rade,pl_bmasse,pl_orbsmax,pl_eqt,st_teff,st_spectype,sy_distan+from+pscomppars+where+ra+is+not+null+and+pl_eqt+is+not+null+order+by+sy_distan+asc&format=json
 ttl 86400
@@ -8266,11 +7862,7 @@ field st_teff thermal K
 dist_key sy_dist
 map .
 
-url https://heasarc.gsfc.nasa.gov/db-perl/W3Browse/w3query.pl?tablehead=name%3Dfermigtrig&Action=More+Options&ResultRange=1&order=desc&field=from&field=0+1+2+3
-ttl 86400
-body earth
-on earth 38.995 -77.101
-last_line exosphere_fermi_gamma_ray_sources_total
+
 
 url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
 ttl 86400
@@ -8293,10 +7885,7 @@ rows
 lat 7 deg
 lon 8 deg
 
-url https://modis.gsfc.nasa.gov/data/dataprod/mod13.php
-ttl 86400
-on earth 0 0
-last_line biosphere_global_ndvi
+
 
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+5000+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,194.9,27.9,3.0))%3D1
 ttl 86400
@@ -8444,8 +8033,8 @@ url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&f
 ttl 86400
 at sun 1.0
 map .
-field latitude gravity deg
-field longitude gravity deg
+lat latitude deg
+lon longitude deg
 field vx advective m/s
 field vy advective m/s
 
@@ -8459,102 +8048,48 @@ dec DEJ2000 deg
 url https://api.astrocats.space/{target}/
 on earth 0 0
 ttl 86400
-field ra em deg
-field dec em deg
+ra ra deg
+dec dec deg
 field redshift em z
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
-ttl 86400
-at sun 1.0
-format universal
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
-ttl 86400
-at sun 1.0
-format universal
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
-ttl 86400
-at sun 1.0
-format universal
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
-ttl 86400
-at sun 1.0
-format universal
 
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep097.bsp
-ttl 86400
-body triton
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
-ttl 86400
-at sun 1.0
-format universal
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 86400
-at sun 1.0
-format universal
-extent 1.24e-9
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 86400
-at sun 1.0
-format universal
-extent 1.75e-9
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
-ttl 86400
-on earth 34.201 -118.171
-extent 3.16e-6
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=399&OBJ_DATA=YES
-ttl 86400
-at sun 1
-regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=599&OBJ_DATA=YES
-ttl 86400
-at sun 5.2
-regex \(kg\).\W*([0-9.]+) orbital_jupiter_mass_x10_24_kg
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=499&OBJ_DATA=YES
-ttl 86400
-at sun 1.5
-regex \(kg\).\W*([0-9.]+) orbital_mars_mass_x10_24_kg
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=199&OBJ_DATA=YES
-ttl 86400
-at sun 0.4
-regex \(kg\).\W*([0-9.]+) orbital_mercury_mass_x10_24_kg
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=899&OBJ_DATA=YES
-ttl 86400
-at sun 30.0
-regex \(kg\).\W*([0-9.]+) orbital_neptune_mass_x10_24_kg
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=699&OBJ_DATA=YES
-ttl 86400
-at sun 9.6
-regex \(kg\).\W*([0-9.]+) orbital_saturn_mass_x10_24_kg
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 url https://ssd-api.jpl.nasa.gov/sentry.api
 ttl 86400
 on earth 34.201 -118.171
 field 6 gravity m
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=799&OBJ_DATA=YES
-ttl 86400
-at sun 19.2
-regex \(kg\).\W*([0-9.]+) orbital_uranus_mass_x10_24_kg
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=299&OBJ_DATA=YES
-ttl 86400
-at sun 0.7
-regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg
+
+
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zCMB,mBcorr+FROM+%22J/ApJ/938/110/table7%22
 ttl 86400
@@ -8639,20 +8174,11 @@ format universal
 rows
 field 1 em mag
 
-url https://www.sidc.be/silso/DATA/SN_d_tot_V2.0.txt
-ttl 86400
-at sun 1.0
-last_line solar_sunspot_number_silso
 
-url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
-ttl 86400
-at sun 1.0
-last_line solar_sunspot_number_silso
 
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
-ttl 86400
-on earth 42.365 -71.105
-last_line exosphere_tess_candidates_total
+
+
+
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,z,MaxMag,Type+FROM+%22B/sn/sncat%22
 ttl 86400
@@ -8737,15 +8263,15 @@ field MajDiam gravity deg
 field MinDiam em deg
 ra RAmdeg deg
 dec DEmdeg deg
-field RAmdeg em deg
+ra RAmdeg deg
 field DEmdeg em deg
-field pmRA em mas_yr
+pmra pmRA mas_yr
 field pmDE em mas_yr
-field e_RAmdeg em deg
+ra e_RAmdeg deg
 field e_DEmdeg em deg
 field e_pmRA em mas_yr
 field e_pmDE em mas_yr
-field q_RAmdeg gravity deg
+ra q_RAmdeg deg
 field q_DEmdeg gravity deg
 field q_pmRA em mas_yr
 field q_pmDE gravity mas_yr
@@ -8753,12 +8279,12 @@ field BTmag em nT
 field e_BTmag em nT
 field VTmag em mag
 field e_VTmag em mag
-field RA(ICRS) em deg
+ra RA(ICRS) deg
 field DE(ICRS) em deg
-field e_RAdeg em deg
+ra e_RAdeg deg
 field e_DEdeg em deg
-field RAgaia em deg
-field e_RAgaia em deg
+ra RAgaia deg
+ra e_RAgaia deg
 field DEgaia em deg
 field e_DEgaia em deg
 field Gmag em mag
@@ -8839,8 +8365,8 @@ format text
 rows
 ra _RA_icrs deg
 dec _DE_icrs deg
-field GLON gravity deg
-field GLAT gravity deg
+lon GLON deg
+lat GLAT deg
 field Fint em W/m2
 field Reff em arcsec
 
@@ -8924,7 +8450,7 @@ field W1mproPM em mag
 field W2mproPM em mag
 pmra pmRA mas_yr
 pmdec pmDE mas_yr
-field RAPMdeg em deg
+ra RAPMdeg deg
 field DEPMdeg em deg
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,%22F2-8%22,%22HR0%22,%22HR1%22,%22HR2%22+FROM+"J/ApJS/235/26/table3"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+%22F2-8%22+DESC
@@ -8943,8 +8469,8 @@ format text
 rows
 ra RAJ2000 deg
 dec DEJ2000 deg
-field GLON gravity deg
-field GLAT gravity deg
+lon GLON deg
+lat GLAT deg
 field Speak em Jy
 field Sint em Jy
 field mT em mag
@@ -9020,7 +8546,7 @@ format universal
 rows
 ra RA_ICRS deg
 dec DE_ICRS deg
-field Plx em mas
+plx Plx mas
 field e_Plx em mas
 field PM em mas_yr
 field e_pmRA em mas_yr
@@ -9042,8 +8568,8 @@ rows
 ra ra deg
 dec dec deg
 plx parallax mas
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field radial_velocity advective m/s
 field radial_velocity_error advective m/s
 field teff_gspphot thermal K
@@ -9310,8 +8836,8 @@ format text
 rows
 ra _RA_icrs deg
 dec _DE_icrs deg
-field GLON gravity deg
-field GLAT gravity deg
+lon GLON deg
+lat GLAT deg
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+IRAS,z,logLIR,F12um,F25um,F60um,F100um,_RA,_DE+FROM+%22J/ApJS/274/5/table1%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
 ttl 86400
@@ -9490,8 +9016,8 @@ format text
 rows
 ra _RA_icrs deg
 dec _DE_icrs deg
-field GLON gravity deg
-field GLAT gravity deg
+lon GLON deg
+lat GLAT deg
 field Rad em m
 map .
 ra RAJ2000 deg
@@ -9528,7 +9054,7 @@ url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={toda
 ttl 86400
 on earth 47.3769 8.5417
 header User-Agent "omegaflow"
-field properties.solar_noon.elevation gravity m
+alt properties.solar_noon.elevation m
 map features
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
@@ -9554,9 +9080,7 @@ map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 
-url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=ozone_total_column
-ttl 86400
-on earth 43.780 -79.470
+
 
 url https://woudc.org/api/records/observations/?dataset=TotalOzone&limit=2000&sortby=-datetime
 ttl 86400
@@ -9579,9 +9103,7 @@ map data
 lat station.latitude deg
 lon station.longitude deg
 
-url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
-ttl 86400
-body earth
+
 
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
 ttl 86400
@@ -9593,10 +9115,7 @@ ttl 86400
 at sun 1
 map features
 
-url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
-ttl 86400
-on earth 38.978 -76.919
-format universal
+
 
 url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
 ttl 86400
@@ -9614,7 +9133,7 @@ lat location.lat deg
 lon location.lon deg
 field temperature_mean_c thermal degC
 field depth_m gravity m
-field elevation_m gravity m
+alt elevation_m m
 
 url https://gtnp.arcticportal.org/api/v1/calm-data?format=json&limit=500
 ttl 86400
@@ -9629,7 +9148,7 @@ at sun 1.0
 map data
 lat location.lat deg
 lon location.lng deg
-field elevation gravity m
+alt elevation m
 field depth gravity m
 field temperature.0.mean_annual thermal degC
 
@@ -9647,98 +9166,37 @@ map data
 lat station.latitude deg
 lon station.longitude deg
 
-url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
-ttl 86400
-at sun 1
-last_line cryosphere_antarctic_sea_ice_extent_nsidc
 
-url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
-ttl 86400
-at sun 1
-last_line cryosphere_arctic_sea_ice_extent_nsidc
 
-url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
-ttl 86400
-on earth 71.29 -156.57
-format universal
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2099942'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body apophis
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2019-01A'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body atlas_3i
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-101955'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body bennu
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='90000031'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body encke
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Haumea'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body haumea
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body iss
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-61'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body juno
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-170'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body jwst
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Makemake'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body makemake
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-98'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body new_horizons
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2000004'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body vesta
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body voyager1
-at sun 1.0
-format ephemeris_binary
 
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
-ttl 86400
-body voyager2
-at sun 1.0
-format ephemeris_binary
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+512+ra,dec,sy_dist,pl_eqt,pl_rade,pl_orbper,pl_bmasse+FROM+pscomppars+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
 ttl 86400
@@ -9837,8 +9295,8 @@ url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Monthly_H
 ttl 86400
 on earth 0 0
 map features
-field attributes.Latitude gravity deg
-field attributes.Longitude gravity deg
+lat attributes.Latitude deg
+lon attributes.Longitude deg
 lat attributes.Latitude deg
 lon attributes.Longitude deg
 
@@ -9846,8 +9304,8 @@ url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Tsunami_C
 ttl 86400
 at sun 1.0
 map features
-field attributes.STAT_LAT gravity deg
-field attributes.STAT_LONG gravity deg
+lat attributes.STAT_LAT deg
+lon attributes.STAT_LONG deg
 lat geometry.y deg
 lon geometry.x deg
 
@@ -9873,7 +9331,7 @@ format text
 rows
 lat Latitude deg
 lon Longitude deg
-field Elevation gravity m
+alt Elevation m
 
 url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilTMP0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
 ttl 86400
@@ -9903,7 +9361,7 @@ at sun 1.0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
-field properties.Elevation gravity m
+alt properties.Elevation m
 
 url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=csv&count=1000
 ttl 86400
@@ -9912,7 +9370,7 @@ format universal
 rows
 lat Latitude deg
 lon Longitude deg
-field Elevation gravity m
+alt Elevation m
 
 url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Pleistocene_Volcanoes&outputFormat=application/json&count=1000
 ttl 86400
@@ -9920,7 +9378,7 @@ at sun 1.0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
-field properties.Elevation gravity m
+alt properties.Elevation m
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
 ttl 86400
@@ -9976,9 +9434,7 @@ map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 
-url https://nsidc.org/api/itslive/antarctica
-at sun 1.0
-ttl 86400
+
 
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
 ttl 86400
@@ -9990,9 +9446,7 @@ lon geometry.coordinates.0 deg
 field properties.v_mean em m/s
 field properties.v0 advective m/yr
 
-url https://nsidc.org/api/itslive/greenland
-at sun 1.0
-ttl 86400
+
 
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=GRE&limit=500&format=json
 ttl 86400
@@ -10003,9 +9457,7 @@ lon geometry.coordinates.0 deg
 field properties.v_mean em m/s
 field properties.v0 advective m/yr
 
-url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&output=json
-ttl 86400
-body earth
+
 
 url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataTypeId=18&limit=500
 ttl 86400
@@ -10013,7 +9465,7 @@ at sun 1.0
 map .
 lat site.latitude deg
 lon site.longitude deg
-field site.elevation gravity m
+alt site.elevation m
 
 url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
 body earth
@@ -10021,7 +9473,7 @@ ttl 86400
 map items
 lat latitude deg
 lon longitude deg
-field elevation gravity m
+alt elevation m
 
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
 ttl 86400
@@ -10032,9 +9484,7 @@ field 2 diffusion ppm
 field 1 diffusion ppm
 field 2 diffusion ppm
 
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
-ttl 86400
-on earth 19.5362 -155.5763
+
 
 url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=currents
 ttl 86400
@@ -10075,8 +9525,8 @@ ttl 86400
 at sun 1.0
 format universal
 map data
-field 3 gravity m
-field 3 gravity m
+alt 3 m
+alt 3 m
 lat 1 deg
 lon 2 deg
 
@@ -10143,7 +9593,7 @@ at sun 1.0
 map study
 lat site.0.geo.geometry.coordinates.1 deg
 lon site.0.geo.geometry.coordinates.0 deg
-field site.0.elevation gravity m
+alt site.0.elevation m
 
 url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=-90&maxLat=30&minLon=-180&maxLon=180&headersOnly=true
 ttl 86400
@@ -10151,7 +9601,7 @@ at sun 1.0
 map study
 lat site.0.geo.geometry.coordinates.1 deg
 lon site.0.geo.geometry.coordinates.0 deg
-field site.0.elevation gravity m
+alt site.0.elevation m
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&stations=USW00013739&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
 ttl 86400
@@ -10172,9 +9622,7 @@ field TEMP_NORMAL_MAX thermal degC
 field TEMP_NORMAL_MIN thermal degC
 field PRCP_NORMAL diffusion mm
 
-url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22:{lon},%22y%22:{lat}%7D&geometryType=esriGeometryPoint&returnGeometry=false&f=json
-ttl 86400
-on earth 47.3769 8.5417
+
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json
 ttl 86400
@@ -10241,7 +9689,7 @@ at sun 1.0
 map study
 lat site.0.geo.geometry.coordinates.1 deg
 lon site.0.geo.geometry.coordinates.0 deg
-field site.0.elevation gravity m
+alt site.0.elevation m
 
 url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Pollen&headersOnly=true
 ttl 86400
@@ -10249,7 +9697,7 @@ at sun 1.0
 map study
 lat site.0.geo.geometry.coordinates.1 deg
 lon site.0.geo.geometry.coordinates.0 deg
-field site.0.elevation gravity m
+alt site.0.elevation m
 
 url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Speleothem&headersOnly=true
 ttl 86400
@@ -10257,7 +9705,7 @@ at sun 1.0
 map study
 lat site.0.geo.geometry.coordinates.1 deg
 lon site.0.geo.geometry.coordinates.0 deg
-field site.0.elevation gravity m
+alt site.0.elevation m
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
 ttl 86400
@@ -10273,7 +9721,7 @@ url https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&
 ttl 86400
 at sun 1
 map result.0
-field decl em deg
+dec decl deg
 field bx em nT
 field by em nT
 field bz em nT
@@ -10295,14 +9743,14 @@ format universal
 rows
 lat Latitude deg
 lon Longitude deg
-field Elevation gravity m
+alt Elevation m
 
 url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01
 ttl 86400
 at sun 1.0
 format universal
 rows
-field 4 gravity m
+alt 4 m
 lat 2 deg
 lon 3 deg
 
@@ -10403,7 +9851,7 @@ format text
 rows
 lat latitude deg
 lon longitude deg
-field significant_wave_height acoustic m
+alt significant_wave_height m
 
 url https://oceanwatch.pifsc.noaa.gov/erddap/griddap/noaa_snpp_chla_daily.csv?chlor_a%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 ttl 86400
@@ -10991,7 +10439,7 @@ on earth 0 0
 map .
 lat geometry.coordinates.1 deg
 lon lng deg
-field altitude gravity m
+alt altitude m
 
 url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
 ttl 86400
@@ -11067,9 +10515,9 @@ field plec_epeak em eV
 field plec_epeak_error em eV
 field flux_peak em W/m2
 field flux_peak_error em W/m2
-field assoc_ra em deg
-field assoc_dec em deg
-field assoc_error_radius gravity deg
+ra assoc_ra deg
+dec assoc_dec deg
+ra assoc_error_radius deg
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+fermil4lac
 ttl 604800
@@ -11087,9 +10535,9 @@ field flux_1_100_gev_error em W/m2
 field energy_flux em W/m2
 field energy_flux_error em W/m2
 field pivot_energy em eV
-field assoc_ra em deg
-field assoc_dec em deg
-field assoc_error_radius gravity deg
+ra assoc_ra deg
+dec assoc_dec deg
+ra assoc_error_radius deg
 field he_peak em eV
 field he_peak_error em eV
 field he_nufnu_peak em eV
@@ -11366,8 +10814,8 @@ z_key redshift
 field lii em deg
 field bii em deg
 field ctrpart_name em W/m2
-field ctrpart_ra em deg
-field ctrpart_dec em deg
+ra ctrpart_ra deg
+dec ctrpart_dec deg
 field flux em W/m2
 field flux_lower em W/m2
 field flux_upper em W/m2
@@ -11386,8 +10834,8 @@ z_key redshift
 field pos_err em deg
 field lii em deg
 field bii em deg
-field bat_ra em deg
-field bat_dec em deg
+ra bat_ra deg
+dec bat_dec deg
 field bat_pos_err em deg
 field bat_theta em deg
 field bat_phi em deg
@@ -11417,8 +10865,8 @@ field bat_hrd1 em eV
 field bat_hrd1_err em eV
 field bat_hrd2 em eV
 field bat_hrd2_err em eV
-field xrt_ra em deg
-field xrt_dec em deg
+ra xrt_ra deg
+dec xrt_dec deg
 field xrt_pos_err em deg
 field xrt_c100_start em s
 field xrt_c100_stop em s
@@ -11431,8 +10879,8 @@ field xrt_hrd1 em eV
 field xrt_hrd1_err em eV
 field xrt_hrd2 em eV
 field xrt_hrd2_err em eV
-field uvot_ra em deg
-field uvot_dec em deg
+ra uvot_ra deg
+dec uvot_dec deg
 field uvot_pos_err em deg
 field uvot_vv_mag em mag
 field uvot_vv_mag_err em mag
@@ -11445,19 +10893,14 @@ field uvot_w1_start em s
 field uvot_w1_stop em s
 field uvot_w1_expo em s
 field galactic_nh em cm-2
-field ot_ra em deg
-field ot_dec em deg
+ra ot_ra deg
+dec ot_dec deg
 field ot_pos_err em deg
-field galaxy_ra em deg
-field galaxy_dec em deg
+ra galaxy_ra deg
+dec galaxy_dec deg
 field galaxy_offset em deg
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+*+FROM+tevcat
-ttl 604800
-body earth
-at sun 1.0
-format universal
-tau_key _dist_m
+
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+J%2FMNRAS%2F509%2F1662%2Ftable1
 ttl 604800
@@ -11488,18 +10931,18 @@ tau_key _dist_m
 ra ra deg
 dec dec deg
 z_key redshift_zsp
-field error_radius gravity deg
+ra error_radius deg
 field error_ell_major gravity deg
 field error_ell_minor em deg
 field error_ell_pa em deg
 field lii em deg
 field bii em deg
-field pn_rawx em deg
-field pn_rawy em deg
-field m1_rawx em deg
-field m1_rawy em deg
-field m2_rawx em deg
-field m2_rawy em deg
+ra pn_rawx deg
+ra pn_rawy deg
+ra m1_rawx deg
+ra m1_rawy deg
+ra m2_rawx deg
+ra m2_rawy deg
 field dist_nn gravity arcsec
 field ep_rate_error em eV
 field pn_rate_error em eV
@@ -11589,11 +11032,11 @@ field wise_w3mag_error em eV
 field wise_w4mag em eV
 field wise_w4mag_error em eV
 field gaiadr3_source_id em eV
-field gaiadr3_parallax em deg
-field gaiadr3_parallax_error em deg
-field gaiadr3_parallax_overerr em deg
-field gaiadr3_pm_ra em deg
-field gaiadr3_pm_dec em deg
+ra gaiadr3_parallax deg
+ra gaiadr3_parallax_error deg
+ra gaiadr3_parallax_overerr deg
+ra gaiadr3_pm_ra deg
+dec gaiadr3_pm_dec deg
 field gaiadr3_gmag em mag
 field gaiadr3_bpmag em mag
 field gaiadr3_rpmag em mag
@@ -11868,10 +11311,10 @@ url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
 body earth
 ttl 2592000
 map data
-field 2 em deg
-field 3 em deg
-field 4 em deg
-field 5 em deg
+ra 2 deg
+dec 3 deg
+ra 4 deg
+dec 5 deg
 field 6 em km/s
 field 7 em km/s
 field 9 em W/m2
@@ -11883,10 +11326,7 @@ body earth
 ttl 2592000
 map data
 
-url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
-ttl 2592000
-on earth 50.727 -3.476
-format universal
+
 
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
 ttl 2592000
@@ -11910,9 +11350,7 @@ map data
 field 0 gravity m
 field 2 diffusion ppm
 
-url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1
-ttl 2592000
-on earth 51.2802 -0.5231
+
 
 url https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf
 ttl 2592000
@@ -11950,7 +11388,7 @@ body earth
 map results
 lat latitude deg
 lon longitude deg
-field elevation gravity m
+alt elevation m
 alt elevation m
 
 url https://api.opentopodata.org/v1/mapzen?locations={grid}
@@ -11959,7 +11397,7 @@ at sun 1.0
 map results
 lat location.lat deg
 lon location.lng deg
-field elevation gravity m
+alt elevation m
 alt elevation m
 
 url https://api.opentopodata.org/v1/srtm30m?locations={grid}
@@ -11968,7 +11406,7 @@ at sun 1.0
 map results
 lat location.lat deg
 lon location.lng deg
-field elevation gravity m
+alt elevation m
 alt elevation m
 
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
@@ -11995,24 +11433,13 @@ on earth 47.3769 8.5417
 field properties.layers.0.depths.0.values.mean acoustic m
 map features
 
-url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&wkid=4326
-ttl 2592000
-body earth
 
-url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json
-ttl 2592000
-at sun 1.0
-format universal
 
-url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_orogens.json
-ttl 2592000
-at sun 1.0
-format universal
 
-url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json
-ttl 2592000
-at sun 1.0
-format universal
+
+
+
+
 
 url https://stac.openlandmap.org/collections/sol_organic.carbon_usda.6a1c_m/items?limit=500&bbox=-180,-60,180,75
 ttl 86400
@@ -12027,8 +11454,8 @@ at sun 1.0
 format universal
 map table
 rows
-field 1 gravity deg
-field 2 gravity deg
+lat 1 deg
+lon 2 deg
 field 4 diffusion kg/m3
 field 6 thermal degC
 
@@ -12038,8 +11465,8 @@ at sun 1.0
 format universal
 map table
 rows
-field 0 gravity deg
-field 1 gravity deg
+lat 0 deg
+lon 1 deg
 field 3 diffusion kg/m3
 field 4 diffusion kg/m3
 field 5 diffusion kg/m3
@@ -12053,23 +11480,17 @@ at sun 1.0
 format universal
 map table
 rows
-field 0 gravity deg
-field 1 gravity deg
+lat 0 deg
+lon 1 deg
 field 3 acoustic hPa
 field 4 thermal degC
 field 5 diffusion psu
 
-url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
-ttl 60
-on earth -35.2809 149.1300
 
-url https://api.drand.sh/public/latest
-ttl 60
-at sun 1
 
-url https://beacon.nist.gov/beacon/2.0/pulse/last
-ttl 60
-on earth 39.9916 -105.2748
+
+
+
 
 url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
 ttl 3600
@@ -12107,18 +11528,11 @@ map .
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 
-url https://rest.uniprot.org/uniprotkb/statistics
-ttl 86400
-on earth 46.233 6.056
 
-url https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN
-ttl 86400
-on earth 46.2276 6.1432
-last_line biosphere_who_life_expectancy_global
 
-url https://www.marinespecies.org/rest/AphiaRecordsByName/Solea%20solea?like=false&marine_only=true
-ttl 86400
-at sun 1.0
+
+
+
 
 url https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames[]=Mola+mola&marine_only=true
 ttl 86400
@@ -12150,17 +11564,11 @@ map .
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 
-url https://registry.npmjs.org/-/v1/search?text=*&size=1
-ttl 86400
-on earth 37.774 -122.419
 
-url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
-ttl 86400
-on earth 48.8566 2.3522
 
-url https://overpass-api.de/api/interpreter?data=[out:json];node[power=plant](global);out;
-ttl 86400
-at sun 1.0
+
+
+
 
 url https://api.openinframap.org/stats/country
 ttl 86400
@@ -12199,7 +11607,7 @@ on earth 0 0
 map data
 lat latitude deg
 lon longitude deg
-field elevation_m gravity m
+alt elevation_m m
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
 map features
@@ -12263,9 +11671,7 @@ lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.mag em mag
 
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
-on earth 0 0
-ttl 3600
+
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
 map features
@@ -12282,13 +11688,9 @@ lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.mag em mag
 
-url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
-on earth 0 0
-ttl 3600
 
-url https://ssd-api.jpl.nasa.gov/cad.api
-on earth 0 0
-ttl 3600
+
+
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
 map features
@@ -12381,9 +11783,7 @@ lon geometry.coordinates.0 deg
 body earth
 ttl 86400
 
-url https://geomag.usgs.gov/ws/data/?id=BOU&type=adjusted&starttime={today}T00:00:00&endtime={today}T23:59:59&format=json&sampling_period=60
-ttl 60
-on earth 40.137 -105.237
+
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=Mauna_Loa&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
 ttl 86400
@@ -12391,28 +11791,15 @@ on earth 19.54 -155.58
 format csv
 last_row AOD_500nm diffusion µg/m3
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8724580&product=wind&time_zone=gmt&units=metric&format=json&date=latest
-ttl 300
-on earth 24.5557 -81.8079
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8454000&product=air_temperature&time_zone=gmt&units=metric&format=json&date=latest
-ttl 300
-on earth 41.8067 -71.4006
 
-url https://gml.noaa.gov/aftp/data/hats/cfcs/cfc11/combined/HATS_global_F11.txt
-ttl 2592000
-at sun 1.0
-format csv
 
-url https://gml.noaa.gov/aftp/data/hats/cfcs/cfc12/combined/HATS_global_F12.txt
-ttl 2592000
-at sun 1.0
-format csv
 
-url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.txt
-ttl 86400
-at sun 1.0
-format csv
+
+
+
+
+
 
 url https://www.ndbc.noaa.gov/data/realtime2/41001.spec
 ttl 300
@@ -12421,9 +11808,7 @@ format csv
 last_row SwH acoustic m
 last_row SwP acoustic s
 
-url https://api.weather.gov/stations/KJFK/observations/latest
-ttl 300
-on earth 40.64 -73.78
+
 
 url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
 ttl 3600
@@ -12807,11 +12192,11 @@ at sun 1.0
 format universal
 rows
 field 0 em eV
-field 3 gravity deg
+lat 3 deg
 lat_sign 4 lat_dir
-field 5 gravity deg
+lon 5 deg
 lon_sign 6 lon_dir
-field 7 gravity km
+alt 7 km
 field 8 advective m/s
 
 url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude,B_NEC&time.min=2026-08-03T00:00:00Z&time.max=2026-08-03T23:59:59Z
@@ -12920,9 +12305,9 @@ field plec_epeak em eV
 field plec_epeak_error em eV
 field flux_peak em W/m2
 field flux_peak_error em W/m2
-field assoc_ra em deg
-field assoc_dec em deg
-field assoc_error_radius gravity deg
+ra assoc_ra deg
+dec assoc_dec deg
+ra assoc_error_radius deg
 ttl 604800
 at sun 1.0
 map .
@@ -12937,9 +12322,9 @@ field flux_1_100_gev_error em W/m2
 field energy_flux em W/m2
 field energy_flux_error em W/m2
 field pivot_energy em eV
-field assoc_ra em deg
-field assoc_dec em deg
-field assoc_error_radius gravity deg
+ra assoc_ra deg
+dec assoc_dec deg
+ra assoc_error_radius deg
 field he_peak em eV
 field he_peak_error em eV
 field he_nufnu_peak em eV
@@ -12982,8 +12367,8 @@ tau_key _dist_m
 ra ra deg
 dec dec deg
 plx parallax mas
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field phot_bp_mean_mag em mag
 field phot_rp_mean_mag em mag
@@ -13016,8 +12401,8 @@ ra ra deg
 dec dec deg
 plx parallax mas
 field phot_g_mean_mag em mag
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 ttl 604800
 at sun 1.0
 map .
@@ -13042,8 +12427,8 @@ tau_key _dist_m
 ra ra deg
 dec dec deg
 plx parallax mas
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field bp_rp em mag
 field radial_velocity advective m/s
@@ -13054,8 +12439,8 @@ tau_key _dist_m
 ra ra deg
 dec dec deg
 plx parallax mas
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field bp_rp em mag
 field radial_velocity advective m/s
@@ -13182,8 +12567,8 @@ z_key redshift
 field lii em deg
 field bii em deg
 field ctrpart_name em W/m2
-field ctrpart_ra em deg
-field ctrpart_dec em deg
+ra ctrpart_ra deg
+dec ctrpart_dec deg
 field flux em W/m2
 field flux_lower em W/m2
 field flux_upper em W/m2
@@ -13199,8 +12584,8 @@ z_key redshift
 field pos_err em deg
 field lii em deg
 field bii em deg
-field bat_ra em deg
-field bat_dec em deg
+ra bat_ra deg
+dec bat_dec deg
 field bat_pos_err em deg
 field bat_theta em deg
 field bat_phi em deg
@@ -13230,8 +12615,8 @@ field bat_hrd1 em eV
 field bat_hrd1_err em eV
 field bat_hrd2 em eV
 field bat_hrd2_err em eV
-field xrt_ra em deg
-field xrt_dec em deg
+ra xrt_ra deg
+dec xrt_dec deg
 field xrt_pos_err em deg
 field xrt_c100_start em s
 field xrt_c100_stop em s
@@ -13244,8 +12629,8 @@ field xrt_hrd1 em eV
 field xrt_hrd1_err em eV
 field xrt_hrd2 em eV
 field xrt_hrd2_err em eV
-field uvot_ra em deg
-field uvot_dec em deg
+ra uvot_ra deg
+dec uvot_dec deg
 field uvot_pos_err em deg
 field uvot_vv_mag em mag
 field uvot_vv_mag_err em mag
@@ -13258,18 +12643,18 @@ field uvot_w1_start em s
 field uvot_w1_stop em s
 field uvot_w1_expo em s
 field galactic_nh em cm-2
-field ot_ra em deg
-field ot_dec em deg
+ra ot_ra deg
+dec ot_dec deg
 field ot_pos_err em deg
-field galaxy_ra em deg
-field galaxy_dec em deg
+ra galaxy_ra deg
+dec galaxy_dec deg
 field galaxy_offset em deg
 ttl 604800
 on earth 0 0
 map .
 lat lat deg
 lon lon deg
-field elevation gravity m
+alt elevation m
 ttl 604800
 at sun 1.0
 format universal
@@ -13310,18 +12695,18 @@ tau_key _dist_m
 ra ra deg
 dec dec deg
 z_key redshift_zsp
-field error_radius gravity deg
+ra error_radius deg
 field error_ell_major gravity deg
 field error_ell_minor em deg
 field error_ell_pa em deg
 field lii em deg
 field bii em deg
-field pn_rawx em deg
-field pn_rawy em deg
-field m1_rawx em deg
-field m1_rawy em deg
-field m2_rawx em deg
-field m2_rawy em deg
+ra pn_rawx deg
+ra pn_rawy deg
+ra m1_rawx deg
+ra m1_rawy deg
+ra m2_rawx deg
+ra m2_rawy deg
 field dist_nn gravity arcsec
 field ep_rate_error em eV
 field pn_rate_error em eV
@@ -13411,11 +12796,11 @@ field wise_w3mag_error em eV
 field wise_w4mag em eV
 field wise_w4mag_error em eV
 field gaiadr3_source_id em eV
-field gaiadr3_parallax em deg
-field gaiadr3_parallax_error em deg
-field gaiadr3_parallax_overerr em deg
-field gaiadr3_pm_ra em deg
-field gaiadr3_pm_dec em deg
+ra gaiadr3_parallax deg
+ra gaiadr3_parallax_error deg
+ra gaiadr3_parallax_overerr deg
+ra gaiadr3_pm_ra deg
+dec gaiadr3_pm_dec deg
 field gaiadr3_gmag em mag
 field gaiadr3_bpmag em mag
 field gaiadr3_rpmag em mag
@@ -13466,9 +12851,9 @@ url https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airpo
 body earth
 ttl 86400
 format csv
-field 4 gravity deg
-field 5 gravity deg
-field 6 gravity ft
+lat 4 deg
+lon 5 deg
+alt 6 ft
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/co2_emissions_countries.json
 body earth
@@ -13544,9 +12929,9 @@ field plec_epeak em eV
 field plec_epeak_error em eV
 field flux_peak em W/m2
 field flux_peak_error em W/m2
-field assoc_ra em deg
-field assoc_dec em deg
-field assoc_error_radius gravity deg
+ra assoc_ra deg
+dec assoc_dec deg
+ra assoc_error_radius deg
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/fermi_4lac.json
 at sun 1.0
@@ -13561,9 +12946,9 @@ field flux_1_100_gev_error em W/m2
 field energy_flux em W/m2
 field energy_flux_error em W/m2
 field pivot_energy em eV
-field assoc_ra em deg
-field assoc_dec em deg
-field assoc_error_radius gravity deg
+ra assoc_ra deg
+dec assoc_dec deg
+ra assoc_error_radius deg
 field he_peak em eV
 field he_peak_error em eV
 field he_nufnu_peak em eV
@@ -13609,8 +12994,8 @@ map .
 ra ra deg
 dec dec deg
 plx parallax mas
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field phot_bp_mean_mag em mag
 field phot_rp_mean_mag em mag
@@ -13646,8 +13031,8 @@ ra ra deg
 dec dec deg
 plx parallax mas
 field phot_g_mean_mag em mag
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_hypervelocity.json
 at sun 1.0
@@ -13675,8 +13060,8 @@ map .
 ra ra deg
 dec dec deg
 plx parallax mas
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field bp_rp em mag
 field radial_velocity advective m/s
@@ -13688,8 +13073,8 @@ map .
 ra ra deg
 dec dec deg
 plx parallax mas
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field bp_rp em mag
 field radial_velocity advective m/s
@@ -13712,7 +13097,7 @@ ra ra deg
 dec dec deg
 dist_key dist_mpc
 field energy_tev em TeV
-field error_radius_deg gravity deg
+ra error_radius_deg deg
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_agn.json
 at sun 1.0
@@ -13803,9 +13188,7 @@ lon longitude deg
 alt altitude_m m
 field rigidity_gv em GV
 
-url https://raw.githubusercontent.com/omegaflow/catalogs/main/nsidc_arctic_seaice.json
-on earth 0 0
-ttl 604800
+
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_master.json
 at sun 1.0
@@ -13852,8 +13235,8 @@ dec dec deg
 field lii em deg
 field bii em deg
 field ctrpart_name em W/m2
-field ctrpart_ra em deg
-field ctrpart_dec em deg
+ra ctrpart_ra deg
+dec ctrpart_dec deg
 field flux em W/m2
 field flux_lower em W/m2
 field flux_upper em W/m2
@@ -13869,8 +13252,8 @@ dec dec deg
 field pos_err em deg
 field lii em deg
 field bii em deg
-field bat_ra em deg
-field bat_dec em deg
+ra bat_ra deg
+dec bat_dec deg
 field bat_pos_err em deg
 field bat_theta em deg
 field bat_phi em deg
@@ -13900,8 +13283,8 @@ field bat_hrd1 em eV
 field bat_hrd1_err em eV
 field bat_hrd2 em eV
 field bat_hrd2_err em eV
-field xrt_ra em deg
-field xrt_dec em deg
+ra xrt_ra deg
+dec xrt_dec deg
 field xrt_pos_err em deg
 field xrt_c100_start em s
 field xrt_c100_stop em s
@@ -13914,8 +13297,8 @@ field xrt_hrd1 em eV
 field xrt_hrd1_err em eV
 field xrt_hrd2 em eV
 field xrt_hrd2_err em eV
-field uvot_ra em deg
-field uvot_dec em deg
+ra uvot_ra deg
+dec uvot_dec deg
 field uvot_pos_err em deg
 field uvot_vv_mag em mag
 field uvot_vv_mag_err em mag
@@ -13928,11 +13311,11 @@ field uvot_w1_start em s
 field uvot_w1_stop em s
 field uvot_w1_expo em s
 field galactic_nh em cm-2
-field ot_ra em deg
-field ot_dec em deg
+ra ot_ra deg
+dec ot_dec deg
 field ot_pos_err em deg
-field galaxy_ra em deg
-field galaxy_dec em deg
+ra galaxy_ra deg
+dec galaxy_dec deg
 field galaxy_offset em deg
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/tevcat.json
@@ -14167,15 +13550,15 @@ map .
 ra RAmdeg deg
 dec DEmdeg deg
 plx default_plx mas
-field RAmdeg em deg
+ra RAmdeg deg
 field DEmdeg em deg
-field pmRA em mas_yr
+pmra pmRA mas_yr
 field pmDE em mas_yr
-field e_RAmdeg em deg
+ra e_RAmdeg deg
 field e_DEmdeg em deg
 field e_pmRA em mas_yr
 field e_pmDE em mas_yr
-field q_RAmdeg gravity deg
+ra q_RAmdeg deg
 field q_DEmdeg gravity deg
 field q_pmRA em mas_yr
 field q_pmDE gravity mas_yr
@@ -14183,9 +13566,9 @@ field BTmag em nT
 field e_BTmag em nT
 field VTmag em mag
 field e_VTmag em mag
-field RA(ICRS) em deg
+ra RA(ICRS) deg
 field DE(ICRS) em deg
-field e_RAdeg em deg
+ra e_RAdeg deg
 field e_DEdeg em deg
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_ucac5.json
@@ -14194,11 +13577,11 @@ ttl 604800
 map .
 ra RAJ2000 deg
 dec DEJ2000 deg
-field RAgaia em deg
-field e_RAgaia em deg
+ra RAgaia deg
+ra e_RAgaia deg
 field DEgaia em deg
 field e_DEgaia em deg
-field pmRA em mas_yr
+pmra pmRA mas_yr
 field e_pmRA em mas_yr
 field pmDE em mas_yr
 field e_pmDE em mas_yr
@@ -14270,18 +13653,18 @@ ttl 604800
 map .
 ra ra deg
 dec dec deg
-field error_radius gravity deg
+ra error_radius deg
 field error_ell_major gravity deg
 field error_ell_minor em deg
 field error_ell_pa em deg
 field lii em deg
 field bii em deg
-field pn_rawx em deg
-field pn_rawy em deg
-field m1_rawx em deg
-field m1_rawy em deg
-field m2_rawx em deg
-field m2_rawy em deg
+ra pn_rawx deg
+ra pn_rawy deg
+ra m1_rawx deg
+ra m1_rawy deg
+ra m2_rawx deg
+ra m2_rawy deg
 field dist_nn gravity arcsec
 field ep_rate_error em eV
 field pn_rate_error em eV
@@ -14371,11 +13754,11 @@ field wise_w3mag_error em eV
 field wise_w4mag em eV
 field wise_w4mag_error em eV
 field gaiadr3_source_id em eV
-field gaiadr3_parallax em deg
-field gaiadr3_parallax_error em deg
-field gaiadr3_parallax_overerr em deg
-field gaiadr3_pm_ra em deg
-field gaiadr3_pm_dec em deg
+ra gaiadr3_parallax deg
+ra gaiadr3_parallax_error deg
+ra gaiadr3_parallax_overerr deg
+ra gaiadr3_pm_ra deg
+dec gaiadr3_pm_dec deg
 field gaiadr3_gmag em mag
 field gaiadr3_bpmag em mag
 field gaiadr3_rpmag em mag
@@ -14394,7 +13777,7 @@ ttl 604800
 map .
 lat lat deg
 lon lon deg
-field elevation gravity m
+alt elevation m
 
 url https://raw.githubusercontent.com/cossatot/gem-global-active-faults/master/geojson/gem_active_faults_harmonized.geojson
 on earth 0 0
@@ -14575,7 +13958,7 @@ on earth 0 0
 rows
 lat Latitude(decimal_degrees) deg
 lon Longitude(decimal_degrees) deg
-field Elevation(m) gravity m
+alt Elevation(m) m
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&application=batch5&format=json&station=8518750
 ttl 3600
@@ -14623,7 +14006,7 @@ lon 0.0 deg
 field 0 em Hz
 field 1 em Hz
 field 2 seismic-surface W/m2
-field 4 em deg
+ra 4 deg
 
 url https://data.sensor.community/airrohr/v1/filter/type=SGP30
 ttl 300
@@ -14643,7 +14026,7 @@ lon location.longitude deg
 field sensordatavalues.NO2 diffusion kg/m3
 field sensordatavalues.CO diffusion ppm
 field sensordatavalues.NH3 diffusion ppb
-field location.altitude gravity m
+alt location.altitude m
 
 url https://data.sensor.community/airrohr/v1/filter/box=35,354,70,40
 ttl 86400
@@ -14663,7 +14046,7 @@ lat location.latitude deg
 lon location.longitude deg
 field sensordatavalues.P1 diffusion µg/m3
 field sensordatavalues.P2 diffusion µg/m3
-field location.altitude gravity m
+alt location.altitude m
 
 url https://datalab.noirlab.edu/query?sql=SELECT+TOP+3000+ls_id,ra,dec,type,z_phot_median,mag_r,mag_g,mag_z,snr_r+FROM+ls_dr10.tractor+WHERE+ra+BETWEEN+150+AND+152+AND+dec+BETWEEN+1+AND+3+AND+snr_r>10+ORDER+BY+mag_r+ASC&fmt=csv
 format text
@@ -14942,9 +14325,9 @@ map states
 lat 6 deg
 lon 5 deg
 field 0 diffusion kg/m3
-field 7 gravity m
+alt 7 m
 field 9 advective m/s
-field 10 gravity deg
+ra 10 deg
 field 11 em m/s
 
 url https://opensky-network.org/api/states/all?lamin=35&lomin=-10&lamax=70&lomax=40
@@ -14954,9 +14337,9 @@ map states
 lat 6 deg
 lon 5 deg
 field 0 diffusion kg/m3
-field 7 gravity m
+alt 7 m
 field 9 advective m/s
-field 10 gravity deg
+ra 10 deg
 
 url https://psl.noaa.gov/data/correlation/ao.data
 format text
@@ -14965,7 +14348,7 @@ at sun 1
 rows
 lat 90.0 deg
 lon 0.0 deg
-field 12 em deg
+dec 12 deg
 
 url https://psl.noaa.gov/data/correlation/amon.us.data
 format text
@@ -14982,7 +14365,7 @@ at sun 1
 rows
 lat 65.0 deg
 lon -20.0 deg
-field 12 diffusion deg
+dec 12 deg
 
 url https://service.iris.edu/fdsnws/station/1/query?network=YT&level=station&format=text&nodata=404
 format text
@@ -14991,7 +14374,7 @@ on earth 0 0
 rows
 lat Latitude deg
 lon Longitude deg
-field Elevation gravity m
+alt Elevation m
 
 url https://service.iris.edu/fdsnws/station/1/query?network=IU&level=station&format=text&nodata=404
 format text
@@ -15000,7 +14383,7 @@ on earth 0 0
 rows
 lat Latitude deg
 lon Longitude deg
-field Elevation gravity m
+alt Elevation m
 
 url https://service.iris.edu/fdsnws/station/1/query?network=II&level=station&format=text&nodata=404
 format text
@@ -15009,7 +14392,7 @@ on earth 0 0
 rows
 lat Latitude deg
 lon Longitude deg
-field Elevation gravity m
+alt Elevation m
 
 url https://service.iris.edu/fdsnws/station/1/query?network=IC,AU&level=station&format=text&nodata=404
 format text
@@ -15018,7 +14401,7 @@ on earth 0 0
 rows
 lat Latitude deg
 lon Longitude deg
-field Elevation gravity m
+alt Elevation m
 
 url https://services.swpc.noaa.gov/products/alerts.json
 ttl 86400
@@ -15081,7 +14464,7 @@ lon 0.0 deg
 field 0 diffusion kg/m3
 field 2 gravity au
 field 3 gravity deg
-field 4 gravity deg
+lon 4 deg
 field 5 gravity deg
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'&CAL_FORMAT='BOTH'
@@ -15094,7 +14477,7 @@ lon 0.0 deg
 field 1 diffusion kg/m3
 field 3 gravity au
 field 4 gravity deg
-field 5 gravity deg
+lon 5 deg
 field 6 gravity deg
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,20,23,24'&CAL_FORMAT='BOTH'
@@ -15182,13 +14565,13 @@ rows
 lat lat deg
 lon lon deg
 field event_name em eV
-field lat gravity deg
-field lon gravity deg
+lat lat deg
+lon lon deg
 field depth gravity m
 field mw seismic-surface mag
 field strike1 seismic-body deg
 field dip1 seismic-body deg
-field rake1 seismic-body deg
+ra rake1 deg
 
 url http://www.isc.ac.uk/cgi-bin/web-db-run?request=BULLETIN&out_format=CSV&searchshape=RECT&bot_lat=-90&top_lat=90&left_lon=-180&right_lon=180&start_year={year}&start_mon={month}&start_day={day}&start_time=00%3A00%3A00&end_year={year}&end_mon={month}&end_day={day}&end_time=23%3A59%3A59&min_mag=4.5&req_mag_type=mb&req_mag_agcy=ISC&include_phases=N&include_headers=N
 format text
@@ -15209,7 +14592,7 @@ on earth 0 0
 rows
 lat lat deg
 lon lon deg
-field 1 gravity deg
+lon 1 deg
 
 url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ACTIVE.list.v04r00.csv
 format text
@@ -15273,7 +14656,7 @@ on earth 0 0
 map items
 lat latitude deg
 lon longitude deg
-field elevationM gravity m
+alt elevationM m
 
 url https://www.nohrsc.noaa.gov/interactive/html/graph.html?station=CEMR&wy=2024&pc=&type=1&o=a&ff=1&nw=0&t=0&nodata=0&var=WTEQ&var=SNWD&var=PREC&var=TEMP&state=&q=&r=&format=csv
 format text
@@ -15291,9 +14674,7 @@ ttl 86400
 at sun 1
 rows
 
-url https://service.iris.edu/fdsnws/station/1/query?format=text&latitude={lat}&longitude={lon}&maxradius=5
-ttl 2592000
-on earth 0 0
+
 
 url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=FRN&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
 ttl 300
@@ -15302,9 +14683,7 @@ field X em nT
 field Y em nT
 field Z em nT
 
-url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
-ttl 300
-on earth 0 0
+
 
 url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=HON&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
 ttl 300
@@ -15313,17 +14692,11 @@ field X em nT
 field Y em nT
 field Z em nT
 
-url https://volcanoes.usgs.gov/hans-public/api/volcano/getElevatedVolcanoes
-ttl 3600
-on earth 0 0
 
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8454000&product=air_temperature&date=latest&time_zone=gmt&units=metric&format=json
-ttl 300
-on earth 0 0
 
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=10
-ttl 86400
-at sun 1.0
+
+
+
 
 url https://api.gbif.org/v1/occurrence/search?basisOfRecord=MACHINE_OBSERVATION&hasCoordinate=true&limit=300&decimalLatitude={lat}&decimalLongitude={lon}&radius=100
 ttl 3600
@@ -15351,8 +14724,8 @@ on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
-field properties.lat gravity deg
-field properties.lon gravity deg
+lat properties.lat deg
+lon properties.lon deg
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
 ttl 86400
@@ -15561,8 +14934,8 @@ tau_key _dist_m
 ra ra deg
 dec dec deg
 plx parallax mas
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field phot_bp_mean_mag em mag
 field phot_rp_mean_mag em mag
@@ -15601,8 +14974,8 @@ ra ra deg
 dec dec deg
 plx parallax mas
 field phot_g_mean_mag em mag
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 
 url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cpmra%2Cpmdec%2Cphot_g_mean_mag%2Cradial_velocity+FROM+gaiadr3.gaia_source+WHERE+SQRT%28POWER%28pmra%2C2%29%2BPOWER%28pmdec%2C2%29%29%3E500+AND+parallax%3E0
 ttl 604800
@@ -15633,8 +15006,8 @@ tau_key _dist_m
 ra ra deg
 dec dec deg
 plx parallax mas
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field bp_rp em mag
 field radial_velocity advective m/s
@@ -15647,8 +15020,8 @@ tau_key _dist_m
 ra ra deg
 dec dec deg
 plx parallax mas
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field bp_rp em mag
 field radial_velocity advective m/s
@@ -15751,10 +15124,7 @@ map .
 lat lat deg
 lon lon deg
 
-url https://api.github.com/events?per_page=100
-ttl 60
-at sun 1.0
-header User-Agent "omegaflow"
+
 
 url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
 ttl 60
@@ -15762,19 +15132,11 @@ on earth 53.3 -6.2
 field statistics.curin advective m/s
 field statistics.curout advective m/s
 
-url https://api.irail.be/liveboard/?station=Brussels&format=json
-ttl 60
-on earth 50.8 4.3
 
-url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
-ttl 60
-on earth 53.3 -6.2
-format xml
-xml_count ObjStationData technosphere_train_departures_dublin
 
-url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
-ttl 60
-on earth 48.2 16.3
+
+
+
 
 url https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json
 ttl 60
@@ -15802,9 +15164,7 @@ lon geometry.coordinates.0 deg
 field properties.mag em mag
 field properties.depth gravity m
 
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
-ttl 60
-at sun 1.0
+
 
 url https://earthquake.tmd.go.th/earthquake_json.php?limit=200
 ttl 120
@@ -15835,9 +15195,7 @@ field pm25 diffusion µg/m3
 field pm10 diffusion µg/m3
 field no2 diffusion kg/m3
 
-url https://api.energy-charts.info/ren_share
-ttl 300
-on earth 50.0 10.0
+
 
 url https://api.carbonintensity.org.uk/intensity
 ttl 300
@@ -15964,16 +15322,13 @@ field properties.depth__m_ gravity m
 field properties.sea_surface_temperature_0__degr thermal degC
 field properties.sea_water_speed_0__cm_s_1_ advective m/s
 
-url https://gdacs.org/xml/rss.xml
-ttl 300
-on earth 38.9072 -77.0369
-xml_count item hazard_event_count
+
 
 url https://api.wolfx.jp/jma_eqlist.json
 ttl 300
 at sun 1.0
-field 1.latitude gravity deg
-field 1.longitude gravity deg
+lat 1.latitude deg
+lon 1.longitude deg
 field 1.magnitude em mag
 field 1.depth gravity m
 
@@ -15991,19 +15346,11 @@ map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 
-url https://www.tsunami.gov/events/xml/PAAQAtom.xml
-ttl 300
-at sun 1.0
-xml_count entry geosphere_tsunami_alert_count
 
-url https://www.tsunami.gov/events/xml/PHEBAtom.xml
-ttl 300
-at sun 1.0
-xml_count entry geosphere_tsunami_alert_count
 
-url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
-ttl 300
-at sun 1.0
+
+
+
 
 url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
 ttl 300
@@ -16023,10 +15370,7 @@ map .
 field 1 em nT
 field 2 em nT
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_iss.json
-ttl 300
-at sun 1.0
-format text
+
 
 url https://tadas.afad.gov.tr/api/event/list?limit=200
 ttl 300
@@ -16096,9 +15440,7 @@ format text
 rows
 field 5 em MW
 
-url https://api.wheretheiss.at/v1/satellites/25544/astronauts
-ttl 600
-at sun 1.0
+
 
 url https://gcn.nasa.gov/circulars/44806.json
 ttl 600
@@ -16106,14 +15448,9 @@ at sun 1.0
 map .
 path eventId em eV
 
-url https://www.ceic.ac.cn/speedsearch?time=1&type=2&page=1
-ttl 600
-on earth 39.9 116.4
 
-url https://www.jma.go.jp/bosai/quake/data/list.json
-ttl 600
-on earth 35.68 139.69
-last_line geosphere_earthquakes_jma_recent_mag
+
+
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_parker_solar_probe.json
 ttl 600
@@ -16124,14 +15461,9 @@ field 2 gravity au
 field 3 gravity au
 field 4 gravity au
 
-url https://gcn.nasa.gov/circulars?query=IceCube%20LVK
-ttl 600
-at sun 1.0
-header User-Agent "omegaflow"
 
-url https://gracedb.ligo.org/api/superevents/?count=10&category=production
-ttl 600
-at sun 1.0
+
+
 
 url https://github.com/omegaflow/catalogs/releases/download/live-data/usgs_water_daily.json
 ttl 600
@@ -16161,17 +15493,11 @@ map data
 lat ra deg
 lon dec deg
 
-url https://api.energy-charts.info/price?country=DE
-ttl 3600
-on earth 51.0 10.0
 
-url https://api.exchangerate-api.com/v4/latest/USD
-ttl 3600
-at sun 1.0
 
-url http://data.gdeltproject.org/normfiles/daily.csv
-ttl 3600
-at sun 1.0
+
+
+
 
 url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+target,+obsid,+collection+FROM+caom2.Observation+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 ttl 3600
@@ -16201,21 +15527,13 @@ lon lon deg
 field alt gravity m
 field vel em m/s
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_earth.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_enceladus.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_encke.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_eris.json
-ttl 3600
-at sun 1.0
+
+
+
+
 
 url https://sky.esa.int/esasky-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 ttl 3600
@@ -16233,39 +15551,27 @@ map data
 lat ra deg
 lon dec deg
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_europa.json
-ttl 3600
-at sun 1.0
+
 
 url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
 ttl 3600
 at sun 1.0
 last dst gravity nT
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_interstellar_3i.json
-ttl 3600
-at sun 1.0
 
-url https://network.satnogs.org/api/observations/?format=json&limit=1
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_ganymede.json
-ttl 3600
-at sun 1.0
+
+
+
 
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
 ttl 3600
 on earth 40.0 15.0
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
-url https://ies-ows.jrc.ec.europa.eu/effis?service=WFS&request=GetFeature&typeName=ms:modis.hs&outputFormat=application/json&maxFeatures=1
-ttl 3600
-on earth 45.803 8.624
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_haumea.json
-ttl 3600
-at sun 1.0
+
+
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+name,+t_scid+FROM+hst+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 ttl 3600
@@ -16275,10 +15581,7 @@ map data
 lat ra deg
 lon dec deg
 
-url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_ERD_INT_UWN_NAT.csv?time,TotalSPL,SPL63Hz,SPL125Hz,SPL2kHz,SPL5kHz
-ttl 3600
-on earth 42.62682 -8.78233
-format csv
+
 
 url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50
 ttl 3600
@@ -16295,9 +15598,7 @@ map results.bindings
 lat lat.value deg
 lon lon.value deg
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_io.json
-ttl 3600
-at sun 1.0
+
 
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
 ttl 3600
@@ -16326,16 +15627,16 @@ map data
 lat lat deg
 lon lon deg
 field alt gravity m
-field lat gravity deg
-field lon gravity deg
+lat lat deg
+lon lon deg
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date
 ttl 3600
 at sun 1.0
 map data
-field 6 gravity deg
-field 8 gravity deg
-field 18 gravity km
+lat 6 deg
+lon 8 deg
+alt 18 km
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_voyager1.json
 ttl 3600
@@ -16353,43 +15654,29 @@ rows
 field 2 gravity au
 field 3 gravity au
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_juno.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_jupiter.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_jwst.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_makemake.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_mars.json
-ttl 3600
-at sun 1.0
+
+
+
+
+
 
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1
 ttl 3600
 body earth
 format votable
 map data
-field s_ra em deg
-field s_dec em deg
+ra s_ra deg
+dec s_dec deg
 lat s_ra deg
 lon s_dec deg
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_mercury.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_luna.json
-ttl 3600
-at sun 1.0
+
+
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json
 ttl 3600
@@ -16427,13 +15714,9 @@ field vx advective km/s
 field vy advective km/s
 field vz advective km/s
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_neptune.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_new_horizons.json
-ttl 3600
-at sun 1.0
+
+
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={today}&endDate={today}&format=json
 ttl 3600
@@ -16461,49 +15744,27 @@ map data
 lat ra deg
 lon dec deg
 
-url https://eyes.nasa.gov/dsn-now/dsn.json
-ttl 3600
-at sun 1.0
 
-url https://ssd-api.jpl.nasa.gov/fireball.api
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_vesta.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_pluto.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_saturn.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_callisto.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_solar_orbiter.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_sun.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_titan.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_triton.json
-ttl 3600
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_uranus.json
-ttl 3600
-at sun 1.0
+
+
+
+
+
+
+
+
+
+
+
 
 url https://volcanoes.usgs.gov/hans-public/api/volcano/weekly
 ttl 3600
@@ -16512,9 +15773,7 @@ map .
 lat Latitude deg
 lon Longitude deg
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_venus.json
-ttl 3600
-at sun 1.0
+
 
 url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_china_airquality.json
 ttl 3600
@@ -16543,67 +15802,38 @@ field col5 em mas
 field col6 em mas
 field col7 em mas
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_astro_total.json
-ttl 86400
-on earth 40.712 -74.006
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_cs_total.json
-ttl 86400
-on earth 40.712 -74.006
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_hep_total.json
-ttl 86400
-on earth 40.712 -74.006
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_math_total.json
-ttl 86400
-on earth 40.712 -74.006
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_physics_total.json
-ttl 86400
-on earth 40.712 -74.006
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qbio_total.json
-ttl 86400
-on earth 40.712 -74.006
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qfin_total.json
-ttl 86400
-on earth 40.712 -74.006
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_stat_total.json
-ttl 86400
-on earth 40.712 -74.006
 
-url https://api.woudc.org/collections/totalozone/items?limit=1
-ttl 86400
-on earth 43.780 -79.470
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_arxiv_total_papers.json
-ttl 86400
-on earth 42.3601 -71.0589
-xml_count totalResults biosphere_arxiv_papers_total
 
-url https://api.openalex.org/works?per-page=1
-ttl 86400
-on earth 47.6062 -122.3321
 
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
-ttl 86400
-at sun 1.0
+
+
+
+
+
+
+
+
+
+
+
+
 
 url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
 ttl 86400
 at sun 1.0
 field H em mag
 
-url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-ERA5&startyear={year}&endyear={year}&outputformat=json
-ttl 86400
-at sun 1.0
 
-url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP46A2&page_size=200
-ttl 86400
-on earth 40.0 -105.0
+
+
 
 url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS
 ttl 86400
@@ -16622,10 +15852,7 @@ rows
 lat Latitude deg
 lon Longitude deg
 
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json
-ttl 86400
-on earth 42.365 -71.105
-last_line exosphere_exoplanets_confirmed_total
+
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 ttl 86400
@@ -16638,9 +15865,7 @@ field pl_rade gravity R_earth
 field pl_orbper gravity d
 field pl_bmasse gravity M_earth
 
-url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
-ttl 86400
-on earth 40.820 -96.702
+
 
 url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
 ttl 86400
@@ -16648,15 +15873,11 @@ body earth
 map .
 lat latitude deg
 lon longitude deg
-field elevation_meters gravity m
+alt elevation_meters m
 
-url https://api.github.com/search/repositories?q=stars:>0&per_page=1
-ttl 86400
-on earth 37.774 -122.419
 
-url https://api.github.com/search/users?q=type:user&per_page=1
-ttl 86400
-on earth 37.774 -122.419
+
+
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mangrove_countries.json
 ttl 86400
@@ -16666,9 +15887,7 @@ lat latitude deg
 lon longitude deg
 field mangrove_area_km2 diffusion km2
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_halley.json
-ttl 86400
-on earth 34.201 -118.171
+
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','bll','FSRQ','fsrq','BCU','bcu')+ORDER+BY+flux_density+DESC
 ttl 86400
@@ -16696,9 +15915,7 @@ rows
 ra ra deg
 dec dec deg
 
-url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
-ttl 86400
-on earth 51.231 2.928
+
 
 url https://meta.icos-cp.eu/sparql?format=json&query=SELECT%20?uri%20?name%20?lat%20?lon%20?alt%20?country%20?ecosys%20WHERE%20%7B?uri%20a%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/ES%3E%20%3B%20%3Chttp://www.w3.org/2000/01/rdf-schema%23label%3E%20?name%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude%3E%20?lat%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude%3E%20?lon%7D
 ttl 86400
@@ -16797,7 +16014,7 @@ rows
 field 1 diffusion kg/m3
 field 3 gravity au
 field 4 gravity deg
-field 5 gravity deg
+lon 5 deg
 field 6 gravity deg
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_comet_c2023_a3.json
@@ -16833,423 +16050,213 @@ map data
 ra 8 deg
 dec 9 deg
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 18.638 72.872
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 68.358 18.823
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -65.245 -64.25799999999998
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 56.433 58.567
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -23.762 133.883
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 49.08 14.02
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 51.836 20.789
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 48.331 8.325
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 40.14 -105.233
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 71.32 -156.62
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 30.35 -89.63999999999999
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -12.188 96.834
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 48.025 2.26
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 64.87 -147.86
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -35.32 149.36
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 17.294 78.919
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -66.283 110.533
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -20.09 146.264
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 36.37 126.854
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 70.36 -148.79
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 11.95 108.48
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 50.1 4.6
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 41.65 14.47
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 40.957 0.333
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -43.474 172.393
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 38.21 -77.36700000000002
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 37.09 -119.72
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 48.17 11.28
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -0.695 73.154
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 44.633 20.767
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 69.252 -53.533000000000015
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -31.356 115.715
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 13.59 144.87
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 28.321 -16.440999999999974
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -25.88 27.71
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HER/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -34.43 19.23
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 54.603 18.811
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 21.32 -158.0
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 47.873 18.19
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 77.0 15.55
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -12.05 -75.32999999999998
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 17.42 78.55
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ESK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 55.3 -3.2
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -27.171 -109.41999999999999
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 52.17 104.45
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 40.5 29.72
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 26.92 75.8
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 36.232 140.186
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -12.69 132.47
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 67.843 20.42
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -26.54 18.11
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 31.42 130.88
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 5.21 -52.73000000000002
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -22.22 114.1
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 49.9 23.75
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 64.612 18.748
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 50.298 5.682
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -67.6 62.88
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -54.5 158.95
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -54.5 158.95
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 43.91 144.19
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 61.167 -45.43299999999999
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 47.63 16.72
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 48.27 -117.12
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 52.07 12.68
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 60.51 24.66
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 54.85 83.23
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -60.737 -44.73700000000002
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 42.515 24.177
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 38.1 23.9
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 21.03 105.96
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -31.667 -63.88099999999997
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -17.567 -149.574
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -21.206 55.576
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -77.829 166.671
-
-url https://zenodo.org/records/15225820/files/NiNo_SR_params_2024.csv
-ttl 86400
-at sun 1.0
-format csv
-last_line atmos_schumann_last_val
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 36.667 -5.944999999999993
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -15.961 -5.747000000000014
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 55.35 -160.46
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 57.06 -135.33
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 18.11 -66.14999999999998
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 67.37 26.63
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 39.55 -4.350000000000023
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 44.68 26.25
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -37.067 -12.315999999999974
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 77.47 -69.22699999999998
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 46.9 17.89
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -22.22 114.1
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 45.408 16.659
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -19.202 17.584
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -1.205 -48.51299999999998
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 32.17 -110.72999999999999
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 59.903 17.353
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 51.933 -10.25
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -70.683 -8.281999999999982
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -78.464 106.835
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth -22.4 -43.64999999999998
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 47.931 15.866
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 53.725 9.053
-
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_GEDI02_A.json
-ttl 86400
-at sun 1.0
-
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_ATL06.json
-ttl 86400
-at sun 1.0
-
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_ATL03.json
-ttl 86400
-at sun 1.0
-
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_SWOT_L2_LR_SSH_D.json
-ttl 86400
-at sun 1.0
-
-url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_VNP14IMG_NRT.json
-ttl 86400
-at sun 1.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 url https://www.ncei.noaa.gov/access/paleo-search/study/params.json?dataTypeId=18
 ttl 86400
@@ -17324,207 +16331,105 @@ on earth 0 0
 map .
 field swdiJsonResponse.status acoustic deg
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_active.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_active_satellites.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_all_satellites.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_cubesats.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_debris.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_debris_analyst.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_engineering_sats.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_glonass.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_gps.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_navigation_sats.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_oneweb.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_science_sats.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_starlink.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_weather_sats.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_callisto.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_ceres.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_earth.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_enceladus.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_eris.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_europa.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_ganymede.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_haumea.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_io.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_jupiter.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_makemake.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_mars.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_mercury.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_moon.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_neptune.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_pluto.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_saturn.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_sun.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_titan.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_triton.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_uranus.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_venus.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_vesta.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_apophis.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_bennu.json
-ttl 86400
-at sun 1.0
 
-url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
-ttl 86400
-on earth 40.034 0.0
-format csv
-header User-Agent "omegaflow"
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_ceres.json
-ttl 86400
-on earth 34.201 -118.171
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_earth.json
-ttl 86400
-at sun 1.0
 
-url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
-ttl 86400
-on earth 34.201 -118.171
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_jupiter.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_mars.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_mercury.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_neptune.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_saturn.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_uranus.json
-ttl 86400
-at sun 1.0
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_venus.json
-ttl 86400
-at sun 1.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_938_110_table7.json
 ttl 86400
@@ -17533,13 +16438,9 @@ map data
 ra 23 deg
 dec 24 deg
 
-url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
-ttl 86400
-on earth 37.774 -122.419
 
-url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
-ttl 86400
-on earth 40.712 -74.006
+
+
 
 url https://tevcat2.tevcat.org/api/sources
 ttl 86400
@@ -17822,7 +16723,7 @@ format text
 rows
 ra RA_ICRS deg
 dec DE_ICRS deg
-field RAPMdeg em deg
+ra RAPMdeg deg
 field DEPMdeg em deg
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hmxb_catalog.json
@@ -17890,9 +16791,9 @@ field plec_epeak em eV
 field plec_epeak_error em eV
 field flux_peak em W/m2
 field flux_peak_error em W/m2
-field assoc_ra em deg
-field assoc_dec em deg
-field assoc_error_radius gravity deg
+ra assoc_ra deg
+dec assoc_dec deg
+ra assoc_error_radius deg
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/fermi_4lac.json
 ttl 604800
@@ -17907,9 +16808,9 @@ field flux_1_100_gev_error em W/m2
 field energy_flux em W/m2
 field energy_flux_error em W/m2
 field pivot_energy em eV
-field assoc_ra em deg
-field assoc_dec em deg
-field assoc_error_radius gravity deg
+ra assoc_ra deg
+dec assoc_dec deg
+ra assoc_error_radius deg
 field he_peak em eV
 field he_peak_error em eV
 field he_nufnu_peak em eV
@@ -17951,8 +16852,8 @@ at sun 1.0
 map data
 ra ra deg
 dec dec deg
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field phot_bp_mean_mag em mag
 field phot_rp_mean_mag em mag
@@ -17985,8 +16886,8 @@ map data
 ra ra deg
 dec dec deg
 field phot_g_mean_mag em mag
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_hypervelocity.json
 ttl 604800
@@ -18011,8 +16912,8 @@ at sun 1.0
 map data
 ra ra deg
 dec dec deg
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field bp_rp em mag
 field radial_velocity advective m/s
@@ -18023,8 +16924,8 @@ at sun 1.0
 map data
 ra ra deg
 dec dec deg
-field pmra em mas_yr
-field pmdec em mas_yr
+pmra pmra mas_yr
+pmdec pmdec mas_yr
 field phot_g_mean_mag em mag
 field bp_rp em mag
 field radial_velocity advective m/s
@@ -18045,7 +16946,7 @@ map data
 ra ra deg
 dec dec deg
 field energy_tev em TeV
-field error_radius_deg gravity deg
+ra error_radius_deg deg
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_agn.json
 ttl 604800
@@ -18118,9 +17019,7 @@ map data
 ra ra deg
 dec dec deg
 
-url https://github.com/omegaflow/catalogs/releases/download/v1.0/nsidc_arctic_seaice.json
-ttl 604800
-on earth 80.0 0.0
+
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_rxte_master.json
 ttl 604800
@@ -18164,8 +17063,8 @@ dec dec deg
 field lii em deg
 field bii em deg
 field ctrpart_name em W/m2
-field ctrpart_ra em deg
-field ctrpart_dec em deg
+ra ctrpart_ra deg
+dec ctrpart_dec deg
 field flux em W/m2
 field flux_lower em W/m2
 field flux_upper em W/m2
@@ -18181,8 +17080,8 @@ dec dec deg
 field pos_err em deg
 field lii em deg
 field bii em deg
-field bat_ra em deg
-field bat_dec em deg
+ra bat_ra deg
+dec bat_dec deg
 field bat_pos_err em deg
 field bat_theta em deg
 field bat_phi em deg
@@ -18212,8 +17111,8 @@ field bat_hrd1 em eV
 field bat_hrd1_err em eV
 field bat_hrd2 em eV
 field bat_hrd2_err em eV
-field xrt_ra em deg
-field xrt_dec em deg
+ra xrt_ra deg
+dec xrt_dec deg
 field xrt_pos_err em deg
 field xrt_c100_start em s
 field xrt_c100_stop em s
@@ -18226,8 +17125,8 @@ field xrt_hrd1 em eV
 field xrt_hrd1_err em eV
 field xrt_hrd2 em eV
 field xrt_hrd2_err em eV
-field uvot_ra em deg
-field uvot_dec em deg
+ra uvot_ra deg
+dec uvot_dec deg
 field uvot_pos_err em deg
 field uvot_vv_mag em mag
 field uvot_vv_mag_err em mag
@@ -18240,11 +17139,11 @@ field uvot_w1_start em s
 field uvot_w1_stop em s
 field uvot_w1_expo em s
 field galactic_nh em cm-2
-field ot_ra em deg
-field ot_dec em deg
+ra ot_ra deg
+dec ot_dec deg
 field ot_pos_err em deg
-field galaxy_ra em deg
-field galaxy_dec em deg
+ra galaxy_ra deg
+dec galaxy_dec deg
 field galaxy_offset em deg
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/tevcat.json
@@ -18470,15 +17369,15 @@ at sun 1.0
 map data
 ra RAmdeg deg
 dec DEmdeg deg
-field RAmdeg em deg
+ra RAmdeg deg
 field DEmdeg em deg
-field pmRA em mas_yr
+pmra pmRA mas_yr
 field pmDE em mas_yr
-field e_RAmdeg em deg
+ra e_RAmdeg deg
 field e_DEmdeg em deg
 field e_pmRA em mas_yr
 field e_pmDE em mas_yr
-field q_RAmdeg gravity deg
+ra q_RAmdeg deg
 field q_DEmdeg gravity deg
 field q_pmRA em mas_yr
 field q_pmDE gravity mas_yr
@@ -18486,9 +17385,9 @@ field BTmag em nT
 field e_BTmag em nT
 field VTmag em mag
 field e_VTmag em mag
-field RA(ICRS) em deg
+ra RA(ICRS) deg
 field DE(ICRS) em deg
-field e_RAdeg em deg
+ra e_RAdeg deg
 field e_DEdeg em deg
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_ucac5.json
@@ -18497,11 +17396,11 @@ at sun 1.0
 map data
 ra RAJ2000 deg
 dec DEJ2000 deg
-field RAgaia em deg
-field e_RAgaia em deg
+ra RAgaia deg
+ra e_RAgaia deg
 field DEgaia em deg
 field e_DEgaia em deg
-field pmRA em mas_yr
+pmra pmRA mas_yr
 field e_pmRA em mas_yr
 field pmDE em mas_yr
 field e_pmDE em mas_yr
@@ -18569,18 +17468,18 @@ at sun 1.0
 map data
 ra ra deg
 dec dec deg
-field error_radius gravity deg
+ra error_radius deg
 field error_ell_major gravity deg
 field error_ell_minor em deg
 field error_ell_pa em deg
 field lii em deg
 field bii em deg
-field pn_rawx em deg
-field pn_rawy em deg
-field m1_rawx em deg
-field m1_rawy em deg
-field m2_rawx em deg
-field m2_rawy em deg
+ra pn_rawx deg
+ra pn_rawy deg
+ra m1_rawx deg
+ra m1_rawy deg
+ra m2_rawx deg
+ra m2_rawy deg
 field dist_nn gravity arcsec
 field ep_rate_error em eV
 field pn_rate_error em eV
@@ -18670,11 +17569,11 @@ field wise_w3mag_error em eV
 field wise_w4mag em eV
 field wise_w4mag_error em eV
 field gaiadr3_source_id em eV
-field gaiadr3_parallax em deg
-field gaiadr3_parallax_error em deg
-field gaiadr3_parallax_overerr em deg
-field gaiadr3_pm_ra em deg
-field gaiadr3_pm_dec em deg
+ra gaiadr3_parallax deg
+ra gaiadr3_parallax_error deg
+ra gaiadr3_parallax_overerr deg
+ra gaiadr3_pm_ra deg
+dec gaiadr3_pm_dec deg
 field gaiadr3_gmag em mag
 field gaiadr3_bpmag em mag
 field gaiadr3_rpmag em mag
@@ -18687,9 +17586,7 @@ field spec_pvalue_pl em eV
 field redshift_lph_z_best em pc
 field redshift_info_distance gravity pc
 
-url https://macrostrat.org/api/v2/units?format=json
-ttl 2592000
-on earth 43.073 -89.401
+
 
 url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
 ttl 2592000
@@ -18702,7 +17599,7 @@ body earth
 map results
 lat location.lat deg
 lon location.lng deg
-field elevation gravity m
+alt elevation m
 alt elevation m
 
 url https://api.opentopodata.org/v1/gebco2020?locations={grid}
@@ -18711,7 +17608,7 @@ body earth
 map results
 lat location.lat deg
 lon location.lng deg
-field elevation gravity m
+alt elevation m
 alt elevation m
 
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
@@ -18831,7 +17728,7 @@ field evdp em eV
 field mag em mag
 field strike seismic-body deg
 field dip seismic-body deg
-field rake seismic-body deg
+ra rake deg
 
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,ALLSKY_SFC_LW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={year}{month}{day}&format=JSON
 ttl 86400
@@ -18864,9 +17761,7 @@ field TAVG thermal degC
 field PRCP diffusion mm
 field SNOW diffusion mm
 
-url https://api.blitzortung.org/v1/strikes/latest?lat={lat}&lon={lon}&radius=100
-ttl 60
-at sun 1.0
+
 
 url https://app.birdweather.com/api/v1/stations/{id}/detections?limit=100&from={today}T00:00:00Z
 ttl 300
