@@ -379,6 +379,36 @@ def physical_unit(name, path, force, url):
     return None
 
 
+# Timestamp/duration metadata that is NOT a physical field quantity: how long
+# a sensor integrated, when an observation happened, epoch of a catalogue row.
+# These propagate nothing. Stripped. (True physical periods survive.)
+def is_time_metadata(name):
+    n = name.lower()
+    if n.endswith("_count") or n.endswith("_total") or n.endswith("_num") or \
+       "count" in n or "total" in n:
+        return True
+    if n in ("recordedby", "country", "value", "val", "v", "q",
+             "superevents", "country.value"):
+        return True
+    if n in ("mjd", "epoch", "obstime", "t_min", "t_max", "t_start",
+             "t_stop", "date", "time", "duration", "exptime", "exposure",
+             "t_exptime", "elapsed", "interval", "t0", "t1", "time_start",
+             "time_end", "start_time", "end_time", "t_trigger",
+             "peak_time", "time_peak", "t_transit", "pl_tranmid",
+             "validtimefrom", "validtimeto", "lastupdated", "gpstime",
+             "time_tag", "timestamp_utc", "datetime", "date_time",
+             "start", "stop", "tmin", "tmax", "tmid", "tstart", "tstop"):
+        return True
+    if n.startswith(("t_", "start_", "end_")) and (
+            n.endswith("time") or n.endswith("date") or n.endswith("s")
+            or n.endswith("start") or n.endswith("stop") or n.endswith("t")):
+        return True
+    if n.endswith(("_duration", "_exposure", "_exptime", "_elapsed",
+                   "_interval", "_time", "_date", "_epoch", "_mjd")):
+        return True
+    return False
+
+
 # Domain-specific ambiguous field resolution: same name, different unit per API.
 DOMAIN_FIELD_UNITS = {
     # JPL SSD asteroid orbital elements
@@ -1143,7 +1173,7 @@ def infer_unit(name, path, force, url):
             "tmin", "tavg", "air_temp", "water_temp", "sea_surface_temp",
             "sea_surface_temperature", "air_temperature", "water_temperature",
             "dew_point", "dewpoint", "dewp", "temp", "atmp", "wtmp",
-            "heat_index", "wind_chill", "emxt", "emnt", "tobs", "slp",
+            "heat_index", "wind_chill", "emxt", "emnt", "tobs",
             "dhw", "degree_heating_week")):
         return "degC"
     if any(w in combined for w in ("teff_gspphot", "teff", "st_teff",
@@ -1504,348 +1534,65 @@ def infer_force(name, path, block_force, url=""):
     c = (n + "_" + path).lower()
     up = name.upper()
 
+    # STRICT by physical meaning.
+    # flux/radiation is em — must precede the density/concentration check
+    # so "flux_density" is not captured as diffusion.
+    if any(w in c for w in ("flux", "irrad", "radian", "xray", "luminos",
+            "fluence", "fpeak", "fint", "spectral_index", "sfu", "wavelength",
+            "pivot_energy")):
+        return "em"
+    # temperature is always thermal
+    if any(w in c for w in ("temp", "sst", "teff", "dewp", "dew_point",
+            "atmp", "wtmp", "heat_index", "wind_chill", "heating_week",
+            "bright_ti", "tmax", "tmin", "tavg", "tobs", "emxt", "emnt",
+            "dhw", "pl_eqt", "avg_max_monthly", "bleaching", "analysed_sst",
+            "sea_surface_temperature", "air_temperature", "water_temperature")):
+        return "thermal"
+    # concentration / diffusion
+    if any(w in c for w in ("density", "o2", "no3", "po4", "chl", "biomass",
+            "salinity", "conductivity", "turbidity", "pm2_5", "pm10", "aod",
+            "aerosol", "particulate", "conc", "ppm", "ppb", "precip", "rain",
+            "snow", "moisture", "humidity", "rhum", "rel_hum", "chlorophyll",
+            "turbid", "oxygen", "nitrate", "phosphate", "silicate", "doc",
+            "poc", "dic", "alkalinity", "co2", "ch4", "n2o", "prcp", "evap",
+            "nhi", "abundance", "content", "col_density", "optical_depth",
+            "sal", "tvoc", "psal", "co_total", "so2", "no2",
+            "extinction", "aerosol_optical", "angstrom", "pm25", "pm10",
+            "particulate")):
+        return "diffusion"
+    # velocity -> advective
+    if any(w in c for w in ("speed", "velocity", "spd", "wspd", "wind",
+            "gust", "flow", "current", "vx", "vy", "vz", "proton_speed",
+            "discharge", "streamflow", "runoff", "cfs", "awnd", "wsf2",
+            "wsf5", "movementspeed", "motion", "u_component", "v_component",
+            "ugos", "vgos", "curin", "curout", "movement_speed", "wspd")):
+        return "advective"
+    # pressure / waves -> acoustic
+    if any(w in c for w in ("pres", "baro", "slp", "altimeter", "press",
+            "altim", "wave", "swh", "wvht", "vhm0", "swell", "wvhgt", "dpd",
+            "apd", "mwd", "sound", "db", "wdf2", "wdf5", "wave_height",
+            "sig_ht", "hmax", "hs", "sea_state")):
+        return "acoustic"
+    # terrestrial position / length / gravity
+    if any(w in c for w in ("tide", "water_level", "sea_level", "sla", "adt",
+            "ssh", "gauge_height", "stage", "msl", "mgal", "free_air",
+            "bouguer", "grav", "orb", "pl_orbsmax", "pl_orbper", "pl_rade",
+            "pl_bmasse", "semi_major", "eccen", "inclination", "depth",
+            "elevation", "altitude", "height", "diameter", "radius",
+            "sy_dist", "dist", "distance", "pl_radj", "maj", "mhhw", "mllw",
+            "latitude", "longitude", "lat", "lon", "kmdepth", "nidheight",
+            "damheight", "visib", "visibility", "depth__m_", "elev", "alt",
+            "gauge_ht", "water_depth", "snow_depth", "pl_orbsmax")):
+        return "gravity"
+    # seismic
+    if any(w in c for w in ("pga", "pgv", "shakemap", "peak_ground",
+            "spectral_accel", "seismic", "intensity", "mmi", "dmin", "gap")):
+        return "seismic-surface"
+
     # Domain-specific ambiguous resolution
     for dom_key, table in DOMAIN_FIELD_UNITS.items():
         if dom_key in url and name in table:
             return table[name][1]
-
-    # unit suffix -> em/gravity
-    if n.endswith(("_au", "_deg", "_degre", "_kev", "_mev", "_gev", "_ev",
-                   "_hz", "_km_s", "_nm", "_kg_m3", "_ms", "_m_s")):
-        return "gravity" if n.endswith(("_au", "_deg", "_degre")) else "em"
-
-    # Unambiguous time/exposure/statistical -> em
-    if n in ("duration", "exptime", "exposure", "t_exptime", "mjd", "epoch",
-             "dateTime", "datetime", "t90", "obstime"):
-        return "em"
-    if n in ("confidence", "assoc_prob_bay", "assoc_prob_lr", "snr", "sig",
-             "detection_significance", "significance", "sigma"):
-        return "em"
-    if n in ("P0", "p0"):
-        return "gravity"
-    if n in ("e_pmde", "e_pmra", "pmde", "e_raj2000", "e_dej2000"):
-        return "em"
-    if n in ("em_min", "em_max", "energy_bandpassname"):
-        return "em"
-    if n in ("b-v", "zabs", "zphot", "wavelength", "parallax", "2mass",
-             "jname", "seq", "trigger_num", "qflg", "otype_txt",
-             "majdiam", "mindiam", "mass", "redshift_lph_z_best",
-             "redshift_info_distance", "approx_source_var"):
-        return "em"
-    if n in ("sst", "baa_7day_max", "sst_min", "sst_max"):
-        return "thermal"
-    if n == "alt":
-        return "gravity"
-    if n == "elev":
-        return "gravity"
-    if n in ("visibility", "vis", "s_ra", "angstrom_exponent_440-870nm",
-             "validtimefrom", "validtimeto", "utc", "labels", "bns",
-             "created", "t_scid", "assoc1", "revolution", "s_dec",
-             "obs_collection", "filters", "calib_level", "site",
-             "collection", "eo:cloud_cover", "landsat:collection_number",
-             "wnd", "fatalities", "observed_on", "startdate", "enddate"):
-        return "em"
-    if n == "psal":
-        return "diffusion"
-    if "angstrom" in n or "refractive_index" in n or "asymmetry" in n or \
-       "optical_depth" in n or        "single_scattering" in n or \
-       (n.startswith("ssa_") and n.endswith("nm")):
-        return "diffusion"
-    if n in ("dens", "ssta", "ts_fig"):
-        return "diffusion"
-    if n in ("map", "cloud_modification", "observation_uuid", "user_login",
-             "observed_on_month", "observation", "alert_level", "threat"):
-        return "em"
-    if n in ("stn", "yyyy", "mm", "volcanotitle", "activity", "slug",
-             "subregion", "datacoverage", "polygonacres",
-             "avg_max_monthly_mean", "bleaching_threshold"):
-        return "em"
-    if n in ("cwa", "forecastoffice", "forecasthourly", "gridid", "gridx",
-             "gridy", "radarstation", "generatedat", "area_km", "uf",
-             "alertlevel"):
-        return "em"
-    if n in ("poly_gisacres", "poly_polygondatetime", "floodclass",
-             "countrycode", "owner", "pgm", "met", "area", "return_period",
-             "doxy", "area_ha", "area_km2"):
-        return "em"
-    if n == "doxy":
-        return "diffusion"
-    if n in ("currents", "bottom_of_ocean_mixed_layer"):
-        return "advective"
-    if n in ("tle0", "tle1", "tle2", "tle_source", "cloudcover", "z_phot",
-             "mass_donor", "mass_bh", "age", "e_mean"):
-        return "em"
-    if n in ("mass_donor", "mass_bh"):
-        return "gravity"
-    if n in ("p_value", "hardness_ratio_1", "hr2", "co_total_column",
-             "co_surface", "co_500hpa", "co_300hpa", "luminosity_x",
-             "luminosity_0_1_2_4", "size_arcmin", "avg_rate",
-             "assoc_pulsar"):
-        return "em"
-    if n in ("rate_err", "mass_log_msun", "vel_disp", "host_galaxy",
-             "sc_hr4", "spin", "subhalo_count", "gal_contam",
-             "meanvaluesandf", "maxvaluesandf", "minvaluesandf",
-             "descriptionsandf"):
-        return "em"
-    if n in ("mass_log_msun", "vel_disp"):
-        return "gravity"
-    if n in ("classtar", "sharp", "fullname", "spkid", "per", "s/n",
-             "average", "minimum", "maximum", "pc:count"):
-        return "em"
-    if n in ("tic", "sectors", "lastburst", "tmag_unc", "p_dot", "pdot",
-             "b_surf", "lx",              "tfopwg_disp", "t_min", "t_max", "pl_masse"):
-        return "em"
-    if n in ("pl_masse", "st_mass"):
-        return "gravity"
-    if n in ("boxes", "cr", "vx", "vy", "dec", "claimedtype", "mbcorr",
-             "objid", "psfmag_g", "allwise"):
-        return "em"
-    if n in ("vx", "vy"):
-        return "advective"
-    if n in ("ex", "m_h", "alpha_m", "vhelio_avg", "sini", "reff", "assoc",
-             "binary", "f0",              "s1400", "f2-8", "n"):
-        return "em"
-    if n in ("hr0", "asc", "mt", "tspan", "ruwe", "dr3name", "plx", "pm",
-             "porb", "fx", "mx", "mdist"):
-        return "em"
-    if n in ("fe_h", "alpha_fe", "vrad", "age_bstep", "peak", "fpwide",
-             "s(1ghz)", "sp-index", "vhb", "mvt", "rv", "e_alpha"):
-        return "em"
-    if n in ("hrv", "fwhm", "fwhma", "fwhmb", "wpeak", "r'-i'",
-             "speaktot", "d", "mu-max", "beta-max", "oname", "opt"):
-        return "em"
-    if n in ("nep", "logvarpa", "s15", "mu_app", "loglir", "f12um",
-             "f25um", "f60um",              "f100um", "local_rms", "nx", "blambda"):
-        return "em"
-    if n in ("stotal", "polfrac", "polangle", "wise", "cl", "rad",
-             "hiiname", "country_name_en", "active_layer_thickness",
-             "totaldeath", "totalaffected", "numberinjured"):
-        return "em"
-    if n in ("numberhomeless", "zipcode", "stat", "stat_st", "stat_lat",
-             "stat_long", "evidence_method", "explosivity_index",
-             "evidence_category",              "auth", "err", "daily_flood_likelihood"):
-        return "em"
-    if n in ("ndvi_anomaly", "drought_class", "susceptibility_class",
-             "studyid", "abstract", "season", "deaths_total", "sal_surface",
-             "eqmagunk", "damageamountorder", "damagemillionsdollars",
-             "studyname"):
-        return "em"
-    if n == "sal_surface":
-        return "diffusion"
-    if n in ("deaths_total", "so", "chlor_a", "anom", "slev",
-             "success_rate", "rank", "db_area", "petromag_g", "pop_max",
-             "atomic_mass", "melt"):
-        return "em"
-    if n in ("so", "chlor_a"):
-        return "diffusion"
-    if n in ("deaths_total", "undulate", "round", "respondent-name",
-             "aphiaid", "cellcount", "cellcount_units", "hab_category",
-             "nuclear_capacity_mw", "ls_size", "fnu_12", "fnu_25"):
-        return "em"
-    if n in ("deaths_total", "fnu_60", "fnu_100", "f24", "e_f24",
-             "snr24", "w3snr", "w4snr", "bleaching_alert_area",
-             "daynight"):
-        return "em"
-    if n in ("establishmentmeans", "mediacount", "x_pole", "y_pole",
-             "ut1-utc", "lod", "dpsi", "depsilon", "recclass",
-             "pm25_ugm3"):
-        return "em"
-    if n in ("population", "des", "dist_min", "v_rel", "date_detected",
-             "energy_range", "association", "elevation(m)", "tvoc", "nh3",
-             "deaths_total", "i3_f_ap"):
-        return "em"
-    if n in ("nox_index", "voc_index", "z_phot_median", "model_cohort",
-             "nominal_resolution", "nsbh", "ngoodobsrel", "ez_z_68l",
-             "ez_z_68u", "ez_mass", "ugosa"):
-        return "em"
-    if n in ("vgosa", "radius_e", "sea_ice_fraction", "analysis_error",
-             "peak_tm", "lev", "dusmass", "ducmass", "totexttau",
-             "totsctau", "otype"):
-        return "em"
-    if n in ("vgosa", "radius_e"):
-        return "advective"
-    if n in ("totsctau", "rvz_redshift", "gdacs:alertlevel",
-             "gdacs:country", "gdacs:alertscore", "strike1", "dip1",
-             "rake1", "dist2land", "subbasin", "eqid"):
-        return "em"
-    if n in ("totaldeaths", "totaldamage", "totalinjuries", "totsctau",
-             "elevationm", "morphology", "eruptionnumber",
-             "lastknowneruption", "wteq", "occurrencestatus",
-             "coordinateuncertaintyinmeters"):
-        return "em"
-    if n in ("scntfcn", "detectn", "cllct_d", "salinty", "turtleid",
-             "curin", "curout", "dep", "loc", "pm25"):
-        return "em"
-    if n in ("curin", "curout"):
-        return "advective"
-    if n in ("salinty",):
-        return "diffusion"
-    if n in ("emsc:depth", "unit_of_measure", "eur", "gbp", "jpy",
-             "features", "imp", "activitycategory"):
-        return "em"
-    if re.match(r"^col\d+$", n):
-        return "em"
-    if n in ("value_2", "totscatau", "totsctau", "deathstotal"):
-        return "em"
-    if n in ("sst_analysed", "sst_uncertainty", "dsci", "vnum", "dmaj",
-             "s1ghz", "totsctau", "deaths_total", "value_2"):
-        return "em"
-    if n in ("feh", "r'-i", "strike", "dip", "rake", "preferredname",
-             "howmany", "obsdt", "damage_usd", "timestamp"):
-        return "em"
-    if n in ("commonname", "chaetoceros", "alexandriu", "cochlodini",
-             "country_iso", "gain_m2"):
-        return "em"
-    if n == "gain_m2":
-        return "biotic"
-    if "component_of_current" in n:
-        return "advective"
-    if n == "albedo":
-        return "em"
-    if n in ("logg", "logt", "rapmdeg", "depmdeg", "vlsr", "vartype",
-             "min1", "alpha", "pa", "va", "iphas", "r'-ha", "r2"):
-        return "em"
-    if n in ("s15ghz", "stot", "ptot", "zd", "zl", "zs", "reg",
-             "simbadname", "msz", "y5r500", "mcxc", "star", "deaths"):
-        return "em"
-    if n in ("injuries", "eruption_number", "eruption_month", "eruption_day",
-             "tectonic_setting", "vei", "date_start", "date_end", "sid",
-             "site_no", "net_slip_rate", "aseismic_slip_factor", "v_mean"):
-        return "em"
-    if n in ("observations", "stac_eo_cloud_cover", "hist_min", "hist_max",
-             "capacity", "primary_fuel", "yn_snr", "peak_dt", "peak_va",
-             "gage_ht",              "speed_radius", "rigidity_gv", "capacity_mw"):
-        return "em"
-    if n in ("yn_mass", "theta500", "i1_f_ap", "i2_f_ap", "i4_f_ap",
-             "f3p6tot", "f4p5tot", "f5p8tot", "f8p0tot", "morph",
-             "extended"):
-        return "em"
-    if n == "mangrove_area_km2":
-        return "biotic"
-    if n in ("pi", "self", "source_sample", "6dfgs", "nm", "nz", "p-value",
-             "x_size", "y_size", "amplitude", "ugos", "vgos",
-             "analysed_sst"):
-        return "em"
-    if n in ("headline", "areadesc", "volcanoid", "aviationcolorcode",
-             "total_count", "maxscale", "kp_index", "estimated_kp",
-             "a_running", "dst", "vel"):
-        return "em"
-    if n in ("area_m2", "loss_m2"):
-        return "biotic"
-    if n in ("station_count", "generated", "stid", "currentconditions",
-             "multiplicity", "kmdepth", "nidheight", "damheight",
-             "inclination", "f4", "f5", "f6"):
-        return "em"
-    if n in ("icao", "group", "pipeline", "wilayah", "waktu", "dirasakan",
-             "unit", "kedalaman", "number_spots", "gpstime", "p_astro"):
-        return "em"
-    if n in ("dateofocc", "subreg", "hostility_d", "victim_d",
-             "hostilitytype_l", "location_name_en", "location_name_fr",
-             "stationid", "stationurl", "graphurl", "bright_t31"):
-        return "em"
-    if n in ("dtg", "hhmm", "tau", "incidenttypecategory", "eventtype",
-             "hoursold", "irwinid", "sum_p0010001", "sum_h0010001",
-             "sum_estimatedunder18pop", "dailyacres"):
-        return "em"
-    if n in ("sum_estimated18to64pop", "sum_estimated65pluspop",
-             "sum_estimated0_14pop", "unitcode", "kenn", "nuclide", "tec",
-             "vtec_assimilated_tecu", "vtec_rms_tecu", "movementdir",
-             "movementspeed"):
-        return "em"
-    if n in ("rawtaf", "issuetime", "hazard", "textdescription", "massgap",
-             "band", "bbh", "ext525", "ext1020", "f107", "f107_adj"):
-        return "em"
-    if n in ("tsi", "stdev", "carrington_rotation", "coverage",
-             "satelliteid", "landsat:wrs_path", "landsat:wrs_row"):
-        return "em"
-    if n in ("detected_energy", "totalTimeInSeconds".lower(),
-             "detected_duration", "hail_size"):
-        return "em"
-    if n in ("pl_massj", "pl_orbeccen"):
-        return "gravity"
-    if n == "visib":
-        return "em"
-    if n == "signif_avg":
-        return "em"
-    if n in ("ramdeg", "demdeg", "xpos", "ypos", "flag3", "ned", "tyc1",
-             "tyc2", "tyc3", "pflag", "num", "epram", "epdem"):
-        return "em"
-    if n in ("q_ramdeg", "q_demdeg", "ra(icrs)", "de(icrs)", "q_pmra",
-             "q_pmde", "prox", "tyc", "hip", "ccdm", "epra-1990",
-             "epde-1990", "posflg"):
-        return "em"
-    if n in ("ragaia", "degaia", "e_ragaia", "speak", "sint", "corr",
-             "srcidgaia", "org", "nu", "epucac", "sdss", "sptype", "mwsc"):
-        return "em"
-    if n in ("bckwide", "lrmswide", "epos", "ctot", "filename", "sname",
-             "investigator", "speciescode", "varnum", "m_varnum", "gcvs",
-             "processid", "bin"):
-        return "em"
-    if n in ("stateprovince", "occurrencedate", "rflg", "bflg", "cflg",
-             "aflg", "pubdate", "georss:point", "volcanoname", "aqi",
-             "totaltimeinseconds", "detected_duration", "detected_energy",
-             "hail_size"):
-        return "em"
-    if "pixel" in n or "rawx" in n or "rawy" in n:
-        return "em"
-    # XMM variability/detection statistics -> em
-    if any(w in n for w in ("chi2", "prob", "fvar", "fratio", "fluxvar",
-            "det_ml", "extent_ml", "ml", "dist_nn", "n_blend", "sig",
-            "counts", "cts", "extent")):
-        return "em"
-    if n in ("he_peak", "he_peak_error", "he_nufnu_peak",
-             "he_nufnu_peak_error", "lp_epeak", "lp_epeak_error",
-             "plec_epeak", "plec_epeak_error", "plec_exp_factor_s",
-             "plec_exp_factor_s_error"):
-        return "em"
-    if n in ("time_peak", "time_peak_error"):
-        return "em"
-    if n == "npred":
-        return "em"
-    if "bat_" in n or n.startswith("lp_") or n.startswith("plec_"):
-        return "em"
-    if n in ("highest_energy_photon", "widthfitb", "spind",
-             "isgri_soft_rate", "isgri_hard_rate", "var_20_40kev",
-             "excess_variance", "zerr", "isgri_soft_rate_error",
-             "isgri_hard_rate_error", "log_lx", "chi_squared",
-             "ctrpart_ra", "ctrpart_dec", "pos_err",
-             "bat_ra", "bat_dec", "bat_pos_err", "bat_theta", "bat_phi",
-             "bat_t90", "bat_t50", "bat_start", "bat_stop",
-             "bat_t100_start", "bat_t100_stop", "ot_ra", "ot_dec",
-             "ot_pos_err", "galactic_nh", "redshift_err",
-             "error_ell_major", "error_ell_minor", "error_ell_pa",
-             "other_obs", "other_obs2", "other_obs3", "other_obs4",
-             "srcid", "pps_srcnum"):
-        return "em"
-    if n == "pl_eqt":
-        return "thermal"
-    if n.endswith("_m") and len(n) == 3:
-        return "em"  # J_m, H_m, K_m -> magnitudes
-    # wdir / period disambiguation by domain
-    if n == "wdir":
-        if "ndbc.noaa.gov" in url or "arcgis.com" in url or "buoy" in url:
-            return "acoustic"  # wave direction
-        return "advective"  # wind direction
-    if n == "period":
-        if any(d in url for d in ("exoplanet", "ssd", "ssd-api", "sbdb",
-                                  "minorplanet", "kepler", "orbit")):
-            return "gravity"
-        return "em"  # variability / pulsation
-
-    # pl_index / lp_beta / variability_index / detection_significance families -> em
-    if any(w in c for w in ("pl_index", "photon_index", "lp_index",
-            "plec_index", "variability_index", "spectral_index", "lp_beta",
-            "frac_variability", "detection_significance", "significance",
-            "pl_index_error", "lp_index_error", "plec_index_error",
-            "lp_beta_error", "plec_exp_index", "frac_variability_error",
-            "snr", "s_n")):
-        return "em"
-    if n in ("wdsp", "wspd"):
-        return "advective"
-    if n == "frp":
-        return "thermal"
-    if n in ("mh_gspphot", "distmod", "limitingmag"):
-        return "em"
 
     # GRB / X-ray instrument families -> em
     if any(n.startswith(p) for p in ("bat_", "lp_", "plec_", "xrt_", "uvot_",
@@ -1853,87 +1600,59 @@ def infer_force(name, path, block_force, url=""):
             "galaxy_", "wise_", "gaiadr3_")):
         return "em"
 
-    # VizieR error prefix e_X -> same force as X (em)
-    if n.startswith("e_") and len(n) > 2:
-        return "em"
-    if n in ("assoc_ra", "assoc_dec", "assoc_error_radius"):
-        return "em"
-    # NCEI climate codes
-    if up in ("EMXT", "EMNT", "TAVG", "TMAX", "TMIN", "TOBS", "DX32", "DT32",
-              "DX70", "DX90", "DP01", "DP05", "DP10", "DYSD", "DYSN", "DYTS",
-              "DYTG", "CDSD", "CLDD", "HDSD", "HTDD", "PSUN"):
-        return "thermal"
-    if up in ("PRCP", "SNOW", "SNWD", "EVAP", "MNPN", "MXPN"):
-        return "diffusion"
-    if up in ("AWND", "WSF2", "WSF5"):
-        return "advective"
-    if up in ("WDF2", "WDF5", "TSUN"):
-        return "acoustic"
-
-    # thermal
-    if any(w in c for w in ("temp", "sst", "teff", "dewp", "dew_point", "atmp",
-            "wtmp", "heat_index", "wind_chill", "heating_week", "bright_ti",
-            "tmax", "tmin", "tavg", "tobs", "emxt", "emnt", "dhw")):
-        return "thermal"
-    # diffusion
-    if any(w in c for w in ("density", "o2", "no3", "po4", "chl", "biomass",
-            "salinity", "conductivity", "turbidity", "pm2_5", "pm10", "aod",
-            "aerosol", "particulate", "conc", "ppm", "ppb", "precip", "rain",
-            "snow", "moisture", "humidity", "rhum", "rel_hum", "chlorophyll",
-            "turbid", "oxygen", "nitrate", "phosphate", "silicate", "doc",
-            "poc", "dic", "alkalinity", "co2", "ch4", "n2o", "prcp", "evap",
-            "nhi", "abundance", "content", "col_density", "optical_depth")):
-        return "diffusion"
-    # advective
-    if any(w in c for w in ("speed", "velocity", "spd", "wspd", "wind", "gust",
-            "flow", "current", "vx", "vy", "vz", "proton_speed", "discharge",
-            "streamflow", "runoff", "cfs", "track", "heading", "course",
-            "awnd", "wsf2", "wsf5")):
-        return "advective"
-    # acoustic
-    if any(w in c for w in ("pres", "baro", "slp", "altimeter", "press",
-            "altim", "wave", "swh", "wvht", "vhm0", "swell", "wvhgt", "dpd",
-            "apd", "mwd", "sound", "db", "wdf2", "wdf5")):
-        return "acoustic"
-    # em
-    if any(w in c for w in ("_bt", "bz_", "by_", "bx_", "mag_field", "magnetic",
-            "geomagnetic", "nt", "flux", "xray", "irrad", "radian", "energy",
-            "_ev", "hz", "freq", "redshift", "vmag", "bmag", "rmag", "gmag",
-            "imag", "zmag", "jmag", "hmag", "kmag", "phot_g", "bp_rp",
-            "w1mpro", "w2mpro", "w3mpro", "w4mpro", "f10.7", "sfu", "mag",
-            "magnitude", "pmra", "pmdec", "radial_vel", "cz", "photon",
-            "luminos", "radio", "uv", "solar", "sunspot", "sr", "fpeak",
-            "fint", "fluence", "count_rate", "spectral_index", "lii", "bii",
-            "glon", "glat", "elon", "elat", "dm", "exptime", "exposure",
-            "wavelength", "nu_syn", "pivot_energy", "fluence", "sfr")):
-        return "em"
-    # gravity
-    if any(w in c for w in ("tide", "water_level", "sea_level", "sla", "adt",
-            "ssh", "gauge_height", "stage", "msl", "mgal", "free_air",
-            "bouguer", "grav", "orb", "pl_orbsmax", "pl_orbper", "pl_rade",
-            "pl_bmasse", "semi_major", "eccen", "inclination", "depth",
-            "elevation", "altitude", "height", "diameter", "radius",
-            "sy_dist", "dist", "distance", "pl_radj", "maj", "mhhw", "mllw",
-            "latitude", "longitude", "lat", "lon")):
+    # unit suffix -> gravity (position) or em (physics)
+    if n.endswith(("_au", "_deg", "_degre")):
         return "gravity"
-    # seismic
-    if any(w in c for w in ("pga", "pgv", "shakemap", "peak_ground",
-            "spectral_accel", "seismic", "intensity", "mmi", "dmin", "gap")):
-        return "seismic-surface"
+    if n.endswith(("_kev", "_mev", "_gev", "_ev", "_hz", "_nm", "_kg_m3")):
+        return "em"
+
+    # EM: radiation, magnitudes, flux, magnetic, redshift, spectra
+    if any(w in c for w in ("_bt", "bz_", "by_", "bx_", "mag_field",
+            "magnetic", "geomagnetic", "nt", "flux", "xray", "irrad",
+            "radian", "energy", "_ev", "hz", "freq", "redshift", "vmag",
+            "bmag", "rmag", "gmag", "imag", "zmag", "jmag", "hmag", "kmag",
+            "phot_g", "bp_rp", "w1mpro", "w2mpro", "w3mpro", "w4mpro",
+            "f10.7", "sfu", "mag", "magnitude", "pmra", "pmdec",
+            "radial_vel", "cz", "photon", "luminos", "radio", "uv", "solar",
+            "sunspot", "sr", "fpeak", "fint", "fluence", "count_rate",
+            "spectral_index", "lii", "bii", "glon", "glat", "elon", "elat",
+            "dm", "exptime", "exposure", "wavelength", "nu_syn",
+            "pivot_energy", "tec", "rigidity", "b_surf", "speak", "sint",
+            "sp-index", "stot", "ptot", "s15ghz", "f12um", "f25um",
+            "f60um", "f100um", "fnu_", "f24", "e_f24", "snr", "w3snr",
+            "w4snr", "signif_avg", "fe_h", "alpha_fe", "vrad", "peak",
+            "fpwide", "vhb", "mvt", "rv", "e_alpha", "hrv", "fwhm",
+            "fwhma", "fwhmb", "wpeak", "mu_app", "loglir", "logvarpa",
+            "polfrac", "polangle", "s15", "stotal", "blambda", "local_rms",
+            "nx", "nep", "x_pole", "y_pole", "ut1-utc", "lod", "dpsi",
+            "depsilon", "pm25_ugm3", "mv", "mbcorr", "psfmag_g", "petromag",
+            "f3p6tot", "f4p5tot", "f5p8tot", "f8p0tot", "i1_f_ap",
+            "i2_f_ap", "i4_f_ap", "w1mpro", "z_phot", "ez_z", "rvz")):
+        return "em"
     # single-letter photometric bands -> em
     if n in "iurgzvbyhjkb" and len(n) == 1:
         return "em"
-    # error/sigma fields -> em (statistical on em measurements)
-    if n in ("sig", "snr", "s_n", "sigma", "error", "err", "e", "t", "r",
-             "q", "n", "max", "min", "mean", "extent", "scale_rank",
-             "scalerank", "steepness"):
-        return block_force
-    # fallback to block force only for generic names
-    if n in ("value", "val", "v"):
-        return block_force
-    return None
 
+    # stellar / planetary mass -> gravity
+    if any(w in c for w in ("mass", "m_sun", "mjup", "meart", "st_mass",
+            "pl_bmasse", "pl_bmassj", "pl_rade", "pl_radj", "radius",
+            "yn_mass", "ez_mass", "mass_log")):
+        return "gravity"
 
+    # time periods of physical signals
+    if n in ("period", "p0", "orbital_period", "pl_orbper", "t90", "t50",
+             "bat_t90", "bat_t50", "porb", "per", "pl_tranmid", "pl_tranmid"):
+        if any(d in url for d in ("exoplanet", "ssd", "ssd-api", "sbdb",
+                                  "minorplanet", "kepler", "orbit")):
+            return "gravity"
+        return "em"
+
+    # orbital distance -> gravity
+    if any(w in c for w in ("dist_min", "v_rel", "pl_orbeccen", "a_au",
+            "i_deg", "pl_massj", "pl_orbsmax", "q")):
+        return "gravity"
+
+    return block_force
 def parse_tap_cols(url):
     if not any(m in url.lower() for m in ("query=", "query=")):
         return {}
@@ -2024,6 +1743,25 @@ def main():
                 base = "lat" if "lat" in key else "lon"
                 new_lines.append(f"{base} {parts[1]} deg")
                 continue
+            # bare position directives (lat/lon/alt/ra/dec/plx/pmra/pmdec):
+            # always 3 tokens: <dir> <path|literal> <unit>
+            if key in ("lat", "lon") and len(parts) >= 2:
+                new_lines.append(f"{key} {parts[1]} deg")
+                continue
+            if key == "alt" and len(parts) >= 2:
+                p = parts[1].lower()
+                u = "ft" if ("_ft" in p or p.endswith("ft")) else ("km" if ("_km" in p or p.endswith("km")) else "m")
+                new_lines.append(f"alt {parts[1]} {u}")
+                continue
+            if key in ("ra", "dec") and len(parts) >= 2:
+                new_lines.append(f"{key} {parts[1]} deg")
+                continue
+            if key == "plx" and len(parts) >= 2:
+                new_lines.append(f"plx {parts[1]} mas")
+                continue
+            if key in ("pmra", "pmdec") and len(parts) >= 2:
+                new_lines.append(f"{key} {parts[1]} mas_yr")
+                continue
             if key == "alt_key" and len(parts) >= 2:
                 p = parts[1].lower()
                 u = "ft" if "_ft" in p else ("km" if "_km" in p else "m")
@@ -2078,7 +1816,10 @@ def main():
                     unit, _ = cache_lookup(url, tgt)
                 if f is None:
                     f = infer_force(col_name or tgt, src, force, url)
-                if unit in PHYSICAL_UNITS and f:
+                # a temperature unit is always thermal — no force may override
+                if unit in ("degC", "degF", "K"):
+                    f = "thermal"
+                if unit in PHYSICAL_UNITS and f and not is_time_metadata(tgt):
                     new_lines.append(f"field {src} {f} {unit}")
                     stats["units"][unit] += 1
                     stats["forces"][f] += 1
@@ -2089,6 +1830,11 @@ def main():
 
             if key in ("last", "first", "count", "path", "deep", "last_row",
                        "obj_last"):
+                if key == "count":
+                    # counting records/lines/events is a derived statistic,
+                    # not a propagating field quantity -> stripped
+                    stats["structural"] += 1
+                    continue
                 if len(parts) >= 3:
                     src = parts[1]
                     tgt = parts[2] if len(parts) > 2 else src
@@ -2105,7 +1851,7 @@ def main():
                     if unit is None:
                         unit, _ = cache_lookup(url, tgt)
                     f = infer_force(col_name or tgt, src, force, url)
-                    if unit in PHYSICAL_UNITS and f:
+                    if unit in PHYSICAL_UNITS and f and not is_time_metadata(tgt):
                         new_lines.append(f"{key} {src} {f} {unit}")
                         stats["units"][unit] += 1
                         stats["forces"][f] += 1
