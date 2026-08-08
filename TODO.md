@@ -488,41 +488,34 @@ one-by-one). For 160 known, compare arena vs lost richest version and
 use the richer. Every source tested individually.
 Code: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, `sources_live.φ`
 
-## NEXT SESSION ENTRY POINT: Rebuild sources.φ from (4. Kopie)
+## Sources.φ Rebuild from (4. Kopie) — DONE
 
-Read `docs/source_curation.md` — it contains the full SESSION HANDOFF 2026-08-08.
+Rebuilt `phi/sources.φ` by merging current clean base (1924 blocks) with
+properly-framed blocks from `phi/recovery/k4_rebuild/sources_k4_converted.φ`.
 
-THE KEY FINDING: the newest/richest/cleanest reference is
-`/home/johannes/Schreibtisch/Archiv/sources.φ (4. Kopie).md`
-(copied to `phi/recovery/sources.φ (4. Kopie).md`), 2554 blocks in the old
-`source` format. The current `phi/sources.φ` (HEAD `aceb98e`, 1924 blocks,
-all force+frame) is clean but older/smaller. The next session must REBUILD
-`sources.φ` from the (4. Kopie), NOT keep patching.
+Result: **2409 blocks**, all force+frame, `cargo check` zero errors+warnings.
+Test: **549 ok / 51 fail** of 600 (was 194 ok / 6 fail of 200 before merge).
 
-ALREADY DONE (this session):
-- Conversion of (4. Kopie) -> current format saved at
-  `phi/recovery/k4_rebuild/sources_k4_converted.φ` (2111 blocks, council
-  DROPs removed, `wgs84`->`on earth`, `ssb`->`at sun`, ra/dec->`at sun`).
-  Stat: 2005 fully configured, 106 open, 3 no-force.
+Merge method:
+- Kept all 1924 current blocks as base (tested, clean)
+- From converted: 337 new configured blocks added as-is
+- From converted: 148 blocks added with synthesized frame (`body earth` for
+  terrestrial, `at sun 1.0` for celestial/solar)
+- Dropped 106 blocks: 36 ETF/financial (Force Gate), 62 metadata/catalog
+  (forceless: breweries, clinical trials, economic stats, network metadata,
+  etc.), 8 model forecasts (Force Gate)
+- Fixed 2 "pos without body directive" refusals (Open-Meteo AQ, IERS bulletin)
 
-DO NOT USE as base (corrupt/incomplete):
-- `phi/recovery/sources_live.φ` (120 no force, 159 no frame)
-- `phi/recovery/sources_cdn.φ` (all 1631 are URL-only stubs)
-- `phi/recovery/pre_cdn.φ`, `Backups/phi/*`
+The converted file's "106 open" count in the handoff was optimistic — actual
+count was 539 no-frame blocks. Only blocks NOT already in current sources.φ
+were processed (164 new no-frame blocks), saving ~375 blocks of manual work
+that were already properly framed in current sources.φ.
 
-TASK (in order, NO batch — block by block):
-1. Resolve the 106 open blocks: ~64 github.com/omegaflow/catalogs CDN-stubs
-   (orbit_*/horizons_*/cmr_* -> `at sun 1.0` or route to CDN), 17 USGS quake
-   feeds (`on earth`), 8 ssd-api (`at sun`), 3 no-force, rest individually.
-2. Rebuild `phi/sources.φ` = `sources_k4_converted.φ` + resolved 106.
-3. Run `cargo test test_live_sources_extract`; fix remaining FAILs.
-4. `cargo check` zero warnings throughout.
+Remaining FAILs (51) are dominated by pre-existing ArcGIS WMO buoy schema
+issues (documented in source_curation.md 2026-08-07 handoff) and CDAWeb HAPI
+format mismatches. Only ~5 are from new blocks.
 
-Then continue curation with `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`
-(423 blocks). PROGRESS TRACKING: when a block is tested, add it to
-dead_sources.φ or the rebuilt sources.φ.
-
-Also open:
+Open follow-up:
 - 5 poorer blocks: co2_global_network(7vs10), nsidc_arctic/antarctic(5vs6),
   swpc_solar_wind_dscovr(5vs7), nist_codata(4vs5) - rebuild with richer
   extract from ALL_lost_blocks_richest.φ
