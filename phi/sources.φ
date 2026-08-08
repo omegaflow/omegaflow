@@ -20515,18 +20515,6 @@ field_in sla sla
 field_in ugosa ugosa
 field_in vgosa vgosa
 
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_wav_anfc_0.083deg_PT3H-i.csv?VHM0%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VMDR%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VTM10%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D
-format text
-ttl 86400
-force thermal
-on earth 0 0
-rows
-lat_key latitude
-lon_key longitude
-field_in VHM0 VHM0
-field_in VMDR VMDR
-field_in VTM10 VTM10
-
 url https://nrt.cmems-du.eu/erddap/tabledap/cmems_obs_mob_glo_phy-cur_nrt_0.1deg-SSH-eddy-track_PT1H.csv?latitude,longitude,time,radius_e,amplitude,speed_radius,eddy_type&time>={today}T00:00:00Z&orderBy(%22time%22)&distinct()
 format text
 ttl 86400
@@ -20540,17 +20528,6 @@ field_in radius_e radius_e
 field_in amplitude amplitude
 field_in speed_radius speed_radius
 field_in eddy_type eddy_type
-
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D,no3%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
-format text
-ttl 86400
-force diffusion
-on earth 0 0
-rows
-lat_key latitude
-lon_key longitude
-field_in o2 o2
-field_in no3 no3
 
 url https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-rep-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D,ugos%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D,vgos%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D
 format text
@@ -20598,16 +20575,6 @@ lon_key longitude
 field_in analysed_sst analysed_sst
 field_in analysis_error analysis_error
 
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1M-m.csv?thetao%5Blast%5D%5B0%5D%5B(-70.0):(70.0):4%5D%5B(-180.0):(180.0):4%5D
-format text
-ttl 86400
-force thermal
-on earth 0 0
-rows
-lat_key latitude
-lon_key longitude
-field_in thetao thetao
-
 url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_mynrt_l4_P1D-m.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
 format text
 ttl 86400
@@ -20617,17 +20584,6 @@ rows
 lat_key latitude
 lon_key longitude
 field_in sla sla
-
-url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D,so%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
-format text
-ttl 86400
-force diffusion
-on earth 0 0
-rows
-lat_key latitude
-lon_key longitude
-field_in thetao thetao
-field_in so so
 
 url https://nrt.cmems-du.eu/erddap/griddap/dataset-oc-glo-bio-multi-l4-chl_4km_daily-rt.csv?CHL%5Blast%5D%5B(-70.0):(70.0):4%5D%5B(-180.0):(180.0):4%5D
 format text
