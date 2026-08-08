@@ -973,3 +973,391 @@ note Force Gate: bare aggregate count, no individual records
 parser-def movebank_telemetry
 url https://www.movebank.org/movebank/service/public/json?entity_type=event&study_id={study_id}&attributes=location_lat,location_long
 note Movebank animal telemetry (biologging): auth works (MOVEBANK_TOKEN in .secrets.local), but aggressive IP rate-limiting blocks consistent fetch. Revisit when rate-limit policy allows. Biotic-force candidate.
+
+dead
+url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
+note reachability test 2026-08-07: HTTP Error 403: Forbidden
+
+dead
+url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=00060&siteStatus=active&bBox={lon_min},{lat_min},{lon_max},{lat_max}
+note reachability test 2026-08-07: HTTP Error 400: 
+
+decline
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=ostracode&limit=1000&offset=0
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=diatom&limit=1000&offset=0
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=plant+macrofossils&limit=1000&offset=0
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://api.worldbank.org/v2/country/all/indicator/EN.ATM.PM25.MC.M3?format=json&mrv=1&per_page=300
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://api.worldbank.org/v2/country/all/indicator/AG.LND.FRST.ZS?format=json&mrv=1&per_page=300
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://api.worldbank.org/v2/country/all/indicator/EN.ATM.CO2E.KT?format=json&date={year}&per_page=300
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://api.worldbank.org/v2/country/all/indicator/SH.H2O.BASW.ZS?format=json&mrv=1&per_page=300
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://ghoapi.azureedge.net/api/AIR_12?$filter=SpatialDimType+eq+'COUNTRY'&$top=500
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update&biome_name=root:Environmental:Aquatic:Marine
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update&biome_name=root:Environmental:Soil
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://www.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames[]=Cetacea&scientificnames[]=Pinnipedia&scientificnames[]=Sirenians&marine_only=true&format=json
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
+note Force Gate: forceless (database/statistics/metadata), council decision
+
+decline
+url https://openlittermap.com/api/getdata?lat=0.0&lon=0.0&radius=50&format=json&limit=500
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://openlittermap.com/api/getdata?lat={lat}&lon={lon}&radius=50&format=json&limit=500
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.neotomadb.org/v2/data/datasets?limit=500
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.neotomadb.org/v2/data/datasets?datasettype=ostracode&limit=500&offset=0
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.neotomadb.org/v2/data/datasets?datasettype=plant+macrofossil&limit=500&offset=0
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.neotomadb.org/v2/data/sites?limit=500
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.openinframap.org/stats/country
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=1&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&basisOfRecord=MACHINE_OBSERVATION
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=180130&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=719&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&basisOfRecord=HUMAN_OBSERVATION&decimalLatitude=-90,90&habitat=MARINE
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&decimalLatitude=-35,38&decimalLongitude=-20,55&basisOfRecord=HUMAN_OBSERVATION
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?per_page=1
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&per_page=20&order=desc&order_by=observed_on
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&geojson=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=35&swlng=-10&nelat=70&nelng=40
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=pollen&limit=2000&offset=0
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=vertebrate+fauna&limit=2000&offset=0
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=diatom&limit=2000&offset=0
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=plant+macrofossils&limit=2000&offset=0
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&month={month}&year={year}
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?establishmentMeans=INVASIVE&hasCoordinate=true&limit=300&mediaType=StillImage&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=4867&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?establishmentMeans=INVASIVE&hasCoordinate=true&limit=300&habitat=marine&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?classKey=358&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?classKey=212,359,358,131,186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=797&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=221&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,PRESERVED_SPECIMEN&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=145&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?kingdomKey=5&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=4887&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=1571&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?taxonKey=104&hasCoordinate=true&depth=500,5000&limit=300&basisOfRecord=PRESERVED_SPECIMEN&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?classKey=137&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,PRESERVED_SPECIMEN&year={year}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?classKey=359&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&habitat=terrestrial&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?kingdomKey=6&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?orderKey=9247&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://paleobiodb.org/data1.2/occs/list.json?limit=500&show=paleoloc
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://api.gbif.org/v1/occurrence/search?basisOfRecord=MACHINE_OBSERVATION&hasCoordinate=true&limit=300&decimalLatitude={lat}&decimalLongitude={lon}&radius=100
+note Force Gate: forceless (biodiversity database / infrastructure), council decision
+
+decline
+url https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv
+note Force Gate: forceless (airport registry, infrastructure)
+
+decline
+url https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/master/airports.json
+note Force Gate: forceless (airport registry, infrastructure)
