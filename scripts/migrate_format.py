@@ -387,10 +387,16 @@ def position_directive(tgt, col_name, src, unit, url):
     the 3-token position directive; else None."""
     n = (col_name or tgt).lower()
     src_l = src.lower()
+    # only PRIMARY position coordinates become position directives; derived
+    # positions (solar_lat, grid_lat, ...) are scalar fields, not the frame.
+    if n not in ("latitude", "lat", "longitude", "lon", "lng", "altitude",
+                 "elevation", "height", "ra", "dec", "plx", "parallax",
+                 "pmra", "pmdec", "pm_ra", "pm_dec", "declination"):
+        return None
     # celestial position
-    if any(w in n for w in ("ra", "right_ascension")) and unit in ("deg", "hms", "rad"):
+    if n in ("ra", "right_ascension") and unit in ("deg", "hms", "rad"):
         return f"ra {src} deg"
-    if any(w in n for w in ("dec", "declination")) and unit in ("deg", "rad"):
+    if n in ("dec", "declination") and unit in ("deg", "rad"):
         return f"dec {src} deg"
     if n in ("plx", "parallax") and unit in ("mas", "arcsec"):
         return f"plx {src} mas"
@@ -399,12 +405,12 @@ def position_directive(tgt, col_name, src, unit, url):
     if n in ("pmdec", "pm_dec") and unit == "mas_yr":
         return f"pmdec {src} mas_yr"
     # terrestrial position
-    if any(w in n for w in ("latitude", "lat")) and unit in ("deg", "rad"):
+    if n in ("latitude", "lat") and unit in ("deg", "rad"):
         return f"lat {src} deg"
-    if any(w in n for w in ("longitude", "lon", "lng")) and unit in ("deg", "rad"):
+    if n in ("longitude", "lon", "lng") and unit in ("deg", "rad"):
         return f"lon {src} deg"
-    if any(w in n for w in ("altitude", "elevation", "height")) and unit in ("m", "km", "ft"):
-        u = "km" if ("iss" in url or "alt" in src_l and "km" in src_l or "km" in n) else unit
+    if n in ("altitude", "elevation", "height") and unit in ("m", "km", "ft"):
+        u = "km" if ("iss" in url or "km" in src_l) else unit
         return f"alt {src} {u}"
     return None
 
@@ -573,8 +579,8 @@ def value_based_unit(name, value, force):
         return "km/s" if a > 50 else "m/s"
     # speed
     if any(w in n for w in ("speed", "velocity", "spd", "wspd", "wdsp")):
-        if a > 200: return "km/s"
-        if a > 40: return "m/s"
+        if a > 1000: return "kmh"   # orbital / aviation km/h
+        if a > 100: return "km/s"   # solar wind km/s
         return "m/s"
     # pressure
     if any(w in n for w in ("pres", "baro", "slp", "altimeter", "press")):
@@ -1260,6 +1266,10 @@ def infer_unit(name, path, force, url):
         return "m"
     if n in ("latitude", "longitude", "lat", "lon"):
         return "deg"
+    if n in ("solar_lat", "solar_lon"):
+        return "deg"
+    if n == "footprint":
+        return "km"
     if n in ("distance", "dist", "sy_dist"):
         return "pc" if force in ("em", "em gravity") else "m"
 
@@ -1609,7 +1619,8 @@ def infer_force(name, path, block_force, url=""):
             "sy_dist", "dist", "distance", "pl_radj", "maj", "mhhw", "mllw",
             "latitude", "longitude", "lat", "lon", "kmdepth", "nidheight",
             "damheight", "visib", "visibility", "depth__m_", "elev", "alt",
-            "gauge_ht", "water_depth", "snow_depth", "pl_orbsmax")):
+            "gauge_ht", "water_depth", "snow_depth", "pl_orbsmax",
+            "solar_lat", "solar_lon", "footprint")):
         return "gravity"
     # seismic
     if any(w in c for w in ("pga", "pgv", "shakemap", "peak_ground",
@@ -1898,6 +1909,44 @@ def main():
                 new_lines.append(ls)
                 continue
             new_lines.append(ls)
+
+        # enrich from the API cache: physical fields present in the response
+        # but not declared in the block (e.g. ISS velocity, solar_lat/lon,
+        # footprint). Declared source keys/paths track what we already emitted.
+        declared = set()
+        for l in new_lines:
+            p = l.split()
+            if p and p[0] in ("field", "last", "first", "path", "deep",
+                              "last_row", "obj_last", "lat", "lon", "alt",
+                              "ra", "dec", "plx", "pmra", "pmdec"):
+                if len(p) >= 2:
+                    declared.add(p[1].lower())
+        cache_entry = UNIT_CACHE.get(url)
+        if isinstance(cache_entry, dict) and not cache_entry.get("error"):
+            for fname, meta in cache_entry.items():
+                if fname in ("error", "header_units", "csv_columns"):
+                    continue
+                if not isinstance(meta, dict) or meta.get("value") is None:
+                    continue
+                key = url.replace("/", "_").replace("?", "_")
+                if fname.lower() in declared:
+                    continue
+                u = cache_col_unit(url, fname)
+                if not u:
+                    u = infer_unit(fname, fname, force, url)
+                f = infer_force(fname, fname, force, url)
+                if u in ("degC", "degF", "K"):
+                    f = "thermal"
+                pos = position_directive(fname, fname, fname, u, url)
+                if pos:
+                    new_lines.append(pos)
+                    declared.add(fname.lower())
+                    stats["units"][u] += 1
+                elif u in PHYSICAL_UNITS and f and not is_time_metadata(fname):
+                    new_lines.append(f"field {fname} {f} {u}")
+                    declared.add(fname.lower())
+                    stats["units"][u] += 1
+                    stats["forces"][f] += 1
 
         # drop empty blocks: no extractor, no position, no frame that matters
         has_content = False
