@@ -9098,6 +9098,7 @@ field Period em d
 field max em mag
 field min em mag
 map .
+field V em mag
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+1%3DCONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
 ttl 86400
@@ -13453,7 +13454,13 @@ plx default_plx mas
 field a em au
 field i em mag
 
-
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_vsx_variables.json
+at sun 1.0
+ttl 604800
+map .
+ra RAJ2000 deg
+dec DEJ2000 deg
+field V em mag
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_xmm4d13s.json
 at sun 1.0
@@ -14054,6 +14061,7 @@ lat lat deg
 lon lon deg
 field T thermal K
 field U advective m/s
+field V em mag
 field QV diffusion kg/m3
 field O3 diffusion ppb
 
@@ -14114,6 +14122,7 @@ rows
 ra ra deg
 dec dec deg
 field rvz_redshift advective z
+field V em mag
 field plx_value em mas
 
 url https://spec.jpl.nasa.gov/ftp/pub/catalog/c018003.cat
@@ -15259,6 +15268,7 @@ map data
 lat lat deg
 lon lon deg
 field alt gravity m
+field v em mag
 lat lat deg
 lon lon deg
 
@@ -15342,6 +15352,7 @@ map data
 lat lat deg
 lon lon deg
 field alt gravity m
+field v em mag
 field vx advective km/s
 field vy advective km/s
 field vz advective km/s
@@ -17489,7 +17500,13 @@ dec _DE deg
 field a em au
 field i em mag
 
-
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_vsx_variables.json
+ttl 604800
+at sun 1.0
+map data
+ra RAJ2000 deg
+dec DEJ2000 deg
+field V em mag
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_xmm4d13s.json
 ttl 604800

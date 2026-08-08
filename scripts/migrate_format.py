@@ -476,7 +476,7 @@ def is_time_metadata(name):
     if n.endswith("_count") or n.endswith("_total") or n.endswith("_num") or \
        "count" in n or "total" in n:
         return True
-    if n in ("recordedby", "country", "value", "val", "v", "q",
+    if n in ("recordedby", "country", "value", "val", "q",
              "superevents", "country.value"):
         return True
     if n in ("mjd", "epoch", "obstime", "t_min", "t_max", "t_start",
