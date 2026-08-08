@@ -1843,6 +1843,11 @@ def main():
                             continue
                     except ValueError:
                         pass
+                # canonical barycentric/inertial frame: "at <body>" — the
+                # legacy scale parameter ("at sun 1.0") is always 1 and dead
+                if key == "at" and len(parts) >= 2:
+                    frames.append(f"at {parts[1]}")
+                    continue
                 frames.append(ls)
                 continue
             if key == "format":
@@ -2018,11 +2023,17 @@ def main():
                 continue
 
             if key in ("last_obj", "last_line", "regex", "xml", "ephemeris",
-                       "vectors", "epoch_key", "val_key", "vel_key",
-                       "trk_key", "vr_key", "dist_key", "z_key", "tau_key",
-                       "alt_sign", "lon_sign", "lat_sign", "rv_key",
+                       "vectors", "alt_sign", "lon_sign", "lat_sign",
                        "dist_scale", "rv_scale"):
                 new_lines.append(ls)
+                continue
+            # canonical coordinate extractors: no _key suffix. The directive
+            # always extracts from data; the suffix carried no information.
+            if key in ("epoch_key", "val_key", "vel_key", "trk_key", "vr_key",
+                       "dist_key", "z_key", "tau_key", "rv_key", "depth_key",
+                       "radvel_key"):
+                bare = key[:-4]
+                new_lines.append(f"{bare} {' '.join(parts[1:])}")
                 continue
             new_lines.append(ls)
 
@@ -2038,7 +2049,7 @@ def main():
             l.split() and l.split()[0] in ("lat", "lon") for l in new_lines)
         has_terr_template = "{lat}" in url and "{lon}" in url
         if has_celestial_pos:
-            frames = ["at sun 1.0"]
+            frames = ["at sun"]
         elif has_terrestrial_pos or has_terr_template:
             # lat/lon directives are geodetic coordinates of a BODY — they can
             # never live in a barycentric (at sun) frame
@@ -2122,6 +2133,15 @@ def main():
             else:
                 # pure metadata/catalog block with no physical measurement
                 new_lines = []
+
+        # deduplicate within the block (cache enrichment may re-add a line)
+        seen = set()
+        uniq = []
+        for l in new_lines:
+            if l not in seen:
+                seen.add(l)
+                uniq.append(l)
+        new_lines = uniq
 
         new_blocks.append("\n".join(new_lines))
 
