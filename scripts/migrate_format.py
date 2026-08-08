@@ -1790,6 +1790,7 @@ def main():
         lines = b.split("\n")
         force = ""
         url = ""
+        frames = []
         for line in lines:
             ls = line.strip()
             if ls.startswith("url "):
@@ -1814,7 +1815,7 @@ def main():
                     # legacy data-carried position with TARGET names; fields now
                     # carry explicit position units -> drop the redundant line
                     continue
-                new_lines.append(ls)
+                frames.append(ls)
                 continue
             if key == "format":
                 new_lines.append(ls)
@@ -1840,8 +1841,13 @@ def main():
                 continue
 
             if key in ("lat_key", "lon_key") and len(parts) >= 2:
-                base = "lat" if "lat" in key else "lon"
-                new_lines.append(f"{base} {parts[1]} deg")
+                v = parts[1]
+                if key == "lon_key" and ("dec" in v.lower() or "decl" in v.lower()):
+                    # source mislabeled declination as a longitude key
+                    new_lines.append(f"dec {v} deg")
+                else:
+                    base = "lat" if "lat" in key else "lon"
+                    new_lines.append(f"{base} {v} deg")
                 continue
             # bare position directives (lat/lon/alt/ra/dec/plx/pmra/pmdec):
             # always 3 tokens: <dir> <path|literal> <unit>
@@ -1971,6 +1977,29 @@ def main():
                 new_lines.append(ls)
                 continue
             new_lines.append(ls)
+
+        # resolve double frames: a block with BOTH a celestial frame (at sun)
+        # and a terrestrial frame (on/body earth) is ambiguous. A block with
+        # ra/dec/plx directives is celestial -> keep at sun. Otherwise keep the
+        # last frame directive (AGENTS.md: double frames resolve to the last).
+        has_celestial_pos = any(
+            l.split() and l.split()[0] in ("ra", "dec", "plx", "pmra", "pmdec")
+            for l in new_lines)
+        if len(frames) > 1:
+            if has_celestial_pos:
+                keep = [f for f in frames if f.startswith("at ")]
+                if keep:
+                    frames = keep
+                else:
+                    frames = frames[-1:]
+            else:
+                frames = frames[-1:]
+        # order: url, ttl, frame, then the rest
+        head = [l for l in new_lines if l.split() and l.split()[0] in ("url", "ttl")]
+        body = [l for l in new_lines
+                if not (l.split() and l.split()[0] in ("url", "ttl", "on",
+                                                       "at", "body"))]
+        new_lines = head + frames + body
 
         # enrich from the API cache: physical fields present in the response
         # but not declared in the block (e.g. ISS velocity, solar_lat/lon,
