@@ -412,3 +412,87 @@ Notable: `FIRMS_MAP_KEY` (NASA fires), `OPENAQ_API_KEY`, `OCEANNETWORKS_TOKEN`,
 - `cargo check` zero errors AND zero warnings.
 - Council decisions live in code, AGENTS.md, or TODO.md — no separate docs.
 - The session is the atom: finish a complete, testable artifact each session.
+
+## SESSION HANDOFF 2026-08-08 — source reference rebuild from (4. Kopie)
+
+### TL;DR
+The newest, richest, cleanest source reference is
+`/home/johannes/Schreibtisch/Archiv/sources.φ (4. Kopie).md` (copied to
+`phi/recovery/sources.φ (4. Kopie).md` and `phi/recovery/sources_4_kopie.md`).
+It has 2554 configured blocks in the OLD `source <name>` format. The current
+`phi/sources.φ` (HEAD `aceb98e`, 1924 blocks, all force+frame) is clean but
+older/smaller. The next session should REBUILD `phi/sources.φ` FROM THE
+(4. Kopie), NOT patch the current one.
+
+### WARNING — do NOT use these as the base (they are corrupt/incomplete)
+- `phi/recovery/sources_live.φ` : 120 blocks no force, 159 no frame.
+- `phi/recovery/sources_cdn.φ` : ALL 1631 blocks are URL-only stubs, no config.
+- `phi/recovery/pre_cdn.φ` : mostly `source` format, some blocks truncated.
+- `Backups/phi/*` : old formats, no force/frame.
+
+### The conversion is DONE and saved
+`phi/recovery/k4_rebuild/sources_k4_converted.φ` (730 KB, 2111 blocks) is the
+(4. Kopie) converted to current format, with Ratsbeschluss (council) DROPs
+removed. Stat: 2005 fully configured (force+frame), 106 open, 3 no-force.
+
+Conversion rules applied:
+- `source <name>` header -> dropped
+- `wgs84 <lat> <lon>` -> `on earth <lat> <lon>`
+- `ssb` / `ecliptic` -> `at sun 1.0`
+- `pos <lat> <lon> <alt> <scale>` -> kept (data-carried)
+- block with `ra_key`/`dec_key` and no frame -> `at sun 1.0` (Council Celestial
+  Frame Convention)
+- council DROPs removed: worldbank(228), gbif/inaturalist/obis(73),
+  pdgapi(38), pubmed/eutils(18), inspirehep(17), celestrak/tle(7),
+  crossref(7), ghoapi(5), neotoma(5), ebi(4), fda(4), openlittermap(2),
+  paleobiodb(1), globalforestwatch(1), openinframap, ourairports,
+  submarine-cable, github.com/omegaflow/sources stubs, gist, physics.nist,
+  crystallography, raw.githubusercontent.com
+
+### 106 open blocks (need individual decision, no batch)
+- ~64 `github.com/omegaflow/catalogs/releases/download/...` : CDN catalog stubs
+  (orbit_*, horizons_*, cmr_* — astro/NASA). These belong in the CDN pipeline,
+  not live. Keep as `at sun 1.0` stubs OR route to CDN CI.
+- 17 `earthquake.usgs.gov` GeoJSON feeds : need `on earth` frame.
+- 8 `ssd-api.jpl.nasa.gov` (cad/fireball/sbdb) : need `at sun 1.0`.
+- rest: SWPC, NCEI, gcn, satnogs, open-meteo, tidesandcurrents, submarine-cable.
+- 3 blocks still no force.
+
+### Council Celestial Frame Convention (binding)
+- ICRS sky coords (ra/dec) -> `at sun 1.0` (SSB = ICRS origin)
+- `body earth` on celestial sources is WRONG (produces Surface at 0,0)
+- ground-telescope archives (CHIME, NICER) also `at sun 1.0` (telescope pos is
+  metadata, oscillators are sky objects)
+- exactly ONE frame per block; remove double frames (`body earth`+`at sun`,
+  `body earth`+`on earth`)
+
+### Parser status
+- Full pre-CDN intelligence restored: 23 Extract variants (incl. Hapi, XmlCount,
+  KeplerMap, Vectors, Ephemeris, Flatten, CmrPolygon, CelestialPolygon) +
+  all directive arms. `cargo check` zero warnings, tests pass.
+- Parser emits `warning: celestial extract with surface frame (use 'at sun 1.0')`
+  for blocks with CelestialMap + Surface frame — the per-block diagnostic.
+
+### Biotic (force biotic) sources found & curated (in sources_new.φ)
+- GBIF MACHINE_OBSERVATION (41M autonomous sensors), BirdWeather bioacoustics,
+  ArcGIS Hakai eDNA, green-turtle telemetry, harmful phytoplankton.
+- Council: biodiversity observation DBs (GBIF/iNat/OBIS counts) are FORCELESS.
+  Only autonomous biophysical sensors qualify as `biotic`.
+
+### The 4 real source bugs tested (Jina)
+- maxi.riken.jp/alert/novae : 404 (dead, even via Jina) — endpoint moved.
+- opensky-network.org : slow/blocked (Jina timeout), API works directly.
+- heasarc integralburst : `FORMAT=csv` -> must be `FORMAT=votable`.
+- gea.esac.esa.int : some TAP queries 400 (bad ADQL) — verify individually.
+
+### Verification of current sources.φ
+- HEAD `aceb98e`: 1924 blocks, 0 no-force, 0 no-frame. `cargo check` clean.
+- `test_live_sources_extract` (Rust, real parser) is the authoritative verifier.
+
+### Next session steps (in order)
+1. Decide the 106 open blocks (CDN-stubs separate; USGS `on earth`;
+   ssd-api `at sun`; 3 no-force fix). No batch — block by block.
+2. Rebuild `phi/sources.φ` from `k4_rebuild/sources_k4_converted.φ` +
+   the resolved 106. Do NOT patch the old 1924.
+3. Run `test_live_sources_extract`; fix remaining FAILs.
+4. `cargo check` zero warnings throughout.

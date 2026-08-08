@@ -488,34 +488,39 @@ one-by-one). For 160 known, compare arena vs lost richest version and
 use the richer. Every source tested individually.
 Code: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, `sources_live.φ`
 
-## NEXT SESSION ENTRY POINT: Untested Blocks
+## NEXT SESSION ENTRY POINT: Rebuild sources.φ from (4. Kopie)
 
-Read `docs/source_curation.md` first — it is the full session handoff with
-the parser status, the parser-as-verifier method, and the session results.
+Read `docs/source_curation.md` — it contains the full SESSION HANDOFF 2026-08-08.
 
-STATUS (2026-08-07, post key-fix): extraction test = **194 ok / 6 fail** of
-the first 200 non-CDN live sources (was 29 ok / 171 fail). Commit `e19b47f`
-fixed DONKI (case-insensitive secret resolution + regex X-class extract),
-converted the two USGS waterservices fixed-bbox blocks to presence-window
-templates, and gave the test a Houston-TX window + `{lon_min}`..`{lat_max}`
-substitution. The 6 remaining FAILs are verified service/data availability:
-5 USGS quake feeds legitimately empty on 2026-08-07 (extract directives
-verified against data-bearing feeds), gracedb 503 scheduled maintenance.
-Previous 107-FAIL inventory RESOLVED — decisive fix was reverting the
-`field_in`->`field` migration error (commit 9c16f8a).
+THE KEY FINDING: the newest/richest/cleanest reference is
+`/home/johannes/Schreibtisch/Archiv/sources.φ (4. Kopie).md`
+(copied to `phi/recovery/sources.φ (4. Kopie).md`), 2554 blocks in the old
+`source` format. The current `phi/sources.φ` (HEAD `aceb98e`, 1924 blocks,
+all force+frame) is clean but older/smaller. The next session must REBUILD
+`sources.φ` from the (4. Kopie), NOT keep patching.
 
-TASK: run `cargo test test_live_sources_extract -- --nocapture` (~150s).
-Confirm 194 ok / 6 fail, then raise the test limit (`let mut limit =
-200usize;` in `test_live_sources_extract`) to the next chunk and repeat,
-fixing every new `FAIL <url> no samples` with the generic recipes in
-source_curation.md (positionless -> `last <dot.path>` at frame; GeoJSON ->
-`map features` + `geometry.coordinates.N` + `on earth`/`body earth`; fixed
-station -> `last <container>.<field>`; metadata/text-warning -> decline).
+ALREADY DONE (this session):
+- Conversion of (4. Kopie) -> current format saved at
+  `phi/recovery/k4_rebuild/sources_k4_converted.φ` (2111 blocks, council
+  DROPs removed, `wgs84`->`on earth`, `ssb`->`at sun`, ra/dec->`at sun`).
+  Stat: 2005 fully configured, 106 open, 3 no-force.
+
+DO NOT USE as base (corrupt/incomplete):
+- `phi/recovery/sources_live.φ` (120 no force, 159 no frame)
+- `phi/recovery/sources_cdn.φ` (all 1631 are URL-only stubs)
+- `phi/recovery/pre_cdn.φ`, `Backups/phi/*`
+
+TASK (in order, NO batch — block by block):
+1. Resolve the 106 open blocks: ~64 github.com/omegaflow/catalogs CDN-stubs
+   (orbit_*/horizons_*/cmr_* -> `at sun 1.0` or route to CDN), 17 USGS quake
+   feeds (`on earth`), 8 ssd-api (`at sun`), 3 no-force, rest individually.
+2. Rebuild `phi/sources.φ` = `sources_k4_converted.φ` + resolved 106.
+3. Run `cargo test test_live_sources_extract`; fix remaining FAILs.
+4. `cargo check` zero warnings throughout.
 
 Then continue curation with `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`
 (423 blocks). PROGRESS TRACKING: when a block is tested, add it to
-dead_sources.φ (dead/parser-def/decline/key-needed) or sources_live.φ
-(verified). UNTESTED_index.txt shows remaining by domain.
+dead_sources.φ or the rebuilt sources.φ.
 
 Also open:
 - 5 poorer blocks: co2_global_network(7vs10), nsidc_arctic/antarctic(5vs6),
