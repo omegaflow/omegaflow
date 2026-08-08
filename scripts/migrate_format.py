@@ -1794,7 +1794,6 @@ def main():
     for b in blocks:
         b = b.strip()
         if not b:
-            new_blocks.append("")
             continue
         lines = b.split("\n")
         force = ""
@@ -2145,7 +2144,8 @@ def main():
 
         new_blocks.append("\n".join(new_lines))
 
-    result = "\n\n".join(new_blocks)
+    # join only non-empty blocks — a single blank line separates blocks
+    result = "\n\n".join(b for b in new_blocks if b.strip())
     if not result.endswith("\n"):
         result += "\n"
 

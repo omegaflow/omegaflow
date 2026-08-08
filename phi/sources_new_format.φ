@@ -33,10 +33,6 @@ field alt_baro acoustic hPa
 field gs advective m/s
 field baro_rate acoustic hPa
 
-
-
-
-
 url https://services.swpc.noaa.gov/json/solar-radio-flux.json
 ttl 60
 at sun
@@ -78,8 +74,6 @@ lat lat deg
 lon lon deg
 field alt_baro acoustic hPa
 field gs advective m/s
-
-
 
 url https://api.adsb.lol/v2/point/{lat}/{lon}/500
 ttl 60
@@ -236,8 +230,6 @@ last dst gravity nT
 map .
 field dst gravity nT
 
-
-
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 ttl 60
 on earth 0 0
@@ -248,23 +240,15 @@ field earthquake.hypocenter.name diffusion kg/m3
 field earthquake.magnitude em mag
 field earthquake.hypocenter.depth diffusion m
 
-
-
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 ttl 60
 at sun
 last flux em p/cm2/s
 
-
-
-
-
 url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=Fobs
 ttl 300
 at sun
 field value em scalar
-
-
 
 url https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json
 ttl 300
@@ -298,8 +282,6 @@ field elev gravity m
 field slp acoustic hPa
 field presTend acoustic hPa
 
-
-
 url https://opensky-network.org/api/states/all
 ttl 300
 on earth 0.0 0.0
@@ -311,8 +293,6 @@ alt 7 m
 vel 9
 trk 10
 vr 11
-
-
 
 url https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/Earthquake_Archive_3D/FeatureServer/0/query?where=1%3D1&outFields=mag,kmDepth,felt,cdi,mmi,tsunami,sig,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 300
@@ -331,8 +311,6 @@ map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.detected_energy em eV
-
-
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Historical_Quakes/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,depth,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=5000
 ttl 300
@@ -772,8 +750,6 @@ field properties.depth__m_ gravity m
 field properties.sea_surface_temperature_0__degr thermal degC
 field properties.sea_water_speed_0__cm_s_1_ advective m/s
 
-
-
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=omegaflow&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
 ttl 300
 on earth 40.7 -74.01
@@ -888,8 +864,6 @@ map value.timeSeries
 lat sourceInfo.geoLocation.geogLocation.latitude deg
 lon sourceInfo.geoLocation.geogLocation.longitude deg
 last value.timeSeries.0.values.0.value.0.value advective m3/s
-
-
 
 url https://www.ndbc.noaa.gov/data/realtime2/13002.txt
 ttl 300
@@ -5487,8 +5461,6 @@ ttl 300
 on earth 18.0893 -67.9382
 last data.v gravity m
 
-
-
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&parameters=BGSEc,Magnitude&time.min={today}T00:00:00.000Z&time.max={today}T23:59:59.000Z&format=csv
 ttl 300
 at sun
@@ -5499,8 +5471,6 @@ field 1 em nT
 field 2 em nT
 field 3 em nT
 field 4 em nT
-
-
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
 ttl 300
@@ -5526,17 +5496,11 @@ path 0.bt em nT
 field bt em nT
 field bz_gsm em nT
 
-
-
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json
 ttl 300
 at sun
 map .
 field flux em W/m2
-
-
-
-
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
 ttl 360
@@ -5593,16 +5557,12 @@ field image em mag
 lat centroid_coordinates.lat deg
 lon centroid_coordinates.lon deg
 
-
-
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
 ttl 600
 on earth 38.99 -76.84
 rows last
 format text
 field AOD_1640nm diffusion µg/m3
-
-
 
 url https://aviationweather.gov/api/data/metar?format=json&bbox=-180,-90,180,90
 ttl 600
@@ -5656,14 +5616,6 @@ field attributes.ADVISNUM advective nmi
 lat attributes.lat deg
 lon attributes.lon deg
 
-
-
-
-
-
-
-
-
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Live_Stream_Gauges_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 600
 on earth 0 0
@@ -5679,12 +5631,6 @@ map features
 field attributes.BRIGHT_T31 thermal K
 lat geometry.y deg
 lon geometry.x deg
-
-
-
-
-
-
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USA_Wildfires_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 600
@@ -5713,8 +5659,6 @@ field attributes.bright_ti4 thermal K
 field attributes.frp thermal MW
 lat attributes.lat deg
 lon attributes.lon deg
-
-
 
 url https://seismic-api.science.unimelb.edu.au/today-quakes
 ttl 600
@@ -5920,8 +5864,6 @@ ttl 900
 at sun
 field data.grid.features.0.properties.vtec_assimilated_tecu gravity TECU
 field data.grid.features.0.properties.vtec_rms_tecu em TECU
-
-
 
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=500
 ttl 1800
@@ -6135,24 +6077,6 @@ on earth 0 0
 path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.latitude gravity deg
 path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.longitude gravity deg
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
 ttl 3600
 at sun
@@ -6217,10 +6141,6 @@ field 2 gravity au
 field 3 gravity au
 field 4 gravity au
 
-
-
-
-
 url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
 ttl 3600
 at sun
@@ -6251,8 +6171,6 @@ format universal
 rows
 field wavelength em nm
 field irradiance em W/m2
-
-
 
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1&FORMAT=json
 ttl 3600
@@ -6321,30 +6239,6 @@ field 4 gravity au
 field 5 gravity deg
 field 6 em mag
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
 ttl 3600
 on earth 0 0
@@ -6401,8 +6295,6 @@ field AOD_675nm diffusion µg/m3
 field AOD_870nm diffusion µg/m3
 field AOD_1020nm diffusion µg/m3
 
-
-
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1
 ttl 3600
 on earth 0 0
@@ -6421,10 +6313,6 @@ lat Site_Latitude(Degrees) deg
 lon Site_Longitude(Degrees) deg
 field Fine_Mode_AOD_500nm[tau_f] diffusion µg/m3
 field Coarse_Mode_AOD_500nm[tau_c] diffusion µg/m3
-
-
-
-
 
 url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
 ttl 3600
@@ -6480,12 +6368,6 @@ field DEWP thermal degC
 field WDSP thermal m/s
 field SLP acoustic hPa
 
-
-
-
-
-
-
 url https://superdarn.ca/plotting/convection-maps/latest
 ttl 3600
 at sun
@@ -6519,8 +6401,6 @@ field fcsts.0.wdir acoustic deg
 field fcsts.0.wspd advective m/s
 field fcsts.0.visib gravity nmi
 field elev gravity m
-
-
 
 url https://api.coral.tsr.lol/stations/southeast_florida/current
 ttl 3600
@@ -6557,8 +6437,6 @@ field 0.temperature thermal degC
 field dens advective kg/m3
 field speed advective km/s
 field temperature thermal K
-
-
 
 url https://geofon.gfz.de/fdsnws/event/1/query?format=geojson&minmag=3&limit=100&region=AFRICA
 ttl 3600
@@ -6597,20 +6475,6 @@ field attributes.POC diffusion kg/m3
 lat geometry.y deg
 lon geometry.x deg
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 url https://firms.modaps.eosdis.nasa.gov/api/area/json/{firms_map_key}/MODIS_NRT/1/world
 ttl 3600
 on earth 0 0
@@ -6642,10 +6506,6 @@ lon geometry.coordinates.0 deg
 field properties.mag em mag
 alt geometry.coordinates.2 m
 
-
-
-
-
 url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json
 ttl 3600
 on earth 0 0
@@ -6653,10 +6513,6 @@ map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field attributes.PolygonAcres em m2
-
-
-
-
 
 url https://api.coral.tsr.lol/stations/gbr_central/current
 ttl 3600
@@ -6751,8 +6607,6 @@ field 8 diffusion kg/m3
 field 9 em nT
 field 10 thermal degC
 
-
-
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=currents&units=metric&time_zone=gmt&format=json
 ttl 3600
 at sun
@@ -6771,10 +6625,6 @@ at sun
 map data
 field g em mag
 
-
-
-
-
 url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
 ttl 3600
 on earth 0 0
@@ -6782,8 +6632,6 @@ map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.area_km diffusion km2
-
-
 
 url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT={year}-{month}-01&endDT={year}-{month}-{day}&parameterCd=00060&siteStatus=all
 ttl 3600
@@ -6800,8 +6648,6 @@ map value.timeSeries
 lat sourceInfo.geoLocation.geogLocation.latitude deg
 lon sourceInfo.geoLocation.geogLocation.longitude deg
 last value.timeSeries.0.values.0.value.0.value gravity m
-
-
 
 url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_YearToDate/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&f=geojson&resultRecordCount=500
 ttl 3600
@@ -6827,8 +6673,6 @@ map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.Area diffusion m2
-
-
 
 url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
 ttl 3600
@@ -7058,8 +6902,6 @@ field 2 gravity deg
 field 3 em TECU
 field 4 em TECU
 
-
-
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
 ttl 10800
 on earth 0 0
@@ -7068,8 +6910,6 @@ rows
 field 7 diffusion µg/m3
 lat 1 deg
 lon 2 deg
-
-
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
 ttl 21600
@@ -7126,8 +6966,6 @@ lon longitude deg
 field temperature_C thermal degC
 field pressure_hPa acoustic hPa
 
-
-
 url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json?time%2Clongitude%2Clatitude%2Cpres%2Ctemp%26time%3E%3D{yesterday}%26time%3C%3D{now}%26longitude%3E%3D{lon_min}%26longitude%3C%3D{lon_max}%26latitude%3E%3D{lat_min}%26latitude%3C%3D{lat_max}
 ttl 43200
 at sun
@@ -7166,8 +7004,6 @@ field RAJ2000 em deg
 field DEJ2000 em deg
 field Vmag em mag
 
-
-
 url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
 ttl 86400
 at sun
@@ -7199,12 +7035,6 @@ at sun
 map .
 field 1 em mag
 field 2 em mag
-
-
-
-
-
-
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,st_teff,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
 ttl 86400
@@ -7284,8 +7114,6 @@ dec 11 deg
 field 23 em pc/cm3
 field DM em pc/cm3
 
-
-
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_10_1000,flux_10_30,flux_30_100,flux_100_1000,spectral_index,redshift,assoc_name+FROM+fermifhl+WHERE+flux_10_1000+IS+NOT+NULL+ORDER+BY+flux_10_1000+DESC
 ttl 86400
 at sun
@@ -7339,8 +7167,6 @@ field mass_donor gravity M_sun
 field mass_bh gravity M_sun
 dist dist
 
-
-
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+700+name,ra,dec,soft_flux,hard_flux,full_flux,band_ratio,photon_index,redshift+FROM+cdfnchandra+WHERE+ra+IS+NOT+NULL+ORDER+BY+full_flux+DESC
 ttl 86400
 at sun
@@ -7382,10 +7208,6 @@ map .
 field 2 em s
 lat 0 deg
 lon 1 deg
-
-
-
-
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,distance,age,type,obs_id+FROM+chansnr+WHERE+ra+IS+NOT+NULL+ORDER+BY+distance+ASC
 ttl 86400
@@ -7604,8 +7426,6 @@ z redshift
 field flux_0_1_2_4 em W/m2
 field luminosity_0_1_2_4 em W
 
-
-
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,count_rate+FROM+rxmtasm+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
 ttl 86400
 at sun
@@ -7637,8 +7457,6 @@ field t90 em s
 field fluence em W/m2
 field redshift em z
 
-
-
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
 ttl 86400
 at sun
@@ -7658,8 +7476,6 @@ dec dec deg
 field period em d
 field lx em W
 dist dist
-
-
 
 url https://www.tng-project.org/api/TNG100-1/snapshots/99/halos/?format=json&limit=500&order_by=-mass_log_msun
 ttl 86400
@@ -7700,8 +7516,6 @@ field w2mpro em mag
 field w3mpro em mag
 field w4mpro em mag
 
-
-
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,gmag,rmag,imag,classtar,sharp
 ttl 86400
 at sun
@@ -7714,8 +7528,6 @@ field rmag em mag
 field imag em mag
 field medianmag em mag
 field magrms em mag
-
-
 
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&sort=date
 ttl 86400
@@ -7745,8 +7557,6 @@ field 3 gravity au
 field 4 gravity deg
 field 5 gravity deg
 field 6 gravity deg
-
-
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
 ttl 86400
@@ -7781,10 +7591,6 @@ field 2 gravity deg
 field 3 gravity au
 field 4 gravity au
 
-
-
-
-
 url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr={target}
 ttl 86400
 body earth
@@ -7817,12 +7623,6 @@ field M gravity deg
 field H em mag
 field diameter gravity m
 
-
-
-
-
-
-
 url https://lasp.colorado.edu/lisird/latis/dap/tsis1_hsrs.csv
 ttl 86400
 at sun
@@ -7834,10 +7634,6 @@ url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/luna
 ttl 86400
 on earth 0 0
 field features.0.properties.pc:density diffusion kg/m3
-
-
-
-
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,D,Mass,HRV+FROM+%22J/AJ/144/4/catalog%22
 ttl 86400
@@ -7859,12 +7655,6 @@ on mars 4.59 137.44
 path soles.0.min_temp thermal degC
 path soles.0.max_temp thermal degC
 path soles.0.pressure acoustic hPa
-
-
-
-
-
-
 
 url https://tess.mit.edu/wp-content/uploads/all_targets_S001_v1.csv
 ttl 86400
@@ -7912,16 +7702,6 @@ ra RA deg
 dec Dec deg
 field H em mag
 field G em mag
-
-
-
-
-
-
-
-
-
-
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+2000+ra,dec,pl_name,pl_rade,pl_bmasse,pl_orbsmax,pl_eqt,st_teff,st_spectype,sy_distan+from+pscomppars+where+ra+is+not+null+and+pl_eqt+is+not+null+order+by+sy_distan+asc&format=json
 ttl 86400
@@ -7971,20 +7751,12 @@ field pl_trandur em s
 field st_teff thermal K
 dist sy_dist
 
-
-
 url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
 ttl 86400
 on earth 0.0 0.0
 format universal
 rows
 field 13 thermal J
-
-
-
-
-
-
 
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+5000+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,194.9,27.9,3.0))%3D1
 ttl 86400
@@ -8010,8 +7782,6 @@ z 3
 field 3 em z
 ra ra deg
 dec dec deg
-
-
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+200+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,st_mass,st_rad,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Imaging'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
 ttl 86400
@@ -8083,8 +7853,6 @@ field PRECTOTCORR diffusion mm
 field ALLSKY_SFC_SW_DWN em W/m2
 field WS10M advective m/s
 
-
-
 url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
 ttl 86400
 at sun
@@ -8115,8 +7883,6 @@ format universal
 rows
 field 1 em mag
 
-
-
 url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json
 ttl 86400
 on earth 0 0
@@ -8126,8 +7892,6 @@ lon longitude deg
 field vx advective m/s
 field vy advective m/s
 
-
-
 url https://api.astrocats.space/{target}/
 ttl 86400
 at sun
@@ -8135,44 +7899,10 @@ ra ra deg
 dec dec deg
 field redshift em z
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 url https://ssd-api.jpl.nasa.gov/sentry.api
 ttl 86400
 on earth 34.201 -118.171
 field 6 gravity m
-
-
-
-
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zCMB,mBcorr+FROM+%22J/ApJ/938/110/table7%22
 ttl 86400
@@ -8183,8 +7913,6 @@ ra _RA deg
 dec _DE deg
 z zCMB
 field mBcorr em mag
-
-
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra={ra}&dec={dec}&sr=6&format=json
 ttl 86400
@@ -8244,12 +7972,6 @@ on earth 50.85 4.35
 format universal
 rows
 field 1 em mag
-
-
-
-
-
-
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,z,MaxMag,Type+FROM+%22B/sn/sncat%22
 ttl 86400
@@ -8557,8 +8279,6 @@ lon DEJ2000 deg
 field z em mag
 field r em mag
 
-
-
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50+JNAME,RAJ,DECJ,P0,DM,Dist,Tspan+FROM+"J/A+A/678/A48/table1"+WHERE+RAJ+IS+NOT+NULL+ORDER+BY+Tspan+DESC
 ttl 86400
 at sun
@@ -8814,8 +8534,6 @@ field Speak em Jy
 field SpeakTot em mag
 field Maj gravity m
 
-
-
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,z,Speak+FROM+\"J/AJ/137/3718/table1\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Speak+DESC
 ttl 86400
 at sun
@@ -8876,8 +8594,6 @@ ra RAJ2000 deg
 dec DEJ2000 deg
 field S1_4 em mJy
 field MajAxis gravity arcsec
-
-
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Reg,RAJ2000,DEJ2000,Dist,SimbadName+FROM+%22J/ApJS/229/28/table1%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Dist+ASC
 ttl 86400
@@ -8945,8 +8661,6 @@ ra RAJ2000 deg
 dec DEJ2000 deg
 field Peak_flux_887 em W/m2
 field Maj gravity m
-
-
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RA_ICRS,DE_ICRS,rmag,gmag,imag,zmag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D1+AND+rmag%3C18
 ttl 86400
@@ -9115,8 +8829,6 @@ field content.0.Pollen.Birke.today diffusion kg/m3
 field content.0.Pollen.Beifuss.today diffusion kg/m3
 field content.0.Pollen.Esche.today diffusion kg/m3
 
-
-
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
 ttl 86400
 on earth 0.0 0.0
@@ -9126,26 +8838,6 @@ lon -73.98 deg
 field PRCP diffusion mm
 field SNOW diffusion mm
 field AWND advective m/s
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
 ttl 86400
@@ -9165,8 +8857,6 @@ field temperature_mean_c thermal degC
 field depth_m gravity m
 field elevation_m gravity m
 
-
-
 url https://gtnp.arcticportal.org/api/boreholes/?format=json&limit=2000
 ttl 86400
 on earth 0 0
@@ -9176,42 +8866,6 @@ lon location.lng deg
 alt elevation m
 field depth gravity m
 field temperature.0.mean_annual thermal degC
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+512+ra,dec,sy_dist,pl_eqt,pl_rade,pl_orbper,pl_bmasse+FROM+pscomppars+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
 ttl 86400
@@ -9246,8 +8900,6 @@ field pl_orbper gravity d
 dist sy_dist 3.085677581e16
 field sy_dist gravity pc
 
-
-
 url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500
 ttl 86400
 on earth 0 0
@@ -9258,22 +8910,6 @@ field attributes.MAG em mag
 field attributes.DEPTH gravity m
 field attributes.DEATHS acoustic m
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Tsunami_Capable_Tide_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 86400
 on earth 0 0
@@ -9283,8 +8919,6 @@ field attributes.STAT_LONG gravity deg
 lat geometry.y deg
 lon geometry.x deg
 
-
-
 url https://raw.githubusercontent.com/GEMScienceTools/gem-global-active-faults/master/geojson/gem_active_faults.geojson
 ttl 86400
 on earth 0 0
@@ -9293,26 +8927,12 @@ lat geometry.coordinates.0.0.1 deg
 lon geometry.coordinates.0.0.0 deg
 field properties.net_slip_rate seismic-surface mm/yr
 
-
-
 url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilTMP0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
 ttl 86400
 body earth
 format text
 rows
 field 1 thermal degC
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={today}T23:59:59&catalog=GCMT&format=text&nodata=404
 ttl 86400
@@ -9344,14 +8964,6 @@ field Depth gravity m
 field Magnitude em mag
 field MagType em mag
 
-
-
-
-
-
-
-
-
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
 ttl 86400
 on earth 0 0
@@ -9360,8 +8972,6 @@ lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.v_mean em m/s
 field properties.v0 advective m/yr
-
-
 
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=GRE&limit=500&format=json
 ttl 86400
@@ -9372,22 +8982,12 @@ lon geometry.coordinates.0 deg
 field properties.v_mean em m/s
 field properties.v0 advective m/yr
 
-
-
-
-
-
-
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
 ttl 86400
 on earth 19.5362 -155.5763
 last_line atmosphere_co2_annual_mean_global
 field 1 diffusion ppm
 field 2 diffusion ppm
-
-
-
-
 
 url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
 ttl 86400
@@ -9482,10 +9082,6 @@ field TEMP thermal degC
 field WDSP thermal m/s
 field PRCP diffusion mm
 
-
-
-
-
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&stations=USW00013739&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
 ttl 86400
 on earth 0 0
@@ -9528,8 +9124,6 @@ lon longitude deg
 field TAVG thermal degC
 field PRCP diffusion mm
 
-
-
 url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&survey=WOCE&variable=T,S,O2,NO3,PO4,SiO3&limit=300
 ttl 86400
 on earth 0 0
@@ -9548,20 +9142,6 @@ lat items.2.latitude deg
 lon items.2.latitude deg
 field eqMagnitude em mag
 field deaths acoustic m
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x
 ttl 86400
@@ -9582,8 +9162,6 @@ field Temperature thermal degC
 field Salinity diffusion psu
 field Oxygen diffusion kg/m3
 
-
-
 url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01
 ttl 86400
 on earth 0 0
@@ -9592,8 +9170,6 @@ rows
 field 4 gravity m
 lat 2 deg
 lon 3 deg
-
-
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6.0&orderby=time&limit=20
 ttl 86400
@@ -9696,8 +9272,6 @@ lat latitude deg
 lon longitude deg
 field chlor_a diffusion mg/m3
 
-
-
 url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PR_CTD_ArcticNet_collection.csv?time,latitude,longitude,depth,PSAL,TEMP&time>=max(time)-30day
 ttl 86400
 on earth 70.0 -130.0
@@ -9713,12 +9287,6 @@ on earth 48.0 -5.0
 format universal
 map data
 field SLEV gravity m
-
-
-
-
-
-
 
 url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?sst%5B(last)%5D%5B(0.0)%5D%5B(-89.875):20:(89.875)%5D%5B(-179.875):20:(179.875)%5D
 ttl 86400
@@ -9752,20 +9320,12 @@ on earth 47.6062 -122.3321
 format universal
 last_row pCO2_sw diffusion kg/m3
 
-
-
-
-
 url https://erddap.emodnet-physics.eu/erddap/tabledap/T-MEDNet.csv?time,latitude,longitude,temperature,site_name&time>=max(time)-2day
 ttl 86400
 on earth 40.0 5.0
 format universal
 map data
 field temperature thermal degC
-
-
-
-
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
 ttl 86400
@@ -10589,8 +10149,6 @@ path 1.1 em nT
 path 1.2 em nT
 path 2 em nT
 
-
-
 url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
 ttl 86400
 at sun
@@ -10615,8 +10173,6 @@ ra ra deg
 dec dec deg
 plx default_plx mas
 field flux_64 em W/m2
-
-
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+chanmaster
 ttl 604800
@@ -10767,8 +10323,6 @@ plx default_plx mas
 field flux_4_10 em W/m2
 field flux_3_4 em W/m2
 
-
-
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+maxissc
 ttl 604800
 at sun
@@ -10779,8 +10333,6 @@ dec dec deg
 plx default_plx mas
 field sb_flux em W/m2
 
-
-
 url http://www.nmdb.eu/station/list/
 ttl 604800
 on earth 0 0
@@ -10789,10 +10341,6 @@ lat latitude deg
 lon longitude deg
 alt altitude_m m
 field rigidity_gv em GV
-
-
-
-
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra={ra}&dec={dec}&sr=6&format=json&spec=galaxy
 ttl 604800
@@ -10826,22 +10374,6 @@ ra ra deg
 dec dec deg
 plx parallax mas
 field phot_g_mean_mag em mag
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+ra,dec,main_id,otype+FROM+basic+WHERE+otype='Y*O'
 ttl 604800
@@ -10948,10 +10480,6 @@ field ot_pos_err em deg
 field galaxy_ra em deg
 field galaxy_dec em deg
 field galaxy_offset em deg
-
-
-
-
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmslew
 ttl 604800
@@ -11137,14 +10665,6 @@ dec dec deg
 plx parallax mas
 field phot_g_mean_mag em mag
 
-
-
-
-
-
-
-
-
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1+main_id,ra,dec,rvz_redshift+FROM+basic+WHERE+otype='QSO'+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
 ttl 604800
 at sun
@@ -11155,18 +10675,6 @@ dec DEJ2000 deg
 ra ra deg
 dec dec deg
 field rvz_redshift advective z
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WD*'
 ttl 604800
@@ -11206,8 +10714,6 @@ lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.ELEV gravity m
 
-
-
 url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 604800
 on earth 0 0
@@ -11224,24 +10730,12 @@ lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.mass gravity M_sun
 
-
-
-
-
-
-
-
-
-
-
 url https://raw.githubusercontent.com/Bowserinator/Periodic-Table-JSON/master/PeriodicTableJSON.json
 ttl 604800
 at sun
 map elements
 field atomic_mass gravity u
 field density diffusion kg/m3
-
-
 
 url https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv
 ttl 604800
@@ -11266,10 +10760,6 @@ field 9 em W/m2
 field 10 em W/m2
 field 14 gravity m/s
 
-
-
-
-
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
 ttl 2592000
 on earth -77.3190 39.7030
@@ -11291,10 +10781,6 @@ format universal
 map data
 field 0 gravity m
 field 2 diffusion ppm
-
-
-
-
 
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/dc_ch4_hol_fl02-noaa.txt
 ttl 2592000
@@ -11320,12 +10806,6 @@ field 0 gravity m
 field 2 diffusion ppm
 field 3 diffusion ppm
 
-
-
-
-
-
-
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
 ttl 2592000
 on earth {lat} {lon}
@@ -11349,16 +10829,6 @@ ttl 2592000
 on earth {lat} {lon}
 field properties.layers.0.depths.0.values.mean acoustic m
 map features
-
-
-
-
-
-
-
-
-
-
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?station_id,latitude,longitude,time,pCO2_sw,pH_sw,SST,SSS&time%3E%3D{year}-01-01T00%3A00%3A00Z
 ttl 86400
@@ -11398,14 +10868,6 @@ field 3 acoustic hPa
 field 4 thermal degC
 field 5 diffusion psu
 
-
-
-
-
-
-
-
-
 url https://api.eia.gov/v2/electricity/rto/region-data/data/?api_key=EIA_API_KEY&frequency=hourly&data[]=value&facets[type][]=D&sort[0][column]=period&sort[0][direction]=desc&length=500
 ttl 3600
 on earth 0 0
@@ -11414,22 +10876,10 @@ lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field period em d
 
-
-
-
-
-
-
-
-
-
-
 url https://www.marinespecies.org/rest/AphiaRecordsByName/Solea%20solea?like=false&marine_only=true
 ttl 86400
 at sun
 field parentNameUsageID em W/m2
-
-
 
 url https://www.bodc.ac.uk/data/published_data_library/catalogue/?jsonrequest=1&keywords=oxygen+salinity&limit=200
 ttl 86400
@@ -11438,18 +10888,6 @@ map results
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field temporal_coverage.end thermal degC
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://api.openinframap.org/stats/country
 ttl 86400
@@ -11553,8 +10991,6 @@ lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.mag em mag
 
-
-
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
 ttl 3600
 body earth
@@ -11570,10 +11006,6 @@ map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.mag em mag
-
-
-
-
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
 ttl 86400
@@ -11700,24 +11132,12 @@ ttl 300
 on earth 41.8067 -71.4006
 last data.v thermal degC
 
-
-
-
-
-
-
 url https://www.ndbc.noaa.gov/data/realtime2/41001.spec
 ttl 300
 on earth 34.68 -72.55
 format csv
 last_row SwH acoustic m
 last_row SwP acoustic s
-
-
-
-
-
-
 
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
 ttl 3600
@@ -12018,10 +11438,6 @@ field bright_ti4 thermal K
 field bright_ti5 thermal K
 field frp thermal MW
 
-
-
-
-
 url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00010
 ttl 300
 body earth
@@ -12037,12 +11453,6 @@ map value.timeSeries
 lat sourceInfo.geoLocation.geogLocation.latitude deg
 lon sourceInfo.geoLocation.geogLocation.longitude deg
 last value.timeSeries.0.values.0.value.0.value diffusion psu
-
-
-
-
-
-
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?dataset=ngk/best-avail/PT1M/xyzf&parameters=Field_Magnitude&time.min={yesterday}T00:00:00Z&time.max={now}Z
 ttl 300
@@ -12381,8 +11791,6 @@ lat latitude deg
 lon longitude deg
 field capacity_mw thermal MW
 
-
-
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/mangrove_countries.json
 ttl 86400
 body earth
@@ -12415,8 +11823,6 @@ lat latitude deg
 lon longitude deg
 field pm25_ugm3 diffusion µg/m3
 
-
-
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_batse_grb.json
 ttl 604800
 at sun
@@ -12425,8 +11831,6 @@ ra ra deg
 dec dec deg
 plx default_plx mas
 field flux_64 em W/m2
-
-
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/chandra_master.json
 ttl 604800
@@ -12641,8 +12045,6 @@ dec dec deg
 plx default_plx mas
 field sb_flux em W/m2
 
-
-
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_isgri4yr.json
 ttl 604800
 at sun
@@ -12681,8 +12083,6 @@ plx default_plx mas
 field flux_4_10 em W/m2
 field flux_3_4 em W/m2
 
-
-
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_ssc.json
 ttl 604800
 at sun
@@ -12692,8 +12092,6 @@ dec dec deg
 plx default_plx mas
 field sb_flux em W/m2
 
-
-
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/nmdb_stations.json
 ttl 604800
 body earth
@@ -12702,12 +12100,6 @@ lat latitude deg
 lon longitude deg
 alt altitude_m m
 field rigidity_gv em GV
-
-
-
-
-
-
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_galaxies.json
 ttl 604800
@@ -12845,8 +12237,6 @@ field Jmag em mag
 field Hmag em mag
 field Kmag em km
 
-
-
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_6dfgs.json
 ttl 604800
 at sun
@@ -12895,8 +12285,6 @@ ra RAJ2000 deg
 dec DEJ2000 deg
 field r em mag
 
-
-
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_dla.json
 ttl 604800
 at sun
@@ -12914,8 +12302,6 @@ map .
 ra RAJ2000 deg
 dec DEJ2000 deg
 field Fpeak em W/m2
-
-
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade.json
 ttl 604800
@@ -12935,8 +12321,6 @@ field e_Hmag em mag
 field Kmag em km
 field e_Kmag em km
 
-
-
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gleam.json
 ttl 604800
 at sun
@@ -12946,12 +12330,6 @@ dec DEJ2000 deg
 plx default_plx mas
 field bckwide em Jy
 field lrmswide em Jy
-
-
-
-
-
-
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_nvss.json
 ttl 604800
@@ -13084,8 +12462,6 @@ dec DE_ICRS deg
 plx default_plx mas
 field Flux1 em W/m2
 field Flux2 em W/m2
-
-
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/wise_allsky.json
 ttl 604800
@@ -13232,10 +12608,6 @@ field spec_pvalue_pl em eV
 field redshift_lph_z_best em pc
 field redshift_info_distance gravity pc
 
-
-
-
-
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+100+ra,dec,exposure+FROM+chanmaster
 ttl 86400
 at sun
@@ -13316,12 +12688,6 @@ dec dec deg
 z redshift
 field flux>100_mev em eV
 
-
-
-
-
-
-
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200000+source_id,ra,dec,parallax,phot_g_mean_mag,bp_rp+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+6+AND+parallax+>+0+AND+bp_rp+>+1.0
 ttl 86400
 at sun
@@ -13331,20 +12697,6 @@ dec dec deg
 plx parallax mas
 field phot_g_mean_mag em mag
 field bp_rp em mag
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
 ttl 86400
@@ -13384,8 +12736,6 @@ map stations
 lat lat deg
 lon lng deg
 field tideType gravity ft
-
-
 
 url https://cdms.astro.uni-koeln.de/cgi-bin/cdmsinfo?file=e044502.cat&version=current
 ttl 86400
@@ -13451,8 +12801,6 @@ field mag_r em mag
 field mag_g em mag
 field mag_z em mag
 
-
-
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+500+pl_name,ra,dec,pl_radj,pl_bmassj,pl_trandep,pl_tranmid,pl_orbper,st_teff,st_rad,st_mass,sy_dist+FROM+ps+WHERE+pl_trandep+IS+NOT+NULL+AND+ra+IS+NOT+NULL+ORDER+BY+pl_trandep+DESC&FORMAT=csv
 ttl 300
 at sun
@@ -13480,8 +12828,6 @@ field pl_rvamp advective m/s
 field st_teff thermal K
 field sy_dist gravity pc
 field pl_orbincl gravity deg
-
-
 
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+id,ra,dec,lp_type,lp_zBEST,lp_zBEST_68_low,lp_zBEST_68_high,lp_mass_med,id_i,mag_i,mag_Y,mag_J,mag_H+FROM+cosmos2020_classic+WHERE+ra+IS+NOT+NULL+AND+lp_zBEST>0+AND+mag_i<25+ORDER+BY+mag_i+ASC
 ttl 86400
@@ -13670,8 +13016,6 @@ field peak_va em m/s
 field peak_tm thermal K
 field gage_ht diffusion m
 
-
-
 url https://opendap.nccs.nasa.gov/dods/GEOS-5/fp/0.25_deg/assim/inst3_3d_asm_Np.latest.info
 ttl 86400
 on earth 0 0
@@ -13717,22 +13061,6 @@ field 0 diffusion kg/m3
 field 7 gravity m
 field 9 advective m/s
 field 10 gravity deg
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+main_id,ra,dec,plx_value,rvz_redshift,sp_type,otype,V+FROM+basic+JOIN+allfluxes+ON+basic.oid%3Dallfluxes.oidref+WHERE+V<9+AND+ra+IS+NOT+NULL+ORDER+BY+V+ASC
 ttl 86400
@@ -13860,14 +13188,6 @@ field Period em d
 field max em mag
 field min em mag
 
-
-
-
-
-
-
-
-
 url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form?itype=ymd&yr={year}&mo={month}&dy=01&otype=ymd&oyr={year}&omo={month}&ody={day}&jyr=1976&jday=1&ojyr=2025&ojday=366&nday=1&lmw=5&umw=10&lms=0&ums=10&lmb=0&umb=10&llat=-90&ulat=90&llon=-180&ulon=180&lhd=0&uhd=1000&lts=-9999&uts=9999&lpe1=0&upe1=90&lpe2=0&upe2=90&list=6
 ttl 3600
 on earth 0 0
@@ -13977,18 +13297,12 @@ lon -100.0 deg
 field WTEQ gravity kg/m2
 field SNWD thermal mm
 
-
-
-
-
 url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=FRN&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
 ttl 300
 on earth 0 0
 field X em nT
 field Y em nT
 field Z em nT
-
-
 
 url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=HON&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
 ttl 300
@@ -13997,14 +13311,10 @@ field X em nT
 field Y em nT
 field Z em nT
 
-
-
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8454000&product=air_temperature&date=latest&time_zone=gmt&units=metric&format=json
 ttl 300
 on earth 0 0
 last data.v thermal degC
-
-
 
 url https://api.gbif.org/v1/occurrence/search?basisOfRecord=MACHINE_OBSERVATION&hasCoordinate=true&limit=300&decimalLatitude={lat}&decimalLongitude={lon}&radius=100
 ttl 3600
@@ -14025,8 +13335,6 @@ field properties.Depth gravity m
 field properties.Temprtr thermal degC
 field properties.Salinty diffusion psu
 field properties.Dssl_O2 diffusion kg/m3
-
-
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
 ttl 86400
@@ -14386,8 +13694,6 @@ pmra 3 mas_yr
 pmdec 4 mas_yr
 radvel 5 1000
 
-
-
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20parallax%3E10%20AND%20phot_g_mean_mag%3C15
 ttl 315576000000
 at sun
@@ -14428,19 +13734,11 @@ map .
 lat lat deg
 lon lon deg
 
-
-
 url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
 ttl 60
 on earth 53.3 -6.2
 field statistics.curin advective m/s
 field statistics.curout advective m/s
-
-
-
-
-
-
 
 url https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json
 ttl 60
@@ -14502,8 +13800,6 @@ lon lon deg
 field pm25 diffusion µg/m3
 field pm10 diffusion µg/m3
 field no2 diffusion kg/m3
-
-
 
 url https://api.carbonintensity.org.uk/intensity
 ttl 300
@@ -14630,8 +13926,6 @@ field properties.depth__m_ gravity m
 field properties.sea_surface_temperature_0__degr thermal degC
 field properties.sea_water_speed_0__cm_s_1_ advective m/s
 
-
-
 url https://api.wolfx.jp/jma_eqlist.json
 ttl 300
 on earth 0 0
@@ -14639,14 +13933,6 @@ lat 1.latitude deg
 lon 1.longitude deg
 field 1.magnitude em mag
 field 1.depth gravity m
-
-
-
-
-
-
-
-
 
 url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
 ttl 300
@@ -14671,8 +13957,6 @@ map .
 field 1 em nT
 field 2 em nT
 
-
-
 url https://tadas.afad.gov.tr/api/event/list?limit=200
 ttl 300
 body earth
@@ -14695,8 +13979,6 @@ hapi Pressure solar_wind_dynamic_pressure_npa
 hapi SYM_H geomag_sym_h_nt
 hapi AE_INDEX geomag_ae_index_nt
 
-
-
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
 ttl 300
 on earth 40.7 -74.01
@@ -14708,10 +13990,6 @@ ttl 300
 on earth 40.7 -74.01
 map data
 last data.v thermal degC
-
-
-
-
 
 url http://afis.meraka.org.za/afis/data/json/
 ttl 600
@@ -14728,17 +14006,11 @@ format text
 rows
 field 5 em MW
 
-
-
 url https://gcn.nasa.gov/circulars/44806.json
 ttl 600
 at sun
 map .
 path eventId em eV
-
-
-
-
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_parker_solar_probe.json
 ttl 600
@@ -14749,10 +14021,6 @@ field 2 gravity au
 field 3 gravity au
 field 4 gravity au
 
-
-
-
-
 url https://github.com/omegaflow/catalogs/releases/download/live-data/usgs_water_daily.json
 ttl 600
 on earth 0 0
@@ -14761,22 +14029,10 @@ lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field parameter_code advective W/m2
 
-
-
 url https://api.carbonintensity.org.uk/intensity/date/{today}
 ttl 1800
 on earth 54.0 -2.0
 path data.0.intensity.actual seismic-surface W/m2
-
-
-
-
-
-
-
-
-
-
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&parameters=mms1_fgm_b_gsm_srvy_l2&time.min={today}T00:00:00.000Z&time.max={today}T06:00:00.000Z&format=csv
 ttl 3600
@@ -14798,26 +14054,10 @@ lon lon deg
 field alt gravity m
 field vel em m/s
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
 ttl 3600
 at sun
 last dst gravity nT
-
-
 
 url https://network.satnogs.org/api/observations/?format=json&limit=1
 ttl 3600
@@ -14828,20 +14068,10 @@ field set_azimuth em deg
 field max_altitude gravity m
 field observation_frequency em Hz
 
-
-
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
 ttl 3600
 on earth 40.0 15.0
 geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
-
-
-
-
-
-
-
-
 
 url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50
 ttl 3600
@@ -14851,10 +14081,6 @@ map .
 lat latitude deg
 lon longitude deg
 field km gravity km
-
-
-
-
 
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
 ttl 3600
@@ -14909,16 +14135,6 @@ rows
 field 2 gravity au
 field 3 gravity au
 
-
-
-
-
-
-
-
-
-
-
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1
 ttl 3600
 at sun
@@ -14928,10 +14144,6 @@ field s_ra em deg
 field s_dec em deg
 lat s_ra deg
 dec s_dec deg
-
-
-
-
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json
 ttl 3600
@@ -14970,10 +14182,6 @@ field vx advective km/s
 field vy advective km/s
 field vz advective km/s
 
-
-
-
-
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={today}&endDate={today}&format=json
 ttl 3600
 body earth
@@ -14983,40 +14191,6 @@ lon LONGITUDE deg
 field PRCP diffusion mm
 field SNOW diffusion mm
 field AWND advective m/s
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
 ttl 43200
@@ -15029,38 +14203,10 @@ field col5 em mas
 field col6 em mas
 field col7 em mas
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
 ttl 86400
 at sun
 field H em mag
-
-
-
-
 
 url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS
 ttl 86400
@@ -15070,10 +14216,6 @@ lat lat deg
 lon lon deg
 field sst_analysed thermal degC
 field sst_uncertainty thermal K
-
-
-
-
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
 ttl 86400
@@ -15086,8 +14228,6 @@ field pl_rade gravity R_earth
 field pl_orbper gravity d
 field pl_bmasse gravity M_earth
 
-
-
 url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
 ttl 86400
 body earth
@@ -15096,10 +14236,6 @@ lat latitude deg
 lon longitude deg
 field elevation_meters gravity m
 
-
-
-
-
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mangrove_countries.json
 ttl 86400
 on earth 0 0
@@ -15107,8 +14243,6 @@ map data
 lat latitude deg
 lon longitude deg
 field mangrove_area_km2 diffusion km2
-
-
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','bll','FSRQ','fsrq','BCU','bcu')+ORDER+BY+flux_density+DESC
 ttl 86400
@@ -15127,12 +14261,6 @@ rows
 ra RAJ2000 deg
 dec DEJ2000 deg
 field Energy_Flux_Band3 em W/m2
-
-
-
-
-
-
 
 url https://datacenter.iers.org/data/9/finals2000A.all
 ttl 86400
@@ -15252,8 +14380,6 @@ field a gravity au
 field i gravity deg
 field H em mag
 field diameter gravity m
-
-
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
@@ -15855,8 +14981,6 @@ path 1.1 em nT
 path 1.2 em nT
 path 2 em nT
 
-
-
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
 on earth 36.667 -5.944999999999993
@@ -16041,18 +15165,6 @@ path 1.1 em nT
 path 1.2 em nT
 path 2 em nT
 
-
-
-
-
-
-
-
-
-
-
-
-
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
 ttl 86400
 at sun
@@ -16120,112 +15232,6 @@ ttl 86400
 on earth 0 0
 map .
 field swdiJsonResponse.status acoustic deg
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 url https://tevcat2.tevcat.org/api/sources
 ttl 86400
@@ -16373,8 +15379,6 @@ dec DEJ2000 deg
 field magMax em mag
 field Period em d
 
-
-
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/I_311_hip2.json
 ttl 86400
 at sun
@@ -16396,8 +15400,6 @@ dec DEJ2000 deg
 field r'mag em mag
 field r'-i em mag
 
-
-
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AJ_130_1389_mojave.json
 ttl 86400
 at sun
@@ -16412,8 +15414,6 @@ field STot em Jy
 field SPeak em Jy
 field PTot em Jy
 field EVPA em eV
-
-
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJS_229_28_table1.json
 ttl 86400
@@ -16496,12 +15496,6 @@ dec DE_ICRS deg
 field RAPMdeg em deg
 field DEPMdeg em deg
 
-
-
-
-
-
-
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_batse_grb.json
 ttl 604800
 at sun
@@ -16509,8 +15503,6 @@ map data
 ra ra deg
 dec dec deg
 field flux_64 em W/m2
-
-
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/chandra_master.json
 ttl 604800
@@ -16709,8 +15701,6 @@ ra ra deg
 dec dec deg
 field sb_flux em W/m2
 
-
-
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_isgri4yr.json
 ttl 604800
 at sun
@@ -16745,8 +15735,6 @@ dec dec deg
 field flux_4_10 em W/m2
 field flux_3_4 em W/m2
 
-
-
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_ssc.json
 ttl 604800
 at sun
@@ -16754,14 +15742,6 @@ map data
 ra ra deg
 dec dec deg
 field sb_flux em W/m2
-
-
-
-
-
-
-
-
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/sdss_galaxies.json
 ttl 604800
@@ -16897,8 +15877,6 @@ field Jmag em mag
 field Hmag em mag
 field Kmag em km
 
-
-
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_6dfgs.json
 ttl 604800
 at sun
@@ -16947,8 +15925,6 @@ ra RAJ2000 deg
 dec DEJ2000 deg
 field r em mag
 
-
-
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_dla.json
 ttl 604800
 at sun
@@ -16965,8 +15941,6 @@ map data
 ra RAJ2000 deg
 dec DEJ2000 deg
 field Fpeak em W/m2
-
-
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade.json
 ttl 604800
@@ -16985,8 +15959,6 @@ field e_Hmag em mag
 field Kmag em km
 field e_Kmag em km
 
-
-
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gleam.json
 ttl 604800
 at sun
@@ -16995,12 +15967,6 @@ ra RAJ2000 deg
 dec DEJ2000 deg
 field bckwide em Jy
 field lrmswide em Jy
-
-
-
-
-
-
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_nvss.json
 ttl 604800
@@ -17129,8 +16095,6 @@ ra RA_ICRS deg
 dec DE_ICRS deg
 field Flux1 em W/m2
 field Flux2 em W/m2
-
-
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/wise_allsky.json
 ttl 604800
@@ -17275,16 +16239,10 @@ field spec_pvalue_pl em eV
 field redshift_lph_z_best em pc
 field redshift_info_distance gravity pc
 
-
-
 url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
 ttl 2592000
 on earth 43.073 -89.401
 path success.data.0.n_intervals em s
-
-
-
-
 
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 ttl 2592000
@@ -17347,12 +16305,6 @@ pmra pmra mas_yr
 pmdec pmdec mas_yr
 field radial_velocity advective m/s
 
-
-
-
-
-
-
 url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_modis_nrt_world.csv
 ttl 3600
 on earth 0 0
@@ -17371,8 +16323,6 @@ map data
 lat 41.52 deg
 lon -70.67 deg
 last data.v thermal degC
-
-
 
 url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={tomorrow}T00:00:00&catalog=GCMT&format=text&nodata=404
 ttl 86400
@@ -17428,8 +16378,6 @@ map .
 lat lat deg
 lon lon deg
 
-
-
 url https://services7.arcgis.com/yHbO69mL1QTGCPQG/arcgis/rest/services/PSF_harmful_phyto/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
 ttl 86400
 on earth 0 0
@@ -17437,8 +16385,6 @@ map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
 field properties.depth_m gravity m
-
-
 
 url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=country&startYear=2020&endYear=2020
 ttl 86400
