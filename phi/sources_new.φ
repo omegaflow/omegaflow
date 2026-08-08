@@ -1659,7 +1659,6 @@ lon_key sourceInfo.geoLocation.geogLocation.longitude
   field_in variable.variableName variable_name
   field_in values.0.value.0.value value
 
-
 url https://api.blitzortung.org/v1/strikes/latest?lat={lat}&lon={lon}&radius=100
 ttl 60
 force em
@@ -2104,3 +2103,28 @@ url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=hmF2&start
 ttl 900
 force em
 on earth 0 0
+
+url https://api.gbif.org/v1/occurrence/search?basisOfRecord=MACHINE_OBSERVATION&hasCoordinate=true&limit=300&decimalLatitude={lat}&decimalLongitude={lon}&radius=100
+ttl 3600
+force biotic
+on earth 0 0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+  field species species_name
+  field scientificName scientific_name
+  field eventDate observation_date
+  field occurrenceStatus occurrence_status
+  field coordinateUncertaintyInMeters coordinate_uncertainty_m
+
+url https://app.birdweather.com/api/v1/stations/{id}/detections?limit=100&from={today}T00:00:00Z
+ttl 300
+force biotic
+on earth 0 0
+map detections
+lat_key lat
+lon_key lon
+  field timestamp detection_timestamp
+  field confidence detection_confidence
+  field species.commonName species_common_name
+  field species.scientificName species_scientific_name
