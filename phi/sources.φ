@@ -7399,6 +7399,7 @@ lon_key geometry.coordinates.0
   field_in properties.site_status site_status
 
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=500
+on earth 0 0
 ttl 1800
 force gravity
 at sun 1.0
@@ -7420,6 +7421,7 @@ lon_key Site_Longitude(Degrees)
   field_in Angstrom_Exponent_440-870nm Angstrom_Exponent_440-870nm
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-10.0&lon1=60.0&lat2=55.0&lon2=150.0
+body earth
 ttl 1800
 force em
 rows
@@ -7688,6 +7690,7 @@ format universal
 extent 7.77e-6
 
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt,sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
+body earth
 ttl 3600
 force em
 map data
@@ -7708,6 +7711,7 @@ lon_key geometry.coordinates.0
   field_in duration duration
 
 url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
+body earth
 ttl 3600
 force em
 map .
@@ -7815,6 +7819,7 @@ field_in 7 velocity_km_s
 field_in 17 diameter_km
 
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD&date-min={today}&limit=100
+on earth 0 0
 ttl 3600
 force em
 at sun 1.0
@@ -7920,6 +7925,7 @@ format universal
 extent 4.78e-6
 
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1&FORMAT=json
+body earth
 ttl 3600
 force em
 map data
@@ -8041,6 +8047,7 @@ force em
 format universal
 
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
+body earth
 ttl 3600
 force em
 map data
@@ -10191,6 +10198,7 @@ rows
   field_in 4 unit
 
 url https://www.chime-frb.ca/catalog
+body earth
 ttl 86400
 force em
 on earth 49.321 -122.573
@@ -10236,6 +10244,7 @@ at sun 1.0
 format ephemeris_binary
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,st_teff,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
+body earth
 ttl 86400
 force gravity
 map .
@@ -10275,6 +10284,7 @@ dec_key dec
 dist_key 2 3.085677581e16
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,F1000i,PLGam+FROM+%22IX/67/4fgldr3%22
+body earth
 ttl 86400
 force em
 at sun 1.0
@@ -10946,6 +10956,7 @@ map results
   field_in subhalo_count subhalo_count
 
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=fp_psc&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,j_m,h_m,k_m,ph_qual,gal_contam
+body earth
 ttl 86400
 force em
 cmap .
@@ -11142,6 +11153,7 @@ rows
   field_in 6 year year
 
 url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr={target}
+body earth
 ttl 86400
 force em
 map object
@@ -11193,32 +11205,6 @@ map .
   field_in M M
   field_in H H
   field_in diameter diameter
-
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
-ttl 86400
-force gravity
-at sun 1.0
-map data
-  field_in full_name asteroid_name
-  field_in epoch epoch_jd
-  field_in H absolute_magnitude
-  field_in diameter estimated_diameter_km
-  field_in albedo geometric_albedo
-  field_in class orbit_class
-  field_in neo neo_flag
-
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
-ttl 86400
-force gravity
-at sun 1.0
-map data
-  field_in full_name asteroid_name
-  field_in epoch epoch_jd
-  field_in H absolute_magnitude
-  field_in diameter estimated_diameter_km
-  field_in albedo geometric_albedo
-  field_in class orbit_class
-  field_in neo neo_flag
 
 url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 ttl 86400
@@ -11377,6 +11363,7 @@ dec_key Dec_J2000
   field_in LastBurst LastBurst
 
 url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
+body earth
 ttl 86400
 force gravity
 at sun 1.0
@@ -11511,6 +11498,7 @@ cmap .
 tau_key _dist_m
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
+body earth
 ttl 86400
 force em
 map .
@@ -11770,6 +11758,7 @@ map .
   field_in vy vy
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,%22S1.4%22,MajAxis,MinAxis+FROM+%22VIII/65/nvss%22+WHERE+%22S1.4%22%3E50+ORDER+BY+%22S1.4%22+DESC
+body earth
 ttl 86400
 force em
 cmap .
@@ -11780,6 +11769,7 @@ dec_key DEJ2000
   field_in MinAxis minor_axis_arcsec
 
 url https://api.astrocats.space/{target}/
+on earth 0 0
 ttl 86400
 force em
   field ra ra
@@ -11915,6 +11905,7 @@ z_key zCMB
   field_in mBcorr mBcorr
 
 url https://raw.githubusercontent.com/omegaflow/omegaflow/main/static/data/saturn_rings_10k.json
+body earth
 ttl 86400
 force em
 at sun 1.0
@@ -12860,6 +12851,7 @@ field_in S1_4 flux_1400mhz_mjy
   field_in MajAxis MajAxis
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Reg,RAJ2000,DEJ2000,Dist,SimbadName+FROM+%22J/ApJS/229/28/table1%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Dist+ASC
+body earth
 ttl 86400
 force em
 cmap .
@@ -14068,6 +14060,7 @@ lon_key site.longitude
   field_in publication.0.year year
 
 url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
+body earth
 ttl 86400
 force seismic-surface
 map items
@@ -17363,6 +17356,7 @@ lon_key longitude
   field_in primary_fuel primary_fuel
 
 url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
+body earth
 ttl 2592000
 force em
 map data
@@ -17383,6 +17377,7 @@ field_in 13 dist_mpc
 field_in 14 log_m_sun
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+"{catalog}"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+body earth
 ttl 2592000
 force em
 map data
@@ -17933,10 +17928,15 @@ field_in elevation_m hydrosphere_ndbc_station_elevation_m
 field_in station_type hydrosphere_ndbc_station_type
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 300
 force seismic-surface
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
+body earth
 ttl 600
 force seismic-surface
 map features
@@ -17946,6 +17946,7 @@ field_in properties.mag geosphere_earthquake_mag
 field_in properties.sig geosphere_earthquake_significance
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
+body earth
 ttl 600
 force seismic-surface
 map features
@@ -17955,6 +17956,7 @@ field_in properties.mag geosphere_quake_mag
 field_in properties.sig geosphere_quake_sig
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
+body earth
 ttl 600
 force seismic-surface
 map features
@@ -17963,6 +17965,7 @@ lon_key geometry.coordinates.0
 field_in properties.mag geosphere_quake_mag
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
+body earth
 ttl 600
 force seismic-surface
 map features
@@ -17972,6 +17975,7 @@ field_in properties.mag geosphere_quake_mag
 field_in properties.sig geosphere_quake_sig
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
+body earth
 ttl 600
 force seismic-surface
 map features
@@ -17981,10 +17985,15 @@ field_in properties.mag geosphere_quake_mag
 field_in properties.sig geosphere_quake_sig
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={week_ago}&endtime={today}&minmagnitude=2.5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 600
 force seismic-surface
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
+body earth
 ttl 1800
 force seismic-surface
 map features
@@ -17993,6 +18002,7 @@ lon_key geometry.coordinates.0
 field_in properties.mag geosphere_quake_mag
 
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+on earth 0 0
 ttl 3600
 force em
 field data.0.4 cosmos_neo_first_dist_au
@@ -18001,10 +18011,15 @@ field data.0.10 cosmos_neo_first_h_mag
 count data cosmos_neo_count
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 3600
 force seismic-surface
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+body earth
 ttl 3600
 force seismic-surface
 map features
@@ -18013,89 +18028,132 @@ lon_key geometry.coordinates.0
 field_in properties.mag geosphere_quake_mag
 
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
+on earth 0 0
 ttl 3600
 force em
 field count orbital_asteroids_closer_than_moon
 
 url https://ssd-api.jpl.nasa.gov/cad.api
+on earth 0 0
 ttl 3600
 force em
 field count cneos_close_approach_count
 
 url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+body earth
 ttl 86400
 force em
 field total biosphere_ocean_occurrences_50km
 
 url https://api.obis.org/v3/statistics
+on earth 0 0
 ttl 86400
 force em
 field taxa biosphere_ocean_species_known
 field records biosphere_ocean_records_total
 field datasets biosphere_ocean_datasets_count
 
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
-ttl 86400
-force gravity
-at sun 1.0
-map data
-  field_in full_name asteroid_name
-  field_in epoch epoch_jd
-  field_in H absolute_magnitude
-  field_in diameter estimated_diameter_km
-  field_in albedo geometric_albedo
-  field_in class orbit_class
-  field_in neo neo_flag
-
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+body earth
 ttl 86400
 force seismic-surface
 
@@ -18528,19 +18586,6 @@ field_in order order
 field_in family family
 field_in country country_code
 
-url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
-ttl 86400
-force biotic
-body earth
-map results
-lat_key decimalLatitude
-lon_key decimalLongitude
-field_in species species_name
-field_in countryCode country_code
-field_in year observation_year
-field_in eventDate observation_date
-field_in basisOfRecord basis_of_record
-
 url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&decimalLatitude=-35,38&decimalLongitude=-20,55&basisOfRecord=HUMAN_OBSERVATION
 ttl 86400
 force biotic
@@ -18646,6 +18691,7 @@ field_in iucnRedListCategory iucn_category
 field_in date_year obs_year
 
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
+body earth
 ttl 3600
 force em
 at sun 1.0
@@ -18921,29 +18967,6 @@ field j_m mag_j
 field h_m mag_h
 field k_m mag_k
 
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
-ttl 86400
-force em
-at sun 1.0
-format text
-ra_key ra
-dec_key dec
-field j_m mag_j
-field h_m mag_h
-field k_m mag_k
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
-ttl 86400
-force em
-at sun 1.0
-format text
-ra_key ra
-dec_key dec
-field w1mpro mag_w1
-field w2mpro mag_w2
-field w3mpro mag_w3
-field w4mpro mag_w4
-
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,w3mpro,w4mpro,w3snr,w4snr,cc_flags+FROM+wise_allwise_p3as_psd+WHERE+ABS(dec-23.44*SIN(ra*3.14159265/180))<10+AND+w4snr>5+AND+w3mpro<8+ORDER+BY+w4mpro+ASC
 ttl 86400
 force em
@@ -18995,6 +19018,7 @@ field extended extended_object_flag
 field neo_flag near_earth_flag
 
 url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv&limit=5000
+body earth
 ttl 86400
 force em
 at sun 1.0
@@ -19007,6 +19031,7 @@ field h_m mag_h
 field k_m mag_k
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+designation,+j_m,+h_m,+k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+body earth
 ttl 604800
 force em
 map data
@@ -19030,12 +19055,6 @@ lat_key geojson.coordinates.1
 lon_key geojson.coordinates.0
 field_in species_guess biosphere_inaturalist_nearby
 
-url https://api.inaturalist.org/v1/observations?per_page=1
-ttl 600
-force em
-at sun 1.0
-path total_results biosphere_inaturalist_observations_total
-
 url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&geojson=true
 ttl 1800
 force diffusion
@@ -19053,13 +19072,6 @@ ttl 3600
 force em
 at sun 1.0
 path total_results biosphere_fungi_observations
-
-url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
-ttl 3600
-force em
-at sun 1.0
-field total_results biosphere_fungi_observations
-field species_count biosphere_fungi_species_count
 
 url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
 ttl 3600
@@ -19176,6 +19188,7 @@ field_in observed_on observation_date
 field_in place_guess locality
 
 url https://api.neotomadb.org/v2.0/data/datasets?datasettype=pollen&limit=2000&offset=0
+body earth
 ttl 86400
 force biotic
 map data
@@ -19188,6 +19201,7 @@ lon_key site.geography.coordinates.0
   field_in site.datasets.0.agerange.0.ageold age_old_yr
 
 url https://api.neotomadb.org/v2.0/data/datasets?datasettype=vertebrate+fauna&limit=2000&offset=0
+body earth
 ttl 86400
 force biotic
 map data
@@ -19200,6 +19214,7 @@ lon_key site.geography.coordinates.0
   field_in site.datasets.0.agerange.0.ageold age_old_yr
 
 url https://api.neotomadb.org/v2.0/data/datasets?datasettype=diatom&limit=2000&offset=0
+body earth
 ttl 86400
 force biotic
 map data
@@ -19212,6 +19227,7 @@ lon_key site.geography.coordinates.0
   field_in site.datasets.0.agerange.0.ageold age_old_yr
 
 url https://api.neotomadb.org/v2.0/data/datasets?datasettype=plant+macrofossils&limit=2000&offset=0
+body earth
 ttl 86400
 force biotic
 map data
@@ -19224,6 +19240,7 @@ lon_key site.geography.coordinates.0
   field_in site.datasets.0.agerange.0.ageold age_old_yr
 
 url https://coastwatch.noaa.gov/erddap/griddap/noaacrwbaa7dDaily.csv?bleaching_alert_area%5Blast%5D%5B(0.0):(30.0)%5D%5B(0.0):(60.0)%5D
+body earth
 ttl 86400
 force thermal
 map .
@@ -19232,6 +19249,7 @@ lon_key longitude
   field_in bleaching_alert_area bleach_alert_level
 
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{firms_map_key}/VIIRS_SNPP_NRT/World/1/{today}
+body earth
 ttl 600
 force thermal
 rows
@@ -20874,6 +20892,7 @@ field_in capacity_mw wri_plant_capacity_mw
 field_in primary_fuel wri_primary_fuel
 
 url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_coastline.geojson
+body earth
 ttl 86400
 force em
 map features
@@ -20882,6 +20901,7 @@ lon_key geometry.coordinates.0
 field_in properties.name coastline_name
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/mangrove_countries.json
+body earth
 ttl 86400
 force diffusion
 map data
@@ -20894,6 +20914,7 @@ field_in mangrove_area_km2 mangrove_area_km2
 field_in percent_mangrove mangrove_percent_total
 
 url https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv
+body earth
 ttl 86400
 force em
 format csv
@@ -20909,6 +20930,7 @@ field_in 12 icao_code
 field_in 13 iata_code
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/co2_emissions_countries.json
+body earth
 ttl 86400
 force diffusion
 map data
@@ -20920,6 +20942,7 @@ field_in co2_kt co2_kt
 field_in year data_year
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/pm25_exposure_countries.json
+body earth
 ttl 86400
 force diffusion
 map data
@@ -20931,6 +20954,7 @@ field_in pm25_ugm3 pm25_ugm3
 field_in year data_year
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/population_countries.json
+body earth
 ttl 86400
 force diffusion
 map data
@@ -20942,6 +20966,7 @@ field_in population population_estimate
 field_in year data_year
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_batse_grb.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -20952,6 +20977,7 @@ field_in trigger_num batse_grb_trigger_num
 field_in flux_64 batse_grb_flux_64
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_batse_pulsar.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -20961,6 +20987,7 @@ plx_key default_plx
 field_in obsid batse_pulsar_obsid
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/chandra_master.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -20987,6 +21014,7 @@ field_in category astro_chandra_master_category
 field_in class astro_chandra_master_class
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/fermi_4fgl.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21064,6 +21092,7 @@ field_in assoc_error_radius astro_fermi_4fgl_assoc_error_radius
 field_in analysis_flags astro_fermi_4fgl_analysis_flags
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/fermi_4lac.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21109,6 +21138,7 @@ field_in frac_variability_error astro_fermi_4lac_frac_variability_error
 field_in highest_energy_photon astro_fermi_4lac_highest_energy_photon
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_frb.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21123,6 +21153,7 @@ field_in Widthfitb frb_width_ms
 field_in SpInd frb_spectral_index
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_binaries.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21132,6 +21163,7 @@ plx_key parallax
 field_in phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_blue_supergiants.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21142,6 +21174,7 @@ field_in phot_g_mean_mag astro_gaia_blue_supergiants_phot_g_mean_mag
 field_in bp_rp astro_gaia_blue_supergiants_bp_rp
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag7.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21159,6 +21192,7 @@ field_in mh_gspphot astro_gaia_bright_vmag7_mh_gspphot
 field_in bp_rp astro_gaia_bright_vmag7_bp_rp
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag9.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21168,6 +21202,7 @@ plx_key parallax
 field_in phot_g_mean_mag astro_gaia_bright_vmag9_phot_g_mean_mag
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_giants.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21179,6 +21214,7 @@ field_in bp_rp astro_gaia_giants_bp_rp
 field_in teff_gspphot astro_gaia_giants_teff_gspphot
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_high_pm.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21190,6 +21226,7 @@ field_in pmra astro_gaia_high_pm_pmra
 field_in pmdec astro_gaia_high_pm_pmdec
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_hypervelocity.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21200,6 +21237,7 @@ field_in phot_g_mean_mag astro_gaia_hypervelocity_phot_g_mean_mag
 field_in radial_velocity astro_gaia_hypervelocity_radial_velocity
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_metal_poor.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21210,6 +21248,7 @@ field_in phot_g_mean_mag astro_gaia_metal_poor_phot_g_mean_mag
 field_in mh_gspphot astro_gaia_metal_poor_mh_gspphot
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx10.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21223,6 +21262,7 @@ field_in bp_rp astro_gaia_nearby_plx10_bp_rp
 field_in radial_velocity astro_gaia_nearby_plx10_radial_velocity
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_nearby_plx50.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21236,6 +21276,7 @@ field_in bp_rp astro_gaia_nearby_plx50_bp_rp
 field_in radial_velocity astro_gaia_nearby_plx50_radial_velocity
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_white_dwarfs.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21246,6 +21287,7 @@ field_in phot_g_mean_mag astro_gaia_white_dwarfs_phot_g_mean_mag
 field_in bp_rp astro_gaia_white_dwarfs_bp_rp
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_icecube.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21256,6 +21298,7 @@ field_in energy_tev icecube_neutrino_energy_tev
 field_in error_radius_deg icecube_error_radius_deg
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_agn.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21265,6 +21308,7 @@ plx_key default_plx
 field_in sb_flux integral_agn_flux
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_bsc.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21275,6 +21319,7 @@ field_in isgri_soft_rate integral_soft_rate
 field_in isgri_hard_rate integral_hard_rate
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_isgri4yr.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21284,6 +21329,7 @@ plx_key default_plx
 field_in distance integral_isgri_distance
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_var.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21294,6 +21340,7 @@ field_in flux_20_40kev integral_flux_20_40kev
 field_in var_20_40kev integral_variability
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/jpl_asteroids.json
+body earth
 ttl 604800
 force gravity
 cmap .
@@ -21305,6 +21352,7 @@ field_in a_au asteroid_semimajor_axis_au
 field_in i_deg asteroid_inclination_deg
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_gsc7yr.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21316,6 +21364,7 @@ field_in flux_3_4 maxi_flux_3_4
 field_in excess_variance maxi_excess_variance
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_master.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21325,6 +21374,7 @@ plx_key default_plx
 field_in time maxi_master_time
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_ssc.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21334,6 +21384,7 @@ plx_key default_plx
 field_in sb_flux maxi_ssc_flux
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_nicer_master.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21343,6 +21394,7 @@ plx_key default_plx
 field_in exposure nicer_exposure_s
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/nmdb_stations.json
+body earth
 ttl 604800
 force em
 map data
@@ -21354,12 +21406,14 @@ field_in hist_min nmdb_hist_min_rate
 field_in hist_max nmdb_hist_max_rate
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/nsidc_arctic_seaice.json
+on earth 0 0
 ttl 604800
 force thermal
 path data.-1.extent_mkm2 arctic_seaice_extent_mkm2
 path data.-1.missing arctic_seaice_missing
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_master.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21369,6 +21423,7 @@ plx_key default_plx
 field_in exposure rxte_exposure_s
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_slew.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21378,6 +21433,7 @@ plx_key default_plx
 field_in stop_time rxte_slew_stop_time
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_galaxies.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21390,6 +21446,7 @@ field_in plate astro_sdss_galaxies_plate
 field_in fiberID astro_sdss_galaxies_fiberID
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_stars.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21402,6 +21459,7 @@ field_in i astro_sdss_stars_i
 field_in psfMag_r astro_sdss_stars_psfMag_r
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/swift_bat.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21427,6 +21485,7 @@ field_in ctrpart_class astro_swift_bat_ctrpart_class
 field_in source_type astro_swift_bat_source_type
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/swift_grb.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21609,6 +21668,7 @@ field_in web_page astro_swift_grb_web_page
 field_in comments astro_swift_grb_comments
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/tevcat.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21631,6 +21691,7 @@ field_in y_size astro_tevcat_y_size
 field_in tevcat_url astro_tevcat_tevcat_url
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/twomass_psc.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21647,6 +21708,7 @@ field_in Cflg astro_twomass_psc_Cflg
 field_in Aflg astro_twomass_psc_Aflg
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21658,6 +21720,7 @@ field_in intNo vizier_2qz_intNo
 field_in intName vizier_2qz_intName
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_6dfgs.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21669,6 +21732,7 @@ field_in Nz vizier_6dfgs_Nz
 field_in bJmag vizier_6dfgs_bJmag
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_apass.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21698,6 +21762,7 @@ field_in e_i'mag astro_vizier_apass_e_i'mag
 field_in u_e_i'mag astro_vizier_apass_u_e_i'mag
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_carmenes.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21709,6 +21774,7 @@ field_in Name vizier_carmenes_Name
 field_in Type vizier_carmenes_Type
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_cosmic_voids.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21720,6 +21786,7 @@ field_in r vizier_cosmic_voids_r
 field_in p-value vizier_cosmic_voids_p-value
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_distant_halo.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21728,6 +21795,7 @@ dec_key DEJ2000
 plx_key default_plx
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_dla.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21738,6 +21806,7 @@ field_in zabs dla_redshift
 field_in NHI dla_neutral_hydrogen
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_first.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21749,6 +21818,7 @@ field_in p(S) vizier_first_p(S)
 field_in Fpeak vizier_first_Fpeak
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21760,6 +21830,7 @@ field_in m_VarNum vizier_gcvs_variables_m_VarNum
 field_in GCVS vizier_gcvs_variables_GCVS
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21787,6 +21858,7 @@ field_in Flag2 astro_vizier_glade_Flag2
 field_in Flag3 astro_vizier_glade_Flag3
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21799,6 +21871,7 @@ field_in GWGC vizier_glade2_GWGC
 field_in HyperLEDA vizier_glade2_HyperLEDA
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gleam.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21809,6 +21882,7 @@ field_in bckwide gleam_brightness_wide
 field_in lrmswide gleam_peak_flux_wide
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hecate.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21820,6 +21894,7 @@ field_in HyperLEDA vizier_hecate_HyperLEDA
 field_in NED vizier_hecate_NED
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hi4pi.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21828,6 +21903,7 @@ dec_key DEJ2000
 plx_key default_plx
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_lotss_dr3.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21839,6 +21915,7 @@ field_in e_RAJ2000 vizier_lotss_dr3_e_RAJ2000
 field_in e_DEJ2000 vizier_lotss_dr3_e_DEJ2000
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_nvss.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21850,6 +21927,7 @@ field_in Xpos vizier_nvss_Xpos
 field_in Ypos vizier_nvss_Ypos
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_orion_region.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21861,6 +21939,7 @@ field_in ePos vizier_orion_region_ePos
 field_in CTot vizier_orion_region_CTot
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21872,6 +21951,7 @@ field_in imag vizier_prigozhin_pulsars_imag
 field_in zphot vizier_prigozhin_pulsars_zphot
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_qso_variable.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21882,6 +21962,7 @@ field_in Mass qso_variable_mass
 field_in Dist qso_variable_dist_pc
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_sdss_qso.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21893,6 +21974,7 @@ field_in umag vizier_sdss_qso_umag
 field_in e_umag vizier_sdss_qso_e_umag
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21904,6 +21986,7 @@ field_in MajDiam vizier_snrs_MajDiam
 field_in MinDiam vizier_snrs_MinDiam
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_tycho2.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21948,6 +22031,7 @@ field_in posflg astro_vizier_tycho2_posflg
 field_in corr astro_vizier_tycho2_corr
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_ucac5.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21973,6 +22057,7 @@ field_in Hmag astro_vizier_ucac5_Hmag
 field_in Kmag astro_vizier_ucac5_Kmag
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_variable_stars.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21984,6 +22069,7 @@ field_in e variable_star_eccentricity
 field_in i variable_star_inclination
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_vsx_variables.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -21995,6 +22081,7 @@ field_in Name vizier_vsx_variables_Name
 field_in V vizier_vsx_variables_V
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_xmm4d13s.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -22005,6 +22092,7 @@ field_in Flux1 xmm4d13_flux1
 field_in Flux2 xmm4d13_flux2
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_young_stars.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -22016,6 +22104,7 @@ field_in FileName vizier_young_stars_FileName
 field_in SName vizier_young_stars_SName
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/wise_allsky.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -22028,6 +22117,7 @@ field_in w3mpro astro_wise_allsky_w3mpro
 field_in w4mpro astro_wise_allsky_w4mpro
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_xmm_slew.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -22037,6 +22127,7 @@ plx_key default_plx
 field_in flux_b8 xmm_slew_flux_b8
 
 url https://raw.githubusercontent.com/omegaflow/catalogs/main/xmm_sources.json
+body earth
 ttl 604800
 force em
 cmap .
@@ -22461,6 +22552,7 @@ field_in redshift_lph_flag_zconf astro_xmm_sources_redshift_lph_flag_zconf
 field_in redshift_info_distance astro_xmm_sources_redshift_info_distance
 
 url https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/master/airports.json
+body earth
 ttl 604800
 force em
 map .
@@ -22469,10 +22561,13 @@ lon_key lon
 field_in elevation technosphere_airport_elevation_ft
 
 url https://raw.githubusercontent.com/cossatot/gem-global-active-faults/master/geojson/gem_active_faults_harmonized.geojson
+on earth 0 0
+map features
 ttl 2592000
 force em
 
 url https://paleobiodb.org/data1.2/occs/list.json?limit=500&show=paleoloc
+body earth
 ttl 86400
 force biotic
 map records
@@ -22484,58 +22579,6 @@ lon_key paleolat
   field cxi cx_int_no
   field oid occurrence_id
 
-url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
-ttl 86400
-force gravity
-format text
-rows
-lat_key lat
-lon_key long
-field name meteorite_name
-field id meteorite_id
-field fall fall_type
-field year fall_year
-field recclass meteorite_class
-field mass mass_grams
-
-url https://raw.githubusercontent.com/omegaflow/omegaflow/main/static/data/saturn_rings_10k.json
-ttl 86400
-force em
-cmap .
-ra_key ra
-dec_key dec
-dist_key dist_au
-dist_scale 1.0
-field_in zone ring_zone
-
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2704+name,ra,dec,t90,fluence,peak_flux,time_trigger+FROM+batsegrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
-ttl 86400
-force em
-body earth
-format text
-rows
-ra_key ra
-dec_key dec
-field name burst_name
-field t90 duration_t90_s
-field fluence fluence_erg_cm2
-field peak_flux peak_flux_ph_cm2_s
-field time_trigger trigger_time_utc
-
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2704+name,ra,dec,t90,fluence,peak_flux,time_trigger+FROM+batsegrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
-ttl 86400
-force em
-body earth
-format text
-rows
-ra_key ra
-dec_key dec
-field name burst_name
-field t90 duration_t90_s
-field fluence fluence_erg_cm2
-field peak_flux peak_flux_ph_cm2_s
-field time_trigger trigger_time_utc
-
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+100+ra,dec,exposure+FROM+chanmaster
 ttl 86400
 force em
@@ -22545,79 +22588,6 @@ rows
 ra_key 0
 dec_key 1
 field_in 2 chandra_exposure_sec
-
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,F1000i,PLGam+FROM+%22IX/67/4fgldr3%22
-ttl 86400
-force em
-cmap .
-ra_key 0
-dec_key 1
-field_in 2 agn_gamma_flux_1000
-field_in 3 agn_pl_index
-
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3500+name,ra,dec,redshift,flux_1_100_gev,source_type,nu_syn+FROM+fermilac+WHERE+redshift+IS+NOT+NULL+AND+redshift%3E0+ORDER+BY+flux_1_100_gev+DESC
-ttl 86400
-force em
-body earth
-format text
-rows
-ra_key ra
-dec_key dec
-z_key redshift
-field name agn_name
-field flux_1_100_gev agn_flux_1gev
-field nu_syn synchrotron_peak_hz
-field source_type agn_class
-
-url https://www.chime-frb.ca/catalog
-ttl 86400
-force em
-last_line exosphere_chime_frb_count
-
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
-ttl 300
-force em
-body earth
-format text
-rows
-ra_key ra
-dec_key dec
-field name source_name
-field trigger_time burst_utc
-field duration burst_duration_s
-field peak_flux peak_flux_erg_cm2_s
-field fluence fluence_erg_cm2
-field type burst_classification
-
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
-ttl 300
-force em
-body earth
-format text
-rows
-ra_key ra
-dec_key dec
-field name source_name
-field trigger_time burst_utc
-field duration burst_duration_s
-field peak_flux peak_flux_erg_cm2_s
-field fluence fluence_erg_cm2
-field type burst_classification
-
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
-ttl 300
-force em
-body earth
-format text
-rows
-ra_key ra
-dec_key dec
-field name source_name
-field trigger_time burst_utc
-field duration burst_duration_s
-field peak_flux peak_flux_erg_cm2_s
-field fluence fluence_erg_cm2
-field type burst_classification
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
 ttl 300
@@ -22635,6 +22605,7 @@ field fluence fluence_erg_cm2
 field type burst_classification
 
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=50
+body earth
 ttl 300
 force gravity
 map data
@@ -22647,35 +22618,8 @@ field h_mag absolute_magnitude
 field diameter estimated_diameter_km
 field epoch approach_time_jd
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,flux_4_10,flux_3_10,flux_10_20,object_type,redshift,error_radius,hardness_ratio_1+FROM+maxigsc7yr+WHERE+flux_4_10+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC&FORMAT=text&limit=2000
-ttl 86400
-force em
+url http://maxi.riken.jp/alert/novae/json/novae_list.json
 body earth
-format text
-rows
-ra_key ra
-dec_key dec
-z_key redshift
-field name source_name
-field flux_4_10 flux_4_10_erg_cm2s
-field flux_3_10 flux_3_10_erg_cm2s
-field object_type object_class
-field error_radius pos_error_arcsec
-field hardness_ratio_1 hardness_ratio
-
-url http://maxi.riken.jp/alert/novae/json/novae_list.json
-ttl 3600
-force em
-map .
-ra_key ra
-dec_key dec
-field name source_name
-field type transient_type
-field date_detected detection_date
-field peak_flux peak_flux_mCrab
-field status alert_status
-
-url http://maxi.riken.jp/alert/novae/json/novae_list.json
 ttl 3600
 force em
 map .
@@ -22701,31 +22645,8 @@ field exposure exposure_time_ks
 field count_rate photon_count_rate_cts_s
 field type source_classification
 
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Name,Avg_Rate,Rate_Err+FROM+public.rxte_asm+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Avg_Rate+DESC&FORMAT=text
-ttl 86400
-force em
-body earth
-format text
-rows
-ra_key RAJ2000
-dec_key DEJ2000
-field Name source_name
-field Avg_Rate average_rate_ct_s
-field Rate_Err rate_error
-
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Name,Avg_Rate,Rate_Err+FROM+public.rxte_asm+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Avg_Rate+DESC&FORMAT=text
-ttl 86400
-force em
-body earth
-format text
-rows
-ra_key RAJ2000
-dec_key DEJ2000
-field Name source_name
-field Avg_Rate average_rate_ct_s
-field Rate_Err rate_error
-
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
+body earth
 ttl 86400
 force em
 map .
@@ -22737,6 +22658,7 @@ field g mag_g
 field i mag_i
 
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
+body earth
 ttl 86400
 force em
 map .
@@ -22747,34 +22669,6 @@ field g mag_g
 field u mag_u
 field i mag_i
 field z mag_z
-
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+2000+name,ra,dec,flux,redshift,source_type+FROM+swbat105m+WHERE+flux+IS+NOT+NULL+ORDER+BY+flux+DESC
-ttl 86400
-force em
-body earth
-format text
-rows
-ra_key 1
-dec_key 2
-z_key 4
-field_in 0 source_name
-field_in 3 hard_xray_flux
-field_in 5 source_type
-
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,t90,fluence,redshift,time_trigger,xrt_column,host_galaxy+FROM+swiftgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
-ttl 86400
-force em
-body earth
-format text
-rows
-ra_key ra
-dec_key dec
-field name burst_name
-field t90 duration_t90_s
-field fluence fluence_erg_cm2
-field redshift redshift
-field time_trigger trigger_time_utc
-field host_galaxy host_galaxy_name
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,energy_range,flux>100_mev,redshift,type,association+FROM+tevcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+name+ASC
 ttl 86400
@@ -22789,40 +22683,6 @@ field energy_range energy_range_tev
 field flux>100_mev gamma_flux
 field type source_type
 field association association
-
-url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv&limit=5000
-ttl 86400
-force em
-format text
-rows
-ra_key ra
-dec_key dec
-field designation source_name
-field j_m mag_j
-field h_m mag_h
-field k_m mag_k
-
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
-ttl 3600
-force em
-format text
-rows
-ra_key ra
-dec_key dec
-field w1mpro mag_w1
-field w2mpro mag_w2
-field mjd mjd_obs
-
-url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
-ttl 86400
-force em
-body earth
-format text
-rows
-ra_key ra
-dec_key dec
-field name xmm_src_name
-field ep_flux xmm_flux_erg_cm2s
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
 ttl 86400
@@ -22889,15 +22749,6 @@ ra_key ra
 dec_key dec
 plx_key parallax
 
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200000+source_id,ra,dec,parallax,pmra,pmdec,phot_g_mean_mag,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+SQRT%28POWER%28pmra,2%29+POWER%28pmdec,2%29%29+>+500+AND+parallax+>+0
-ttl 86400
-force em
-at sun 1.0
-cmap .
-ra_key ra
-dec_key dec
-plx_key parallax
-
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200000+source_id,ra,dec,parallax,phot_g_mean_mag,mh_gspphot+FROM+gaiadr3.gaia_source+WHERE+mh_gspphot+<+-2.0+AND+parallax+>+0
 ttl 86400
 force em
@@ -22933,3 +22784,1266 @@ cmap .
 ra_key ra
 dec_key dec
 plx_key parallax
+
+url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
+ttl 86400
+force diffusion
+format text
+on earth 0 0
+rows
+lat_key Latitude(decimal_degrees)
+lon_key Longitude(decimal_degrees)
+  field_in Site_Name site_name
+  field_in Elevation(m) elevation
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=lightning_potential,cape,convective_inhibition&models=icon_seamless&forecast_days=3&format=json
+ttl 300
+force em
+at sun 1
+map hourly.time
+field_in hourly.lightning_potential lightning_potential_jkg
+field_in hourly.cape cape_jkg
+field_in hourly.convective_inhibition cin_jkg
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m,cape,visibility&models=best_match&forecast_days=1&format=json
+ttl 3600
+force em
+at sun 1
+map hourly.time
+field_in hourly.temperature_2m temp_2m_c
+field_in hourly.precipitation precipitation_mm
+field_in hourly.cape cape_jkg
+field_in hourly.visibility visibility_m
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=boundary_layer_height,cape,lifted_index,convective_inhibition,wind_speed_10m,wind_direction_10m&models=era5_seamless&forecast_days=1&format=json
+ttl 86400
+force gravity
+at sun 1
+map hourly.time
+field_in hourly.boundary_layer_height pbl_height_m
+field_in hourly.cape convective_avail_potential_energy_J_kg
+field_in hourly.lifted_index lifted_index_K
+field_in hourly.convective_inhibition cin_J_kg
+field_in hourly.wind_speed_10m wind_speed_10m_kmh
+field_in hourly.wind_direction_10m wind_dir_10m_deg
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,soil_temperature_0cm&models=era5_seamless&forecast_days=1&format=json
+ttl 86400
+force diffusion
+at sun 1
+map hourly.time
+field_in hourly.soil_moisture_0_to_1cm sm_0_1cm_m3_m3
+field_in hourly.soil_moisture_1_to_3cm sm_1_3cm_m3_m3
+field_in hourly.soil_moisture_3_to_9cm sm_3_9cm_m3_m3
+field_in hourly.soil_moisture_9_to_27cm sm_9_27cm_m3_m3
+field_in hourly.soil_moisture_27_to_81cm sm_27_81cm_m3_m3
+field_in hourly.soil_temperature_0cm soil_temp_0cm_c
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,terrestrial_radiation,sunshine_duration&models=icon_seamless&forecast_days=3&format=json
+ttl 3600
+force em
+at sun 1
+map hourly.time
+field_in hourly.shortwave_radiation ghi_W_m2
+field_in hourly.direct_radiation dir_radiation_W_m2
+field_in hourly.diffuse_radiation dif_radiation_W_m2
+field_in hourly.direct_normal_irradiance dni_W_m2
+field_in hourly.terrestrial_radiation toa_radiation_W_m2
+field_in hourly.sunshine_duration sunshine_min_per_hr
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&application=batch5&format=json&station=8518750
+ttl 3600
+force thermal
+at sun 1
+map data
+field_in t timestamp_utc
+field_in v water_level_m
+field_in q data_quality_flag
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+ttl 86400
+force em
+at sun 1
+map data
+lat 40.7
+lon -74.01
+  field_in t observation_time_utc
+  field_in v water_level_m
+  field_in s water_level_sigma
+  field_in f quality_flags
+  field_in q quality_code
+
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions&units=metric
+ttl 300
+force diffusion
+on earth 0 0
+map stations
+lat_key lat
+lon_key lng
+  field_in id station_id
+  field_in name station_name
+  field_in state state
+  field_in timezone timezone
+  field_in tideType tide_type
+  field_in details.self station_url
+
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions&units=metric&tz=gmt
+ttl 3600
+force diffusion
+on earth 0 0
+map stations
+lat_key lat
+lon_key lng
+  field_in id station_id
+  field_in name station_name
+  field_in state state_code
+  field_in tideType tide_type
+  field_in timezone timezone_code
+
+url https://cdms.astro.uni-koeln.de/cgi-bin/cdmsinfo?file=e028503.cat&version=current
+format text
+ttl 86400
+force em
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 frequency_MHz
+  field_in 1 freq_uncertainty_MHz
+  field_in 2 log10_intensity_nm2MHz
+  field_in 3 degrees_freedom
+  field_in 4 lower_energy_cm1
+  field_in 5 upper_state_degeneracy
+  field_in 6 molecule_tag
+  field_in 7 qn_format
+  field_in 8 upper_quantum_number
+  field_in 9 lower_quantum_number
+
+url https://cdms.astro.uni-koeln.de/cgi-bin/cdmsinfo?file=e044502.cat&version=current
+format text
+ttl 86400
+force em
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 frequency_MHz
+  field_in 1 freq_error_MHz
+  field_in 2 log10_intensity
+  field_in 3 lower_energy_cm1
+  field_in 4 upper_degeneracy
+  field_in 5 molecule_tag
+
+url https://data.sensor.community/airrohr/v1/filter/type=SGP30
+ttl 300
+force diffusion
+on earth 0 0
+map .
+lat_key location.latitude
+lon_key location.longitude
+  field_in sensordatavalues.TVOC tvoc_ppb
+  field_in sensordatavalues.eCO2 eco2_ppm
+
+url https://data.sensor.community/airrohr/v1/filter/type=MICS6814
+ttl 300
+force diffusion
+on earth 0 0
+map .
+lat_key location.latitude
+lon_key location.longitude
+  field_in sensordatavalues.NO2 no2_ugm3
+  field_in sensordatavalues.CO co_ugm3
+  field_in sensordatavalues.NH3 nh3_ugm3
+  field_in location.altitude altitude_m
+
+url https://data.sensor.community/airrohr/v1/filter/box=35,354,70,40
+ttl 86400
+force seismic-body
+on earth 0 0
+map .
+lat_key location.latitude
+lon_key location.longitude
+  field_in sensordatavalues.P1 pm10_ugm3
+  field_in sensordatavalues.P2 pm25_ugm3
+  field_in sensordatavalues.temperature temp_c
+  field_in sensordatavalues.humidity rh_pct
+
+url https://data.sensor.community/airrohr/v1/filter/type=SEN5X
+ttl 300
+force diffusion
+on earth 0 0
+map .
+lat_key location.latitude
+lon_key location.longitude
+  field_in sensordatavalues.NOx_index nox_index
+  field_in sensordatavalues.VOC_index voc_index
+  field_in sensordatavalues.P1 pm10_ugm3
+  field_in sensordatavalues.P2 pm25_ugm3
+  field_in location.altitude altitude_m
+
+url https://datalab.noirlab.edu/query?sql=SELECT+TOP+3000+ls_id,ra,dec,type,z_phot_median,mag_r,mag_g,mag_z,snr_r+FROM+ls_dr10.tractor+WHERE+ra+BETWEEN+150+AND+152+AND+dec+BETWEEN+1+AND+3+AND+snr_r>10+ORDER+BY+mag_r+ASC&fmt=csv
+format text
+ttl 86400
+force gravity
+at sun 1
+rows
+ra_key ra
+dec_key dec
+  field_in ls_id source_id
+  field_in type morphological_type
+  field_in z_phot_median photometric_redshift
+  field_in mag_r r_magnitude
+  field_in mag_g g_magnitude
+  field_in mag_z z_magnitude
+  field_in snr_r r_band_snr
+
+url https://esgf-node.llnl.gov/esg-search/search?project=CMIP6&experiment_id=historical&variable=npp,gpp,nbp&frequency=mon&replica=false&latest=true&limit=100&format=application%2Fsolr%2Bjson
+ttl 86400
+force diffusion
+on earth 0 0
+map response.docs
+lat_key .
+lon_key .
+  field_in id dataset_id
+  field_in model_cohort model_name
+  field_in institution_id institution
+  field_in experiment_id experiment_type
+  field_in variable_id variable_name
+  field_in nominal_resolution spatial_resolution
+  field_in version data_version
+  field_in url.0 opendap_url
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+500+pl_name,ra,dec,pl_radj,pl_bmassj,pl_trandep,pl_tranmid,pl_orbper,st_teff,st_rad,st_mass,sy_dist+FROM+ps+WHERE+pl_trandep+IS+NOT+NULL+AND+ra+IS+NOT+NULL+ORDER+BY+pl_trandep+DESC&FORMAT=csv
+format text
+ttl 300
+force gravity
+at sun 1
+rows
+ra_key ra
+dec_key dec
+  field_in pl_name planet_name
+  field_in pl_radj planet_radius_rjup
+  field_in pl_bmassj planet_mass_mjup
+  field_in pl_trandep transit_depth_ppt
+  field_in pl_tranmid transit_midpoint_bjd
+  field_in pl_orbper orbital_period_d
+  field_in st_teff stellar_teff_K
+  field_in sy_dist system_distance_pc
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+500+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_rvamp,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Radial+Velocity'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
+format text
+ttl 86400
+force thermal
+at sun 1
+rows
+ra_key ra
+dec_key dec
+  field_in pl_name planet_name
+  field_in pl_massj planet_mass_MJup
+  field_in pl_radj planet_radius_RJup
+  field_in pl_orbsmax semimajor_axis_au
+  field_in pl_orbeccen eccentricity
+  field_in pl_rvamp rv_semi_amplitude_m_s
+  field_in st_teff stellar_teff_K
+  field_in sy_dist system_distance_pc
+  field_in disc_year discovery_year
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&classification__BNS__gte=0.3&ordering=-created&per_page=50
+ttl 86400
+force em
+at sun 1
+map superevents
+lat 0.0
+lon 0.0
+  field_in superevent_id event_id
+  field_in t_0 gps_time_s
+  field_in far false_alarm_rate_Hz
+  field_in classification.BNS probability_bns
+  field_in classification.NSBH probability_nsbh
+  field_in distance.mean luminosity_distance_Mpc
+  field_in labels event_labels
+  field_in created created_utc
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+id,ra,dec,lp_type,lp_zBEST,lp_zBEST_68_low,lp_zBEST_68_high,lp_mass_med,id_i,mag_i,mag_Y,mag_J,mag_H+FROM+cosmos2020_classic+WHERE+ra+IS+NOT+NULL+AND+lp_zBEST>0+AND+mag_i<25+ORDER+BY+mag_i+ASC
+format text
+ttl 86400
+force em
+at sun 1
+rows
+ra_key ra
+dec_key dec
+z_key lp_zBEST
+  field_in id cosmos_id
+  field_in lp_type galaxy_type
+  field_in lp_zBEST_68_low z_68_lower
+  field_in lp_zBEST_68_high z_68_upper
+  field_in lp_mass_med log10_stellar_mass
+  field_in mag_i i_band_magnitude
+  field_in mag_J j_band_magnitude
+  field_in mag_H h_band_magnitude
+
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel&outrows=5000&constraints=ngoodobsrel%3E50+AND+magrms%3E0.05
+format text
+ttl 3600
+force em
+at sun 1
+rows
+ra_key ra
+dec_key dec
+  field_in medianmag median_mag
+  field_in magrms mag_rms
+  field_in filterid ztf_filter
+  field_in ngoodobsrel n_good_obs
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,i1_f_ap,i2_f_ap,i4_f_ap,m1_f_ap+FROM+spitzer_sage_smc_irac_m1+WHERE+ra+IS+NOT+NULL+AND+i1_f_ap>0.05+ORDER+BY+i1_f_ap+DESC
+format text
+ttl 86400
+force em
+at sun 1
+rows
+ra_key ra
+dec_key dec
+  field_in designation source_id
+  field_in i1_f_ap irac_3_6um_mJy
+  field_in i2_f_ap irac_4_5um_mJy
+  field_in i4_f_ap irac_8_0um_mJy
+  field_in m1_f_ap mips_24um_mJy
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+id,ra,dec,ez_z_phot,ez_z_68l,ez_z_68u,ez_mass,mag_i,mag_Y,mag_J,mag_H,type+FROM+cosmos2020_farmer+WHERE+ra+IS+NOT+NULL+AND+ez_z_phot>0+AND+mag_i<25+ORDER+BY+ez_z_phot+ASC
+format text
+ttl 86400
+force em
+at sun 1
+rows
+ra_key ra
+dec_key dec
+z_key ez_z_phot
+  field_in id cosmos_id
+  field_in ez_z_68l photo_z_lower_68
+  field_in ez_z_68u photo_z_upper_68
+  field_in ez_mass stellar_mass_log_solar
+  field_in mag_i i_band_mag
+  field_in mag_J j_band_mag
+  field_in type morphological_type
+
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>={today}
+format text
+ttl 300
+force em
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in time observation_date
+  field_in wavelength wavelength_nm
+  field_in ssi spectral_irradiance_W_m2_nm
+  field_in uncertainty ssi_uncertainty_W_m2_nm
+
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,ocean_current_velocity&forecast_days=7&format=json
+ttl 3600
+force diffusion
+at sun 1
+map hourly.time
+field_in hourly.wave_height wave_height_m
+field_in hourly.wave_period wave_period_s
+field_in hourly.wave_direction wave_dir_deg
+field_in hourly.swell_wave_height swell_height_m
+field_in hourly.ocean_current_velocity current_ms
+
+url https://my.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1D-m.csv?uo%5Blast%5D%5B0%5D%5B(-60.0):(65.0):4%5D%5B(-80.0):(20.0):4%5D,vo%5Blast%5D%5B0%5D%5B(-60.0):(65.0):4%5D%5B(-80.0):(20.0):4%5D
+format text
+ttl 300
+force acoustic
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in uo current_east_ms
+  field_in vo current_north_ms
+
+url https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D,adt%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+ttl 86400
+force seismic-surface
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in sla sea_level_anomaly_m
+  field_in adt absolute_dynamic_topography_m
+
+url https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-65.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D,ugosa%5Blast%5D%5B(-65.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D,vgosa%5Blast%5D%5B(-65.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D
+format text
+ttl 86400
+force acoustic
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in sla sea_level_anomaly_m
+  field_in ugosa geostrophic_anomaly_u_m_s
+  field_in vgosa geostrophic_anomaly_v_m_s
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_wav_anfc_0.083deg_PT3H-i.csv?VHM0%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VMDR%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VTM10%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D
+format text
+ttl 86400
+force thermal
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in VHM0 sig_wave_height_m
+  field_in VMDR mean_wave_dir_deg
+  field_in VTM10 mean_wave_period_s
+
+url https://nrt.cmems-du.eu/erddap/tabledap/cmems_obs_mob_glo_phy-cur_nrt_0.1deg-SSH-eddy-track_PT1H.csv?latitude,longitude,time,radius_e,amplitude,speed_radius,eddy_type&time>={today}T00:00:00Z&orderBy(%22time%22)&distinct()
+format text
+ttl 86400
+force diffusion
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in time detection_time
+  field_in radius_e eddy_effective_radius_km
+  field_in amplitude ssh_amplitude_m
+  field_in speed_radius rotation_speed_m_s
+  field_in eddy_type cyclonic_anticyclonic
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D,no3%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+ttl 86400
+force diffusion
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in o2 oxygen_mmol_m3
+  field_in no3 nitrate_mmol_m3
+
+url https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-rep-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D,ugos%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D,vgos%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D
+format text
+ttl 86400
+force acoustic
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in sla sea_level_anomaly_m
+  field_in ugos geostrophic_u_m_s
+  field_in vgos geostrophic_v_m_s
+
+url https://nrt.cmems-du.eu/erddap/griddap/SST_GLO_SST_L4_NRT_OBSERVATIONS_010_001.csv?analysed_sst%5Blast%5D%5B(-60.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D,sea_ice_fraction%5Blast%5D%5B(-60.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D
+format text
+ttl 3600
+force seismic-body
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in analysed_sst sst_K_l4
+  field_in sea_ice_fraction sea_ice_concentration_0_1
+
+url https://nrt.cmems-du.eu/erddap/tabledap/dataset-ssalto-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-60.0):(60.0):2%5D%5B(-180.0):(180.0):2%5D,ugos%5Blast%5D%5B(-60.0):(60.0):2%5D%5B(-180.0):(180.0):2%5D,vgos%5Blast%5D%5B(-60.0):(60.0):2%5D%5B(-180.0):(180.0):2%5D
+format text
+ttl 3600
+force diffusion
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in sla sea_level_anomaly_m
+  field_in ugos geostrophic_u_m_s
+  field_in vgos geostrophic_v_m_s
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sst_glo_phy_nrt_l4_P1D-m.csv?analysed_sst%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D,analysis_error%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+ttl 86400
+force diffusion
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in analysed_sst sst_k
+  field_in analysis_error sst_error_k
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1M-m.csv?thetao%5Blast%5D%5B0%5D%5B(-70.0):(70.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+ttl 86400
+force thermal
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in thetao ocean_potential_temp_c_surface
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_mynrt_l4_P1D-m.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+ttl 86400
+force acoustic
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in sla sea_level_anomaly_m
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D,so%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+ttl 86400
+force diffusion
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in thetao ocean_potential_temp_c
+  field_in so ocean_salinity_psu
+
+url https://nrt.cmems-du.eu/erddap/griddap/dataset-oc-glo-bio-multi-l4-chl_4km_daily-rt.csv?CHL%5Blast%5D%5B(-70.0):(70.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+ttl 3600
+force diffusion
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in CHL chlorophyll_a_mg_m3
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-ssh_nrt_allsat-l4-duacs-0.25deg_P1D.csv?adt%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+format text
+ttl 86400
+force gravity
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in adt absolute_dynamic_topography_m
+
+url https://nrt.cmems-du.eu/erddap/griddap/dataset-oc-arc-bio-multi-l4-chl_1km_daily-rt.csv?CHL%5Blast%5D%5B(60.0):(90.0):3%5D%5B(-180.0):(180.0):3%5D
+format text
+ttl 86400
+force em
+on earth 0 0
+rows
+lat_key latitude
+lon_key longitude
+  field_in CHL arctic_chlorophyll_a_mg_m3
+
+url https://nwis.waterdata.usgs.gov/usa/nwis/peak?state_cd=all&site_no=&agency_cd=USGS&por_peak_begin_date=&por_peak_end_date=&format=rdb&date_format=YYYY-MM-DD&peak_begin_date={year}-01-01&peak_end_date={year}-12-31
+format text
+ttl 3600
+force diffusion
+on earth 0 0
+rows
+lat_key dec_lat_va
+lon_key dec_long_va
+  field_in site_no site_code
+  field_in station_nm station_name
+  field_in peak_dt peak_date
+  field_in peak_va peak_discharge_cfs
+  field_in peak_tm peak_time
+  field_in gage_ht gage_height_ft
+
+url https://omniweb.gsfc.nasa.gov/cgi/nx1.cgi?activity=retrieve&res=hour&spacecraft=omni2&start_date={year}{month}{day}&end_date={year}{month}{day}&vars=13,14,15,16,17,18,19,20,21,22,23&format=csv
+format text
+ttl 86400
+force gravity
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 year
+  field_in 1 doy
+  field_in 2 hour
+  field_in 3 bx_nT
+  field_in 4 by_nT
+  field_in 5 bz_nT
+  field_in 6 sw_speed_km_s
+  field_in 7 sw_density_cm3
+  field_in 8 sw_temp_K
+  field_in 9 ae_nT
+  field_in 10 kp_index
+
+url https://opendap.nccs.nasa.gov/dods/GEOS-5/fp/0.25_deg/assim/inst3_3d_asm_Np.latest.info
+format text
+ttl 86400
+force gravity
+on earth 0 0
+rows
+lat_key lat
+lon_key lon
+  field_in T temperature_K
+  field_in U u_wind_m_s
+  field_in V v_wind_m_s
+  field_in QV specific_humidity_kg_kg
+  field_in O3 ozone_ppm
+  field_in RH relative_humidity_pct
+  field_in lev pressure_level_hPa
+
+url https://opendap.nccs.nasa.gov/dods/GEOS-5/fp/0.25_deg/assim/tavg1_2d_aer_Nx.latest.info
+format text
+ttl 3600
+force diffusion
+on earth 0 0
+rows
+lat_key lat
+lon_key lon
+  field_in DUSMASS dust_surface_mass_concentration_kg_m3
+  field_in DUCMASS dust_column_mass_ug_m2
+  field_in TOTEXTTAU total_aod_550nm
+  field_in TOTSCATAU total_scattering_aod
+
+url https://opensky-network.org/api/states/all?lamin={lat_min}&lomin={lon_min}&lamax={lat_max}&lomax={lon_max}
+ttl 86400
+force em
+at sun 1.0
+map states
+lat_key 6
+lon_key 5
+  field_in 0 icao24
+  field_in 1 callsign
+  field_in 2 origin_country
+  field_in 7 altitude_m
+  field_in 9 velocity_m_s
+  field_in 10 true_track_deg
+  field_in 11 vertical_rate_m_s
+  field_in 13 on_ground
+
+url https://opensky-network.org/api/states/all?lamin=35&lomin=-10&lamax=70&lomax=40
+ttl 86400
+force diffusion
+at sun 1.0
+map states
+lat_key 6
+lon_key 5
+field_in 0 icao24
+field_in 1 callsign
+field_in 7 altitude_m
+field_in 9 velocity_ms
+field_in 10 track_deg
+
+url https://psl.noaa.gov/data/correlation/ao.data
+format text
+ttl 86400
+force em
+at sun 1
+rows
+lat 90.0
+lon 0.0
+  field_in 0 year
+  field_in 1 jan
+  field_in 2 feb
+  field_in 3 mar
+  field_in 4 apr
+  field_in 5 may
+  field_in 6 jun
+  field_in 7 jul
+  field_in 8 aug
+  field_in 9 sep
+  field_in 10 oct
+  field_in 11 nov
+  field_in 12 dec
+
+url https://psl.noaa.gov/data/correlation/amon.us.data
+format text
+ttl 86400
+force em
+at sun 1
+rows
+lat 40.0
+lon -40.0
+  field_in 0 year
+  field_in 1 jan
+  field_in 2 feb
+  field_in 3 mar
+  field_in 4 apr
+  field_in 5 may
+  field_in 6 jun
+  field_in 7 jul
+  field_in 8 aug
+  field_in 9 sep
+  field_in 10 oct
+  field_in 11 nov
+  field_in 12 dec
+
+url https://psl.noaa.gov/data/correlation/nao.data
+ttl 86400
+force diffusion
+format text
+at sun 1
+rows
+lat 65.0
+lon -20.0
+  field_in 0 year
+  field_in 1 jan
+  field_in 2 feb
+  field_in 3 mar
+  field_in 4 apr
+  field_in 5 may
+  field_in 6 jun
+  field_in 7 jul
+  field_in 8 aug
+  field_in 9 sep
+  field_in 10 oct
+  field_in 11 nov
+  field_in 12 dec
+
+url https://service.iris.edu/fdsnws/station/1/query?network=YT&level=station&format=text&nodata=404
+format text
+ttl 86400
+force gravity
+on earth 0 0
+rows
+lat_key Latitude
+lon_key Longitude
+  field_in Network network_code
+  field_in Station station_code
+  field_in Elevation elevation_m
+  field_in SiteDescription site_name
+  field_in StartTime operation_start
+
+url https://service.iris.edu/fdsnws/station/1/query?network=IU&level=station&format=text&nodata=404
+format text
+ttl 86400
+force seismic-body
+on earth 0 0
+rows
+lat_key Latitude
+lon_key Longitude
+  field_in Network network_code
+  field_in Station station_code
+  field_in Elevation elevation_m
+  field_in SiteDescription site_description
+  field_in StartTime start_date
+
+url https://service.iris.edu/fdsnws/station/1/query?network=II&level=station&format=text&nodata=404
+format text
+ttl 300
+force seismic-body
+on earth 0 0
+rows
+lat_key Latitude
+lon_key Longitude
+  field_in Network network_code
+  field_in Station station_code
+  field_in Location location_code
+  field_in Elevation elevation_m
+  field_in SiteDescription site_name
+  field_in StartTime start_date
+
+url https://service.iris.edu/fdsnws/station/1/query?network=IC,AU&level=station&format=text&nodata=404
+format text
+ttl 60
+force seismic-body
+on earth 0 0
+rows
+lat_key Latitude
+lon_key Longitude
+  field_in Network network_code
+  field_in Station station_code
+  field_in Elevation elevation_m
+  field_in SiteDescription location_name
+  field_in StartTime deployment_start
+
+url https://services.swpc.noaa.gov/products/alerts.json
+ttl 86400
+force em
+at sun 1
+map .
+lat 0.0
+lon 0.0
+  field_in issue_time alert_issue_time
+  field_in message alert_message_text
+  field_in product_id product_identifier
+
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+main_id,ra,dec,plx_value,rvz_redshift,sp_type,otype,V+FROM+basic+JOIN+allfluxes+ON+basic.oid%3Dallfluxes.oidref+WHERE+V<9+AND+ra+IS+NOT+NULL+ORDER+BY+V+ASC
+ttl 86400
+force em
+format text
+at sun 1
+rows
+ra_key ra
+dec_key dec
+  field_in main_id object_name
+  field_in otype object_type_code
+  field_in sp_type spectral_type
+  field_in rvz_redshift redshift
+  field_in V v_magnitude
+
+url https://spec.jpl.nasa.gov/ftp/pub/catalog/c018003.cat
+format text
+ttl 86400
+force em
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 frequency_MHz
+  field_in 1 freq_error_MHz
+  field_in 2 log10_intensity_nm2MHz
+  field_in 3 degrees_freedom
+  field_in 4 lower_energy_cm1
+  field_in 5 upper_degen
+  field_in 6 tag
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'&CAL_FORMAT='BOTH'&SKIP_DAYLT='NO'
+format text
+ttl 3600
+force gravity
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 datetime_calendar
+  field_in 2 ra_hms
+  field_in 3 dec_dms
+  field_in 8 range_au
+  field_in 9 range_rate_km_s
+  field_in 12 vmag
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'&CAL_FORMAT='BOTH'
+format text
+ttl 3600
+force gravity
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 datetime_calendar
+  field_in 2 ra_hms
+  field_in 3 dec_dms
+  field_in 8 range_au
+  field_in 9 range_rate_km_s
+  field_in 12 vmag
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3D65803%3BDimorphos'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+format text
+ttl 86400
+force gravity
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 epoch_date
+  field_in 1 eccentricity
+  field_in 2 perihelion_dist_au
+  field_in 3 inclination_deg
+  field_in 4 long_asc_node_deg
+  field_in 5 arg_perihelion_deg
+  field_in 6 time_perihelion_jd
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'&CAL_FORMAT='BOTH'
+format text
+ttl 3600
+force gravity
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 1 epoch_jd
+  field_in 2 eccentricity
+  field_in 3 perihelion_dist_au
+  field_in 4 inclination_deg
+  field_in 5 long_asc_node_deg
+  field_in 6 arg_perihelion_deg
+  field_in 7 time_perihelion_jd
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,20,23,24'&CAL_FORMAT='BOTH'
+format text
+ttl 3600
+force gravity
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 datetime_calendar
+  field_in 2 ra_hms
+  field_in 3 dec_dms
+  field_in 8 range_km
+  field_in 9 range_rate_km_s
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Fpeak,Fint,Maj,Min+FROM+"VIII/92/first14"+WHERE+Fpeak%3E10+ORDER+BY+Fpeak+DESC
+format text
+ttl 3600
+force em
+at sun 1
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Fpeak flux_peak_mjy
+  field_in Fint flux_int_mjy
+  field_in Maj major_axis_arcsec
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,"S1.4",MajAxis,MinAxis+FROM+"VIII/65/nvss"+WHERE+"S1.4"%3E50+ORDER+BY+"S1.4"+DESC
+format text
+ttl 86400
+force em
+at sun 1
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in S1.4 flux_1400mhz_mjy
+  field_in MajAxis major_axis_arcsec
+  field_in MinAxis minor_axis_arcsec
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,"S1.4",MajAxis+FROM+"VIII/65/nvss"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))=1
+format text
+ttl 86400
+force em
+at sun 1
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in S1.4 flux_1400mhz_mjy
+  field_in MajAxis major_axis_arcsec
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Type,Period,max,min,n_min+FROM+"B/vsx/vsx"+WHERE+(Type+LIKE+'CV%25'+OR+Type+LIKE+'UG%25'+OR+Type+LIKE+'CN%25'+OR+Type+LIKE+'AM%25'+OR+Type+LIKE+'DQ%25')+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
+format text
+ttl 86400
+force em
+at sun 1
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Name star_name
+  field_in Type variability_type
+  field_in Period period_d
+  field_in max max_magnitude
+  field_in min min_magnitude
+
+url https://volcano.si.edu/news/WeeklyVolcanoRSS.xml
+format text
+ttl 86400
+force thermal
+at sun 1
+rows
+  field_in title volcano_report_title
+  field_in description activity_description
+  field_in pubDate publication_date
+
+url https://volcanoes.usgs.gov/vhp/feeds/vaalatom.xml
+format text
+ttl 86400
+force seismic-body
+at sun 1
+rows
+  field_in title volcano_name
+  field_in summary alert_description
+  field_in updated update_time
+  field_in georss:point location_lat_lon
+
+url http://www.bom.gov.au/climate/mjo/graphics/rmm.74toRealtime.txt
+format text
+ttl 86400
+force acoustic
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 year
+  field_in 1 month
+  field_in 2 day
+  field_in 3 rmm1
+  field_in 4 rmm2
+  field_in 5 phase
+  field_in 6 amplitude
+
+url https://www.gdacs.org/xml/rss.xml
+format text
+ttl 86400
+force acoustic
+at sun 1
+rows
+  field_in title alert_title
+  field_in description alert_description
+  field_in pubDate publication_date
+  field_in gdacs:alertlevel alert_level
+  field_in gdacs:country country
+  field_in gdacs:alertscore alert_score
+  field_in georss:point location_lat_lon
+
+url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form?itype=ymd&yr={year}&mo={month}&dy=01&otype=ymd&oyr={year}&omo={month}&ody={day}&jyr=1976&jday=1&ojyr=2025&ojday=366&nday=1&lmw=5&umw=10&lms=0&ums=10&lmb=0&umb=10&llat=-90&ulat=90&llon=-180&ulon=180&lhd=0&uhd=1000&lts=-9999&uts=9999&lpe1=0&upe1=90&lpe2=0&upe2=90&list=6
+format text
+ttl 3600
+force seismic-body
+on earth 0 0
+rows
+lat_key lat
+lon_key lon
+  field_in event_name event_name
+  field_in date event_date
+  field_in time event_time
+  field_in lat centroid_lat
+  field_in lon centroid_lon
+  field_in depth centroid_depth_km
+  field_in mw moment_magnitude
+  field_in strike1 strike_1_deg
+  field_in dip1 dip_1_deg
+  field_in rake1 rake_1_deg
+
+url http://www.isc.ac.uk/cgi-bin/web-db-run?request=BULLETIN&out_format=CSV&searchshape=RECT&bot_lat=-90&top_lat=90&left_lon=-180&right_lon=180&start_year={year}&start_mon={month}&start_day={day}&start_time=00%3A00%3A00&end_year={year}&end_mon={month}&end_day={day}&end_time=23%3A59%3A59&min_mag=4.5&req_mag_type=mb&req_mag_agcy=ISC&include_phases=N&include_headers=N
+format text
+ttl 86400
+force seismic-body
+on earth 0 0
+rows
+lat_key Latitude
+lon_key Longitude
+  field_in EventID event_id
+  field_in Time event_time
+  field_in Depth depth_km
+  field_in Magnitude magnitude
+  field_in MagType mag_type
+  field_in Author agency
+
+url https://www.minorplanetcenter.net/iau/lists/ObsCodes.html
+format text
+ttl 60
+force acoustic
+on earth 0 0
+rows
+lat_key lat
+lon_key lon
+  field_in 0 obs_code
+  field_in 1 longitude_deg
+  field_in 2 rho_cos_phi
+  field_in 3 rho_sin_phi
+  field_in 4 observatory_name
+
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ACTIVE.list.v04r00.csv
+format text
+ttl 86400
+force acoustic
+on earth 0 0
+rows
+lat_key LAT
+lon_key LON
+  field_in NAME storm_name
+  field_in SID storm_id
+  field_in ISO_TIME timestamp_utc
+  field_in WMO_WIND max_wind_kt
+  field_in WMO_PRES min_pressure_hpa
+  field_in DIST2LAND dist_to_land_km
+  field_in SUBBASIN subbasin_code
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly&dataTypes=MLY-TMAX-NORMAL,MLY-TMIN-NORMAL,MLY-PRCP-NORMAL&stations=GM000010501,UK000003005,US1NYNW0001&startDate=2010-01-01&endDate=2010-12-31&format=json
+ttl 86400
+force em
+on earth 0 0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION station_id
+  field_in NAME station_name
+  field_in DATE obs_month
+  field_in MLY_TMAX_NORMAL monthly_tmax_normal_c
+  field_in MLY_TMIN_NORMAL monthly_tmin_normal_c
+  field_in MLY_PRCP_NORMAL monthly_precip_normal_mm
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND,WDF5,WSF5&stations=GM000003026,GM000010501,UK000003668,US1NYNW0001&startDate={today}&endDate={today}&format=json
+ttl 86400
+force thermal
+on earth 0 0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION station_id
+  field_in NAME station_name
+  field_in DATE obs_date
+  field_in TMAX max_temp_tenth_c
+  field_in TMIN min_temp_tenth_c
+  field_in PRCP precipitation_tenth_mm
+  field_in SNOW snowfall_mm
+  field_in AWND avg_wind_speed_tenth_ms
+  field_in WSF5 fastest_5s_wind_speed
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB&stations=72420314733,10637099999,47678099999,94120099999&startDate={today}&endDate={today}&format=json
+ttl 86400
+force thermal
+on earth 0 0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION station_id
+  field_in NAME station_name
+  field_in DATE obs_date
+  field_in TEMP mean_temp_f
+  field_in MAX max_temp_f
+  field_in MIN min_temp_f
+  field_in PRCP precipitation_inch
+  field_in WDSP wind_speed_kt
+  field_in SLP sea_level_pressure_mb
+  field_in VISIB visibility_miles
+
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?startYear=1900&endYear={year}&minMagnitude=7.0&maxResults=2000&format=json
+ttl 86400
+force acoustic
+on earth 0 0
+map items
+lat_key latitude
+lon_key longitude
+  field_in eqId earthquake_id
+  field_in year event_year
+  field_in mo event_month
+  field_in dy event_day
+  field_in hour event_hour
+  field_in eqMagnitude magnitude
+  field_in depth depth_km
+  field_in deaths fatalities
+  field_in totalDeaths total_deaths
+  field_in totalDamage total_damage_million_usd
+  field_in totalInjuries injuries
+
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxResults=1000&format=json
+ttl 3600
+force diffusion
+on earth 0 0
+map items
+lat_key latitude
+lon_key longitude
+  field_in volcanoName volcano_name
+  field_in country country
+  field_in elevationM elevation_m
+  field_in morphology volcano_type
+  field_in eruptionNumber last_eruption_count
+  field_in lastKnownEruption last_eruption_year
+
+url https://www.nohrsc.noaa.gov/interactive/html/graph.html?station=CEMR&wy=2024&pc=&type=1&o=a&ff=1&nw=0&t=0&nodata=0&var=WTEQ&var=SNWD&var=PREC&var=TEMP&state=&q=&r=&format=csv
+format text
+ttl 86400
+force thermal
+at sun 1
+rows
+lat 45.0
+lon -100.0
+  field_in Date date
+  field_in WTEQ swe_inches
+  field_in SNWD snow_depth_inches
+
+url https://www.ogimet.com/cgi-bin/getsynop?block=20&begin={year}{month}{day}0000&end={year}{month}{day}2300
+format text
+ttl 86400
+force thermal
+at sun 1
+rows
+  field_in 0 station_id
+  field_in 1 synop_date
+  field_in 2 synop_hour
+  field_in 5 temperature_encoded
+
+url https://service.iris.edu/fdsnws/station/1/query?format=text&latitude={lat}&longitude={lon}&maxradius=5
+ttl 2592000
+force seismic-body
+on earth 0 0
+count lines geosphere_seismic_stations_5deg
+
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=FRN&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+ttl 300
+force em
+on earth 0 0
+field X magnetosphere_x_frn_nt
+field Y magnetosphere_y_frn_nt
+field Z magnetosphere_z_frn_nt
+
+url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
+ttl 300
+force thermal
+on earth 0 0
+count . atmosphere_local_pm_sensors_count
+
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=HON&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+ttl 300
+force em
+on earth 0 0
+field X magnetosphere_x_hon_nt
+field Y magnetosphere_y_hon_nt
+field Z magnetosphere_z_hon_nt
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getElevatedVolcanoes
+ttl 3600
+force seismic-body
+on earth 0 0
+count . geosphere_elevated_volcanoes_us
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8454000&product=air_temperature&date=latest&time_zone=gmt&units=metric&format=json
+ttl 300
+force acoustic
+on earth 0 0
+first v atmosphere_air_temp_providence_c
+
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,swell_wave_height
+ttl 600
+force acoustic
+on earth 0 0
+field current.wave_height hydrosphere_wave_height_m
+field current.wave_direction hydrosphere_wave_direction_deg
+field current.wave_period hydrosphere_wave_period_s
+field current.wind_wave_height hydrosphere_wind_wave_height_m
+field current.swell_wave_height hydrosphere_swell_wave_height_m
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=soil_temperature_0_to_7cm,soil_moisture_0_to_7cm&forecast_hours=1&timezone=auto
+ttl 3600
+force thermal
+on earth 0 0
+first hourly.soil_temperature_0_to_7cm geosphere_soil_temp_7cm_c
+first hourly.soil_moisture_0_to_7cm geosphere_soil_moisture_7cm_m3m3
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=cape,lifted_index,convective_inhibition&forecast_hours=1&timezone=auto
+ttl 3600
+force thermal
+on earth 0 0
+first hourly.cape atmosphere_cape_jkg
+first hourly.lifted_index atmosphere_lifted_index
+first hourly.convective_inhibition atmosphere_cin_jkg
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=10
+ttl 86400
+force gravity
+at sun 1.0
+count data cosmic_fireball_count
+
+url https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=100
+ttl 3600
+force thermal
+at sun 1.0
+count events geosphere_eonet_open_events
+
+url https://api.gbif.org/v1/occurrence/search?basisOfRecord=MACHINE_OBSERVATION&hasCoordinate=true&limit=300&decimalLatitude={lat}&decimalLongitude={lon}&radius=100
+ttl 3600
+force biotic
+on earth 0 0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+  field species species_name
+  field scientificName scientific_name
+  field eventDate observation_date
+  field occurrenceStatus occurrence_status
+  field coordinateUncertaintyInMeters coordinate_uncertainty_m
+
+url https://services9.arcgis.com/rLkpFp1GxgPDr9HL/arcgis/rest/services/eDNA_Species_Detected/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
+ttl 86400
+force biotic
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field properties.ScntfcN species_name
+  field properties.Detectn detection_score
+  field properties.Cllct_D collection_date_ms
+  field properties.Depth depth_m
+  field properties.Temprtr temperature_c
+  field properties.Salinty salinity_psu
+  field properties.Dssl_O2 dissolved_oxygen_umolkg
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/C_mydas_SSM/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
+ttl 3600
+force biotic
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field properties.turtleid turtle_id
+  field properties.date telemetry_date_ms
+  field properties.lat latitude_deg
+  field properties.lon longitude_deg
+  field properties.state movement_state
