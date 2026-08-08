@@ -1870,12 +1870,20 @@ def main():
 
             if key in ("lat_key", "lon_key") and len(parts) >= 2:
                 v = parts[1]
-                if key == "lon_key" and ("dec" in v.lower() or "decl" in v.lower()):
-                    # source mislabeled declination as a longitude key
-                    new_lines.append(f"dec {v} deg")
+                vl = v.lower()
+                if key == "lon_key":
+                    # a longitude key whose column name carries lon/long is a
+                    # longitude ("dec_" is often a decimal-format prefix, e.g.
+                    # dec_long_va). Only a column that is clearly declination
+                    # (no longitude hint) is a mislabeled celestial dec.
+                    if "lon" in vl or "lng" in vl or "long" in vl:
+                        new_lines.append(f"lon {v} deg")
+                    elif "dec" in vl or "decl" in vl:
+                        new_lines.append(f"dec {v} deg")
+                    else:
+                        new_lines.append(f"lon {v} deg")
                 else:
-                    base = "lat" if "lat" in key else "lon"
-                    new_lines.append(f"{base} {v} deg")
+                    new_lines.append(f"lat {v} deg")
                 continue
             # bare position directives (lat/lon/alt/ra/dec/plx/pmra/pmdec):
             # always 3 tokens: <dir> <path|literal> <unit>
@@ -1888,7 +1896,13 @@ def main():
                 new_lines.append(f"alt {parts[1]} {u}")
                 continue
             if key in ("ra", "dec") and len(parts) >= 2:
-                new_lines.append(f"{key} {parts[1]} deg")
+                v = parts[1]
+                if key == "dec" and any(s in v.lower() for s in ("lon", "lng",
+                        "longitude", "long", "lo_")):
+                    # source mislabeled a longitude column as declination
+                    new_lines.append(f"lon {v} deg")
+                else:
+                    new_lines.append(f"{key} {v} deg")
                 continue
             if key == "plx" and len(parts) >= 2:
                 new_lines.append(f"plx {parts[1]} mas")
@@ -1905,7 +1919,13 @@ def main():
                 new_lines.append(f"ra {parts[1]} deg")
                 continue
             if key == "dec_key" and len(parts) >= 2:
-                new_lines.append(f"dec {parts[1]} deg")
+                v = parts[1]
+                if any(s in v.lower() for s in ("lon", "lng", "longitude",
+                        "long", "lo_")):
+                    # source mislabeled a longitude column as declination
+                    new_lines.append(f"lon {v} deg")
+                else:
+                    new_lines.append(f"dec {v} deg")
                 continue
             if key == "plx_key" and len(parts) >= 2:
                 new_lines.append(f"plx {parts[1]} mas")
@@ -2006,22 +2026,29 @@ def main():
                 continue
             new_lines.append(ls)
 
-        # resolve double frames: a block with BOTH a celestial frame (at sun)
-        # and a terrestrial frame (on/body earth) is ambiguous. A block with
-        # ra/dec/plx directives is celestial -> keep at sun. Otherwise keep the
-        # last frame directive (AGENTS.md: double frames resolve to the last).
+        # resolve the frame by the data's nature.
+        # celestial (ra/dec/plx directives) -> at sun 1.0
+        # terrestrial (lat/lon directives, or {lat}/{lon} templates, or a
+        # terrestrial domain) -> on earth (or "on earth {lat} {lon}" when the
+        # URL carries position templates)
         has_celestial_pos = any(
             l.split() and l.split()[0] in ("ra", "dec", "plx", "pmra", "pmdec")
-            for l in new_lines)
-        if len(frames) > 1:
-            if has_celestial_pos:
-                keep = [f for f in frames if f.startswith("at ")]
-                if keep:
-                    frames = keep
+            for l in new_lines) or ("{ra}" in url and "{dec}" in url)
+        has_terrestrial_pos = any(
+            l.split() and l.split()[0] in ("lat", "lon") for l in new_lines)
+        has_terr_template = "{lat}" in url and "{lon}" in url
+        if has_celestial_pos:
+            frames = ["at sun 1.0"]
+        elif has_terrestrial_pos or has_terr_template:
+            # lat/lon directives are geodetic coordinates of a BODY — they can
+            # never live in a barycentric (at sun) frame
+            if any(f.startswith("at ") for f in frames):
+                if has_terr_template:
+                    frames = ["on earth {lat} {lon}"]
                 else:
-                    frames = frames[-1:]
-            else:
-                frames = frames[-1:]
+                    frames = ["on earth 0 0"]
+        if len(frames) > 1:
+            frames = frames[-1:]
         # order: url, ttl, frame, then the rest
         head = [l for l in new_lines if l.split() and l.split()[0] in ("url", "ttl")]
         body = [l for l in new_lines

@@ -1,6 +1,6 @@
 url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
 ttl 10
-at sun 1.0
+on earth 0 0
 lat 0.latitude deg
 lon 0.longitude deg
 alt 0.altitude km
@@ -14,7 +14,7 @@ field solar_lon gravity deg
 
 url https://api.wheretheiss.at/v1/satellites/25544
 ttl 10
-at sun 1.0
+on earth 0 0
 lat latitude deg
 lon longitude deg
 alt altitude km
@@ -122,7 +122,7 @@ field properties.mag em mag
 
 url https://api.wolfx.jp/jma_eew.json
 ttl 60
-at sun 1
+on earth 0 0
 lat Latitude deg
 lon Longitude deg
 field Magnitude em mag
@@ -338,7 +338,7 @@ field properties.detected_energy em eV
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Historical_Quakes/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,depth,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=5000
 ttl 300
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -348,7 +348,7 @@ field properties.tsunami seismic-body s
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/0/query?where=1%3D1&outFields=LATITUDE,LONGITUDE,TEMP,DEW_POINT,R_HUMIDITY,WIND_DIRECT,WIND_SPEED,WIND_GUST,WIND_CHILL,PRESSURE,VISIBILITY,HEAT_INDEX,ELEVATION&outSR=4326&f=geojson&resultRecordCount=5000
 ttl 300
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -405,7 +405,7 @@ field properties.tsunami seismic-body s
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,bright_ti4,bright_ti5,frp,confidence&outSR=4326&f=geojson&resultRecordCount=5000
 ttl 300
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -415,7 +415,7 @@ field properties.frp thermal MW
 
 url https://api.wolfx.jp/cenc_eqlist.json
 ttl 300
-at sun 1
+on earth 0 0
 lat No1.latitude deg
 lon No1.longitude deg
 field No1.magnitude em mag
@@ -443,7 +443,7 @@ lon geometry.x deg
 
 url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 300
-at sun 1.0
+on earth 0 0
 map features
 field attributes.Temperature_C thermal degC
 field attributes.Wind advective m/s
@@ -526,7 +526,7 @@ field properties.sea_surface_temperature_1__degr thermal degC
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42360/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_water_speed__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -596,7 +596,7 @@ field properties.sea_water_speed_0__cm_s_1_ advective m/s
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42370/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_2__degr,sea_water_speed_2__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -686,7 +686,7 @@ field properties.sea_water_speed_0__cm_s_1_ advective m/s
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42395/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_water_speed__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -726,7 +726,7 @@ field properties.sea_water_speed_0__cm_s_1_ advective m/s
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42881/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_2__degr,sea_water_speed_2__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -5569,7 +5569,7 @@ field 4 em mag
 
 url https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv
 ttl 600
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat 0 deg
@@ -5579,7 +5579,7 @@ field 11 thermal MW
 
 url https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Global_24h.csv
 ttl 600
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat 0 deg
@@ -5589,7 +5589,7 @@ field 11 thermal MW
 
 url https://epic.gsfc.nasa.gov/api/natural
 ttl 600
-at sun 1
+on earth 0 0
 map .
 field image em mag
 lat centroid_coordinates.lat deg
@@ -5668,7 +5668,7 @@ lon attributes.lon deg
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Live_Stream_Gauges_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 600
-at sun 1.0
+on earth 0 0
 map features
 field attributes.stage_ft gravity ft
 lat geometry.y deg
@@ -5676,7 +5676,7 @@ lon geometry.x deg
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/MODIS_Thermal_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 600
-at sun 1.0
+on earth 0 0
 map features
 field attributes.BRIGHT_T31 thermal K
 lat geometry.y deg
@@ -5690,7 +5690,7 @@ lon geometry.x deg
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USA_Wildfires_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 600
-at sun 1.0
+on earth 0 0
 map features
 field attributes.DailyAcres thermal m2
 lat geometry.y deg
@@ -5720,7 +5720,7 @@ lon attributes.lon deg
 
 url https://seismic-api.science.unimelb.edu.au/today-quakes
 ttl 600
-at sun 1
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -5729,7 +5729,7 @@ alt geometry.coordinates.2 m
 
 url https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=text&minmagnitude=3&limit=100
 ttl 600
-at sun 1.0
+on earth 0 0
 format universal
 rows
 field 0 em eV
@@ -5800,7 +5800,7 @@ field properties.mag em mag
 
 url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500,09380000,11447650,02177000,03036500,05064500,07010000,08330000,09421500,12144500&parameterCd=00060&period=PT1H
 ttl 600
-at sun 1.0
+on earth 0 0
 map value.timeSeries
 lat sourceInfo.geoLocation.geogLocation.latitude deg
 lon sourceInfo.geoLocation.geogLocation.longitude deg
@@ -5808,7 +5808,7 @@ last value.timeSeries.0.values.0.value.0.value advective m3/s
 
 url https://www.ndbc.noaa.gov/data/latest_obs/all_stations.txt
 ttl 600
-at sun 1.0
+on earth 0 0
 format text
 rows
 field 8 advective deg
@@ -5822,7 +5822,7 @@ lon 6 deg
 
 url https://www.nhc.noaa.gov/CurrentStorms.json
 ttl 900
-at sun 1.0
+on earth 0 0
 map activeStorms
 lat latitude deg
 lon longitude deg
@@ -5839,7 +5839,7 @@ last data.v gravity m
 
 url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065,00060&siteStatus=all
 ttl 900
-at sun 1.0
+on earth 0 0
 map value.timeSeries
 lat sourceInfo.geoLocation.geogLocation.latitude deg
 lon sourceInfo.geoLocation.geogLocation.longitude deg
@@ -5912,7 +5912,7 @@ last value.timeSeries.0.values.0.value.0.value advective m3/s
 
 url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
 ttl 900
-at sun 1
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -5935,7 +5935,7 @@ field 7 advective km/s
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
 ttl 1800
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat Site_Latitude(Degrees) deg
@@ -5953,7 +5953,7 @@ field AOD_675nm diffusion µg/m3
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
 ttl 1800
-at sun 1
+on earth 0 0
 format universal
 rows
 lat Site_Latitude(Degrees) deg
@@ -5967,7 +5967,7 @@ field AOD_1020nm diffusion µg/m3
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=15.0&lon1=-170.0&lat2=80.0&lon2=-40.0
 ttl 1800
-at sun 1
+on earth 0 0
 format universal
 rows
 lat Site_Latitude(Degrees) deg
@@ -5978,7 +5978,7 @@ field Precipitable_Water(cm) diffusion mm
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-60.0&lon1=-90.0&lat2=15.0&lon2=-30.0
 ttl 1800
-at sun 1
+on earth 0 0
 format universal
 rows
 lat Site_Latitude(Degrees) deg
@@ -5989,7 +5989,7 @@ field AOD_870nm diffusion µg/m3
 
 url https://aviationweather.gov/api/data/taf?ids=KJFK&format=json
 ttl 1800
-at sun 1
+on earth 0 0
 map .
 lat lat deg
 lon lon deg
@@ -6060,7 +6060,7 @@ field presTend acoustic hPa
 
 url https://www.nhc.noaa.gov/CurrentStorms.json?basin=epac
 ttl 1800
-at sun 1.0
+on earth 0 0
 map activeStorms
 lat latitude deg
 lon longitude deg
@@ -6069,7 +6069,7 @@ field pressure acoustic hPa
 
 url https://seismic-api.science.unimelb.edu.au/three-day-quakes
 ttl 1800
-at sun 1
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -6078,7 +6078,7 @@ alt geometry.coordinates.2 m
 
 url https://aviationweather.gov/api/data/sigmet?format=json
 ttl 1800
-at sun 1.0
+on earth 0 0
 map .
 lat lat deg
 lon lon deg
@@ -6111,7 +6111,7 @@ alt geometry.coordinates.2 m
 
 url https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt
 ttl 1800
-at sun 1.0
+on earth 0 0
 format universal
 rows
 field 8 advective deg
@@ -6160,7 +6160,7 @@ path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.longitude gravity de
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
 ttl 3600
-body earth
+at sun 1.0
 map .
 map data
 alt altitude m
@@ -6263,7 +6263,7 @@ field irradiance em W/m2
 
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1&FORMAT=json
 ttl 3600
-body earth
+at sun 1.0
 map data
 field s_ra em deg
 field s_dec em deg
@@ -6354,7 +6354,7 @@ field 6 em mag
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
 ttl 3600
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat Site_Latitude(Degrees) deg
@@ -6365,7 +6365,7 @@ field Precipitable_Water(cm) diffusion mm
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
 ttl 3600
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat Site_Latitude(Degrees) deg
@@ -6375,7 +6375,7 @@ field AOD_500nm diffusion µg/m3
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
 ttl 3600
-at sun 1
+on earth 0 0
 format universal
 rows
 lat Site_Latitude(Degrees) deg
@@ -6385,7 +6385,7 @@ field AOD_500nm diffusion µg/m3
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-55.0&lon1=-130.0&lat2=60.0&lon2=-30.0
 ttl 3600
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat Site_Latitude(Degrees) deg
@@ -6395,7 +6395,7 @@ field AOD_500nm diffusion µg/m3
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1
 ttl 3600
-at sun 1
+on earth 0 0
 format universal
 rows
 lat Site_Latitude(Degrees) deg
@@ -6412,7 +6412,7 @@ field AOD_1020nm diffusion µg/m3
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1
 ttl 3600
-at sun 1
+on earth 0 0
 format text
 rows
 lat Site_Latitude(Degrees) deg
@@ -6421,7 +6421,7 @@ field Absorption_AOD[440nm] diffusion µg/m3
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&SDA15=1&AVG=10&if_no_html=1
 ttl 3600
-at sun 1
+on earth 0 0
 format universal
 rows
 lat Site_Latitude(Degrees) deg
@@ -6582,7 +6582,7 @@ alt geometry.coordinates.2 m
 
 url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&outFields=mag,place,time,alert,fatalities&f=json&resultRecordCount=500
 ttl 3600
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.y deg
 lon geometry.x deg
@@ -6590,7 +6590,7 @@ field attributes.mag em mag
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Coral_Reef_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 3600
-at sun 1.0
+on earth 0 0
 map features
 field attributes.sst thermal degC
 field attributes.ssta thermal degC
@@ -6601,7 +6601,7 @@ lon geometry.x deg
 
 url https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/AQS_Monitor_Sites/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
 ttl 3600
-at sun 1.0
+on earth 0 0
 map features
 field attributes.POC diffusion kg/m3
 lat geometry.y deg
@@ -6623,7 +6623,7 @@ lon geometry.x deg
 
 url https://firms.modaps.eosdis.nasa.gov/api/area/json/{firms_map_key}/MODIS_NRT/1/world
 ttl 3600
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat latitude deg
@@ -6634,7 +6634,7 @@ field frp thermal MW
 
 url https://firms.modaps.eosdis.nasa.gov/api/area/json/{firms_map_key}/VIIRS_NOAA20_NRT/1/world
 ttl 3600
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat latitude deg
@@ -6645,7 +6645,7 @@ field frp thermal MW
 
 url https://seismic-api.science.unimelb.edu.au/month-quakes
 ttl 3600
-at sun 1
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -6658,7 +6658,7 @@ alt geometry.coordinates.2 m
 
 url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json
 ttl 3600
-at sun 1
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -6722,7 +6722,7 @@ lon longitude deg
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=USW00013739,USW00094728&startDate={week_ago}&endDate={today}&format=json
 ttl 3600
-at sun 1.0
+on earth 0 0
 map .
 lat LATITUDE deg
 lon LONGITUDE deg
@@ -6754,7 +6754,7 @@ field 3 diffusion ppm
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmel_co2_moorings_c2e7_ecb9_4565.csv?latitude,longitude,time,pCO2_sw,pCO2_air,xCO2_air,pH_sw,DOXY,CHL,NTU,SST,SSS
 ttl 3600
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat latitude deg
@@ -6792,7 +6792,7 @@ field g em mag
 
 url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
 ttl 3600
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -6802,7 +6802,7 @@ field properties.area_km diffusion km2
 
 url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT={year}-{month}-01&endDT={year}-{month}-{day}&parameterCd=00060&siteStatus=all
 ttl 3600
-at sun 1.0
+on earth 0 0
 map value.timeSeries
 lat sourceInfo.geoLocation.geogLocation.latitude deg
 lon sourceInfo.geoLocation.geogLocation.longitude deg
@@ -6810,7 +6810,7 @@ last value.timeSeries.0.values.0.value.0.value advective m3/s
 
 url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065&siteStatus=all
 ttl 3600
-at sun 1.0
+on earth 0 0
 map value.timeSeries
 lat sourceInfo.geoLocation.geogLocation.latitude deg
 lon sourceInfo.geoLocation.geogLocation.longitude deg
@@ -6827,7 +6827,7 @@ map features
 
 url https://argovis-api.colorado.edu/argo?startDate=2026-07-26T00:00:00Z&endDate=2026-07-27T00:00:00Z&box=%5B%5B-180,-90%5D,%5B180,90%5D%5D
 ttl 3600
-at sun 1.0
+on earth 0 0
 map .
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -6837,7 +6837,7 @@ field pressure acoustic hPa
 
 url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
 ttl 3600
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -6853,7 +6853,7 @@ last_row TotalSPL acoustic dB
 
 url https://www.globalfloods.eu/glofas-forecasting/?format=json
 ttl 3600
-at sun 1
+on earth 0 0
 map .
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -6862,7 +6862,7 @@ field return_period em yr
 
 url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy(%22time%22)&limit=3000
 ttl 3600
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat latitude deg
@@ -6874,7 +6874,7 @@ field PRES acoustic hPa
 
 url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json
 ttl 3600
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -6882,7 +6882,7 @@ field properties.area_ha diffusion m2
 
 url https://www.ndbc.noaa.gov/activestations.xml
 ttl 3600
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat geometry.coordinates.1 deg
@@ -7053,7 +7053,7 @@ last_row navd88_meters gravity m
 
 url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
 ttl 3600
-at sun 1.0
+on earth {lat} {lon}
 format universal
 map .
 lat latitude deg
@@ -7062,7 +7062,7 @@ field km gravity km
 
 url https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX
 ttl 3600
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat latitude deg
@@ -7077,7 +7077,7 @@ field 4 em TECU
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
 ttl 10800
-at sun 1.0
+on earth 0 0
 format text
 rows
 field 7 diffusion µg/m3
@@ -7088,7 +7088,7 @@ lon 2 deg
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
 ttl 21600
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat latitude deg
@@ -7098,7 +7098,7 @@ field v_component_of_current advective m/s
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
 ttl 21600
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat latitude deg
@@ -7107,7 +7107,7 @@ field Potential_temperature thermal degC
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_bottom_of_ocean_mixed_layer_lat_lon.csv?bottom_of_ocean_mixed_layer%5B(last)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
 ttl 21600
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat latitude deg
@@ -7116,7 +7116,7 @@ field bottom_of_ocean_mixed_layer thermal m
 
 url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?sst%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 ttl 21600
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat latitude deg
@@ -7134,7 +7134,7 @@ field 4 advective m/s
 
 url https://weather.uwyo.edu/wsgi/sounding?datetime={today}%2000:00:00&type=TEXT:CSV&id=10393&src=UNKNOWN
 ttl 43200
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat latitude deg
@@ -7224,7 +7224,7 @@ field 2 em mag
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,st_teff,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
 ttl 86400
-body earth
+at sun 1.0
 map .
 ra ra deg
 dec dec deg
@@ -7392,7 +7392,7 @@ field flux em W/m2
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?request=doQuery&lang=ADQL&format=text&query=SELECT+TOP+100+ra,dec,exposure+FROM+chanmaster
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map .
 field 2 em s
@@ -7467,7 +7467,7 @@ field redshift em z
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,lat,lon,trigger_time,duration,e_mean,counts+FROM+fermitgf+WHERE+lat+IS+NOT+NULL+ORDER+BY+counts+DESC
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat geometry.coordinates.1 deg
@@ -7562,7 +7562,7 @@ field flux_20_40 em W/m2
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+latitude,longitude,co_total_column,co_surface,co_500hpa,co_300hpa,date+FROM+mopittl3m+WHERE+latitude+IS+NOT+NULL+ORDER+BY+co_total_column+DESC
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat latitude deg
@@ -7908,7 +7908,7 @@ field LX em W
 
 url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat geometry.coordinates.1 deg
@@ -8102,7 +8102,7 @@ field WS10M advective m/s
 
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={today}&format=JSON
 ttl 86400
-at sun 1
+on earth {lat} {lon}
 map properties.parameter.T2M
 field T2M thermal degC
 field PRECTOTCORR diffusion mm
@@ -8145,7 +8145,7 @@ field 1 em mag
 
 url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json
 ttl 86400
-at sun 1.0
+on earth 0 0
 map .
 lat latitude deg
 lon longitude deg
@@ -8156,7 +8156,7 @@ field vy advective m/s
 
 url https://api.astrocats.space/{target}/
 ttl 86400
-on earth 0 0
+at sun 1.0
 ra ra deg
 dec dec deg
 field redshift em z
@@ -8301,7 +8301,7 @@ field Kmag em km
 
 url https://firms.modaps.eosdis.nasa.gov/api/country/csv/{firms_map_key}/VIIRS_SNPP_NRT/USA
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat latitude deg
@@ -8577,7 +8577,7 @@ field mT em mag
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RAJ2000,DEJ2000,z,r,ID+FROM+"J/A+A/570/A106/void"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+r+DESC
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat RAJ2000 deg
@@ -8735,7 +8735,7 @@ field lrmswide em Jy
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+304+SNR,GLON,GLAT,Dmaj,Dmin,S1GHz,alpha,Type+FROM+"VII/278/snrs"+WHERE+GLON+IS+NOT+NULL+ORDER+BY+S1GHz+DESC
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat RAJ2000 deg
@@ -8823,7 +8823,7 @@ pmdec pmDE mas_yr
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+IPHAS,RAJ2000,DEJ2000,r%27mag,e_r%27mag,r%27-i,r%27-Ha,Flag+FROM+%22J/MNRAS/384/1277/emitters%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+r%27-Ha+DESC
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat RAJ2000 deg
@@ -8958,7 +8958,7 @@ field ymag em mag
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,SNR,z,Val,MSZ,Y5R500,MCXC+FROM+%22J/A%2BA/594/A27/psz2%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SNR+DESC
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat RAJ2000 deg
@@ -9002,7 +9002,7 @@ dec DEJ2000 deg
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,imag,zphot,zd,zs,qflag+FROM+"J/ApJ/785/144/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+zphot+DESC
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat RAJ2000 deg
@@ -9014,7 +9014,7 @@ field zs em z
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+_RA,_DE,zL,zS,Sigma,Imag,Class+FROM+"J/ApJ/851/48/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+zL+ASC
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat _RA deg
@@ -9026,7 +9026,7 @@ field Imag em mag
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+_RA,_DE,Star,a,e,i,Omega,w,Tp,Per+FROM+"J/ApJ/837/30/table3"+WHERE+_RA+IS+NOT+NULL
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat _RA deg
@@ -9128,7 +9128,7 @@ field DE_ICRS em deg
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD20=1&AVG=20&if_no_html=1
 ttl 86400
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat Site_Latitude(Degrees) deg
@@ -9179,7 +9179,7 @@ field AWND advective m/s
 
 url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
 ttl 86400
-at sun 1.0
+on earth 0 0
 map data
 lat location.lat deg
 lon location.lng deg
@@ -9187,7 +9187,7 @@ field active_layer_thickness thermal m
 
 url https://gtnp.arcticportal.org/api/v1/gtnp-boreholes?format=json&limit=500
 ttl 86400
-at sun 1.0
+on earth 0 0
 map data
 lat location.lat deg
 lon location.lon deg
@@ -9199,7 +9199,7 @@ field elevation_m gravity m
 
 url https://gtnp.arcticportal.org/api/boreholes/?format=json&limit=2000
 ttl 86400
-at sun 1.0
+on earth 0 0
 map data
 lat location.lat deg
 lon location.lng deg
@@ -9280,7 +9280,7 @@ field sy_dist gravity pc
 
 url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500
 ttl 86400
-at sun 1.0
+on earth 0 0
 map features
 lat attributes.LATITUDE deg
 lon attributes.LONGITUDE deg
@@ -9306,7 +9306,7 @@ field attributes.DEATHS acoustic m
 
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Tsunami_Capable_Tide_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 86400
-at sun 1.0
+on earth 0 0
 map features
 field attributes.STAT_LAT gravity deg
 field attributes.STAT_LONG gravity deg
@@ -9317,7 +9317,7 @@ lon geometry.x deg
 
 url https://raw.githubusercontent.com/GEMScienceTools/gem-global-active-faults/master/geojson/gem_active_faults.geojson
 ttl 86400
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.0.0.1 deg
 lon geometry.coordinates.0.0.0 deg
@@ -9346,7 +9346,7 @@ field 1 thermal degC
 
 url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={today}T23:59:59&catalog=GCMT&format=text&nodata=404
 ttl 86400
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat evla deg
@@ -9356,7 +9356,7 @@ field mag em mag
 
 url https://www.isc.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&limit=500&orderby=time&starttime=1900-01-01&endtime={today}
 ttl 86400
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -9364,7 +9364,7 @@ field properties.mag em mag
 
 url http://www.isc.ac.uk/cgi-bin/web-db-run?request=BULLETIN&out_format=CSV&searchshape=RECT&bot_lat=-90&top_lat=90&left_lon=-180&right_lon=180&start_year={year}&start_mon={month}&start_day={day}&start_time=00%3A00%3A00&end_year={year}&end_mon={month}&end_day={day}&end_time=23%3A59%3A59&min_mag=4.5&req_mag_type=mb&req_mag_agcy=ISC
 ttl 86400
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat Latitude deg
@@ -9384,7 +9384,7 @@ field MagType em mag
 
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
 ttl 86400
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -9440,7 +9440,7 @@ field 1 em mag
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW&stations=USW00013739&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json&limit=10000
 ttl 86400
-at sun 1.0
+on earth 0 0
 map .
 lat LATITUDE deg
 lon LONGITUDE deg
@@ -9450,7 +9450,7 @@ field SNWD thermal mm
 
 url https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map data
 field 3 gravity m
@@ -9474,7 +9474,7 @@ field 1 em mag
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB&stations=72420314733,10637099999,47678099999,94120099999&startDate={week_ago}&endDate={today}&format=json
 ttl 86400
-at sun 1.0
+on earth 0 0
 map .
 lat LATITUDE deg
 lon LONGITUDE deg
@@ -9486,7 +9486,7 @@ field VISIB gravity nmi
 
 url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.last3years.list.v04r00.csv
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map data
 lat LAT deg
@@ -9496,7 +9496,7 @@ field WMO_PRES acoustic hPa
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&stations=USW00013739&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json
 ttl 86400
-at sun 1.0
+on earth 0 0
 map .
 lat LATITUDE deg
 lon LONGITUDE deg
@@ -9507,7 +9507,7 @@ field SLP acoustic hPa
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&stations=USW00094728&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json
 ttl 86400
-at sun 1.0
+on earth 0 0
 map .
 lat LATITUDE deg
 lon LONGITUDE deg
@@ -9521,7 +9521,7 @@ field PRCP diffusion mm
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&stations=USW00013739&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
 ttl 86400
-at sun 1.0
+on earth 0 0
 map .
 lat LATITUDE deg
 lon LONGITUDE deg
@@ -9530,7 +9530,7 @@ field PRCP diffusion mm
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-daily&dataTypes=TEMP_NORMAL_MAX,TEMP_NORMAL_MIN,PRCP_NORMAL&stations=GM000003026,USW00094728,UK000003772,JN000047412&startDate=2010-01-01&endDate=2010-01-31&format=json
 ttl 86400
-at sun 1.0
+on earth 0 0
 map .
 lat LATITUDE deg
 lon LONGITUDE deg
@@ -9554,7 +9554,7 @@ field PRCP diffusion mm
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={today}&format=json
 ttl 86400
-at sun 1.0
+on earth 0 0
 map .
 lat latitude deg
 lon longitude deg
@@ -9565,7 +9565,7 @@ field PRCP diffusion mm
 
 url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&survey=WOCE&variable=T,S,O2,NO3,PO4,SiO3&limit=300
 ttl 86400
-at sun 1.0
+on earth 0 0
 map profiles
 lat latitude deg
 lon longitude deg
@@ -9598,7 +9598,7 @@ field deaths acoustic m
 
 url https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x
 ttl 86400
-at sun 1
+on earth {lat} {lon}
 map result.0
 field decl em deg
 field bx em nT
@@ -9607,7 +9607,7 @@ field bz em nT
 
 url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300
 ttl 86400
-at sun 1.0
+on earth 0 0
 map .
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -9619,7 +9619,7 @@ field Oxygen diffusion kg/m3
 
 url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 rows
 field 4 gravity m
@@ -9645,18 +9645,18 @@ geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
 
 url https://nwis.waterdata.usgs.gov/usa/nwis/peak?state_cd=all&format=rdb&date_format=YYYY-MM-DD&peak_begin_date={year}-01-01&peak_end_date={year}-12-31
 ttl 86400
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat dec_lat_va deg
-dec dec_long_va deg
+lon dec_long_va deg
 field station_nm em nm
 field peak_va em m/s
 field gage_ht diffusion m
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 ttl 86400
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat latitude deg
@@ -9666,7 +9666,7 @@ field v_component_of_current advective m/s
 
 url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN_DESEASONALIZED.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat latitude deg
@@ -9676,7 +9676,7 @@ field speed_radius advective km
 
 url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_TREND.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat latitude deg
@@ -9685,7 +9685,7 @@ field sla gravity m
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Salinity%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 ttl 86400
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat latitude deg
@@ -9694,7 +9694,7 @@ field Salinity diffusion psu
 
 url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat latitude deg
@@ -9703,7 +9703,7 @@ field sla gravity m
 
 url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 ttl 86400
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat latitude deg
@@ -9713,7 +9713,7 @@ field so thermal psu
 
 url https://erddap.marine.ie/erddap/griddap/IMI_IRISH_SHELF_SWAN_WAVE.csv?significant_wave_height%5B(last)%5D%5B(-60.0):4:(60.0)%5D%5B(-20.0):4:(-5.0)%5D
 ttl 86400
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat latitude deg
@@ -9722,7 +9722,7 @@ field significant_wave_height acoustic m
 
 url https://oceanwatch.pifsc.noaa.gov/erddap/griddap/noaa_snpp_chla_daily.csv?chlor_a%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 rows
 lat latitude deg
@@ -10816,7 +10816,7 @@ field sb_flux em W/m2
 
 url http://www.nmdb.eu/station/list/
 ttl 604800
-at sun 1.0
+on earth 0 0
 map data
 lat latitude deg
 lon longitude deg
@@ -11133,7 +11133,7 @@ map features
 
 url https://www.glims.org/geoserver/ows?service=wfs&version=2.0.0&request=GetFeature&typeName=GLIMS:GLIMS_Points&bbox={lon_min},{lat_min},{lon_max},{lat_max},EPSG:4326&count=500&outputFormat=application/json
 ttl 604800
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -11278,7 +11278,7 @@ field density diffusion kg/m3
 
 url https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv
 ttl 604800
-at sun 1.0
+on earth 0 0
 format universal
 map .
 lat latitude deg
@@ -11395,7 +11395,7 @@ map features
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?station_id,latitude,longitude,time,pCO2_sw,pH_sw,SST,SSS&time%3E%3D{year}-01-01T00%3A00%3A00Z
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map table
 rows
@@ -11406,7 +11406,7 @@ field 6 thermal degC
 
 url https://erddap.emodnet-chemistry.eu/erddap/tabledap/EUT_NORTHSEA_TIMESERIES.json?latitude,longitude,time,Water_body_nitrate,Water_body_phosphate,Water_body_silicate,Water_body_dissolved_oxygen_concentration,ITS_90_water_temperature,Water_body_salinity,Water_body_pH&time%3E%3D{year}-01-01T00%3A00%3A00Z
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map table
 rows
@@ -11421,7 +11421,7 @@ field 8 diffusion psu
 
 url https://coastwatch.pfeg.noaa.gov/erddap/tabledap/scrippsGliders.json?latitude,longitude,time,pressure,temperature,salinity,platform_id&time%3E%3D{year}-01-01T00%3A00%3A00Z
 ttl 86400
-at sun 1.0
+on earth 0 0
 format universal
 map table
 rows
@@ -11486,7 +11486,7 @@ field temporal_coverage.end thermal degC
 
 url https://api.openinframap.org/stats/country
 ttl 86400
-body earth
+on earth 0 0
 map .
 lat centroid.lat deg
 lon centroid.lon deg
@@ -12027,7 +12027,7 @@ field k_m em mag
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+designation,+j_m,+h_m,+k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 ttl 604800
-body earth
+at sun 1.0
 map data
 field j_m em mag
 field h_m em mag
@@ -12176,46 +12176,6 @@ ttl 604800
 ttl 604800
 ttl 604800
 ttl 604800
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
-at sun 1.0
 at sun 1.0
 map .
 field flux em W/m2
@@ -13591,7 +13551,7 @@ field redshift_info_distance gravity pc
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+100+ra,dec,exposure+FROM+chanmaster
 ttl 86400
-body earth
+at sun 1.0
 format text
 rows
 ra 0 deg
@@ -13600,7 +13560,7 @@ field 2 em s
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
 ttl 300
-body earth
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -13621,7 +13581,7 @@ field diameter gravity m
 
 url http://maxi.riken.jp/alert/novae/json/novae_list.json
 ttl 3600
-body earth
+at sun 1.0
 map .
 ra ra deg
 dec dec deg
@@ -13629,7 +13589,7 @@ field peak_flux em W/m2
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
 ttl 3600
-body earth
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -13638,7 +13598,7 @@ field count_rate em Hz
 
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
 ttl 86400
-body earth
+at sun 1.0
 map .
 ra ra deg
 dec dec deg
@@ -13649,7 +13609,7 @@ field i em mag
 
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
 ttl 86400
-body earth
+at sun 1.0
 map .
 ra ra deg
 dec dec deg
@@ -13661,7 +13621,7 @@ field z em mag
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,energy_range,flux>100_mev,redshift,type,association+FROM+tevcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+name+ASC
 ttl 86400
-body earth
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -13705,7 +13665,7 @@ on earth 0 0
 format text
 rows
 lat Latitude(decimal_degrees) deg
-dec Longitude(decimal_degrees) deg
+lon Longitude(decimal_degrees) deg
 field Elevation(m) gravity m
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&application=batch5&format=json&station=8518750
@@ -13716,7 +13676,7 @@ last data.v gravity m
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
 ttl 86400
-at sun 1
+on earth 0 0
 map data
 lat 40.7 deg
 lon -74.01 deg
@@ -13742,7 +13702,7 @@ field tideType gravity ft
 
 url https://cdms.astro.uni-koeln.de/cgi-bin/cdmsinfo?file=e044502.cat&version=current
 ttl 86400
-at sun 1
+on earth 0 0
 format text
 rows
 lat 0.0 deg
@@ -13794,7 +13754,7 @@ alt location.altitude m
 
 url https://datalab.noirlab.edu/query?sql=SELECT+TOP+3000+ls_id,ra,dec,type,z_phot_median,mag_r,mag_g,mag_z,snr_r+FROM+ls_dr10.tractor+WHERE+ra+BETWEEN+150+AND+152+AND+dec+BETWEEN+1+AND+3+AND+snr_r>10+ORDER+BY+mag_r+ASC&fmt=csv
 ttl 86400
-at sun 1
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -13808,7 +13768,7 @@ field mag_z em mag
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+500+pl_name,ra,dec,pl_radj,pl_bmassj,pl_trandep,pl_tranmid,pl_orbper,st_teff,st_rad,st_mass,sy_dist+FROM+ps+WHERE+pl_trandep+IS+NOT+NULL+AND+ra+IS+NOT+NULL+ORDER+BY+pl_trandep+DESC&FORMAT=csv
 ttl 300
-at sun 1
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -13821,7 +13781,7 @@ field sy_dist gravity pc
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+500+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_rvamp,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Radial+Velocity'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
 ttl 86400
-at sun 1
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -13838,7 +13798,7 @@ field pl_orbincl gravity deg
 
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+id,ra,dec,lp_type,lp_zBEST,lp_zBEST_68_low,lp_zBEST_68_high,lp_mass_med,id_i,mag_i,mag_Y,mag_J,mag_H+FROM+cosmos2020_classic+WHERE+ra+IS+NOT+NULL+AND+lp_zBEST>0+AND+mag_i<25+ORDER+BY+mag_i+ASC
 ttl 86400
-at sun 1
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -13850,7 +13810,7 @@ field mag_H em mag
 
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel&outrows=5000&constraints=ngoodobsrel%3E50+AND+magrms%3E0.05
 ttl 3600
-at sun 1
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -13860,7 +13820,7 @@ field magrms em mag
 
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,i1_f_ap,i2_f_ap,i4_f_ap,m1_f_ap+FROM+spitzer_sage_smc_irac_m1+WHERE+ra+IS+NOT+NULL+AND+i1_f_ap>0.05+ORDER+BY+i1_f_ap+DESC
 ttl 86400
-at sun 1
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -13872,7 +13832,7 @@ field m1_f_ap em mag
 
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+id,ra,dec,ez_z_phot,ez_z_68l,ez_z_68u,ez_mass,mag_i,mag_Y,mag_J,mag_H,type+FROM+cosmos2020_farmer+WHERE+ra+IS+NOT+NULL+AND+ez_z_phot>0+AND+mag_i<25+ORDER+BY+ez_z_phot+ASC
 ttl 86400
-at sun 1
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -13886,7 +13846,7 @@ field mag_J em mag
 
 url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>={today}
 ttl 300
-at sun 1
+on earth 0 0
 format text
 rows
 lat 0.0 deg
@@ -14017,7 +13977,7 @@ on earth 0 0
 format text
 rows
 lat dec_lat_va deg
-dec dec_long_va deg
+lon dec_long_va deg
 field station_nm em nm
 field peak_va em m/s
 field peak_tm thermal K
@@ -14050,7 +14010,7 @@ field DUCMASS gravity kg/m2
 
 url https://opensky-network.org/api/states/all?lamin={lat_min}&lomin={lon_min}&lamax={lat_max}&lomax={lon_max}
 ttl 86400
-at sun 1.0
+on earth 0 0
 map states
 lat 6 deg
 lon 5 deg
@@ -14062,7 +14022,7 @@ field 11 em m/s
 
 url https://opensky-network.org/api/states/all?lamin=35&lomin=-10&lamax=70&lomax=40
 ttl 86400
-at sun 1.0
+on earth 0 0
 map states
 lat 6 deg
 lon 5 deg
@@ -14089,7 +14049,7 @@ field 10 gravity deg
 
 url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+main_id,ra,dec,plx_value,rvz_redshift,sp_type,otype,V+FROM+basic+JOIN+allfluxes+ON+basic.oid%3Dallfluxes.oidref+WHERE+V<9+AND+ra+IS+NOT+NULL+ORDER+BY+V+ASC
 ttl 86400
-at sun 1
+at sun 1.0
 format text
 rows
 ra ra deg
@@ -14100,7 +14060,7 @@ field plx_value em mas
 
 url https://spec.jpl.nasa.gov/ftp/pub/catalog/c018003.cat
 ttl 86400
-at sun 1
+on earth 0 0
 format text
 rows
 lat 0.0 deg
@@ -14113,7 +14073,7 @@ field 5 em deg
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'&CAL_FORMAT='BOTH'&SKIP_DAYLT='NO'
 ttl 3600
-at sun 1
+on earth 0 0
 format text
 rows
 lat 0.0 deg
@@ -14124,7 +14084,7 @@ field 12 em mag
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'&CAL_FORMAT='BOTH'
 ttl 3600
-at sun 1
+on earth 0 0
 format text
 rows
 lat 0.0 deg
@@ -14135,7 +14095,7 @@ field 12 em mag
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3D65803%3BDimorphos'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
 ttl 86400
-at sun 1
+on earth 0 0
 format text
 rows
 lat 0.0 deg
@@ -14148,7 +14108,7 @@ field 5 gravity deg
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'&CAL_FORMAT='BOTH'
 ttl 3600
-at sun 1
+on earth 0 0
 format text
 rows
 lat 0.0 deg
@@ -14161,7 +14121,7 @@ field 6 gravity deg
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,20,23,24'&CAL_FORMAT='BOTH'
 ttl 3600
-at sun 1
+on earth 0 0
 format text
 rows
 lat 0.0 deg
@@ -14171,7 +14131,7 @@ field 9 gravity km/s
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Fpeak,Fint,Maj,Min+FROM+"VIII/92/first14"+WHERE+Fpeak%3E10+ORDER+BY+Fpeak+DESC
 ttl 3600
-at sun 1
+at sun 1.0
 format text
 rows
 ra RAJ2000 deg
@@ -14183,7 +14143,7 @@ field Min em arcsec
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,"S1.4",MajAxis,MinAxis+FROM+"VIII/65/nvss"+WHERE+"S1.4"%3E50+ORDER+BY+"S1.4"+DESC
 ttl 86400
-at sun 1
+at sun 1.0
 format text
 rows
 ra RAJ2000 deg
@@ -14194,7 +14154,7 @@ field S1_4 em mJy
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,"S1.4",MajAxis+FROM+"VIII/65/nvss"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))=1
 ttl 86400
-at sun 1
+at sun 1.0
 format text
 rows
 ra RAJ2000 deg
@@ -14204,7 +14164,7 @@ field S1_4 em mJy
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Type,Period,max,min,n_min+FROM+"B/vsx/vsx"+WHERE+(Type+LIKE+'CV%25'+OR+Type+LIKE+'UG%25'+OR+Type+LIKE+'CN%25'+OR+Type+LIKE+'AM%25'+OR+Type+LIKE+'DQ%25')+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
 ttl 86400
-at sun 1
+at sun 1.0
 format text
 rows
 ra RAJ2000 deg
@@ -14324,7 +14284,7 @@ field elevationM gravity m
 
 url https://www.nohrsc.noaa.gov/interactive/html/graph.html?station=CEMR&wy=2024&pc=&type=1&o=a&ff=1&nw=0&t=0&nodata=0&var=WTEQ&var=SNWD&var=PREC&var=TEMP&state=&q=&r=&format=csv
 ttl 86400
-at sun 1
+on earth 0 0
 format text
 rows
 lat 45.0 deg
@@ -14366,7 +14326,7 @@ ttl 3600
 on earth {lat} {lon}
 map results
 lat decimalLatitude deg
-dec decimalLongitude deg
+lon decimalLongitude deg
 field eventDate em eV
 field coordinateUncertaintyInMeters em m
 
@@ -14849,7 +14809,7 @@ field properties.detected_energy em eV
 
 url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_air_quality.json
 ttl 300
-at sun 1.0
+on earth 0 0
 format json
 map .
 lat lat deg
@@ -14989,7 +14949,7 @@ field properties.sea_water_speed_0__cm_s_1_ advective m/s
 
 url https://api.wolfx.jp/jma_eqlist.json
 ttl 300
-at sun 1.0
+on earth 0 0
 lat 1.latitude deg
 lon 1.longitude deg
 field 1.magnitude em mag
@@ -15110,7 +15070,7 @@ field 4 gravity au
 
 url https://github.com/omegaflow/catalogs/releases/download/live-data/usgs_water_daily.json
 ttl 600
-at sun 1.0
+on earth 0 0
 map features
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -15146,7 +15106,7 @@ field 4 em nT
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
 ttl 3600
-at sun 1.0
+on earth 0 0
 map data
 lat lat deg
 lon lon deg
@@ -15233,7 +15193,7 @@ field magrms em mag
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
 ttl 3600
-at sun 1.0
+on earth 0 0
 map data
 lat lat deg
 lon lon deg
@@ -15244,7 +15204,7 @@ lon lon deg
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date
 ttl 3600
-at sun 1.0
+on earth 0 0
 map data
 lat 6 deg
 lon 8 deg
@@ -15278,7 +15238,7 @@ field 3 gravity au
 
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1
 ttl 3600
-body earth
+at sun 1.0
 format votable
 map data
 field s_ra em deg
@@ -15317,7 +15277,7 @@ field seaLevelPressure acoustic hPa
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&date-min=2020-01-01
 ttl 3600
-at sun 1.0
+on earth 0 0
 map data
 lat lat deg
 lon lon deg
@@ -15459,7 +15419,7 @@ field elevation_meters gravity m
 
 url https://github.com/omegaflow/catalogs/releases/download/v1.0/mangrove_countries.json
 ttl 86400
-at sun 1.0
+on earth 0 0
 map data
 lat latitude deg
 lon longitude deg
@@ -16663,7 +16623,7 @@ field spatial.representationalPoint.coordinates.1 acoustic hPa
 
 url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_viirs_nrt_world.csv
 ttl 86400
-at sun 1.0
+on earth 0 0
 format text
 rows
 lat latitude deg
@@ -17645,7 +17605,7 @@ path success.data.0.n_intervals em s
 
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 ttl 2592000
-body earth
+at sun 1.0
 format votable
 map data
 field redshift em z
@@ -17713,7 +17673,7 @@ field radial_velocity advective m/s
 
 url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_modis_nrt_world.csv
 ttl 3600
-at sun 1.0
+on earth 0 0
 format csv
 map data
 lat latitude deg
@@ -17724,7 +17684,7 @@ field frp thermal MW
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8447435&datum=MLLW&units=metric&time_zone=gmt&format=json
 ttl 86400
-at sun 1
+on earth 0 0
 map data
 lat 41.52 deg
 lon -70.67 deg
@@ -17781,7 +17741,7 @@ field SNOW diffusion mm
 
 url https://api.blitzortung.org/v1/strikes/latest?lat={lat}&lon={lon}&radius=100
 ttl 60
-at sun 1.0
+on earth {lat} {lon}
 map .
 lat lat deg
 lon lon deg
