@@ -25,7 +25,7 @@ field solar_lon gravity deg
 
 url https://api.adsb.lol/v2/point/{lat}/{lon}/250
 ttl 10
-on earth 52.5 13.4
+on earth {lat} {lon}
 map ac
 lat lat deg
 lon lon deg
@@ -84,7 +84,7 @@ field gs advective m/s
 
 url https://api.adsb.lol/v2/point/{lat}/{lon}/500
 ttl 60
-on earth 0.0 0.0
+on earth {lat} {lon}
 map ac
 lat lat deg
 lon lon deg
@@ -8091,7 +8091,7 @@ tau_key _dist_m
 
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}0101&end={year}1231&format=JSON
 ttl 86400
-on earth 0 0
+on earth {lat} {lon}
 map properties.parameter.T2M
 lat geometry.coordinates.1 deg
 lon geometry.coordinates.0 deg
@@ -9540,7 +9540,7 @@ field PRCP_NORMAL diffusion mm
 
 url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22:{lon},%22y%22:{lat}%7D&geometryType=esriGeometryPoint&returnGeometry=false&f=json
 ttl 86400
-on earth 47.3769 8.5417
+on earth {lat} {lon}
 field value em nT
 
 url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json
@@ -11124,7 +11124,7 @@ field redshift_info_distance gravity pc
 
 url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2001&end=2020&format=JSON
 ttl 604800
-on earth 47.3769 8.5417
+on earth {lat} {lon}
 path properties.parameter.T2M.01 em W/m2
 path properties.parameter.T2M.07 em W/m2
 path properties.parameter.PRECTOTCORR.01 em W/m2
@@ -11361,25 +11361,25 @@ field 3 diffusion ppm
 
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
 ttl 2592000
-on earth 47.3769 8.5417
+on earth {lat} {lon}
 field properties.layers.0.depths.0.values.mean acoustic m
 map features
 
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
 ttl 2592000
-on earth 47.3769 8.5417
+on earth {lat} {lon}
 field properties.layers.0.depths.0.values.mean acoustic m
 map features
 
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=sand&depth=0-5cm&value=mean
 ttl 2592000
-on earth 47.3769 8.5417
+on earth {lat} {lon}
 field properties.layers.0.depths.0.values.mean acoustic m
 map features
 
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
 ttl 2592000
-on earth 47.3769 8.5417
+on earth {lat} {lon}
 field properties.layers.0.depths.0.values.mean acoustic m
 map features
 
@@ -14363,7 +14363,7 @@ last data.v thermal degC
 
 url https://api.gbif.org/v1/occurrence/search?basisOfRecord=MACHINE_OBSERVATION&hasCoordinate=true&limit=300&decimalLatitude={lat}&decimalLongitude={lon}&radius=100
 ttl 3600
-on earth 0 0
+on earth {lat} {lon}
 map results
 lat decimalLatitude deg
 dec decimalLongitude deg
@@ -17750,7 +17750,7 @@ field rake seismic-body deg
 
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,ALLSKY_SFC_LW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={year}{month}{day}&format=JSON
 ttl 86400
-on earth 0 0
+on earth {lat} {lon}
 map properties.parameter.T2M
 lat lat deg
 lon lon deg

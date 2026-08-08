@@ -1831,6 +1831,18 @@ def main():
                     if "mars.nasa.gov/rss/api/?feed=weather" in url:
                         frames.append("on mars 4.59 137.44")
                         continue
+                # a template block (URL has {lat}/{lon}) must not carry a
+                # hardcoded on-earth point — its position is the substituted
+                # presence window, declared by the same template variables
+                if key == "on" and len(parts) == 4:
+                    try:
+                        float(parts[2]); float(parts[3])
+                        if ("{lat}" in url or "{lon}" in url) and \
+                           parts[1] == "earth":
+                            frames.append(f"on earth {{lat}} {{lon}}")
+                            continue
+                    except ValueError:
+                        pass
                 frames.append(ls)
                 continue
             if key == "format":
