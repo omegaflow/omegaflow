@@ -2128,3 +2128,18 @@ lon_key lon
   field confidence detection_confidence
   field species.commonName species_common_name
   field species.scientificName species_scientific_name
+
+url https://services9.arcgis.com/rLkpFp1GxgPDr9HL/arcgis/rest/services/eDNA_Species_Detected/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
+ttl 86400
+force biotic
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field properties.ScntfcN species_name
+  field properties.Detectn detection_score
+  field properties.Cllct_D collection_date_ms
+  field properties.Depth depth_m
+  field properties.Temprtr temperature_c
+  field properties.Salinty salinity_psu
+  field properties.Dssl_O2 dissolved_oxygen_umolkg
