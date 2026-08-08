@@ -6178,7 +6178,15 @@ map .
 field energy_tev em TeV
 field error_radius_deg gravity deg
 
-
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
+ttl 3600
+body earth
+at sun 1.0
+format universal
+map .
+ra ra deg
+lon dec deg
+field count_rate em Hz
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+date,band,peak_flux,duration,type+FROM+sgraflares+WHERE+date+IS+NOT+NULL+ORDER+BY+date+DESC
 ttl 3600
@@ -7479,7 +7487,15 @@ field fluence em W/m2
 field peak_flux em W/m2
 field redshift em z
 
-
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,lat,lon,trigger_time,duration,e_mean,counts+FROM+fermitgf+WHERE+lat+IS+NOT+NULL+ORDER+BY+counts+DESC
+ttl 86400
+body earth
+at sun 1.0
+format universal
+rows
+lat geometry.coordinates.1 deg
+lon geometry.coordinates.0 deg
+field count_rate em Hz
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Source_Name,CLASS1,GLON,GLAT,nu_flux,nu_flux_1000,LP_Index,Pivot_Energy,TS+FROM+public.angel_fourfgl+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+nu_flux+DESC&FORMAT=text
 ttl 86400
@@ -7609,7 +7625,15 @@ ra 1 deg
 dec 2 deg
 field 3 em W/m2
 
-
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+ttl 86400
+body earth
+at sun 1.0
+format universal
+rows
+ra ra deg
+dec dec deg
+field count_rate em Hz
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
 ttl 86400
@@ -10773,7 +10797,16 @@ dec dec deg
 plx default_plx mas
 field sb_flux em W/m2
 
-
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intbsc
+ttl 604800
+body earth
+at sun 1.0
+map .
+ra ra deg
+dec dec deg
+plx default_plx mas
+field isgri_soft_rate em Hz
+field isgri_hard_rate em Hz
 
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intisgri4yr
 ttl 604800
@@ -13661,7 +13694,14 @@ ra ra deg
 dec dec deg
 field peak_flux em W/m2
 
-
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
+ttl 3600
+body earth
+format text
+rows
+ra ra deg
+dec dec deg
+field count_rate em Hz
 
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
 body earth

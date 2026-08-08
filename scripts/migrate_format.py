@@ -466,6 +466,12 @@ def domain_physical_lines(url, frame_lines):
         lines += ["last flux em p/cm2/s"]
     elif "blitzortung.org" in url:
         lines += ["map .", "lat lat deg", "lon lon deg"]
+    elif "heasarc" in url or "xamin" in url:
+        # X-ray detector photon rates are frequencies (Hz), not abstract counts
+        if "count_rate" in url or "counts" in url or "avg_rate" in url or "rate_err" in url:
+            lines += ["field count_rate em Hz"]
+        if "isgri_soft_rate" in url or "intbsc" in url:
+            lines += ["field isgri_soft_rate em Hz", "field isgri_hard_rate em Hz"]
     elif "kp.gfz.de" in url or "superdarn.ca" in url:
         lines += ["field value em scalar"]  # replaced by real inference below
     return lines
