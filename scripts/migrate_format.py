@@ -415,6 +415,52 @@ def position_directive(tgt, col_name, src, unit, url):
     return None
 
 
+def domain_physical_lines(url, frame_lines):
+    """For known physical sources whose declared fields were too generic or
+    whose cache parsing failed, return the correct physical extractor lines.
+    These restore wrongly-dropped blocks."""
+    lines = []
+    if "imag-data.bgs.ac.uk" in url and "/xyzf" in url:
+        # BGS magnetometer: HAPI columns X, Y, Z, F in nT
+        lines += ["path 1.0 em nT", "path 1.1 em nT", "path 1.2 em nT",
+                  "path 2 em nT"]
+    elif "api.tidesandcurrents.noaa.gov" in url:
+        if "product=water_level" in url:
+            lines += ["last data.v gravity m"]
+        elif "product=water_temperature" in url:
+            lines += ["last data.v thermal degC"]
+        elif "product=air_temperature" in url:
+            lines += ["last data.v thermal degC"]
+        elif "product=conductivity" in url or "product=specific_conductance" in url:
+            lines += ["last data.v diffusion psu"]
+        elif "product=salinity" in url:
+            lines += ["last data.v diffusion psu"]
+        elif "product=currents" in url or "product=wind" in url:
+            lines += ["last data.v advective m/s"]
+        elif "product=water_level" in url:
+            lines += ["last data.v gravity m"]
+    elif "waterservices.usgs.gov" in url:
+        if "parameterCd=00060" in url:
+            lines += ["last value.timeSeries.0.values.0.value.0.value advective m3/s"]
+        elif "parameterCd=00065" in url:
+            lines += ["last value.timeSeries.0.values.0.value.0.value gravity m"]
+        elif "parameterCd=00010" in url:
+            lines += ["last value.timeSeries.0.values.0.value.0.value thermal degC"]
+        elif "parameterCd=00095" in url:
+            lines += ["last value.timeSeries.0.values.0.value.0.value diffusion psu"]
+        elif "parameterCd=00045" in url:
+            lines += ["last value.timeSeries.0.values.0.value.0.value gravity m"]
+    elif "xray-flares" in url and "swpc.noaa.gov" in url:
+        lines += ["last max_xrlong em W/m2", "last current_int_xrlong em W/m2"]
+    elif "pegelonline.wsv.de" in url:
+        lines += ["last value gravity cm"]
+    elif "geomag.usgs.gov" in url or "gis.ngdc.noaa.gov" in url:
+        lines += ["field value em nT"]
+    elif "kp.gfz.de" in url or "superdarn.ca" in url:
+        lines += ["field value em scalar"]  # replaced by real inference below
+    return lines
+
+
 def is_time_metadata(name):
     n = name.lower()
     if n.endswith("_count") or n.endswith("_total") or n.endswith("_num") or \
@@ -1948,20 +1994,28 @@ def main():
                     stats["units"][u] += 1
                     stats["forces"][f] += 1
 
-        # drop empty blocks: no extractor, no position, no frame that matters
-        has_content = False
+        # a block is complete only when it declares a measurement extractor
+        # (field/last/path/...) — position directives alone carry no physics
+        has_measurement = False
         for l in new_lines:
             p = l.split()
             if p and p[0] in ("field", "last", "first", "count", "path",
-                              "deep", "last_row", "obj_last", "lat", "lon",
-                              "alt", "ra", "dec", "plx", "pmra", "pmdec",
-                              "map", "rows", "cmap", "geojson", "flatten",
-                              "kepler", "hapi", "ephemeris", "vectors"):
-                has_content = True
+                              "deep", "last_row", "obj_last"):
+                has_measurement = True
                 break
-        if not has_content:
-            stats["structural"] += 0
-            new_lines = []
+        if not has_measurement:
+            restored = domain_physical_lines(url, new_lines)
+            if restored:
+                # keep the block header (url/ttl/frame/position) and re-add
+                # the physical measurement extractors
+                frame_ok = [l for l in new_lines if l.split() and l.split()[0] in
+                            ("url", "ttl", "on", "at", "body", "format",
+                             "header", "map", "rows", "lat", "lon", "alt",
+                             "ra", "dec", "plx", "pmra", "pmdec")]
+                new_lines = frame_ok + restored
+            else:
+                # pure metadata/catalog block with no physical measurement
+                new_lines = []
 
         new_blocks.append("\n".join(new_lines))
 
