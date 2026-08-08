@@ -490,34 +490,36 @@ Code: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, `sources_live.φ`
 
 ## Sources.φ Rebuild from (4. Kopie) — DONE
 
-Rebuilt `phi/sources.φ` by merging current clean base (1924 blocks) with
-properly-framed blocks from `phi/recovery/k4_rebuild/sources_k4_converted.φ`.
+Rebuilt `phi/sources.φ` from (4. Kopie) merge + Force Gate Audit + native_targets.
 
-Result: **2409 blocks**, all force+frame, `cargo check` zero errors+warnings.
-Test: **549 ok / 51 fail** of 600 (was 194 ok / 6 fail of 200 before merge).
+Result: **2168 blocks**, all force+frame, `cargo check` zero errors+warnings, all
+field targets `native_targets.py`-clean (Name = Implementation).
 
-Merge method:
-- Kept all 1924 current blocks as base (tested, clean)
-- From converted: 337 new configured blocks added as-is
-- From converted: 148 blocks added with synthesized frame (`body earth` for
-  terrestrial, `at sun 1.0` for celestial/solar)
-- Dropped 106 blocks: 36 ETF/financial (Force Gate), 62 metadata/catalog
-  (forceless: breweries, clinical trials, economic stats, network metadata,
-  etc.), 8 model forecasts (Force Gate)
-- Fixed 2 "pos without body directive" refusals (Open-Meteo AQ, IERS bulletin)
+### Rebuild (Session 2026-08-08)
+- Merged current base (1924) + converted (4. Kopie) new blocks (485) = 2409
+- Added 12 valid blocks from `sources_new.φ` + 5 from `sources_biosphere_merged.φ`
+- Added 22 Gaia TAP endpoint blocks from `repair_gaia.py` → CI Archivar fetches
 
-The converted file's "106 open" count in the handoff was optimistic — actual
-count was 539 no-frame blocks. Only blocks NOT already in current sources.φ
-were processed (164 new no-frame blocks), saving ~375 blocks of manual work
-that were already properly framed in current sources.φ.
+### Council Force Gate Audit (Session 2026-08-08)
+Council verdict: 280 blocks forceless → removed. 194 force tags corrected.
+- **Open-Meteo ALL endpoints**: model output, no physical sensor → DROPPED (162)
+- **Biodiversity human obs** (GBIF, iNaturalist, OBIS, eBird, NeotomaDB, NBN,
+  OpenLitterMap): database records, not physical measurements → DROPPED (~90)
+- **GBIF MACHINE_OBSERVATION**: camera traps, acoustic monitors ARE physical
+  sensors → KEPT (5)
+- **BGS magnetometer HAPI**: force `gravity` → `em` (magnetometers measure
+  magnetic field, not gravity) → FIXED (192)
+- **SWPC IMF `rtsw_mag_1m.json`**: force `gravity` → `em` (interplanetary
+  magnetic field) → FIXED (1)
+- **CDDIS GNSS SP3**: force `thermal` → `gravity` (satellite orbits) → FIXED (1)
+- **Station metadata catalogs** (EarthScope station, RaspberryShake, CDDIS aux):
+  → DROPPED (10)
+- **Aviation forecasts** (AIRSIGMET, ISIGMET, PIREP): text forecasts → DROPPED (4)
+- **EONET event lists**: curated catalogs → DROPPED (6)
+- **RIPE Atlas**: internet infrastructure → DROPPED (1)
+- **SERVIR soil moisture**: model output → DROPPED (1)
 
-Remaining FAILs (51) are dominated by pre-existing ArcGIS WMO buoy schema
-issues (documented in source_curation.md 2026-08-07 handoff) and CDAWeb HAPI
-format mismatches. Only ~5 are from new blocks.
-
-Open follow-up:
-- 5 poorer blocks: co2_global_network(7vs10), nsidc_arctic/antarctic(5vs6),
-  swpc_solar_wind_dscovr(5vs7), nist_codata(4vs5) - rebuild with richer
-  extract from ALL_lost_blocks_richest.φ
-- 93 HAPI blocks: consider switching manual path 1.0 extracts to native
-  `hapi` Extract variant
+### Native Targets (Name = Implementation)
+Applied `scripts/native_targets.py`: all field targets match source path leaf
+keys. 11k lines renamed. `field_in 0 timestamp_utc` → `field_in 0 0` etc.
+Validated: `cargo check` clean.
