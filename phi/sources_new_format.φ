@@ -804,9 +804,6 @@ on earth 0 0
 map coordinates
 lat 0 deg
 lon 1 deg
-map coordinates
-lat 0 deg
-lon 1 deg
 field 2 em W/m2
 
 url https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json
@@ -6848,7 +6845,11 @@ field properties.Area diffusion m2
 
 
 
-
+url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
+ttl 3600
+on earth 42.62682 -8.78233
+format universal
+last_row TotalSPL acoustic dB
 
 url https://www.globalfloods.eu/glofas-forecasting/?format=json
 ttl 3600
@@ -7871,7 +7872,7 @@ field HRV em km/s
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
 ttl 86400
-at mars 1
+on mars 4.59 137.44
 path soles.0.min_temp thermal degC
 path soles.0.max_temp thermal degC
 path soles.0.pressure acoustic hPa
@@ -14778,9 +14779,6 @@ field phot_g_mean_mag em mag
 url https://api.blitzortung.org/compressed/current_positions?lat={lat}&lon={lon}&range=500
 ttl 60
 body earth
-map .
-lat lat deg
-lon lon deg
 map .
 lat lat deg
 lon lon deg

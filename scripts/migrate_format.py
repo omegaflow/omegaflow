@@ -472,6 +472,15 @@ def domain_physical_lines(url, frame_lines):
             lines += ["field count_rate em Hz"]
         if "isgri_soft_rate" in url or "intbsc" in url:
             lines += ["field isgri_soft_rate em Hz", "field isgri_hard_rate em Hz"]
+    elif "smartbay_obs_acoustic" in url:
+        # underwater acoustic sensor: sound pressure level in dB
+        lines += ["last_row TotalSPL acoustic dB"]
+    elif "mars.nasa.gov/rss/api/?feed=weather" in url:
+        # Mars rover weather = surface measurements on Mars
+        lines += ["on mars 4.59 137.44",
+                  "path soles.0.min_temp thermal degC",
+                  "path soles.0.max_temp thermal degC",
+                  "path soles.0.pressure acoustic hPa"]
     elif "kp.gfz.de" in url or "superdarn.ca" in url:
         lines += ["field value em scalar"]  # replaced by real inference below
     return lines
@@ -1815,6 +1824,13 @@ def main():
                     # legacy data-carried position with TARGET names; fields now
                     # carry explicit position units -> drop the redundant line
                     continue
+                # "at <body> 1" is the barycentric frame of a body; a source
+                # measuring that body's SURFACE (weather, seismic, sound) must
+                # be "on <body> <lat> <lon>" — a fixed geodetic point.
+                if key == "at" and len(parts) >= 2 and parts[1] != "sun":
+                    if "mars.nasa.gov/rss/api/?feed=weather" in url:
+                        frames.append("on mars 4.59 137.44")
+                        continue
                 frames.append(ls)
                 continue
             if key == "format":
@@ -2055,12 +2071,15 @@ def main():
             restored = domain_physical_lines(url, new_lines)
             if restored:
                 # keep the block header (url/ttl/frame/position) and re-add
-                # the physical measurement extractors
+                # the physical measurement extractors — without duplicating
+                # lines that are already present
                 frame_ok = [l for l in new_lines if l.split() and l.split()[0] in
                             ("url", "ttl", "on", "at", "body", "format",
                              "header", "map", "rows", "lat", "lon", "alt",
                              "ra", "dec", "plx", "pmra", "pmdec")]
-                new_lines = frame_ok + restored
+                existing = set(frame_ok)
+                add = [l for l in restored if l not in existing]
+                new_lines = frame_ok + add
             else:
                 # pure metadata/catalog block with no physical measurement
                 new_lines = []
