@@ -2915,6 +2915,16 @@ fn load_sources() -> Vec<SourceConfig> {
                                 cur_url
                             );
                         }
+                        if matches!(frame, Frame::Surface { .. })
+                            && cur_extracts
+                                .iter()
+                                .any(|e| matches!(e, Extract::CelestialMap { .. }))
+                        {
+                            eprintln!(
+                                "warning: celestial extract with surface frame (use 'at sun 1.0' for ICRS sky coordinates): {}",
+                                cur_url
+                            );
+                        }
                         sources.push(SourceConfig {
                             ttl: cur_ttl,
                             url: cur_url.clone(),

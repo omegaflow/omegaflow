@@ -8,6 +8,25 @@ Council decision 2026-08-07: biodiversity observation APIs (GBIF, iNaturalist, O
 
 ---
 
+## Celestial Frame Convention: Per-Block Application
+
+Council decision 2026-08-08. Celestial sources with ICRS sky coordinates (ra_key/dec_key) must declare `at sun 1.0`. The SSB is the ICRS origin. `body earth` on a celestial source is incorrect.
+
+Rule in AGENTS.md §Live APIs, enforced by parser warning at `src/main.rs:2918-2926`.
+
+### Blocks to fix (approx 82)
+
+Blocks in `phi/sources.φ` with `body earth` + ra_key/dec_key (no Earth-surface lat_key/lon_key data) need `body earth` → `at sun 1.0`. Per-block application:
+- Read the block. Verify: does it have ra_key/dec_key? Does it have lat_key/lon_key with Earth-surface data?
+- If ICRS-only → replace `body earth` with `at sun 1.0`, remove stale `body earth`
+- If also has Earth-surface data → split into separate blocks or keep `body earth` (not celestial)
+- Double-frame blocks (both `body earth` AND `at sun 1.0`) → remove `body earth`, keep `at sun 1.0`
+- One commit per block or small group. Verify `cargo check` clean. Parser warning for that URL must disappear.
+
+Code: `phi/sources.φ` (block edits), `src/main.rs:2918-2926` (warning verifies fix)
+
+---
+
 ## Council Agent Versioned (2026-08-07)
 
 `.opencode/agent/council.md` and `.opencode/command/council.md` are now versioned (skip-worktree). Verify a fresh clone invokes the council agent with the same behavior.
