@@ -2143,3 +2143,31 @@ lon_key geometry.coordinates.0
   field properties.Temprtr temperature_c
   field properties.Salinty salinity_psu
   field properties.Dssl_O2 dissolved_oxygen_umolkg
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/C_mydas_SSM/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
+ttl 3600
+force biotic
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field properties.turtleid turtle_id
+  field properties.date telemetry_date_ms
+  field properties.lat latitude_deg
+  field properties.lon longitude_deg
+  field properties.state movement_state
+
+url https://services7.arcgis.com/yHbO69mL1QTGCPQG/arcgis/rest/services/PSF_harmful_phyto/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
+ttl 86400
+force biotic
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field properties.station station_id
+  field properties.year sample_year
+  field properties.month sample_month
+  field properties.depth_m sample_depth_m
+  field properties.chaetoceros chaetoceros_cells
+  field properties.alexandriu alexandrium_cells
+  field properties.cochlodini cochlodinium_cells
