@@ -456,6 +456,16 @@ def domain_physical_lines(url, frame_lines):
         lines += ["last value gravity cm"]
     elif "geomag.usgs.gov" in url or "gis.ngdc.noaa.gov" in url:
         lines += ["field value em nT"]
+    elif "earthquake.usgs.gov" in url and "geojson" in url:
+        # USGS quake feeds: magnitude + depth from GeoJSON event properties
+        lines += ["geojson events mag 0 seismic_magnitude seismic_depth_m"]
+    elif "ovation_aurora" in url:
+        lines += ["map coordinates", "lat 0 deg", "lon 1 deg",
+                  "field 2 em W/m2"]
+    elif "differential-protons" in url:
+        lines += ["last flux em p/cm2/s"]
+    elif "blitzortung.org" in url:
+        lines += ["map .", "lat lat deg", "lon lon deg"]
     elif "kp.gfz.de" in url or "superdarn.ca" in url:
         lines += ["field value em scalar"]  # replaced by real inference below
     return lines
@@ -1995,12 +2005,15 @@ def main():
                     stats["forces"][f] += 1
 
         # a block is complete only when it declares a measurement extractor
-        # (field/last/path/...) — position directives alone carry no physics
+        # (field/last/path/...) or a container that carries measurements inline
+        # (geojson events, hapi, kepler, ephemeris). Position alone is not.
         has_measurement = False
         for l in new_lines:
             p = l.split()
-            if p and p[0] in ("field", "last", "first", "count", "path",
-                              "deep", "last_row", "obj_last"):
+            if p and (p[0] in ("field", "last", "first", "count", "path",
+                               "deep", "last_row", "obj_last") or
+                      (p[0] == "geojson" and len(p) > 2) or
+                      p[0] in ("hapi", "kepler", "ephemeris", "vectors")):
                 has_measurement = True
                 break
         if not has_measurement:
