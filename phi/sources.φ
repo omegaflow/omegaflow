@@ -602,7 +602,7 @@ field No1.location location
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
 ttl 300
-force em
+force seismic-body
 on earth 0 0
 map features
 lat_key geometry.coordinates.1
@@ -677,7 +677,7 @@ field_in properties.sea_water_speed_1__cm_s_1_ sea_water_speed_1__cm_s_1_
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42084/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
-force acoustic
+force thermal
 on earth 0 0
 map features
 lat_key geometry.coordinates.1
@@ -687,7 +687,7 @@ field_in properties.sea_surface_temperature_1__degr sea_surface_temperature_1__d
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42091/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
-force acoustic
+force thermal
 on earth 0 0
 map features
 lat_key geometry.coordinates.1
@@ -697,7 +697,7 @@ field_in properties.sea_surface_temperature_1__degr sea_surface_temperature_1__d
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42095/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
-force acoustic
+force thermal
 on earth 0 0
 map features
 lat_key geometry.coordinates.1
@@ -707,7 +707,7 @@ field_in properties.sea_surface_temperature_1__degr sea_surface_temperature_1__d
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42098/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
-force acoustic
+force thermal
 on earth 0 0
 map features
 lat_key geometry.coordinates.1
@@ -717,7 +717,7 @@ field_in properties.sea_surface_temperature_1__degr sea_surface_temperature_1__d
 
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42099/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
 ttl 300
-force acoustic
+force thermal
 on earth 0 0
 map features
 lat_key geometry.coordinates.1
@@ -6482,7 +6482,7 @@ field_in dirasakan dirasakan
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=3&limit=500
 ttl 600
-force em
+force seismic-body
 on earth 0 0
 map features
 lat_key geometry.coordinates.1
@@ -6784,7 +6784,7 @@ field_in properties.sig sig
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmagnitude=2&limit=500
 ttl 600
-force em
+force seismic-body
 on earth 0 0
 map features
 lat_key geometry.coordinates.1
@@ -7626,14 +7626,7 @@ url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC
 ttl 3600
 force em
 at sun 1.0
-obj_last value biosphere_solar_radiation_power
-field_in 0 0
-field_in 1 1
-field_in 2 2
-field_in 3 3
-field_in 5 5
-field_in 7 7
-field_in 8 8
+obj_last value value
 
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
 ttl 3600
@@ -11990,7 +11983,7 @@ field_in 2 2
 
 url https://api.woudc.org/collections/stations/items?f=json&limit=500
 ttl 86400
-force em
+force diffusion
 on earth 0 0
 map features
 lat_key geometry.coordinates.1
@@ -12004,7 +11997,7 @@ field_in properties.active active
 
 url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=ozone_total_column
 ttl 86400
-force em
+force diffusion
 on earth 43.780 -79.470
 path numberMatched numberMatched
 
@@ -12665,7 +12658,7 @@ field_in properties.mission mission
 
 url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&output=json
 ttl 86400
-force em
+force diffusion
 body earth
 field value value
 field resolution resolution
@@ -13134,7 +13127,7 @@ field_in attributes.sm sm
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6.0&orderby=time&limit=20
 ttl 86400
-force em
+force seismic-surface
 on earth 0 0
 map features
 lat_key geometry.coordinates.1
@@ -15948,35 +15941,35 @@ alt_key elevation
 
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
 ttl 2592000
-force em
+force diffusion
 on earth 47.3769 8.5417
 field properties.layers.0.depths.0.values.mean mean
 map features
 
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
 ttl 2592000
-force em
+force diffusion
 on earth 47.3769 8.5417
 field properties.layers.0.depths.0.values.mean mean
 map features
 
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=sand&depth=0-5cm&value=mean
 ttl 2592000
-force em
+force diffusion
 on earth 47.3769 8.5417
 field properties.layers.0.depths.0.values.mean mean
 map features
 
 url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
 ttl 2592000
-force em
+force diffusion
 on earth 47.3769 8.5417
 field properties.layers.0.depths.0.values.mean mean
 map features
 
 url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&wkid=4326
 ttl 2592000
-force seismic-surface
+force diffusion
 body earth
 path value value
 
@@ -20307,7 +20300,7 @@ field_in location.altitude altitude
 
 url https://data.sensor.community/airrohr/v1/filter/box=35,354,70,40
 ttl 86400
-force seismic-body
+force diffusion
 on earth 0 0
 map .
 lat_key location.latitude
@@ -20502,7 +20495,7 @@ field_in vo vo
 url https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D,adt%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D
 format text
 ttl 86400
-force seismic-surface
+force gravity
 on earth 0 0
 rows
 lat_key latitude
@@ -20513,7 +20506,7 @@ field_in adt adt
 url https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-65.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D,ugosa%5Blast%5D%5B(-65.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D,vgosa%5Blast%5D%5B(-65.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D
 format text
 ttl 86400
-force acoustic
+force advective
 on earth 0 0
 rows
 lat_key latitude
@@ -20562,7 +20555,7 @@ field_in no3 no3
 url https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-rep-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D,ugos%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D,vgos%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D
 format text
 ttl 86400
-force acoustic
+force advective
 on earth 0 0
 rows
 lat_key latitude
@@ -20574,7 +20567,7 @@ field_in vgos vgos
 url https://nrt.cmems-du.eu/erddap/griddap/SST_GLO_SST_L4_NRT_OBSERVATIONS_010_001.csv?analysed_sst%5Blast%5D%5B(-60.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D,sea_ice_fraction%5Blast%5D%5B(-60.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D
 format text
 ttl 3600
-force seismic-body
+force advective
 on earth 0 0
 rows
 lat_key latitude
@@ -20618,7 +20611,7 @@ field_in thetao thetao
 url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_mynrt_l4_P1D-m.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
 format text
 ttl 86400
-force acoustic
+force advective
 on earth 0 0
 rows
 lat_key latitude
@@ -21920,7 +21913,7 @@ last data.1.data data
 
 url https://api.carbonintensity.org.uk/intensity
 ttl 300
-force em
+force thermal
 on earth 54.0 -2.0
 path data.0.intensity.actual actual
 
@@ -22919,7 +22912,7 @@ field feed.totalResults totalResults
 
 url https://api.woudc.org/collections/totalozone/items?limit=1
 ttl 86400
-force em
+force diffusion
 on earth 43.780 -79.470
 path numberMatched numberMatched
 
