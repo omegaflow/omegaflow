@@ -278,7 +278,7 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32) -> f32 {
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 
-struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) kernel_id: u32, @location(3) @interpolate(flat) absorption: f32 };
+struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) kernel_id: u32, @location(3) @interpolate(flat) absorption: f32, @location(4) @interpolate(flat) force_type: u32 };
 
 const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
 
@@ -349,14 +349,14 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     if (k_id >= 4u && k_id < 7u) { lvl = vp.expose_hi[k_id - 4u]; }
     if (lvl <= 0.0) { return out; }
 
-    let hue_center = fract(log2(max(tau, 1.0)) / 16.0);
+    let hue_center = fract(log2(max(tau, 1.0)) / 16.0 + f32(k_id) * 0.125);
     let tau_freq = 1.0 / max(tau, exp2(-32.0));
     let color_shift = clamp(log2(tau_freq) / 8.0, -0.25, 0.25);
-    let hue = fract(hue_center + color_shift);
+    let hue = fract(hue_center + color_shift + f32(u32(tm.z)) * 0.125);
     let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y, u32(tm.z))) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
     let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
     out.color = rgb;
-    out.kernel_id = u32(tm.z);
+    out.force_type = u32(tm.z);
     return out;
 }
 
