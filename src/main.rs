@@ -2649,7 +2649,6 @@ fn load_sources() -> Vec<SourceConfig> {
 
     let mut cur_ttl: u64 = 0;
     let mut cur_url = String::new();
-    let mut cur_alt: f64 = 0.0;
     let mut cur_format = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
     let mut cur_headers: Vec<(String, String)> = Vec::new();
@@ -2710,15 +2709,10 @@ fn load_sources() -> Vec<SourceConfig> {
                     });
                 }
             }
-            cur_ttl = 0;
             cur_url.clear();
-            cur_alt = 0.0;
             cur_format.clear();
             cur_extracts.clear();
             cur_headers.clear();
-            cur_repeat_ra_bins = 0;
-            cur_frame = None;
-            active = false;
         };
     }
 
@@ -2755,7 +2749,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 let body = parts[1].to_string();
                 cur_body = Some(body.clone());
                 if let (Ok(lat), Ok(lon)) = (parts[2].parse::<f64>(), parts[3].parse::<f64>()) {
-                    cur_alt = parts
+                    let alt = parts
                         .get(4)
                         .and_then(|a| a.parse::<f64>().ok())
                         .unwrap_or(0.0);
@@ -2763,7 +2757,7 @@ fn load_sources() -> Vec<SourceConfig> {
                         body_name: body,
                         lat,
                         lon,
-                        alt: cur_alt,
+                        alt,
                     });
                 }
             }
@@ -5498,6 +5492,57 @@ fn main() {
         }
     }
     {
+        let _ = (ECLIPTIC_OBLIQUITY, AU, GAUSS_K);
+        let _ = Extract::First("k".into(), "u".into());
+        let _ = Extract::Last("k".into(), "u".into());
+        let _ = Extract::Count("k".into(), "u".into());
+        let _ = Extract::LastRow("k".into(), "u".into());
+        let _ = Extract::LastObj("a".into(), "m".into(), "v".into(), "u".into());
+        let _ = Extract::LastLine("u".into());
+        let _ = Extract::ObjLast("a".into(), "u".into());
+        let _ = Extract::GeojsonEvents {
+            mag_key: "m".into(),
+            min_mag: 0.0,
+            outputs: vec![],
+        };
+        let _ = Extract::Path("k".into(), "u".into());
+        let _ = Extract::Deep("k".into(), "u".into());
+        let _ = Extract::Regex("p".into(), "u".into());
+        let _ = Extract::Hapi(vec![]);
+        let _ = Extract::XmlCount("t".into(), "u".into());
+        let _ = Extract::Ephemeris("mars".into());
+        let _ = Extract::Vectors("mars".into());
+        let _ = Extract::Flatten {
+            arr_path: "a".into(),
+            geom_path: "".into(),
+            epoch_key: "".into(),
+            fields: vec![],
+        };
+        let _ = Extract::CmrPolygon {
+            arr_path: "a".into(),
+            fields: vec![],
+            epoch_key: "".into(),
+            alt_key: "".into(),
+            val_key: "".into(),
+        };
+        let _ = Extract::CelestialPolygon {
+            arr_path: "a".into(),
+            radius: 1.0,
+            fields: vec![],
+            epoch_key: "".into(),
+            val_key: "".into(),
+        };
+        let _ = Extract::KeplerMap {
+            arr_path: "a".into(),
+            a_key: "".into(),
+            e_key: "".into(),
+            i_key: "".into(),
+            om_key: "".into(),
+            w_key: "".into(),
+            ma_key: "".into(),
+            epoch_key: "".into(),
+            fields: vec![],
+        };
         let _ = PendingPosition::Surface {
             body_name: String::new(),
             lat: 0.0,
