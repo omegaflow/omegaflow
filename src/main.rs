@@ -4,7 +4,7 @@ use std::{
     io::{Cursor, Read, Write},
     net::{TcpListener, TcpStream},
     process::Command,
-    sync::{Arc, mpsc},
+    sync::{mpsc, Arc},
     thread,
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
@@ -841,7 +841,11 @@ fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
         (365.25 * (y + 4716) as f64) as i64 + (30.6001 * (m + 1) as f64) as i64 + day as i64 + b
             - 1524;
     let days = jdn - 2440588;
-    if days < 0 { None } else { Some(days as u64) }
+    if days < 0 {
+        None
+    } else {
+        Some(days as u64)
+    }
 }
 
 #[derive(Clone, Default)]
@@ -1968,6 +1972,7 @@ struct StationEntry {
     lon: f64,
 }
 
+#[derive(Clone)]
 struct SourceConfig {
     ttl: u64,
     url: String,
@@ -4884,301 +4889,21 @@ fn main() {
         }
     }
     {
-        let _ = (ECLIPTIC_OBLIQUITY, AU, GAUSS_K);
-        let _ = (J2000_EPOCH, Φ, CHEBYSHEV_N);
-        let _ = Extract::First("k".into(), "u".into());
-        let _ = Extract::Last("k".into(), "u".into());
-        let _ = Extract::Count("k".into(), "u".into());
-        let _ = Extract::LastRow("k".into(), "u".into());
-        let _ = Extract::LastObj("a".into(), "m".into(), "v".into(), "u".into());
-        let _ = Extract::LastLine("u".into());
-        let _ = Extract::ObjLast("a".into(), "u".into());
-        let _ = Extract::GeojsonEvents {
-            mag_key: "m".into(),
-            min_mag: 0.0,
-            outputs: vec![],
-        };
-        let _ = Extract::Path("k".into(), "u".into());
-        let _ = Extract::Deep("k".into(), "u".into());
-        let _ = Extract::Regex("p".into(), "u".into());
-        let _ = Extract::Hapi(vec![]);
-        let _ = Extract::XmlCount("t".into(), "u".into());
-        let _ = Extract::Ephemeris("mars".into());
-        let _ = Extract::Vectors("mars".into());
-        let _ = Extract::Flatten {
-            arr_path: "a".into(),
-            geom_path: "".into(),
-            epoch_key: "".into(),
-            fields: vec![],
-        };
-        let _ = Extract::CmrPolygon {
-            arr_path: "a".into(),
-            fields: vec![],
-            epoch_key: "".into(),
-            alt_key: "".into(),
-            val_key: "".into(),
-        };
-        let _ = Extract::CelestialPolygon {
-            arr_path: "a".into(),
-            radius: 1.0,
-            fields: vec![],
-            epoch_key: "".into(),
-            val_key: "".into(),
-        };
-        let _ = Extract::KeplerMap {
-            arr_path: "a".into(),
-            a_key: "".into(),
-            e_key: "".into(),
-            i_key: "".into(),
-            om_key: "".into(),
-            w_key: "".into(),
-            ma_key: "".into(),
-            epoch_key: "".into(),
-            fields: vec![],
-        };
-        let _ = Extract::CelestialMap {
-            arr_path: "a".into(),
-            ra_key: "".into(),
-            dec_key: "".into(),
-            dist_key: String::new(),
-            dist_scale: 1.0,
-            plx_key: "".into(),
-            z_key: String::new(),
-            pmra_key: "".into(),
-            pmdec_key: "".into(),
-            rv_key: String::new(),
-            rv_scale: 1.0,
-            epoch_key: "".into(),
-            fields: vec![],
-        };
-        let _ = Extract::Map {
-            arr_path: "a".into(),
-            lat_key: "".into(),
-            lon_key: "".into(),
-            alt_key: "".into(),
-            epoch_key: "".into(),
-            val_key: "".into(),
-            alt_sign: -1.0,
-            vel_key: String::new(),
-            trk_key: String::new(),
-            vr_key: String::new(),
-            fields: vec![],
-            lon_sign: None,
-        };
-        let _ = Extract::Rows {
-            last_line: false,
-            fields: vec![],
-        };
-        let _ = PendingPosition::Surface {
-            body_name: String::new(),
-            lat: 0.0,
-            lon: 0.0,
-            alt: 0.0,
-        };
-        let _ = PendingPosition::SurfaceFlow {
-            body_name: String::new(),
-            lat: 0.0,
-            lon: 0.0,
-            alt: 0.0,
-            speed: 0.0,
-            track: 0.0,
-            vrate: 0.0,
-        };
-        let _ = PendingPosition::Source;
-        let _ = PendingPosition::StateVector {
-            p: [0.0; 3],
-            v: [0.0; 3],
-            track: false,
-        };
-        let _er: ExtractResult = ExtractResult::Samples(vec![]);
-        {
-            let _ = match &_er {
-                ExtractResult::Samples(s) => {
-                    let _ = s;
-                }
-                ExtractResult::WithEphemeris(s, e) => {
-                    let _ = (s, e);
-                }
-            };
-        }
-        let _os = OriginState {
-            fetched: 0.0,
-            ttl: 1.0,
-            prev_epoch: 0.0,
-            prev_abs: [0.0; 3],
-            prev_motion: None,
-            resid_ema: 0.0,
-            has_prev: false,
-            zero_yield: 0,
-            last_body_hash: [0u8; 20],
-        };
-        {
-            let _ = (&_os.zero_yield, &_os.last_body_hash);
-        }
-        let _se = StationEntry {
-            id: String::new(),
-            lat: 0.0,
-            lon: 0.0,
-        };
-        let _sc = SourceConfig {
-            ttl: 0,
-            url: String::new(),
-            frame: Frame::Surface {
-                body_name: String::new(),
-                lat: 0.0,
-                lon: 0.0,
-                alt: 0.0,
-            },
-            tau: None,
-            format: String::new(),
-            extracts: vec![],
-            headers: vec![],
-            post_body: None,
-            method: String::new(),
-            target: None,
-            catalog: None,
-            max_freq: None,
-            min_freq: None,
-            body: None,
-            stations_url: None,
-            stations_path: String::new(),
-            stations_lat: String::new(),
-            stations_lon: String::new(),
-            stations_id: String::new(),
-            flux_from_mag: None,
-            abs_mag_from: None,
-            reach_ttl: None,
-            catalog_epoch: None,
-            repeat_ra_bins: 0,
-        };
-        let _ = &_sc.ttl;
-        let _ = &_sc.url;
-        let _ = &_sc.frame;
-        let _ = &_sc.format;
-        let _ = &_sc.headers;
-        let _ = &_sc.method;
-        let _ = &_sc.body;
-    }
-
-    {
-        let _ = C_LIGHT;
-        let _ = HUBBLE_H0;
-        let _ = MAS_YR_TO_RAD_S;
-        let _ = PARSEC_M;
-        let _ = days_to_ymd(0);
-        let _ = ecliptic_to_field([0.0; 3]);
-        let dummy_url = "";
-        let _ = extract_netloc(dummy_url);
-        let sc_empty = SourceConfig {
-            ttl: 0,
-            url: String::new(),
-            frame: Frame::Surface {
-                body_name: String::new(),
-                lat: 0.0,
-                lon: 0.0,
-                alt: 0.0,
-            },
-            tau: None,
-            format: String::new(),
-            extracts: vec![],
-            headers: vec![],
-            post_body: None,
-            method: String::new(),
-            target: None,
-            catalog: None,
-            max_freq: None,
-            min_freq: None,
-            body: None,
-            stations_url: None,
-            stations_path: String::new(),
-            stations_lat: String::new(),
-            stations_lon: String::new(),
-            stations_id: String::new(),
-            flux_from_mag: None,
-            abs_mag_from: None,
-            reach_ttl: None,
-            catalog_epoch: None,
-            repeat_ra_bins: 0,
-        };
-        let _ = extract_pending(&sc_empty, "", 0.0);
-        let _ = extract_regex_val("", "");
-        let _ = fetch_one(dummy_url, None, &[], 0);
-        let _ = fetch_raw(dummy_url, None, &[], 0);
-        let _ = file_fresh("", 0);
-        let _ = frame_body_name(&Frame::Surface {
-            body_name: String::new(),
-            lat: 0.0,
-            lon: 0.0,
-            alt: 0.0,
-        });
-        let _ = horizons_nums("", [""; 3]);
-        let eph_empty: HashMap<String, BodyEphemeris> = HashMap::new();
-        let _ = icrs_to_body_surface(0.0, 0.0, 0.0, 0.0, "", &eph_empty);
-        let _ = is_leap(2020);
-        let j_null = JsonVal::Null;
-        let _ = j2d_last_row(&j_null, "");
-        let _ = jcount(&j_null, "");
-        let _ = jdeep_find_num(&j_null, "");
-        let _ = jfirst(&j_null, "");
-        let _ = jlast(&j_null, "");
-        let _ = jnum(&j_null, "");
-        let _ = jpath(&j_null, "");
-        let _ = jpath_val(&j_null, "");
-        let _ = parse_ephemeris_binary(&[]);
-        let _ = parse_iso_tdb("");
-        let _ = resolve_secret("");
-        let _ = scalar_of(&j_null);
-        let _ = source_name_from_url(dummy_url);
-        let _ = split_data_line("");
-        let _ = tdb_to_jd(0.0);
-        let _ = text_last_col("", "");
-        let _ = universal_auto_detect(&j_null);
-        let _ = utc_iso8601_now();
-        let _ = ymd_to_days(1970, 1, 1);
-        let _ = flatten_geojson_coords(&[]);
-        let presences: Vec<(f64, f64, f64, f64, f64)> = vec![];
-        let _ = fetch_priority(dummy_url, (0.0, 0.0, 0.0), 1.0, false, 0, &presences);
-        let _ = render_headers(&sc_empty, 0.0, 0.0, 0.0, 0.0, 1.0, &eph_empty);
-        let _ = render_url("", 0.0, 0.0, 0.0, 0.0, 1.0, "", &eph_empty);
-        let o_empty: HashMap<Origin, OriginState> = HashMap::new();
-        let orig: Origin = (0, 0, 0);
-        let _ = origin_stale(&o_empty, orig, 0, 0.0);
-        let arch_empty = Archive {
-            sources: vec![],
-            index_html: vec![],
-            constants_js: vec![],
-            body_ephemerides: Arc::new(HashMap::new()),
-            field: Arc::new(build_buffer(vec![], 1.0)),
-            station: StationState {
-                sample: None,
-                buffer: Arc::new(build_buffer(vec![], 1.0)),
-                ema_interval: 0.0,
-                last_seen: 0.0,
-            },
-            presence: HashMap::new(),
-            origins: HashMap::new(),
-            ttl_eff: HashMap::new(),
-            stations_cache: HashMap::new(),
-        };
-        let _ = per_origin_sleep(&arch_empty, 0.0);
-        let presences: Vec<(f64, f64, f64, f64, f64)> = vec![];
-        let _ = presence_gate(&presences, (0.0, 0.0, 0.0), 1.0);
-        let _ = render_source_body(&sc_empty, 0.0, 0.0, 0.0, 0.0, 1.0, &eph_empty);
-        let _ = render_source_url(&sc_empty, 0.0, 0.0, 0.0, 0.0, 1.0, None, &eph_empty);
-        let _ = spawn_task_curl(
-            std::path::Path::new(""),
-            0,
-            &(
-                0,
-                (0u32, 0, 0),
-                None,
-                String::new(),
-                None,
-                vec![],
-                0,
-                String::new(),
-            ),
-        );
+        let _ = &presence_gate;
+        let _ = &origin_stale;
+        let _ = &fetch_priority;
+        let _ = &per_origin_sleep;
+        let _ = &spawn_task_curl;
+        let _ = &parse_ephemeris_binary;
+        let _ = &parse_iso_tdb;
+        let _ = &ymd_to_days;
+        let _ = &days_to_ymd;
+        let _ = &is_leap;
+        let _ = &icrs_to_body_surface;
+        let _ = &build_buffer;
+        let _ = PARSEC_M * C_LIGHT * HUBBLE_H0 * MAS_YR_TO_RAD_S;
+        let _ = ECLIPTIC_OBLIQUITY + AU + GAUSS_K;
+        let _ = J2000_EPOCH + Φ + CHEBYSHEV_N as f64;
     }
     let loaded = load_sources();
     let port: u16 = std::env::var("PORT")
@@ -5187,7 +4912,7 @@ fn main() {
         .unwrap_or(1111);
     let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
     listener.set_nonblocking(true).unwrap();
-    let (_fetch_tx, _fetch_rx) = mpsc::channel::<FetchResult>();
+    let (fetch_tx, fetch_rx) = mpsc::channel::<FetchResult>();
     let (station_tx, station_rx) = mpsc::channel::<StationUpdate>();
     let body_ephemerides = Arc::new(HashMap::new());
     let index_html = std::fs::read(resolve_asset("static/index.html")).unwrap_or_default();
@@ -5219,7 +4944,7 @@ fn main() {
     let cadence = 1.0;
     loop {
         let now = tdb_now();
-        while let Ok(res) = _fetch_rx.try_recv() {
+        while let Ok(res) = fetch_rx.try_recv() {
             archive
                 .origins
                 .entry((res.source_idx as u32, 0, 0))
@@ -5250,6 +4975,85 @@ fn main() {
             for (key, val) in msg.presences {
                 archive.presence.insert(key, val);
             }
+        }
+        for i in 0..archive.sources.len() {
+            let origin = (i as u32, 0, 0);
+            if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
+                continue;
+            }
+            let r = kernel_extent(0, None, archive.sources[i].ttl as f64);
+            let pos = match &archive.sources[i].frame {
+                Frame::Surface {
+                    lat,
+                    lon,
+                    alt,
+                    body_name,
+                } => {
+                    if let Some(p) = body_fixed_to_icrs(
+                        body_name,
+                        *lat,
+                        *lon,
+                        *alt,
+                        now,
+                        &archive.body_ephemerides,
+                    ) {
+                        (p[0], p[1], p[2])
+                    } else {
+                        continue;
+                    }
+                }
+                Frame::Barycenter { body_name, scale } => {
+                    if let Some(bp) =
+                        body_barycenter_position(body_name, now, &archive.body_ephemerides)
+                    {
+                        (bp[0] * scale, bp[1] * scale, bp[2] * scale)
+                    } else {
+                        continue;
+                    }
+                }
+            };
+            let presences: Vec<(f64, f64, f64, f64, f64)> =
+                archive.presence.values().cloned().collect();
+            if !presence_gate(&presences, pos, r) {
+                continue;
+            }
+            let ftx = fetch_tx.clone();
+            let src_clone = archive.sources[i].clone();
+            let url = render_source_url(
+                &src_clone,
+                pos.0,
+                pos.1,
+                pos.2,
+                now,
+                r,
+                None,
+                &archive.body_ephemerides,
+            );
+            let body = render_source_body(
+                &src_clone,
+                pos.0,
+                pos.1,
+                pos.2,
+                now,
+                r,
+                &archive.body_ephemerides,
+            );
+            let src_idx = i;
+            thread::spawn(move || {
+                let raw = fetch_one(&url, body.as_deref(), &src_clone.headers, src_clone.ttl);
+                let pendings = match raw {
+                    Some(ref r) => match extract_pending(&src_clone, r, now) {
+                        ExtractResult::Samples(v) => v,
+                        ExtractResult::WithEphemeris(v, _) => v,
+                    },
+                    None => Vec::new(),
+                };
+                let _ = ftx.send(FetchResult {
+                    source_idx: src_idx,
+                    pendings,
+                    eph_update: None,
+                });
+            });
         }
         {
             let mut all: Vec<Sample> = Vec::new();
