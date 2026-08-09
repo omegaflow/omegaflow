@@ -2,6 +2,32 @@
 
 AGENTS.md is the primary constraint matrix. Git is the history. This file contains only pending work.
 
+## Parser Rewrite — 4-Token Canonical Format
+
+`sources_v2.phi` (1501/1924 blocks, 4902 fields) is the canonical 4-token migration.
+Format: `field <key> <force> <unit>`. No block-level `force`. `*_key` → drop suffix.
+`at sun 1.0` → `at sun`. No indentation. `field_in` → `field` inside map blocks.
+
+Parser (`src/main.rs`) must be rewritten to load `phi/sources_v2.phi` instead of
+`phi/sources.φ`. The extract variants must be unified (field=field_in=path=deep,
+first=last=last_row=last_line=last_obj=obj_last). Only `field` (4-token scalar),
+`field` (3-token inside map), `count` (skip), and core directives survive.
+
+429 blocks (GBIF, iNaturalist, ArcGIS-metadata, earthquake-catalogs, station-lists)
+have no physical measurements — parser must handle blocks with zero fields.
+
+## OPeNDAP Integration for NASA EarthData
+
+NASA EarthData (SWOT, ICESat-2, GEDI) stores measurements in HDF5/NetCDF files
+accessible via OPeNDAP. No binary decompression needed — OPeNDAP returns CSV/JSON
+subsets. CI-mode Archivar fetches OPeNDAP URLs, extracts physical fields.
+
+Crates needed: none (std-only). OPeNDAP is HTTP GET with DAP2/DAP4 protocol.
+URL pattern: `{granule_url}.dap?variable[subset]`. CMR API finds granules.
+
+Expected data: SSH (sea surface height), wind speed, wave height, ice freeboard,
+canopy height, biomass. All have SI units. Force assignments follow standard matrix.
+
 ## Autonomous Biodiversity Sensing
 
 Council decision 2026-08-07: biodiversity observation APIs (GBIF, iNaturalist, OBIS) measure human database records, not physical field quantities — forceless under the Force Gate. Genuine biophysical biodiversity measurements (camera traps, eDNA sequencers, bioacoustic monitors, chlorophyll fluorescence) carry force. Sources exist for acoustic (xeno-canto, passive acoustic monitoring) and satellite-derived (chlorophyll, NDVI). Open them when available.

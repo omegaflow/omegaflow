@@ -1896,43 +1896,7 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
         None
     }
 }
-fn parse_quoted_args(s: &str) -> Vec<String> {
-    let mut result = Vec::new();
-    let mut chars = s.chars().peekable();
-    while chars.peek().is_some() {
-        while chars.peek().map(|c| c.is_whitespace()).unwrap_or(false) {
-            chars.next();
-        }
-        if chars.peek().is_none() {
-            break;
-        }
-        if *chars.peek().unwrap() == '"' {
-            chars.next();
-            let mut val = String::new();
-            while let Some(&c) = chars.peek() {
-                if c == '"' {
-                    chars.next();
-                    break;
-                }
-                val.push(c);
-                chars.next();
-            }
-            result.push(val);
-        } else {
-            let mut val = String::new();
-            while let Some(&c) = chars.peek() {
-                if c.is_whitespace() {
-                    break;
-                }
-                val.push(c);
-                chars.next();
-            }
-            result.push(val);
-        }
-    }
-    result
-}
-
+#[allow(dead_code)]
 #[derive(Clone)]
 enum Extract {
     Field(String, String),
@@ -2069,6 +2033,7 @@ fn force_extent_of_id(id: u8) -> Option<f64> {
     }
 }
 
+#[derive(Clone)]
 enum Frame {
     Surface {
         body_name: String,
@@ -2787,628 +2752,336 @@ fn resolve_secret(url: &str) -> String {
     result
 }
 
+#[allow(unused_assignments, unused_variables)]
 fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
-    for path in &["phi/sources.φ"] {
-        let content = match std::fs::read_to_string(path) {
-            Ok(c) => c,
-            Err(_) => continue,
-        };
-        let mut cur_ttl: u64 = 0;
-        let mut cur_force = String::new();
-        let mut cur_tau: Option<f64> = None;
-        let mut cur_tau_key: Option<String> = None;
-        let mut cur_url = String::new();
-        let mut cur_lat: Option<f64> = None;
-        let mut cur_lon: Option<f64> = None;
-        let mut cur_alt: f64 = 0.0;
-        let mut cur_scale: Option<f64> = None;
-        let mut cur_pos: Option<(String, String, Option<String>, f64)> = None;
-        let mut cur_format = String::new();
-        let mut cur_extracts: Vec<Extract> = Vec::new();
-        let mut cur_headers: Vec<(String, String)> = Vec::new();
-        let mut cur_target: Option<String> = None;
-        let mut cur_catalog: Option<String> = None;
-        let mut cur_max_freq: Option<f64> = None;
-        let mut cur_min_freq: Option<f64> = None;
-        let mut cur_body: Option<String> = None;
-        let mut cur_post_body: Option<String> = None;
-        let mut cur_method: Option<String> = None;
-        let mut cur_stations_url: Option<String> = None;
-        let mut cur_stations_path = String::from("stations");
-        let mut cur_stations_lat = String::from("lat");
-        let mut cur_stations_lon = String::from("lng");
-        let mut cur_stations_id = String::from("id");
-        let mut cur_flux_from_mag: Option<String> = None;
-        let mut cur_abs_mag_from: Option<String> = None;
-        let mut cur_reach_ttl: Option<u64> = None;
-        let mut cur_catalog_epoch: Option<f64> = None;
-        let mut cur_repeat_ra_bins: u32 = 0;
-        let mut active = false;
+    let content = match std::fs::read_to_string("phi/sources.φ") {
+        Ok(c) => c,
+        Err(_) => return sources,
+    };
 
-        macro_rules! flush {
+    let mut cur_ttl: u64 = 0;
+    let mut cur_url = String::new();
+    let mut cur_lat: Option<f64> = None;
+    let mut cur_lon: Option<f64> = None;
+    let mut cur_alt: f64 = 0.0;
+    let mut cur_format = String::new();
+    let mut cur_extracts: Vec<Extract> = Vec::new();
+    let mut cur_headers: Vec<(String, String)> = Vec::new();
+    let mut cur_target: Option<String> = None;
+    let mut cur_catalog: Option<String> = None;
+    let mut cur_max_freq: Option<f64> = None;
+    let mut cur_min_freq: Option<f64> = None;
+    let mut cur_body: Option<String> = None;
+    let mut cur_post_body: Option<String> = None;
+    let mut cur_method: Option<String> = None;
+    let mut cur_stations_url: Option<String> = None;
+    let mut cur_stations_path = String::from("stations");
+    let mut cur_stations_lat = String::from("lat");
+    let mut cur_stations_lon = String::from("lng");
+    let mut cur_stations_id = String::from("id");
+    let mut cur_flux_from_mag: Option<String> = None;
+    let mut cur_abs_mag_from: Option<String> = None;
+    let mut cur_reach_ttl: Option<u64> = None;
+    let mut cur_catalog_epoch: Option<f64> = None;
+    let mut cur_repeat_ra_bins: u32 = 0;
+    let mut cur_frame: Option<Frame> = None;
+    let mut cur_forces: Vec<String> = Vec::new();
+    let mut active = false;
+
+    macro_rules! flush_v2 {
         () => {
-            if active {
-                if cur_force.is_empty() {
-                    eprintln!("source refused (no force): {}", cur_url);
-                } else if force_id_of(&cur_force).is_none() {
+            if active && cur_frame.is_some() && cur_ttl > 0 && !cur_url.is_empty() {
+                let mut force_str = String::new();
+                for (i, f) in cur_forces.iter().enumerate() {
+                    if i > 0 {
+                        force_str.push(' ');
+                    }
+                    force_str.push_str(f);
+                }
+                if force_str.is_empty() {
+                    force_str.push_str("em");
+                }
+                if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
                     eprintln!(
-                        "source refused (unknown force '{}'): {}",
-                        cur_force, cur_url
-                    );
-                } else if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
-                    eprintln!(
-                        "source refused (flux_from_mag and abs_mag_from are mutually exclusive): {}",
+                        "source refused (flux_from_mag and abs_mag_from exclusive): {}",
                         cur_url
                     );
                 } else {
-                    let has_data_position = cur_pos.is_some()
-                        || cur_extracts.iter().any(|e| {
-                            matches!(
-                                e,
-                                Extract::Map { .. }
-                                    | Extract::GeojsonEvents { .. }
-                                    | Extract::CelestialMap { .. }
-                                    | Extract::Rows { .. }
-                            )
-                        });
-                    let frame = if let (Some(lat), Some(lon)) = (cur_lat, cur_lon) {
-                        let body = cur_body.clone().unwrap_or_else(|| {
-                            eprintln!("source refused (on without body): {}", cur_url);
-                            String::new()
-                        });
-                        if body.is_empty() {
-                            None
-                        } else {
-                            Some(Frame::Surface { body_name: body, lat, lon, alt: cur_alt })
-                        }
-                    } else if let Some(scale) = cur_scale {
-                        let body = cur_body.clone().unwrap_or_else(|| {
-                            eprintln!("source refused (at without body): {}", cur_url);
-                            String::new()
-                        });
-                        if body.is_empty() {
-                            None
-                        } else {
-                            Some(Frame::Barycenter { body_name: body, scale })
-                        }
-                    } else if has_data_position {
-                        match cur_body.clone() {
-                            Some(body) => Some(Frame::Surface {
-                                body_name: body,
-                                lat: 0.0, lon: 0.0, alt: 0.0,
-                            }),
-                            None => {
-                                eprintln!("source refused (pos without body directive): {}", cur_url);
-                                None
-                            }
-                        }
-                    } else if cur_url.contains("{lat}")
-                        || cur_url.contains("{lon}")
-                        || cur_url.contains("{x}")
-                        || cur_url.contains("{y}")
-                        || cur_url.contains("{z}")
-                        || cur_url.contains("{grid")
-                    {
-                        match cur_body.clone() {
-                            Some(body) => Some(Frame::Surface {
-                                body_name: body,
-                                lat: 0.0, lon: 0.0, alt: 0.0,
-                            }),
-                            None => {
-                                eprintln!("source refused (template URL without body directive): {}", cur_url);
-                                None
-                            }
-                        }
-                    } else {
-                        eprintln!("source refused (no reference frame): {}", cur_url);
-                        None
-                    };
-                    if let Some(frame) = frame {
-                        if !matches!(frame, Frame::Surface { .. })
-                            && cur_extracts
-                                .iter()
-                                .any(|e| matches!(e, Extract::Map { .. }))
-                        {
-                            eprintln!(
-                                "warning: map extract with non-surface frame: {}",
-                                cur_url
-                            );
-                        }
-                        if matches!(frame, Frame::Surface { .. })
-                            && cur_extracts
-                                .iter()
-                                .any(|e| matches!(e, Extract::CelestialMap { .. }))
-                        {
-                            eprintln!(
-                                "warning: celestial extract with surface frame (use 'at sun 1.0' for ICRS sky coordinates): {}",
-                                cur_url
-                            );
-                        }
-                        sources.push(SourceConfig {
-                            ttl: cur_ttl,
-                            url: cur_url.clone(),
-                            frame,
-                            force: cur_force.clone(),
-                            tau: cur_tau,
-                            tau_key: cur_tau_key.clone(),
-                            format: cur_format.clone(),
-                            extracts: cur_extracts.clone(),
-                            headers: cur_headers.clone(),
-                            post_body: cur_post_body.clone(),
-                            method: cur_method.clone().unwrap_or_else(|| "GET".to_string()),
-                            target: cur_target.clone(),
-                            catalog: cur_catalog.clone(),
-                            max_freq: cur_max_freq,
-                            min_freq: cur_min_freq,
-                            body: cur_body.clone(),
-                            stations_url: cur_stations_url.clone(),
-                            stations_path: cur_stations_path.clone(),
-                            stations_lat: cur_stations_lat.clone(),
-                            stations_lon: cur_stations_lon.clone(),
-                            stations_id: cur_stations_id.clone(),
-                            flux_from_mag: cur_flux_from_mag.clone(),
-                            abs_mag_from: cur_abs_mag_from.clone(),
-                            reach_ttl: cur_reach_ttl,
-                            catalog_epoch: cur_catalog_epoch,
-                            repeat_ra_bins: cur_repeat_ra_bins,
-                        });
-                    }
+                    sources.push(SourceConfig {
+                        ttl: cur_ttl,
+                        url: std::mem::take(&mut cur_url),
+                        frame: cur_frame.clone().unwrap(),
+                        force: force_str,
+                        tau: None,
+                        tau_key: None,
+                        format: std::mem::take(&mut cur_format),
+                        extracts: std::mem::take(&mut cur_extracts),
+                        headers: std::mem::take(&mut cur_headers),
+                        post_body: cur_post_body.clone(),
+                        method: cur_method.clone().unwrap_or_else(|| "GET".to_string()),
+                        target: cur_target.clone(),
+                        catalog: cur_catalog.clone(),
+                        max_freq: cur_max_freq,
+                        min_freq: cur_min_freq,
+                        body: cur_body.clone(),
+                        stations_url: cur_stations_url.clone(),
+                        stations_path: std::mem::take(&mut cur_stations_path),
+                        stations_lat: std::mem::take(&mut cur_stations_lat),
+                        stations_lon: std::mem::take(&mut cur_stations_lon),
+                        stations_id: std::mem::take(&mut cur_stations_id),
+                        flux_from_mag: cur_flux_from_mag.clone(),
+                        abs_mag_from: cur_abs_mag_from.clone(),
+                        reach_ttl: cur_reach_ttl,
+                        catalog_epoch: cur_catalog_epoch,
+                        repeat_ra_bins: cur_repeat_ra_bins,
+                    });
                 }
             }
+            cur_ttl = 0;
+            cur_url.clear();
+            cur_lat = None;
+            cur_lon = None;
+            cur_alt = 0.0;
+            cur_format.clear();
+            cur_extracts.clear();
+            cur_headers.clear();
+            cur_target = None;
+            cur_catalog = None;
+            cur_max_freq = None;
+            cur_min_freq = None;
+            cur_body = None;
+            cur_post_body = None;
+            cur_method = None;
+            cur_stations_url = None;
+            cur_stations_path = String::from("stations");
+            cur_stations_lat = String::from("lat");
+            cur_stations_lon = String::from("lng");
+            cur_stations_id = String::from("id");
+            cur_flux_from_mag = None;
+            cur_abs_mag_from = None;
+            cur_reach_ttl = None;
+            cur_catalog_epoch = None;
+            cur_repeat_ra_bins = 0;
+            cur_frame = None;
+            cur_forces.clear();
+            active = false;
         };
     }
 
-        for line in content.lines() {
-            let line = line.trim();
-            if line.is_empty() || line.starts_with('#') || line.starts_with("```") {
-                continue;
-            }
-            let parts: Vec<&str> = line.split_whitespace().collect();
-            if parts.is_empty() {
-                continue;
-            }
-            match parts[0] {
-                "url" => {
-                    flush!();
-                    cur_url = line.get(4..).unwrap_or("").trim().to_string();
-                    cur_ttl = 0;
-                    cur_force.clear();
-                    cur_tau = None;
-                    cur_tau_key = None;
-                    cur_lat = None;
-                    cur_lon = None;
-                    cur_alt = 0.0;
-                    cur_scale = None;
-                    cur_format.clear();
-                    cur_target = None;
-                    cur_catalog = None;
-                    cur_max_freq = None;
-                    cur_min_freq = None;
-                    cur_body = None;
-                    cur_post_body = None;
-                    cur_method = None;
-                    cur_stations_url = None;
-                    cur_stations_path = String::from("stations");
-                    cur_stations_lat = String::from("lat");
-                    cur_stations_lon = String::from("lng");
-                    cur_stations_id = String::from("id");
-                    cur_extracts.clear();
-                    cur_pos = None;
-                    cur_headers.clear();
-                    cur_flux_from_mag = None;
-                    cur_abs_mag_from = None;
-                    cur_reach_ttl = None;
-                    cur_catalog_epoch = None;
-                    cur_repeat_ra_bins = 0;
-                    active = true;
-                }
-                "ttl" => cur_ttl = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0),
-                "force" => cur_force = parts.get(1).unwrap_or(&"").to_string(),
-                "tau" => cur_tau = parts.get(1).and_then(|s| s.parse().ok()),
-                "tau_key" => cur_tau_key = parts.get(1).map(|s| s.to_string()),
-                "format" => cur_format = parts.get(1).unwrap_or(&"json").to_string(),
-                "stations" => cur_stations_url = parts.get(1).map(|s| s.to_string()),
-                "stations_path" => {
-                    cur_stations_path = parts.get(1).unwrap_or(&"stations").to_string()
-                }
-                "stations_lat" => cur_stations_lat = parts.get(1).unwrap_or(&"lat").to_string(),
-                "stations_lon" => cur_stations_lon = parts.get(1).unwrap_or(&"lng").to_string(),
-                "stations_id" => cur_stations_id = parts.get(1).unwrap_or(&"id").to_string(),
-                "flux_from_mag" => cur_flux_from_mag = parts.get(1).map(|s| s.to_string()),
-                "abs_mag_from" => cur_abs_mag_from = parts.get(1).map(|s| s.to_string()),
-                "reach_ttl" => cur_reach_ttl = parts.get(1).and_then(|s| s.parse().ok()),
-                "catalog_epoch" => cur_catalog_epoch = parts.get(1).and_then(|s| s.parse().ok()),
-                "repeat" => {
-                    if parts.len() >= 5 {
-                        cur_repeat_ra_bins = parts.get(4).and_then(|s| s.parse().ok()).unwrap_or(0);
-                    }
-                }
-                "target" => cur_target = parts.get(1).map(|s| s.to_string()),
-                "catalog" => cur_catalog = parts.get(1).map(|s| s.to_string()),
-                "max_freq" => cur_max_freq = parts.get(1).and_then(|s| s.parse().ok()),
-                "min_freq" => cur_min_freq = parts.get(1).and_then(|s| s.parse().ok()),
-                "body" => cur_body = Some(line.get(5..).unwrap_or("").trim().to_string()),
-                "post_body" => {
-                    cur_post_body = Some(line.get(10..).unwrap_or("").trim().to_string())
-                }
-                "method" => cur_method = parts.get(1).map(|s| s.to_string()),
-                "verify" => {}
-                "on" => {
-                    cur_body = Some(parts.get(1).unwrap_or(&"").to_string());
-                    cur_lat = parts.get(2).and_then(|s| s.parse().ok());
-                    cur_lon = parts.get(3).and_then(|s| s.parse().ok());
-                    cur_alt = parts.get(4).and_then(|s| s.parse().ok()).unwrap_or(0.0);
-                }
-                "at" => {
-                    cur_body = Some(parts.get(1).unwrap_or(&"").to_string());
-                    cur_scale = parts.get(2).and_then(|s| s.parse().ok());
-                }
-                "pos" => {
-                    if parts.len() >= 3 {
-                        cur_pos = Some((
-                            parts[1].to_string(),
-                            parts[2].to_string(),
-                            parts.get(3).map(|s| s.to_string()),
-                            parts.get(4).and_then(|s| s.parse().ok()).unwrap_or(1.0),
-                        ));
-                    }
-                }
-                "header" => {
-                    let rest = line.get(7..).unwrap_or("").trim();
-                    if let Some(sp) = rest.find(' ') {
-                        cur_headers.push((
-                            rest[..sp].to_string(),
-                            rest[sp + 1..].trim_matches('"').to_string(),
-                        ));
-                    }
-                }
-                "field" => {
-                    if parts.len() >= 3 {
-                        cur_extracts
-                            .push(Extract::Field(parts[1].to_string(), parts[2].to_string()));
-                    }
-                }
-                "first" => {
-                    if parts.len() >= 3 {
-                        cur_extracts
-                            .push(Extract::First(parts[1].to_string(), parts[2].to_string()));
-                    }
-                }
-                "last" => {
-                    if parts.len() >= 3 {
-                        cur_extracts
-                            .push(Extract::Last(parts[1].to_string(), parts[2].to_string()));
-                    }
-                }
-                "count" => {
-                    if parts.len() >= 3 {
-                        cur_extracts
-                            .push(Extract::Count(parts[1].to_string(), parts[2].to_string()));
-                    }
-                }
-                "last_row" => {
-                    if parts.len() >= 3 {
-                        cur_extracts
-                            .push(Extract::LastRow(parts[1].to_string(), parts[2].to_string()));
-                    }
-                }
-                "path" => {
-                    if parts.len() >= 3 {
-                        cur_extracts
-                            .push(Extract::Path(parts[1].to_string(), parts[2].to_string()));
-                    }
-                }
-                "deep" => {
-                    if parts.len() >= 3 {
-                        cur_extracts
-                            .push(Extract::Deep(parts[1].to_string(), parts[2].to_string()));
-                    }
-                }
-                "regex" => {
-                    if parts.len() >= 3 {
-                        cur_extracts
-                            .push(Extract::Regex(parts[1].to_string(), parts[2].to_string()));
-                    }
-                }
-                "last_line" => {
-                    if parts.len() >= 2 {
-                        cur_extracts.push(Extract::LastLine(parts[1].to_string()));
-                    }
-                }
-                "obj_last" => {
-                    if parts.len() >= 3 {
-                        cur_extracts
-                            .push(Extract::ObjLast(parts[1].to_string(), parts[2].to_string()));
-                    }
-                }
-                "last_obj" => {
-                    let quoted = parse_quoted_args(line.get(9..).unwrap_or(""));
-                    if quoted.len() >= 4 {
-                        cur_extracts.push(Extract::LastObj(
-                            quoted[0].clone(),
-                            quoted[1].clone(),
-                            quoted[2].clone(),
-                            quoted[3].clone(),
-                        ));
-                    }
-                }
-                "xml_count" => {
-                    if parts.len() >= 3 {
-                        cur_extracts.push(Extract::XmlCount(
-                            parts[1].to_string(),
-                            parts[2].to_string(),
-                        ));
-                    }
-                }
-                "ephemeris" => {
-                    if parts.len() >= 2 {
-                        cur_extracts.push(Extract::Ephemeris(parts[1].to_string()));
-                    }
-                }
-                "vectors" => {
-                    if parts.len() >= 2 {
-                        cur_extracts.push(Extract::Vectors(parts[1].to_string()));
-                    }
-                }
-                "flatten" => {
-                    if parts.len() >= 2 {
-                        cur_extracts.push(Extract::Flatten {
-                            arr_path: parts[1].to_string(),
-                            geom_path: "geometry".to_string(),
-                            epoch_key: String::new(),
-                            fields: Vec::new(),
-                        });
-                    }
-                }
-                "cmr_polygon" => {
-                    if parts.len() >= 2 {
-                        cur_extracts.push(Extract::CmrPolygon {
-                            arr_path: parts[1].to_string(),
-                            fields: Vec::new(),
-                            epoch_key: String::new(),
-                            alt_key: String::new(),
-                            val_key: String::new(),
-                        });
-                    }
-                }
-                "celestial_polygon" => {
-                    if parts.len() >= 2 {
-                        cur_extracts.push(Extract::CelestialPolygon {
-                            arr_path: parts[1].to_string(),
-                            radius: 0.0,
-                            fields: Vec::new(),
-                            epoch_key: String::new(),
-                            val_key: String::new(),
-                        });
-                    }
-                }
-                "kepler_map" => {
-                    if parts.len() >= 2 {
-                        cur_extracts.push(Extract::KeplerMap {
-                            arr_path: parts[1].to_string(),
-                            a_key: String::new(),
-                            e_key: String::new(),
-                            i_key: String::new(),
-                            om_key: String::new(),
-                            w_key: String::new(),
-                            ma_key: String::new(),
-                            epoch_key: String::new(),
-                            fields: Vec::new(),
-                        });
-                    }
-                }
-                "hapi" => {
-                    if parts.len() >= 3 {
-                        let param = parts[1].to_string();
-                        let name = parts[2].to_string();
-                        if let Some(Extract::Hapi(fields)) = cur_extracts.last_mut() {
-                            fields.push((param, name));
-                        } else {
-                            cur_extracts.push(Extract::Hapi(vec![(param, name)]));
-                        }
-                    }
-                }
-
-                "geojson" => {
-                    if parts.len() >= 5 && parts[1] == "events" {
-                        cur_extracts.push(Extract::GeojsonEvents {
-                            mag_key: parts.get(2).unwrap_or(&"mag").to_string(),
-                            min_mag: parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0),
-                            outputs: parts[4..].iter().map(|s| s.to_string()).collect(),
-                        });
-                    }
-                }
-                "map" => {
-                    if parts.len() >= 2 {
-                        cur_extracts.push(Extract::Map {
-                            arr_path: parts[1].to_string(),
-                            lat_key: String::new(),
-                            lon_key: String::new(),
-                            alt_key: String::new(),
-                            epoch_key: String::new(),
-                            val_key: String::new(),
-                            alt_sign: 1.0,
-                            vel_key: String::new(),
-                            trk_key: String::new(),
-                            vr_key: String::new(),
-                            fields: Vec::new(),
-                            lon_sign: None,
-                            lat_sign: None,
-                        });
-                    }
-                }
-                "lat_key" => {
-                    if let Some(Extract::Map { lat_key, .. }) = cur_extracts.last_mut() {
-                        *lat_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "lon_key" => {
-                    if let Some(Extract::Map { lon_key, .. }) = cur_extracts.last_mut() {
-                        *lon_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "alt_key" => {
-                    if let Some(e) = cur_extracts.last_mut() {
-                        match e {
-                            Extract::Map { alt_key, .. } => {
-                                *alt_key = parts.get(1).unwrap_or(&"").to_string();
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-                "alt_sign" => {
-                    if let Some(Extract::Map { alt_sign, .. }) = cur_extracts.last_mut() {
-                        *alt_sign = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(1.0);
-                    }
-                }
-                "vel_key" => {
-                    if let Some(Extract::Map { vel_key, .. }) = cur_extracts.last_mut() {
-                        *vel_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "trk_key" => {
-                    if let Some(Extract::Map { trk_key, .. }) = cur_extracts.last_mut() {
-                        *trk_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "vr_key" => {
-                    if let Some(Extract::Map { vr_key, .. }) = cur_extracts.last_mut() {
-                        *vr_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "lon_sign" => {
-                    if let Some(Extract::Map { lon_sign, .. }) = cur_extracts.last_mut() {
-                        *lon_sign = parts.get(1).map(|s| s.to_string());
-                    }
-                }
-                "lat_sign" => {
-                    if let Some(Extract::Map { lat_sign, .. }) = cur_extracts.last_mut() {
-                        *lat_sign = parts.get(1).map(|s| s.to_string());
-                    }
-                }
-                "epoch_key" => {
-                    if let Some(e) = cur_extracts.last_mut() {
-                        match e {
-                            Extract::Map { epoch_key, .. }
-                            | Extract::CelestialMap { epoch_key, .. } => {
-                                *epoch_key = parts.get(1).unwrap_or(&"").to_string();
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-                "val_key" => {
-                    if let Some(e) = cur_extracts.last_mut() {
-                        match e {
-                            Extract::Map { val_key, .. } => {
-                                *val_key = parts.get(1).unwrap_or(&"").to_string();
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-                "tail" => {
-                    cur_extracts.push(Extract::Rows {
-                        last_line: true,
-                        fields: Vec::new(),
-                    });
-                }
-                "rows" => {
-                    cur_extracts.push(Extract::Rows {
-                        last_line: false,
-                        fields: Vec::new(),
-                    });
-                }
-                "field_in" => {
-                    if parts.len() >= 3 {
-                        match cur_extracts.last_mut() {
-                            Some(Extract::Map { fields, .. })
-                            | Some(Extract::CelestialMap { fields, .. })
-                            | Some(Extract::Rows { fields, .. }) => {
-                                fields.push((parts[1].to_string(), parts[2].to_string()));
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-                "cmap" => {
-                    if parts.len() >= 2 {
-                        cur_extracts.push(Extract::CelestialMap {
-                            arr_path: parts[1].to_string(),
-                            ra_key: String::new(),
-                            dec_key: String::new(),
-                            dist_key: String::new(),
-                            dist_scale: 1.0,
-                            plx_key: String::new(),
-                            z_key: String::new(),
-                            pmra_key: String::new(),
-                            pmdec_key: String::new(),
-                            rv_key: String::new(),
-                            rv_scale: 1.0,
-                            epoch_key: String::new(),
-                            fields: Vec::new(),
-                        });
-                    }
-                }
-                "ra_key" => {
-                    if let Some(Extract::CelestialMap { ra_key, .. }) = cur_extracts.last_mut() {
-                        *ra_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "dec_key" => {
-                    if let Some(Extract::CelestialMap { dec_key, .. }) = cur_extracts.last_mut() {
-                        *dec_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "dist_key" => {
-                    if let Some(Extract::CelestialMap {
-                        dist_key,
-                        dist_scale,
-                        ..
-                    }) = cur_extracts.last_mut()
-                    {
-                        *dist_key = parts.get(1).unwrap_or(&"").to_string();
-                        *dist_scale = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(1.0);
-                    }
-                }
-                "plx_key" => {
-                    if let Some(Extract::CelestialMap { plx_key, .. }) = cur_extracts.last_mut() {
-                        *plx_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "z_key" => {
-                    if let Some(Extract::CelestialMap { z_key, .. }) = cur_extracts.last_mut() {
-                        *z_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "pmra_key" => {
-                    if let Some(Extract::CelestialMap { pmra_key, .. }) = cur_extracts.last_mut() {
-                        *pmra_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "pmdec_key" => {
-                    if let Some(Extract::CelestialMap { pmdec_key, .. }) = cur_extracts.last_mut() {
-                        *pmdec_key = parts.get(1).unwrap_or(&"").to_string();
-                    }
-                }
-                "radvel_key" => {
-                    if let Some(Extract::CelestialMap {
-                        rv_key, rv_scale, ..
-                    }) = cur_extracts.last_mut()
-                    {
-                        *rv_key = parts.get(1).unwrap_or(&"").to_string();
-                        *rv_scale = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(1.0);
-                    }
-                }
-                _ => {}
-            }
+    for line in content.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
         }
-        flush!();
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        if parts.is_empty() {
+            continue;
+        }
+
+        match parts[0] {
+            "url" if parts.len() >= 2 => {
+                flush_v2!();
+                cur_url = parts[1].to_string();
+                active = true;
+            }
+            "ttl" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<u64>() {
+                    cur_ttl = v;
+                }
+            }
+            "at" if parts.len() >= 2 => {
+                let body = parts[1].to_string();
+                cur_body = Some(body.clone());
+                cur_frame = Some(Frame::Barycenter {
+                    body_name: body,
+                    scale: 1.0,
+                });
+            }
+            "on" if parts.len() >= 4 => {
+                let body = parts[1].to_string();
+                cur_body = Some(body.clone());
+                if let (Ok(lat), Ok(lon)) = (parts[2].parse::<f64>(), parts[3].parse::<f64>()) {
+                    cur_lat = Some(lat);
+                    cur_lon = Some(lon);
+                    cur_alt = parts
+                        .get(4)
+                        .and_then(|a| a.parse::<f64>().ok())
+                        .unwrap_or(0.0);
+                    cur_frame = Some(Frame::Surface {
+                        body_name: body,
+                        lat,
+                        lon,
+                        alt: cur_alt,
+                    });
+                }
+            }
+            "body" if parts.len() >= 2 => {
+                cur_body = Some(parts[1].to_string());
+                if cur_frame.is_none() {
+                    cur_frame = Some(Frame::Surface {
+                        body_name: parts[1].to_string(),
+                        lat: 0.0,
+                        lon: 0.0,
+                        alt: 0.0,
+                    });
+                }
+            }
+            "map" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::Map {
+                    arr_path: parts[1].to_string(),
+                    lat_key: String::new(),
+                    lon_key: String::new(),
+                    alt_key: String::new(),
+                    epoch_key: String::new(),
+                    val_key: String::new(),
+                    alt_sign: 1.0,
+                    vel_key: String::new(),
+                    trk_key: String::new(),
+                    vr_key: String::new(),
+                    fields: Vec::new(),
+                    lon_sign: None,
+                    lat_sign: None,
+                });
+            }
+            "cmap" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::CelestialMap {
+                    arr_path: parts[1].to_string(),
+                    ra_key: String::new(),
+                    dec_key: String::new(),
+                    dist_key: String::new(),
+                    dist_scale: 1.0,
+                    plx_key: String::new(),
+                    z_key: String::new(),
+                    pmra_key: String::new(),
+                    pmdec_key: String::new(),
+                    rv_key: String::new(),
+                    rv_scale: 1.0,
+                    epoch_key: String::new(),
+                    fields: Vec::new(),
+                });
+            }
+            "rows" => {
+                cur_extracts.push(Extract::Rows {
+                    last_line: false,
+                    fields: Vec::new(),
+                });
+            }
+            "field" if parts.len() >= 3 => {
+                if !cur_forces.contains(&parts[2].to_string()) {
+                    cur_forces.push(parts[2].to_string());
+                }
+                if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push((parts[1].to_string(), parts[2].to_string()));
+                } else if let Some(Extract::CelestialMap { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push((parts[1].to_string(), parts[2].to_string()));
+                } else if let Some(Extract::Rows { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push((parts[1].to_string(), parts[2].to_string()));
+                } else {
+                    cur_extracts.push(Extract::Field(
+                        parts[1].to_string(),
+                        parts.get(3).unwrap_or(&parts[1]).to_string(),
+                    ));
+                }
+            }
+            "lat" if parts.len() >= 2 => {
+                if let Some(Extract::Map { lat_key, .. }) = cur_extracts.last_mut() {
+                    *lat_key = parts[1].to_string();
+                }
+            }
+            "lon" if parts.len() >= 2 => {
+                if let Some(Extract::Map { lon_key, .. }) = cur_extracts.last_mut() {
+                    *lon_key = parts[1].to_string();
+                }
+            }
+            "alt" if parts.len() >= 2 => {
+                if let Some(Extract::Map { alt_key, .. }) = cur_extracts.last_mut() {
+                    *alt_key = parts[1].to_string();
+                }
+            }
+            "ra" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { ra_key, .. }) = cur_extracts.last_mut() {
+                    *ra_key = parts[1].to_string();
+                }
+            }
+            "dec" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { dec_key, .. }) = cur_extracts.last_mut() {
+                    *dec_key = parts[1].to_string();
+                }
+            }
+            "plx" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { plx_key, .. }) = cur_extracts.last_mut() {
+                    *plx_key = parts[1].to_string();
+                }
+            }
+            "pmra" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { pmra_key, .. }) = cur_extracts.last_mut() {
+                    *pmra_key = parts[1].to_string();
+                }
+            }
+            "pmdec" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { pmdec_key, .. }) = cur_extracts.last_mut() {
+                    *pmdec_key = parts[1].to_string();
+                }
+            }
+            "radvel" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { rv_key, .. }) = cur_extracts.last_mut() {
+                    *rv_key = parts[1].to_string();
+                }
+            }
+            "dist" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { dist_key, .. }) = cur_extracts.last_mut() {
+                    *dist_key = parts[1].to_string();
+                }
+            }
+            "format" if parts.len() >= 2 => cur_format = parts[1].to_string(),
+            "header" if parts.len() >= 3 => {
+                cur_headers.push((parts[1].to_string(), parts[2].to_string()));
+            }
+            "method" if parts.len() >= 2 => cur_method = Some(parts[1].to_string()),
+            "post_body" if parts.len() >= 2 => cur_post_body = Some(parts[1].to_string()),
+            "target" if parts.len() >= 2 => cur_target = Some(parts[1].to_string()),
+            "catalog" if parts.len() >= 2 => cur_catalog = Some(parts[1].to_string()),
+            "max_freq" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    cur_max_freq = Some(v);
+                }
+            }
+            "min_freq" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    cur_min_freq = Some(v);
+                }
+            }
+            "stations" if parts.len() >= 2 => cur_stations_url = Some(parts[1].to_string()),
+            "stations_path" if parts.len() >= 2 => cur_stations_path = parts[1].to_string(),
+            "stations_lat" if parts.len() >= 2 => cur_stations_lat = parts[1].to_string(),
+            "stations_lon" if parts.len() >= 2 => cur_stations_lon = parts[1].to_string(),
+            "stations_id" if parts.len() >= 2 => cur_stations_id = parts[1].to_string(),
+            "flux_from_mag" if parts.len() >= 2 => cur_flux_from_mag = Some(parts[1].to_string()),
+            "abs_mag_from" if parts.len() >= 2 => cur_abs_mag_from = Some(parts[1].to_string()),
+            "reach_ttl" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<u64>() {
+                    cur_reach_ttl = Some(v);
+                }
+            }
+            "catalog_epoch" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    cur_catalog_epoch = Some(v);
+                }
+            }
+            "repeat" if parts.len() >= 5 => {
+                if let Ok(v) = parts[1].parse::<u32>() {
+                    cur_repeat_ra_bins = v;
+                }
+            }
+            "force" => {}
+            _ => {}
+        }
     }
+    flush_v2!();
     sources
 }
+
 
 fn parse_path(s: &str) -> String {
     let fl = s.lines().next().unwrap_or("");
