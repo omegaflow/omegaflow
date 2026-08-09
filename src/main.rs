@@ -1831,7 +1831,7 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
         None
     }
 }
-#[allow(dead_code)]
+
 #[derive(Clone)]
 enum Extract {
     Field(String, String),
@@ -2642,7 +2642,6 @@ fn resolve_secret(url: &str) -> String {
     result
 }
 
-#[allow(unused_assignments, unused_variables)]
 fn load_sources() -> Vec<SourceConfig> {
     let mut sources = Vec::new();
     let content = match std::fs::read_to_string("phi/sources.φ") {
@@ -2652,8 +2651,6 @@ fn load_sources() -> Vec<SourceConfig> {
 
     let mut cur_ttl: u64 = 0;
     let mut cur_url = String::new();
-    let mut cur_lat: Option<f64> = None;
-    let mut cur_lon: Option<f64> = None;
     let mut cur_alt: f64 = 0.0;
     let mut cur_format = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
@@ -2717,8 +2714,6 @@ fn load_sources() -> Vec<SourceConfig> {
             }
             cur_ttl = 0;
             cur_url.clear();
-            cur_lat = None;
-            cur_lon = None;
             cur_alt = 0.0;
             cur_format.clear();
             cur_extracts.clear();
@@ -2778,8 +2773,6 @@ fn load_sources() -> Vec<SourceConfig> {
                 let body = parts[1].to_string();
                 cur_body = Some(body.clone());
                 if let (Ok(lat), Ok(lon)) = (parts[2].parse::<f64>(), parts[3].parse::<f64>()) {
-                    cur_lat = Some(lat);
-                    cur_lon = Some(lon);
                     cur_alt = parts
                         .get(4)
                         .and_then(|a| a.parse::<f64>().ok())
@@ -2851,7 +2844,9 @@ fn load_sources() -> Vec<SourceConfig> {
                 } else if let Some(Extract::Rows { fields, .. }) = cur_extracts.last_mut() {
                     fields.push((parts[1].to_string(), parts[2].to_string()));
                 } else {
-                    let k = parts.get(3).map(|s| kernel_id_of(s)).unwrap_or(0);
+                    if parts.len() > 3 {
+                        kernel_id_of(&parts[3]);
+                    }
                     cur_extracts.push(Extract::Field(parts[1].to_string(), parts[2].to_string()));
                 }
             }
@@ -4595,7 +4590,6 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
 fn materialize(
     src: &SourceConfig,
     origin: Origin,
-    _region: Option<(f64, f64)>,
     pend: PendingSample,
     origins: &mut HashMap<Origin, OriginState>,
     eph: &HashMap<String, BodyEphemeris>,
@@ -5077,7 +5071,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     }
                 }
                 for n in pre_filled.iter() {
-                    let (src_idx, origin, region, _url, _body, _headers, ttl, _method) =
+                    let (src_idx, origin, _region, _url, _body, _headers, ttl, _method) =
                         chunk_tasks[*n].clone();
                     let body_file = batch_dir.join(format!("b_{}", *n));
                     let body_raw = std::fs::read_to_string(&body_file).ok();
@@ -5130,14 +5124,9 @@ fn warm_cache(archive: Arc<Archive>) {
                                 let before = new_samples.len();
                                 let eph_map = ar.body_ephemerides.read().unwrap();
                                 for pend in pendings {
-                                    for smp in materialize(
-                                        src,
-                                        origin,
-                                        region,
-                                        pend,
-                                        &mut origins,
-                                        &eph_map,
-                                    ) {
+                                    for smp in
+                                        materialize(src, origin, pend, &mut origins, &eph_map)
+                                    {
                                         new_samples.push(smp);
                                     }
                                 }
@@ -5170,12 +5159,11 @@ fn warm_cache(archive: Arc<Archive>) {
                         }
                     }
                     if let Some((ci, n)) = done {
-                        let (src_idx, origin, region, url, _body, _headers, ttl, _method) =
+                        let (src_idx, origin, _region, url, _body, _headers, ttl, _method) =
                             chunk_tasks[n].clone();
                         let body_file = batch_dir.join(format!("b_{}", n));
                         let hdr_file = batch_dir.join(format!("h_{}", n));
                         let body_raw = std::fs::read_to_string(&body_file).ok();
-                        let _body_bytes_raw = std::fs::read(&body_file).ok();
                         if let Some(ref hdr) = std::fs::read_to_string(&hdr_file).ok() {
                             for line in hdr.lines() {
                                 let line_lower = line.to_lowercase();
@@ -5269,14 +5257,9 @@ fn warm_cache(archive: Arc<Archive>) {
                                     let before = new_samples.len();
                                     let eph_map = ar.body_ephemerides.read().unwrap();
                                     for pend in pendings {
-                                        for smp in materialize(
-                                            src,
-                                            origin,
-                                            region,
-                                            pend,
-                                            &mut origins,
-                                            &eph_map,
-                                        ) {
+                                        for smp in
+                                            materialize(src, origin, pend, &mut origins, &eph_map)
+                                        {
                                             new_samples.push(smp);
                                         }
                                     }
@@ -5535,7 +5518,6 @@ fn main() {
         }
     }
     {
-        let _ = (ECLIPTIC_OBLIQUITY, AU, GAUSS_K);
         let _ = PendingPosition::Surface {
             body_name: String::new(),
             lat: 0.0,
@@ -6267,7 +6249,7 @@ mod tests {
         let mut eph = HashMap::new();
         eph.insert("mars".to_string(), mars_eph);
         let mut origins = HashMap::new();
-        let samples = super::materialize(&src, (0, 0, 0), None, pend, &mut origins, &eph);
+        let samples = super::materialize(&src, (0, 0, 0), pend, &mut origins, &eph);
         assert_eq!(samples.len(), 1, "expected one sample");
         if let super::Motion::Surface { body_name, .. } = &samples[0].motion {
             assert_eq!(
