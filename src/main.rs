@@ -1225,7 +1225,6 @@ fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
             vr_key: vr_key.into(),
             fields,
             lon_sign: None,
-            lat_sign: None,
         }]
     } else {
         vec![]
@@ -1864,7 +1863,6 @@ enum Extract {
         vr_key: String,
         fields: Vec<(String, String)>,
         lon_sign: Option<String>,
-        lat_sign: Option<String>,
     },
     CelestialMap {
         arr_path: String,
@@ -2718,22 +2716,6 @@ fn load_sources() -> Vec<SourceConfig> {
             cur_format.clear();
             cur_extracts.clear();
             cur_headers.clear();
-            cur_target = None;
-            cur_catalog = None;
-            cur_max_freq = None;
-            cur_min_freq = None;
-            cur_body = None;
-            cur_post_body = None;
-            cur_method = None;
-            cur_stations_url = None;
-            cur_stations_path = String::from("stations");
-            cur_stations_lat = String::from("lat");
-            cur_stations_lon = String::from("lng");
-            cur_stations_id = String::from("id");
-            cur_flux_from_mag = None;
-            cur_abs_mag_from = None;
-            cur_reach_ttl = None;
-            cur_catalog_epoch = None;
             cur_repeat_ra_bins = 0;
             cur_frame = None;
             active = false;
@@ -2810,7 +2792,6 @@ fn load_sources() -> Vec<SourceConfig> {
                     vr_key: String::new(),
                     fields: Vec::new(),
                     lon_sign: None,
-                    lat_sign: None,
                 });
             }
             "cmap" if parts.len() >= 2 => {
@@ -3819,7 +3800,6 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 vr_key,
                 fields,
                 lon_sign,
-                lat_sign: _,
             } => {
                 let eff_lat_key = lat_key.clone();
                 let eff_lon_key = lon_key.clone();
@@ -5749,7 +5729,6 @@ mod tests {
                 vr_key: String::new(),
                 fields: vec![("4".into(), "argo_temp_c".into())],
                 lon_sign: None,
-                lat_sign: None,
             }],
             headers: vec![],
             post_body: None,
@@ -6368,7 +6347,6 @@ mod tests {
                 vr_key: String::new(),
                 fields: vec![("properties.mag".into(), "mag".into())],
                 lon_sign: None,
-                lat_sign: None,
             }],
             headers: vec![],
             post_body: None,
