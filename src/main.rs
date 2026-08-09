@@ -3905,14 +3905,20 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 };
                                 let epoch = if eff_epoch_key.is_empty() {
                                     now
+                                } else if let Some(ev) = jpath_val(v, &eff_epoch_key) {
+                                    match ev {
+                                        JsonVal::Str(s) => {
+                                            if let Some(t) = parse_iso_tdb(s) {
+                                                t
+                                            } else {
+                                                continue;
+                                            }
+                                        }
+                                        JsonVal::Num(n) => n - UNIX_J2000_OFFSET,
+                                        _ => continue,
+                                    }
                                 } else {
-                                    jpath_val(v, &eff_epoch_key)
-                                        .and_then(|ev| match ev {
-                                            JsonVal::Str(s) => parse_iso_tdb(s),
-                                            JsonVal::Num(n) => Some(*n - UNIX_J2000_OFFSET),
-                                            _ => None,
-                                        })
-                                        .unwrap_or(now)
+                                    continue;
                                 };
                                 pending.push(PendingSample {
                                     epoch,
@@ -4016,14 +4022,20 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             }
                             let epoch = if epoch_key.is_empty() {
                                 now
+                            } else if let Some(ev) = jpath_val(v, epoch_key) {
+                                match ev {
+                                    JsonVal::Str(s) => {
+                                        if let Some(t) = parse_iso_tdb(s) {
+                                            t
+                                        } else {
+                                            continue;
+                                        }
+                                    }
+                                    JsonVal::Num(n) => n - UNIX_J2000_OFFSET,
+                                    _ => continue,
+                                }
                             } else {
-                                jpath_val(v, epoch_key)
-                                    .and_then(|ev| match ev {
-                                        JsonVal::Str(s) => parse_iso_tdb(s),
-                                        JsonVal::Num(n) => Some(*n - UNIX_J2000_OFFSET),
-                                        _ => None,
-                                    })
-                                    .unwrap_or(now)
+                                continue;
                             };
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
                             for (fk, fn_) in fields {
@@ -4111,7 +4123,11 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 let (sd, cd) = dec.sin_cos();
                                 let p = [cd * ca * radius, cd * sa * radius, sd * radius];
                                 let row_epoch = if !epoch_key.is_empty() {
-                                    jpath(v, &epoch_key).unwrap_or(now)
+                                    if let Some(v) = jpath(v, &epoch_key) {
+                                        v
+                                    } else {
+                                        continue;
+                                    }
                                 } else {
                                     now
                                 };
@@ -4408,18 +4424,24 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
                             let mu_a = if pmra_key.is_empty() {
                                 0.0
+                            } else if let Some(v) = jpath(v, pmra_key) {
+                                v * MAS_YR_TO_RAD_S
                             } else {
-                                jpath(v, pmra_key).unwrap_or(0.0) * MAS_YR_TO_RAD_S
+                                continue;
                             };
                             let mu_d = if pmdec_key.is_empty() {
                                 0.0
+                            } else if let Some(v) = jpath(v, pmdec_key) {
+                                v * MAS_YR_TO_RAD_S
                             } else {
-                                jpath(v, pmdec_key).unwrap_or(0.0) * MAS_YR_TO_RAD_S
+                                continue;
                             };
                             let vr = if rv_key.is_empty() {
                                 0.0
+                            } else if let Some(v) = jpath(v, rv_key) {
+                                v * rv_scale
                             } else {
-                                jpath(v, rv_key).unwrap_or(0.0) * rv_scale
+                                continue;
                             };
                             let a_hat = [-sa, ca, 0.0];
                             let d_hat = [-sd * ca, -sd * sa, cd];
@@ -4429,7 +4451,11 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 d * (mu_a * a_hat[2] + mu_d * d_hat[2]) + vr * p_hat[2],
                             ];
                             let sample_epoch = if !epoch_key.is_empty() {
-                                jpath(v, epoch_key).unwrap_or(default_epoch)
+                                if let Some(v) = jpath(v, epoch_key) {
+                                    v
+                                } else {
+                                    continue;
+                                }
                             } else {
                                 default_epoch
                             };
