@@ -77,7 +77,7 @@ export async function syncFrame(inputs, queries, presence) {
         const t = dvRes.getFloat64(o, true); o += 8;
         const ttl = dvRes.getFloat64(o, true); o += 8;
         const tau = dvRes.getFloat64(o, true); o += 8;
-        const force_type = dvRes.getFloat64(o, true); o += 8;
+        const kernel_id = dvRes.getFloat64(o, true); o += 8;
         const absorption = dvRes.getFloat64(o, true); o += 8;
 
         const fOff = i * 8;
@@ -99,7 +99,7 @@ export async function syncFrame(inputs, queries, presence) {
         const mOff = i * 4;
         meta[mOff] = extent;
         meta[mOff + 1] = tau;
-        meta[mOff + 2] = force_type;
+        meta[mOff + 2] = kernel_id;
         meta[mOff + 3] = absorption;
     }
     return { field, meta, count: oscCount };
