@@ -4992,6 +4992,56 @@ fn main() {
         let _ = PARSEC_M * C_LIGHT * HUBBLE_H0 * MAS_YR_TO_RAD_S;
         let _ = ECLIPTIC_OBLIQUITY + AU + GAUSS_K;
         let _ = J2000_EPOCH + Φ + CHEBYSHEV_N as f64;
+        let _ = Extract::First("k".into(), "u".into());
+        let _ = Extract::Last("k".into(), "u".into());
+        let _ = Extract::Count("k".into(), "u".into());
+        let _ = Extract::LastRow("k".into(), "u".into());
+        let _ = Extract::LastObj("a".into(), "m".into(), "v".into(), "u".into());
+        let _ = Extract::LastLine("u".into());
+        let _ = Extract::ObjLast("a".into(), "u".into());
+        let _ = Extract::GeojsonEvents {
+            mag_key: "m".into(),
+            min_mag: 0.0,
+            outputs: vec![],
+        };
+        let _ = Extract::Path("k".into(), "u".into());
+        let _ = Extract::Deep("k".into(), "u".into());
+        let _ = Extract::Regex("p".into(), "u".into());
+        let _ = Extract::Hapi(vec![]);
+        let _ = Extract::XmlCount("t".into(), "u".into());
+        let _ = Extract::Ephemeris("mars".into());
+        let _ = Extract::Vectors("mars".into());
+        let _ = Extract::Flatten {
+            arr_path: "a".into(),
+            geom_path: "".into(),
+            epoch_key: "".into(),
+            fields: vec![],
+        };
+        let _ = Extract::CmrPolygon {
+            arr_path: "a".into(),
+            fields: vec![],
+            epoch_key: "".into(),
+            alt_key: "".into(),
+            val_key: "".into(),
+        };
+        let _ = Extract::CelestialPolygon {
+            arr_path: "a".into(),
+            radius: 1.0,
+            fields: vec![],
+            epoch_key: "".into(),
+            val_key: "".into(),
+        };
+        let _ = Extract::KeplerMap {
+            arr_path: "a".into(),
+            a_key: "".into(),
+            e_key: "".into(),
+            i_key: "".into(),
+            om_key: "".into(),
+            w_key: "".into(),
+            ma_key: "".into(),
+            epoch_key: "".into(),
+            fields: vec![],
+        };
     }
     let loaded = load_sources();
     let port: u16 = std::env::var("PORT")
