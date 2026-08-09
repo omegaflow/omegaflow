@@ -1373,17 +1373,17 @@ fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                             arr_has_rows = true;
                         }
                     }
-                    Extract::Field(k, _)
-                    | Extract::First(k, _)
-                    | Extract::Last(k, _)
-                    | Extract::Count(k, _)
-                    | Extract::Path(k, _)
-                    | Extract::Deep(k, _)
-                    | Extract::LastRow(k, _)
-                    | Extract::ObjLast(k, _)
-                    | Extract::Regex(k, _) => {
-                        if jpath_val(&j, k).is_some()
-                            || jpath_val(&j, k.split('.').next().unwrap_or(k)).is_some()
+                    Extract::Field(FieldConfig { key, .. })
+                    | Extract::First(FieldConfig { key, .. })
+                    | Extract::Last(FieldConfig { key, .. })
+                    | Extract::Count(FieldConfig { key, .. })
+                    | Extract::Path(FieldConfig { key, .. })
+                    | Extract::Deep(FieldConfig { key, .. })
+                    | Extract::LastRow(FieldConfig { key, .. })
+                    | Extract::ObjLast(FieldConfig { key, .. })
+                    | Extract::Regex(FieldConfig { key, .. }) => {
+                        if jpath_val(&j, key).is_some()
+                            || jpath_val(&j, key.split('.').next().unwrap_or(key)).is_some()
                         {
                             key_found = true;
                         }
@@ -1867,22 +1867,22 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
 
 #[derive(Clone)]
 enum Extract {
-    Field(String, String),
-    First(String, String),
-    Last(String, String),
-    Count(String, String),
-    LastRow(String, String),
+    Field(FieldConfig),
+    First(FieldConfig),
+    Last(FieldConfig),
+    Count(FieldConfig),
+    LastRow(FieldConfig),
     LastObj(String, String, String, String),
     LastLine(String),
-    ObjLast(String, String),
+    ObjLast(FieldConfig),
     GeojsonEvents {
         mag_key: String,
         min_mag: f64,
         outputs: Vec<String>,
     },
-    Path(String, String),
-    Deep(String, String),
-    Regex(String, String),
+    Path(FieldConfig),
+    Deep(FieldConfig),
+    Regex(FieldConfig),
 
     Map {
         arr_path: String,
@@ -2959,7 +2959,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 } else if let Some(Extract::Rows { fields, .. }) = cur_extracts.last_mut() {
                     fields.push(fc);
                 } else {
-                    cur_extracts.push(Extract::Field(fc.key, fc.name));
+                    cur_extracts.push(Extract::Field(fc.clone()));
                 }
             }
             "lat" if parts.len() >= 2 => {
@@ -3557,26 +3557,26 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
     };
     for ext in effective_extracts {
         match ext {
-            Extract::Field(k, n) => {
+            Extract::Field(fc) => {
                 if let Some(ref j) = parsed_json {
-                    if let Some(v) = jnum(j, k) {
-                        extracted.insert(n.clone(), v);
+                    if let Some(v) = jnum(j, &fc.key) {
+                        extracted.insert(fc.name.clone(), v);
                     }
                 }
             }
-            Extract::First(k, n) => {
+            Extract::First(fc) => {
                 if let Some(ref j) = parsed_json {
-                    if let Some(v) = jfirst(j, k) {
-                        extracted.insert(n.clone(), v);
+                    if let Some(v) = jfirst(j, &fc.key) {
+                        extracted.insert(fc.name.clone(), v);
                     }
                 }
             }
-            Extract::Last(k, n) => {
+            Extract::Last(fc) => {
                 if let Some(ref j) = parsed_json {
-                    if let Some(v) = jlast(j, k) {
-                        extracted.insert(n.clone(), v);
+                    if let Some(v) = jlast(j, &fc.key) {
+                        extracted.insert(fc.name.clone(), v);
                     }
-                } else if k == "line" {
+                } else if fc.key == "line" {
                     if let Some(v) = body
                         .lines()
                         .rev()
@@ -3590,48 +3590,48 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 .and_then(|c| c.trim_matches('"').parse::<f64>().ok())
                         })
                     {
-                        extracted.insert(n.clone(), v);
+                        extracted.insert(fc.name.clone(), v);
                     }
                 }
             }
-            Extract::Count(k, n) => {
-                let v = if src.format == "csv" || k == "lines" {
+            Extract::Count(fc) => {
+                let v = if src.format == "csv" || fc.key == "lines" {
                     Some(
                         body.lines()
                             .filter(|l| !l.trim().is_empty() && !l.trim().starts_with('#'))
                             .count() as f64,
                     )
                 } else {
-                    parsed_json.as_ref().and_then(|j| jcount(j, k))
+                    parsed_json.as_ref().and_then(|j| jcount(j, &fc.key))
                 };
                 if let Some(v) = v {
-                    extracted.insert(n.clone(), v);
+                    extracted.insert(fc.name.clone(), v);
                 }
             }
-            Extract::LastRow(k, n) => {
+            Extract::LastRow(fc) => {
                 if src.format == "csv" {
-                    if let Some(v) = text_last_col(body, k) {
-                        extracted.insert(n.clone(), v);
+                    if let Some(v) = text_last_col(body, &fc.key) {
+                        extracted.insert(fc.name.clone(), v);
                     }
                 } else if let Some(ref j) = parsed_json {
-                    if let Some(v) = j2d_last_row(j, k) {
-                        extracted.insert(n.clone(), v);
+                    if let Some(v) = j2d_last_row(j, &fc.key) {
+                        extracted.insert(fc.name.clone(), v);
                     }
-                } else if let Some(v) = text_last_col(body, k) {
-                    extracted.insert(n.clone(), v);
+                } else if let Some(v) = text_last_col(body, &fc.key) {
+                    extracted.insert(fc.name.clone(), v);
                 }
             }
-            Extract::Path(k, n) => {
+            Extract::Path(fc) => {
                 if let Some(ref j) = parsed_json {
-                    if let Some(v) = jpath(j, k) {
-                        extracted.insert(n.clone(), v);
+                    if let Some(v) = jpath(j, &fc.key) {
+                        extracted.insert(fc.name.clone(), v);
                     }
                 }
             }
-            Extract::Deep(k, n) => {
+            Extract::Deep(fc) => {
                 if let Some(ref j) = parsed_json {
-                    if let Some(v) = jdeep_find_num(j, k) {
-                        extracted.insert(n.clone(), v);
+                    if let Some(v) = jdeep_find_num(j, &fc.key) {
+                        extracted.insert(fc.name.clone(), v);
                     }
                 }
             }
@@ -3653,9 +3653,9 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                     extracted.insert(n.clone(), v);
                 }
             }
-            Extract::ObjLast(k, n) => {
+            Extract::ObjLast(fc) => {
                 if let Some(ref j) = parsed_json {
-                    if let Some(obj) = jpath_val(j, k) {
+                    if let Some(obj) = jpath_val(j, &fc.key) {
                         if let JsonVal::Obj(m) = obj {
                             if let Some(last_key) = m.keys().max_by(|a, b| {
                                 let ka = a.parse::<i64>().unwrap_or(0);
@@ -3663,16 +3663,16 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 ka.cmp(&kb)
                             }) {
                                 if let Some(val) = m.get(last_key).and_then(scalar_of) {
-                                    extracted.insert(n.clone(), val);
+                                    extracted.insert(fc.name.clone(), val);
                                 }
                             }
                         }
                     }
                 }
             }
-            Extract::Regex(pat, n) => {
-                if let Some(v) = extract_regex_val(body, pat) {
-                    extracted.insert(n.clone(), v);
+            Extract::Regex(fc) => {
+                if let Some(v) = extract_regex_val(body, &fc.key) {
+                    extracted.insert(fc.name.clone(), v);
                 }
             }
             Extract::XmlCount(tag, n) => {
@@ -5072,21 +5072,69 @@ fn main() {
         let _ = PARSEC_M * C_LIGHT * HUBBLE_H0 * MAS_YR_TO_RAD_S;
         let _ = ECLIPTIC_OBLIQUITY + AU + GAUSS_K;
         let _ = J2000_EPOCH + Φ + CHEBYSHEV_N as f64;
-        let _ = Extract::First("k".into(), "u".into());
-        let _ = Extract::Last("k".into(), "u".into());
-        let _ = Extract::Count("k".into(), "u".into());
-        let _ = Extract::LastRow("k".into(), "u".into());
+        let _ = Extract::First(FieldConfig {
+            key: "k".into(),
+            name: "u".into(),
+            kernel: 0,
+            force: 0,
+            unit: "".into(),
+        });
+        let _ = Extract::Last(FieldConfig {
+            key: "k".into(),
+            name: "u".into(),
+            kernel: 0,
+            force: 0,
+            unit: "".into(),
+        });
+        let _ = Extract::Count(FieldConfig {
+            key: "k".into(),
+            name: "u".into(),
+            kernel: 0,
+            force: 0,
+            unit: "".into(),
+        });
+        let _ = Extract::LastRow(FieldConfig {
+            key: "k".into(),
+            name: "u".into(),
+            kernel: 0,
+            force: 0,
+            unit: "".into(),
+        });
         let _ = Extract::LastObj("a".into(), "m".into(), "v".into(), "u".into());
         let _ = Extract::LastLine("u".into());
-        let _ = Extract::ObjLast("a".into(), "u".into());
+        let _ = Extract::ObjLast(FieldConfig {
+            key: "a".into(),
+            name: "u".into(),
+            kernel: 0,
+            force: 0,
+            unit: "".into(),
+        });
         let _ = Extract::GeojsonEvents {
             mag_key: "m".into(),
             min_mag: 0.0,
             outputs: vec![],
         };
-        let _ = Extract::Path("k".into(), "u".into());
-        let _ = Extract::Deep("k".into(), "u".into());
-        let _ = Extract::Regex("p".into(), "u".into());
+        let _ = Extract::Path(FieldConfig {
+            key: "k".into(),
+            name: "u".into(),
+            kernel: 0,
+            force: 0,
+            unit: "".into(),
+        });
+        let _ = Extract::Deep(FieldConfig {
+            key: "k".into(),
+            name: "u".into(),
+            kernel: 0,
+            force: 0,
+            unit: "".into(),
+        });
+        let _ = Extract::Regex(FieldConfig {
+            key: "p".into(),
+            name: "u".into(),
+            kernel: 0,
+            force: 0,
+            unit: "".into(),
+        });
         let _ = Extract::Hapi(vec![]);
         let _ = Extract::XmlCount("t".into(), "u".into());
         let _ = Extract::Ephemeris("mars".into());
