@@ -2111,6 +2111,8 @@ fn fetch_raw(
     let max_t = (((ttl as f64) / (Φ * Φ)).max(1.0) as u64).min(120);
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
+        .arg("-S")
+        .arg("-f")
         .arg("-L")
         .arg("--retry")
         .arg("3")
@@ -2131,6 +2133,8 @@ fn fetch_raw(
     if output.status.success() {
         Some(String::from_utf8_lossy(&output.stdout).to_string())
     } else {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        eprintln!("curl failed ({}): {} {}", output.status, url, stderr.trim());
         None
     }
 }
@@ -2177,6 +2181,8 @@ fn spawn_task_curl(
     cmd.arg("--remove-on-error");
     cmd.arg("--retry").arg("1");
     cmd.arg("-s");
+    cmd.arg("-S");
+    cmd.arg("-f");
     cmd.arg("--location");
     cmd.arg("-o")
         .arg(format!("{}/b_{}", batch_dir.display(), n));
