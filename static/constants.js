@@ -58,7 +58,8 @@ export async function syncFrame(inputs, queries, presence) {
 
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86 || bytes[2] !== 2) return emptyResp;
+    if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86) return emptyResp;
+    if (bytes[2] !== 3) throw new Error('protocol v3 required, got v' + bytes[2]);
 
     let o = 3;
     o += 4;
@@ -68,7 +69,7 @@ export async function syncFrame(inputs, queries, presence) {
     const meta = new Float32Array(oscCount * 4);
 
     for (let i = 0; i < oscCount; i++) {
-        if (o + 80 > bytes.length) break;
+        if (o + 88 > bytes.length) break;
         const x = dvRes.getFloat64(o, true); o += 8;
         const y = dvRes.getFloat64(o, true); o += 8;
         const z = dvRes.getFloat64(o, true); o += 8;
@@ -79,6 +80,7 @@ export async function syncFrame(inputs, queries, presence) {
         const tau = dvRes.getFloat64(o, true); o += 8;
         const kernel_id = dvRes.getFloat64(o, true); o += 8;
         const absorption = dvRes.getFloat64(o, true); o += 8;
+        const force_type = dvRes.getFloat64(o, true); o += 8;
 
         const fOff = i * 8;
         if (presence) {
@@ -93,7 +95,7 @@ export async function syncFrame(inputs, queries, presence) {
         field[fOff + 3] = val;
         field[fOff + 4] = t;
         field[fOff + 5] = ttl;
-        field[fOff + 6] = 0;
+        field[fOff + 6] = force_type;
         field[fOff + 7] = 0;
 
         const mOff = i * 4;

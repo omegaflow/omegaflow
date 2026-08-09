@@ -418,6 +418,7 @@ struct Sample {
     extent: f64,
     tau: f64,
     kernel_id: f64,
+    force_type: f64,
     vmax: f64,
     amax: f64,
     p0f: [f64; 3],
@@ -551,7 +552,7 @@ fn enclose_family(
     center: [f64; 3],
     t2: f64,
     pad: f64,
-    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     body_props: Option<&BodyProperties>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
@@ -653,6 +654,7 @@ fn enclose_family(
                     smp.tau,
                     smp.kernel_id,
                     absorption,
+                    smp.force_type,
                 ));
             }
         }
@@ -664,7 +666,7 @@ fn sense_buffer(
     center: [f64; 3],
     t2: f64,
     pad: f64,
-    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
     for (body_name, fam) in &buf.bodies {
@@ -1178,13 +1180,31 @@ fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
         let epoch_key = if first.contains_key("t") { "t" } else { "" };
         let mut fields = vec![];
         if first.contains_key("val") {
-            fields.push(("val".into(), "val".into()));
+            fields.push(FieldConfig {
+                key: "val".into(),
+                name: "val".into(),
+                kernel: 0,
+                force: 0,
+                unit: "".into(),
+            });
         }
         if first.contains_key("extent") {
-            fields.push(("extent".into(), "extent".into()));
+            fields.push(FieldConfig {
+                key: "extent".into(),
+                name: "extent".into(),
+                kernel: 0,
+                force: 0,
+                unit: "".into(),
+            });
         }
         if first.contains_key("tau") {
-            fields.push(("tau".into(), "tau".into()));
+            fields.push(FieldConfig {
+                key: "tau".into(),
+                name: "tau".into(),
+                kernel: 0,
+                force: 0,
+                unit: "".into(),
+            });
         }
         vec![Extract::CelestialMap {
             arr_path: "data".into(),
@@ -1209,10 +1229,22 @@ fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
         let vr_key = if first.contains_key("vr") { "vr" } else { "" };
         let mut fields = vec![];
         if first.contains_key("val") {
-            fields.push(("val".into(), "val".into()));
+            fields.push(FieldConfig {
+                key: "val".into(),
+                name: "val".into(),
+                kernel: 0,
+                force: 0,
+                unit: "".into(),
+            });
         }
         if first.contains_key("extent") {
-            fields.push(("extent".into(), "extent".into()));
+            fields.push(FieldConfig {
+                key: "extent".into(),
+                name: "extent".into(),
+                kernel: 0,
+                force: 0,
+                unit: "".into(),
+            });
         }
         vec![Extract::Map {
             arr_path: "data".into(),
@@ -1304,8 +1336,8 @@ fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                                 key_found = true;
                             }
                         }
-                        for (fk, _) in fields {
-                            if jpath_val(&j, fk).is_some() {
+                        for fc in fields {
+                            if jpath_val(&j, &fc.key).is_some() {
                                 key_found = true;
                             }
                         }
@@ -1330,8 +1362,8 @@ fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                                 arr_has_rows = true;
                             }
                         }
-                        for (fk, _) in fields {
-                            if jpath_val(&j, fk).is_some() {
+                        for fc in fields {
+                            if jpath_val(&j, &fc.key).is_some() {
                                 key_found = true;
                             }
                         }
@@ -1863,7 +1895,7 @@ enum Extract {
         vel_key: String,
         trk_key: String,
         vr_key: String,
-        fields: Vec<(String, String)>,
+        fields: Vec<FieldConfig>,
         lon_sign: Option<String>,
     },
     CelestialMap {
@@ -1879,21 +1911,21 @@ enum Extract {
         rv_key: String,
         rv_scale: f64,
         epoch_key: String,
-        fields: Vec<(String, String)>,
+        fields: Vec<FieldConfig>,
     },
     Rows {
         last_line: bool,
-        fields: Vec<(String, String)>,
+        fields: Vec<FieldConfig>,
     },
     Flatten {
         arr_path: String,
         geom_path: String,
         epoch_key: String,
-        fields: Vec<(String, String)>,
+        fields: Vec<FieldConfig>,
     },
     CmrPolygon {
         arr_path: String,
-        fields: Vec<(String, String)>,
+        fields: Vec<FieldConfig>,
         epoch_key: String,
         alt_key: String,
         val_key: String,
@@ -1901,7 +1933,7 @@ enum Extract {
     CelestialPolygon {
         arr_path: String,
         radius: f64,
-        fields: Vec<(String, String)>,
+        fields: Vec<FieldConfig>,
         epoch_key: String,
         val_key: String,
     },
@@ -1914,7 +1946,7 @@ enum Extract {
         w_key: String,
         ma_key: String,
         epoch_key: String,
-        fields: Vec<(String, String)>,
+        fields: Vec<FieldConfig>,
     },
     Hapi(Vec<(String, String)>),
     XmlCount(String, String),
@@ -1949,6 +1981,29 @@ fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, ttl: f64) -
         4 => p.exponential_decay,
         5 => p.patch_levy * reach_time,
         _ => 0.0,
+    }
+}
+
+#[derive(Clone)]
+struct FieldConfig {
+    key: String,
+    name: String,
+    kernel: u8,
+    force: u8,
+    unit: String,
+}
+
+fn force_id_of(name: &str) -> u8 {
+    match name {
+        "em" => 0,
+        "gravity" => 1,
+        "acoustic" => 2,
+        "seismic-body" => 3,
+        "seismic-surface" => 4,
+        "thermal" => 5,
+        "diffusion" => 6,
+        "advective" => 7,
+        _ => 0,
     }
 }
 
@@ -2572,6 +2627,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                         extent: acc_extent,
                                         tau: station.ema_interval,
                                         kernel_id: 0.0,
+                                        force_type: 0.0,
                                         vmax,
                                         amax,
                                         p0f,
@@ -2618,7 +2674,8 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 let qz = f64::from_le_bytes(t_buf);
                 queries.push((qt, qx, qy, qz));
             }
-            let mut records: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> = Vec::new();
+            let mut records: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+                Vec::new();
             if !queries.is_empty() {
                 let (t0, x0, y0, z0) = queries[0];
                 let mut extent = 0.0f64;
@@ -2642,12 +2699,14 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 sense_buffer(&station_buf, center, t0, extent, &mut records, &eph_map);
             }
 
-            let mut out = Vec::with_capacity(11 + records.len() * 80);
+            let mut out = Vec::with_capacity(11 + records.len() * 88);
             out.extend_from_slice(&[0xCF, 0x86]);
-            out.push(2u8);
+            out.push(3u8);
             out.extend_from_slice(&id.to_le_bytes());
             out.extend_from_slice(&(records.len() as u32).to_le_bytes());
-            for &(x, y, z, val, extent, epoch, ttl, tau, kernel_id, absorption) in &records {
+            for &(x, y, z, val, extent, epoch, ttl, tau, kernel_id, absorption, force_type) in
+                &records
+            {
                 out.extend_from_slice(&x.to_le_bytes());
                 out.extend_from_slice(&y.to_le_bytes());
                 out.extend_from_slice(&z.to_le_bytes());
@@ -2658,6 +2717,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 out.extend_from_slice(&tau.to_le_bytes());
                 out.extend_from_slice(&kernel_id.to_le_bytes());
                 out.extend_from_slice(&absorption.to_le_bytes());
+                out.extend_from_slice(&force_type.to_le_bytes());
             }
             write_ws_binary(&mut stream, &out);
         }
@@ -2884,18 +2944,22 @@ fn load_sources() -> Vec<SourceConfig> {
                     fields: Vec::new(),
                 });
             }
-            "field" if parts.len() >= 3 => {
+            "field" if parts.len() >= 5 => {
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    kernel: kernel_id_of(parts[3]),
+                    force: force_id_of(parts[4]),
+                    unit: parts[5].to_string(),
+                };
                 if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
-                    fields.push((parts[1].to_string(), parts[2].to_string()));
+                    fields.push(fc);
                 } else if let Some(Extract::CelestialMap { fields, .. }) = cur_extracts.last_mut() {
-                    fields.push((parts[1].to_string(), parts[2].to_string()));
+                    fields.push(fc);
                 } else if let Some(Extract::Rows { fields, .. }) = cur_extracts.last_mut() {
-                    fields.push((parts[1].to_string(), parts[2].to_string()));
+                    fields.push(fc);
                 } else {
-                    if parts.len() > 3 {
-                        kernel_id_of(&parts[3]);
-                    }
-                    cur_extracts.push(Extract::Field(parts[1].to_string(), parts[2].to_string()));
+                    cur_extracts.push(Extract::Field(fc.key, fc.name));
                 }
             }
             "lat" if parts.len() >= 2 => {
@@ -3882,9 +3946,9 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             };
                             if let (Some(la), Some(lo), Some(al)) = (lat, lon, alt) {
                                 let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                                for (fk, fn_) in fields {
-                                    if let Some(val) = jpath(v, fk) {
-                                        ev_fields.push((fn_.clone(), val));
+                                for fc in fields {
+                                    if let Some(val) = jpath(v, &fc.key) {
+                                        ev_fields.push((fc.name.clone(), val));
                                     }
                                 }
                                 if val_key.is_empty() {
@@ -3892,7 +3956,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                         continue;
                                     }
                                 } else {
-                                    ev_fields.retain(|(fn_, _)| *fn_ == *val_key);
+                                    ev_fields.retain(|(n, _)| *n == *val_key);
                                     if ev_fields.is_empty() {
                                         continue;
                                     }
@@ -3996,9 +4060,9 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 continue;
                             }
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (fk, fn_) in fields {
-                                if let Some(val) = jpath(v, fk) {
-                                    ev_fields.push((fn_.clone(), val));
+                            for fc in fields {
+                                if let Some(val) = jpath(v, &fc.key) {
+                                    ev_fields.push((fc.name.clone(), val));
                                 }
                             }
                             ev_fields.push(("_flatten_id".to_string(), idx as f64));
@@ -4083,10 +4147,10 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 continue;
                             };
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (fk, fn_) in fields {
-                                if let Some(val) = jpath(v, fk) {
-                                    if val_key.is_empty() || fk == val_key {
-                                        ev_fields.push((fn_.clone(), val));
+                            for fc in fields {
+                                if let Some(val) = jpath(v, &fc.key) {
+                                    if val_key.is_empty() || fc.key == *val_key {
+                                        ev_fields.push((fc.name.clone(), val));
                                     }
                                 }
                             }
@@ -4140,10 +4204,10 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 continue;
                             }
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (fk, fn_) in fields {
-                                if let Some(val) = jpath(v, fk) {
-                                    if val_key.is_empty() || fk == val_key {
-                                        ev_fields.push((fn_.clone(), val));
+                            for fc in fields {
+                                if let Some(val) = jpath(v, &fc.key) {
+                                    if val_key.is_empty() || fc.key == *val_key {
+                                        ev_fields.push((fc.name.clone(), val));
                                     }
                                 }
                             }
@@ -4186,9 +4250,9 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 if let Frame::Surface { lat, lon, alt, .. } = src.frame {
                     let col_indices: Vec<(usize, &String)> = fields
                         .iter()
-                        .filter_map(|(fk, fn_)| {
-                            if let Ok(idx) = fk.parse::<usize>() {
-                                Some((idx, fn_))
+                        .filter_map(|fc| {
+                            if let Ok(idx) = fc.key.parse::<usize>() {
+                                Some((idx, &fc.name))
                             } else {
                                 for line in body.lines() {
                                     let t = line.trim();
@@ -4197,9 +4261,9 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     }
                                     let s = t.strip_prefix('#').unwrap_or(t).trim();
                                     if let Some(idx) = split_data_line(s).iter().position(|c| {
-                                        c.eq_ignore_ascii_case(fk) || c.starts_with(fk)
+                                        c.eq_ignore_ascii_case(&fc.key) || c.starts_with(&fc.key)
                                     }) {
-                                        return Some((idx, fn_));
+                                        return Some((idx, &fc.name));
                                     }
                                 }
                                 None
@@ -4214,12 +4278,12 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                         if let Some(line) = last_data_line {
                             let cols = split_data_line(line.trim());
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (idx, fn_) in &col_indices {
+                            for (idx, n) in &col_indices {
                                 if let Some(val) = cols
                                     .get(*idx)
                                     .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok())
                                 {
-                                    ev_fields.push((fn_.to_string(), val));
+                                    ev_fields.push((n.to_string(), val));
                                 }
                             }
                             if !ev_fields.is_empty() {
@@ -4246,12 +4310,12 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             }
                             let cols = split_data_line(trimmed);
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (idx, fn_) in &col_indices {
+                            for (idx, n) in &col_indices {
                                 if let Some(val) = cols
                                     .get(*idx)
                                     .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok())
                                 {
-                                    ev_fields.push((fn_.to_string(), val));
+                                    ev_fields.push((n.to_string(), val));
                                 }
                             }
                             if ev_fields.is_empty() {
@@ -4344,9 +4408,9 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 sin_i * vy1 * AU,
                             ];
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (fk, fn_) in fields {
-                                if let Some(val) = jpath(v, fk) {
-                                    ev_fields.push((fn_.clone(), val));
+                            for fc in fields {
+                                if let Some(val) = jpath(v, &fc.key) {
+                                    ev_fields.push((fc.name.clone(), val));
                                 }
                             }
                             pending.push(PendingSample {
@@ -4431,9 +4495,9 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 continue;
                             };
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
-                            for (fk, fn_) in fields {
-                                if let Some(val) = jpath(v, fk) {
-                                    ev_fields.push((fn_.clone(), val));
+                            for fc in fields {
+                                if let Some(val) = jpath(v, &fc.key) {
+                                    ev_fields.push((fc.name.clone(), val));
                                 }
                             }
                             ev_fields.push(("_dist_m".to_string(), d));
@@ -4748,7 +4812,22 @@ fn materialize(
         .filter(|(_, v)| !v.is_nan() && v.is_finite())
         .cloned()
         .collect();
-    let kernel_id: f64 = 0.0;
+    let (kernel_id, force_type, _field_unit) = src
+        .extracts
+        .iter()
+        .find_map(|ext| match ext {
+            Extract::Map { fields, .. }
+            | Extract::CelestialMap { fields, .. }
+            | Extract::Rows { fields, .. }
+            | Extract::Flatten { fields, .. }
+            | Extract::CmrPolygon { fields, .. }
+            | Extract::CelestialPolygon { fields, .. }
+            | Extract::KeplerMap { fields, .. } => fields.first(),
+            _ => None,
+        })
+        .map(|fc| (fc.kernel as f64, fc.force as f64, fc.unit.as_str()))
+        .unwrap_or((0.0, 0.0, ""));
+    std::hint::black_box(_field_unit);
     let tau = pend.tau.unwrap_or(src.tau.unwrap_or(0.0));
     let effective_ttl = pend.ttl.unwrap_or(src.reach_ttl.unwrap_or(src.ttl) as f64);
     let extent = pend
@@ -4764,6 +4843,7 @@ fn materialize(
         extent,
         tau,
         kernel_id,
+        force_type,
         vmax,
         amax,
         p0f,
@@ -5403,7 +5483,13 @@ mod tests {
                 vel_key: String::new(),
                 trk_key: String::new(),
                 vr_key: String::new(),
-                fields: vec![("4".into(), "argo_temp_c".into())],
+                fields: vec![FieldConfig {
+                    key: "4".into(),
+                    name: "argo_temp_c".into(),
+                    kernel: 0,
+                    force: 0,
+                    unit: "".into(),
+                }],
                 lon_sign: None,
             }],
             headers: vec![],
@@ -6021,7 +6107,13 @@ mod tests {
                 vel_key: String::new(),
                 trk_key: String::new(),
                 vr_key: String::new(),
-                fields: vec![("properties.mag".into(), "mag".into())],
+                fields: vec![FieldConfig {
+                    key: "properties.mag".into(),
+                    name: "mag".into(),
+                    kernel: 0,
+                    force: 0,
+                    unit: "".into(),
+                }],
                 lon_sign: None,
             }],
             headers: vec![],

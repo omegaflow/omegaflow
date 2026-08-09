@@ -256,8 +256,21 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         const fieldShader = `
 struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, presence: vec4f };
 const C_LIGHT: f32 = 299792458.0;
-fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32) -> f32 {
-    let retarded = max(0.0, abs(vp.presence.w - t) - d_mag / C_LIGHT);
+const PROPAGATION_SPEED: array<f32, 8> = array<f32, 8>(
+    299792458.0,  // 0: em
+    299792458.0,  // 1: gravity
+    343.0,        // 2: acoustic
+    6000.0,       // 3: seismic-body
+    3000.0,       // 4: seismic-surface
+    0.0,          // 5: thermal
+    0.0,          // 6: diffusion
+    0.0,          // 7: advective
+);
+fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32) -> f32 {
+    let v = PROPAGATION_SPEED[min(force_type, 7u)];
+    let light_retarded = abs(vp.presence.w - t) - d_mag / C_LIGHT;
+    let wave_retarded = abs(vp.presence.w - t) - d_mag / v;
+    let retarded = select(light_retarded, wave_retarded, v > 0.0 && d_mag > 0.0);
     return raw * exp(-retarded / max(ttl, 1e-9));
 }
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
@@ -340,10 +353,10 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let tau_freq = 1.0 / max(tau, exp2(-32.0));
     let color_shift = clamp(log2(tau_freq) / 8.0, -0.25, 0.25);
     let hue = fract(hue_center + color_shift);
-    let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y)) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
+    let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y, u32(tm.z))) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
     let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
     out.color = rgb;
-    out.kernel_id = f_type;
+    out.kernel_id = u32(tm.z);
     return out;
 }
 
@@ -402,7 +415,7 @@ fn presence_probe() {
         let kernel_id = u32(mt.z);
         let absorption = f32(mt.w);
 
-        let val_eff = fold_eff(d_mag, m.w, tm.x, tm.y);
+        let val_eff = fold_eff(d_mag, m.w, tm.x, tm.y, u32(tm.z));
         let sk = field_spatial(d2, d_mag, extent, kernel_id, soft, absorption);
 
         if (kernel_id < 7u) {
