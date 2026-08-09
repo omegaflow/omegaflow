@@ -1967,20 +1967,46 @@ fn kernel_id_of(name: &str) -> u8 {
     }
 }
 
+fn extract_fields(ext: &Extract) -> &[FieldConfig] {
+    match ext {
+        Extract::Map { fields, .. }
+        | Extract::CelestialMap { fields, .. }
+        | Extract::Rows { fields, .. }
+        | Extract::Flatten { fields, .. }
+        | Extract::CmrPolygon { fields, .. }
+        | Extract::CelestialPolygon { fields, .. }
+        | Extract::KeplerMap { fields, .. } => fields,
+        Extract::Field(fc)
+        | Extract::First(fc)
+        | Extract::Last(fc)
+        | Extract::Count(fc)
+        | Extract::LastRow(fc)
+        | Extract::ObjLast(fc)
+        | Extract::Path(fc)
+        | Extract::Deep(fc)
+        | Extract::Regex(fc) => std::slice::from_ref(fc),
+        _ => &[],
+    }
+}
+
 fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, ttl: f64) -> f64 {
-    let reach_time = ttl;
-    let p = match body_props {
-        Some(p) => p,
-        None => return 0.0,
-    };
     match kernel_id {
         0 | 6 => f64::INFINITY,
-        1 => p.gaussian_inverse_square * reach_time,
-        2 => p.gaussian_inverse * reach_time,
-        3 => (2.0 * p.erfc * reach_time).sqrt(),
-        4 => p.exponential_decay,
-        5 => p.patch_levy * reach_time,
-        _ => 0.0,
+        _ => {
+            let reach_time = ttl;
+            let p = match body_props {
+                Some(p) => p,
+                None => return 0.0,
+            };
+            match kernel_id {
+                1 => p.gaussian_inverse_square * reach_time,
+                2 => p.gaussian_inverse * reach_time,
+                3 => (2.0 * p.erfc * reach_time).sqrt(),
+                4 => p.exponential_decay,
+                5 => p.patch_levy * reach_time,
+                _ => 0.0,
+            }
+        }
     }
 }
 
@@ -5210,6 +5236,7 @@ fn main() {
     let cadence = 1.0;
     loop {
         let now = tdb_now();
+        let mut fetched_samples: Vec<Sample> = Vec::new();
         while let Ok(res) = fetch_rx.try_recv() {
             archive
                 .origins
@@ -5223,13 +5250,13 @@ fn main() {
             }
             let src = &archive.sources[res.source_idx];
             for pend in res.pendings {
-                let _dummy = materialize(
+                fetched_samples.append(&mut materialize(
                     src,
                     (res.source_idx as u32, 0, 0),
                     pend,
                     &mut archive.origins,
                     &archive.body_ephemerides,
-                );
+                ));
             }
         }
         while let Ok(msg) = station_rx.try_recv() {
@@ -5247,7 +5274,27 @@ fn main() {
             if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
                 continue;
             }
-            let r = kernel_extent(0, None, archive.sources[i].ttl as f64);
+            let body_name = match &archive.sources[i].frame {
+                Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
+                    body_name.as_str()
+                }
+            };
+            let body_props = archive
+                .body_ephemerides
+                .get(body_name)
+                .and_then(|e| e.props.as_ref());
+            let mut r = 0.0_f64;
+            for ext in &archive.sources[i].extracts {
+                for fc in extract_fields(ext) {
+                    r = f64::max(
+                        r,
+                        kernel_extent(fc.kernel, body_props, archive.sources[i].ttl as f64),
+                    );
+                }
+            }
+            if r == 0.0 {
+                continue;
+            }
             let pos = match &archive.sources[i].frame {
                 Frame::Surface {
                     lat,
@@ -5332,6 +5379,7 @@ fn main() {
         }
         {
             let mut all: Vec<Sample> = Vec::new();
+            all.append(&mut fetched_samples);
             let old = archive.field.clone();
             let mut families: Vec<&Family> = old.bodies.values().collect();
             families.push(&old.inertial);
