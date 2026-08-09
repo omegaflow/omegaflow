@@ -2915,7 +2915,6 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_repeat_ra_bins = v;
                 }
             }
-            "force" => {}
             _ => {}
         }
     }
