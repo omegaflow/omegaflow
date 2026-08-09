@@ -45,7 +45,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let exposureBoost = 4.0;
         let debugFontF = 1.0;
         let debugFontCnt = 0;
-        const forceExposeF = new Float64Array([1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8]);
+        const kernelExpose = new Float64Array([1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8]);
         let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = -1e9;
         let xPresence = 0, yPresence = 0, zPresence = 0;
         let audioCtx = null;
@@ -254,7 +254,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         });
         
         const fieldShader = `
-struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, expose_hi2: vec4f, presence: vec4f };
+struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, presence: vec4f };
 const C_LIGHT: f32 = 299792458.0;
 fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32) -> f32 {
     let retarded = max(0.0, abs(vp.presence.w - t) - d_mag / C_LIGHT);
@@ -265,7 +265,7 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32) -> f32 {
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 
-struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) force_type: u32, @location(3) @interpolate(flat) absorption: f32 };
+struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) kernel_id: u32, @location(3) @interpolate(flat) absorption: f32 };
 
 const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
 
@@ -290,7 +290,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
     out.uv = vec2f(0.0);
     out.color = vec3f(0.0);
-    out.force_type = 0u;
+    out.kernel_id = 0u;
     if (count == 0u) { return out; }
 
     let id = i / 6u;
@@ -329,12 +329,11 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.pos = vec4f(clip, 0.0, 1.0);
     out.uv = quad[vid];
 
-    let f_type = min(u32(mt.z), 8u);
-    out.force_type = f_type;
+    let k_id = min(u32(mt.z), 6u);
+    out.kernel_id = k_id;
     out.absorption = f32(mt.w);
-    var lvl = vp.expose_lo[min(f_type, 3u)];
-    if (f_type >= 4u && f_type < 8u) { lvl = vp.expose_hi[f_type - 4u]; }
-    if (f_type >= 8u) { lvl = vp.expose_hi2[f_type - 8u]; }
+    var lvl = vp.expose_lo[min(k_id, 3u)];
+    if (k_id >= 4u && k_id < 7u) { lvl = vp.expose_hi[k_id - 4u]; }
     if (lvl <= 0.0) { return out; }
 
     let hue_center = fract(log2(max(tau, 1.0)) / 16.0);
@@ -344,7 +343,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y)) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
     let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
     out.color = rgb;
-    out.force_type = f_type;
+    out.kernel_id = f_type;
     return out;
 }
 
@@ -356,18 +355,20 @@ fn erfc(x: f32) -> f32 {
     return select(y, 2.0 - y, x < 0.0);
 }
 
-fn field_spatial(d2: f32, d_mag: f32, extent: f32, force_type: u32, global_scale: f32, absorption: f32) -> f32 {
+fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale: f32, absorption: f32) -> f32 {
     let perceptual_extent = max(extent, global_scale);
     let e2 = perceptual_extent * perceptual_extent;
     let s2 = global_scale * global_scale;
 
-    if (force_type == 0u || force_type == 1u) {
+    if (kernel_id == 0u || kernel_id == 6u) {
         return 1.0 / max(d2 + s2, s2);
-    } else if (force_type == 5u || force_type == 6u) {
+    } else if (kernel_id == 3u) {
         return erfc(d_mag / max(perceptual_extent * sqrt(2.0), global_scale));
-    } else if (force_type == 4u) {
+    } else if (kernel_id == 2u) {
         return exp(-d2 / (2.0 * max(e2, s2))) / (d_mag + sqrt(s2));
-    } else if (force_type == 8u) {
+    } else if (kernel_id == 4u) {
+        return exp(-d_mag / max(perceptual_extent, global_scale));
+    } else if (kernel_id == 5u) {
         let alpha = clamp(absorption, 0.0, 1.0);
         let beta = 1.6;
         let core = exp(-d2 / (2.0 * max(e2, s2)));
@@ -382,13 +383,13 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, force_type: u32, global_scale
 fn presence_probe() {
     let count = u32(vp.surface.z);
     if (count == 0u) {
-        for (var i: u32 = 0u; i < 9u; i = i + 1u) { probe_out[i] = 0.0f; }
+        for (var i: u32 = 0u; i < 7u; i = i + 1u) { probe_out[i] = 0.0f; }
         return;
     }
     let soft = vp.surface.w;
 
-    var omegas: array<f32, 9>;
-    for (var i: u32 = 0u; i < 9u; i = i + 1u) { omegas[i] = 0.0f; }
+    var omegas: array<f32, 7>;
+    for (var i: u32 = 0u; i < 7u; i = i + 1u) { omegas[i] = 0.0f; }
 
     for (var j = 0u; j < count; j = j + 1u) {
         let m = field[j * 2u];
@@ -398,18 +399,18 @@ fn presence_probe() {
         let d_mag = sqrt(d2);
         let mt = props[j];
         let extent = mt.x;
-        let force_type = u32(mt.z);
+        let kernel_id = u32(mt.z);
         let absorption = f32(mt.w);
 
         let val_eff = fold_eff(d_mag, m.w, tm.x, tm.y);
-        let sk = field_spatial(d2, d_mag, extent, force_type, soft, absorption);
+        let sk = field_spatial(d2, d_mag, extent, kernel_id, soft, absorption);
 
-        if (force_type < 9u) {
-            omegas[force_type] += val_eff * sk;
+        if (kernel_id < 7u) {
+            omegas[kernel_id] += val_eff * sk;
         }
     }
 
-    for (var i: u32 = 0u; i < 9u; i = i + 1u) {
+    for (var i: u32 = 0u; i < 7u; i = i + 1u) {
         probe_out[i] = omegas[i];
     }
 }
@@ -441,11 +442,11 @@ fn presence_probe() {
                 uploads: typeof uploadCount === 'number' ? uploadCount : -1,
                 uploadErrors: typeof uploadErrors === 'number' ? uploadErrors : -1,
                 frames: fieldFrames, wsOpen: !!(ws && ws.readyState === 1),
-                lvls0: forceExposeF[0], gridStepLog2: Math.round(Math.log2(gridStep))
+                lvls0: kernelExpose[0], gridStepLog2: Math.round(Math.log2(gridStep))
             });
         };
         let gpu = null, fieldCtx = null, fieldPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, fieldCap = 0, fieldFrames = 0;
-        let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0,0,0];
+        let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0];
         let gpuInitPromise = null;
         let gpuStatus = 'WebGPU: awaiting config';
         async function initFieldGPU() {
@@ -498,9 +499,9 @@ fn presence_probe() {
                         layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
                         compute: { module, entryPoint: 'presence_probe' }
                     });
-                    probeBuf = device.createBuffer({ size: 48, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
-                    probeRead = device.createBuffer({ size: 48, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
-                    vpBuf = device.createBuffer({ size: 128, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+                    probeBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+                    probeRead = device.createBuffer({ size: 32, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+                    vpBuf = device.createBuffer({ size: 112, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
                     gpu = device;
                 } catch (e) { gpu = null; gpuStatus = 'WebGPU: error (' + String(e) + ')'; reportState('gpu', String(e)); }
             })();
@@ -550,7 +551,7 @@ fn presence_probe() {
                 pass.setBindGroup(0, fieldBind);
                 pass.dispatchWorkgroups(1);
                 pass.end();
-                encoder.copyBufferToBuffer(probeBuf, 0, probeRead, 0, 48);
+                encoder.copyBufferToBuffer(probeBuf, 0, probeRead, 0, 32);
                 gpu.queue.submit([encoder.finish()]);
                 await gpu.queue.onSubmittedWorkDone();
                 await probeRead.mapAsync(GPUMapMode.READ);
@@ -583,16 +584,16 @@ fn presence_probe() {
                 lastFoldResp = rawWindowResponse;
                 const raw = rawWindowResponse.field;
                 const rawm = rawWindowResponse.meta;
-                const fref = new Float64Array(9);
+                const fref = new Float64Array(7);
                 const ft_vals = [[], [], [], [], [], [], [], [], []];
                 for (let i = 0; i < n; i++) {
                     const ft = rawm[i * 4 + 2] | 0;
-                    if (ft >= 0 && ft < 9) {
+                    if (ft >= 0 && ft < 7) {
                         const av = Math.abs(raw[i * 8 + 3]);
                         if (av > 0 && isFinite(av)) ft_vals[ft].push(av);
                     }
                 }
-                for (let ft = 0; ft < 9; ft++) {
+                for (let ft = 0; ft < 7; ft++) {
                     if (ft_vals[ft].length > 0) {
                         ft_vals[ft].sort((a, b) => Math.log10(Math.max(a, 1e-30)) - Math.log10(Math.max(b, 1e-30)));
                         cachedFref[ft] = ft_vals[ft][ft_vals[ft].length >> 1];
@@ -605,17 +606,17 @@ fn presence_probe() {
                 } catch { uploadErrors++; }
             }
             const relax = 1 - Math.exp(-dt / Φ);
-            for (let i = 0; i < 9; i++) forceExposeF[i] += (cachedFref[i] - forceExposeF[i]) * relax;
+            for (let i = 0; i < 7; i++) kernelExpose[i] += (cachedFref[i] - kernelExpose[i]) * relax;
             const dpr = window.devicePixelRatio || 1;
             const evalW = Math.floor(RX * dpr);
             const evalH = Math.floor(RY * dpr);
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
             const [fr, fu, ff] = orientationFrame();
             const boost = Math.pow(2, exposureBoost);
-            const lvls = new Float32Array(9);
-            for (let i = 0; i < 9; i++) lvls[i] = Math.max(forceExposeF[i], Math.pow(2, -10)) / boost;
+            const lvls = new Float32Array(7);
+            for (let i = 0; i < 7; i++) lvls[i] = Math.max(kernelExpose[i], Math.pow(2, -10)) / boost;
             try {
-                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], 0, fu[0], fu[1], fu[2], 0, ff[0], ff[1], ff[2], 0, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], lvls[7], lvls[8], 0, 0, 0, xPresence, yPresence, zPresence, tPresence]));
+                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], 0, fu[0], fu[1], fu[2], 0, ff[0], ff[1], ff[2], 0, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], 0, xPresence, yPresence, zPresence, tPresence]));
                 const encoder = gpu.createCommandEncoder();
                 const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
                 pass.setPipeline(fieldPipe);
@@ -666,7 +667,7 @@ fn presence_probe() {
         let uploadCount = 0, uploadErrors = 0;
         let lastFoldResp = null;
         let fieldCount = 0;
-        const cachedFref = new Float64Array(9);
+        const cachedFref = new Float64Array(7);
         async function syncField(transmitList, queries) {
             const response = await syncFrame(transmitList, queries, { x: xPresence, y: yPresence, z: zPresence, t: tPresence });
             rawWindowResponse = response || rawWindowResponse;
@@ -679,7 +680,7 @@ fn presence_probe() {
                 const compressor = audioCtx.createDynamicsCompressor();
                 compressor.connect(audioCtx.destination);
                 const partials = [];
-                for (let i = 0; i < 9; i++) {
+                for (let i = 0; i < 7; i++) {
                     const voice = audioCtx.createOscillator();
                     voice.frequency.setValueAtTime(Math.pow(2, 5 + i), audioCtx.currentTime);
                     const voiceGain = audioCtx.createGain();
@@ -696,9 +697,9 @@ fn presence_probe() {
                     manifest: () => {
                         try {
                             const mx2 = Math.pow(windowMedianExtent(), 2);
-                            for (let i = 0; i < 9; i++) {
+                            for (let i = 0; i < 7; i++) {
                                 const lum = Math.tanh(Math.abs(probedOmegas[i]) * mx2);
-                                partials[i].gain.setTargetAtTime(lum / 9, audioCtx.currentTime, stableTick / 1000);
+                                partials[i].gain.setTargetAtTime(lum / 7, audioCtx.currentTime, stableTick / 1000);
                             }
                         } catch {}
                     }
@@ -1092,16 +1093,14 @@ fn presence_probe() {
                     `  Oscillators in window: ${rawWindowResponse.count}\n` +
                     `  Uploads: ${uploadCount} ok / ${uploadErrors} err\n` +
                     `  Window omega: ${probedOmega.toExponential(2)} (exp ${(exposureBoost > 0 ? '+' : '') + exposureBoost.toFixed(1)} oct)\n` +
-                    "\nField (9 Forces)\n" +
-                    `  EM (Electromagnetic): ${probedOmegas[0].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[0], Math.pow(2, -40))))}]\n` +
-                    `  Gravity (Gravitational): ${probedOmegas[1].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[1], Math.pow(2, -40))))}]\n` +
-                    `  Acoustic (Sound): ${probedOmegas[2].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[2], Math.pow(2, -40))))}]\n` +
-                    `  SeismicBody (P-wave): ${probedOmegas[3].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[3], Math.pow(2, -40))))}]\n` +
-                    `  SeismicSurface (S-wave): ${probedOmegas[4].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[4], Math.pow(2, -40))))}]\n` +
-                    `  Thermal (Heat): ${probedOmegas[5].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[5], Math.pow(2, -40))))}]\n` +
-                    `  Diffusion (Matter): ${probedOmegas[6].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[6], Math.pow(2, -40))))}]\n` +
-                    `  Advective (Wind): ${probedOmegas[7].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[7], Math.pow(2, -40))))}]\n` +
-                    `  Biotic (Life): ${probedOmegas[8].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(forceExposeF[8], Math.pow(2, -40))))}]\n` +
+                    "\nField (7 Kernels)\n" +
+                    `  inverse-square: ${probedOmegas[0].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(kernelExpose[0], Math.pow(2, -40))))}]\n` +
+                    `  gaussian-inv-sq: ${probedOmegas[1].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(kernelExpose[1], Math.pow(2, -40))))}]\n` +
+                    `  gaussian-inv: ${probedOmegas[2].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(kernelExpose[2], Math.pow(2, -40))))}]\n` +
+                    `  erfc: ${probedOmegas[3].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(kernelExpose[3], Math.pow(2, -40))))}]\n` +
+                    `  exponential-decay: ${probedOmegas[4].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(kernelExpose[4], Math.pow(2, -40))))}]\n` +
+                    `  patch-levy: ${probedOmegas[5].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(kernelExpose[5], Math.pow(2, -40))))}]\n` +
+                    `  inverse-linear: ${probedOmegas[6].toExponential(2)} [ref 2^${Math.round(Math.log2(Math.max(kernelExpose[6], Math.pow(2, -40))))}]\n` +
                     `  Total Omega: ${probedOmega.toExponential(2)}\n\n` +
                     "System\n" +
                     `  Oscillators: ${oscillators.length}\n` +
