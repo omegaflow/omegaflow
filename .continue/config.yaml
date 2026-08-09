@@ -1,0 +1,498 @@
+# =============================================================================
+# Continue.dev Configuration
+# =============================================================================
+name: omegaflow
+version: 1.0.0
+schema: v1
+# -----------------------------------------------------------------------------
+# UI Settings
+# -----------------------------------------------------------------------------
+ui:
+  codeBlockWrap: true
+  showSessionTabs: true
+  showChatScrollbar: true
+  generateSessionTitles: true
+  markdown: true
+  fontSize: 14
+  multilineAutocomplete: auto
+  disableAutocompleteInFiles:
+    - "*.is"
+    - "*.dat"
+    - "*.idx"
+    - "*.φ"
+    - immunity.is
+    - epigenome.is
+    - dormant
+    - index.html
+    - scan.html
+    - main.rs
+    - sources.φ
+    - constants.js
+    - definitions.js
+  addCurrentFileToContext: true
+  useToolsForCodebaseRetrieval: false
+  streamAfterToolRejection: true
+  experimental:
+    allTools: false
+    systemMessageToolsOnly: false
+    modelContextProtocol: true
+
+# =============================================================================
+# MODELS
+# =============================================================================
+models:
+  # ===========================================================================
+  # 1. LOCAL MODELS (Ollama)
+  # ===========================================================================
+  - name: 🆓💻 Qwen2.5-Coder 1.5B │ ⚡ Tab-Autocomplete
+    provider: ollama
+    model: qwen2.5-coder:1.5b
+    roles:
+      - autocomplete
+    autocompleteOptions:
+      debounceDelay: 250
+      maxPromptTokens: 512
+      prefixPercentage: 0.5
+      maxSuffixPercentage: 0.3
+      modelTimeout: 400
+
+  - name: 🆓💻 nomic-embed-text │ 🔍 Codebase Embeddings
+    provider: ollama
+    model: nomic-embed-text
+    roles:
+      - embed
+
+  # ===========================================================================
+  # 2. Z.AI — GLM MODELLE
+  # ===========================================================================
+  # --- 2.0 FREE TIER ---
+  - name: 🆓☁️ GLM-4.7 Flash │ ⚡🔧 Free & Fast [128K]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+    model: glm-4.7-flash
+    defaultCompletionOptions:
+      contextLength: 128000
+      maxTokens: 8192
+
+  - name: 🆓☁️ GLM-4.6V Flash │ 📸 Free Vision [128K]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - summarize
+    model: glm-4.6v-flash
+    capabilities:
+      - tool_use
+      - image_input
+    defaultCompletionOptions:
+      contextLength: 128000
+      maxTokens: 8192
+
+  # --- 2.2 ULTRA-BUDGET ---
+  - name: €☁️ GLM-4-32B-0414 │ ⚡ Ultra-Budget [128K]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+    model: glm-4-32b-0414-128k
+    defaultCompletionOptions:
+      contextLength: 128000
+      maxTokens: 8192
+
+  - name: €☁️ GLM-OCR │ 📄 Dokument-/Texterkennung [Budget]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - summarize
+    model: glm-ocr
+    capabilities:
+      - image_input
+    defaultCompletionOptions:
+      contextLength: 32000
+      maxTokens: 4096
+
+  - name: €☁️ GLM-4.7 FlashX │ ⚡🔧 Budget Coding [128K]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+    model: glm-4.7-flashx
+    defaultCompletionOptions:
+      contextLength: 128000
+      maxTokens: 8192
+
+  - name: €☁️ GLM-4.6V FlashX │ 📸 Budget Vision [128K]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - summarize
+    model: glm-4.6v-flashx
+    capabilities:
+      - tool_use
+      - image_input
+    defaultCompletionOptions:
+      contextLength: 128000
+      maxTokens: 8192
+
+  # --- 2.3 MITTELKLASSE ---
+  - name: €€☁️ GLM-4.5-Air │ 🔧 Mittelklasse Coding [128K]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+    model: glm-4.5-air
+    defaultCompletionOptions:
+      contextLength: 128000
+      maxTokens: 8192
+
+  - name: €€☁️ GLM-4.5V │ 📸🔧 Mittelklasse Vision [128K]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - summarize
+    model: glm-4.5v
+    capabilities:
+      - tool_use
+      - image_input
+    defaultCompletionOptions:
+      contextLength: 128000
+      maxTokens: 8192
+
+  - name: €€☁️ GLM-4.5 │ 🧠🔧 Mittelklasse Reasoning [128K]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - summarize
+    model: glm-4.5
+    defaultCompletionOptions:
+      contextLength: 128000
+      maxTokens: 8192
+
+  - name: €€☁️ GLM-4.6 │ 🧠🔧 Mittelklasse Reasoning (neuer) [200K]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - summarize
+    model: glm-4.6
+    defaultCompletionOptions:
+      contextLength: 200000
+      maxTokens: 8192
+
+  - name: €€☁️ GLM-4.7 │ 🧠🔧 Mittelklasse (aktuellster 4.x) [200K]
+    provider: openai
+    apiBase: https://api.z.ai/api/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - summarize
+    model: glm-4.7
+    capabilities:
+      - tool_use
+    defaultCompletionOptions:
+      contextLength: 200000
+      maxTokens: 8192
+
+  # --- 2.4 OBERKLASSE ---
+  - name: €€€☁️ GLM-5 │ 🧠🔧 Oberklasse Coding [200K]
+    provider: openai
+    apiBase: https://api.z.ai/api/coding/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - summarize
+    model: glm-5
+    capabilities:
+      - tool_use
+    defaultCompletionOptions:
+      contextLength: 200000
+      maxTokens: 8192
+    requestOptions:
+      extraBodyProperties:
+        thinking:
+          type: enabled
+          reasoning_effort: high
+
+  - name: €€€☁️ GLM-5 Turbo │ ⚡🔧 Oberklasse, schnell [262K]
+    provider: openai
+    apiBase: https://api.z.ai/api/coding/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - summarize
+    model: glm-5-turbo
+    capabilities:
+      - tool_use
+    defaultCompletionOptions:
+      contextLength: 262144
+      maxTokens: 8192
+    requestOptions:
+      extraBodyProperties:
+        thinking:
+          type: enabled
+          reasoning_effort: high
+
+  - name: €€€☁️ GLM-5V Turbo │ 📸🔧 Oberklasse Vision-Agent [203K]
+    provider: openai
+    apiBase: https://api.z.ai/api/coding/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - summarize
+    model: glm-5v-turbo
+    capabilities:
+      - tool_use
+      - image_input
+    defaultCompletionOptions:
+      contextLength: 203000
+      maxTokens: 8192
+    requestOptions:
+      extraBodyProperties:
+        thinking:
+          type: enabled
+          reasoning_effort: high
+
+  - name: €€€☁️ GLM-5.1 │ 🧠🔧 Oberklasse Long-Horizon [200K]
+    provider: openai
+    apiBase: https://api.z.ai/api/coding/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - summarize
+    model: glm-5.1
+    capabilities:
+      - tool_use
+      - image_input
+    defaultCompletionOptions:
+      contextLength: 200000
+      maxTokens: 8192
+    requestOptions:
+      extraBodyProperties:
+        thinking:
+          type: enabled
+          reasoning_effort: high
+
+  # --- 2.5 FLAGSHIP GLM-5.2 ---
+  - name: €€€☁️ GLM-5.2 │ ⚡🔧 Fast (No Reasoning) [200K]
+    provider: openai
+    apiBase: https://api.z.ai/api/coding/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+    model: glm-5.2
+    defaultCompletionOptions:
+      contextLength: 200000
+      maxTokens: 8192
+    requestOptions:
+      extraBodyProperties:
+        thinking:
+          type: disabled
+          reasoning_effort: none
+
+  - name: €€€☁️ GLM-5.2 │ 🧠🔧 Balanced (High Reasoning) [200K]
+    provider: openai
+    apiBase: https://api.z.ai/api/coding/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - summarize
+    model: glm-5.2
+    capabilities:
+      - tool_use
+      - image_input
+    defaultCompletionOptions:
+      contextLength: 200000
+      maxTokens: 8192
+    requestOptions:
+      extraBodyProperties:
+        thinking:
+          type: enabled
+          reasoning_effort: high
+
+  - name: €€€€☁️ GLM-5.2 │ 🧠🔧📦 Deep (Max Reasoning) [1M]
+    provider: openai
+    apiBase: https://api.z.ai/api/coding/paas/v4
+    apiKey: ${{ secrets.ZAI_API_KEY }}
+    roles:
+      - chat
+      - edit
+      - apply
+      - summarize
+    model: glm-5.2
+    capabilities:
+      - tool_use
+      - image_input
+    defaultCompletionOptions:
+      contextLength: 1000000
+      maxTokens: 16384
+    requestOptions:
+      extraBodyProperties:
+        thinking:
+          type: enabled
+          reasoning_effort: max
+
+  # --- 3.1 CLOUDFLARE GLM-5.2 ---
+  - name: "🆓☁️ GLM-5.2 Cloudflare [128K] · 💬✏️🔧"
+    provider: openai
+    model: "@cf/zai-org/glm-5.2"
+    apiBase: https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/ai/v1
+    apiKey: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    roles:
+      - chat
+      - edit
+      - apply
+    capabilities:
+      - tool_use
+    defaultCompletionOptions:
+      contextLength: 128000
+      maxTokens: 8192
+
+# =============================================================================
+# CONTEXT PROVIDERS
+# =============================================================================
+context:
+  - provider: web
+    params:
+      apiBase: https://api.tavily.com
+      apiKey: ${{ secrets.TAVILY_API_KEY }}
+      model: tavily-searchcontext
+  - provider: currentFile
+  - provider: file
+  - provider: os
+  - provider: problems
+
+# =============================================================================
+# MCP SERVERS
+# =============================================================================
+mcpServers:
+  # ---------------------------------------------------------------------------
+  # 1. Vision MCP (lokal, stdio)
+  # ---------------------------------------------------------------------------
+  - name: zai-vision
+    command: /usr/bin/npx
+    args:
+      - -y
+      - "@z_ai/mcp-server@latest"
+    env:
+      Z_AI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      Z_AI_MODE: ZAI
+    alwaysAllow:
+      - ui_to_artifact
+      - extract_text_from_screenshot
+      - diagnose_error_screenshot
+      - understand_technical_diagram
+      - analyze_data_visualization
+      - ui_diff_check
+      - image_analysis
+      - video_analysis
+
+  # ---------------------------------------------------------------------------
+  # 2. Web Search MCP (remote, HTTP)
+  # ---------------------------------------------------------------------------
+  - name: zai-web-search
+    type: streamable-http
+    url: https://api.z.ai/api/mcp/web_search_prime/mcp
+    requestOptions:
+      headers:
+        Authorization: Bearer ${{ secrets.ZAI_API_KEY }}
+    alwaysAllow:
+      - webSearchPrime
+
+  # ---------------------------------------------------------------------------
+  # 3. Web Reader MCP (remote, HTTP)
+  # ---------------------------------------------------------------------------
+  - name: zai-web-reader
+    type: streamable-http
+    url: https://api.z.ai/api/mcp/web_reader/mcp
+    requestOptions:
+      headers:
+        Authorization: Bearer ${{ secrets.ZAI_API_KEY }}
+    alwaysAllow:
+      - webReader
+
+  # ---------------------------------------------------------------------------
+  # 4. Zread MCP (DEAKTIVIERT)
+  # ---------------------------------------------------------------------------
+  - name: zai-zread
+    type: streamable-http
+    url: https://api.z.ai/api/mcp/zread/mcp
+    requestOptions:
+      headers:
+        Authorization: Bearer ${{ secrets.ZAI_API_KEY }}
+    alwaysAllow:
+      - search_doc
+      - read_file
+      - get_repo_structure
+    enabled: false
+
+  # ---------------------------------------------------------------------------
+  # 5. GitHub MCP (lokal, stdio)
+  # ---------------------------------------------------------------------------
+  - name: github
+    command: npx
+    args:
+      - -y
+      - "@modelcontextprotocol/server-github"
+    env:
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+
+  # ---------------------------------------------------------------------------
+  # 6. Playwright MCP (lokal, stdio)
+  # ---------------------------------------------------------------------------
+  - name: playwright
+    command: npx
+    args:
+      - "@playwright/mcp@latest"
+
+  # ---------------------------------------------------------------------------
+  # 7. Context7 MCP (DEAKTIVIERT)
+  # ---------------------------------------------------------------------------
+  - name: context7
+    type: streamable-http
+    url: https://mcp.context7.com/mcp
+    requestOptions:
+      headers:
+        CONTEXT7_API_KEY: ${{ secrets.CONTEXT7_API_KEY }}
+    enabled: false
