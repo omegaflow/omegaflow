@@ -3963,7 +3963,11 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             ev_fields.push(("_flatten_id".to_string(), idx as f64));
                             for (lon, lat) in vertices {
                                 let row_epoch = if !epoch_key.is_empty() {
-                                    jpath(v, &epoch_key).unwrap_or(now)
+                                    if let Some(v) = jpath(v, &epoch_key) {
+                                        v
+                                    } else {
+                                        continue;
+                                    }
                                 } else {
                                     now
                                 };
@@ -4094,17 +4098,6 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             if vertices.is_empty() || *radius <= 0.0 {
                                 continue;
                             }
-                            let _epoch = if epoch_key.is_empty() {
-                                now
-                            } else {
-                                jpath_val(v, epoch_key)
-                                    .and_then(|ev| match ev {
-                                        JsonVal::Str(s) => parse_iso_tdb(s),
-                                        JsonVal::Num(n) => Some(*n - UNIX_J2000_OFFSET),
-                                        _ => None,
-                                    })
-                                    .unwrap_or(now)
-                            };
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
                             for (fk, fn_) in fields {
                                 if let Some(val) = jpath(v, fk) {
