@@ -882,7 +882,7 @@ enum PendingPosition {
         alt: f64,
         speed: f64,
         track: f64,
-        vrate: f64,
+        vrate: Option<f64>,
     },
     StateVector {
         p: [f64; 3],
@@ -4048,7 +4048,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                         alt: al,
                                         speed: sp,
                                         track: tr,
-                                        vrate: vrate.unwrap_or(0.0),
+                                        vrate,
                                     }
                                 } else {
                                     PendingPosition::Surface {
@@ -4801,7 +4801,15 @@ fn materialize(
                 return vec![];
             }
             match surface_motion(
-                body_name, *lat, *lon, *alt, *speed, *track, *vrate, pend.epoch, eph,
+                body_name,
+                *lat,
+                *lon,
+                *alt,
+                *speed,
+                *track,
+                vrate.unwrap_or(0.0),
+                pend.epoch,
+                eph,
             ) {
                 Some(m) => m,
                 None => return vec![],
