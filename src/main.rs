@@ -448,7 +448,7 @@ struct Sample {
     ttl: f64,
     extent: f64,
     tau: f64,
-    force_type: f64,
+    kernel_id: f64,
     vmax: f64,
     amax: f64,
     p0f: [f64; 3],
@@ -576,20 +576,6 @@ fn build_buffer(samples: Vec<Sample>, cadence: f64) -> Buffer {
     }
 }
 
-fn force_constants_by_id(id: f64, body_props: Option<&BodyProperties>) -> Option<(f64, bool)> {
-    match id as u8 {
-        0 | 1 => Some((C_LIGHT, false)),
-        2 => body_props.and_then(|p| p.v_sound).map(|v| (v, false)),
-        3 => body_props.and_then(|p| p.v_seismic_p).map(|v| (v, false)),
-        4 => body_props.and_then(|p| p.v_seismic_s).map(|v| (v, false)),
-        5 => body_props.and_then(|p| p.alpha_thermal).map(|v| (v, true)),
-        6 => body_props.and_then(|p| p.d_diffusion).map(|v| (v, true)),
-        7 => body_props.and_then(|p| p.v_advective).map(|v| (v, false)),
-        8 => Some((C_LIGHT, false)),
-        _ => None,
-    }
-}
-
 fn enclose_family(
     fam: &Family,
     anchor: [f64; 3],
@@ -597,7 +583,6 @@ fn enclose_family(
     t2: f64,
     pad: f64,
     records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
-    _frustum: Option<([f64; 3], [f64; 3], [f64; 3], f64, f64)>,
     body_props: Option<&BodyProperties>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
@@ -659,18 +644,7 @@ fn enclose_family(
     for samples in visit {
         for smp in samples {
             let age = (t2 - smp.epoch).abs();
-            let causal_reach = if let Some((v_or_d, is_diff)) =
-                force_constants_by_id(smp.force_type, body_props)
-            {
-                let lifetime = smp.ttl;
-                if is_diff {
-                    (2.0 * v_or_d * lifetime).sqrt()
-                } else {
-                    v_or_d * lifetime
-                }
-            } else {
-                0.0
-            };
+            let causal_reach = kernel_extent(smp.kernel_id as u8, body_props, smp.ttl, smp.tau);
             let reach =
                 smp.extent.max(causal_reach) + smp.vmax * age + 0.5 * smp.amax * age * age + pad;
             let dx = smp.p0f[0] - qf[0];
@@ -680,7 +654,7 @@ fn enclose_family(
             if dist2_p0f > reach * reach {
                 continue;
             }
-            if force_constants_by_id(smp.force_type, body_props).is_some() {
+            if smp.kernel_id >= 0.0 {
                 if smp.tau > 0.0 && age > smp.tau * 64.0 {
                     continue;
                 }
@@ -698,9 +672,7 @@ fn enclose_family(
                 continue;
             }
             if let Some((_, val)) = smp.fields.iter().find(|(n, _)| !n.starts_with('_')) {
-                let absorption = force_constants_by_id(smp.force_type, body_props)
-                    .map(|(v, _)| if v > 0.0 { 1.0 / v } else { 0.0 })
-                    .unwrap_or(0.0);
+                let absorption = 0.0;
                 records.push((
                     p[0],
                     p[1],
@@ -710,7 +682,7 @@ fn enclose_family(
                     smp.epoch,
                     smp.ttl,
                     smp.tau,
-                    smp.force_type,
+                    smp.kernel_id,
                     absorption,
                 ));
             }
@@ -724,7 +696,6 @@ fn sense_buffer(
     t2: f64,
     pad: f64,
     records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
-    _frustum: Option<([f64; 3], [f64; 3], [f64; 3], f64, f64)>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
     for (body_name, fam) in &buf.bodies {
@@ -733,9 +704,7 @@ fn sense_buffer(
             None => continue,
         };
         let body_props = eph.get(body_name).and_then(|e| e.props.as_ref());
-        enclose_family(
-            fam, anchor, center, t2, pad, records, _frustum, body_props, eph,
-        );
+        enclose_family(fam, anchor, center, t2, pad, records, body_props, eph);
     }
     enclose_family(
         &buf.inertial,
@@ -744,7 +713,6 @@ fn sense_buffer(
         t2,
         pad,
         records,
-        _frustum,
         None,
         eph,
     );
@@ -1987,49 +1955,44 @@ enum Extract {
     Vectors(String),
 }
 
-fn force_id_of(force: &str) -> Option<u8> {
-    match force {
-        "em" => Some(0),
-        "gravity" => Some(1),
-        "acoustic" => Some(2),
-        "seismic-body" => Some(3),
-        "seismic-surface" => Some(4),
-        "thermal" => Some(5),
-        "diffusion" => Some(6),
-        "advective" => Some(7),
-        "electric" => Some(8),
+fn kernel_id_of(name: &str) -> Option<u8> {
+    match name {
+        "inverse-square" => Some(0),
+        "gaussian-inverse-square" => Some(1),
+        "gaussian-inverse" => Some(2),
+        "erfc" => Some(3),
+        "exponential-decay" => Some(4),
+        "patch-levy" => Some(5),
+        "inverse-linear" => Some(6),
         _ => None,
     }
 }
 
-fn force_type_val(force: &str) -> f64 {
-    force_id_of(force).map(|id| id as f64).unwrap_or(0.0)
-}
-
-fn force_extent(force: &str) -> f64 {
-    match force {
-        "em" | "gravity" => f64::INFINITY,
-        "seismic-body" => 1e5,
-        "seismic-surface" => 1e4,
-        "acoustic" => 1e3,
-        "advective" => 1e1,
-        "electric" => 1e2,
-        "thermal" | "diffusion" => 1e0,
+fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, ttl: f64, _tau: f64) -> f64 {
+    let reach_time = ttl;
+    match kernel_id {
+        0 | 6 => f64::INFINITY,
+        1 => body_props
+            .and_then(|p| p.v_sound)
+            .map(|v| v * reach_time)
+            .unwrap_or(1e3),
+        2 => body_props
+            .and_then(|p| p.v_seismic_s)
+            .map(|v| v * reach_time)
+            .unwrap_or(1e4),
+        3 => body_props
+            .and_then(|p| p.d_diffusion)
+            .map(|d| (2.0 * d * reach_time).sqrt())
+            .unwrap_or(1e0),
+        4 => body_props
+            .and_then(|p| p.v_sound)
+            .map(|v| v.max(1e-3 * reach_time))
+            .unwrap_or(1e2),
+        5 => body_props
+            .and_then(|p| p.v_advective)
+            .map(|v| v * reach_time)
+            .unwrap_or(1e2),
         _ => 0.0,
-    }
-}
-
-fn force_tau_of_id(id: u8) -> Option<f64> {
-    match id {
-        8 => Some(86400.0),
-        _ => None,
-    }
-}
-
-fn force_extent_of_id(id: u8) -> Option<f64> {
-    match id {
-        8 => Some(1e2),
-        _ => None,
     }
 }
 
@@ -2057,9 +2020,7 @@ struct SourceConfig {
     ttl: u64,
     url: String,
     frame: Frame,
-    force: String,
     tau: Option<f64>,
-    tau_key: Option<String>,
     format: String,
     extracts: Vec<Extract>,
     headers: Vec<(String, String)>,
@@ -2236,7 +2197,7 @@ fn spawn_task_curl(
         String,
     ),
 ) -> Option<std::process::Child> {
-    let (_i, _origin, _region, url, body, headers, ttl, method) = task;
+    let (_, _, _, url, body, headers, ttl, method) = task;
     let mut cmd = Command::new("curl");
     cmd.arg("--remove-on-error");
     cmd.arg("--retry").arg("1");
@@ -2602,7 +2563,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                                         ttl: Φ * Φ * station.ema_interval,
                                         extent: acc_extent,
                                         tau: station.ema_interval,
-                                        force_type: force_type_val("em"),
+                                        kernel_id: 0.0,
                                         vmax,
                                         amax,
                                         p0f,
@@ -2669,16 +2630,8 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 archive.warm_cache_cv.notify_one();
                 let eph_map = archive.body_ephemerides.read().unwrap();
                 let center = [x0, y0, z0];
-                sense_buffer(&field, center, t0, extent, &mut records, None, &eph_map);
-                sense_buffer(
-                    &station_buf,
-                    center,
-                    t0,
-                    extent,
-                    &mut records,
-                    None,
-                    &eph_map,
-                );
+                sense_buffer(&field, center, t0, extent, &mut records, &eph_map);
+                sense_buffer(&station_buf, center, t0, extent, &mut records, &eph_map);
             }
 
             let mut out = Vec::with_capacity(11 + records.len() * 80);
@@ -2686,7 +2639,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
             out.push(2u8);
             out.extend_from_slice(&id.to_le_bytes());
             out.extend_from_slice(&(records.len() as u32).to_le_bytes());
-            for &(x, y, z, val, extent, epoch, ttl, tau, force_type, absorption) in &records {
+            for &(x, y, z, val, extent, epoch, ttl, tau, kernel_id, absorption) in &records {
                 out.extend_from_slice(&x.to_le_bytes());
                 out.extend_from_slice(&y.to_le_bytes());
                 out.extend_from_slice(&z.to_le_bytes());
@@ -2695,7 +2648,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 out.extend_from_slice(&epoch.to_le_bytes());
                 out.extend_from_slice(&ttl.to_le_bytes());
                 out.extend_from_slice(&tau.to_le_bytes());
-                out.extend_from_slice(&force_type.to_le_bytes());
+                out.extend_from_slice(&kernel_id.to_le_bytes());
                 out.extend_from_slice(&absorption.to_le_bytes());
             }
             write_ws_binary(&mut stream, &out);
@@ -2786,22 +2739,11 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_catalog_epoch: Option<f64> = None;
     let mut cur_repeat_ra_bins: u32 = 0;
     let mut cur_frame: Option<Frame> = None;
-    let mut cur_forces: Vec<String> = Vec::new();
     let mut active = false;
 
-    macro_rules! flush_v2 {
+    macro_rules! flush {
         () => {
             if active && cur_frame.is_some() && cur_ttl > 0 && !cur_url.is_empty() {
-                let mut force_str = String::new();
-                for (i, f) in cur_forces.iter().enumerate() {
-                    if i > 0 {
-                        force_str.push(' ');
-                    }
-                    force_str.push_str(f);
-                }
-                if force_str.is_empty() {
-                    force_str.push_str("em");
-                }
                 if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
                     eprintln!(
                         "source refused (flux_from_mag and abs_mag_from exclusive): {}",
@@ -2812,9 +2754,7 @@ fn load_sources() -> Vec<SourceConfig> {
                         ttl: cur_ttl,
                         url: std::mem::take(&mut cur_url),
                         frame: cur_frame.clone().unwrap(),
-                        force: force_str,
                         tau: None,
-                        tau_key: None,
                         format: std::mem::take(&mut cur_format),
                         extracts: std::mem::take(&mut cur_extracts),
                         headers: std::mem::take(&mut cur_headers),
@@ -2864,7 +2804,6 @@ fn load_sources() -> Vec<SourceConfig> {
             cur_catalog_epoch = None;
             cur_repeat_ra_bins = 0;
             cur_frame = None;
-            cur_forces.clear();
             active = false;
         };
     }
@@ -2881,7 +2820,7 @@ fn load_sources() -> Vec<SourceConfig> {
 
         match parts[0] {
             "url" if parts.len() >= 2 => {
-                flush_v2!();
+                flush!();
                 cur_url = parts[1].to_string();
                 active = true;
             }
@@ -2968,9 +2907,7 @@ fn load_sources() -> Vec<SourceConfig> {
                 });
             }
             "field" if parts.len() >= 3 => {
-                if !cur_forces.contains(&parts[2].to_string()) {
-                    cur_forces.push(parts[2].to_string());
-                }
+                let _ = kernel_id_of(parts.get(2).unwrap_or(&""));
                 if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
                     fields.push((parts[1].to_string(), parts[2].to_string()));
                 } else if let Some(Extract::CelestialMap { fields, .. }) = cur_extracts.last_mut() {
@@ -3078,7 +3015,7 @@ fn load_sources() -> Vec<SourceConfig> {
             _ => {}
         }
     }
-    flush_v2!();
+    flush!();
     sources
 }
 
@@ -4814,72 +4751,34 @@ fn materialize(
         .anchor_body()
         .and_then(|name| eph.get(name))
         .and_then(|e| e.props.as_ref());
-    let forces: Vec<(f64, f64, bool, u8)> = src
-        .force
-        .split_whitespace()
-        .filter_map(|f| {
-            let id = force_id_of(f)?;
-            let (v_or_d, is_diff) = match id {
-                0 | 1 => (C_LIGHT, false),
-                _ => force_constants_by_id(id as f64, body_props)?,
-            };
-            let tau_default = force_tau_of_id(id).unwrap_or(1.0 / v_or_d);
-            Some((v_or_d, tau_default, is_diff, id))
-        })
-        .collect();
-    if forces.is_empty() {
-        return vec![];
-    }
     let clean_fields: Vec<(String, f64)> = pend
         .fields
         .iter()
         .filter(|(_, v)| !v.is_nan() && v.is_finite())
         .cloned()
         .collect();
-    forces
-        .into_iter()
-        .filter_map(|(v_or_d, tau_default, is_diff, force_type)| {
-            let tau = pend.tau.unwrap_or_else(|| {
-                src.tau
-                    .or_else(|| {
-                        src.tau_key.as_ref().and_then(|k| {
-                            clean_fields
-                                .iter()
-                                .find(|(n, _)| n == k)
-                                .map(|(_, v)| *v / v_or_d)
-                        })
-                    })
-                    .unwrap_or(tau_default)
-            });
-            let effective_ttl = pend.ttl.unwrap_or(src.reach_ttl.unwrap_or(src.ttl) as f64);
-            let extent = pend.extent.unwrap_or_else(|| {
-                force_extent_of_id(force_type).unwrap_or_else(|| {
-                    let reach_time = effective_ttl + tau;
-                    if is_diff {
-                        (2.0 * v_or_d * reach_time).sqrt()
-                    } else {
-                        v_or_d * reach_time
-                    }
-                })
-            });
-            if extent.is_nan() || tau.is_nan() {
-                return None;
-            }
-            Some(Sample {
-                origin,
-                epoch: pend.epoch,
-                ttl: pend.ttl.unwrap_or(src.ttl.max(1) as f64),
-                extent,
-                tau,
-                force_type: force_type as f64,
-                vmax,
-                amax,
-                p0f,
-                motion: motion.clone(),
-                fields: clean_fields.clone(),
-            })
-        })
-        .collect()
+    let kernel_id: f64 = 0.0;
+    let tau = pend.tau.unwrap_or(src.tau.unwrap_or(0.0));
+    let effective_ttl = pend.ttl.unwrap_or(src.reach_ttl.unwrap_or(src.ttl) as f64);
+    let extent = pend
+        .extent
+        .unwrap_or_else(|| kernel_extent(kernel_id as u8, body_props, effective_ttl, tau));
+    if extent.is_nan() || tau.is_nan() {
+        return vec![];
+    }
+    vec![Sample {
+        origin,
+        epoch: pend.epoch,
+        ttl: pend.ttl.unwrap_or(src.ttl.max(1) as f64),
+        extent,
+        tau,
+        kernel_id,
+        vmax,
+        amax,
+        p0f,
+        motion: motion.clone(),
+        fields: clean_fields,
+    }]
 }
 
 fn render_headers(
@@ -5012,15 +4911,7 @@ fn warm_cache(archive: Arc<Archive>) {
                 .sources
                 .iter()
                 .enumerate()
-                .map(|(i, s)| {
-                    let (fx, fi) = s
-                        .force
-                        .split_whitespace()
-                        .filter_map(|f| force_id_of(f).map(|id| (force_extent(f), id)))
-                        .max_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal))
-                        .unwrap_or((0.0, 0));
-                    (i, -fx, fi)
-                })
+                .map(|(i, _s)| (i, -1e11_f64, 0u8))
                 .collect();
             src_order.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap().then(a.2.cmp(&b.2)));
             for (i, _fx, _fi) in src_order {
@@ -5031,24 +4922,11 @@ fn warm_cache(archive: Arc<Archive>) {
                     let body_props = eph_map
                         .get(&frame_body_name(&src.frame))
                         .and_then(|e| e.props.as_ref());
-                    for f in src.force.split_whitespace() {
-                        if let Some(id) = force_id_of(f) {
-                            if let Some((v_or_d, is_diff)) =
-                                force_constants_by_id(id as f64, body_props)
-                            {
-                                let tau = src.tau.unwrap_or(1.0 / v_or_d);
-                                let effective_ttl = src.reach_ttl.unwrap_or(src.ttl) as f64;
-                                let reach_time = effective_ttl + tau;
-                                let this_r = if is_diff {
-                                    (2.0 * v_or_d * reach_time).sqrt()
-                                } else {
-                                    v_or_d * reach_time
-                                };
-                                if this_r > max_r {
-                                    max_r = this_r;
-                                }
-                            }
-                        }
+                    let effective_ttl = src.reach_ttl.unwrap_or(src.ttl) as f64;
+                    let tau = src.tau.unwrap_or(0.0);
+                    let this_r = kernel_extent(0, body_props, effective_ttl, tau);
+                    if this_r > max_r {
+                        max_r = this_r;
                     }
                     max_r
                 };
@@ -5879,9 +5757,7 @@ mod tests {
                 lon: 0.0,
                 alt: 0.0,
             },
-            force: "em".into(),
             tau: None,
-            tau_key: None,
             format: "json".into(),
             extracts: vec![],
             headers: vec![],
@@ -5916,9 +5792,7 @@ mod tests {
             ttl: 100,
             url: "https://earth-search.aws.element84.com/v0/search".into(),
             frame: super::Frame::Surface { body_name: "body_test".into(), lat: 0.0, lon: 0.0, alt: 0.0 },
-            force: "em".into(),
             tau: None,
-            tau_key: None,
             format: "json".into(),
             extracts: vec![],
             headers: vec![("Content-Type".into(), "application/stac+json".into())],
@@ -5959,9 +5833,7 @@ mod tests {
                 lon: 0.0,
                 alt: 0.0,
             },
-            force: "thermal".into(),
             tau: None,
-            tau_key: None,
             format: "json".into(),
             extracts: vec![super::Extract::Map {
                 arr_path: "table.rows".into(),
@@ -6063,6 +5935,14 @@ mod tests {
         assert_eq!(super::ymd_to_days(1970, 1, 1).unwrap(), 0);
         assert!(super::ymd_to_days(1900, 1, 1).is_none());
         assert_eq!(super::ymd_to_days(1970, 1, 1).unwrap(), 0);
+    }
+
+    #[test]
+    fn test_kernel_id_of() {
+        assert_eq!(super::kernel_id_of("inverse-square"), Some(0));
+        assert_eq!(super::kernel_id_of("erfc"), Some(3));
+        assert_eq!(super::kernel_id_of("patch-levy"), Some(5));
+        assert_eq!(super::kernel_id_of("nonexistent"), None);
     }
 
     #[test]
@@ -6401,9 +6281,7 @@ mod tests {
             ttl: 3600,
             url: "https://example.com".into(),
             frame,
-            force: "gravity".into(),
             tau: None,
-            tau_key: None,
             format: "json".into(),
             extracts: vec![],
             headers: vec![],
@@ -6575,9 +6453,7 @@ mod tests {
                 lon: 0.0,
                 alt: 0.0,
             },
-            force: "seismic-body".into(),
             tau: None,
-            tau_key: None,
             format: "json".into(),
             extracts: vec![super::Extract::Map {
                 arr_path: "features".into(),
