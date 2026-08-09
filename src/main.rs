@@ -3956,7 +3956,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                         continue;
                                     }
                                 } else {
-                                    ev_fields.retain(|(n, _)| *n == *val_key);
+                                    ev_fields.retain(|(n, _)| n.as_str() == val_key.as_str());
                                     if ev_fields.is_empty() {
                                         continue;
                                     }
@@ -4149,7 +4149,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
                             for fc in fields {
                                 if let Some(val) = jpath(v, &fc.key) {
-                                    if val_key.is_empty() || fc.key == *val_key {
+                                    if val_key.is_empty() || fc.key == val_key.as_str() {
                                         ev_fields.push((fc.name.clone(), val));
                                     }
                                 }
@@ -4206,7 +4206,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             let mut ev_fields: Vec<(String, f64)> = Vec::new();
                             for fc in fields {
                                 if let Some(val) = jpath(v, &fc.key) {
-                                    if val_key.is_empty() || fc.key == *val_key {
+                                    if val_key.is_empty() || fc.key == val_key.as_str() {
                                         ev_fields.push((fc.name.clone(), val));
                                     }
                                 }
