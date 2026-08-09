@@ -51,12 +51,11 @@ struct BodyProperties {
     dw_dt_deg_per_day: f64,
     radius_m: f64,
     flattening: f64,
-    v_sound: f64,
-    v_seismic_p: f64,
-    v_seismic_s: f64,
-    alpha_thermal: f64,
-    d_diffusion: f64,
-    v_advective: f64,
+    gaussian_inverse_square: f64,
+    gaussian_inverse: f64,
+    erfc: f64,
+    exponential_decay: f64,
+    patch_levy: f64,
 }
 
 #[derive(Clone, Default)]
@@ -123,12 +122,11 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 dw_dt_deg_per_day: f(5),
                 radius_m: f(6),
                 flattening: f(7),
-                v_sound: 0.0,
-                v_seismic_p: 0.0,
-                v_seismic_s: 0.0,
-                alpha_thermal: 0.0,
-                d_diffusion: 0.0,
-                v_advective: 0.0,
+                gaussian_inverse_square: 0.0,
+                gaussian_inverse: 0.0,
+                erfc: 0.0,
+                exponential_decay: 0.0,
+                patch_levy: 0.0,
             });
             pos += 64;
             continue;
@@ -141,20 +139,18 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                         .unwrap_or([0; 8]),
                 )
             };
-            let vs = f(0);
-            let vp = f(1);
-            let vss = f(2);
-            let ath = f(3);
-            let dd = f(4);
-            let vad = f(5);
+            let gis = f(0);
+            let giv = f(1);
+            let ert = f(2);
+            let ed = f(3);
+            let pl = f(4);
             props = Some(match props {
                 Some(mut p) => {
-                    p.v_sound = vs;
-                    p.v_seismic_p = vp;
-                    p.v_seismic_s = vss;
-                    p.alpha_thermal = ath;
-                    p.d_diffusion = dd;
-                    p.v_advective = vad;
+                    p.gaussian_inverse_square = gis;
+                    p.gaussian_inverse = giv;
+                    p.erfc = ert;
+                    p.exponential_decay = ed;
+                    p.patch_levy = pl;
                     p
                 }
                 None => BodyProperties {
@@ -166,15 +162,14 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                     dw_dt_deg_per_day: 0.0,
                     radius_m: 0.0,
                     flattening: 0.0,
-                    v_sound: vs,
-                    v_seismic_p: vp,
-                    v_seismic_s: vss,
-                    alpha_thermal: ath,
-                    d_diffusion: dd,
-                    v_advective: vad,
+                    gaussian_inverse_square: gis,
+                    gaussian_inverse: giv,
+                    erfc: ert,
+                    exponential_decay: ed,
+                    patch_levy: pl,
                 },
             });
-            pos += 48;
+            pos += 5 * 8;
             continue;
         }
         if stype == 3 {
@@ -1964,11 +1959,11 @@ fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, ttl: f64) -
     };
     match kernel_id {
         0 | 6 => f64::INFINITY,
-        1 => p.v_sound * reach_time,
-        2 => p.v_seismic_s * reach_time,
-        3 => (2.0 * p.d_diffusion * reach_time).sqrt(),
-        4 => p.v_sound.max(1e-3 * reach_time),
-        5 => p.v_advective * reach_time,
+        1 => p.gaussian_inverse_square * reach_time,
+        2 => p.gaussian_inverse * reach_time,
+        3 => (2.0 * p.erfc * reach_time).sqrt(),
+        4 => p.exponential_decay,
+        5 => p.patch_levy * reach_time,
         _ => 0.0,
     }
 }
@@ -5989,12 +5984,11 @@ mod tests {
             dw_dt_deg_per_day: 350.89198226,
             radius_m: 3389500.0,
             flattening: 0.00589,
-            v_sound: 0.0,
-            v_seismic_p: 0.0,
-            v_seismic_s: 0.0,
-            alpha_thermal: 0.0,
-            d_diffusion: 0.0,
-            v_advective: 0.0,
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -6061,12 +6055,11 @@ mod tests {
             dw_dt_deg_per_day: 350.89198226,
             radius_m: 3389500.0,
             flattening: 0.00589,
-            v_sound: 0.0,
-            v_seismic_p: 0.0,
-            v_seismic_s: 0.0,
-            alpha_thermal: 0.0,
-            d_diffusion: 0.0,
-            v_advective: 0.0,
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -6133,12 +6126,11 @@ mod tests {
             dw_dt_deg_per_day: 350.89198226,
             radius_m: 3389500.0,
             flattening: 0.00589,
-            v_sound: 0.0,
-            v_seismic_p: 0.0,
-            v_seismic_s: 0.0,
-            alpha_thermal: 0.0,
-            d_diffusion: 0.0,
-            v_advective: 0.0,
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -6191,12 +6183,11 @@ mod tests {
             dw_dt_deg_per_day: 350.89198226,
             radius_m: 3389500.0,
             flattening: 0.00589,
-            v_sound: 0.0,
-            v_seismic_p: 0.0,
-            v_seismic_s: 0.0,
-            alpha_thermal: 0.0,
-            d_diffusion: 0.0,
-            v_advective: 0.0,
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -6304,12 +6295,11 @@ mod tests {
             dw_dt_deg_per_day: 350.89198226,
             radius_m: 3389500.0,
             flattening: 0.00589,
-            v_sound: 0.0,
-            v_seismic_p: 0.0,
-            v_seismic_s: 0.0,
-            alpha_thermal: 0.0,
-            d_diffusion: 0.0,
-            v_advective: 0.0,
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
