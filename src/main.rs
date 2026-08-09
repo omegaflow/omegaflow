@@ -585,7 +585,7 @@ fn force_constants_by_id(id: f64, body_props: Option<&BodyProperties>) -> Option
         5 => body_props.and_then(|p| p.alpha_thermal).map(|v| (v, true)),
         6 => body_props.and_then(|p| p.d_diffusion).map(|v| (v, true)),
         7 => body_props.and_then(|p| p.v_advective).map(|v| (v, false)),
-        8 => Some((0.0, false)),
+        8 => Some((C_LIGHT, false)),
         _ => None,
     }
 }
@@ -1997,7 +1997,7 @@ fn force_id_of(force: &str) -> Option<u8> {
         "thermal" => Some(5),
         "diffusion" => Some(6),
         "advective" => Some(7),
-        "biotic" => Some(8),
+        "electric" => Some(8),
         _ => None,
     }
 }
@@ -2013,7 +2013,7 @@ fn force_extent(force: &str) -> f64 {
         "seismic-surface" => 1e4,
         "acoustic" => 1e3,
         "advective" => 1e1,
-        "biotic" => 1e2,
+        "electric" => 1e2,
         "thermal" | "diffusion" => 1e0,
         _ => 0.0,
     }
@@ -3081,7 +3081,6 @@ fn load_sources() -> Vec<SourceConfig> {
     flush_v2!();
     sources
 }
-
 
 fn parse_path(s: &str) -> String {
     let fl = s.lines().next().unwrap_or("");

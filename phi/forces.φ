@@ -1,0 +1,11 @@
+# omegaflow force registry
+# name id extent_m velocity absorption
+force em 0 inf C_LIGHT 0
+force gravity 1 inf C_LIGHT 0
+force acoustic 2 1000 body.v_sound 0
+force seismic-body 3 100000 body.v_seismic_p 0
+force seismic-surface 4 10000 body.v_seismic_s 0
+force thermal 5 1 body.alpha_thermal 0
+force diffusion 6 1 body.d_diffusion 0
+force advective 7 10 body.v_advective 0
+force electric 8 100 C_LIGHT 0
