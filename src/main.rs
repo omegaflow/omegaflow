@@ -268,12 +268,8 @@ fn body_fixed_to_icrs(
         let rot_m = e
             .rotation_matrices
             .iter()
-            .min_by(|a, b| {
-                (jd - a.0)
-                    .abs()
-                    .partial_cmp(&(jd - b.0).abs())
-                    .unwrap_or(std::cmp::Ordering::Equal)
-            })
+            .filter(|(t, _)| t.is_finite())
+            .min_by(|a, b| (jd - a.0).abs().partial_cmp(&(jd - b.0).abs()).unwrap())
             .map(|(_, m)| m)?;
         let xi = rot_m[0] * xb + rot_m[1] * yb + rot_m[2] * zb;
         let yi = rot_m[3] * xb + rot_m[4] * yb + rot_m[5] * zb;
@@ -316,12 +312,8 @@ fn icrs_to_body_surface(
         let rot_m = e
             .rotation_matrices
             .iter()
-            .min_by(|a, b| {
-                (jd - a.0)
-                    .abs()
-                    .partial_cmp(&(jd - b.0).abs())
-                    .unwrap_or(std::cmp::Ordering::Equal)
-            })
+            .filter(|(t, _)| t.is_finite())
+            .min_by(|a, b| (jd - a.0).abs().partial_cmp(&(jd - b.0).abs()).unwrap())
             .map(|(_, m)| m)?;
         let xt = rot_m[0] * rx + rot_m[3] * ry + rot_m[6] * rz;
         let yt = rot_m[1] * rx + rot_m[4] * ry + rot_m[7] * rz;
@@ -825,7 +817,12 @@ fn parse_iso_tdb(s: &str) -> Option<f64> {
     let mut tp = t.split(':');
     let hh: u32 = tp.next()?.parse().ok()?;
     let mm: u32 = tp.next()?.parse().ok()?;
-    let ss: u32 = tp.next().unwrap_or("0").parse().ok()?;
+    let ss: u32 = match tp.next() {
+        Some(s) => s,
+        None => return None,
+    }
+    .parse()
+    .ok()?;
     let days = ymd_to_days(y, m, d)? as i64;
     let unix = days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + ss as i64;
     Some(unix as f64 - UNIX_J2000_OFFSET)
@@ -1186,6 +1183,7 @@ fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 kernel: 0,
                 force: 0,
                 unit: "".into(),
+                tau: None,
             });
         }
         if first.contains_key("extent") {
@@ -1195,6 +1193,7 @@ fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 kernel: 0,
                 force: 0,
                 unit: "".into(),
+                tau: None,
             });
         }
         if first.contains_key("tau") {
@@ -1204,6 +1203,7 @@ fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 kernel: 0,
                 force: 0,
                 unit: "".into(),
+                tau: None,
             });
         }
         vec![Extract::CelestialMap {
@@ -1235,6 +1235,7 @@ fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 kernel: 0,
                 force: 0,
                 unit: "".into(),
+                tau: None,
             });
         }
         if first.contains_key("extent") {
@@ -1244,6 +1245,7 @@ fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 kernel: 0,
                 force: 0,
                 unit: "".into(),
+                tau: None,
             });
         }
         vec![Extract::Map {
@@ -1383,7 +1385,15 @@ fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                     | Extract::ObjLast(FieldConfig { key, .. })
                     | Extract::Regex(FieldConfig { key, .. }) => {
                         if jpath_val(&j, key).is_some()
-                            || jpath_val(&j, key.split('.').next().unwrap_or(key)).is_some()
+                            || jpath_val(
+                                &j,
+                                if let Some((p, _)) = key.rsplit_once('.') {
+                                    p
+                                } else {
+                                    key
+                                },
+                            )
+                            .is_some()
                         {
                             key_found = true;
                         }
@@ -1954,16 +1964,16 @@ enum Extract {
     Vectors(String),
 }
 
-fn kernel_id_of(name: &str) -> u8 {
+fn kernel_id_of(name: &str) -> Option<u8> {
     match name {
-        "inverse-square" => 0,
-        "gaussian-inverse-square" => 1,
-        "gaussian-inverse" => 2,
-        "erfc" => 3,
-        "exponential-decay" => 4,
-        "patch-levy" => 5,
-        "inverse-linear" => 6,
-        _ => 0,
+        "inverse-square" => Some(0),
+        "gaussian-inverse-square" => Some(1),
+        "gaussian-inverse" => Some(2),
+        "erfc" => Some(3),
+        "exponential-decay" => Some(4),
+        "patch-levy" => Some(5),
+        "inverse-linear" => Some(6),
+        _ => None,
     }
 }
 
@@ -2017,6 +2027,7 @@ struct FieldConfig {
     kernel: u8,
     force: u8,
     unit: String,
+    tau: Option<f64>,
 }
 
 fn force_id_of(name: &str) -> u8 {
@@ -2058,7 +2069,6 @@ struct SourceConfig {
     ttl: u64,
     url: String,
     frame: Frame,
-    tau: Option<f64>,
     format: String,
     extracts: Vec<Extract>,
     headers: Vec<(String, String)>,
@@ -2076,7 +2086,6 @@ struct SourceConfig {
     stations_id: String,
     flux_from_mag: Option<String>,
     abs_mag_from: Option<String>,
-    reach_ttl: Option<u64>,
     catalog_epoch: Option<f64>,
     repeat_ra_bins: u32,
 }
@@ -2630,7 +2639,10 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                             } else {
                                 1.0
                             };
-                            let alt = st_alt.unwrap_or(0.0);
+                            let alt = match st_alt {
+                                Some(a) => a,
+                                None => continue,
+                            };
                             let motion = match (st_spd, st_hdg) {
                                 (Some(spd), Some(hdg)) if spd > 0.0 => surface_motion(
                                     &body_name, lat, lon, alt, spd, hdg, 0.0, now, &eph_map,
@@ -2825,7 +2837,6 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_stations_id = String::from("id");
     let mut cur_flux_from_mag: Option<String> = None;
     let mut cur_abs_mag_from: Option<String> = None;
-    let mut cur_reach_ttl: Option<u64> = None;
     let mut cur_catalog_epoch: Option<f64> = None;
     let mut cur_repeat_ra_bins: u32 = 0;
     let mut cur_frame: Option<Frame> = None;
@@ -2844,7 +2855,6 @@ fn load_sources() -> Vec<SourceConfig> {
                         ttl: cur_ttl,
                         url: std::mem::take(&mut cur_url),
                         frame: cur_frame.clone().unwrap(),
-                        tau: None,
                         format: std::mem::take(&mut cur_format),
                         extracts: std::mem::take(&mut cur_extracts),
                         headers: std::mem::take(&mut cur_headers),
@@ -2862,7 +2872,6 @@ fn load_sources() -> Vec<SourceConfig> {
                         stations_id: std::mem::take(&mut cur_stations_id),
                         flux_from_mag: cur_flux_from_mag.clone(),
                         abs_mag_from: cur_abs_mag_from.clone(),
-                        reach_ttl: cur_reach_ttl,
                         catalog_epoch: cur_catalog_epoch,
                         repeat_ra_bins: cur_repeat_ra_bins,
                     });
@@ -2971,12 +2980,17 @@ fn load_sources() -> Vec<SourceConfig> {
                 });
             }
             "field" if parts.len() >= 5 => {
+                let k = match kernel_id_of(parts[3]) {
+                    Some(k) => k,
+                    None => continue,
+                };
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
-                    kernel: kernel_id_of(parts[3]),
+                    kernel: k,
                     force: force_id_of(parts[4]),
                     unit: parts[5].to_string(),
+                    tau: None,
                 };
                 if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
                     fields.push(fc);
@@ -3063,11 +3077,6 @@ fn load_sources() -> Vec<SourceConfig> {
             "stations_id" if parts.len() >= 2 => cur_stations_id = parts[1].to_string(),
             "flux_from_mag" if parts.len() >= 2 => cur_flux_from_mag = Some(parts[1].to_string()),
             "abs_mag_from" if parts.len() >= 2 => cur_abs_mag_from = Some(parts[1].to_string()),
-            "reach_ttl" if parts.len() >= 2 => {
-                if let Ok(v) = parts[1].parse::<u64>() {
-                    cur_reach_ttl = Some(v);
-                }
-            }
             "catalog_epoch" if parts.len() >= 2 => {
                 if let Ok(v) = parts[1].parse::<f64>() {
                     cur_catalog_epoch = Some(v);
@@ -3221,7 +3230,10 @@ fn render_url(
     let unix_now = secs.to_string();
     let unix_now_plus_3600 = (secs + 3600).to_string();
 
-    let (lat, lon) = icrs_to_body_surface(x, y, z, tdb_secs, body_name, eph).unwrap_or((0.0, 0.0));
+    let (lat, lon) = match icrs_to_body_surface(x, y, z, tdb_secs, body_name, eph) {
+        Some(ll) => ll,
+        None => (0.0, 0.0),
+    };
     let radius_m = eph
         .get(body_name)
         .and_then(|e| e.props.as_ref())
@@ -3399,8 +3411,10 @@ fn render_source_url(
             });
             if !stations.is_empty() {
                 let (lat, lon) =
-                    icrs_to_body_surface(x, y, z, tdb, &frame_body_name(&src.frame), eph)
-                        .unwrap_or((0.0, 0.0));
+                    match icrs_to_body_surface(x, y, z, tdb, &frame_body_name(&src.frame), eph) {
+                        Some(ll) => ll,
+                        None => return url,
+                    };
                 let mut best = 0usize;
                 let mut best_d = f64::MAX;
                 for (i, st) in stations.iter().enumerate() {
@@ -3729,7 +3743,10 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 };
                 if let Some(soe) = ht.find("$$SOE") {
                     let a = &ht[soe + 5..];
-                    let e = a.find("$$EOE").unwrap_or(a.len());
+                    let e = match a.find("$EOE") {
+                        Some(i) => i,
+                        None => continue,
+                    };
                     let blk = &a[..e];
                     let mut rows: Vec<(f64, [f64; 3], [f64; 3], Option<f64>)> = Vec::new();
                     let mut cur_jd: Option<f64> = None;
@@ -3843,7 +3860,10 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 };
                 if let Some(soe) = ht.find("$$SOE") {
                     let a = &ht[soe + 5..];
-                    let e = a.find("$$EOE").unwrap_or(a.len());
+                    let e = match a.find("$EOE") {
+                        Some(i) => i,
+                        None => continue,
+                    };
                     let blk = &a[..e];
                     let mut cur_jd: Option<f64> = None;
                     let mut cur_p: Option<[f64; 3]> = None;
@@ -4652,7 +4672,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                                     ],
                                                     extent: None,
                                                     ttl: None,
-                                                    tau: None,
+                                                    tau: Some(60.0),
                                                 });
                                             }
                                         }
@@ -4838,7 +4858,7 @@ fn materialize(
         .filter(|(_, v)| !v.is_nan() && v.is_finite())
         .cloned()
         .collect();
-    let (kernel_id, force_type, _field_unit) = src
+    let (kernel_id, force_type, _field_unit, _field_tau) = src
         .extracts
         .iter()
         .find_map(|ext| match ext {
@@ -4851,21 +4871,24 @@ fn materialize(
             | Extract::KeplerMap { fields, .. } => fields.first(),
             _ => None,
         })
-        .map(|fc| (fc.kernel as f64, fc.force as f64, fc.unit.as_str()))
-        .unwrap_or((0.0, 0.0, ""));
+        .map(|fc| (fc.kernel as f64, fc.force as f64, fc.unit.as_str(), fc.tau))
+        .unwrap_or((0.0, 0.0, "", None));
     std::hint::black_box(_field_unit);
-    let tau = pend.tau.unwrap_or(src.tau.unwrap_or(0.0));
-    let effective_ttl = pend.ttl.unwrap_or(src.reach_ttl.unwrap_or(src.ttl) as f64);
+    std::hint::black_box(_field_tau);
+    let tau = match pend.tau {
+        Some(t) if t > 0.0 => t,
+        _ => return vec![],
+    };
     let extent = pend
         .extent
-        .unwrap_or_else(|| kernel_extent(kernel_id as u8, body_props, effective_ttl));
+        .unwrap_or_else(|| kernel_extent(kernel_id as u8, body_props, tau));
     if extent.is_nan() || tau.is_nan() {
         return vec![];
     }
     vec![Sample {
         origin,
         epoch: pend.epoch,
-        ttl: pend.ttl.unwrap_or(src.ttl.max(1) as f64),
+        ttl: pend.ttl.unwrap_or(src.ttl as f64),
         extent,
         tau,
         kernel_id,
@@ -5104,6 +5127,7 @@ fn main() {
             kernel: 0,
             force: 0,
             unit: "".into(),
+            tau: None,
         });
         let _ = Extract::Last(FieldConfig {
             key: "k".into(),
@@ -5111,6 +5135,7 @@ fn main() {
             kernel: 0,
             force: 0,
             unit: "".into(),
+            tau: None,
         });
         let _ = Extract::Count(FieldConfig {
             key: "k".into(),
@@ -5118,6 +5143,7 @@ fn main() {
             kernel: 0,
             force: 0,
             unit: "".into(),
+            tau: None,
         });
         let _ = Extract::LastRow(FieldConfig {
             key: "k".into(),
@@ -5125,6 +5151,7 @@ fn main() {
             kernel: 0,
             force: 0,
             unit: "".into(),
+            tau: None,
         });
         let _ = Extract::LastObj("a".into(), "m".into(), "v".into(), "u".into());
         let _ = Extract::LastLine("u".into());
@@ -5134,6 +5161,7 @@ fn main() {
             kernel: 0,
             force: 0,
             unit: "".into(),
+            tau: None,
         });
         let _ = Extract::GeojsonEvents {
             mag_key: "m".into(),
@@ -5146,6 +5174,7 @@ fn main() {
             kernel: 0,
             force: 0,
             unit: "".into(),
+            tau: None,
         });
         let _ = Extract::Deep(FieldConfig {
             key: "k".into(),
@@ -5153,6 +5182,7 @@ fn main() {
             kernel: 0,
             force: 0,
             unit: "".into(),
+            tau: None,
         });
         let _ = Extract::Regex(FieldConfig {
             key: "p".into(),
@@ -5160,6 +5190,7 @@ fn main() {
             kernel: 0,
             force: 0,
             unit: "".into(),
+            tau: None,
         });
         let _ = Extract::Hapi(vec![]);
         let _ = Extract::XmlCount("t".into(), "u".into());
@@ -5490,7 +5521,6 @@ mod tests {
                 lon: 0.0,
                 alt: 0.0,
             },
-            tau: None,
             format: "json".into(),
             extracts: vec![],
             headers: vec![],
@@ -5508,7 +5538,6 @@ mod tests {
             stations_id: String::new(),
             flux_from_mag: None,
             abs_mag_from: None,
-            reach_ttl: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
         };
@@ -5525,7 +5554,6 @@ mod tests {
             ttl: 100,
             url: "https://earth-search.aws.element84.com/v0/search".into(),
             frame: super::Frame::Surface { body_name: "body_test".into(), lat: 0.0, lon: 0.0, alt: 0.0 },
-            tau: None,
             format: "json".into(),
             extracts: vec![],
             headers: vec![("Content-Type".into(), "application/stac+json".into())],
@@ -5543,7 +5571,6 @@ mod tests {
             stations_id: String::new(),
             flux_from_mag: None,
             abs_mag_from: None,
-            reach_ttl: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
         };
@@ -5566,7 +5593,6 @@ mod tests {
                 lon: 0.0,
                 alt: 0.0,
             },
-            tau: None,
             format: "json".into(),
             extracts: vec![super::Extract::Map {
                 arr_path: "table.rows".into(),
@@ -5585,6 +5611,7 @@ mod tests {
                     kernel: 0,
                     force: 0,
                     unit: "".into(),
+                    tau: None,
                 }],
                 lon_sign: None,
             }],
@@ -5603,7 +5630,6 @@ mod tests {
             stations_id: String::new(),
             flux_from_mag: None,
             abs_mag_from: None,
-            reach_ttl: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
         };
@@ -5677,14 +5703,14 @@ mod tests {
 
     #[test]
     fn test_kernel_id_of() {
-        assert_eq!(super::kernel_id_of("inverse-square"), 0);
-        assert_eq!(super::kernel_id_of("gaussian-inverse-square"), 1);
-        assert_eq!(super::kernel_id_of("gaussian-inverse"), 2);
-        assert_eq!(super::kernel_id_of("erfc"), 3);
-        assert_eq!(super::kernel_id_of("exponential-decay"), 4);
-        assert_eq!(super::kernel_id_of("patch-levy"), 5);
-        assert_eq!(super::kernel_id_of("inverse-linear"), 6);
-        assert_eq!(super::kernel_id_of("nonexistent"), 0);
+        assert_eq!(super::kernel_id_of("inverse-square"), Some(0));
+        assert_eq!(super::kernel_id_of("gaussian-inverse-square"), Some(1));
+        assert_eq!(super::kernel_id_of("gaussian-inverse"), Some(2));
+        assert_eq!(super::kernel_id_of("erfc"), Some(3));
+        assert_eq!(super::kernel_id_of("exponential-decay"), Some(4));
+        assert_eq!(super::kernel_id_of("patch-levy"), Some(5));
+        assert_eq!(super::kernel_id_of("inverse-linear"), Some(6));
+        assert_eq!(super::kernel_id_of("nonexistent"), None);
     }
 
     #[test]
@@ -6019,7 +6045,6 @@ mod tests {
             ttl: 3600,
             url: "https://example.com".into(),
             frame,
-            tau: None,
             format: "json".into(),
             extracts: vec![],
             headers: vec![],
@@ -6037,7 +6062,6 @@ mod tests {
             stations_id: "id".into(),
             flux_from_mag: None,
             abs_mag_from: None,
-            reach_ttl: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
         };
@@ -6052,7 +6076,7 @@ mod tests {
             fields: vec![("v".to_string(), 1.0)],
             extent: None,
             ttl: None,
-            tau: None,
+            tau: Some(60.0),
         };
         let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
         cx[0] = 1.5e9;
@@ -6190,7 +6214,6 @@ mod tests {
                 lon: 0.0,
                 alt: 0.0,
             },
-            tau: None,
             format: "json".into(),
             extracts: vec![super::Extract::Map {
                 arr_path: "features".into(),
@@ -6209,6 +6232,7 @@ mod tests {
                     kernel: 0,
                     force: 0,
                     unit: "".into(),
+                    tau: None,
                 }],
                 lon_sign: None,
             }],
@@ -6227,7 +6251,6 @@ mod tests {
             stations_id: String::new(),
             flux_from_mag: None,
             abs_mag_from: None,
-            reach_ttl: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
         };
