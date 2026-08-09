@@ -1955,16 +1955,16 @@ enum Extract {
     Vectors(String),
 }
 
-fn kernel_id_of(name: &str) -> Option<u8> {
+fn kernel_id_of(name: &str) -> u8 {
     match name {
-        "inverse-square" => Some(0),
-        "gaussian-inverse-square" => Some(1),
-        "gaussian-inverse" => Some(2),
-        "erfc" => Some(3),
-        "exponential-decay" => Some(4),
-        "patch-levy" => Some(5),
-        "inverse-linear" => Some(6),
-        _ => None,
+        "inverse-square" => 0,
+        "gaussian-inverse-square" => 1,
+        "gaussian-inverse" => 2,
+        "erfc" => 3,
+        "exponential-decay" => 4,
+        "patch-levy" => 5,
+        "inverse-linear" => 6,
+        _ => 0,
     }
 }
 
@@ -1975,23 +1975,23 @@ fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, ttl: f64, _
         1 => body_props
             .and_then(|p| p.v_sound)
             .map(|v| v * reach_time)
-            .unwrap_or(1e3),
+            .unwrap_or(0.0),
         2 => body_props
             .and_then(|p| p.v_seismic_s)
             .map(|v| v * reach_time)
-            .unwrap_or(1e4),
+            .unwrap_or(0.0),
         3 => body_props
             .and_then(|p| p.d_diffusion)
             .map(|d| (2.0 * d * reach_time).sqrt())
-            .unwrap_or(1e0),
+            .unwrap_or(0.0),
         4 => body_props
             .and_then(|p| p.v_sound)
             .map(|v| v.max(1e-3 * reach_time))
-            .unwrap_or(1e2),
+            .unwrap_or(0.0),
         5 => body_props
             .and_then(|p| p.v_advective)
             .map(|v| v * reach_time)
-            .unwrap_or(1e2),
+            .unwrap_or(0.0),
         _ => 0.0,
     }
 }
@@ -5939,10 +5939,14 @@ mod tests {
 
     #[test]
     fn test_kernel_id_of() {
-        assert_eq!(super::kernel_id_of("inverse-square"), Some(0));
-        assert_eq!(super::kernel_id_of("erfc"), Some(3));
-        assert_eq!(super::kernel_id_of("patch-levy"), Some(5));
-        assert_eq!(super::kernel_id_of("nonexistent"), None);
+        assert_eq!(super::kernel_id_of("inverse-square"), 0);
+        assert_eq!(super::kernel_id_of("gaussian-inverse-square"), 1);
+        assert_eq!(super::kernel_id_of("gaussian-inverse"), 2);
+        assert_eq!(super::kernel_id_of("erfc"), 3);
+        assert_eq!(super::kernel_id_of("exponential-decay"), 4);
+        assert_eq!(super::kernel_id_of("patch-levy"), 5);
+        assert_eq!(super::kernel_id_of("inverse-linear"), 6);
+        assert_eq!(super::kernel_id_of("nonexistent"), 0);
     }
 
     #[test]
