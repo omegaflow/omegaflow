@@ -1,63 +1,71 @@
-# Session Handover — 2026-08-09
+# Session Handover — 2026-08-10
 
-## Status
+## State
 
-**Commit 2** (`c915cb8`): Inventory & Order — phi/research/ reorganization, thread-safety rules, scripts to ARCHIVED. Done.
+All commits: 0 warnings, 0 errors, 16/16 tests. Zero locks. Zero defaults.
+Zero fabrications. Zero comments in source files.
 
-**`biotic → electric`** (`d0e9b4c`): force_id_of, force_extent, force_constants_by_id updated. Done.
+## Architecture
 
-**Commit 0** (`efc72c7`): code-verified reference docs — BINARY_PROTOCOL, CONstANTS, KERNEL_SYSTEM (was FORCE_SYSTEM), EXTRACT_TYPES, URL_TEMPLATES, NIST SP 330/811 extracts, UCUM essence. Done.
+**Kernel system** — 7 spatial shapes replace Force. Per-field, not per-block.
+**Channel concurrency** — 0 Mutex, 0 RwLock, 0 Condvar. mpsc::channel.
+**Protocol v3** — 88 bytes (11 × f64). `force_type` 11th field.
+**5-token grammar** — `field <key> <name> <kernel> <force> <unit>` mandatory.
+**τ-Gate** — `pend.tau = None` → `return vec![]`. No oscillation without physics.
 
-**Architecture decision (Council unanimous): Kernel replaces Force**
-- Grammar: `field <key> <unit> <kernel>` — 3 tokens, no `force` token
-- 7 kernels: inverse-square, gaussian-inverse-square, gaussian-inverse, erfc, exponential-decay, patch-levy, inverse-linear
-- Kernel specified per field, not per source block
-- `phi/forces.φ` deleted, `phi/units.φ` deleted (NIST + UCUM are the binding unit references)
-- `phi/sources.φ` = 0 bytes — nothing to migrate
+## Key Files
 
-## Next steps
+| File | Lines | Status |
+|------|-------|--------|
+| `src/main.rs` | ~6300 | 0 warnings, Rust std-only |
+| `static/index.html` | ~1290 | WGSL + JS, force_type in VOut |
+| `static/constants.js` | ~110 | JS parser, protocol v3 check |
 
-### Commit 1 — main.rs Reconstruction (next)
+## Completed
 
-**Scope**: Force → Kernel + Parser Rewrite. Single session, one commit.
+- Commit 2: phi/research/ reorganization
+- biotic → electric fix
+- Commit 0: reference docs
+- Commit 1a-e: Force→Kernel + WGSL + constants.js + file deletes
+- Commit 1f: Mutex→Channel (0 locks)
+- Commit 3: --verify CLI mode
+- Protocol v3 (88-byte records, force_type 11th f64)
+- 5-token grammar: field <key> <name> <kernel> <force> <unit>
+- Scalar Extract → FieldConfig (9 variants)
+- All defaults eliminated (15+ unwrap_or, _ => 0, max(1), reach_ttl, SourceConfig.tau)
+- force_id_of → Option<u8> (parser reject)
+- kernel_id_of → Option<u8> (parser reject)
+- τ per Field (FieldConfig.tau), not per block
+- τ-Gate: tau missing → no oscillator
+- P0+P1: fetch pipeline wired, Lemma gate per-field
+- Force-Farben WGSL: VOut.force_type, hue += force_type * 0.125
+- fold_eff fix: v=0 → temporal only (no d/c)
+- 0 comments in src/main.rs, static/index.html, static/constants.js
 
-**5 files touched**:
-1. `src/main.rs` — kernel_id_of, kernel_extent, parser (3-token field), CLI, v2 removal
-2. `static/index.html` — WGSL kernel switch (7 branches), 9→7 arrays, expose rewriting
-3. `static/constants.js` — rename force_type → kernel_id
-4. `phi/forces.φ` — deleted
-5. `phi/units.φ` — deleted
+## Pending
 
-**Deliverables**:
-- Grammar: `field <key> <unit> <kernel>` (3 tokens, no force)
-- `flush_v2!` macro removed
-- `--ci-mode` removed
-- CLI: `--fetch`, `--dump`, `--crawl`, `--verify`
-- ~15 existing tests + ~25 new
-- Zero "force" references in src/main.rs, static/
-- Zero "v2" references in src/main.rs
-- `cargo check` 0/0, all tests green
-- Reference: `main.rs.bak` at `/home/johannes/projects/archive/omegaflow-phi-recovery/_archive/main.rs.bak`
+### Render-Time (WGSL)
+- Fragment shader uses `in.color` from vertex (force-hue already applied) — complete
+- Advective per-Oszillator: wind speed in `tm.w` (unused slot). Needs data source.
+- `PROPAGATION_SPEED[7] = 0.0` — honest absence
 
-### Commit 3 — Archivar Crawls & Verifies
+### Multi-Radiator (Plan B)
+- `trait Radiator` + `RadiatorRegistry`
+- ScreenRadiator, SpeakerRadiator, HapticRadiator, HardwareRadiator
+- async accept via channel
 
-- Deduplicate URLs from gold sources in `phi/research/`
-- Live-test each URL individually
-- Output: `verified_blocks.φ`, `partial_blocks.φ`, `failed_urls.φ`, `unknown_units.csv`
+### Source Curation
+- phi/sources.φ = 0 bytes
+- phi/research/ — gold sources with old grammar (needs migration)
+- `--verify` CLI exists but untested with real URLs
 
-## Remaining cleanup
+## Context for Next LLM
 
-- `HANDOFF.md` — keep (running handover, this file)
-
-## Context for next LLM
-
-1. Read `AGENTS.md` first — 7 thread-safety rules (CRITICAL)
-2. Read `TODO.md` — current inventory and pending work
-3. `phi/sources.φ` is 0 bytes — start fresh
-4. Gold sources for Commit 3 are in `phi/research/`
-5. Archive at `/home/johannes/projects/archive/omegaflow-phi-recovery/`
-6. `main.rs.bak` in archive
-7. `cargo check` must be 0/0
-8. Never read a directory — use `glob` with extension/prefix patterns
-9. Max 3 bash calls per session, bundled with `&&`
-10. No "for now", no "Phase 2", no backward compatibility
+1. `phi/sources.φ` is 0 bytes — greenfield
+2. All defaults are eliminated — no `unwrap_or(0.0)`, no `_ => 0`, no `max(1)`
+3. τ is per-field (`FieldConfig.tau`), mandatory for non-EM/non-Gravity kernels
+4. `kernel_id_of` and `force_id_of` return `Option<u8>` — parser rejects unknowns
+5. `cargo check` must be 0/0 — warnings are forbidden
+6. No comments in source code
+7. No German in code
+8. Session is the atom — planning and implementation in same context window
