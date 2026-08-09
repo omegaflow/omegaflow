@@ -107,11 +107,7 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
         pos += 4;
         if stype == 1 {
             let f = |i: usize| -> f64 {
-                f64::from_le_bytes(
-                    data[pos + i * 8..pos + (i + 1) * 8]
-                        .try_into()
-                        .unwrap_or([0; 8]),
-                )
+                f64::from_le_bytes(data[pos + i * 8..pos + (i + 1) * 8].try_into().unwrap())
             };
             props = Some(BodyProperties {
                 α0_deg: f(0),
@@ -133,11 +129,7 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
         }
         if stype == 2 {
             let f = |i: usize| -> f64 {
-                f64::from_le_bytes(
-                    data[pos + i * 8..pos + (i + 1) * 8]
-                        .try_into()
-                        .unwrap_or([0; 8]),
-                )
+                f64::from_le_bytes(data[pos + i * 8..pos + (i + 1) * 8].try_into().unwrap())
             };
             let gis = f(0);
             let giv = f(1);
@@ -178,11 +170,7 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                     break;
                 }
                 let f = |i: usize| -> f64 {
-                    f64::from_le_bytes(
-                        data[pos + i * 8..pos + (i + 1) * 8]
-                            .try_into()
-                            .unwrap_or([0; 8]),
-                    )
+                    f64::from_le_bytes(data[pos + i * 8..pos + (i + 1) * 8].try_into().unwrap())
                 };
                 let t0_jd = f(0);
                 let m: [f64; 9] = [f(1), f(2), f(3), f(4), f(5), f(6), f(7), f(8), f(9)];
@@ -202,11 +190,7 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 break;
             }
             let f = |i: usize| -> f64 {
-                f64::from_le_bytes(
-                    data[pos + i * 8..pos + (i + 1) * 8]
-                        .try_into()
-                        .unwrap_or([0; 8]),
-                )
+                f64::from_le_bytes(data[pos + i * 8..pos + (i + 1) * 8].try_into().unwrap())
             };
             let mut cx = [0f64; CHEBYSHEV_N];
             let mut cy = [0f64; CHEBYSHEV_N];
@@ -2253,17 +2237,18 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                     "/station" => {
                         let now = tdb_now();
                         let eph_map = archive.body_ephemerides.read().unwrap();
-                        let result = archive
-                            .station
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .sample
-                            .as_ref()
-                            .and_then(|smp| {
-                                let p0 = smp.motion.at(now, smp.epoch, &eph_map)?;
-                                let p1 = smp.motion.at(now + 1.0, smp.epoch, &eph_map)?;
-                                Some((p0, [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]]))
-                            });
+                        let result =
+                            archive
+                                .station
+                                .lock()
+                                .unwrap()
+                                .sample
+                                .as_ref()
+                                .and_then(|smp| {
+                                    let p0 = smp.motion.at(now, smp.epoch, &eph_map)?;
+                                    let p1 = smp.motion.at(now + 1.0, smp.epoch, &eph_map)?;
+                                    Some((p0, [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]]))
+                                });
                         match result {
                             Some((p, v)) => emit(
                                 &mut s,
@@ -2295,11 +2280,7 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                         }
                     }
                     "/field" => {
-                        let buf = archive
-                            .field
-                            .read()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .clone();
+                        let buf = archive.field.read().unwrap().clone();
                         let mut report = String::new();
                         let mut families: Vec<(&str, &Family)> =
                             buf.bodies.iter().map(|(k, v)| (k.as_str(), v)).collect();
@@ -2332,16 +2313,8 @@ fn handle_ingress(stream: TcpStream, archive: Arc<Archive>) {
                                 report.push_str(&format!("  {}\n", nm));
                             }
                         }
-                        let origins_n = archive
-                            .origins
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .len();
-                        let presence_n = archive
-                            .presence
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .len();
+                        let origins_n = archive.origins.lock().unwrap().len();
+                        let presence_n = archive.presence.lock().unwrap().len();
                         report
                             .push_str(&format!("origins={} presence={}\n", origins_n, presence_n));
                         emit(&mut s, "200 OK", "text/plain", report.as_bytes());
@@ -2480,7 +2453,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
             let eph_map = archive.body_ephemerides.read().unwrap();
             let body_name = st_body.and_then(|id| body_id_to_name(&eph_map, id));
             let station_buf = {
-                let mut station = archive.station.lock().unwrap_or_else(|e| e.into_inner());
+                let mut station = archive.station.lock().unwrap();
                 if let (Some(lat), Some(lon), Some(acc), Some(body_name)) =
                     (st_lat, st_lon, st_acc, body_name)
                 {
@@ -2554,11 +2527,7 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                 }
                 Arc::clone(&station.buffer)
             };
-            let field = archive
-                .field
-                .read()
-                .unwrap_or_else(|e| e.into_inner())
-                .clone();
+            let field = archive.field.read().unwrap().clone();
 
             let mut queries: Vec<(f64, f64, f64, f64)> = Vec::with_capacity(query_count);
             for _ in 0..query_count {
@@ -2591,14 +2560,10 @@ fn resonance(mut stream: TcpStream, signal: &str, archive: Arc<Archive>) {
                         extent = d;
                     }
                 }
-                archive
-                    .presence
-                    .lock()
-                    .unwrap_or_else(|e| e.into_inner())
-                    .insert(
-                        format!("{}_{}_{}", x0 as i64, y0 as i64, z0 as i64),
-                        (t0, x0, y0, z0, extent),
-                    );
+                archive.presence.lock().unwrap().insert(
+                    format!("{}_{}_{}", x0 as i64, y0 as i64, z0 as i64),
+                    (t0, x0, y0, z0, extent),
+                );
                 archive.warm_cache_cv.notify_one();
                 let eph_map = archive.body_ephemerides.read().unwrap();
                 let center = [x0, y0, z0];
@@ -3251,7 +3216,7 @@ fn render_source_url(
         if let Some(ref st_url) = src.stations_url {
             let cache_key = st_url.clone();
             let stations = {
-                let cache = ar.stations_cache.lock().unwrap_or_else(|e| e.into_inner());
+                let cache = ar.stations_cache.lock().unwrap();
                 if let Some((ts, st)) = cache.get(&cache_key) {
                     if ts.elapsed().as_secs() < 86400 {
                         Some(st.clone())
@@ -3287,8 +3252,7 @@ fn render_source_url(
                                 })
                                 .collect();
                             let arc = Arc::new(entries);
-                            let mut cache =
-                                ar.stations_cache.lock().unwrap_or_else(|e| e.into_inner());
+                            let mut cache = ar.stations_cache.lock().unwrap();
                             cache.insert(cache_key, (Instant::now(), arc.clone()));
                             arc
                         } else {
@@ -3969,7 +3933,6 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 epoch_key,
                 fields,
             } => {
-                let _default_epoch = src.catalog_epoch.unwrap_or(now);
                 if let Some(ref j) = parsed_json {
                     if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
                         for (idx, v) in arr.iter().enumerate() {
@@ -4073,10 +4036,10 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             if ev_fields.is_empty() {
                                 ev_fields.push(("_cmr_id".to_string(), idx as f64));
                             }
-                            let alt = if alt_key.is_empty() {
+                            let alt = if alt_key.is_empty() || jpath(v, &alt_key).is_none() {
                                 0.0
                             } else {
-                                jpath(v, alt_key).unwrap_or(0.0)
+                                jpath(v, &alt_key).unwrap()
                             };
                             for (lon, lat) in vertices {
                                 pending.push(PendingSample {
@@ -4806,7 +4769,7 @@ fn fetch_priority(
 }
 
 fn per_origin_sleep(archive: &Archive, fallback: f64) -> f64 {
-    let origins = archive.origins.lock().unwrap_or_else(|e| e.into_inner());
+    let origins = archive.origins.lock().unwrap();
     if origins.is_empty() {
         return fallback;
     }
@@ -4826,25 +4789,13 @@ fn warm_cache(archive: Arc<Archive>) {
         archive
             .presence
             .lock()
-            .unwrap_or_else(|e| e.into_inner())
+            .unwrap()
             .retain(|_, (t, _, _, _, _)| (now - *t).abs() < min_ttl as f64 * 64.0);
-        let presences: Vec<(f64, f64, f64, f64, f64)> = archive
-            .presence
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .values()
-            .cloned()
-            .collect();
+        let presences: Vec<(f64, f64, f64, f64, f64)> =
+            archive.presence.lock().unwrap().values().cloned().collect();
         if presences.is_empty() {
-            let lock = archive
-                .warm_cache_mutex
-                .lock()
-                .unwrap_or_else(|e| e.into_inner());
-            let still_empty = archive
-                .presence
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .is_empty();
+            let lock = archive.warm_cache_mutex.lock().unwrap();
+            let still_empty = archive.presence.lock().unwrap().is_empty();
             if still_empty {
                 let sleep_secs = per_origin_sleep(&archive, cadence);
                 let _ = archive
@@ -4866,16 +4817,9 @@ fn warm_cache(archive: Arc<Archive>) {
         )> = Vec::new();
         let mut task_prios: Vec<u8> = Vec::new();
         {
-            let ttl_snapshot: HashMap<String, f64> = archive
-                .ttl_eff
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .clone();
-            let origins_snap: HashMap<Origin, OriginState> = archive
-                .origins
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .clone();
+            let ttl_snapshot: HashMap<String, f64> = archive.ttl_eff.lock().unwrap().clone();
+            let origins_snap: HashMap<Origin, OriginState> =
+                archive.origins.lock().unwrap().clone();
             let mut src_order: Vec<(usize, f64, u8)> = archive
                 .sources
                 .iter()
@@ -5120,7 +5064,7 @@ fn warm_cache(archive: Arc<Archive>) {
                     let body_raw = std::fs::read_to_string(&body_file).ok();
                     let _ = std::fs::remove_file(&body_file);
                     let src = &ar.sources[src_idx];
-                    let mut origins = ar.origins.lock().unwrap_or_else(|e| e.into_inner());
+                    let mut origins = ar.origins.lock().unwrap();
                     if body_raw.is_some() {
                         let body = body_raw.as_deref().unwrap_or("");
                         let entry = origins.entry(origin).or_default();
@@ -5225,7 +5169,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                                     url.split('/').nth(2).unwrap_or("").to_string();
                                                 ar.ttl_eff
                                                     .lock()
-                                                    .unwrap_or_else(|e| e.into_inner())
+                                                    .unwrap()
                                                     .insert(host, max_age.max(ttl as f64));
                                             }
                                         }
@@ -5235,10 +5179,7 @@ fn warm_cache(archive: Arc<Archive>) {
                                     let val = line.splitn(2, ':').nth(1).unwrap_or("").trim();
                                     if let Ok(ra) = val.parse::<f64>() {
                                         let host = url.split('/').nth(2).unwrap_or("").to_string();
-                                        ar.ttl_eff
-                                            .lock()
-                                            .unwrap_or_else(|e| e.into_inner())
-                                            .insert(host, ra.max(ttl as f64));
+                                        ar.ttl_eff.lock().unwrap().insert(host, ra.max(ttl as f64));
                                     }
                                 }
                             }
@@ -5246,7 +5187,7 @@ fn warm_cache(archive: Arc<Archive>) {
                         let _ = std::fs::remove_file(&body_file);
                         let _ = std::fs::remove_file(&hdr_file);
                         let src = &ar.sources[src_idx];
-                        let mut origins = ar.origins.lock().unwrap_or_else(|e| e.into_inner());
+                        let mut origins = ar.origins.lock().unwrap();
                         if body_raw.is_some() || src.format == "ephemeris_binary" {
                             let body = body_raw.as_deref().unwrap_or("");
                             let entry = origins.entry(origin).or_default();
@@ -5334,14 +5275,13 @@ fn warm_cache(archive: Arc<Archive>) {
                             let station_sample = ar
                                 .station
                                 .lock()
-                                .unwrap_or_else(|e| e.into_inner())
+                                .unwrap()
                                 .sample
                                 .clone()
                                 .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
                             let mut all: Vec<Sample> = Vec::new();
                             {
-                                let old =
-                                    ar.field.read().unwrap_or_else(|e| e.into_inner()).clone();
+                                let old = ar.field.read().unwrap().clone();
                                 let mut families: Vec<&Family> = old.bodies.values().collect();
                                 families.push(&old.inertial);
                                 for fam in families {
@@ -5360,8 +5300,7 @@ fn warm_cache(archive: Arc<Archive>) {
                             if let Some(ref s) = station_sample {
                                 all.push(s.clone());
                             }
-                            *ar.field.write().unwrap_or_else(|e| e.into_inner()) =
-                                Arc::new(build_buffer(all, cadence));
+                            *ar.field.write().unwrap() = Arc::new(build_buffer(all, cadence));
                         }
                     } else {
                         std::thread::sleep(std::time::Duration::from_millis(15));
@@ -5391,17 +5330,13 @@ fn warm_cache(archive: Arc<Archive>) {
         let station_sample = archive
             .station
             .lock()
-            .unwrap_or_else(|e| e.into_inner())
+            .unwrap()
             .sample
             .clone()
             .filter(|s| (now - s.epoch).abs() <= s.ttl * 64.0);
         let mut all: Vec<Sample> = Vec::new();
         {
-            let old = archive
-                .field
-                .read()
-                .unwrap_or_else(|e| e.into_inner())
-                .clone();
+            let old = archive.field.read().unwrap().clone();
             let mut families: Vec<&Family> = old.bodies.values().collect();
             families.push(&old.inertial);
             for fam in families {
@@ -5419,18 +5354,15 @@ fn warm_cache(archive: Arc<Archive>) {
             all.push(s.clone());
         }
         let partial = Arc::new(build_buffer(all, cadence));
-        *archive.field.write().unwrap_or_else(|e| e.into_inner()) = partial;
+        *archive.field.write().unwrap() = partial;
 
         archive
             .origins
             .lock()
-            .unwrap_or_else(|e| e.into_inner())
+            .unwrap()
             .retain(|_, o| (now - o.fetched).abs() < o.ttl.max(1.0) * 64.0);
         let sleep_secs = per_origin_sleep(&archive, cadence);
-        let lock = archive
-            .warm_cache_mutex
-            .lock()
-            .unwrap_or_else(|e| e.into_inner());
+        let lock = archive.warm_cache_mutex.lock().unwrap();
         let _ = archive
             .warm_cache_cv
             .wait_timeout(lock, std::time::Duration::from_secs_f64(sleep_secs));
@@ -5636,7 +5568,7 @@ fn main() {
         archive
             .presence
             .lock()
-            .unwrap_or_else(|e| e.into_inner())
+            .unwrap()
             .insert("0_0_0".to_string(), (tdb_now(), 0.0, 0.0, 0.0, 1e11));
         let ar = Arc::clone(&archive);
         thread::spawn(move || warm_cache(ar));
