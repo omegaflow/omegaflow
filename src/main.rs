@@ -4879,6 +4879,77 @@ fn file_fresh(path: &str, ttl: u64) -> bool {
     false
 }
 
+fn verify_mode(dir: &str) -> i32 {
+    let mut urls: Vec<String> = Vec::new();
+    let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+    fn walk(
+        dir: &std::path::Path,
+        urls: &mut Vec<String>,
+        seen: &mut std::collections::HashSet<String>,
+    ) {
+        if let Ok(entries) = std::fs::read_dir(dir) {
+            for e in entries.flatten() {
+                let p = e.path();
+                if p.is_dir() {
+                    walk(&p, urls, seen);
+                } else if p.extension().map(|x| x == "φ").unwrap_or(false) {
+                    if let Ok(content) = std::fs::read_to_string(&p) {
+                        for line in content.lines() {
+                            let trimmed = line.trim();
+                            if let Some(rest) = trimmed.strip_prefix("url ") {
+                                let url = rest.trim().to_string();
+                                if !url.is_empty() && seen.insert(url.clone()) {
+                                    urls.push(url);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    walk(std::path::Path::new(dir), &mut urls, &mut seen);
+    eprintln!("verify: {} unique URLs from {}", urls.len(), dir);
+    let mut ok = 0;
+    let mut fail = 0;
+    let mut verified = String::new();
+    let mut failed = String::new();
+    for url in &urls {
+        let raw = fetch_raw(url, None, &[], 30);
+        if raw.is_some() {
+            ok += 1;
+            verified.push_str(url);
+            verified.push('\n');
+        } else {
+            fail += 1;
+            failed.push_str(url);
+            failed.push('\n');
+        }
+        if (ok + fail) % 50 == 0 {
+            eprintln!(
+                "verify: {}/{} ok, {}/{} files",
+                ok,
+                ok + fail,
+                fail,
+                urls.len()
+            );
+        }
+    }
+    std::fs::write("verified_urls.txt", &verified).ok();
+    std::fs::write("failed_urls.txt", &failed).ok();
+    eprintln!(
+        "verify: done. {} ok, {} failed. {} total.",
+        ok,
+        fail,
+        urls.len()
+    );
+    if fail > 0 {
+        1
+    } else {
+        0
+    }
+}
+
 fn main() {
     load_env();
     {
@@ -4887,6 +4958,10 @@ fn main() {
             eprintln!("ci-mode not available in this build");
             std::process::exit(0);
         }
+        if args.len() > 1 && args[1] == "--verify" {
+            let dir = args.get(2).map(|s| s.as_str()).unwrap_or("phi/research");
+            std::process::exit(verify_mode(dir));
+        }
     }
     {
         let _ = &presence_gate;
@@ -4894,6 +4969,13 @@ fn main() {
         let _ = &fetch_priority;
         let _ = &per_origin_sleep;
         let _ = &spawn_task_curl;
+        let _ = &render_headers;
+        let _ = &utc_iso8601_now;
+        let _ = &file_fresh;
+        let _oz: fn(&OriginState) -> u32 = |o| o.zero_yield;
+        let _ob: fn(&OriginState) -> [u8; 20] = |o| o.last_body_hash;
+        let _sm: fn(&SourceConfig) -> &String = |s| &s.method;
+        let _sb: fn(&SourceConfig) -> &Option<String> = |s| &s.body;
         let _ = &parse_ephemeris_binary;
         let _ = &parse_iso_tdb;
         let _ = &ymd_to_days;
@@ -5044,15 +5126,24 @@ fn main() {
                 let pendings = match raw {
                     Some(ref r) => match extract_pending(&src_clone, r, now) {
                         ExtractResult::Samples(v) => v,
-                        ExtractResult::WithEphemeris(v, _) => v,
+                        ExtractResult::WithEphemeris(v, eph) => {
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                pendings: Vec::new(),
+                                eph_update: Some((src_clone.body.clone().unwrap_or_default(), eph)),
+                            });
+                            v
+                        }
                     },
                     None => Vec::new(),
                 };
-                let _ = ftx.send(FetchResult {
-                    source_idx: src_idx,
-                    pendings,
-                    eph_update: None,
-                });
+                if !pendings.is_empty() {
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        pendings,
+                        eph_update: None,
+                    });
+                }
             });
         }
         {
