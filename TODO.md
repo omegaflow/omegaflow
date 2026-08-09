@@ -2,19 +2,37 @@
 
 AGENTS.md is the primary constraint matrix. Git is the history. This file contains only pending work.
 
-## Parser Rewrite — 4-Token Canonical Format
+## Inventory — 2026-08-09
 
-`sources_v2.phi` (1501/1924 blocks, 4902 fields) is the canonical 4-token migration.
-Format: `field <key> <force> <unit>`. No block-level `force`. `*_key` → drop suffix.
-`at sun 1.0` → `at sun`. No indentation. `field_in` → `field` inside map blocks.
+Disk cleaned. `phi/sources.φ` reset to empty (0 bytes) — no block without individual live test.
+`phi/recovery/` moved to `/home/johannes/projects/archive/omegaflow-phi-recovery/`.
+Python migration scripts moved to `scripts/ARCHIVED/`. Duplicates eliminated.
 
-Parser (`src/main.rs`) must be rewritten to load `phi/sources_v2.phi` instead of
-`phi/sources.φ`. The extract variants must be unified (field=field_in=path=deep,
-first=last=last_row=last_line=last_obj=obj_last). Only `field` (4-token scalar),
-`field` (3-token inside map), `count` (skip), and core directives survive.
+### Research archive (`phi/research/`) — 123 flat-named files
 
-429 blocks (GBIF, iNaturalist, ArcGIS-metadata, earthquake-catalogs, station-lists)
-have no physical measurements — parser must handle blocks with zero fields.
+Gold sources copied with naming convention `{origin}--{filename}`:
+
+- `pre_cdn_history--*` — 16 files: git-history snapshots (7), `ALL_lost_blocks_richest.φ` (5701), `UNTESTED_blocks.φ` (423), `NEW_unchecked_blocks.φ` (873), `valuable_*`, `lost_urls*`, `UNTESTED_index.txt`
+- `api-research--*` — 60 files: domain coverage analysis, API gaps/potential (API_Luecken, API_potential, API_gaps), 21 Arena batches, gold `.φ` files, curated block lists
+- `git-extracts--*` — 34 files: historical `.φ` snapshots + `.msg` commit messages from git archaeology
+- `duplicate-sources--*` — 4 files: source format specification + reference copies
+- Root-level `.φ`: `pre-cdn-1924-blocks.φ`, `candidate-staging.φ`, `live-verified.φ`, `cdn-published.φ`, `dead-reachability.φ`, `broken-2026-08-09.φ`
+
+### Archive (`/home/johannes/projects/archive/omegaflow-phi-recovery/`)
+
+Complete original `phi/recovery/` moved outside the repo. Contains batch-session artifacts
+(`dump_fields.csv`, agent outputs, `load_sources_v2.rs`, responses), PNG page scans,
+JSON artifacts, `all_urls_dedup.txt`, and `main.rs.bak`.
+
+### Active (`phi/`)
+- `sources.φ` — 0 bytes. Will grow via `verified_blocks.φ` only.
+- `dont_touch/`, `math/` — frozen, untouched.
+
+### Next: Commit 0 → Commit 1 → Commit 3 (see session handover for full plan)
+
+## main.rs Reconstruction — Parser Rewrite
+
+`src/main.rs` must be diffed against pre-mess state (commits 188dd76 + 2cc6d5e per source_curation.md). Classify every hunk. Reconstruct to ONE parser, ONE format: 4-token `field <key> <force> <unit>`, `url`+`query`, `force` token refused, no `flush_v2!` macro. CLI: `--fetch` (auto-detect CDN↔local via token), `--dump`, `--crawl`, `--verify`. `--ci-mode` removed. Heart tests: ~15 existing + ~25 new fixture tests. `cargo check` 0/0, all tests green.
 
 ## OPeNDAP Integration for NASA EarthData
 
@@ -36,20 +54,7 @@ Council decision 2026-08-07: biodiversity observation APIs (GBIF, iNaturalist, O
 
 ## Celestial Frame Convention: Per-Block Application
 
-Council decision 2026-08-08. Celestial sources with ICRS sky coordinates (ra_key/dec_key) must declare `at sun 1.0`. The SSB is the ICRS origin. `body earth` on a celestial source is incorrect.
-
-Rule in AGENTS.md §Live APIs, enforced by parser warning at `src/main.rs:2918-2926`.
-
-### Blocks to fix (approx 82)
-
-Blocks in `phi/sources.φ` with `body earth` + ra_key/dec_key (no Earth-surface lat_key/lon_key data) need `body earth` → `at sun 1.0`. Per-block application:
-- Read the block. Verify: does it have ra_key/dec_key? Does it have lat_key/lon_key with Earth-surface data?
-- If ICRS-only → replace `body earth` with `at sun 1.0`, remove stale `body earth`
-- If also has Earth-surface data → split into separate blocks or keep `body earth` (not celestial)
-- Double-frame blocks (both `body earth` AND `at sun 1.0`) → remove `body earth`, keep `at sun 1.0`
-- One commit per block or small group. Verify `cargo check` clean. Parser warning for that URL must disappear.
-
-Code: `phi/sources.φ` (block edits), `src/main.rs:2918-2926` (warning verifies fix)
+Council decision 2026-08-08. Celestial sources with ICRS sky coordinates must declare `at sun 1.0`. Enforced by parser at load time (Gate 1: ra/dec + `on earth` → refuse). Applied during `--verify` curation of new blocks — no blocks to fix until sources.φ is repopulated.
 
 ---
 
@@ -59,82 +64,15 @@ Code: `phi/sources.φ` (block edits), `src/main.rs:2918-2926` (warning verifies 
 
 ---
 
-## Collapse CDN/Live split → single `sources.φ`
+## Single sources.φ — CDN-First Runtime
 
-SUPERSEDES "Sources Split: CDN / Live" — council verdict 2026-08-07. After
-the CI Archivar populates the CDN (session 4 of the dual-mode roadmap),
-`sources_cdn.φ` and `sources_live.φ` collapse into a single `sources.φ`. The
-CDN/live distinction becomes a runtime decision: the Archivar tries CDN first
-for every source, falls back to live API. See `docs/dual_mode_architecture.md`
-for the full roadmap.
-Code: `phi/sources_live.φ`, `src/main.rs:2644`
-
----
-
-## Touchpad / Touch Control
+Single `phi/sources.φ` (rebuilt from verified_blocks.φ). CDN/live distinction is runtime: `--fetch` auto-detects token presence, tries CDN first per naming convention. No separate `--ci-mode` flag. Original roadmap sessions 1-5 archived in `/home/johannes/projects/archive/omegaflow-phi-recovery/`. `source_name_from_url` dead — replaced by deterministic full-URL encoding. Python migration scripts archived. CI workflow runs `cargo run -- --fetch` + `cargo test`.
 
 Spec: `docs/concepts/INTUITIVE TOUCHPAD- & TOUCH-STEUERUNG.md`. Diagonal pinch → zoom. 2-finger horizontal → time. 2-finger vertical → spatial forward/back. `pointers.size < 3` condition in tThrust reset → `< 2`.
 Code: `static/index.html` — pointer event handlers, tThrust reset condition, gesture state machine.
 
 Action: Implement 2-finger gesture handling: track initial separation and center for pinch zoom, horizontal delta for time thrust, vertical delta for spatial thrust. Change tThrust reset from `pointers.size < 3` to `< 2` so single-finger lift doesn't reset temporal velocity.
 Verification: Two-finger pinch zooms in/out (scale changes). Two-finger horizontal swipe changes time. Two-finger vertical swipe moves forward/back. Single-finger lift does not reset tThrust. `cargo check` clean. Open browser at `127.0.0.1:1111`, confirm gestures work.
-
----
-
-## Archivar Dual-Mode Architecture — 5-Session Roadmap
-
-SUPERSEDES "Archivar `{latest}` Resolver" and "CDN Asset Renaming". Council
-verdict 2026-08-07 (unanimous, 5 voices). The `{latest}` resolver and CDN
-renaming are unnecessary when the CI Archivar writes timestamped snapshots to
-the CDN — the naming convention IS the resolver. The full architecture is
-described in `docs/dual_mode_architecture.md`.
-
-### Session 1: CI-mode flag + naming convention + local file output — DONE
-Commit: upcoming. `src/main.rs:5791-5894` — `ci_mode_main()`, `extract_netloc`,
-`source_name_from_url`, `utc_iso8601_now`, `file_fresh`. CLI dispatch at
-`main():5896-5903`. Uses `{name}.json` (no timestamp) for Session 1 freshness.
-Verified: `cargo check` 0 errors 0 warnings, 14/14 tests, `--ci-mode` writes
-to `out/{netloc}/{name}.json`. `out/` added to `.gitignore`.
-Next session entry point: extend `ci_mode_main()` to call `gh release upload`.
-
-### Session 2: CDN upload integration — DONE
-Commit: upcoming. `src/main.rs:5795-5859` — `gh release create` + `gh release
-upload --clobber` after each successful write. Token guard: skips if neither
-`GH_TOKEN` nor `OMEGAFLOW_TOKEN` set. Upload counter in log line.
-`.github/workflows/mirror-cdn.yml` — `cargo run -- --ci-mode` on push +
-`*/5 * * * *` schedule. Verified: `cargo check` 0/0, 14/14 tests, local run
-without token skips uploads gracefully.
-Next session entry point: modify `fetch_one` for CDN-first TTL-fallback.
-
-### Session 3: Local CDN-first fetch with TTL-fallback — DONE
-Commit: upcoming. `src/main.rs:2203-2258` — `fetch_raw` (pure curl), `fetch_one`
-(CDN-first wrapper: try `releases/download/{netloc}/{name}.json`, fall through
-to `fetch_raw`). `ci_mode_main()` uses `fetch_raw` directly (CI is the writer).
-`warm_cache` consumer: CDN pre-scan at `:5567-5585` (sequential CDN tries per
-chunk before spawn loop), pre-filled tasks skip `spawn_task_curl` and are
-processed at `:5588-5650`. No TTL comparison needed — CI cadence (TTL/Φ)
-guarantees CDN freshness. `cargo check` 0/0, 14/14 tests.
-Next session entry point: collapse `sources_cdn.φ` into `sources_live.φ`.
-
-### Session 4: Collapse source files — DONE
-Code: `phi/sources_cdn.φ` + `phi/sources_live.φ` → `phi/sources.φ` (3510 blocks
-= 1770+1740). `load_sources()` at `src/main.rs:2792` reads single
-`phi/sources.φ`. `main()` eprintln updated. `cargo check` 0/0, 14/14 tests.
-Next session entry point: excise Python CDN scripts, only Rust CI remains.
-
-### Session 5: Excise Python CDN scripts
-Delete: `migrate_live_to_cdn.py`, `tap_to_cdn.py`, `shard_catalog.py`,
-`refresh_catalogs.py`, `restore_all_live.py`. Keep `generate_ephemerides.py`
-(SPICE) and `verify_sources.py` (audit). CI workflow only runs
-`cargo run -- --ci-mode` + ephemeris generation.
-
-### CI Script URL-First Migration
-
-`tap_to_cdn.py`, `refresh_catalogs.py`, `restore_all_live.py` parse with `source <name>` lines as block anchors. The file is url-first now.
-Code: `scripts/tap_to_cdn.py`, `scripts/refresh_catalogs.py`, `scripts/restore_all_live.py`.
-
-Action: `tap_to_cdn.py` and `refresh_catalogs.py`: Replace `re.split(r"\n(?=source )", content)` with `content.strip().split('\n\n')`. Derive name from URL path. `restore_all_live.py`: Remove `_current_names_from_urls()` `{latest}` strip logic (no longer needed after URL repair).
-Verification: Run each script against current `phi/sources.φ`. No parse errors. Correct source names extracted. `grep -c '{latest}' phi/sources.φ` → 0 (URLs already repaired or resolver handles them).
 
 ---
 
@@ -306,7 +244,7 @@ Reclassification of the 2,189 pre_cdn.φ source blocks:
 - DEFER: ~10% (parser support, TLE extract, TAP protocol, live URL verification)
 - DROP: ~2% (MarineTraffic, SentinelHub/Planet/GEE, LeoLabs, CTBTO, DSN Now, MBARI MARS)
 
-Code: `phi/recovery/pre_cdn.φ` (inventory), `phi/sources_cdn.φ`, `phi/sources_live.φ`
+Code: `phi/research/pre-cdn-1924-blocks.φ` (inventory), `phi/sources_cdn.φ`, `phi/sources_live.φ`
 
 ---
 
@@ -372,14 +310,14 @@ Verification: NEO oscillators appear at correct ICRS positions. `cargo check` cl
 ## Pre-CDN Reclassification: World Bank Indicators DROP
 
 The 228 World Bank indicator blocks in `pre_cdn.φ` (GDP, birth rate, forest percentage, etc.) are economic statistics — not direct physical measurements. They have no force. The prior verdict of IMPLEMENT-NOW with `force em` is revoked under the Force Gate Principle: the measured quantity does not propagate through the block universe under any declared force. All 228 are DROP.
-Code: `phi/recovery/pre_cdn.φ` (inventory reference only — no migration occurs).
+Code: `phi/research/pre-cdn-1924-blocks.φ` (inventory reference only — no migration occurs).
 
 ---
 
 ## Pre-CDN Reclassification: Yahoo Finance DROP
 
 The 37 Yahoo Finance ETF/stock price blocks in `pre_cdn.φ` are symbolic abstractions (prices) — not physical measurements. They have no force. The prior verdict of IMPLEMENT-NOW is revoked. All 37 are DROP.
-Code: `phi/recovery/pre_cdn.φ` (inventory reference only — no migration occurs).
+Code: `phi/research/pre-cdn-1924-blocks.φ` (inventory reference only — no migration occurs).
 
 ---
 
@@ -493,13 +431,13 @@ If a force type is needed, it must be added to `force_id_of()` and `force_extent
 - BGS-HAPI: 92 observatories present in live but had dead hardcoded timestamps (fixed to {yesterday}..{yesterday}T23:59). 2 missing (mcg, nag). Original used {today} template which fails (1405 - best-avail has latency).
 
 Action: recover SIMBAD (curate with otype), JPL-SSD (Horizons, parser-def), Gaia. Verify each.
-Code: `phi/recovery/research/arena/` inventory, `phi/sources_live.φ`
+Code: `phi/research/api-domains/` inventory, `phi/sources_live.φ`
 
 ## Remaining Curation Backlog (post-recovery comparison)
 
 `ALL_lost_blocks_richest.φ` (5701 recovered) vs arena blocks still unchecked (1033):
 - 873 blocks NOT in lost history = truly new, completely unchecked
-  (saved: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, 13658 lines)
+  (saved: `phi/research/pre-cdn-history/NEW_unchecked_blocks.φ`, 13658 lines)
   Largest: tapvizier 249, ncei 47, heasarc 39, coastwatch 20, pangaea 18,
   celestrak 16, cdaweb 15, cmems 13, mast 11, irsa 10, inaturalist 10,
   gml 10...
@@ -512,7 +450,7 @@ Code: `phi/recovery/research/arena/` inventory, `phi/sources_live.φ`
 Action: curate 873 new blocks (reachability + structure + force-gate
 one-by-one). For 160 known, compare arena vs lost richest version and
 use the richer. Every source tested individually.
-Code: `phi/recovery/pre_cdn_history/NEW_unchecked_blocks.φ`, `sources_live.φ`
+Code: `phi/research/pre-cdn-history/NEW_unchecked_blocks.φ`, `sources_live.φ`
 
 ## NEXT SESSION ENTRY POINT: Untested Blocks
 
@@ -538,7 +476,7 @@ source_curation.md (positionless -> `last <dot.path>` at frame; GeoJSON ->
 `map features` + `geometry.coordinates.N` + `on earth`/`body earth`; fixed
 station -> `last <container>.<field>`; metadata/text-warning -> decline).
 
-Then continue curation with `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`
+Then continue curation with `phi/research/pre-cdn-history/UNTESTED_blocks.φ`
 (423 blocks). PROGRESS TRACKING: when a block is tested, add it to
 dead_sources.φ (dead/parser-def/decline/key-needed) or sources_live.φ
 (verified). UNTESTED_index.txt shows remaining by domain.

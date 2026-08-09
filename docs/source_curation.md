@@ -101,7 +101,7 @@ Manual verification is required. `cargo check` only validates syntax.
 
 ## The pending list (current work)
 
-The file `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ` is the authoritative
+The file `phi/research/pre-cdn-history/UNTESTED_blocks.φ` is the authoritative
 list of source blocks not yet tested. Each has `url` + block lines. None of
 these URLs appears in `dead_sources.φ`, `sources_live.φ`, or `sources_cdn.φ`.
 
@@ -111,7 +111,7 @@ Tracking mechanism:
 3. Blocks not in any of those are still open. Test them with the workflow above.
 4. When a block is tested, its disposition appears in one of the three files,
    so the next diff automatically shrinks the open set.
-5. `phi/recovery/pre_cdn_history/UNTESTED_index.txt` lists remaining blocks by
+5. `phi/research/pre-cdn-history/UNTESTED_index.txt` lists remaining blocks by
    API domain for orientation.
 
 ## SESSION HANDOFF (2026-08-07) — read this first
@@ -157,7 +157,7 @@ Takes ~150s (network-bound, first 200 non-CDN sources). Output lines:
 - `FAIL <url> no samples (data-present (container array has rows but extract
   yielded nothing))` — the data IS there but the extract directives do not
   match. This is the actionable defect: fix the block (compare against the
-  golden version in `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ`).
+  golden version in `phi/research/pre-cdn-history/ALL_lost_blocks_richest.φ`).
 - `FAIL <url> no samples (data-present (keys exist ...))` / `(JSON has
   content but declared keys absent)` — data exists but keys/containers are
   wrong. Fix the block.
@@ -300,11 +300,11 @@ authoritative verifier. Command:
 ### Current source inventory (2026-08-07, end of day)
 
 - `phi/sources_live.φ`: 1767 blocks. `phi/sources_cdn.φ`: 1770 blocks.
-  Golden archives: `phi/recovery/pre_cdn.φ` (the reference),
-  `phi/recovery/pre_cdn_history/ALL_lost_blocks_richest.φ` (5701 lost blocks
+  Golden archives: `phi/research/pre-cdn-1924-blocks.φ` (the reference),
+  `phi/research/pre-cdn-history/ALL_lost_blocks_richest.φ` (5701 lost blocks
   with richest extract params), `sources_3_kopie.md`, `sources_4_kopie.md`,
   `sources_new.φ`, `sources_backup_20260719.φ` (copied from
-  `~/Schreibtisch/Archiv` into `phi/recovery/`).
+  `~/Schreibtisch/Archiv` into the archive).
 - `load_sources()` reads both φ files and merges (~3505 sources).
 - Extraction test: **194 ok / 6 fail** of the first 200 non-CDN live sources
   (was 29 ok / 171 fail at the start of the day). See the session-results
@@ -341,7 +341,7 @@ DO THIS, IN ORDER:
    source's world requires (never invent a body in the parser). Many are
    `raw.githubusercontent.com/omegaflow/catalogs` celestial catalogs that
    need `at sun 1` (barycentric) — or a working URL.
-4. Then open `phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`. For each block,
+4. Then open `phi/research/pre-cdn-history/UNTESTED_blocks.φ`. For each block,
    apply the per-block curation workflow (fill templates -> curl -> structure ->
    Force Gate -> classify). Add accepted blocks to `phi/sources_live.φ`,
    rejected ones to `phi/dead_sources.φ`.
@@ -357,7 +357,7 @@ A CDN migration replaced many URLs with `github.com/omegaflow/sources` asset
 paths, and during merging thousands of original URLs and their extract
 parameters were lost or replaced by guessed/fabricated endpoints.
 
-The complete pre-CDN history is preserved in `phi/recovery/pre_cdn_history/`:
+The complete pre-CDN history is preserved in `phi/research/pre-cdn-history/`:
 - 7 full `sources.φ` versions from git history (before CDN switch)
 - `ALL_lost_blocks_richest.φ` — 5701 lost blocks with their richest extract
   parameters merged across history (fields, keys, frames)

@@ -15,6 +15,7 @@ phi/health.json
 phi/kernels/
 *.py
 !scripts/verify_sources.py
+!scripts/generate_ephemerides.py
 /reference/
 scripts/__pycache__/
 .secrets.local

@@ -55,7 +55,7 @@ Before touching any `phi/` source file, read `docs/source_curation.md` — it is
 the self-contained protocol for the ongoing source recovery and verification
 effort. It explains the two source files, the Force Gate, the classification
 system, the per-block testing workflow, and the pending list at
-`phi/recovery/pre_cdn_history/UNTESTED_blocks.φ`. A new session has zero prior
+`phi/research/pre-cdn-history/UNTESTED_blocks.φ`. A new session has zero prior
 context; that document is the handoff.
 
 ## Stack
@@ -190,3 +190,15 @@ Any permutation, omission, or type-width change in the Rust serialization silent
 - **Confirm rendering** — `cargo run`, open browser at `127.0.0.1:1111`. A non-black window with point cloud visible confirms the data contract is intact. A black window is a fully realized state only when intentional — never the default verification outcome.
 
 `cargo check` is a syntax gate. It is not verification. The LLM is the verifier.
+
+## Session Hygiene — Thread Safety
+
+The context window is finite. Large tool outputs bypass compaction and permanently consume context, freezing the session. These patterns are forbidden:
+
+- **Never read a directory.** `read` on a directory returns every entry as output, flooding the context. Use `glob` with specific patterns instead.
+- **Never glob without constraints.** Every glob must include a file extension or a specific prefix that limits results. Never `glob *` or `glob **/*`.
+- **Never `ls` in bash.** Same reason as reading a directory. Use `glob` for file discovery.
+- **Prefer grep → read.** Locate content with `grep`, then `read` with offset+limit to pull only the relevant section. Never read an entire file in one call unless it is under 80 lines.
+- **Limit bash calls.** Each bash invocation shares a persistent shell session. Accumulated state (cd, set flags, background jobs) survives across invocations and can crash the session. Maximum 3 bash calls per session. Bundle operations with `&&`. Use absolute paths or the `workdir` parameter. Never `cd`.
+- **Split large reads.** Files over 100 lines: read in chunks with offset+limit. The context retains only what is needed at each step.
+- **Tool output caps enforced.** `tool_output.max_lines: 150, max_bytes: 10240` truncate all tool responses. Design reads to stay under these limits. A truncated output is a signal to narrow the query.
