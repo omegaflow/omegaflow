@@ -1,11 +1,13 @@
 #![allow(mixed_script_confusables)]
-use std::collections::HashMap;
-use std::io::{Cursor, Read, Write};
-use std::net::{TcpListener, TcpStream};
-use std::process::Command;
-use std::sync::{mpsc, Arc};
-use std::thread;
-use std::time::{Instant, SystemTime, UNIX_EPOCH};
+use std::{
+    collections::HashMap,
+    io::{Cursor, Read, Write},
+    net::{TcpListener, TcpStream},
+    process::Command,
+    sync::{mpsc, Arc},
+    thread,
+    time::{Instant, SystemTime, UNIX_EPOCH},
+};
 
 const Φ: f64 = 1.618033988749895;
 const J2000_EPOCH: f64 = 2451545.0;
