@@ -2030,17 +2030,17 @@ struct FieldConfig {
     tau: Option<f64>,
 }
 
-fn force_id_of(name: &str) -> u8 {
+fn force_id_of(name: &str) -> Option<u8> {
     match name {
-        "em" => 0,
-        "gravity" => 1,
-        "acoustic" => 2,
-        "seismic-body" => 3,
-        "seismic-surface" => 4,
-        "thermal" => 5,
-        "diffusion" => 6,
-        "advective" => 7,
-        _ => 0,
+        "em" => Some(0),
+        "gravity" => Some(1),
+        "acoustic" => Some(2),
+        "seismic-body" => Some(3),
+        "seismic-surface" => Some(4),
+        "thermal" => Some(5),
+        "diffusion" => Some(6),
+        "advective" => Some(7),
+        _ => None,
     }
 }
 
@@ -2984,11 +2984,15 @@ fn load_sources() -> Vec<SourceConfig> {
                     Some(k) => k,
                     None => continue,
                 };
+                let f = match force_id_of(parts[4]) {
+                    Some(f) => f,
+                    None => continue,
+                };
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     kernel: k,
-                    force: force_id_of(parts[4]),
+                    force: f,
                     unit: parts[5].to_string(),
                     tau: None,
                 };
@@ -4490,7 +4494,11 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 epoch_key,
                 fields,
             } => {
-                let default_epoch = src.catalog_epoch.unwrap_or(now);
+                let default_epoch = if let Some(e) = src.catalog_epoch {
+                    e
+                } else {
+                    continue;
+                };
                 if let Some(ref j) = parsed_json {
                     if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
                         for v in arr.iter() {
@@ -4858,23 +4866,29 @@ fn materialize(
         .filter(|(_, v)| !v.is_nan() && v.is_finite())
         .cloned()
         .collect();
-    let (kernel_id, force_type, _field_unit, _field_tau) = src
-        .extracts
-        .iter()
-        .find_map(|ext| match ext {
-            Extract::Map { fields, .. }
-            | Extract::CelestialMap { fields, .. }
-            | Extract::Rows { fields, .. }
-            | Extract::Flatten { fields, .. }
-            | Extract::CmrPolygon { fields, .. }
-            | Extract::CelestialPolygon { fields, .. }
-            | Extract::KeplerMap { fields, .. } => fields.first(),
-            _ => None,
-        })
-        .map(|fc| (fc.kernel as f64, fc.force as f64, fc.unit.as_str(), fc.tau))
-        .unwrap_or((0.0, 0.0, "", None));
-    std::hint::black_box(_field_unit);
-    std::hint::black_box(_field_tau);
+    let field_cfg = src.extracts.iter().find_map(|ext| match ext {
+        Extract::Map { fields, .. }
+        | Extract::CelestialMap { fields, .. }
+        | Extract::Rows { fields, .. }
+        | Extract::Flatten { fields, .. }
+        | Extract::CmrPolygon { fields, .. }
+        | Extract::CelestialPolygon { fields, .. }
+        | Extract::KeplerMap { fields, .. } => fields.first(),
+        Extract::Field(fc)
+        | Extract::First(fc)
+        | Extract::Last(fc)
+        | Extract::Count(fc)
+        | Extract::LastRow(fc)
+        | Extract::ObjLast(fc)
+        | Extract::Path(fc)
+        | Extract::Deep(fc)
+        | Extract::Regex(fc) => Some(fc),
+        _ => None,
+    });
+    let (kernel_id, force_type, _field_unit, _field_tau) = match field_cfg {
+        Some(fc) => (fc.kernel as f64, fc.force as f64, fc.unit.as_str(), fc.tau),
+        None => return vec![],
+    };
     let tau = match pend.tau {
         Some(t) if t > 0.0 => t,
         _ => return vec![],
@@ -5392,7 +5406,7 @@ fn main() {
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 pendings: Vec::new(),
-                                eph_update: Some((src_clone.body.clone().unwrap_or_default(), eph)),
+                                eph_update: src_clone.body.clone().map(|b| (b, eph)),
                             });
                             v
                         }
@@ -6046,7 +6060,14 @@ mod tests {
             url: "https://example.com".into(),
             frame,
             format: "json".into(),
-            extracts: vec![],
+            extracts: vec![Extract::Field(FieldConfig {
+                key: "v".into(),
+                name: "v".into(),
+                kernel: 1,
+                force: 0,
+                unit: "".into(),
+                tau: None,
+            })],
             headers: vec![],
             post_body: None,
             method: "get".into(),
