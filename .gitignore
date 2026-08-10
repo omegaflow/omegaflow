@@ -9,7 +9,6 @@ omegaflow.wasm
 !.opencode/command/
 .opencode/command/*
 !.opencode/command/council.md
-opencode.json
 *.pdb
 phi/health.json
 phi/kernels/
