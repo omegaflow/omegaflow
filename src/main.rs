@@ -3907,7 +3907,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                     }
                 } else {
                     eprintln!(
-                        "VEC body not JSON, fmt={} len={} lead={:?}",
+                        "EPH body not JSON, fmt={} len={} lead={:?}",
                         src.format,
                         body.len(),
                         &body[..body.len().min(120)]
@@ -4024,7 +4024,7 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                     }
                 } else {
                     eprintln!(
-                        "VEC parse_json failed fmt={} len={} head={:?}",
+                        "VEC body not JSON, fmt={} len={} lead={:?}",
                         src.format,
                         body.len(),
                         body.get(..40.min(body.len()))
@@ -5239,7 +5239,7 @@ fn verify_mode(dir: &str) -> i32 {
     let mut ok = 0;
     let mut fail = 0;
     let mut verified = String::new();
-    let mut failed = String::new();
+    let mut empty_urls = String::new();
     for url in &urls {
         let raw = fetch_raw(url, None, &[], 30);
         if raw.is_some() {
@@ -5248,8 +5248,8 @@ fn verify_mode(dir: &str) -> i32 {
             verified.push('\n');
         } else {
             fail += 1;
-            failed.push_str(url);
-            failed.push('\n');
+            empty_urls.push_str(url);
+            empty_urls.push('\n');
         }
         if (ok + fail) % 50 == 0 {
             eprintln!(
@@ -5262,7 +5262,7 @@ fn verify_mode(dir: &str) -> i32 {
         }
     }
     std::fs::write("verified_urls.txt", &verified).ok();
-    std::fs::write("failed_urls.txt", &failed).ok();
+    std::fs::write("empty_urls.txt", &empty_urls).ok();
     eprintln!(
         "verify: done. {} present, {} empty. {} total.",
         ok,
