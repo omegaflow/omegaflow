@@ -477,8 +477,8 @@ fn horizons_request(
 ) -> Option<String> {
     let url = format!(
         "https://ssd.jpl.nasa.gov/api/horizons.api?format=text\
-         &COMMAND='{}'&CENTER='500@0'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'\
-         &START_TIME='JD+{:.2}'&STOP_TIME='JD+{:.2}'&STEP_SIZE='{}+d'",
+         &COMMAND=%27{}%27&CENTER=%27500%400%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27\
+         &START_TIME=%27JD%2B{:.2}%27&STOP_TIME=%27JD%2B{:.2}%27&STEP_SIZE=%27{}%2Bd%27",
         url_encode(command),
         t_start_jd,
         t_stop_jd,
@@ -511,7 +511,7 @@ fn url_encode(s: &str) -> String {
     let mut out = String::new();
     for b in s.bytes() {
         match b {
-            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' | b';' | b'\'' => {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
                 out.push(b as char)
             }
             b' ' => out.push('+'),
