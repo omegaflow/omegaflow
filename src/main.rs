@@ -460,7 +460,7 @@ struct Oscillator {
     name: String,
 }
 
-struct Family {
+struct SpatialHash {
     cell_size: f64,
     vmax: f64,
     amax: f64,
@@ -472,8 +472,8 @@ struct Family {
 }
 
 struct Buffer {
-    bodies: HashMap<String, Family>,
-    inertial: Family,
+    bodies: HashMap<String, SpatialHash>,
+    inertial: SpatialHash,
 }
 
 fn cell_of(p: [f64; 3], s: f64) -> CellKey {
@@ -517,7 +517,7 @@ fn law_bounds(
     Some((Φ * (v + resid_ema), Φ * a, p0))
 }
 
-fn build_family(samples: Vec<Oscillator>, cadence: f64) -> Family {
+fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
     let mut vmax = 0.0f64;
     let mut amax = 0.0f64;
     let mut rmax = 0.0f64;
@@ -544,7 +544,7 @@ fn build_family(samples: Vec<Oscillator>, cadence: f64) -> Family {
         cell_hi.2 = cell_hi.2.max(c.2);
         cells.entry(c).or_default().push(s);
     }
-    Family {
+    SpatialHash {
         cell_size,
         vmax,
         amax,
@@ -572,16 +572,16 @@ fn build_buffer(samples: Vec<Oscillator>, cadence: f64) -> Buffer {
     }
     let mut bodies = HashMap::new();
     for (name, oscs) in body_samps {
-        bodies.insert(name, build_family(oscs, cadence));
+        bodies.insert(name, build_spatial_hash(oscs, cadence));
     }
     Buffer {
         bodies,
-        inertial: build_family(inertial_samps, cadence),
+        inertial: build_spatial_hash(inertial_samps, cadence),
     }
 }
 
-fn enclose_family(
-    fam: &Family,
+fn query_hash(
+    hash: &SpatialHash,
     anchor: [f64; 3],
     center: [f64; 3],
     t2: f64,
@@ -590,7 +590,7 @@ fn enclose_family(
     body_props: Option<&BodyProperties>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
-    if fam.cells.is_empty() {
+    if hash.cells.is_empty() {
         return;
     }
     let qf = [
@@ -598,20 +598,20 @@ fn enclose_family(
         center[1] - anchor[1],
         center[2] - anchor[2],
     ];
-    let dt = (t2 - fam.epoch_min).abs();
-    let rho = fam.rmax + fam.vmax * dt + 0.5 * fam.amax * dt * dt + pad;
-    let s = fam.cell_size;
+    let dt = (t2 - hash.epoch_min).abs();
+    let rho = hash.rmax + hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
+    let s = hash.cell_size;
     let qlo = cell_of([qf[0] - rho, qf[1] - rho, qf[2] - rho], s);
     let qhi = cell_of([qf[0] + rho, qf[1] + rho, qf[2] + rho], s);
     let lo = (
-        qlo.0.max(fam.cell_lo.0),
-        qlo.1.max(fam.cell_lo.1),
-        qlo.2.max(fam.cell_lo.2),
+        qlo.0.max(hash.cell_lo.0),
+        qlo.1.max(hash.cell_lo.1),
+        qlo.2.max(hash.cell_lo.2),
     );
     let hi = (
-        qhi.0.min(fam.cell_hi.0),
-        qhi.1.min(fam.cell_hi.1),
-        qhi.2.min(fam.cell_hi.2),
+        qhi.0.min(hash.cell_hi.0),
+        qhi.1.min(hash.cell_hi.1),
+        qhi.2.min(hash.cell_hi.2),
     );
     if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
         return;
@@ -619,8 +619,8 @@ fn enclose_family(
     let span = ((hi.0 - lo.0 + 1) as u64)
         .saturating_mul((hi.1 - lo.1 + 1) as u64)
         .saturating_mul((hi.2 - lo.2 + 1) as u64);
-    let visit: Vec<&Vec<Oscillator>> = if span > fam.cells.len() as u64 * 4 {
-        fam.cells
+    let visit: Vec<&Vec<Oscillator>> = if span > hash.cells.len() as u64 * 4 {
+        hash.cells
             .iter()
             .filter(|(ck, _)| {
                 ck.0 >= lo.0
@@ -637,7 +637,7 @@ fn enclose_family(
         for cx in lo.0..=hi.0 {
             for cy in lo.1..=hi.1 {
                 for cz in lo.2..=hi.2 {
-                    if let Some(samples) = fam.cells.get(&(cx, cy, cz)) {
+                    if let Some(samples) = hash.cells.get(&(cx, cy, cz)) {
                         out.push(samples);
                     }
                 }
@@ -701,15 +701,15 @@ fn sense_buffer(
     records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
-    for (body_name, fam) in &buf.bodies {
+    for (body_name, hash_cell) in &buf.bodies {
         let anchor = match body_barycenter_position(body_name, t2, eph) {
             Some(a) => a,
             None => continue,
         };
         let body_props = eph.get(body_name).and_then(|e| e.props.as_ref());
-        enclose_family(fam, anchor, center, t2, pad, records, body_props, eph);
+        query_hash(hash_cell, anchor, center, t2, pad, records, body_props, eph);
     }
-    enclose_family(
+    query_hash(
         &buf.inertial,
         [0.0, 0.0, 0.0],
         center,
@@ -2287,12 +2287,12 @@ impl Radiator for AudioRadiator {
     fn accept(&self, field: Arc<Buffer>) {
         let mut out = std::io::stdout();
         let mut samples: Vec<f32> = Vec::new();
-        for fam in field
+        for hash in field
             .bodies
             .values()
             .chain(std::iter::once(&field.inertial))
         {
-            for v in fam.cells.values() {
+            for v in hash.cells.values() {
                 for s in v {
                     let tau_u32 = s.tau as u32;
                     if tau_u32 == 0 {
@@ -2619,14 +2619,14 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             last_field.clone()
                         };
                         let mut report = String::new();
-                        let mut families: Vec<(&str, &Family)> =
+                        let mut hashes: Vec<(&str, &SpatialHash)> =
                             buf.bodies.iter().map(|(k, v)| (k.as_str(), v)).collect();
-                        families.push(("inertial", &buf.inertial));
-                        for (fname, fam) in families {
+                        hashes.push(("inertial", &buf.inertial));
+                        for (fname, hash) in hashes {
                             let mut n = 0usize;
                             let mut field_names: std::collections::HashSet<&str> =
                                 std::collections::HashSet::new();
-                            for v in fam.cells.values() {
+                            for v in hash.cells.values() {
                                 for osc in v {
                                     n += 1;
                                     field_names.insert(osc.name.as_str());
@@ -2639,10 +2639,10 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                                 "{} samples={} cells={} rmax={:.3e} vmax={:.3e} epoch_min={:.1}\n",
                                 fname,
                                 n,
-                                fam.cells.len(),
-                                fam.rmax,
-                                fam.vmax,
-                                fam.epoch_min
+                                hash.cells.len(),
+                                hash.rmax,
+                                hash.vmax,
+                                hash.epoch_min
                             ));
                             let mut names: Vec<&str> = field_names.into_iter().collect();
                             names.sort();
@@ -5794,10 +5794,10 @@ fn main() {
             let mut all: Vec<Oscillator> = Vec::new();
             all.append(&mut fetched_oscillators);
             let old = archive.field.clone();
-            let mut families: Vec<&Family> = old.bodies.values().collect();
-            families.push(&old.inertial);
-            for fam in families {
-                for v in fam.cells.values() {
+            let mut hashes: Vec<&SpatialHash> = old.bodies.values().collect();
+            hashes.push(&old.inertial);
+            for hash in hashes {
+                for v in hash.cells.values() {
                     for s in v {
                         if (now - s.epoch).abs() <= s.ttl * 64.0 {
                             all.push(s.clone());
