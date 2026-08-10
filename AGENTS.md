@@ -43,6 +43,9 @@ fieldPermeability = exponential relaxation (naturalLatencyTicks as τ).
 Thresholds derive from: c, Φ, J2000, power-of-2, live data, or BodyProperties (per-body, read from ephemeris binary).
 Behavior emerges from properties.
 Name = Implementation.
+Diagnostics name what IS, not what was EXPECTED. No `failed`, `error`, `crash`, `secret`, `cannot`, `fallback` in messages or variable names. A Sirian reading the output must understand what happened without knowing what was supposed to happen.
+0 honored: absence is a fully realized property. Black window, empty field, τ=0 gate closed — these are correct states, not bugs. Empty is not a default. Silence is not a crash.
+Every `unwrap_or`, `_ => 0`, `max(1)`, `#[derive(Default)]` is a fabrication waiting to happen. Eliminate them. The archaeology documents the war against them.
 Code is self-documenting.
 A council session leaves no document of its own. Council decisions exist only as code, as a rule in this file, or as a line in TODO.md. The council agent definition at `.opencode/agent/council.md` and `.opencode/command/council.md` is versioned infrastructure — the council's body, not its output.
 A commit is a checkmark. Every commit closes a TODO item, opens one, or narrows it. The TODO is updated in the same commit that changes the code. Completed items are removed — TODO contains only pending work. Git is the history.
