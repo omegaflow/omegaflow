@@ -16,6 +16,16 @@ jobs:
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
 
+      - name: Delete old ephemeris assets from CDN
+        run: |
+          echo "Cleaning ssd.jpl.nasa.gov release..."
+          gh release view ssd.jpl.nasa.gov --repo omegaflow/sources --json assets -q '.assets[].name' 2>/dev/null | \
+            while read name; do
+              echo "  delete $name"
+              gh release delete-asset ssd.jpl.nasa.gov "$name" --repo omegaflow/sources -y 2>/dev/null || \
+                echo "  (delete skipped: $name)"
+            done || echo "  (no release or no assets)"
+
       - name: Download SPICE kernels
         run: |
           mkdir -p kernels
@@ -46,13 +56,11 @@ jobs:
             kernels/mar099s.bsp \
             kernels/nep097.bsp
 
-      - name: Upload ephemeris binaries
+      - name: Upload to CDN release
         run: |
-          mkdir -p out
-          mv ephemeris_*.bin out/
-          ls -lh out/
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ephemerides
-          path: out/
+          for f in ephemeris_*.bin; do
+            echo "upload $f to ssd.jpl.nasa.gov..."
+            gh release upload ssd.jpl.nasa.gov "$f" \
+              --repo omegaflow/sources --clobber || \
+              echo "::warning::upload failed for $f"
+          done
