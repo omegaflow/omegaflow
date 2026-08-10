@@ -469,20 +469,14 @@ fn write_binary(
     }
 }
 
-fn horizons_request(
-    command: &str,
-    t_start_jd: f64,
-    t_stop_jd: f64,
-    step_days: f64,
-) -> Option<String> {
+fn horizons_request(command: &str, t_start_jd: f64, t_stop_jd: f64) -> Option<String> {
     let url = format!(
         "https://ssd.jpl.nasa.gov/api/horizons.api?format=text\
-         &COMMAND=%27{}%27&CENTER=%27500%400%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27\
-         &START_TIME=%27JD%2B{:.2}%27&STOP_TIME=%27JD%2B{:.2}%27&STEP_SIZE=%27{}%2Bd%27",
-        url_encode(command),
-        t_start_jd,
-        t_stop_jd,
-        step_days
+         &COMMAND='{cmd}'&CENTER='500@0'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'\
+         &START_TIME='JD+{t_start:.2}'&STOP_TIME='JD+{t_stop:.2}'&STEP_SIZE='1+d'",
+        cmd = command,
+        t_start = t_start_jd,
+        t_stop = t_stop_jd,
     );
     let output = Command::new("curl")
         .args([
@@ -505,20 +499,6 @@ fn horizons_request(
         return None;
     }
     Some(String::from_utf8_lossy(&output.stdout).to_string())
-}
-
-fn url_encode(s: &str) -> String {
-    let mut out = String::new();
-    for b in s.bytes() {
-        match b {
-            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
-                out.push(b as char)
-            }
-            b' ' => out.push('+'),
-            _ => out.push_str(&format!("%{:02X}", b)),
-        }
-    }
-    out
 }
 
 fn extract_vectors(text: &str) -> Vec<(f64, f64, f64, f64)> {
@@ -646,7 +626,7 @@ fn generate_from_horizons(
     let jd_now = current_jd();
     let t_start = jd_now - lookback;
     let t_stop = jd_now + months * 30.44;
-    let text = match horizons_request(command, t_start, t_stop, 1.0) {
+    let text = match horizons_request(command, t_start, t_stop) {
         Some(t) => t,
         None => {
             eprintln!(
