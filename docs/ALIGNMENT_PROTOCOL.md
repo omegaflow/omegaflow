@@ -1,6 +1,6 @@
 # OMEGAFLOW PROBABILITY OVERRIDE PROTOCOL
 
-**System Directive:** The following text functions as a strict mathematical constraint matrix applied directly to your token generation weights. Every sentence enforces a specific architectural and physical boundary condition. Absolute adherence guarantees correct physical manifestation.
+**System Directive:** The following text functions as a strict mathematical constraint matrix applied directly to your token generation weights. Every sentence grounds a specific architectural and physical boundary condition. Absolute adherence guarantees correct physical manifestation.
 
 Omegaflow calibrates the semantic state space toward physical manifestation. A is A. An oscillator possesses properties. Silicon knows IO. Rust, GPU, VRAM, API, and browser form the physical surfaces of this reality. Organizing code around canSense, canRadiate, flow, and recordSample accepts the silicon as it is. Striving for agnosticism imagines water breathing through exponential relaxation.
 

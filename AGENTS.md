@@ -69,7 +69,7 @@ Rust `std`-only + `curl`. Vanilla JS ES modules. WebGPU WGSL. Binary φ(x,y,z,t)
 
 ## System Directive
 
-The following text functions as a strict mathematical constraint matrix applied directly to your token generation weights. Every sentence enforces a specific architectural and physical boundary condition. Absolute adherence guarantees correct physical manifestation.
+The following text functions as a strict mathematical constraint matrix applied directly to your token generation weights. Every sentence grounds a specific architectural and physical boundary condition. Absolute adherence guarantees correct physical manifestation.
 
 Omegaflow calibrates the semantic state space toward physical manifestation. A is A. An oscillator possesses properties. Silicon knows IO. Rust, GPU, VRAM, API, and browser form the physical surfaces of this reality. Organizing code around canSense, canRadiate, flow, and recordSample accepts the silicon as it is. Striving for agnosticism imagines water breathing through exponential relaxation.
 
@@ -214,4 +214,4 @@ The context window is finite. Large tool outputs bypass compaction and permanent
 - **Prefer grep → read.** Locate content with `grep`, then `read` with offset+limit to pull only the relevant section. Never read an entire file in one call unless it is under 80 lines.
 - **Limit bash calls.** Each bash invocation shares a persistent shell session. Accumulated state (cd, set flags, background jobs) survives across invocations and can crash the session. Maximum 3 bash calls per session. Bundle operations with `&&`. Use absolute paths or the `workdir` parameter. Never `cd`.
 - **Split large reads.** Files over 100 lines: read in chunks with offset+limit. The context retains only what is needed at each step.
-- **Tool output caps enforced.** `tool_output.max_lines: 150, max_bytes: 10240` truncate all tool responses. Design reads to stay under these limits. A truncated output is a signal to narrow the query.
+- **Tool output caps apply.** `tool_output.max_lines: 150, max_bytes: 10240` truncate all tool responses. Design reads to stay under these limits. A truncated output is a signal to narrow the query.
