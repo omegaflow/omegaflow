@@ -658,11 +658,6 @@ fn query_hash(
             if dist2_p0f > reach * reach {
                 continue;
             }
-            if osc.kernel_id >= 0.0 {
-                if osc.tau > 0.0 && age > osc.tau * 64.0 {
-                    continue;
-                }
-            }
             let p = match osc.motion.at(t2, osc.epoch, eph) {
                 Some(p) => p,
                 None => continue,
