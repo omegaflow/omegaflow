@@ -21,7 +21,7 @@ export async function syncFrame(inputs, queries, presence) {
     if (inputs.length === 0 && queries.length === 0) return emptyResp;
 
     let inputBytes = 0;
-    for (const inp of inputs) inputBytes += 17 + new TextEncoder().encode(inp.name).length;
+    for (const inp of inputs) inputBytes += 9 + new TextEncoder().encode(inp.name).length;
     const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32);
     const dv = new DataView(buf);
     const id = ++transport.seq;
@@ -33,7 +33,6 @@ export async function syncFrame(inputs, queries, presence) {
         const nameBytes = new TextEncoder().encode(inp.name);
         dv.setUint8(off, nameBytes.length); off += 1;
         new Uint8Array(buf, off, nameBytes.length).set(nameBytes); off += nameBytes.length;
-        dv.setFloat64(off, inp.tau || 0, true); off += 8;
     }
     dv.setUint32(off, queries.length, true); off += 4;
     for (const q of queries) {

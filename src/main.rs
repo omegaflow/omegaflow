@@ -436,8 +436,14 @@ impl Motion {
 }
 
 #[derive(Clone)]
+enum OscillatorSource {
+    Api(u32),
+    Browser,
+}
+
+#[derive(Clone)]
 struct Oscillator {
-    origin: Origin,
+    source: OscillatorSource,
     epoch: f64,
     ttl: f64,
     extent: f64,
@@ -921,17 +927,12 @@ enum Position {
     },
 }
 
-struct Measurement {
-    epoch: f64,
-    position: Position,
+#[derive(Clone)]
+struct Channel {
     name: String,
-    val: f64,
-    kernel: u8,
-    force: u8,
-    tau: f64,
-    absorption: f64,
-    advection: f64,
-    ttl: f64,
+    value: f64,
+    position: Position,
+    epoch: f64,
 }
 
 fn origin_stale(
@@ -2168,7 +2169,7 @@ struct SourceConfig {
 
 struct FetchResult {
     source_idx: usize,
-    measurements: Vec<Measurement>,
+    channels: Vec<(Channel, FieldConfig)>,
     eph_update: Option<(String, BodyEphemeris)>,
 }
 
@@ -2566,7 +2567,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             let mut station_sample: Option<Oscillator> = None;
                             for v in buf.inertial.cells.values() {
                                 for osc in v {
-                                    if osc.origin.0 == u32::MAX {
+                                    if matches!(osc.source, OscillatorSource::Browser) {
                                         station_sample = Some(osc.clone());
                                     }
                                 }
@@ -2626,6 +2627,9 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                                 for osc in v {
                                     n += 1;
                                     field_names.insert(osc.name.as_str());
+                                    if let OscillatorSource::Api(id) = osc.source {
+                                        let _ = id;
+                                    }
                                 }
                             }
                             report.push_str(&format!(
@@ -2722,7 +2726,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
             }
             let oscillator_count = u32::from_le_bytes(buf4) as usize;
 
-            let mut browser: Vec<(String, f64, f64)> = Vec::with_capacity(oscillator_count);
+            let mut browser: Vec<(String, f64)> = Vec::with_capacity(oscillator_count);
             {
                 for _ in 0..oscillator_count {
                     let mut val_buf = [0u8; 8];
@@ -2742,13 +2746,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     }
                     let name = String::from_utf8_lossy(&name_bytes).to_string();
 
-                    let mut tau_buf = [0u8; 8];
-                    if cursor.read_exact(&mut tau_buf).is_err() {
-                        break;
-                    }
-                    let tau = f64::from_le_bytes(tau_buf);
-
-                    browser.push((name, value, tau));
+                    browser.push((name, value));
                 }
             }
 
@@ -2759,8 +2757,8 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
 
             let now = tdb_now();
             let (mut st_lat, mut st_lon, mut st_alt, mut st_body) = (None, None, None, None::<u32>);
-            let mut field_values: Vec<(String, f64, f64)> = Vec::new();
-            for (name, value, tau) in &browser {
+            let mut field_values: Vec<(String, f64)> = Vec::new();
+            for (name, value) in &browser {
                 match name.as_str() {
                     "lat" => st_lat = Some(*value),
                     "lon" => st_lon = Some(*value),
@@ -2773,7 +2771,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         }
                     }
                     _ => {
-                        field_values.push((name.clone(), *value, *tau));
+                        field_values.push((name.clone(), *value));
                     }
                 }
             }
@@ -2794,44 +2792,32 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         lon,
                         alt,
                     };
-                    let mut measurements: Vec<Measurement> = Vec::new();
-                    for (name, value, tau) in &field_values {
+                    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+                    for (name, value) in &field_values {
                         if let Some(fc) = sensor_config(name) {
                             if value.is_finite() {
-                                measurements.push(Measurement {
-                                    epoch: now,
-                                    position: pos.clone(),
-                                    name: fc.name,
-                                    val: *value,
-                                    kernel: fc.kernel,
-                                    force: fc.force,
-                                    tau: *tau,
-                                    absorption: fc.absorption,
-                                    advection: fc.advection,
-                                    ttl: *tau * 64.0,
-                                });
+                                channels.push((
+                                    Channel {
+                                        epoch: now,
+                                        position: pos.clone(),
+                                        name: fc.name.clone(),
+                                        value: *value,
+                                    },
+                                    fc.clone(),
+                                ));
                             }
                         }
                     }
-                    let mut browser = Vec::new();
-                    let mut browser_origins: HashMap<Origin, OriginState> = HashMap::new();
-                    let browser_frame = Frame::Barycenter {
-                        body_name: body_name.clone(),
-                        scale: 1.0,
-                    };
-                    for m in measurements {
-                        if let Some(osc) = anchor(
-                            (u32::MAX, 0, 1),
-                            m,
-                            Some(&browser_frame),
-                            &mut browser_origins,
-                            &eph_map,
-                        ) {
-                            browser.push(osc);
+                    let mut oscillators = Vec::new();
+                    for (channel, sensor) in channels {
+                        if let Some(osc) =
+                            anchor(&channel, &sensor, 0.0, None, None, None, &eph_map)
+                        {
+                            oscillators.push(osc);
                         }
                     }
-                    if !browser.is_empty() {
-                        let _ = cfg.osc_tx.send(browser);
+                    if !oscillators.is_empty() {
+                        let _ = cfg.osc_tx.send(oscillators);
                     }
                 }
             }
@@ -4015,8 +4001,8 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
 }
 
 enum ExtractResult {
-    Measurements(Vec<Measurement>),
-    WithEphemeris(Vec<Measurement>, BodyEphemeris),
+    Measurements(Vec<(Channel, FieldConfig)>),
+    WithEphemeris(Vec<(Channel, FieldConfig)>, BodyEphemeris),
 }
 
 fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
@@ -4031,7 +4017,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
         }
         return ExtractResult::Measurements(vec![]);
     }
-    let mut measurements: Vec<Measurement> = Vec::new();
+    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
     let mut extracted: HashMap<String, f64> = HashMap::new();
     let parsed_json = if src.format == "json" || src.format.is_empty() || src.format == "universal"
     {
@@ -4281,22 +4267,27 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             p0[2] + v[2] * shift,
                         ];
                         if let Some(rg) = rg0 {
-                            measurements.push(Measurement {
-                                epoch: now,
-                                position: Position::StateVector {
-                                    p: p_now,
-                                    v,
-                                    track: true,
+                            channels.push((
+                                Channel {
+                                    epoch: now,
+                                    position: Position::StateVector {
+                                        p: p_now,
+                                        v,
+                                        track: true,
+                                    },
+                                    name: n.clone(),
+                                    value: rg * 1000.0,
                                 },
-                                name: n.clone(),
-                                val: rg * 1000.0,
-                                kernel: 0,
-                                force: 0,
-                                tau: src.ttl as f64,
-                                absorption: 0.0,
-                                advection: 0.0,
-                                ttl: src.ttl as f64,
-                            });
+                                FieldConfig {
+                                    key: n.clone(),
+                                    name: n.clone(),
+                                    kernel: 0,
+                                    force: 0,
+                                    tau: src.ttl as f64,
+                                    absorption: 0.0,
+                                    advection: 0.0,
+                                },
+                            ));
                         }
                     }
                 }
@@ -4357,22 +4348,27 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 ]);
                                 let row_epoch = (jd - J2000_EPOCH) * 86400.0;
                                 if let Some(rg) = cur_rg {
-                                    measurements.push(Measurement {
-                                        epoch: row_epoch,
-                                        position: Position::StateVector {
-                                            p: p_f,
-                                            v: v_f,
-                                            track: true,
+                                    channels.push((
+                                        Channel {
+                                            epoch: row_epoch,
+                                            position: Position::StateVector {
+                                                p: p_f,
+                                                v: v_f,
+                                                track: true,
+                                            },
+                                            name: n.clone(),
+                                            value: rg * 1000.0,
                                         },
-                                        name: n.clone(),
-                                        val: rg * 1000.0,
-                                        kernel: 0,
-                                        force: 0,
-                                        tau: src.ttl as f64,
-                                        absorption: 0.0,
-                                        advection: 0.0,
-                                        ttl: src.ttl as f64,
-                                    });
+                                        FieldConfig {
+                                            key: n.clone(),
+                                            name: n.clone(),
+                                            kernel: 0,
+                                            force: 0,
+                                            tau: src.ttl as f64,
+                                            absorption: 0.0,
+                                            advection: 0.0,
+                                        },
+                                    ));
                                 }
                             }
                             cur_jd = t
@@ -4397,22 +4393,27 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                         let v_f = ecliptic_to_field([v[0] * 1000.0, v[1] * 1000.0, v[2] * 1000.0]);
                         let row_epoch = (jd - J2000_EPOCH) * 86400.0;
                         if let Some(rg) = cur_rg {
-                            measurements.push(Measurement {
-                                epoch: row_epoch,
-                                position: Position::StateVector {
-                                    p: p_f,
-                                    v: v_f,
-                                    track: true,
+                            channels.push((
+                                Channel {
+                                    epoch: row_epoch,
+                                    position: Position::StateVector {
+                                        p: p_f,
+                                        v: v_f,
+                                        track: true,
+                                    },
+                                    name: n.clone(),
+                                    value: rg * 1000.0,
                                 },
-                                name: n.clone(),
-                                val: rg * 1000.0,
-                                kernel: 0,
-                                force: 0,
-                                tau: src.ttl as f64,
-                                absorption: 0.0,
-                                advection: 0.0,
-                                ttl: src.ttl as f64,
-                            });
+                                FieldConfig {
+                                    key: n.clone(),
+                                    name: n.clone(),
+                                    kernel: 0,
+                                    force: 0,
+                                    tau: src.ttl as f64,
+                                    absorption: 0.0,
+                                    advection: 0.0,
+                                },
+                            ));
                         }
                     }
                 }
@@ -4544,18 +4545,15 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     if val.is_nan() {
                                         continue;
                                     }
-                                    measurements.push(Measurement {
-                                        epoch,
-                                        position: position.clone(),
-                                        name: fc.name.clone(),
-                                        val,
-                                        kernel: fc.kernel,
-                                        force: fc.force,
-                                        tau: fc.tau,
-                                        absorption: fc.absorption,
-                                        advection: fc.advection,
-                                        ttl: src.ttl as f64,
-                                    });
+                                    channels.push((
+                                        Channel {
+                                            epoch,
+                                            position: position.clone(),
+                                            name: fc.name.clone(),
+                                            value: val,
+                                        },
+                                        (*fc).clone(),
+                                    ));
                                 }
                             }
                         }
@@ -4612,18 +4610,15 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     if val.is_nan() {
                                         continue;
                                     }
-                                    measurements.push(Measurement {
-                                        epoch: row_epoch,
-                                        position: position.clone(),
-                                        name: fc.name.clone(),
-                                        val,
-                                        kernel: fc.kernel,
-                                        force: fc.force,
-                                        tau: fc.tau,
-                                        absorption: fc.absorption,
-                                        advection: fc.advection,
-                                        ttl: src.ttl as f64,
-                                    });
+                                    channels.push((
+                                        Channel {
+                                            epoch: row_epoch,
+                                            position: position.clone(),
+                                            name: fc.name.clone(),
+                                            value: val,
+                                        },
+                                        (*fc).clone(),
+                                    ));
                                 }
                             }
                         }
@@ -4707,23 +4702,20 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     continue;
                                 }
                                 for (lon, lat) in vertices.iter() {
-                                    measurements.push(Measurement {
-                                        epoch,
-                                        position: Position::Surface {
-                                            body_name: frame_body_name(&src.frame),
-                                            lat: *lat,
-                                            lon: *lon,
-                                            alt,
+                                    channels.push((
+                                        Channel {
+                                            epoch,
+                                            position: Position::Surface {
+                                                body_name: frame_body_name(&src.frame),
+                                                lat: *lat,
+                                                lon: *lon,
+                                                alt,
+                                            },
+                                            name: fc.name.clone(),
+                                            value: val,
                                         },
-                                        name: fc.name.clone(),
-                                        val,
-                                        kernel: fc.kernel,
-                                        force: fc.force,
-                                        tau: fc.tau,
-                                        absorption: fc.absorption,
-                                        advection: fc.advection,
-                                        ttl: src.ttl as f64,
-                                    });
+                                        (*fc).clone(),
+                                    ));
                                 }
                             }
                         }
@@ -4783,22 +4775,19 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     let (sa, ca) = ra.sin_cos();
                                     let (sd, cd) = dec.sin_cos();
                                     let p = [cd * ca * radius, cd * sa * radius, sd * radius];
-                                    measurements.push(Measurement {
-                                        epoch: row_epoch,
-                                        position: Position::StateVector {
-                                            p,
-                                            v: [0.0, 0.0, 0.0],
-                                            track: false,
+                                    channels.push((
+                                        Channel {
+                                            epoch: row_epoch,
+                                            position: Position::StateVector {
+                                                p,
+                                                v: [0.0, 0.0, 0.0],
+                                                track: false,
+                                            },
+                                            name: fc.name.clone(),
+                                            value: val,
                                         },
-                                        name: fc.name.clone(),
-                                        val,
-                                        kernel: fc.kernel,
-                                        force: fc.force,
-                                        tau: fc.tau,
-                                        absorption: fc.absorption,
-                                        advection: fc.advection,
-                                        ttl: src.ttl as f64,
-                                    });
+                                        (*fc).clone(),
+                                    ));
                                 }
                             }
                         }
@@ -4853,18 +4842,15 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 if val.is_nan() {
                                     continue;
                                 }
-                                measurements.push(Measurement {
-                                    epoch: now,
-                                    position: position.clone(),
-                                    name: fc.name.clone(),
-                                    val,
-                                    kernel: fc.kernel,
-                                    force: fc.force,
-                                    tau: fc.tau,
-                                    absorption: fc.absorption,
-                                    advection: fc.advection,
-                                    ttl: src.ttl as f64,
-                                });
+                                channels.push((
+                                    Channel {
+                                        epoch: now,
+                                        position: position.clone(),
+                                        name: fc.name.clone(),
+                                        value: val,
+                                    },
+                                    (*fc).clone(),
+                                ));
                             }
                         }
                     } else {
@@ -4885,18 +4871,15 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 if val.is_nan() {
                                     continue;
                                 }
-                                measurements.push(Measurement {
-                                    epoch: now,
-                                    position: position.clone(),
-                                    name: fc.name.clone(),
-                                    val,
-                                    kernel: fc.kernel,
-                                    force: fc.force,
-                                    tau: fc.tau,
-                                    absorption: fc.absorption,
-                                    advection: fc.advection,
-                                    ttl: src.ttl as f64,
-                                });
+                                channels.push((
+                                    Channel {
+                                        epoch: now,
+                                        position: position.clone(),
+                                        name: fc.name.clone(),
+                                        value: val,
+                                    },
+                                    (*fc).clone(),
+                                ));
                             }
                         }
                     }
@@ -4988,22 +4971,19 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 if val.is_nan() {
                                     continue;
                                 }
-                                measurements.push(Measurement {
-                                    epoch: now,
-                                    position: Position::StateVector {
-                                        p,
-                                        v: vel,
-                                        track: false,
+                                channels.push((
+                                    Channel {
+                                        epoch: now,
+                                        position: Position::StateVector {
+                                            p,
+                                            v: vel,
+                                            track: false,
+                                        },
+                                        name: fc.name.clone(),
+                                        value: val,
                                     },
-                                    name: fc.name.clone(),
-                                    val,
-                                    kernel: fc.kernel,
-                                    force: fc.force,
-                                    tau: fc.tau,
-                                    absorption: fc.absorption,
-                                    advection: fc.advection,
-                                    ttl: src.ttl as f64,
-                                });
+                                    (*fc).clone(),
+                                ));
                             }
                         }
                     }
@@ -5144,22 +5124,19 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 if val.is_nan() {
                                     continue;
                                 }
-                                measurements.push(Measurement {
-                                    epoch: sample_epoch,
-                                    position: Position::StateVector {
-                                        p,
-                                        v: vel,
-                                        track: false,
+                                channels.push((
+                                    Channel {
+                                        epoch: sample_epoch,
+                                        position: Position::StateVector {
+                                            p,
+                                            v: vel,
+                                            track: false,
+                                        },
+                                        name: fc.name.clone(),
+                                        value: val,
                                     },
-                                    name: fc.name.clone(),
-                                    val,
-                                    kernel: fc.kernel,
-                                    force: fc.force,
-                                    tau: fc.tau,
-                                    absorption: fc.absorption,
-                                    advection: fc.advection,
-                                    ttl: src.ttl as f64,
-                                });
+                                    (*fc).clone(),
+                                ));
                             }
                         }
                     }
@@ -5207,40 +5184,50 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                                 }
                                             }
                                             if mag >= *min_mag {
-                                                measurements.push(Measurement {
-                                                    epoch: now,
-                                                    position: Position::Surface {
-                                                        body_name: frame_body_name(&src.frame),
-                                                        lat: ela,
-                                                        lon: elo,
-                                                        alt: -ed * 1000.0,
+                                                channels.push((
+                                                    Channel {
+                                                        epoch: now,
+                                                        position: Position::Surface {
+                                                            body_name: frame_body_name(&src.frame),
+                                                            lat: ela,
+                                                            lon: elo,
+                                                            alt: -ed * 1000.0,
+                                                        },
+                                                        name: outputs[0].clone(),
+                                                        value: mag,
                                                     },
-                                                    name: outputs[0].clone(),
-                                                    val: mag,
-                                                    kernel: 0,
-                                                    force: 3,
-                                                    tau: *tau,
-                                                    absorption: *absorption,
-                                                    advection: *advection,
-                                                    ttl: src.ttl as f64,
-                                                });
-                                                measurements.push(Measurement {
-                                                    epoch: now,
-                                                    position: Position::Surface {
-                                                        body_name: frame_body_name(&src.frame),
-                                                        lat: ela,
-                                                        lon: elo,
-                                                        alt: -ed * 1000.0,
+                                                    FieldConfig {
+                                                        key: outputs[0].clone(),
+                                                        name: outputs[0].clone(),
+                                                        kernel: 0,
+                                                        force: 3,
+                                                        tau: *tau,
+                                                        absorption: *absorption,
+                                                        advection: *advection,
                                                     },
-                                                    name: outputs[1].clone(),
-                                                    val: ed * 1000.0,
-                                                    kernel: 0,
-                                                    force: 3,
-                                                    tau: *tau,
-                                                    absorption: *absorption,
-                                                    advection: *advection,
-                                                    ttl: src.ttl as f64,
-                                                });
+                                                ));
+                                                channels.push((
+                                                    Channel {
+                                                        epoch: now,
+                                                        position: Position::Surface {
+                                                            body_name: frame_body_name(&src.frame),
+                                                            lat: ela,
+                                                            lon: elo,
+                                                            alt: -ed * 1000.0,
+                                                        },
+                                                        name: outputs[1].clone(),
+                                                        value: ed * 1000.0,
+                                                    },
+                                                    FieldConfig {
+                                                        key: outputs[1].clone(),
+                                                        name: outputs[1].clone(),
+                                                        kernel: 0,
+                                                        force: 3,
+                                                        tau: *tau,
+                                                        absorption: *absorption,
+                                                        advection: *advection,
+                                                    },
+                                                ));
                                             }
                                         }
                                     }
@@ -5331,33 +5318,32 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 if val.is_nan() {
                     continue;
                 }
-                measurements.push(Measurement {
-                    epoch: now,
-                    position: Position::Source,
-                    name: fc.name.clone(),
-                    val,
-                    kernel: fc.kernel,
-                    force: fc.force,
-                    tau: fc.tau,
-                    absorption: fc.absorption,
-                    advection: fc.advection,
-                    ttl: src.ttl as f64,
-                });
+                channels.push((
+                    Channel {
+                        epoch: now,
+                        position: Position::Source,
+                        name: fc.name.clone(),
+                        value: val,
+                    },
+                    fc.clone(),
+                ));
             }
         }
     }
-    measurements.retain(|m| m.val.is_finite());
-    ExtractResult::Measurements(measurements)
+    channels.retain(|(c, _)| c.value.is_finite());
+    ExtractResult::Measurements(channels)
 }
 
 fn anchor(
-    origin: Origin,
-    meas: Measurement,
+    channel: &Channel,
+    sensor: &FieldConfig,
+    source_ttl: f64,
+    source_idx: Option<u32>,
     frame: Option<&Frame>,
-    origins: &mut HashMap<Origin, OriginState>,
+    mut origin_state: Option<&mut OriginState>,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<Oscillator> {
-    let motion = match &meas.position {
+    let motion = match &channel.position {
         Position::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
         Position::Surface {
             body_name,
@@ -5400,62 +5386,60 @@ fn anchor(
                 None => return None,
             };
             match surface_motion(
-                body_name, *lat, *lon, *alt, *speed, *track, v, meas.epoch, eph,
+                body_name,
+                *lat,
+                *lon,
+                *alt,
+                *speed,
+                *track,
+                v,
+                channel.epoch,
+                eph,
             ) {
                 Some(m) => m,
                 None => return None,
             }
         }
         Position::Source => match frame {
-            Some(f) => match frame_motion(f, None, None, meas.epoch, eph) {
+            Some(f) => match frame_motion(f, None, None, channel.epoch, eph) {
                 Some(m) => m,
                 None => return None,
             },
             None => return None,
         },
     };
-    let abs = match motion.at(meas.epoch, meas.epoch, eph) {
+    let abs = match motion.at(channel.epoch, channel.epoch, eph) {
         Some(p) => p,
         None => return None,
     };
-    if abs[0].is_nan() || abs[1].is_nan() || abs[2].is_nan() || meas.epoch.is_nan() {
+    if abs[0].is_nan() || abs[1].is_nan() || abs[2].is_nan() || channel.epoch.is_nan() {
         return None;
     }
     let mut resid_ema = 0.0;
-    let track_origin = matches!(meas.position, Position::Source)
-        || matches!(meas.position, Position::StateVector { track: true, .. });
-    if track_origin {
-        let entry = origins.entry(origin).or_insert(OriginState {
-            fetched: 0.0,
-            prev_epoch: 0.0,
-            prev_abs: [0.0, 0.0, 0.0],
-            prev_motion: None,
-            resid_ema: 0.0,
-            has_prev: false,
-        });
-        if entry.has_prev {
-            let dt_raw = (meas.epoch - entry.prev_epoch).abs();
-            if dt_raw > 0.0 && meas.ttl > 0.0 {
+    if let Some(ref mut st) = origin_state {
+        if st.has_prev {
+            let dt_raw = (channel.epoch - st.prev_epoch).abs();
+            if dt_raw > 0.0 && source_ttl > 0.0 {
                 let dt = dt_raw;
-                if let Some(pm) = &entry.prev_motion {
-                    if let Some(pred) = pm.at(meas.epoch, entry.prev_epoch, eph) {
+                if let Some(pm) = &st.prev_motion {
+                    if let Some(pred) = pm.at(channel.epoch, st.prev_epoch, eph) {
                         let resid = ((pred[0] - abs[0]).powi(2)
                             + (pred[1] - abs[1]).powi(2)
                             + (pred[2] - abs[2]).powi(2))
                         .sqrt();
-                        let alpha = 1.0 - (-dt / meas.ttl).exp();
-                        entry.resid_ema += (resid / dt - entry.resid_ema) * alpha;
+                        let alpha = 1.0 - (-dt / source_ttl).exp();
+                        st.resid_ema += (resid / dt - st.resid_ema) * alpha;
                     }
                 }
             }
         }
-        resid_ema = entry.resid_ema;
-        entry.prev_epoch = meas.epoch;
-        entry.prev_abs = abs;
-        entry.prev_motion = Some(motion.clone());
-        entry.has_prev = true;
+        resid_ema = st.resid_ema;
+        st.prev_epoch = channel.epoch;
+        st.prev_abs = abs;
+        st.prev_motion = Some(motion.clone());
+        st.has_prev = true;
     }
-    let (vmax, amax, p0f) = match law_bounds(&motion, meas.epoch, resid_ema, eph) {
+    let (vmax, amax, p0f) = match law_bounds(&motion, channel.epoch, resid_ema, eph) {
         Some(b) => b,
         None => return None,
     };
@@ -5466,26 +5450,29 @@ fn anchor(
         .anchor_body()
         .and_then(|name| eph.get(name))
         .and_then(|e| e.props.as_ref());
-    let extent = kernel_extent(meas.kernel, body_props, meas.tau);
+    let extent = kernel_extent(sensor.kernel, body_props, sensor.tau);
     if extent.is_nan() {
         return None;
     }
     Some(Oscillator {
-        origin,
-        epoch: meas.epoch,
-        ttl: meas.ttl,
+        source: match source_idx {
+            Some(idx) => OscillatorSource::Api(idx),
+            None => OscillatorSource::Browser,
+        },
+        epoch: channel.epoch,
+        ttl: source_ttl,
         extent,
-        tau: meas.tau,
-        kernel_id: meas.kernel as f64,
-        force_type: meas.force as f64,
-        absorption: meas.absorption,
-        advection: meas.advection,
+        tau: sensor.tau,
+        kernel_id: sensor.kernel as f64,
+        force_type: sensor.force as f64,
+        absorption: sensor.absorption,
+        advection: sensor.advection,
         vmax,
         amax,
         p0f,
         motion: motion.clone(),
-        val: meas.val,
-        name: meas.name,
+        val: channel.value,
+        name: channel.name.clone(),
     })
 }
 
@@ -5672,12 +5659,20 @@ fn main() {
                 archive.body_ephemerides = Arc::new(eph_map);
             }
             let src = &archive.sources[res.source_idx];
-            for meas in res.measurements {
+            for (channel, sensor) in &res.channels {
+                let track_origin = matches!(channel.position, Position::Source)
+                    || matches!(channel.position, Position::StateVector { track: true, .. });
                 if let Some(osc) = anchor(
-                    (res.source_idx as u32, 0, 0),
-                    meas,
+                    channel,
+                    sensor,
+                    src.ttl as f64,
+                    Some(res.source_idx as u32),
                     Some(&src.frame),
-                    &mut archive.origins,
+                    if track_origin {
+                        archive.origins.get_mut(&(res.source_idx as u32, 0, 0))
+                    } else {
+                        None
+                    },
                     &archive.body_ephemerides,
                 ) {
                     fetched_oscillators.push(osc);
@@ -5769,13 +5764,13 @@ fn main() {
             let src_idx = i;
             thread::spawn(move || {
                 let raw = fetch_one(&url, body.as_deref(), &src_clone.headers, src_clone.ttl);
-                let measurements = match raw {
+                let channels = match raw {
                     Some(ref r) => match extract(&src_clone, r, now) {
                         ExtractResult::Measurements(v) => v,
                         ExtractResult::WithEphemeris(v, eph) => {
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
-                                measurements: Vec::new(),
+                                channels: Vec::new(),
                                 eph_update: src_clone.body.clone().map(|b| (b, eph)),
                             });
                             v
@@ -5783,10 +5778,10 @@ fn main() {
                     },
                     None => Vec::new(),
                 };
-                if !measurements.is_empty() {
+                if !channels.is_empty() {
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
-                        measurements,
+                        channels,
                         eph_update: None,
                     });
                 }
@@ -6004,14 +5999,14 @@ mod tests {
         let test_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
         eprintln!("now={} test_epoch={}", now, test_epoch);
         let result = super::extract(&src, body, now);
-        let measurements = match result {
+        let channels = match result {
             super::ExtractResult::Measurements(v) => v,
             _ => {
-                panic!("ExtractResult is WithEphemeris, 0 Measurements");
+                panic!("ExtractResult is WithEphemeris, 0 Channels");
             }
         };
-        assert_eq!(measurements.len(), 2);
-        let p0 = &measurements[0];
+        assert_eq!(channels.len(), 2);
+        let (p0, _f0) = &channels[0];
         assert!(p0.epoch < now);
         let test_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
         assert!((p0.epoch - test_epoch).abs() < 1e-6);
@@ -6029,8 +6024,8 @@ mod tests {
             _ => panic!("position is {:?}", p0.position),
         }
         assert_eq!(p0.name, "argo_temp_c");
-        assert!((p0.val - 23.478).abs() < 1e-6);
-        let p1 = &measurements[1];
+        assert!((p0.value - 23.478).abs() < 1e-6);
+        let (p1, _) = &channels[1];
         match p1.position {
             super::Position::Surface { alt, .. } => {
                 assert!((alt - -1000.0).abs() < 1e-6);
@@ -6436,7 +6431,7 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
         };
-        let meas = super::Measurement {
+        let channel = super::Channel {
             epoch: 0.0,
             position: super::Position::Surface {
                 body_name: "mars".into(),
@@ -6445,13 +6440,16 @@ mod tests {
                 alt: 0.0,
             },
             name: "v".into(),
-            val: 1.0,
+            value: 1.0,
+        };
+        let sensor = super::FieldConfig {
+            key: "v".into(),
+            name: "v".into(),
             kernel: 1,
             force: 0,
             tau: 60.0,
             absorption: 0.0,
             advection: 0.0,
-            ttl: 3600.0,
         };
         let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
         cx[0] = 1.5e9;
@@ -6484,8 +6482,23 @@ mod tests {
         };
         let mut eph = HashMap::new();
         eph.insert("mars".to_string(), mars_eph);
-        let mut origins = HashMap::new();
-        let sample = super::anchor((0, 0, 0), meas, Some(&src.frame), &mut origins, &eph);
+        let mut origin_state = super::OriginState {
+            fetched: 0.0,
+            prev_epoch: 0.0,
+            prev_abs: [0.0, 0.0, 0.0],
+            prev_motion: None,
+            resid_ema: 0.0,
+            has_prev: false,
+        };
+        let sample = super::anchor(
+            &channel,
+            &sensor,
+            3600.0,
+            Some(0),
+            Some(&src.frame),
+            Some(&mut origin_state),
+            &eph,
+        );
         assert!(sample.is_some(), "sample is None");
         let sample = sample.unwrap();
         if let super::Motion::Surface { body_name, .. } = &sample.motion {
