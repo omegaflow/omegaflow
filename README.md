@@ -12,7 +12,7 @@ APIs (sources.φ)       ω
               IO (Web-API)
 ```
 
-Protocol: 88 bytes, 11 × f64 LE
+Protocol:96 bytes, 12 × f64 LE
 
 Certainty: exp(−retarded / ttl)
 

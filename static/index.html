@@ -41,6 +41,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let lastTs = 0, debugEl = null, lastDebug = 0;
         let lastManifestTime = 0;
         let stableTick = 0;
+        let frameInterval = 16 / 1000;
         let tPresence = 0;
         let exposureBoost = 4.0;
         let debugFontF = 1.0;
@@ -147,7 +148,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             ws.addEventListener('message', (e) => {
                 if (typeof e.data !== 'string') {
                     const buf = new Uint8Array(e.data);
-                    if (buf.length < 11 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 2) return;
+                    if (buf.length < 11 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 4) return;
                     const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
                     const id = dv.getUint32(3, true);
                     const pending = transport.pending.get(id);
@@ -200,10 +201,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     const c = pos.coords;
                     let stationBodyId = null;
                     if (!indexMap.has('lat')) {
-                        registerOscillator('lat', c.latitude);
-                        registerOscillator('lon', c.longitude);
-                        registerOscillator('alt', c.altitude || 0);
-                        registerOscillator('acc', c.accuracy);
+                        registerOscillator('lat', c.latitude, 1.0);
+                        registerOscillator('lon', c.longitude, 1.0);
+                        registerOscillator('alt', c.altitude || 0, 1.0);
+                        registerOscillator('acc', c.accuracy, 1.0);
                         const hash = window.location.hash.replace('#', '');
                         for (const part of hash.split('&')) {
                             const eq = part.indexOf('=');
@@ -218,14 +219,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                                     }
                                 }
                                 if (stationBodyId) {
-                                    registerOscillator('body', stationBodyId);
+                                    registerOscillator('body', stationBodyId, 0);
                                 }
                                 break;
                             }
                         }
                         if (c.speed !== null && c.heading !== null) {
-                            registerOscillator('spd', c.speed);
-                            registerOscillator('hdg', c.heading);
+                            registerOscillator('spd', c.speed, 1.0);
+                            registerOscillator('hdg', c.heading, 1.0);
                         }
                     }
                     recordSample('lat', c.latitude);
@@ -244,8 +245,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             if (navigator.getBattery) {
                 navigator.getBattery().then(battery => {
                     if (!indexMap.has('battery.level')) {
-                        registerOscillator('battery.level', battery.level);
-                        registerOscillator('battery.charging', battery.charging ? 1 : 0);
+                        registerOscillator('battery.level', battery.level, 0);
+                        registerOscillator('battery.charging', battery.charging ? 1 : 0, 0);
                     }
                     recordSample('battery.level', battery.level);
                     recordSample('battery.charging', battery.charging ? 1 : 0);
@@ -277,7 +278,7 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 
-struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) kernel_id: u32, @location(3) @interpolate(flat) absorption: f32, @location(4) @interpolate(flat) force_type: u32 };
+struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) kernel_id: u32, @location(3) @interpolate(flat) absorption: f32, @location(4) @interpolate(flat) force_type: u32, @location(5) @interpolate(flat) advection: f32 };
 
 const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
 
@@ -314,10 +315,11 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
         vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
     );
 
-    let m = field[id * 2u];
+    let m = field[id * 3u];
     let d = m.xyz;
     let val = m.w;
-    let tm = field[id * 2u + 1u];
+    let tm = field[id * 3u + 1u];
+    let fm = field[id * 3u + 2u];
     let mt = props[id];
     let extent = mt.x;
     let tau = mt.y;
@@ -343,7 +345,8 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
 
     let k_id = min(u32(mt.z), 6u);
     out.kernel_id = k_id;
-    out.absorption = f32(mt.w);
+    out.absorption = f32(tm.w);
+    out.advection = fm.x;
     var lvl = vp.expose_lo[min(k_id, 3u)];
     if (k_id >= 4u && k_id < 7u) { lvl = vp.expose_hi[k_id - 4u]; }
     if (lvl <= 0.0) { return out; }
@@ -352,7 +355,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let tau_freq = 1.0 / max(tau, exp2(-32.0));
     let color_shift = clamp(log2(tau_freq) / 8.0, -0.25, 0.25);
     let hue = fract(hue_center + color_shift + f32(u32(tm.z)) * 0.125);
-    let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y, u32(tm.z), tm.w)) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
+    let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y, u32(tm.z), fm.x)) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
     let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
     out.color = rgb;
     out.force_type = u32(tm.z);
@@ -404,17 +407,18 @@ fn presence_probe() {
     for (var i: u32 = 0u; i < 7u; i = i + 1u) { omegas[i] = 0.0f; }
 
     for (var j = 0u; j < count; j = j + 1u) {
-        let m = field[j * 2u];
-        let tm = field[j * 2u + 1u];
+        let m = field[j * 3u];
+        let tm = field[j * 3u + 1u];
+        let fm = field[j * 3u + 2u];
         let d = m.xyz;
         let d2 = dot(d, d);
         let d_mag = sqrt(d2);
         let mt = props[j];
         let extent = mt.x;
         let kernel_id = u32(mt.z);
-        let absorption = f32(mt.w);
+        let absorption = f32(tm.w);
 
-        let val_eff = fold_eff(d_mag, m.w, tm.x, tm.y, u32(tm.z));
+        let val_eff = fold_eff(d_mag, m.w, tm.x, tm.y, u32(tm.z), fm.x);
         let sk = field_spatial(d2, d_mag, extent, kernel_id, soft, absorption);
 
         if (kernel_id < 7u) {
@@ -656,10 +660,10 @@ fn presence_probe() {
             const needed = oscillators.length * CAPTURE_RING_SIZE;
             if (needed > flatRings.length) { const nr = new Float32Array(Math.max(needed, flatRings.length + CAPTURE_RING_SIZE)).fill(Number.EPSILON); nr.set(flatRings); flatRings = nr; }
         }
-        function registerOscillator(url, initialVal) {
+        function registerOscillator(url, initialVal, tau = 0) {
             const index = oscillators.length;
             const ringOffset = index * CAPTURE_RING_SIZE;
-            const osc = { url, index, ringOffset, idx: 0, filled: 0, median: initialVal, originT: 0, lastTransmitted: initialVal };
+            const osc = { url, index, ringOffset, idx: 0, filled: 0, median: initialVal, originT: 0, lastTransmitted: initialVal, tau };
             oscillators.push(osc); indexMap.set(url, index); ensureRingCapacity();
             return osc;
         }
@@ -702,9 +706,9 @@ fn presence_probe() {
                     voice.start();
                     partials.push(voiceGain);
                 }
-                registerOscillator('audioContext.destination.channel.frequency', Number.EPSILON);
-                registerOscillator('audioContext.destination.channel.amplitude', Number.EPSILON);
-                registerOscillator('audioContext.destination.channel.pan', Number.EPSILON);
+                registerOscillator('audioContext.destination.channel.frequency', Number.EPSILON, frameInterval);
+                registerOscillator('audioContext.destination.channel.amplitude', Number.EPSILON, frameInterval);
+                registerOscillator('audioContext.destination.channel.pan', Number.EPSILON, frameInterval);
                 surfaces.push({
                     manifest: () => {
                         try {
@@ -770,7 +774,7 @@ fn presence_probe() {
                     const binIdx = i;
                     const url = 'microphone.freq_' + binIdx;
                     if (!indexMap.has(url)) {
-                        registerOscillator(url, Number.EPSILON);
+                        registerOscillator(url, Number.EPSILON, frameInterval);
                         pollFns.push(() => { if (micAnalyser && micFreqData) { micAnalyser.getByteFrequencyData(micFreqData); recordSample(url, micFreqData[binIdx] / 255); } });
                     }
                 }
@@ -854,8 +858,8 @@ fn presence_probe() {
             }).catch(() => { console.warn('stream empty'); });
         }
         if (navigator.vibrate) {
-            registerOscillator('navigator.vibrate.channel.duration', Number.EPSILON);
-            registerOscillator('navigator.vibrate.channel.rhythm', Number.EPSILON);
+            registerOscillator('navigator.vibrate.channel.duration', Number.EPSILON, frameInterval);
+            registerOscillator('navigator.vibrate.channel.rhythm', Number.EPSILON, frameInterval);
             surfaces.push({
                 manifest: () => {
                     const lum = Math.tanh(Math.abs(probedOmega) * Math.pow(windowMedianExtent(), 2));
@@ -866,7 +870,7 @@ fn presence_probe() {
         }
         if (stationFlowConsented) {
             if (navigator.serial) {
-                registerOscillator('navigator.serial.channel.tx', Number.EPSILON);
+                registerOscillator('navigator.serial.channel.tx', Number.EPSILON, 0);
                 surfaces.push({
                     manifest: () => {
                         if (!activeSerialPort || !activeSerialPort.writable) return;
@@ -883,7 +887,7 @@ fn presence_probe() {
                 });
             }
             if (navigator.usb) {
-                registerOscillator('navigator.usb.channel.tx', Number.EPSILON);
+                registerOscillator('navigator.usb.channel.tx', Number.EPSILON, 0);
                 surfaces.push({
                     manifest: () => {
                         if (!activeUsbDevice || !activeUsbDevice.opened) return;
@@ -902,7 +906,7 @@ fn presence_probe() {
                 });
             }
             if (navigator.bluetooth) {
-                registerOscillator('navigator.bluetooth.channel.tx', Number.EPSILON);
+                registerOscillator('navigator.bluetooth.channel.tx', Number.EPSILON, 0);
                 surfaces.push({
                     manifest: () => {
                         if (!activeBtChar) return;
@@ -917,7 +921,7 @@ fn presence_probe() {
                 });
             }
             if (navigator.hid) {
-                registerOscillator('navigator.hid.channel.tx', Number.EPSILON);
+                registerOscillator('navigator.hid.channel.tx', Number.EPSILON, 0);
                 surfaces.push({
                     manifest: () => {
                         if (!activeHidDevice || !activeHidDevice.opened) return;
@@ -965,7 +969,7 @@ fn presence_probe() {
                                     const url = 'bluetooth.' + service.uuid + '.' + ch.uuid;
                                     if (!indexMap.has(url)) {
                                         const chRef = ch;
-                                        registerOscillator(url, Number.EPSILON);
+                                        registerOscillator(url, Number.EPSILON, 0);
                                         pollFns.push(async () => { try { const dv = await chRef.readValue(); recordSample(url, dv.getFloat64(0, true)); } catch { console.warn('bt read returned void'); } });
                                     }
                                 }
@@ -995,7 +999,7 @@ fn presence_probe() {
                     const url = `gamepad.${p}.axes.${a}`;
                     if (!indexMap.has(url)) {
                         const ax = a, pn = p;
-                        registerOscillator(url, pad.axes[a]);
+                        registerOscillator(url, pad.axes[a], frameInterval);
                         pollFns.push(() => { const gp = navigator.getGamepads()[pn]; if (gp) recordSample(url, gp.axes[ax]); });
                     }
                 }
@@ -1003,7 +1007,7 @@ fn presence_probe() {
                     const url = `gamepad.${p}.buttons.${b}`;
                     if (!indexMap.has(url)) {
                         const bn = b, pn = p;
-                        registerOscillator(url, pad.buttons[b].value);
+                        registerOscillator(url, pad.buttons[b].value, frameInterval);
                         pollFns.push(() => { const gp = navigator.getGamepads()[pn]; if (gp) recordSample(url, gp.buttons[bn].value); });
                     }
                 }
@@ -1013,6 +1017,7 @@ fn presence_probe() {
             const rawTick = lastTs > 0 ? ts - lastTs : Φ;
             lastTs = ts;
             stableTick = stableTick * (1 - ma()) + rawTick * ma();
+            frameInterval = frameInterval * (1 - ma()) + (rawTick / 1000) * ma();
             transport.tickTime = stableTick;
 
             if (keysDown.has(',')) tThrustTarget = -64;
@@ -1057,7 +1062,7 @@ fn presence_probe() {
             for (const fn of pollFns) { try { fn(); } catch { console.warn('poll cycle returned void'); } }
 
             const transmitList = [];
-            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > Number.EPSILON) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val }); } }
+            for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > Number.EPSILON) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val, tau: osc.tau }); } }
             const windowMoved = Math.abs(xPresence - lastQueryX) >= gridStep || Math.abs(yPresence - lastQueryY) >= gridStep || Math.abs(zPresence - lastQueryZ) >= gridStep || gridStep > lastQueryStep * Φ || lastQueryStep > gridStep * Φ;
             if (windowMoved || ts - lastQueryTs >= Φ * 1000) {
                 lastQueryX = xPresence; lastQueryY = yPresence; lastQueryZ = zPresence; lastQueryStep = gridStep; lastQueryTs = ts;

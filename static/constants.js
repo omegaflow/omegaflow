@@ -21,7 +21,7 @@ export async function syncFrame(inputs, queries, presence) {
     if (inputs.length === 0 && queries.length === 0) return emptyResp;
 
     let inputBytes = 0;
-    for (const inp of inputs) inputBytes += 9 + new TextEncoder().encode(inp.name).length;
+    for (const inp of inputs) inputBytes += 17 + new TextEncoder().encode(inp.name).length;
     const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32);
     const dv = new DataView(buf);
     const id = ++transport.seq;
@@ -33,6 +33,7 @@ export async function syncFrame(inputs, queries, presence) {
         const nameBytes = new TextEncoder().encode(inp.name);
         dv.setUint8(off, nameBytes.length); off += 1;
         new Uint8Array(buf, off, nameBytes.length).set(nameBytes); off += nameBytes.length;
+        dv.setFloat64(off, inp.tau || 0, true); off += 8;
     }
     dv.setUint32(off, queries.length, true); off += 4;
     for (const q of queries) {
@@ -59,30 +60,31 @@ export async function syncFrame(inputs, queries, presence) {
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86) return emptyResp;
-    if (bytes[2] !== 3) throw new Error('protocol mismatch');
+    if (bytes[2] !== 4) throw new Error('protocol mismatch');
 
     let o = 3;
     o += 4;
     const oscCount = dvRes.getUint32(o, true); o += 4;
 
-    const field = new Float32Array(oscCount * 8);
+    const field = new Float32Array(oscCount * 12);
     const meta = new Float32Array(oscCount * 4);
 
     for (let i = 0; i < oscCount; i++) {
-        if (o + 88 > bytes.length) break;
+        if (o + 96 > bytes.length) break;
         const x = dvRes.getFloat64(o, true); o += 8;
         const y = dvRes.getFloat64(o, true); o += 8;
         const z = dvRes.getFloat64(o, true); o += 8;
         const val = dvRes.getFloat64(o, true); o += 8;
-        const extent = dvRes.getFloat64(o, true); o += 8;
         const t = dvRes.getFloat64(o, true); o += 8;
         const ttl = dvRes.getFloat64(o, true); o += 8;
         const tau = dvRes.getFloat64(o, true); o += 8;
+        const extent = dvRes.getFloat64(o, true); o += 8;
         const kernel_id = dvRes.getFloat64(o, true); o += 8;
-        const absorption = dvRes.getFloat64(o, true); o += 8;
         const force_type = dvRes.getFloat64(o, true); o += 8;
+        const absorption = dvRes.getFloat64(o, true); o += 8;
+        const advection = dvRes.getFloat64(o, true); o += 8;
 
-        const fOff = i * 8;
+        const fOff = i * 12;
         if (presence) {
             field[fOff] = Math.fround(x - presence.x);
             field[fOff + 1] = Math.fround(y - presence.y);
@@ -96,13 +98,17 @@ export async function syncFrame(inputs, queries, presence) {
         field[fOff + 4] = t;
         field[fOff + 5] = ttl;
         field[fOff + 6] = force_type;
-        field[fOff + 7] = 0;
+        field[fOff + 7] = absorption;
+        field[fOff + 8] = advection;
+        field[fOff + 9] = 0;
+        field[fOff + 10] = 0;
+        field[fOff + 11] = 0;
 
         const mOff = i * 4;
         meta[mOff] = extent;
         meta[mOff + 1] = tau;
         meta[mOff + 2] = kernel_id;
-        meta[mOff + 3] = absorption;
+        meta[mOff + 3] = 0;
     }
     return { field, meta, count: oscCount };
 }
