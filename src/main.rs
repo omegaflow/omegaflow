@@ -6375,7 +6375,7 @@ mod tests {
             let body = match super::fetch_one(&url, None, &[], s.ttl) {
                 Some(b) => b,
                 None => {
-                    fail.push((url, "fetch failed".into()));
+                    fail.push((url, "fetch returned empty".into()));
                     continue;
                 }
             };
