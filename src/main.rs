@@ -63,7 +63,7 @@ struct BodyProperties {
     patch_levy: f64,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone)]
 struct ChebyshevGranule {
     t0_jd: f64,
     dt_jd: f64,
@@ -72,7 +72,7 @@ struct ChebyshevGranule {
     cz: [f64; CHEBYSHEV_N],
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone)]
 struct BodyEphemeris {
     granules: Vec<ChebyshevGranule>,
     rotation_matrices: Vec<(f64, [f64; 9])>,
@@ -801,7 +801,7 @@ fn frame_motion(
 fn tdb_now() -> f64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .unwrap_or_default()
+        .expect("system clock before UNIX epoch")
         .as_secs_f64()
         - UNIX_J2000_OFFSET
 }
@@ -2489,7 +2489,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                     "[{}] ASYNC_LOG: {}\n",
                     SystemTime::now()
                         .duration_since(UNIX_EPOCH)
-                        .unwrap_or_default()
+                        .expect("system clock before UNIX epoch")
                         .as_secs(),
                     body_start.trim()
                 );
@@ -2510,7 +2510,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                     "/time" => {
                         let unix = SystemTime::now()
                             .duration_since(UNIX_EPOCH)
-                            .unwrap_or_default()
+                            .expect("system clock before UNIX epoch")
                             .as_secs_f64();
                         let tdb = unix - UNIX_J2000_OFFSET;
                         emit(&mut s, "200 OK", "text/plain", tdb.to_string().as_bytes());
@@ -2965,7 +2965,10 @@ fn resolve_secret(url: &str) -> String {
             let val = std::env::var(key)
                 .ok()
                 .or_else(|| std::env::var(&upper).ok())
-                .unwrap_or_default();
+                .unwrap_or_else(|| {
+                    eprintln!("missing secret '{}', URL may fail", key);
+                    String::new()
+                });
             result.push_str(&val);
             rest = &rest[end + 1..];
         } else {
@@ -5178,7 +5181,7 @@ fn source_name_from_url(url: &str) -> String {
 fn utc_iso8601_now() -> String {
     let dur = SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .unwrap_or_default();
+        .expect("system clock before UNIX epoch");
     let secs = dur.as_secs();
     let (y, m, d) = days_to_ymd(secs / 86400);
     let sod = secs % 86400;
@@ -5193,7 +5196,7 @@ fn file_fresh(path: &str, ttl: u64) -> bool {
         if let Ok(modified) = meta.modified() {
             let age = SystemTime::now()
                 .duration_since(modified)
-                .unwrap_or_default()
+                .expect("system clock before UNIX epoch")
                 .as_secs();
             return age < ttl;
         }
@@ -5278,7 +5281,7 @@ fn main() {
         let args: Vec<String> = std::env::args().collect();
         if args.len() > 1 && args[1] == "--ci-mode" {
             eprintln!("ci-mode not available in this build");
-            std::process::exit(0);
+            std::process::exit(1);
         }
         if args.len() > 1 && args[1] == "--verify" {
             let dir = args.get(2).map(|s| s.as_str()).unwrap_or("phi/research");
@@ -5423,8 +5426,20 @@ fn main() {
     let (fetch_tx, fetch_rx) = mpsc::channel::<FetchResult>();
     let (station_tx, station_rx) = mpsc::channel::<StationUpdate>();
     let body_ephemerides = Arc::new(HashMap::new());
-    let index_html = std::fs::read(resolve_asset("static/index.html")).unwrap_or_default();
-    let constants_js = std::fs::read(resolve_asset("static/constants.js")).unwrap_or_default();
+    let index_html = match std::fs::read(resolve_asset("static/index.html")) {
+        Ok(v) => v,
+        Err(_) => {
+            eprintln!("static/index.html not found — cannot serve pages");
+            Vec::new()
+        }
+    };
+    let constants_js = match std::fs::read(resolve_asset("static/constants.js")) {
+        Ok(v) => v,
+        Err(_) => {
+            eprintln!("static/constants.js not found — browser protocol fails");
+            Vec::new()
+        }
+    };
     let mut archive = Archive {
         sources: loaded,
         body_ephemerides: body_ephemerides.clone(),
