@@ -56,6 +56,10 @@ jobs:
             kernels/mar099s.bsp \
             kernels/nep097.bsp
 
+      - name: Compile ephemerides from JPL Horizons
+        run: |
+          cargo run --release --bin horizons_compiler
+
       - name: Upload to CDN release
         run: |
           for f in ephemeris_*.bin; do
