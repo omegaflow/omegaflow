@@ -5701,7 +5701,7 @@ mod tests {
         let v = parse_json(s).unwrap();
         let obj = match v {
             super::JsonVal::Obj(m) => m,
-            _ => panic!("expected object"),
+            _ => panic!("not an object"),
         };
         assert!(matches!(obj.get("name"), Some(super::JsonVal::Str(s)) if s == "iss"));
         assert!(
@@ -5840,7 +5840,7 @@ mod tests {
         let pending = match result {
             super::ExtractResult::Samples(v) => v,
             _ => {
-                panic!("expected Samples");
+                panic!("no Samples");
             }
         };
         assert_eq!(pending.len(), 2);
@@ -5937,7 +5937,7 @@ mod tests {
                 assert_eq!(arr_path, "data");
                 assert!(!fields.is_empty());
             }
-            _ => panic!("expected CelestialMap"),
+            _ => panic!("not a CelestialMap"),
         }
     }
 
@@ -5960,7 +5960,7 @@ mod tests {
                 assert_eq!(alt_key, "alt");
                 assert_eq!(arr_path, "data");
             }
-            _ => panic!("expected Map"),
+            _ => panic!("not a Map"),
         }
     }
 
@@ -6324,7 +6324,7 @@ mod tests {
                 "body must come from frame, not earth fallback"
             );
         } else {
-            panic!("expected Surface motion");
+            panic!("not Surface motion");
         }
     }
 
@@ -6334,7 +6334,7 @@ mod tests {
         eprintln!("load_sources returned {} sources", srcs.len());
         let now = super::tdb_now();
         let mut ok = 0usize;
-        let mut fail: Vec<(String, String)> = Vec::new();
+        let mut empty: Vec<(String, String)> = Vec::new();
         let mut limit = 600usize;
         super::load_env();
         for s in srcs.iter() {
@@ -6375,7 +6375,7 @@ mod tests {
             let body = match super::fetch_one(&url, None, &[], s.ttl) {
                 Some(b) => b,
                 None => {
-                    fail.push((url, "fetch returned empty".into()));
+                    empty.push((url, "fetch returned empty".into()));
                     continue;
                 }
             };
@@ -6383,7 +6383,7 @@ mod tests {
                 super::ExtractResult::Samples(v) => {
                     if v.is_empty() {
                         let diag = super::diagnose_no_samples(s, &body);
-                        fail.push((url, format!("no samples ({})", diag)));
+                        empty.push((url, format!("no samples ({})", diag)));
                     } else {
                         ok += 1;
                     }
@@ -6391,7 +6391,7 @@ mod tests {
                 super::ExtractResult::WithEphemeris(v, _) => {
                     if v.is_empty() {
                         let diag = super::diagnose_no_samples(s, &body);
-                        fail.push((url, format!("no samples ({})", diag)));
+                        empty.push((url, format!("no samples ({})", diag)));
                     } else {
                         ok += 1;
                     }
@@ -6399,12 +6399,12 @@ mod tests {
             }
         }
         eprintln!(
-            "\n=== LIVE SOURCE EXTRACTION: {} ok, {} fail (of {} tested) ===",
+            "\n=== LIVE SOURCE EXTRACTION: {} ok, {} empty (of {} tested) ===",
             ok,
-            fail.len(),
-            ok + fail.len()
+            empty.len(),
+            ok + empty.len()
         );
-        for (u, why) in fail.iter() {
+        for (u, why) in empty.iter() {
             eprintln!("  FAIL {}  {}", u, why);
         }
     }
