@@ -534,14 +534,27 @@ fn extract_vectors(text: &str) -> Vec<(f64, f64, f64, f64)> {
                 let mut z: Option<f64> = None;
                 let parts: Vec<&str> = line.split_whitespace().collect();
                 for (i, p) in parts.iter().enumerate() {
-                    if *p == "X" && i + 2 < parts.len() {
-                        x = parts[i + 2].parse().ok();
-                    }
-                    if *p == "Y" && i + 2 < parts.len() {
-                        y = parts[i + 2].parse().ok();
-                    }
-                    if *p == "Z" && i + 2 < parts.len() {
-                        z = parts[i + 2].parse().ok();
+                    let val = if *p == "X" || *p == "Y" || *p == "Z" {
+                        if i + 1 < parts.len() && parts[i + 1].starts_with('=') {
+                            let v = &parts[i + 1][1..];
+                            if v.is_empty() && i + 2 < parts.len() {
+                                parts[i + 2].parse().ok()
+                            } else {
+                                v.parse().ok()
+                            }
+                        } else if i + 2 < parts.len() && parts[i + 1] == "=" {
+                            parts[i + 2].parse().ok()
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    };
+                    match *p {
+                        "X" => x = val,
+                        "Y" => y = val,
+                        "Z" => z = val,
+                        _ => {}
                     }
                 }
                 if let (Some(x), Some(y), Some(z)) = (x, y, z) {
