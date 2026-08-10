@@ -22,10 +22,7 @@ APIs (sources.φ)       ω           Relay (Nostr)
 
 ## Status
 
-**FICTION** — Heuristic diversity of perspectives. Marked as a thought experiment.
-Physics-free creativity. Embrace wonder.
-
-This file is METADATA for the human observer. The compiler ignores it.
+Transfer entropy lenses — five voices, each holding the system from its own nature. A = A.
 
 ## Literature Sources
 
