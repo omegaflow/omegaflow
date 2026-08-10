@@ -4,7 +4,10 @@ use std::{
     io::{Cursor, Read, Write},
     net::{TcpListener, TcpStream},
     process::Command,
-    sync::{mpsc, Arc},
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        mpsc, Arc,
+    },
     thread,
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
@@ -2110,10 +2113,172 @@ struct WsConfig {
     field_rx: mpsc::Receiver<Arc<Buffer>>,
 }
 
+trait Radiator: Send + Sync {
+    fn accept(&self, field: Arc<Buffer>);
+    fn name(&self) -> &str;
+}
+
+struct ScreenRadiator {
+    name: &'static str,
+    shutdown: Arc<AtomicBool>,
+    field_tx: mpsc::Sender<Arc<Buffer>>,
+    _thread: Option<thread::JoinHandle<()>>,
+}
+
+impl ScreenRadiator {
+    fn new(
+        port: u16,
+        eph: Arc<HashMap<String, BodyEphemeris>>,
+        index_html: Vec<u8>,
+        constants_js: Vec<u8>,
+        station_tx: mpsc::Sender<StationUpdate>,
+    ) -> Self {
+        let (field_tx, field_rx) = mpsc::channel::<Arc<Buffer>>();
+        let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let shutdown = Arc::new(AtomicBool::new(false));
+        let shutdown_clone = shutdown.clone();
+        let handle = thread::spawn(move || {
+            let mut field_txs: Vec<mpsc::Sender<Arc<Buffer>>> = Vec::new();
+            loop {
+                if shutdown_clone.load(Ordering::Relaxed) {
+                    break;
+                }
+                while let Ok((stream, _)) = listener.accept() {
+                    let (ftx, frx) = mpsc::channel();
+                    field_txs.push(ftx);
+                    let cfg = WsConfig {
+                        eph: eph.clone(),
+                        index_html: index_html.clone(),
+                        constants_js: constants_js.clone(),
+                        station_tx: station_tx.clone(),
+                        field_rx: frx,
+                    };
+                    thread::spawn(move || handle_ingress(stream, cfg));
+                }
+                if let Ok(field) = field_rx.try_recv() {
+                    field_txs.retain(|tx| tx.send(field.clone()).is_ok());
+                }
+                thread::sleep(std::time::Duration::from_millis(1));
+            }
+        });
+        Self {
+            name: "screen",
+            shutdown,
+            field_tx,
+            _thread: Some(handle),
+        }
+    }
+}
+
+impl Radiator for ScreenRadiator {
+    fn accept(&self, field: Arc<Buffer>) {
+        let _ = self.field_tx.send(field);
+    }
+    fn name(&self) -> &str {
+        self.name
+    }
+}
+
+impl Drop for ScreenRadiator {
+    fn drop(&mut self) {
+        self.shutdown.store(true, Ordering::SeqCst);
+    }
+}
+
+struct SpeakerRadiator {
+    name: &'static str,
+    sample_rate: u32,
+}
+
+impl SpeakerRadiator {
+    fn new(sample_rate: u32) -> Self {
+        Self {
+            name: "speaker",
+            sample_rate,
+        }
+    }
+}
+
+impl Radiator for SpeakerRadiator {
+    fn accept(&self, field: Arc<Buffer>) {
+        let mut out = std::io::stdout();
+        let mut samples: Vec<f32> = Vec::new();
+        let mut families: Vec<&Family> = Vec::new();
+        for b in field.bodies.values() {
+            families.push(b);
+        }
+        families.push(&field.inertial);
+        for fam in &families {
+            for v in fam.cells.values() {
+                for s in v {
+                    let amp = (s.fields.first().map(|(_, v)| *v as f32).unwrap_or(0.0) / 1000.0)
+                        .clamp(0.0, 1.0);
+                    let dur = (s.tau as u32).max(1).min(self.sample_rate);
+                    let freq = 220.0 + s.kernel_id as f32 * 110.0 + s.force_type as f32 * 55.0;
+                    for t in 0..dur {
+                        let phase =
+                            2.0 * std::f32::consts::PI * freq * t as f32 / self.sample_rate as f32;
+                        let decay = (-(t as f32) / (dur as f32 * 0.5)).exp();
+                        samples.push(amp * phase.sin() * decay);
+                    }
+                }
+            }
+        }
+        if !samples.is_empty() {
+            let _ = out.write_all(unsafe {
+                std::slice::from_raw_parts(samples.as_ptr() as *const u8, samples.len() * 4)
+            });
+            let _ = out.flush();
+        }
+    }
+    fn name(&self) -> &str {
+        self.name
+    }
+}
+
+struct HapticRadiator {
+    name: &'static str,
+}
+
+impl Radiator for HapticRadiator {
+    fn accept(&self, field: Arc<Buffer>) {
+        let mut intensity: f64 = 0.0;
+        for b in field.bodies.values() {
+            for v in b.cells.values() {
+                for s in v {
+                    intensity += s.fields.first().map(|(_, v)| v.abs()).unwrap_or(0.0);
+                }
+            }
+        }
+        writeln!(std::io::stderr(), "{}:{}", self.name, intensity).ok();
+    }
+    fn name(&self) -> &str {
+        self.name
+    }
+}
+
+struct HardwareRadiator {
+    name: &'static str,
+}
+
+impl Radiator for HardwareRadiator {
+    fn accept(&self, field: Arc<Buffer>) {
+        let mut count = 0usize;
+        for b in field.bodies.values() {
+            for v in b.cells.values() {
+                count += v.len();
+            }
+        }
+        writeln!(std::io::stderr(), "{}:{}", self.name, count).ok();
+    }
+    fn name(&self) -> &str {
+        self.name
+    }
+}
+
 struct Archive {
     sources: Vec<SourceConfig>,
-    index_html: Vec<u8>,
-    constants_js: Vec<u8>,
     body_ephemerides: Arc<HashMap<String, BodyEphemeris>>,
     field: Arc<Buffer>,
     station: StationState,
@@ -5255,8 +5420,6 @@ fn main() {
         .ok()
         .and_then(|s| s.parse().ok())
         .unwrap_or(1111);
-    let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
-    listener.set_nonblocking(true).unwrap();
     let (fetch_tx, fetch_rx) = mpsc::channel::<FetchResult>();
     let (station_tx, station_rx) = mpsc::channel::<StationUpdate>();
     let body_ephemerides = Arc::new(HashMap::new());
@@ -5264,8 +5427,6 @@ fn main() {
     let constants_js = std::fs::read(resolve_asset("static/constants.js")).unwrap_or_default();
     let mut archive = Archive {
         sources: loaded,
-        index_html: index_html.clone(),
-        constants_js: constants_js.clone(),
         body_ephemerides: body_ephemerides.clone(),
         field: Arc::new(build_buffer(Vec::new(), 1.0)),
         station: StationState {
@@ -5285,7 +5446,18 @@ fn main() {
     {
         let _ = (&archive.ttl_eff, &archive.stations_cache);
     }
-    let mut field_txs: Vec<mpsc::Sender<Arc<Buffer>>> = Vec::new();
+    let mut radiators: Vec<Box<dyn Radiator>> = Vec::new();
+    let sr = ScreenRadiator::new(
+        port,
+        body_ephemerides.clone(),
+        index_html.clone(),
+        constants_js.clone(),
+        station_tx.clone(),
+    );
+    radiators.push(Box::new(sr));
+    radiators.push(Box::new(SpeakerRadiator::new(44100)));
+    radiators.push(Box::new(HapticRadiator { name: "haptic" }));
+    radiators.push(Box::new(HardwareRadiator { name: "hardware" }));
     let cadence = 1.0;
     loop {
         let now = tdb_now();
@@ -5453,20 +5625,9 @@ fn main() {
             archive.field = Arc::new(build_buffer(all, cadence));
         }
         let f = archive.field.clone();
-        field_txs.retain(|tx| tx.send(f.clone()).is_ok());
-        while let Ok((stream, _)) = listener.accept() {
-            let (ftx, frx) = mpsc::channel();
-            field_txs.push(ftx);
-            let cfg = WsConfig {
-                eph: archive.body_ephemerides.clone(),
-                index_html: archive.index_html.clone(),
-                constants_js: archive.constants_js.clone(),
-                station_tx: station_tx.clone(),
-                field_rx: frx,
-            };
-            let _web_idx = index_html.clone();
-            let _web_js = constants_js.clone();
-            thread::spawn(move || handle_ingress(stream, cfg));
+        for r in &radiators {
+            let _ = r.name();
+            r.accept(f.clone());
         }
         let elapsed = tdb_now() - now;
         if elapsed < cadence {
