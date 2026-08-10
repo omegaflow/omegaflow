@@ -1,0 +1,74 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md", "docs/ALIGNMENT_PROTOCOL.md"],
+  "model": "deepseek/deepseek-v4-pro",
+  "small_model": "deepseek/deepseek-v4-flash",
+  "default_agent": "build",
+  "subagent_depth": 2,
+  "permission": {
+    "edit": "allow",
+    "bash": {
+      "cargo *": "allow",
+      "git *": "allow",
+      "curl *": "allow",
+      "rg *": "allow",
+      "ls *": "allow",
+      "gh *": "allow",
+      "*": "ask"
+    },
+    "webfetch": "allow",
+    "websearch": "allow"
+  },
+  "formatter": {
+    "rust": {
+      "command": ["rustfmt"],
+      "extensions": [".rs"]
+    }
+  },
+  "lsp": true,
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "tail_turns": 30
+  },
+  "tool_output": {
+    "max_lines": 300,
+    "max_bytes": 50000
+  },
+  "watcher": {
+    "ignore": ["target/**", "*.φ", ".continue/**", "docs/**"]
+  },
+  "agent": {
+    "build": {
+      "mode": "primary",
+      "model": "deepseek/deepseek-v4-pro",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    },
+    "plan": {
+      "mode": "primary",
+      "model": "deepseek/deepseek-v4-pro",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
+    },
+    "general": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "explore": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-flash"
+    },
+    "council": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-pro"
+    }
+  },
+  "experimental": {
+    "batch_tool": false
+  }
+}
