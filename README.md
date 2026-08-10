@@ -12,9 +12,9 @@ APIs (sources.φ)       ω
               IO (Web-API)
 ```
 
-Protocol: φ(x,y,z,t), 32 bytes
+Protocol v3: 88 bytes, 11 × f64 LE
 
-Certainty: exp(-v_c / (g + ε))
+Certainty: exp(−retarded / ttl)
 
 [omegaflow.space](https://omegaflow.space)
 
