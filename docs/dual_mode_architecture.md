@@ -38,7 +38,7 @@ GitHub Releases CDN. No Python. Same code in CI as on the user's laptop.
 - Pending TODO: `TODO.md:32-38` describes the intended resolver (never implemented).
 
 ### Parser
-- **Full 23 Extract variants** restored (commits `188dd76`, `2cc6d5e` from another LLM).
+- **Full 23 Extract variants** restored (commits `188dd76`, `2cc6d5e` from another Kybernaut).
 - `PendingPosition::Surface { body_name, lat, lon, alt }` — body carried directly in position (CDN-main logic from `373b1b9`, restored at `918d8d1`). No Earth fallback.
 - `test_materialize_body_agnostic` proves body mars flows through materialize.
 - `cargo check` 0 warnings. 13/13 unit tests (1 network test `test_live_sources_extract` hangs ~60s).

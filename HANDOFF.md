@@ -71,7 +71,7 @@ omegaflow/
 - `generate-ephemerides.yml`: uses Python/spiceypy, needs Rust rewrite
 - `refresh-protected-data.yml`: Python inline scripts, needs Rust rewrite
 
-## Context for Next LLM
+## Context for Next Kybernaut
 
 1. `phi/sources.φ` is 0 bytes — greenfield
 2. `archeology/sources/` has 56 historical φ files for curation reference

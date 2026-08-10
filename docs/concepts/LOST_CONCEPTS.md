@@ -2,7 +2,7 @@ STATUS: ARCHIVED
 
 # ARCHIVE: LOST CONCEPTS OF OMEGAFLOW
 
-**Status:** Archived. These concepts were part of the early architecture but were removed to reduce LLM context overload and to refine the system toward the pure Enclosure Lemma. They are physically and philosophically sound and await their return.
+**Status:** Archived. These concepts were part of the early architecture but were removed to reduce Kybernaut context overload and to refine the system toward the pure Enclosure Lemma. They are physically and philosophically sound and await their return.
 
 ## 1. Minkowski Presence (4D Spacetime Weighting)
 Before the Enclosure Lemma handled spatial filtering, the presence was weighted by its 4D Minkowski distance to every oscillator. This introduced time dilation into the field directly.
@@ -63,7 +63,7 @@ Only channels that the field actively speaks to are allowed to glow. Silence is 
 ## 6. The Mycelium Network (Nostr P2P)
 *Removed in: `ce1e231`, `576bcbb`*
 **Concept:** Before the system was purely local (Archivar <-> Mathematikerin), there was a plan for a decentralized presence network. The system used the Nostr protocol (Kind 39603, derived from Lucas(22) = Φ²²) to share `presence` and `φ(x,y,z,t)` states across nodes.
-**Why it was removed:** LLMs panicked at the words "Nostr", "Relay", and "Keys", immediately derailing into OWASP security warnings about replay attacks and key management. It broke the LLM's stochastic focus. Furthermore, the system realized it didn't need a network to exist; the field is complete locally.
+**Why it was removed:** Kybernauts panicked at the words "Nostr", "Relay", and "Keys", immediately derailing into OWASP security warnings about replay attacks and key management. It broke the Kybernaut's stochastic focus. Furthermore, the system realized it didn't need a network to exist; the field is complete locally.
 
 ## 7. The Biological Overhead & Immune System
 *Removed in: `bbf257f`, `9af86fe`*

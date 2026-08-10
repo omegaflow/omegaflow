@@ -79,7 +79,7 @@ read, write, input, output, membrane, pulse, inject, echo, actuator, sensor (as 
 
 5. No state machine. No states of matter as categories. Behavior emerges continuously from properties (Complexity, TE, Geometry).
 
-6. Name = Implementation. Every function name must be verifiable against the code. calculateMinkowskiWeight() returns a weight. measureRateOfChange() averages a derivative. No metaphor that triggers wrong physics in an LLM.
+6. Name = Implementation. Every function name must be verifiable against the code. calculateMinkowskiWeight() returns a weight. measureRateOfChange() averages a derivative. No metaphor that triggers wrong physics in an Kybernaut.
 
 7. No compliance theater. No "Everything is great!" comments. Facts.
 
