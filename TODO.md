@@ -1,161 +1,70 @@
 # TODO
 
-AGENTS.md is the primary constraint matrix. Git is the history. This file contains only pending work.
+AGENTS.md is the primary constraint matrix. Git is the history. Pending work only.
 
-## Status — 2026-08-09
+## Status — 2026-08-10
 
 **Done:**
-- Commit 2 (`c915cb8`): phi/research/ reorganization, thread-safety rules, scripts to ARCHIVED
-- `biotic → electric` (`d0e9b4c`): force_id_of, force_extent, force_constants_by_id
-- Commit 0 (`efc72c7`): docs/reference/ (7 code-verified files, NIST SP 330/811, UCUM)
-- `phi/units.φ` and `phi/forces.φ`: created but become obsolete with kernel decision (see below)
-- `out/*` emptied, `SESSION_HANDOFF.md` deleted
+- Commit 2: phi/research/ reorganization, thread-safety rules, scripts to ARCHIVED
+- Commit 0: docs/reference/ (code-verified, NIST SP 330/811, UCUM)
+- Force→Kernel: 7 kernels replace 8 forces, per-field, grammar: `field <key> <name> <kernel> <force> <unit>` (5 tokens)
+- Mutex→Channel: 0 locks, 0 RwLock, 0 Condvar, mpsc::channel
+- Protocol v3: 88-byte records (11 × f64), force_type 11th field
+- All defaults eliminated: no `unwrap_or(0.0)`, no `_ => 0`, no `max(1)`, no `reach_ttl`
+- τ per Field: `FieldConfig.tau`, τ-Gate (tau missing → `return vec![]`)
+- Fetch pipeline wired: Lemma gate per-field, `fetched_samples → all → build_buffer`
+- Multi-Radiator: Screen + Speaker (PCM stdout) + Haptic (stderr) + Hardware (stderr)
+- Force-Farben WGSL: VOut.force_type, hue per kernel+force
+- fold_eff fix: v=0 forces → temporal decay only (no d/c)
+- 0 comments in source files
+- Overflow Protocol restored to AGENTS.md System Directive
+- Archaeology consolidated: `archeology/` (56 φ sources, 370+ research docs), `docs/omegaflow_archeology.zip`
+- GitHub cleanup: 22 issues closed, ~80 failed runs deleted, mirror-cdn cron disabled
 
-**Architecture decision (Council unanimous): Kernel replaces Force**
-- Grammar: `field <key> <unit> <kernel>` — 3 tokens, no `force` token
-- 7 kernel shapes: inverse-square, gaussian-inverse-square, gaussian-inverse, erfc, exponential-decay, patch-levy, inverse-linear
-- Kernel specified per field, not per source block
-- `force` token rejected by parser
-- `phi/forces.φ` deleted, `phi/units.φ` deleted (NIST SP 330/811 + UCUM are binding)
+## Source Curation (next)
 
-**phi/sources.φ = 0 bytes.** Nothing to migrate.
+### Gold Source Migration
+- `archeology/sources/sources_gold_359-domains.φ` — 27K lines, 359 domains, OLD grammar
+- EVERY source block needs migration: `force em` → `field <key> <name> <kernel> <force> <unit>`
+- Arena batches (`archeology/arena/`) contain API proposals not yet in φ files
 
-## Commit 1 — main.rs Reconstruction (next atomic unit)
+### Untested Blocks
+- `archeology/sources/sources_new_untested_14k_new-unchecked.φ` — 873 unchecked blocks
+- `archeology/sources/sources_new_untested_candidate-staging.φ` — staging candidates
 
-### Scope: Force → Kernel + Parser Rewrite
+### Gap Analysis
+- `archeology/foundation/gaps.md` — domain coverage gaps
+- `archeology/foundation/collection.md` — curated collection state
 
-Single session, one commit. No phases.
+### Validation
+- `--verify` CLI exists (tests URL reachability), no sources loaded yet
+- Old sources use `force`, `pos`, `field_in` tokens → parser ignores them (grammar mismatch)
 
-**Grammar change:**
-```
-field <key> <force> <unit>          (old, 4 tokens, removed)
-field <key> <unit> <kernel>         (new, 3 tokens)
-```
+## CI Pipeline
 
-**Cut list — zero "force" remaining:**
-- `force_id_of`, `force_extent`, `force_type_val`, `force_constants_by_id`, `force_tau_of_id`, `force_extent_of_id` — all deleted
-- `Sample.force_type` → `kernel_id`
-- `SourceConfig.force: String` → removed
-- `cur_forces` → removed
-- `flush_v2!` macro → removed (v2 naming dies)
-- All `src.force.split_whitespace()` loops → extent from field kernels
-- `--ci-mode` → removed
-- WGSL: `force_type` → `kernel_id`, `9u → 7u`, `expose_hi2` removed
-- JS: `forceExposeF` → `kernelExpose`, `probedOmegas` 9→7
-- `phi/forces.φ` → deleted
-- `phi/units.φ` → deleted
-
-**Add:**
-- `kernel_id_of(name) -> Option<u8>` — 7-arm match
-- `kernel_extent(id, body_props, ttl, tau) -> f64` — per-kernel extent formula
-
-**CLI:**
-- `--fetch` (auto-detect CDN↔local)
-- `--dump`
-- `--crawl`
-- `--verify`
-- `--ci-mode` removed
-
-**Parser:**
-- ONE parser, ONE format
-- 3-token field: `field <key> <unit> <kernel>`
-- `force` token → parser error
-- Unknown kernel → source block refused
-- No field without kernel → source block refused
-
-**Tests:**
-- ~15 existing (adapt to kernel_id)
-- ~25 new fixture tests
-- Reference: `main.rs.bak` at `/home/johannes/projects/archive/omegaflow-phi-recovery/_archive/main.rs.bak`
-
-**Post-commit verification:**
-- `cargo check` 0/0, all tests green
-- `cargo run` → 127.0.0.1:1111 → non-black render window
-- `grep -r "force" src/main.rs` returns zero matches
-- `grep -r "force_type" static/` returns zero matches
-- `grep -r "v2" src/main.rs` returns zero matches
-
-### 5 files touched:
-1. `src/main.rs` — all parser + kernel logic
-2. `static/index.html` — WGSL shader + JS
-3. `static/constants.js` — variable rename
-4. `phi/forces.φ` — deleted
-5. `phi/units.φ` — deleted
-
-## Commit 3 — Archivar Crawls & Verifies
-
-- Deduplicate all URLs from gold sources in `phi/research/`
-- Live-test each URL individually (no batch)
-- Output: `verified_blocks.φ`, `partial_blocks.φ`, `failed_urls.φ`, `unknown_units.csv`
-- Never write `sources.φ` directly — verified blocks are operator-reviewed candidates
-
-## Three Architectural Gates
-
-- **Gate 1** (Parse-time): refuse blocks without per-field kernel, unknown kernel, field without unit
-- **Gate 2** (Verify-time): field key must exist in live API response, unit must be recognized
-- **Gate 3** (Operator-review): physical validity of kernel assignment
-
----
-
-## Source Curation (LTS)
-
-### Pending Blocks
-- 423 UNTESTED blocks (`phi/research/pre-cdn-history/UNTESTED_blocks.φ`)
-- 873 NEW_unchecked blocks (`phi/research/pre-cdn-history/NEW_unchecked_blocks.φ`)
-- 96 Audit Findings (`scripts/api_audit.py`)
-- 5 poorer blocks: co2_global_network, nsidc_arctic/antarctic, swpc_solar_wind_dscovr, nist_codata
-- 93 HAPI blocks
-
-### Pre-CDN Format Migration (after Commit 1)
-- EM TAP astronomy (130): VOTable parser needed
-- EM PDG (38): static, keyless, ttl≥604800
-- Acoustic (105): NDBC buoys, NOAA CO-OPS, GCOOS, METAR
-- Diffusion (186): USGS water quality, AERONET, Open-Meteo air quality
-- Gravity BGS (162): magnetic observatories
-- Gravity JPL-SSD (104): Horizons — needs parser support
-- Seismic (113): USGS/EMSC/EarthScope dedup
-- Thermal (73): NCEI climate, NSIDC sea ice, FIRMS fire
-
-### Source Inventory Reclassification
-2189 pre-cdn blocks → IMPLEMENT-NOW(85%) / ACQUIRE-KEY(3%) / DEFER(10%) / DROP(2%)
-
-### CDN-Switch Loss Recovery
-simbad(84), ssd.jpl.nasa.gov(48), gea.esac.esa.int(50), overpass.openstreetmap.fr(235)
-
----
+- `mirror-cdn.yml`: cron disabled, uses `--verify` manually
+- `generate-ephemerides.yml`: Python/spiceypy → needs Rust rewrite
+- `refresh-protected-data.yml`: Python inline scripts → needs Rust rewrite
 
 ## Feature Backlog
 
-- OPeNDAP Integration for NASA EarthData
+- Advective per-Oszillator: wind speed in `tm.w` (channel wired, data source needed)
+- OPeNDAP Integration
 - New Extract Types: Kepler, HorizonsVec, Flatten
 - `field_in` nested support
-- Window/Temporal `from`/`until` bounding
 - Command Palette (⌘K)
-- Minkowski 4D Weighting (WGSL kernel refinement)
-- 2-finger gesture handling (touchpad pinch/zoom)
-
----
+- Minkowski 4D Weighting
 
 ## Deferred
 
-### Require AGENTS.md Amendment
-- Temporal Topology (TDA, Takens, Transfer Entropy)
-- Field Permeability (`tanh(vC/g)`)
-
-### Operator / Key Acquisition
-- 10 Free-API-Keys registrieren
-- 8 Secrets in `.secrets.local` + GitHub Actions
+- Temporal Topology (TDA, Takens, Transfer Entropy) — needs AGENTS.md amendment
+- Field Permeability — needs AGENTS.md amendment
+- 10 Free-API-Keys registration
 - Workflow Secret Wiring
-
-### Out of Scope
-- ESP32 Mantis-Shrimp Firmware (separate project)
-- Global Station Web via Nostr (separate infrastructure)
-- Water Metaphor / Total Coherence / Temporal Manifestation (visionary, no architecture)
-
----
 
 ## Rejected
 
-- Unknown-Force soft fallback to `em` — AGENTS.md: forceless sources refused at load. A = A.
-- World Bank Indicators (228 blocks) — economic statistics, no physical force. DROP.
-- Yahoo Finance (37 blocks) — stock prices, symbolic abstractions. DROP.
+- Unknown-Force soft fallback → parser rejects unknown force
+- Default τ values → gate closes if not declared
+- World Bank Indicators → forceless, DROP
+- Yahoo Finance → forceless, DROP
