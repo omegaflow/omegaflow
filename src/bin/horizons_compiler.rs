@@ -470,11 +470,12 @@ fn write_binary(
 }
 
 fn horizons_request(command: &str, t_start_jd: f64, t_stop_jd: f64) -> Option<String> {
+    let cmd_safe = command.replace(';', "%3B");
     let url = format!(
         "https://ssd.jpl.nasa.gov/api/horizons.api?format=text\
          &COMMAND='{cmd}'&CENTER='500@0'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'\
          &START_TIME='JD+{t_start:.2}'&STOP_TIME='JD+{t_stop:.2}'&STEP_SIZE='1+d'",
-        cmd = command,
+        cmd = cmd_safe,
         t_start = t_start_jd,
         t_stop = t_stop_jd,
     );
