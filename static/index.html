@@ -63,7 +63,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 φ['archivar.time'] = parsed;
                 tPresence = parsed;
             }
-        }).catch(() => { console.warn('async operation failed'); });
+        }).catch(() => { console.warn('stream empty'); });
         let pPresence = [0, 0, 0], vPresence = [0, 0, 0], t0P = tPresence;
         let qOrientation = [1, 0, 0, 0];
         function qMul(a, b) {
@@ -158,7 +158,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 reconnectAttempts = 0;
                 syncFrame([], [{ t: tPresence, x: xPresence, y: yPresence, z: zPresence }]).then(response => {
                     if (response && response.count > 0) rawWindowResponse = response;
-                }).catch(() => { console.warn('async operation failed'); });
+                }).catch(() => { console.warn('stream empty'); });
             });
         }
         connectResonance();
@@ -249,7 +249,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     }
                     recordSample('battery.level', battery.level);
                     recordSample('battery.charging', battery.charging ? 1 : 0);
-                }).catch(() => { console.warn('async operation failed'); });
+                }).catch(() => { console.warn('stream empty'); });
             }
         });
         
@@ -517,7 +517,7 @@ fn presence_probe() {
                     gpu = device;
                 } catch (e) { gpu = null; gpuStatus = 'WebGPU: error (' + String(e) + ')'; reportState('gpu', String(e)); }
             })();
-            gpuInitPromise.catch(() => { console.warn('async operation failed'); }).finally(() => { gpuInitPromise = null; });
+            gpuInitPromise.catch(() => { console.warn('stream empty'); }).finally(() => { gpuInitPromise = null; });
             return gpuInitPromise;
         }
         initFieldGPU();
@@ -571,7 +571,7 @@ fn presence_probe() {
                 probedOmegas = [data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]];
                 probedOmega = data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8];
                 probeRead.unmap();
-            } catch { console.warn('crash report failed'); } finally { probePending = false; }
+            } catch { console.warn('position stream empty'); } finally { probePending = false; }
         }
 
         function manifestWindow(ts, rawTick) {
@@ -585,7 +585,7 @@ fn presence_probe() {
                     pass.draw(0);
                     pass.end();
                     gpu.queue.submit([encoder.finish()]);
-                } catch { console.warn('crash report failed'); }
+                } catch { console.warn('position update returned void'); }
                 return;
             }
             const dt = rawTick / 1000;
@@ -638,7 +638,7 @@ fn presence_probe() {
                 gpu.queue.submit([encoder.finish()]);
                 fieldFrames++;
             } catch { gpu = null; }
-            probePresence().catch(() => { console.warn('async operation failed'); });
+            probePresence().catch(() => { console.warn('stream empty'); });
         }
         let mxRef = null, mxVal = 1;
         function windowMedianExtent() {
@@ -713,10 +713,10 @@ fn presence_probe() {
                                 const lum = Math.tanh(Math.abs(probedOmegas[i]) * mx2);
                                 partials[i].gain.setTargetAtTime(lum / 7, audioCtx.currentTime, stableTick / 1000);
                             }
-                        } catch { console.warn('crash report failed'); }
+                        } catch { console.warn('resonance message returned void'); }
                     }
                 });
-            } catch { console.warn('crash report failed'); }
+            } catch { console.warn('resonance key event returned void'); }
         }
         async function startCamera() {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
@@ -751,12 +751,12 @@ fn presence_probe() {
                                     bmp.close();
                                 }
                                 frame.close();
-                            } catch { try { frame.close(); } catch { console.warn('crash report failed'); } }
+                            } catch { try { frame.close(); } catch { console.warn('serial frame close returned void'); } }
                         }
                     } catch (e) { reportState('CAMERA_READ_FAIL', e && e.message ? e.message : String(e)); }
                     })();
                 }
-            } catch { console.warn('crash report failed'); }
+            } catch { console.warn('serial read returned void'); }
         }
         function startMicrophone() {
             if (!audioCtx || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
@@ -774,7 +774,7 @@ fn presence_probe() {
                         pollFns.push(() => { if (micAnalyser && micFreqData) { micAnalyser.getByteFrequencyData(micFreqData); recordSample(url, micFreqData[binIdx] / 255); } });
                     }
                 }
-            }).catch(() => { console.warn('async operation failed'); });
+            }).catch(() => { console.warn('stream empty'); });
         }
         function startXR() {
             if (!navigator.xr) return;
@@ -851,7 +851,7 @@ fn presence_probe() {
                     }
                     session.requestAnimationFrame(onXRFrame);
                 });
-            }).catch(() => { console.warn('async operation failed'); });
+            }).catch(() => { console.warn('stream empty'); });
         }
         if (navigator.vibrate) {
             registerOscillator('navigator.vibrate.channel.duration', Number.EPSILON);
@@ -878,7 +878,7 @@ fn presence_probe() {
                             const sendBuf = new Uint8Array([byte, byte, byte, byte]);
                             writer.write(sendBuf);
                             writer.releaseLock();
-                        } catch { console.warn('crash report failed'); }
+                        } catch { console.warn('usb track returned void'); }
                     }
                 });
             }
@@ -897,7 +897,7 @@ fn presence_probe() {
                             const byte = Math.floor(lum * 255);
                             const sendBuf = new Uint8Array([byte, byte, byte, byte]);
                             activeUsbDevice.transferOut(outEp.endpointNumber, sendBuf);
-                        } catch { console.warn('crash report failed'); }
+                        } catch { console.warn('bt track returned void'); }
                     }
                 });
             }
@@ -912,7 +912,7 @@ fn presence_probe() {
                             const buf = new DataView(new ArrayBuffer(1));
                             buf.setUint8(0, Math.floor(lum * 255));
                             activeBtChar.writeValue(buf.buffer);
-                        } catch { console.warn('crash report failed'); }
+                        } catch { console.warn('hid track returned void'); }
                     }
                 });
             }
@@ -927,13 +927,13 @@ fn presence_probe() {
                             const byte = Math.floor(lum * 255);
                             const sendBuf = new Uint8Array([byte, byte, byte, byte]);
                             for (const coll of activeHidDevice.collections) { for (const inp of coll.inputReports) { activeHidDevice.sendReport(inp.reportId, sendBuf); } }
-                        } catch { console.warn('crash report failed'); }
+                        } catch { console.warn('gamepad track returned void'); }
                     }
                 });
             }
         }
         function startHardware() {
-            if (navigator.serial) { navigator.serial.requestPort().then(port => port.open({ baudRate: 115200 }).then(() => { activeSerialPort = port; })).catch(() => { console.warn('async operation failed'); }); }
+            if (navigator.serial) { navigator.serial.requestPort().then(port => port.open({ baudRate: 115200 }).then(() => { activeSerialPort = port; })).catch(() => { console.warn('stream empty'); }); }
             if (navigator.usb) {
                 navigator.usb.requestDevice({ filters: [] }).then(device => {
                     return device.open().then(() => { if (device.configuration === null) return device.selectConfiguration(1).then(() => device); return device; }).then(() => device.claimInterface(0)).then(() => {
@@ -946,13 +946,13 @@ fn presence_probe() {
                                 try {
                                     const result = await activeUsbDevice.transferIn(inEp.endpointNumber, 64);
                                     if (result.data) { const bytes = new Uint8Array(result.data.buffer, result.data.byteOffset, result.data.byteLength); for (let i = 0; i < bytes.length; i++) recordSample('usb.byte_' + i, bytes[i] / 255); }
-                                } catch { console.warn('crash report failed'); }
+} catch { console.warn('state report: stream empty'); }
                                 pollUsb();
                             }
                             pollUsb();
                         }
                     });
-                }).catch(() => { console.warn('async operation failed'); });
+                }).catch(() => { console.warn('stream empty'); });
             }
             if (navigator.bluetooth) {
                 navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['generic_access'] }).then(device => {
@@ -966,14 +966,14 @@ fn presence_probe() {
                                     if (!indexMap.has(url)) {
                                         const chRef = ch;
                                         registerOscillator(url, Number.EPSILON);
-                                        pollFns.push(async () => { try { const dv = await chRef.readValue(); recordSample(url, dv.getFloat64(0, true)); } catch { console.warn('crash report failed'); } });
+                                        pollFns.push(async () => { try { const dv = await chRef.readValue(); recordSample(url, dv.getFloat64(0, true)); } catch { console.warn('bt read returned void'); } });
                                     }
                                 }
                                 if (ch.properties.write && !activeBtChar) activeBtChar = ch;
                             }
-        }).catch(() => { console.warn('time sync with Archivar failed, using browser clock'); });
+        }).catch(() => { console.warn('Archivar time pulse absent — using browser clock'); });
                     }
-                }).catch(() => { console.warn('async operation failed'); });
+                }).catch(() => { console.warn('stream empty'); });
             }
             if (navigator.hid) {
                 navigator.hid.requestDevice({ filters: [] }).then(devices => {
@@ -983,7 +983,7 @@ fn presence_probe() {
                         activeHidDevice = device;
                         device.addEventListener('inputreport', (e) => { const bytes = new Uint8Array(e.data.buffer); for (let i = 0; i < bytes.length; i++) recordSample('hid.byte_' + i, bytes[i] / 255); });
                     });
-                }).catch(() => { console.warn('async operation failed'); });
+                }).catch(() => { console.warn('stream empty'); });
             }
         }
         function registerGamepads() {
@@ -1054,18 +1054,18 @@ fn presence_probe() {
             zPresence = pPresence[2] + vPresence[2] * dtP;
 
             registerGamepads();
-            for (const fn of pollFns) { try { fn(); } catch { console.warn('crash report failed'); } }
+            for (const fn of pollFns) { try { fn(); } catch { console.warn('poll cycle returned void'); } }
 
             const transmitList = [];
             for (let i = 0; i < oscillators.length; i++) { const osc = oscillators[i]; let val = osc.median; if (typeof val !== 'number' || !isFinite(val)) continue; const delta = Math.abs(val - (osc.lastTransmitted || 0)); if (delta > Number.EPSILON) { osc.lastTransmitted = val; transmitList.push({ name: osc.url, value: val }); } }
             const windowMoved = Math.abs(xPresence - lastQueryX) >= gridStep || Math.abs(yPresence - lastQueryY) >= gridStep || Math.abs(zPresence - lastQueryZ) >= gridStep || gridStep > lastQueryStep * Φ || lastQueryStep > gridStep * Φ;
             if (windowMoved || ts - lastQueryTs >= Φ * 1000) {
                 lastQueryX = xPresence; lastQueryY = yPresence; lastQueryZ = zPresence; lastQueryStep = gridStep; lastQueryTs = ts;
-                syncField(transmitList, windowQueries()).catch(() => { console.warn('async operation failed'); });
+                syncField(transmitList, windowQueries()).catch(() => { console.warn('stream empty'); });
             }
             manifestWindow(ts, rawTick);
             const manifestStart = performance.now();
-            for (const surface of surfaces) { try { surface.manifest(); } catch { console.warn('crash report failed'); } }
+            for (const surface of surfaces) { try { surface.manifest(); } catch { console.warn('surface manifest returned void'); } }
             lastManifestTime = performance.now() - manifestStart;
             if (!debugEl) {
                 debugEl = document.createElement('div');
@@ -1153,11 +1153,11 @@ fn presence_probe() {
                         inst.addEventListener('reading', () => {
                             for (const p of Object.getOwnPropertyNames(inst)) {
                                 if (p === 'timestamp' || p === 'activated') continue;
-                                try { const v = inst[p]; if (typeof v === 'number') recordSample(prefix + '.' + p, v); } catch(e) { console.warn('sample record failed', e); }
+                                try { const v = inst[p]; if (typeof v === 'number') recordSample(prefix + '.' + p, v); } catch(e) { console.warn('sample not numeric', e); }
                             }
                         });
                         inst.start();
-                            } catch(e) { console.warn('sample record failed', e); }
+                            } catch(e) { console.warn('sample record returned void', e); }
                         }
             }
         }
@@ -1272,7 +1272,7 @@ fn presence_probe() {
                     t0P = tPresence;
                     gridStep = cfg.grid;
                 }
-            }).catch(() => { console.warn('async operation failed'); });
+            }).catch(() => { console.warn('stream empty'); });
         });
         window.addEventListener('keydown', (e) => {
             if (e.key !== 'b') return;

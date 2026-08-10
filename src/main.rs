@@ -33,11 +33,7 @@ fn resolve_asset(rel: &str) -> std::path::PathBuf {
             }
         }
     }
-    eprintln!(
-        "asset '{}' not found (CWD={:?})",
-        rel,
-        std::env::current_dir()
-    );
+    eprintln!("asset {} absent (CWD {:?})", rel, std::env::current_dir());
     cwd_candidate
 }
 
@@ -2389,7 +2385,12 @@ fn fetch_raw(
         Some(String::from_utf8_lossy(&output.stdout).to_string())
     } else {
         let stderr = String::from_utf8_lossy(&output.stderr);
-        eprintln!("curl failed ({}): {} {}", output.status, url, stderr.trim());
+        eprintln!(
+            "fetch returned ({}): {} {}",
+            output.status,
+            url,
+            stderr.trim()
+        );
         None
     }
 }
@@ -2966,7 +2967,7 @@ fn resolve_secret(url: &str) -> String {
                 .ok()
                 .or_else(|| std::env::var(&upper).ok())
                 .unwrap_or_else(|| {
-                    eprintln!("missing secret '{}', URL may fail", key);
+                    eprintln!("env var {} absent — URL template unresolved", key);
                     String::new()
                 });
             result.push_str(&val);
@@ -3015,7 +3016,7 @@ fn load_sources() -> Vec<SourceConfig> {
             if active && cur_frame.is_some() && cur_ttl > 0 && !cur_url.is_empty() {
                 if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
                     eprintln!(
-                        "source refused (flux_from_mag and abs_mag_from exclusive): {}",
+                        "source refused: flux_from_mag + abs_mag_from conflict at {}",
                         cur_url
                     );
                 } else {
@@ -3897,19 +3898,19 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                         if let Some(JsonVal::Str(s)) = m.get("result") {
                             s.clone()
                         } else {
-                            eprintln!("EPH no result key fmt={}", src.format);
+                            eprintln!("EPH result key absent, fmt={}", src.format);
                             body.to_string()
                         }
                     } else {
-                        eprintln!("EPH not obj fmt={}", src.format);
+                        eprintln!("EPH root not object, fmt={}", src.format);
                         body.to_string()
                     }
                 } else {
                     eprintln!(
-                        "EPH parse_json failed fmt={} len={} head={:?}",
+                        "VEC body not JSON, fmt={} len={} lead={:?}",
                         src.format,
                         body.len(),
-                        body.get(..40.min(body.len()))
+                        &body[..body.len().min(120)]
                     );
                     body.to_string()
                 };
@@ -4014,11 +4015,11 @@ fn extract_pending(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                         if let Some(JsonVal::Str(s)) = m.get("result") {
                             s.clone()
                         } else {
-                            eprintln!("VEC no result key fmt={}", src.format);
+                            eprintln!("VEC result key absent, fmt={}", src.format);
                             body.to_string()
                         }
                     } else {
-                        eprintln!("VEC not obj fmt={}", src.format);
+                        eprintln!("VEC root not object, fmt={}", src.format);
                         body.to_string()
                     }
                 } else {
@@ -5234,7 +5235,7 @@ fn verify_mode(dir: &str) -> i32 {
         }
     }
     walk(std::path::Path::new(dir), &mut urls, &mut seen);
-    eprintln!("verify: {} unique URLs from {}", urls.len(), dir);
+    eprintln!("verify: {} URL sources from {}", urls.len(), dir);
     let mut ok = 0;
     let mut fail = 0;
     let mut verified = String::new();
@@ -5252,7 +5253,7 @@ fn verify_mode(dir: &str) -> i32 {
         }
         if (ok + fail) % 50 == 0 {
             eprintln!(
-                "verify: {}/{} ok, {}/{} files",
+                "verify: {}/{} present, {}/{} empty",
                 ok,
                 ok + fail,
                 fail,
@@ -5263,7 +5264,7 @@ fn verify_mode(dir: &str) -> i32 {
     std::fs::write("verified_urls.txt", &verified).ok();
     std::fs::write("failed_urls.txt", &failed).ok();
     eprintln!(
-        "verify: done. {} ok, {} failed. {} total.",
+        "verify: done. {} present, {} empty. {} total.",
         ok,
         fail,
         urls.len()
@@ -5280,7 +5281,7 @@ fn main() {
     {
         let args: Vec<String> = std::env::args().collect();
         if args.len() > 1 && args[1] == "--ci-mode" {
-            eprintln!("ci-mode not available in this build");
+            eprintln!("ci-mode: not compiled");
             std::process::exit(1);
         }
         if args.len() > 1 && args[1] == "--verify" {
@@ -5429,14 +5430,14 @@ fn main() {
     let index_html = match std::fs::read(resolve_asset("static/index.html")) {
         Ok(v) => v,
         Err(_) => {
-            eprintln!("static/index.html not found — cannot serve pages");
+            eprintln!("static/index.html absent — serving 0 bytes");
             Vec::new()
         }
     };
     let constants_js = match std::fs::read(resolve_asset("static/constants.js")) {
         Ok(v) => v,
         Err(_) => {
-            eprintln!("static/constants.js not found — browser protocol fails");
+            eprintln!("static/constants.js absent — browser protocol empty");
             Vec::new()
         }
     };

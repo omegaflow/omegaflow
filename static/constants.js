@@ -59,7 +59,7 @@ export async function syncFrame(inputs, queries, presence) {
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86) return emptyResp;
-    if (bytes[2] !== 3) throw new Error('protocol v3 required, got v' + bytes[2]);
+    if (bytes[2] !== 3) throw new Error('protocol mismatch');
 
     let o = 3;
     o += 4;

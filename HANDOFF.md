@@ -9,7 +9,7 @@ Zero fabrications. Zero comments in source files.
 
 **Kernel system** — 7 spatial shapes. Per-field. `FieldConfig { key, name, kernel, force, unit, tau }`.
 **Channel concurrency** — 0 Mutex, 0 RwLock, 0 Condvar. mpsc::channel. trait Radiator.
-**Protocol v3** — 88 bytes (11 × f64). `force_type` 11th field.
+**Protocol** — 88 bytes (11 × f64).
 **Grammar** — `field <key> <name> <kernel> <force> <unit>` mandatory (5 tokens).
 **τ-Gate** — `pend.tau = None` → `return vec![]`. No oscillation without physics.
 
