@@ -5237,7 +5237,7 @@ fn verify_mode(dir: &str) -> i32 {
     walk(std::path::Path::new(dir), &mut urls, &mut seen);
     eprintln!("verify: {} URL sources from {}", urls.len(), dir);
     let mut ok = 0;
-    let mut fail = 0;
+    let mut empty_count = 0;
     let mut verified = String::new();
     let mut empty_urls = String::new();
     for url in &urls {
@@ -5247,16 +5247,16 @@ fn verify_mode(dir: &str) -> i32 {
             verified.push_str(url);
             verified.push('\n');
         } else {
-            fail += 1;
+            empty_count += 1;
             empty_urls.push_str(url);
             empty_urls.push('\n');
         }
-        if (ok + fail) % 50 == 0 {
+        if (ok + empty_count) % 50 == 0 {
             eprintln!(
                 "verify: {}/{} present, {}/{} empty",
                 ok,
-                ok + fail,
-                fail,
+                ok + empty_count,
+                empty_count,
                 urls.len()
             );
         }
@@ -5266,10 +5266,10 @@ fn verify_mode(dir: &str) -> i32 {
     eprintln!(
         "verify: done. {} present, {} empty. {} total.",
         ok,
-        fail,
+        empty_count,
         urls.len()
     );
-    if fail > 0 {
+    if empty_count > 0 {
         1
     } else {
         0

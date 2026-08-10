@@ -48,7 +48,7 @@ export async function syncFrame(inputs, queries, presence) {
     const promise = new Promise((resolve, reject) => {
         const timeoutDuration = getRto();
         const timeout = setTimeout(() => {
-            if (transport.pending.has(id)) { transport.pending.delete(id); reject(new Error("Frame timeout")); }
+            if (transport.pending.has(id)) { transport.pending.delete(id); reject(new Error("frame timed out")); }
         }, timeoutDuration);
         transport.pending.set(id, { resolve, reject, timeout, startTime });
     });

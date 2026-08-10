@@ -515,7 +515,7 @@ fn presence_probe() {
                     probeRead = device.createBuffer({ size: 32, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
                     vpBuf = device.createBuffer({ size: 112, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
                     gpu = device;
-                } catch (e) { gpu = null; gpuStatus = 'WebGPU: error (' + String(e) + ')'; reportState('gpu', String(e)); }
+                } catch (e) { gpu = null; gpuStatus = 'WebGPU: absent (' + String(e) + ')'; reportState('gpu', String(e)); }
             })();
             gpuInitPromise.catch(() => { console.warn('stream empty'); }).finally(() => { gpuInitPromise = null; });
             return gpuInitPromise;
@@ -1283,7 +1283,7 @@ fn presence_probe() {
             qOrientation = [1, 0, 0, 0];
             keysDown.clear();
         });
-        window.addEventListener('error', (e) => { reportState('ERROR', e.message + ' @ ' + e.filename + ':' + e.lineno); e.preventDefault(); });
+        window.addEventListener('error', (e) => { reportState('signal', e.message + ' @ ' + e.filename + ':' + e.lineno); e.preventDefault(); });
         window.addEventListener('unhandledrejection', (e) => { reportState('REJECTION', String(e.reason)); e.preventDefault(); });
         requestAnimationFrame(ω);
     </script>
