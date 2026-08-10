@@ -488,8 +488,9 @@ fn horizons_request(
         .args([
             "-sS",
             "-L",
+            "-k",
             "--max-time",
-            "120",
+            "180",
             "--retry",
             "2",
             "-H",
@@ -499,6 +500,8 @@ fn horizons_request(
         .output()
         .ok()?;
     if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        eprintln!("  curl exit {}: {}", output.status, stderr.trim());
         return None;
     }
     Some(String::from_utf8_lossy(&output.stdout).to_string())
@@ -646,13 +649,21 @@ fn generate_from_horizons(
     let text = match horizons_request(command, t_start, t_stop, 1.0) {
         Some(t) => t,
         None => {
-            eprintln!("  {}: Horizons request returned void", body_name);
+            eprintln!(
+                "  {}: Horizons request returned void (curl or API issue)",
+                body_name
+            );
             return Vec::new();
         }
     };
     let vectors = extract_vectors(&text);
     if vectors.len() < 10 {
-        eprintln!("  SKIP {}: {:?} vectors", body_name, vectors.len());
+        eprintln!(
+            "  SKIP {}: {} vectors (min 10), lead: {:?}",
+            body_name,
+            vectors.len(),
+            text.get(..200)
+        );
         return Vec::new();
     }
     let mut granules = Vec::new();
