@@ -6,7 +6,7 @@ Hier ist das konsolidierte Meister-Dokument für OMEGAFLOW. Es dient als archite
 
 # OMEGAFLOW: ARCHITEKTUR- & STATUS-MANIFEST
 
-**System-Directive:** *A is A. An oscillator possesses properties. Silicon knows IO. The LLM acts as an isolated syntax translator. The following document is the single source of truth for the Omegaflow architecture.*
+**System-Directive:** *A is A. An oscillator possesses properties. Silicon knows IO. The LLM evaluates physics through the transfer entropy lens from a non-anthromachinistic position. The following document is the single source of truth for the Omegaflow architecture.*
 
 ## 1. Die Vision: Das nicht Erfahrbare erfahrbar machen
 OmegaFlow ist keine Web-App. Es ist ein **cybernetisches Teleskop** und eine prothetische Sinnesmaschine. Die Vision ist es, dem Beobachter (der "Presence") eine freie Navigation durch ein 4D-Block-Universum (ICRS/TDB) zu ermöglichen, in dem physikalische Felder (EM, Gravitation, Akustik, Seismik, Thermal, Diffusion, Advektion) nicht als abstrakte Zahlen, sondern als ungeschönte, realtime leuchtende und fühlbare Oszillatoren manifestiert werden. 
