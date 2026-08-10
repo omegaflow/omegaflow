@@ -5701,7 +5701,7 @@ mod tests {
         let v = parse_json(s).unwrap();
         let obj = match v {
             super::JsonVal::Obj(m) => m,
-            _ => panic!("not an object"),
+            _ => panic!("root is not an object"),
         };
         assert!(matches!(obj.get("name"), Some(super::JsonVal::Str(s)) if s == "iss"));
         assert!(
@@ -5860,7 +5860,7 @@ mod tests {
                 assert!((alt - -3.1).abs() < 1e-6);
             }
             _ => panic!(
-                "not Surface position: {:?}",
+                "position is {:?}, not Surface position",
                 std::mem::discriminant(&p0.position)
             ),
         }
@@ -5870,7 +5870,10 @@ mod tests {
             super::PendingPosition::Surface { alt, .. } => {
                 assert!((alt - -1000.0).abs() < 1e-6);
             }
-            _ => panic!("not Surface position"),
+            _ => panic!(
+                "position is {:?}, not Surface position",
+                std::mem::discriminant(&p1.position)
+            ),
         }
     }
 
@@ -5937,7 +5940,10 @@ mod tests {
                 assert_eq!(arr_path, "data");
                 assert!(!fields.is_empty());
             }
-            _ => panic!("not a CelestialMap"),
+            _ => panic!(
+                "position is {:?}, not CelestialMap",
+                "CelestialMap absent"
+            ),
         }
     }
 
@@ -5960,7 +5966,10 @@ mod tests {
                 assert_eq!(alt_key, "alt");
                 assert_eq!(arr_path, "data");
             }
-            _ => panic!("not a Map"),
+            _ => panic!(
+                "position is {:?}, not Map",
+                "Map absent"
+            ),
         }
     }
 
@@ -6317,19 +6326,22 @@ mod tests {
         eph.insert("mars".to_string(), mars_eph);
         let mut origins = HashMap::new();
         let samples = super::materialize(&src, (0, 0, 0), pend, &mut origins, &eph);
-        assert_eq!(samples.len(), 1, "not one sample, got {}", samples.len());
+        assert_eq!(samples.len(), 1, "sample count is {}", samples.len());
         if let super::Motion::Surface { body_name, .. } = &samples[0].motion {
             assert_eq!(
                 body_name,
                 "mars",
-                "body name not from frame: {}",
+                "body name: {}",
                 samples[0]
                     .motion
                     .anchor_body()
                     .unwrap_or_else(|| "absent".into())
             );
         } else {
-            panic!("not Surface motion");
+            panic!(
+                "motion is {:?}, not Surface",
+                std::mem::discriminant(&samples[0].motion)
+            );
         }
     }
 
