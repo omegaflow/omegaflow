@@ -2042,11 +2042,14 @@ fn extract_fields(ext: &Extract) -> &[FieldConfig] {
     }
 }
 
-fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, ttl: f64) -> f64 {
+fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, tau: f64) -> f64 {
+    if tau == 0.0 {
+        return 0.0;
+    }
     match kernel_id {
         0 | 6 => f64::INFINITY,
         _ => {
-            let reach_time = ttl;
+            let reach_time = tau;
             let p = match body_props {
                 Some(p) => p,
                 None => return 0.0,
@@ -2963,8 +2966,8 @@ fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
         None => return None,
     };
     let tau: f64 = match parts[6].parse() {
-        Ok(v) => v,
-        Err(_) => return None,
+        Ok(v) if v > 0.0 => v,
+        _ => return None,
     };
     let absorption: f64 = match parts[7].parse() {
         Ok(v) => v,
@@ -3242,16 +3245,16 @@ fn load_sources() -> Vec<SourceConfig> {
                     outputs.push(parts[i].to_string());
                 }
                 let tau: f64 = match parts.get(5).and_then(|s| s.parse().ok()) {
-                    Some(v) => v,
-                    None => 0.0,
+                    Some(v) if v > 0.0 => v,
+                    _ => continue,
                 };
                 let absorption: f64 = match parts.get(6).and_then(|s| s.parse().ok()) {
                     Some(v) => v,
-                    None => 0.0,
+                    _ => continue,
                 };
                 let advection: f64 = match parts.get(7).and_then(|s| s.parse().ok()) {
                     Some(v) => v,
-                    None => 0.0,
+                    _ => continue,
                 };
                 cur_extracts.push(Extract::GeojsonEvents {
                     mag_key,
@@ -4282,8 +4285,8 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     key: n.clone(),
                                     name: n.clone(),
                                     kernel: 0,
-                                    force: 0,
-                                    tau: src.ttl as f64,
+                                    force: 1,
+                                    tau: 86400.0 * 365.0,
                                     absorption: 0.0,
                                     advection: 0.0,
                                 },
@@ -4408,8 +4411,8 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     key: n.clone(),
                                     name: n.clone(),
                                     kernel: 0,
-                                    force: 0,
-                                    tau: src.ttl as f64,
+                                    force: 1,
+                                    tau: 86400.0 * 365.0,
                                     absorption: 0.0,
                                     advection: 0.0,
                                 },
