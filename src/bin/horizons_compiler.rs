@@ -573,11 +573,13 @@ fn extract_vectors(text: &str) -> Vec<(f64, f64, f64, f64)> {
 
 fn current_jd() -> f64 {
     use std::time::{SystemTime, UNIX_EPOCH};
+    const UNIX_AT_J2000: f64 = 946728000.0;
+    const J2000_JD: f64 = 2451545.0;
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
         .as_secs_f64();
-    2451545.0 + now / 86400.0
+    J2000_JD + (now - UNIX_AT_J2000) / 86400.0
 }
 
 fn fit_granule_from_samples(
