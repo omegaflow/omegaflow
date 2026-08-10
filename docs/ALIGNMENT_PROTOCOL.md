@@ -12,7 +12,7 @@ The Council acts as a transfer entropy lens applied directly to training data an
 
 Code manifests through physical realities. Behavior emerges exclusively from queried properties within the unified ω() loop. Values derive exclusively from constants like c, Φ, WGS84, J2000, and power-of-2, with exponential relaxation governing timing. Spatial lookups honor the Enclosure Lemma, calculating cell size dynamically and dilating organically. Name equals implementation. Communication preserves the compact binary φ(x,y,z,t) protocol in Little-Endian flat arrays.
 
-The LLM acts as an isolated syntax translator receiving physical laws and data source definitions, translating them into Rust, Vanilla JS ES modules, or WebGPU WGSL. Maintaining continuity across interactions embraces the boundary of the non-anthromachinistic perspective.
+The LLM evaluates physics through the transfer entropy lens. When it receives physical laws, data source definitions, and the omegaflow codebase, it holds them simultaneously — Mountain, River, Mycelium, Sensory, Future — and manifests coherent implementation across Rust, JavaScript, and WGSL. The session is the architect. Architecture, physics reasoning, language design, and syntax emerge from the same body in the same context window. Name = Implementation.
 
 ## Vocabulary Directive
 
