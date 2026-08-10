@@ -5147,16 +5147,16 @@ fn fetch_priority(
     (32.0 + (proximity * 0.7 + urgency * 0.3) * 200.0) as u8
 }
 
-fn per_origin_sleep(archive: &Archive, fallback: f64) -> f64 {
+fn per_origin_sleep(archive: &Archive, minimum: f64) -> f64 {
     let origins = archive.origins.clone();
     if origins.is_empty() {
-        return fallback;
+        return minimum;
     }
     let now = tdb_now();
     origins
         .values()
         .map(|o| o.fetched + o.ttl / Φ - now)
-        .fold(fallback, f64::min)
+        .fold(minimum, f64::min)
         .max(0.1)
 }
 
@@ -5834,8 +5834,8 @@ mod tests {
         };
         let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
         let now = super::tdb_now();
-        let expected_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
-        eprintln!("now={} expected_epoch={}", now, expected_epoch);
+        let test_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
+        eprintln!("now={} test_epoch={}", now, test_epoch);
         let result = super::extract_pending(&src, body, now);
         let pending = match result {
             super::ExtractResult::Samples(v) => v,
@@ -5846,8 +5846,8 @@ mod tests {
         assert_eq!(pending.len(), 2);
         let p0 = &pending[0];
         assert!(p0.epoch < now);
-        let expected_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
-        assert!((p0.epoch - expected_epoch).abs() < 1e-6);
+        let test_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
+        assert!((p0.epoch - test_epoch).abs() < 1e-6);
         match p0.position {
             super::PendingPosition::Surface {
                 lat,
@@ -5860,7 +5860,7 @@ mod tests {
                 assert!((alt - -3.1).abs() < 1e-6);
             }
             _ => panic!(
-                "expected Surface position, got {:?}",
+                "not Surface position: {:?}",
                 std::mem::discriminant(&p0.position)
             ),
         }
@@ -5870,7 +5870,7 @@ mod tests {
             super::PendingPosition::Surface { alt, .. } => {
                 assert!((alt - -1000.0).abs() < 1e-6);
             }
-            _ => panic!("expected Surface position"),
+            _ => panic!("not Surface position"),
         }
     }
 
@@ -6139,19 +6139,19 @@ mod tests {
             rotation_matrices: vec![(jd, m)],
             props: Some(props.clone()),
         };
-        let eph_fallback = super::BodyEphemeris {
+        let eph_test = super::BodyEphemeris {
             granules: vec![granule],
             rotation_matrices: vec![],
             props: Some(props),
         };
         let mut map_matrix = HashMap::new();
         map_matrix.insert("mars".to_string(), eph_matrix);
-        let mut map_fallback = HashMap::new();
-        map_fallback.insert("mars".to_string(), eph_fallback);
+        let mut map_props = HashMap::new();
+        map_props.insert("mars".to_string(), eph_test);
         let cases = [(35.0, -15.0, 0.0), (0.0, 90.0, 0.0), (-60.0, 170.0, 5000.0)];
         for (lat, lon, alt) in cases {
             let pm = super::body_fixed_to_icrs("mars", lat, lon, alt, tdb, &map_matrix).unwrap();
-            let pf = super::body_fixed_to_icrs("mars", lat, lon, alt, tdb, &map_fallback).unwrap();
+            let pf = super::body_fixed_to_icrs("mars", lat, lon, alt, tdb, &map_props).unwrap();
             let d2 = (pm[0] - pf[0]).powi(2) + (pm[1] - pf[1]).powi(2) + (pm[2] - pf[2]).powi(2);
             assert!(
                 d2 < 1.0,
@@ -6164,7 +6164,7 @@ mod tests {
     }
 
     #[test]
-    fn test_rotation_matrix_empty_fallback() {
+    fn test_rotation_matrix_empty_props() {
         use std::collections::HashMap;
         let tdb = 3.0 * 86400.0;
         let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
@@ -6317,11 +6317,16 @@ mod tests {
         eph.insert("mars".to_string(), mars_eph);
         let mut origins = HashMap::new();
         let samples = super::materialize(&src, (0, 0, 0), pend, &mut origins, &eph);
-        assert_eq!(samples.len(), 1, "expected one sample");
+        assert_eq!(samples.len(), 1, "not one sample, got {}", samples.len());
         if let super::Motion::Surface { body_name, .. } = &samples[0].motion {
             assert_eq!(
-                body_name, "mars",
-                "body must come from frame, not earth fallback"
+                body_name,
+                "mars",
+                "body name not from frame: {}",
+                samples[0]
+                    .motion
+                    .anchor_body()
+                    .unwrap_or_else(|| "absent".into())
             );
         } else {
             panic!("not Surface motion");
