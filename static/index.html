@@ -285,7 +285,7 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 
-struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) kernel_id: u32, @location(3) @interpolate(flat) absorption: f32, @location(4) @interpolate(flat) force_type: u32, @location(5) @interpolate(flat) advection: f32, @location(6) @interpolate(flat) d_mag: f32, @location(7) @interpolate(flat) extent: f32 };
+struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 
 const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
 
@@ -305,84 +305,13 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
 }
 
 @vertex fn vs(@builtin(vertex_index) i: u32) -> VOut {
-    let count = u32(vp.surface.z);
-    var out: VOut;
-    out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
-    out.uv = vec2f(0.0);
-    out.color = vec3f(0.0);
-    out.kernel_id = 0u;
-    if (count == 0u) { return out; }
-
-    let id = i / 6u;
-    if (id >= count) { return out; }
-    let vid = i % 6u;
-
-    var quad = array<vec2f, 6>(
+    var p = array<vec2f, 6>(
         vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
         vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
     );
-
-    let m = field[id * 3u];
-    var d = m.xyz;
-    let beta = vec3f(vp.right.w, vp.up.w, vp.forward.w);
-    let b2 = dot(beta, beta);
-    var dopp = 1.0;
-    let d_mag0 = length(d);
-    if (b2 > 1e-12 && d_mag0 > 0.0) {
-        let gamma = 1.0 / sqrt(max(1.0 - b2, 1e-9));
-        let n_hat = d / d_mag0;
-        let nb = dot(n_hat, beta);
-        dopp = gamma * (1.0 + nb);
-        let bmag = sqrt(b2);
-        let bhat = beta / bmag;
-        let nbh = dot(n_hat, bhat);
-        let n_prime = (n_hat + ((gamma - 1.0) * nbh + gamma * bmag) * bhat) / (gamma * (1.0 + nb));
-        d = n_prime * d_mag0;
-    }
-    let val = m.w;
-    let tm = field[id * 3u + 1u];
-    let fm = field[id * 3u + 2u];
-    let mt = props[id];
-    let extent = mt.x;
-    let tau = mt.y;
-
-    let w = vp.surface.x;
-    let h = vp.surface.y;
-    let scale = vp.surface.w;
-
-    let x = dot(d, vp.right.xyz);
-    let y = dot(d, vp.up.xyz);
-    var clip = vec2f(x / (w * scale * 0.5), y / (h * scale * 0.5));
-
-    let d_mag = length(d);
-    let phys_extent = mt.x;
-    out.d_mag = d_mag;
-    out.extent = phys_extent;
-    let w_f = max(w, h);
-    var point_size_px = 1.0;
-    
-    clip.x += (quad[vid].x * point_size_px) / w * 2.0;
-    clip.y += (quad[vid].y * point_size_px) / h * 2.0;
-
-    out.pos = vec4f(clip, 0.0, 1.0);
-    out.uv = quad[vid];
-
-    let k_id = u32(mt.z);
-    let ft = u32(tm.z);
-    out.kernel_id = k_id;
-    out.absorption = f32(tm.w);
-    out.advection = fm.x;
-    var lvl = get_expose(ft);
-    if (lvl <= 0.0) { return out; }
-
-    let hue_center = fract(log2(max(tau, 1.0)) / 16.0 + f32(k_id) * 0.125);
-    let tau_freq = 1.0 / max(tau, exp2(-32.0));
-    let color_shift = clamp(log2(tau_freq) / 8.0, -0.25, 0.25);
-    let hue = fract(hue_center + color_shift + f32(u32(tm.z)) / 9.0 + log2(dopp) * 0.125);
-    let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y, u32(tm.z), fm.x)) * pow(dopp, 4.0) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
-    let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
-    out.color = rgb;
-    out.force_type = u32(tm.z);
+    var out: VOut;
+    out.pos = vec4f(p[i], 0.0, 1.0);
+    out.uv = vec2f(p[i].x * 0.5 + 0.5, 0.5 - p[i].y * 0.5);
     return out;
 }
 
@@ -466,10 +395,35 @@ fn presence_probe() {
 }
 
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
-    let hdr_color = in.color;
-    let mapped_color = log2(hdr_color * 4.0 + vec3f(1.0)) / 8.0;
-    let alpha = clamp(exp(-in.absorption * 0.1), 0.0, 1.0);
-    return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), alpha);
+    let count = u32(vp.surface.z);
+    if (count == 0u) { discard; }
+
+    let w = vp.surface.x;
+    let h = vp.surface.y;
+    let scale = vp.surface.w;
+    let pixel_rel = (in.uv.x - 0.5) * w * scale * vp.right.xyz
+        + (0.5 - in.uv.y) * h * scale * vp.up.xyz;
+
+    var omega = 0.0f;
+    for (var j = 0u; j < count; j = j + 1u) {
+        let m = field[j * 3u];
+        let tm = field[j * 3u + 1u];
+        let fm = field[j * 3u + 2u];
+        let mt = props[j];
+        let delta = m.xyz - pixel_rel;
+        let d2 = dot(delta, delta);
+        let d_mag = sqrt(d2);
+        let val_eff = fold_eff(d_mag, m.w, tm.x, tm.y, u32(tm.z), fm.x);
+        let sk = field_spatial(d2, d_mag, mt.x, u32(mt.z), scale, f32(tm.w));
+        omega += val_eff * sk;
+    }
+
+    let aw = abs(omega);
+    if (aw < 1e-30) { discard; }
+    let lum = clamp(log2(aw + 1.0) / 16.0, 0.0, 1.0);
+    let hue = fract(log2(max(scale, 1.0)) / 32.0 + lum * 0.3);
+    let rgb = hsl_to_rgb(hue, 0.7, lum * 0.85);
+    return vec4f(rgb, 1.0);
 }
 `;
         let fieldCanvas = document.createElement('canvas');
@@ -518,8 +472,8 @@ fn presence_probe() {
                     fieldCtx.configure({ device, format, alphaMode: 'opaque' });
                     const module = device.createShaderModule({ code: fieldShader });
                     fieldLayout = device.createBindGroupLayout({ entries: [
-                        { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
-                        { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
+                        { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } },
+                        { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } },
                         { binding: 2, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
                         { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
                     ] });
@@ -682,7 +636,7 @@ fn presence_probe() {
                 const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
                 pass.setPipeline(fieldPipe);
                 pass.setBindGroup(0, fieldBind);
-                pass.draw(n * 6);
+                pass.draw(6);
                 pass.end();
                 gpu.queue.submit([encoder.finish()]);
                 fieldFrames++;
