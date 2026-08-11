@@ -6945,20 +6945,34 @@ fn main() {
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
+                let body_name = src_clone.body.clone().unwrap_or_default();
+                let lock = format!("/tmp/omegaflow_eph_{}.lock", body_name);
+                if std::path::Path::new(&lock).exists() {
+                    continue;
+                }
+                let _ = std::fs::write(&lock, "");
                 thread::spawn(move || {
                     let tmp_path = match &src_clone.body {
                         Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
-                        None => return,
+                        None => {
+                            let _ = std::fs::remove_file(&lock);
+                            return;
+                        }
                     };
                     if read_cache_if_fresh(&tmp_path, src_clone.ttl).is_none() {
                         let bytes = match fetch_raw_bytes(&url, src_clone.ttl) {
                             Some(b) => b,
-                            None => return,
+                            None => {
+                                let _ = std::fs::remove_file(&lock);
+                                return;
+                            }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
+                            let _ = std::fs::remove_file(&lock);
                             return;
                         }
                     }
+                    let _ = std::fs::remove_file(&lock);
                     if let ExtractResult::WithEphemeris(_, eph) =
                         extract(&src_clone, &tmp_path, tdb_now())
                     {
