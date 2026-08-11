@@ -7013,14 +7013,6 @@ fn main() {
                 continue;
             }
             if archive.sources[i].format == "ephemeris_binary" {
-                let is_essential = match &archive.sources[i].body {
-                    Some(b) => b == "earth" || b == "sun" || b == "moon",
-                    None => false,
-                };
-                let has_earth = archive.body_ephemerides.contains_key("earth");
-                if !has_earth && !is_essential {
-                    continue;
-                }
                 let url = archive.sources[i].url.clone();
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
