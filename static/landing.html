@@ -110,6 +110,7 @@ const platforms = document.getElementById('platforms');
 
 const ua = navigator.userAgent;
 const isMobile = /Android|iPhone|iPad|iPod|Mobi/i.test(ua);
+const isAndroid = /Android/i.test(ua);
 const isMac = /Mac/i.test(ua) || /iPhone|iPad|iPod/i.test(ua);
 const isWin = /Win/i.test(ua);
 const isLinux = /Linux/i.test(ua) && !/Android/i.test(ua);
@@ -118,11 +119,14 @@ const isArm = /arm|aarch/i.test(ua) || /Apple.*ARM|Mac.*ARM/i.test(ua);
 let binary = 'omegaflow_linux';
 if (isMac) binary = isArm ? 'omegaflow_macos_arm64' : 'omegaflow_macos_intel';
 else if (isWin) binary = 'omegaflow_windows.exe';
+else if (isLinux) binary = isArm ? 'omegaflow_linux_arm64' : 'omegaflow_linux';
 
 if (isMobile) {
-    φ.href = 'https://github.com/omegaflow/omegaflow';
-    Φ.href = 'https://github.com/omegaflow/omegaflow';
-    info.innerHTML = 'Ω runs on desktop. The field is WebGPU — open <code style="color:#8a8270">localhost:1111</code> after starting the binary.';
+    φ.href = isAndroid ? 'omegaflow_termux_bootstrap.zip' : 'https://github.com/omegaflow/omegaflow';
+    Φ.href = isAndroid ? 'omegaflow_termux_bootstrap.zip' : 'https://github.com/omegaflow/omegaflow';
+    info.innerHTML = isAndroid
+        ? 'install Termux, download this bootstrap, then <code style="color:#8a8270">localhost:1111</code> in Chrome'
+        : 'Ω needs a Linux host. Desktop or Android/Termux.';
     Φ.classList.remove('pulse');
 } else {
     φ.href = binary;
@@ -132,10 +136,11 @@ if (isMobile) {
 
 const allLinks = [
     ['Linux (x64)', 'omegaflow_linux'],
+    ['Linux (ARM64)', 'omegaflow_linux_arm64'],
     ['macOS (Apple Silicon)', 'omegaflow_macos_arm64'],
     ['macOS (Intel)', 'omegaflow_macos_intel'],
     ['Windows (x64)', 'omegaflow_windows.exe'],
-    ['Android · iOS', 'https://github.com/omegaflow/omegaflow'],
+    ['Android (Termux)', 'omegaflow_termux_bootstrap.zip'],
 ];
 platforms.innerHTML = allLinks.map(l => `<a href="${l[1]}">${l[0]}</a>`).join(' · ');
 
