@@ -6586,6 +6586,7 @@ fn ci_mode(dir: &str) -> i32 {
     let total = sources.len();
     let mut reachable = 0usize;
     let mut dead = 0usize;
+    let mut mirrored = 0u32;
     for src in &sources {
         let raw = match fetch_raw(&src.url, None, &[], src.ttl) {
             Some(r) => r,
@@ -6598,12 +6599,43 @@ fn ci_mode(dir: &str) -> i32 {
         if parse_json(&raw).is_some() {
             reachable += 1;
             eprintln!("ci-mode: {} JSON ok", src.url);
+            let is_fixed = !src.url.contains('{');
+            if is_fixed {
+                if let Some(netloc) = extract_netloc(&src.url) {
+                    let name = source_name_from_url(&src.url);
+                    let tmp_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+                    if let Some(parent) = std::path::Path::new(&tmp_path).parent() {
+                        let _ = std::fs::create_dir_all(parent);
+                    }
+                    if std::fs::write(&tmp_path, &raw).is_ok() {
+                        if let Ok(_gh) = std::env::var("GH_TOKEN") {
+                            let status = Command::new("gh")
+                                .arg("release")
+                                .arg("upload")
+                                .arg(netloc)
+                                .arg(&tmp_path)
+                                .arg("--clobber")
+                                .arg("--repo")
+                                .arg("omegaflow/sources")
+                                .output();
+                            if let Ok(o) = status {
+                                if o.status.success() {
+                                    mirrored += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         } else {
             eprintln!("ci-mode: {} JSON parse void", src.url);
             dead += 1;
         }
     }
-    eprintln!("ci-mode: {}/{} reachable, {} dead", reachable, total, dead);
+    eprintln!(
+        "ci-mode: {}/{} reachable, {} dead, {} mirrored to CDN",
+        reachable, total, dead, mirrored
+    );
     if dead == 0 {
         0
     } else {
