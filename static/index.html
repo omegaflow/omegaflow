@@ -359,7 +359,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.d_mag = d_mag;
     out.extent = phys_extent;
     let w_f = max(w, h);
-    var point_size_px = clamp(phys_extent / scale, 0.5, w_f);
+    var point_size_px = 1.0;
     
     clip.x += (quad[vid].x * point_size_px) / w * 2.0;
     clip.y += (quad[vid].y * point_size_px) / h * 2.0;
@@ -466,17 +466,9 @@ fn presence_probe() {
 }
 
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
-    let dist = length(in.uv);
-    if (dist > 1.0) { discard; }
-
-    let intensity = 1.0 - dist * dist;
-
-    let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
-    let analog_intensity = intensity * (0.9 + noise * 0.1);
-
-    let hdr_color = in.color * analog_intensity;
+    let hdr_color = in.color;
     let mapped_color = log2(hdr_color * 4.0 + vec3f(1.0)) / 8.0;
-    let alpha = clamp(exp(-in.absorption * analog_intensity * 10.0), 0.0, 1.0);
+    let alpha = clamp(exp(-in.absorption * 0.1), 0.0, 1.0);
     return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), alpha);
 }
 `;
