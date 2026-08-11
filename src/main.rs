@@ -6583,61 +6583,28 @@ fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
 
 fn ci_mode(dir: &str) -> i32 {
     let sources = load_all_sources(dir);
-    eprintln!("ci-mode: {} sources loaded from {}", sources.len(), dir);
-    let mut uploaded = 0u32;
+    let total = sources.len();
+    let mut reachable = 0usize;
+    let mut dead = 0usize;
     for src in &sources {
-        let netloc = match extract_netloc(&src.url) {
-            Some(n) => n,
-            None => {
-                eprintln!("ci-mode: netloc absent for {}", src.url);
-                continue;
-            }
-        };
-        let name = source_name_from_url(&src.url);
         let raw = match fetch_raw(&src.url, None, &[], src.ttl) {
             Some(r) => r,
             None => {
                 eprintln!("ci-mode: fetch returned void for {}", src.url);
+                dead += 1;
                 continue;
             }
         };
-        let tmp_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
-        if let Some(parent) = std::path::Path::new(&tmp_path).parent() {
-            let _ = std::fs::create_dir_all(parent);
-        }
-        if let Err(e) = std::fs::write(&tmp_path, &raw) {
-            eprintln!("ci-mode: write {} returned: {}", tmp_path, e);
-            continue;
-        }
-        let status = Command::new("gh")
-            .arg("release")
-            .arg("upload")
-            .arg(netloc)
-            .arg(&tmp_path)
-            .arg("--repo")
-            .arg("omegaflow/sources")
-            .arg("--clobber")
-            .env("GH_TOKEN", std::env::var("GH_TOKEN").unwrap_or_default())
-            .status();
-        match status {
-            Ok(s) if s.success() => {
-                uploaded += 1;
-                eprintln!("ci-mode: uploaded {}/{} as {}", name, netloc, tmp_path);
-            }
-            Ok(s) => {
-                eprintln!("ci-mode: gh upload returned {} for {}", s, name);
-            }
-            Err(e) => {
-                eprintln!("ci-mode: gh upload absent: {} for {}", e, name);
-            }
+        if parse_json(&raw).is_some() {
+            reachable += 1;
+            eprintln!("ci-mode: {} JSON ok", src.url);
+        } else {
+            eprintln!("ci-mode: {} JSON parse void", src.url);
+            dead += 1;
         }
     }
-    eprintln!(
-        "ci-mode: done. {} loaded, {} uploaded.",
-        sources.len(),
-        uploaded
-    );
-    if uploaded as usize == sources.len() {
+    eprintln!("ci-mode: {}/{} reachable, {} dead", reachable, total, dead);
+    if dead == 0 {
         0
     } else {
         1

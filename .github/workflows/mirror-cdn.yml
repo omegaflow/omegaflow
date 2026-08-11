@@ -1,15 +1,10 @@
-name: CI Archivar — CDN Cache
+name: Source Health — Probe all APIs
 on:
   workflow_dispatch:
-permissions:
-  contents: write
 jobs:
-  archivar:
+  probe:
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - run: cargo run -- --verify phi/research
       - run: cargo run -- --verify phi
