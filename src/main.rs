@@ -5756,7 +5756,16 @@ fn source_name_from_url(url: &str) -> String {
     let cleaned = path_and_query
         .chars()
         .map(|c| match c {
-            c if c.is_ascii_alphanumeric() || c == '/' || c == '-' || c == '.' || c == '_' => c,
+            c if c.is_ascii_alphanumeric()
+                || c == '/'
+                || c == '-'
+                || c == '.'
+                || c == '_'
+                || c == '{'
+                || c == '}' =>
+            {
+                c
+            }
             '?' | '&' | '=' => '/',
             _ => '_',
         })
