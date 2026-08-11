@@ -5745,27 +5745,26 @@ fn source_name_from_url(url: &str) -> String {
         .strip_prefix("https://")
         .unwrap_or(url)
         .strip_prefix("http://")
-        .unwrap_or(url);
-    let path_and_query = without_scheme
+        .unwrap_or(url)
         .strip_prefix("www.")
-        .unwrap_or(without_scheme);
-    let after_domain: Vec<&str> = path_and_query.splitn(2, '/').collect();
+        .unwrap_or(url);
+    let after_domain: Vec<&str> = without_scheme.splitn(2, '/').collect();
     if after_domain.len() < 2 {
-        return "index".to_string();
+        return "index.json".to_string();
     }
-    let segments = after_domain[1]
+    let path_and_query = after_domain[1];
+    let cleaned = path_and_query
         .chars()
         .map(|c| match c {
-            '/' | '?' | '&' | '=' => '_',
-            c if c.is_ascii_alphanumeric() || c == '-' || c == '.' || c == '_' => c,
+            c if c.is_ascii_alphanumeric() || c == '/' || c == '-' || c == '.' || c == '_' => c,
+            '?' | '&' | '=' => '/',
             _ => '_',
         })
-        .take(128)
         .collect::<String>();
-    if segments.is_empty() {
+    if cleaned.is_empty() {
         "index".to_string()
     } else {
-        segments
+        cleaned.trim_matches('/').to_string()
     }
 }
 
@@ -6593,12 +6592,10 @@ fn ci_mode(dir: &str) -> i32 {
                 continue;
             }
         };
-        let dir_path = format!("/tmp/archivar_cache/{}", netloc);
-        if let Err(e) = std::fs::create_dir_all(&dir_path) {
-            eprintln!("ci-mode: create_dir {} returned: {}", dir_path, e);
-            continue;
+        let tmp_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+        if let Some(parent) = std::path::Path::new(&tmp_path).parent() {
+            let _ = std::fs::create_dir_all(parent);
         }
-        let tmp_path = format!("{}/{}.json", dir_path, name);
         if let Err(e) = std::fs::write(&tmp_path, &raw) {
             eprintln!("ci-mode: write {} returned: {}", tmp_path, e);
             continue;
