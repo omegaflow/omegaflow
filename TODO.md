@@ -4,7 +4,9 @@ AGENTS.md is the primary constraint matrix. Git is the history.
 
 ## Stand — 2026-08-11 (Post-DeepSeek-Cleanup)
 
-Architektur kohärent: Fragment-Shader nutzt `field_spatial` (B04), Propagation Speeds für alle 9 Kräfte implementiert (B01), `unsafe set_var` eliminiert durch `Arc<HashMap>` (B08), Exposure-System auf 9 Forces erweitert (B03/D04/H15). 0 Warnings, 0 Errors. Fabrikationen (F01-F26, F43) eliminiert. Zentrismus-Biases (Z02, Z05, Z09) entfernt. `/crash`-Endpoint stabilisiert. Details: Git.
+Architektur kohärent: Fragment-Shader nutzt radial falloff `1 - dist²` (B04 gefixt), Propagation Speeds für alle 9 Kräfte, Exposure-System auf 9 Forces erweitert (B03/D04/H15), `kernel_for_force` als `match` (B02). Auto-Zoom beim ersten Datenempfang (90. Perzentil, min 2²⁸, >5 Oszillatoren). Stride 8→12 korrigiert. 0 Warnings, 0 Errors.
+**Source Curation gestartet:** 7 Live-API-Quellen in `phi/sources.φ` (USGS Erdbeben, SWPC Sonnenwind/Xray/Mag, NOAA Magnetometer, FDSN Quake, METAR). `test_live_sources_extract`: 7/7 ok.
+Fabrikationen (F01-F26, F43) eliminiert. Zentrismus-Biases (Z02, Z05, Z09) entfernt. `/crash`-Endpoint stabilisiert. Details: Git.
 
 ---
 
