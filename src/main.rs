@@ -2025,21 +2025,6 @@ fn kernel_for_force(force: u8) -> u8 {
     }
 }
 
-fn tau_for_force(force: u8) -> f64 {
-    match force {
-        0 => 60.0,
-        1 => 3600.0,
-        2 => 60.0,
-        3 => 10.0,
-        4 => 10.0,
-        5 => 3600.0,
-        6 => 86400.0,
-        7 => 60.0,
-        8 => 3600.0,
-        _ => 60.0,
-    }
-}
-
 fn extract_fields(ext: &Extract) -> &[FieldConfig] {
     match ext {
         Extract::Map { fields, .. }
@@ -3475,55 +3460,25 @@ fn load_sources() -> Vec<SourceConfig> {
             "vectors" if parts.len() >= 2 => {
                 cur_extracts.push(Extract::Vectors(parts[1].to_string()));
             }
-            "field" if parts.len() == 5 => {
+            "field" if parts.len() == 6 => {
                 let f = match force_id_of(parts[2]) {
                     Some(f) => f,
                     None => continue,
                 };
                 let tau: f64 = match parts[4].parse() {
                     Ok(v) if v > 0.0 => v,
-                    _ => tau_for_force(f),
+                    _ => continue,
+                };
+                let k = match kernel_id_of(parts[5]) {
+                    Some(k) => k,
+                    None => kernel_for_force(f),
                 };
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[1].to_string(),
-                    kernel: kernel_for_force(f),
+                    kernel: k,
                     force: f,
                     tau,
-                    absorption: 0.0,
-                    advection: 0.0,
-                };
-                if let Some(ext) = cur_extracts.last_mut() {
-                    let fields: Option<&mut Vec<FieldConfig>> = match ext {
-                        Extract::Map { fields, .. } => Some(fields),
-                        Extract::CelestialMap { fields, .. } => Some(fields),
-                        Extract::Rows { fields, .. } => Some(fields),
-                        Extract::Flatten { fields, .. } => Some(fields),
-                        Extract::CmrPolygon { fields, .. } => Some(fields),
-                        Extract::CelestialPolygon { fields, .. } => Some(fields),
-                        Extract::KeplerMap { fields, .. } => Some(fields),
-                        _ => None,
-                    };
-                    if let Some(flds) = fields {
-                        flds.push(fc);
-                    } else {
-                        cur_extracts.push(Extract::Field(fc.clone()));
-                    }
-                } else {
-                    cur_extracts.push(Extract::Field(fc.clone()));
-                }
-            }
-            "field" if parts.len() == 4 => {
-                let f = match force_id_of(parts[2]) {
-                    Some(f) => f,
-                    None => continue,
-                };
-                let fc = FieldConfig {
-                    key: parts[1].to_string(),
-                    name: parts[1].to_string(),
-                    kernel: kernel_for_force(f),
-                    force: f,
-                    tau: tau_for_force(f),
                     absorption: 0.0,
                     advection: 0.0,
                 };
@@ -3555,7 +3510,7 @@ fn load_sources() -> Vec<SourceConfig> {
                             name: parts[1].to_string(),
                             kernel: kernel_for_force(f),
                             force: f,
-                            tau: tau_for_force(f),
+                            tau: 0.0,
                             absorption: 0.0,
                             advection: 0.0,
                         };
@@ -5733,7 +5688,7 @@ fn probe_mode(path: &str) -> i32 {
         if let Some(p) = parsed {
             let mut fields = String::new();
             let mut coords = String::new();
-            walk_json_probe(&p, "", &mut fields, &mut coords, ttl);
+            walk_json_probe(&p, "", &mut fields, &mut coords);
             if !coords.is_empty() {
                 out.push_str(&coords);
             }
@@ -5741,7 +5696,7 @@ fn probe_mode(path: &str) -> i32 {
                 out.push_str(&fields);
             }
         } else if let Some(ref r) = raw {
-            if let Some(csv) = probe_csv(r, ttl) {
+            if let Some(csv) = probe_csv(r) {
                 out.push_str(&csv);
             }
         } else {
@@ -5932,7 +5887,7 @@ fn is_coord_key(key: &str) -> bool {
         || kl == "solar_lon"
 }
 
-fn probe_csv(raw: &str, _tau_field: u64) -> Option<String> {
+fn probe_csv(raw: &str) -> Option<String> {
     let first_header = raw.lines().find_map(|line| {
         let trimmed = line.trim();
         if trimmed.starts_with('#') {
@@ -5960,8 +5915,7 @@ fn probe_csv(raw: &str, _tau_field: u64) -> Option<String> {
         if force == "DROP" {
             continue;
         }
-        let tau = force_id_of(force).map(tau_for_force).unwrap_or(60.0);
-        out.push_str(&format!("field {} {} {} {}\n", col, force, unit, tau));
+        out.push_str(&format!("field {} {} {}\n", col, force, unit));
     }
     if out.is_empty() {
         None
@@ -5995,13 +5949,7 @@ fn is_unit_name(name: &str) -> bool {
         || kl == "deg"
 }
 
-fn walk_json_probe(
-    val: &JsonVal,
-    prefix: &str,
-    out: &mut String,
-    coords: &mut String,
-    tau_field: u64,
-) {
+fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut String) {
     match val {
         JsonVal::Obj(map) => {
             for (k, v) in map {
@@ -6021,7 +5969,7 @@ fn walk_json_probe(
                         out.push_str(&format!("field {} seismic-body {}\n", path, unit));
                     }
                 } else {
-                    walk_json_probe(v, &path, out, coords, tau_field);
+                    walk_json_probe(v, &path, out, coords);
                 }
             }
         }
@@ -6061,10 +6009,10 @@ fn walk_json_probe(
             }
             let first = &arr[0];
             if matches!(first, JsonVal::Obj(_)) {
-                walk_json_probe(first, prefix, out, coords, tau_field);
+                walk_json_probe(first, prefix, out, coords);
             } else {
                 for (i, v) in arr.iter().enumerate() {
-                    walk_json_probe(v, &format!("{}.{}", prefix, i), out, coords, tau_field);
+                    walk_json_probe(v, &format!("{}.{}", prefix, i), out, coords);
                 }
             }
         }
@@ -6080,8 +6028,7 @@ fn walk_json_probe(
             if unit == "DROP" {
                 return;
             }
-            let tau = force_id_of(force).map(tau_for_force).unwrap_or(60.0);
-            out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
+            out.push_str(&format!("field {} {} {}\n", prefix, force, unit));
         }
         JsonVal::Str(s) => {
             if let Ok(n) = s.parse::<f64>() {
@@ -6096,8 +6043,7 @@ fn walk_json_probe(
                 if unit == "DROP" {
                     return;
                 }
-                let tau = force_id_of(force).map(tau_for_force).unwrap_or(60.0);
-                out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
+                out.push_str(&format!("field {} {} {}\n", prefix, force, unit));
             }
         }
         _ => {}
