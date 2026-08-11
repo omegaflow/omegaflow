@@ -1,0 +1,386 @@
+source subatomic_pdg_w_boson_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S043M
+field pdg_values.0.value subatomic_w_boson_mass_gev
+
+source subatomic_pdg_xi_c_plus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S045M
+field pdg_values.0.value subatomic_xi_c_plus_mass_mev
+
+source subatomic_pdg_xi_c_prime_plus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S058M
+field pdg_values.0.value subatomic_xi_c_prime_plus_mass_mev
+
+source subatomic_pdg_xi_c_prime_zero_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S059M
+field pdg_values.0.value subatomic_xi_c_prime_zero_mass_mev
+
+source subatomic_pdg_xi_c_zero_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S048M
+field pdg_values.0.value subatomic_xi_c_zero_mass_mev
+
+source subatomic_pdg_xi_cc_plus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S065M
+field pdg_values.0.value subatomic_xi_cc_plus_mass_mev
+
+source subatomic_pdg_xi_cc_plusplus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S068M
+field pdg_values.0.value subatomic_xi_cc_plusplus_mass_mev
+
+source subatomic_pdg_xi_minus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S022M
+field pdg_values.0.value subatomic_xi_minus_mass_mev
+
+source subatomic_pdg_xi_zero_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S023M
+field pdg_values.0.value subatomic_xi_zero_mass_mev
+
+source subatomic_pdg_z_boson_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S044M
+field pdg_values.0.value subatomic_z_boson_mass_gev
+
+source technosphere_global_airports
+ttl 604800
+force em
+url https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/master/airports.json
+map .
+lat_key lat
+lon_key lon
+field_in elevation technosphere_airport_elevation_ft
+
+source technosphere_submarine_cables
+ttl 604800
+force em
+url https://github.com/lifewinning/submarine-cable-taps/raw/master/data/submarine_cables.geojson
+flatten features
+field_in properties.name technosphere_cable_name
+field_in properties.length technosphere_cable_length_km
+
+source atmosphere_climate_projection
+ttl 2592000
+force em
+url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum
+first temperature_2m_max atmosphere_climate_temp_max_c
+first temperature_2m_min atmosphere_climate_temp_min_c
+first precipitation_sum atmosphere_climate_precip_mm
+
+source atmosphere_hadcrut5_temp
+ttl 2592000
+force em
+format csv
+lat 50.727
+lon -3.476
+url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
+last line atmosphere_hadcrut5_temp_anomaly_raw
+
+source atmosphere_lawdome_co2
+ttl 2592000
+force em
+format text
+lat -66.733
+lon 140.800
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/law/law2006co2.txt
+last line paleoclimate_lawdome_co2_raw
+
+source biosphere_globalforestwatch_tree_cover_loss
+ttl 2592000
+force em
+lat 38.907
+lon -77.036
+url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest
+field data.0.areaHa biosphere_tree_cover_loss_ha_latest
+
+source biosphere_overpass_farmland
+ttl 2592000
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["landuse"="farmland"](around:10000,{lat},{lon});out%20count;
+deep ways biosphere_farmland_10km
+
+source biosphere_overpass_history_buildings_2yr
+ttl 2592000
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2024-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
+deep ways technosphere_buildings_2024_1km
+
+source biosphere_overpass_history_buildings_5yr
+ttl 2592000
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
+deep ways technosphere_buildings_2021_1km
+
+source biosphere_overpass_history_hospitals_5yr
+ttl 2592000
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20count;
+deep total anthroposphere_hospitals_2021_10km
+
+source biosphere_overpass_history_schools_5yr
+ttl 2592000
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20count;
+deep total anthroposphere_schools_2021_10km
+
+source biosphere_overpass_history_shops_5yr
+ttl 2592000
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count;
+deep total technosphere_shops_2021_5km
+
+source biosphere_overpass_history_streets_5yr
+ttl 2592000
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20count;
+deep ways technosphere_streets_2021_500m
+
+source biosphere_overpass_memorials
+ttl 2592000
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20count;
+deep total anthroposphere_memorials_5km
+
+source biosphere_worldbank_birth_rate
+ttl 2592000
+force em
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CBRT.IN?format=json&date=2023&per_page=1&mrv=1
+field 1.0.value biosphere_birth_rate_per_1000
+
+source biosphere_worldbank_co2_emissions
+ttl 2592000
+force em
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.GHG.CO2.MT.CE.AR5?format=json
+field 1.0.value worldbank_co2_emissions_value
+
+source biosphere_worldbank_death_rate
+ttl 2592000
+force em
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1
+field 1.0.value biosphere_death_rate_per_1000
+
+source biosphere_worldbank_gdp_growth_DEU
+ttl 2592000
+force em
+lat 52.520
+lon 13.405
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+field 1.0.value biosphere_gdp_growth_pct_DEU
+
+source biosphere_worldbank_gdp_growth_afghanistan
+ttl 2592000
+force em
+lat 33.83
+lon 67.71
+url https://api.worldbank.org/v2/country/AFG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_afghanistan_pct
+
+source biosphere_worldbank_gdp_growth_albania
+ttl 2592000
+force em
+lat 41.33
+lon 19.82
+url https://api.worldbank.org/v2/country/ALB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_albania_pct
+
+source biosphere_worldbank_gdp_growth_algeria
+ttl 2592000
+force em
+lat 36.75
+lon 3.06
+url https://api.worldbank.org/v2/country/DZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_algeria_pct
+
+source biosphere_worldbank_gdp_growth_american_samoa
+ttl 2592000
+force em
+lat -14.28
+lon -170.70
+url https://api.worldbank.org/v2/country/ASM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_american_samoa_pct
+
+source biosphere_worldbank_gdp_growth_andorra
+ttl 2592000
+force em
+lat 42.51
+lon 1.52
+url https://api.worldbank.org/v2/country/AND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_andorra_pct
+
+source biosphere_worldbank_gdp_growth_angola
+ttl 2592000
+force em
+lat -8.84
+lon 13.23
+url https://api.worldbank.org/v2/country/AGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_angola_pct
+
+source biosphere_worldbank_gdp_growth_antigua_and_barbuda
+ttl 2592000
+force em
+lat 17.12
+lon -61.85
+url https://api.worldbank.org/v2/country/ATG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_antigua_and_barbuda_pct
+
+source biosphere_worldbank_gdp_growth_argentina
+ttl 2592000
+force em
+lat -34.60
+lon -58.38
+url https://api.worldbank.org/v2/country/ARG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_argentina_pct
+
+source biosphere_worldbank_gdp_growth_armenia
+ttl 2592000
+force em
+lat 40.18
+lon 44.51
+url https://api.worldbank.org/v2/country/ARM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_armenia_pct
+
+source biosphere_worldbank_gdp_growth_aruba
+ttl 2592000
+force em
+lat 12.52
+lon -70.03
+url https://api.worldbank.org/v2/country/ABW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_aruba_pct
+
+source biosphere_worldbank_gdp_growth_australia
+ttl 2592000
+force em
+lat -35.28
+lon 149.13
+url https://api.worldbank.org/v2/country/AUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_australia_pct
+
+source biosphere_worldbank_gdp_growth_austria
+ttl 2592000
+force em
+lat 48.21
+lon 16.37
+url https://api.worldbank.org/v2/country/AUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_austria_pct
+
+source biosphere_worldbank_gdp_growth_azerbaijan
+ttl 2592000
+force em
+lat 40.40
+lon 49.87
+url https://api.worldbank.org/v2/country/AZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_azerbaijan_pct
+
+source biosphere_worldbank_gdp_growth_bahamas
+ttl 2592000
+force em
+lat 25.06
+lon -77.35
+url https://api.worldbank.org/v2/country/BHS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_bahamas_pct
+
+source biosphere_worldbank_gdp_growth_bahrain
+ttl 2592000
+force em
+lat 26.23
+lon 50.59
+url https://api.worldbank.org/v2/country/BHR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_bahrain_pct
+
+source biosphere_worldbank_gdp_growth_bangladesh
+ttl 2592000
+force em
+lat 23.81
+lon 90.41
+url https://api.worldbank.org/v2/country/BGD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_bangladesh_pct
+
+source biosphere_worldbank_gdp_growth_barbados
+ttl 2592000
+force em
+lat 13.10
+lon -59.62
+url https://api.worldbank.org/v2/country/BRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_barbados_pct
+
+source biosphere_worldbank_gdp_growth_belarus
+ttl 2592000
+force em
+lat 53.90
+lon 27.57
+url https://api.worldbank.org/v2/country/BLR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_belarus_pct
+
+source biosphere_worldbank_gdp_growth_belgium
+ttl 2592000
+force em
+lat 50.85
+lon 4.35
+url https://api.worldbank.org/v2/country/BEL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_belgium_pct
+
+source biosphere_worldbank_gdp_growth_belize
+ttl 2592000
+force em
+lat 17.25
+lon -88.77
+url https://api.worldbank.org/v2/country/BLZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_belize_pct
+
+source biosphere_worldbank_gdp_growth_benin
+ttl 2592000
+force em
+lat 6.50
+lon 2.60
+url https://api.worldbank.org/v2/country/BEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_benin_pct
+
+source biosphere_worldbank_gdp_growth_bermuda
+ttl 2592000
+force em
+lat 32.29
+lon -64.78
+url https://api.worldbank.org/v2/country/BMU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_bermuda_pct

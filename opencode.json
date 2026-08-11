@@ -66,6 +66,22 @@
     "council": {
       "mode": "subagent",
       "model": "deepseek/deepseek-v4-pro"
+    },
+    "grind-flash": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-flash",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    },
+    "grind-pro": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-pro",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      }
     }
   },
   "experimental": {

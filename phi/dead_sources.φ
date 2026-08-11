@@ -1,0 +1,25 @@
+# ── Source Curation: Declined Sources ──
+# Format: <category> <reason> \n url <url> \n note <explanation>
+
+# ── Block 1-2: ISS Position (wheretheiss.at) ──
+# Superseded by JPL Horizons ephemeris (at iss in phi/sources.φ)
+
+decline superseded-by-ephemeris
+url https://api.wheretheiss.at/v1/satellites/25544
+note ISS position now available via ephemeris_iss.bin in CDN (ssd.jpl.nasa.gov), format ephemeris_binary at iss
+
+decline superseded-by-ephemeris
+url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
+note ISS history now available via ephemeris_iss.bin CDN
+
+# ── Block 4-5: Yahoo Finance ETFs ──
+# Force Gate: stock price has no physical propagation mechanism.
+# Litmus test: could a non-human organism evolve a sensory organ for this measurement? No.
+
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
+note Force Gate failed: stock price is an economic abstraction, HTTP is delivery medium not physical force. Biosphere ETF Africa.
+
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
+note Force Gate failed: stock price is an economic abstraction. Biosphere ETF Brazil.

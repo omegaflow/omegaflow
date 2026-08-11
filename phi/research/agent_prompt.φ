@@ -1,0 +1,67 @@
+# Source Curation Agent Prompt — Standard Template
+# For converting old-grammar source blocks to new phi grammar.
+#
+# OLD GRAMMAR → NEW GRAMMAR
+#
+# FIELD FORMAT (exactly 9 whitespace-separated parts):
+#   field <key> <name> <kernel_name> <force_name> <unit> <tau> <absorption> <advection>
+#   kernel_name: inverse-square | gaussian-inverse-square | gaussian-inverse | erfc | exponential-decay | patch-levy
+#   force_name: em | gravity | acoustic | seismic-body | seismic-surface | thermal | diffusion | advective
+#   tau: f64 > 0.0
+#   absorption: f64
+#   advection: f64
+#
+# FORCE→KERNEL DEFAULT MAPPING:
+#   em → inverse-square
+#   gravity → inverse-square
+#   acoustic → gaussian-inverse-square
+#   seismic-body → gaussian-inverse-square
+#   seismic-surface → erfc
+#   thermal → exponential-decay
+#   diffusion → gaussian-inverse-square
+#   advective → patch-levy
+#
+# FRAME CONVERSION:
+#   old: lat X lon Y [alt Z] → new: on earth X Y [Z]  (default X=0 if no alt)
+#   old: pos lat_key lon_key alt_key scale → new: map+map extract (leave pos as comment)
+#   old: source <name> → DISCARD — the "source" keyword does NOT exist in new grammar. 
+#        The "url" line naturally starts a new block via flush!().
+#
+# TAU ESTIMATION:
+#   If old block has explicit "tau N": use it.
+#   Otherwise: source TTL / 10.  Minimum tau: 1.0.
+#   For sources with quickly-changing data (ISS, weather): tau = min(TTL/10, 1.0).
+#   For stable sources (star catalogs, geology): tau = TTL.
+#
+# FORCE GATE (must apply before conversion):
+#   Litmus test: could a non-human organism evolve a sensory organ for this measurement?
+#   − Stock prices, indices, economic data → DECLINE (no physical force)
+#   − Bare counts without individual events → DECLINE
+#   − Station lists, catalogs, registries → DECLINE
+#   − Model forecasts (GFS, ECMWF reanalysis) → DECLINE
+#   − Text warnings, alerts, weather text → DECLINE
+#   + Radar, lidar, optical → PASS (EM)
+#   + Seismometer, hydrophone → PASS (acoustic, seismic)
+#   + Magnetometer, particle detector → PASS (EM)
+#   + Thermometer, bolometer → PASS (thermal)
+#   + Chemical sensor, gas chromatograph → PASS (diffusion, advective)
+#   + Gravimeter → PASS (gravity)
+#
+# OUTPUT RULES:
+#   1. One clean block per accepted source. No # comments, no markdown.
+#   2. url starts the block (parser's flush!() triggers on url keyword)
+#   3. Frame (on/at) must be present or flush refuses the block
+#   4. All field lines in one contiguous block
+#   5. Declined blocks → written to phi/dead_sources.φ
+#   6. Accepted blocks → written to phi/sources_live.φ (or agent output file if batch)
+#   7. Known parser limitations: header values cannot contain spaces (parser splits on whitespace)
+#
+# CURATION NOTES (separate file: batch_N_notes.φ):
+#   For each block, write:
+#   # Block N: <old_source_name> → ACCEPT|DECLINE <reason>
+#   # Kernel: <choice> <rationale>
+#   # Force Gate: <pass/fail> <explanation>
+#   # Frame: <choice>
+#   # Unit: <choice>
+#   # Tau: <value> <rationale>
+#   # Parser concerns: <any issues>

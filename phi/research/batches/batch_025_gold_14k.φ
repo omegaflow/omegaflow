@@ -1,0 +1,512 @@
+source biosphere_overpass_kindergarten
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="kindergarten"];out%20count;
+header User-Agent "omegaflow"
+deep total technosphere_kindergarten_count
+
+source biosphere_overpass_laundry
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="laundry"];out%20count;
+header User-Agent "omegaflow"
+deep total technosphere_laundry_1km
+
+source biosphere_overpass_libraries
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="library"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_libraries_2km
+
+source biosphere_overpass_memorials_culture
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="memorial"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_memorials_2km
+
+source biosphere_overpass_monuments
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="monument"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_monuments_2km
+
+source biosphere_overpass_museums
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="museum"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_museums_5km
+
+source biosphere_overpass_music_venues
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="music_venue"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_music_venues_5km
+
+source biosphere_overpass_opticians
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="optician"];out%20count;
+header User-Agent "omegaflow"
+deep total anthroposphere_opticians_2km
+
+source biosphere_overpass_pet_shops
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="pet"];out%20count;
+header User-Agent "omegaflow"
+deep total biosphere_pet_shops_2km
+
+source biosphere_overpass_place_of_worship
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="place_of_worship"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_place_of_worship_count
+
+source biosphere_overpass_playgrounds
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["leisure"="playground"];out%20count;
+header User-Agent "omegaflow"
+deep total anthroposphere_playgrounds_1km
+
+source biosphere_overpass_police
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="police"];out%20count;
+header User-Agent "omegaflow"
+deep total technosphere_police_count
+
+source biosphere_overpass_post_boxes
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="post_box"];out%20count;
+header User-Agent "omegaflow"
+deep total technosphere_post_box_count
+
+source biosphere_overpass_pubs
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="pub"];out%20count;
+header User-Agent "omegaflow"
+deep total anthroposphere_pubs_1km
+
+source biosphere_overpass_recycling
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="recycling"];out%20count;
+header User-Agent "omegaflow"
+deep total technosphere_recycling_count
+
+source biosphere_overpass_ruins
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="ruins"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_ruins_10km
+
+source biosphere_overpass_stadiums
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["leisure"="stadium"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_stadiums_10km
+
+source biosphere_overpass_street_art
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["tourism"="artwork"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_street_art_1km
+
+source biosphere_overpass_street_lamps
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:500,{lat},{lon})["highway"="street_lamp"];out%20count;
+header User-Agent "omegaflow"
+deep total technosphere_street_lamp_count
+
+source biosphere_overpass_theatre_cinema
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"~"^(theatre|cinema|arts_centre)$"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_theatre_cinema_count
+
+source biosphere_overpass_toilets
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="toilets"];out%20count;
+header User-Agent "omegaflow"
+deep total technosphere_toilets_count
+
+source biosphere_overpass_traffic_signals
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="traffic_signals"];out%20count;
+header User-Agent "omegaflow"
+deep total technosphere_traffic_signal_count
+
+source biosphere_overpass_travel_agents
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="travel_agency"];out%20count;
+header User-Agent "omegaflow"
+deep total economic_travel_agents_2km
+
+source biosphere_overpass_university
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="university"];out%20count;
+header User-Agent "omegaflow"
+deep total culture_university_count
+
+source biosphere_overpass_veterinary
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="veterinary"];out%20count;
+header User-Agent "omegaflow"
+deep total biosphere_veterinary_5km
+
+source biosphere_overpass_water_spring
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["natural"="spring"];out%20count;
+header User-Agent "omegaflow"
+deep total hydrosphere_spring_count
+
+source exosphere_gaia_nearby_stars
+ttl 604800
+force em
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax+>+0+ORDER+BY+parallax+DESC
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 gaia_nearby_star_mag
+
+source exosphere_gaia_stars
+ttl 604800
+force em
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+6+AND+parallax+>+0+ORDER+BY+phot_g_mean_mag
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 cosmic_star_magnitude
+
+source exosphere_gaia_stellar_ages
+ttl 604800
+force em
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+128+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,ap.age_flame,ap.teff_gspphot+FROM+gaiadr3.astrophysical_parameters+AS+ap+JOIN+gaiadr3.gaia_source+AS+g+ON+ap.source_id=g.source_id+WHERE+ap.age_flame+IS+NOT+NULL+AND+g.parallax+>+0+ORDER+BY+ap.age_flame+DESC
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 cosmic_oldest_star_age_gyr
+field_in 7 cosmic_oldest_star_temp_k
+
+source exosphere_gaia_variable_stars
+ttl 604800
+force em
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,v.pf+FROM+gaiadr3.vari_cepheid+AS+v+JOIN+gaiadr3.gaia_source+AS+g+ON+v.source_id=g.source_id+WHERE+g.parallax+>+0+ORDER+BY+v.pf+DESC
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 gaia_cepheid_period_d
+
+source exosphere_sdss_cosmic_web_galaxies
+ttl 604800
+force em
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?format=json&cmd=SELECT+TOP+1024+ra,dec,z,petroMag_g+FROM+SpecObj+WHERE+class=%27GALAXY%27+AND+z+BETWEEN+0.01+AND+2+AND+petroMag_g+<+19
+cmap 0.Rows
+ra_key ra
+dec_key dec
+z_key z
+field_in petroMag_g sdss_galaxy_mag_g
+
+source exosphere_simbad_brown_dwarfs
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27BD*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_brown_dwarf_plx_mas
+field_in 6 simbad_brown_dwarf_redshift
+
+source exosphere_simbad_carbon_stars
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27C*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_carbon_star_plx_mas
+field_in 6 simbad_carbon_star_redshift
+
+source exosphere_simbad_eclipsing_binaries
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27EB*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_eclipsing_binary_plx_mas
+field_in 6 simbad_eclipsing_binary_redshift
+
+source exosphere_simbad_galaxies
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_galaxy_plx_mas
+field_in 6 simbad_galaxy_redshift
+
+source exosphere_simbad_galaxy_clusters
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27ClG%27+AND+rvz_redshift+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_galaxy_cluster_plx_mas
+field_in 6 simbad_galaxy_cluster_redshift
+
+source exosphere_simbad_high_z_galaxies
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+%3E+5+ORDER+BY+rvz_redshift+DESC
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 cosmic_galaxies_z_gt5_redshift
+
+source exosphere_simbad_highest_redshift_quasar
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+16+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 simbad_highest_redshift_quasar_z
+
+source exosphere_simbad_millisecond_pulsars
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27ms*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_millisecond_pulsar_plx_mas
+field_in 6 simbad_millisecond_pulsar_redshift
+
+source exosphere_simbad_novae
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Nova%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_nova_plx_mas
+field_in 6 simbad_nova_redshift
+
+source exosphere_simbad_pulsars
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Pulsar%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_pulsar_plx_mas
+field_in 6 simbad_pulsar_redshift
+
+source exosphere_simbad_quasars
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 6 simbad_quasar_redshift
+
+source exosphere_simbad_supernovae
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27SN%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_supernova_plx_mas
+field_in 6 simbad_supernova_redshift
+
+source exosphere_simbad_symbiotic_stars
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Sy*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_symbiotic_star_plx_mas
+field_in 6 simbad_symbiotic_star_redshift
+
+source exosphere_simbad_white_dwarfs
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27WD*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_white_dwarf_plx_mas
+field_in 6 simbad_white_dwarf_redshift
+
+source exosphere_simbad_wolf_rayet
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27WR*%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_wolf_rayet_plx_mas
+field_in 6 simbad_wolf_rayet_redshift
+
+source exosphere_simbad_young_stellar_objects
+ttl 604800
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27S*Y%27+AND+plx_value+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+z_key 6
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+field_in 2 simbad_yso_plx_mas
+field_in 6 simbad_yso_redshift
+
+source geosphere_earth_impact_craters
+ttl 604800
+force em
+url https://raw.githubusercontent.com/arijguest/3D-meteorite-viewer/main/earth-impact-craters-v2.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.Name geosphere_crater_name
+
+source geosphere_nasa_meteorite_landings
+ttl 604800
+force em
+url https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mass geosphere_meteorite_mass_g
+field_in properties.name geosphere_meteorite_name
+
+source geosphere_ne_10m_places
+ttl 604800
+force em
+lat 0
+lon 0
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places_simple.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.pop_max geosphere_population_max
+field_in properties.scalerank geosphere_place_rank

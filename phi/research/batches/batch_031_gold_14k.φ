@@ -1,0 +1,399 @@
+source biosphere_worldbank_gdp_growth_slovak_republic
+ttl 2592000
+force em
+lat 48.15
+lon 17.11
+url https://api.worldbank.org/v2/country/SVK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_slovak_republic_pct
+
+source biosphere_worldbank_gdp_growth_slovenia
+ttl 2592000
+force em
+lat 46.06
+lon 14.51
+url https://api.worldbank.org/v2/country/SVN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_slovenia_pct
+
+source biosphere_worldbank_gdp_growth_solomon_islands
+ttl 2592000
+force em
+lat -9.43
+lon 159.95
+url https://api.worldbank.org/v2/country/SLB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_solomon_islands_pct
+
+source biosphere_worldbank_gdp_growth_somalia
+ttl 2592000
+force em
+lat 2.05
+lon 45.32
+url https://api.worldbank.org/v2/country/SOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_somalia_pct
+
+source biosphere_worldbank_gdp_growth_south_africa
+ttl 2592000
+force em
+lat -25.75
+lon 28.22
+url https://api.worldbank.org/v2/country/ZAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_south_africa_pct
+
+source biosphere_worldbank_gdp_growth_south_sudan
+ttl 2592000
+force em
+lat 4.85
+lon 31.58
+url https://api.worldbank.org/v2/country/SSD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_south_sudan_pct
+
+source biosphere_worldbank_gdp_growth_spain
+ttl 2592000
+force em
+lat 40.42
+lon -3.70
+url https://api.worldbank.org/v2/country/ESP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_spain_pct
+
+source biosphere_worldbank_gdp_growth_sri_lanka
+ttl 2592000
+force em
+lat 6.93
+lon 79.86
+url https://api.worldbank.org/v2/country/LKA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_sri_lanka_pct
+
+source biosphere_worldbank_gdp_growth_st_kitts_and_nevis
+ttl 2592000
+force em
+lat 17.30
+lon -62.73
+url https://api.worldbank.org/v2/country/KNA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_st_kitts_and_nevis_pct
+
+source biosphere_worldbank_gdp_growth_st_lucia
+ttl 2592000
+force em
+lat 13.91
+lon -60.98
+url https://api.worldbank.org/v2/country/LCA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_st_lucia_pct
+
+source biosphere_worldbank_gdp_growth_st_martin_french_part
+ttl 2592000
+force em
+lat 18.07
+lon -63.08
+url https://api.worldbank.org/v2/country/MAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_st_martin_french_part_pct
+
+source biosphere_worldbank_gdp_growth_st_vincent_and_the_grenadines
+ttl 2592000
+force em
+lat 13.16
+lon -61.22
+url https://api.worldbank.org/v2/country/VCT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_st_vincent_and_the_grenadines_pct
+
+source biosphere_worldbank_gdp_growth_sudan
+ttl 2592000
+force em
+lat 15.50
+lon 32.56
+url https://api.worldbank.org/v2/country/SDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_sudan_pct
+
+source biosphere_worldbank_gdp_growth_suriname
+ttl 2592000
+force em
+lat 5.85
+lon -55.20
+url https://api.worldbank.org/v2/country/SUR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_suriname_pct
+
+source biosphere_worldbank_gdp_growth_sweden
+ttl 2592000
+force em
+lat 59.33
+lon 18.07
+url https://api.worldbank.org/v2/country/SWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_sweden_pct
+
+source biosphere_worldbank_gdp_growth_switzerland
+ttl 2592000
+force em
+lat 47.37
+lon 8.54
+url https://api.worldbank.org/v2/country/CHE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_switzerland_pct
+
+source biosphere_worldbank_gdp_growth_syrian_arab_republic
+ttl 2592000
+force em
+lat 33.51
+lon 36.29
+url https://api.worldbank.org/v2/country/SYR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_syrian_arab_republic_pct
+
+source biosphere_worldbank_gdp_growth_tajikistan
+ttl 2592000
+force em
+lat 38.56
+lon 68.77
+url https://api.worldbank.org/v2/country/TJK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_tajikistan_pct
+
+source biosphere_worldbank_gdp_growth_tanzania
+ttl 2592000
+force em
+lat -6.16
+lon 35.75
+url https://api.worldbank.org/v2/country/TZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_tanzania_pct
+
+source biosphere_worldbank_gdp_growth_thailand
+ttl 2592000
+force em
+lat 13.76
+lon 100.50
+url https://api.worldbank.org/v2/country/THA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_thailand_pct
+
+source biosphere_worldbank_gdp_growth_timor_leste
+ttl 2592000
+force em
+lat -8.55
+lon 125.58
+url https://api.worldbank.org/v2/country/TLS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_timor_leste_pct
+
+source biosphere_worldbank_gdp_growth_togo
+ttl 2592000
+force em
+lat 6.17
+lon 1.33
+url https://api.worldbank.org/v2/country/TGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_togo_pct
+
+source biosphere_worldbank_gdp_growth_tonga
+ttl 2592000
+force em
+lat -21.17
+lon -175.20
+url https://api.worldbank.org/v2/country/TON/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_tonga_pct
+
+source biosphere_worldbank_gdp_growth_trinidad_and_tobago
+ttl 2592000
+force em
+lat 10.69
+lon -61.52
+url https://api.worldbank.org/v2/country/TTO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_trinidad_and_tobago_pct
+
+source biosphere_worldbank_gdp_growth_tunisia
+ttl 2592000
+force em
+lat 36.81
+lon 10.18
+url https://api.worldbank.org/v2/country/TUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_tunisia_pct
+
+source biosphere_worldbank_gdp_growth_turkiye
+ttl 2592000
+force em
+lat 39.93
+lon 32.85
+url https://api.worldbank.org/v2/country/TUR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_turkiye_pct
+
+source biosphere_worldbank_gdp_growth_turkmenistan
+ttl 2592000
+force em
+lat 37.95
+lon 58.38
+url https://api.worldbank.org/v2/country/TKM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_turkmenistan_pct
+
+source biosphere_worldbank_gdp_growth_turks_and_caicos_islands
+ttl 2592000
+force em
+lat 21.46
+lon -71.14
+url https://api.worldbank.org/v2/country/TCA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_turks_and_caicos_islands_pct
+
+source biosphere_worldbank_gdp_growth_tuvalu
+ttl 2592000
+force em
+lat -8.52
+lon 179.19
+url https://api.worldbank.org/v2/country/TUV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_tuvalu_pct
+
+source biosphere_worldbank_gdp_growth_uganda
+ttl 2592000
+force em
+lat 0.34
+lon 32.58
+url https://api.worldbank.org/v2/country/UGA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_uganda_pct
+
+source biosphere_worldbank_gdp_growth_ukraine
+ttl 2592000
+force em
+lat 50.45
+lon 30.52
+url https://api.worldbank.org/v2/country/UKR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_ukraine_pct
+
+source biosphere_worldbank_gdp_growth_united_arab_emirates
+ttl 2592000
+force em
+lat 24.45
+lon 54.38
+url https://api.worldbank.org/v2/country/ARE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_united_arab_emirates_pct
+
+source biosphere_worldbank_gdp_growth_united_kingdom
+ttl 2592000
+force em
+lat 51.51
+lon -0.13
+url https://api.worldbank.org/v2/country/GBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_united_kingdom_pct
+
+source biosphere_worldbank_gdp_growth_united_states
+ttl 2592000
+force em
+lat 38.90
+lon -77.03
+url https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_united_states_pct
+
+source biosphere_worldbank_gdp_growth_uruguay
+ttl 2592000
+force em
+lat -34.90
+lon -56.16
+url https://api.worldbank.org/v2/country/URY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_uruguay_pct
+
+source biosphere_worldbank_gdp_growth_uzbekistan
+ttl 2592000
+force em
+lat 41.29
+lon 69.24
+url https://api.worldbank.org/v2/country/UZB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_uzbekistan_pct
+
+source biosphere_worldbank_gdp_growth_vanuatu
+ttl 2592000
+force em
+lat -17.73
+lon 168.32
+url https://api.worldbank.org/v2/country/VUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_vanuatu_pct
+
+source biosphere_worldbank_gdp_growth_venezuela
+ttl 2592000
+force em
+lat 10.48
+lon -66.90
+url https://api.worldbank.org/v2/country/VEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_venezuela_pct
+
+source biosphere_worldbank_gdp_growth_vietnam
+ttl 2592000
+force em
+lat 21.02
+lon 105.83
+url https://api.worldbank.org/v2/country/VNM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_vietnam_pct
+
+source biosphere_worldbank_gdp_growth_virgin_islands_u_s
+ttl 2592000
+force em
+lat 18.34
+lon -64.93
+url https://api.worldbank.org/v2/country/VIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_virgin_islands_u_s_pct
+
+source biosphere_worldbank_gdp_growth_west_bank_and_gaza
+ttl 2592000
+force em
+lat 31.95
+lon 35.23
+url https://api.worldbank.org/v2/country/PSE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_west_bank_and_gaza_pct
+
+source biosphere_worldbank_gdp_growth_yemen
+ttl 2592000
+force em
+lat 15.36
+lon 44.19
+url https://api.worldbank.org/v2/country/YEM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_yemen_pct
+
+source biosphere_worldbank_gdp_growth_zambia
+ttl 2592000
+force em
+lat -15.38
+lon 28.32
+url https://api.worldbank.org/v2/country/ZMB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_zambia_pct
+
+source biosphere_worldbank_gdp_growth_zimbabwe
+ttl 2592000
+force em
+lat -17.82
+lon 31.03
+url https://api.worldbank.org/v2/country/ZWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+field 1.0.value biosphere_gdp_growth_zimbabwe_pct
+
+source biosphere_worldbank_life_expectancy
+ttl 2592000
+force em
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.LE00.IN?format=json&date=2023&per_page=1&mrv=1
+field 1.0.value biosphere_life_expectancy_years
+
+source biosphere_worldbank_median_age
+ttl 2592000
+force em
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.MEDN?format=json&date=2023&per_page=1&mrv=1
+field 1.0.value biosphere_median_age_years
+
+source biosphere_worldbank_population
+ttl 2592000
+force em
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.TOTL?format=json
+field 1.0.value biosphere_worldbank_population_total
+
+source biosphere_worldbank_population_density
+ttl 2592000
+force em
+lat 38.8991
+lon -77.0430
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.POP.DNST?format=json&per_page=1&date=2023
+field 1.0.value biosphere_global_population_density_sqkm
+
+source biosphere_worldbank_urban_population_pct
+ttl 2592000
+force em
+lat 38.899
+lon -77.043
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.URB.TOTL.IN.ZS?format=json&date=2023&per_page=1&mrv=1
+field 1.0.value biosphere_urban_population_pct
+
+source dark_matter_direct_limits
+ttl 2592000
+force em
+lat 42.454
+lon 13.576
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=dark+matter+direct+detection+limit+XENONnT+LZ&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count quantum_dark_matter_limit_citations

@@ -1,0 +1,445 @@
+source magnetosphere_ttb
+ttl 86400
+force em
+lat -1.205
+lon -48.51299999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ttb_x_nt
+path 1.1 magnetosphere_ttb_y_nt
+path 1.2 magnetosphere_ttb_z_nt
+path 2 magnetosphere_ttb_s_nt
+
+source magnetosphere_ttb_hapi
+ttl 86400
+force em
+lat -1.205
+lon -48.51299999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ttb_x_nt
+path 1.1 magnetosphere_ttb_y_nt
+path 1.2 magnetosphere_ttb_z_nt
+path 2 magnetosphere_ttb_f_nt
+
+source magnetosphere_tuc
+ttl 86400
+force em
+lat 32.17
+lon -110.72999999999999
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_tuc_x_nt
+path 1.1 magnetosphere_tuc_y_nt
+path 1.2 magnetosphere_tuc_z_nt
+path 2 magnetosphere_tuc_s_nt
+
+source magnetosphere_tuc_hapi
+ttl 86400
+force em
+lat 32.17
+lon -110.72999999999999
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_tuc_x_nt
+path 1.1 magnetosphere_tuc_y_nt
+path 1.2 magnetosphere_tuc_z_nt
+path 2 magnetosphere_tuc_f_nt
+
+source magnetosphere_ups
+ttl 86400
+force em
+lat 59.903
+lon 17.353
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ups_x_nt
+path 1.1 magnetosphere_ups_y_nt
+path 1.2 magnetosphere_ups_z_nt
+path 2 magnetosphere_ups_s_nt
+
+source magnetosphere_valL
+ttl 86400
+force em
+lat 51.933
+lon -10.25
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_val_x_nt
+path 1.1 magnetosphere_val_y_nt
+path 1.2 magnetosphere_val_z_nt
+path 2 magnetosphere_val_s_nt
+
+source magnetosphere_vna
+ttl 86400
+force em
+lat -70.683
+lon -8.281999999999982
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vna_x_nt
+path 1.1 magnetosphere_vna_y_nt
+path 1.2 magnetosphere_vna_z_nt
+path 2 magnetosphere_vna_s_nt
+
+source magnetosphere_vna_hapi
+ttl 86400
+force em
+lat -22.4
+lon -43.64999999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vna_x_nt
+path 1.1 magnetosphere_vna_y_nt
+path 1.2 magnetosphere_vna_z_nt
+path 2 magnetosphere_vna_f_nt
+path 1.0 magnetosphere_vss_x_nt
+path 1.2 magnetosphere_vss_z_nt
+path 2 magnetosphere_vss_f_nt
+
+source magnetosphere_vos
+ttl 86400
+force em
+lat -78.464
+lon 106.835
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vos_x_nt
+path 1.1 magnetosphere_vos_y_nt
+path 1.2 magnetosphere_vos_z_nt
+path 2 magnetosphere_vos_s_nt
+
+source magnetosphere_vss
+ttl 86400
+force em
+lat -22.4
+lon -43.64999999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vss_x_nt
+path 1.1 magnetosphere_vss_y_nt
+path 1.2 magnetosphere_vss_z_nt
+path 2 magnetosphere_vss_s_nt
+
+source magnetosphere_wic
+ttl 86400
+force em
+lat 47.931
+lon 15.866
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wic_x_nt
+path 1.1 magnetosphere_wic_y_nt
+path 1.2 magnetosphere_wic_z_nt
+path 2 magnetosphere_wic_s_
+
+source magnetosphere_wic_hapi
+ttl 86400
+force em
+lat 47.931
+lon 15.866
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wic_x_nt
+path 1.1 magnetosphere_wic_y_nt
+path 1.2 magnetosphere_wic_z_nt
+path 2 magnetosphere_wic_f_nt
+
+source magnetosphere_wng
+ttl 86400
+force em
+lat 53.725
+lon 9.053
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wng_x_nt
+path 1.1 magnetosphere_wng_y_nt
+path 1.2 magnetosphere_wng_z_nt
+path 2 magnetosphere_wng_s_nt
+
+source magnetosphere_wng_hapi
+ttl 86400
+force em
+lat 53.725
+lon 9.053
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wng_x_nt
+path 1.1 magnetosphere_wng_y_nt
+path 1.2 magnetosphere_wng_z_nt
+path 2 magnetosphere_wng_f_nt
+
+source minor_planet_center_asteroids_total
+ttl 86400
+force em
+lat 42.365
+lon -71.105
+url https://www.minorplanetcenter.net/data_service
+last_line orbital_mpc_asteroid_count
+
+source molecular_crystallography_xrd
+ttl 86400
+force em
+lat 54.683
+lon 25.287
+url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
+field a molecular_lattice_constant_a
+
+source molecular_protein_structures
+ttl 86400
+force em
+lat 40.500
+lon -74.450
+url https://data.rcsb.org/rest/v1/core/entry/1UBQ
+field rcsb_id biosphere_protein_structure_id
+
+source moon_phase
+ttl 86400
+force em
+lat 34.201
+lon -118.171
+url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
+path properties.data.curphase cosmic_moon_phase
+path properties.data.fracillum cosmic_moon_illumination_pct
+
+source musicbrainz_artists_total
+ttl 86400
+force em
+lat 51.507
+lon -0.127
+url https://musicbrainz.org/ws/2/artist?query=*&limit=1&fmt=json
+field artists.0.id biosphere_music_artists_total
+
+source musicbrainz_recordings_total
+ttl 86400
+force em
+lat 51.507
+lon -0.127
+url https://musicbrainz.org/ws/2/recording?query=*&limit=1&fmt=json
+field recordings.0.id biosphere_music_recordings_total
+
+source musicbrainz_releases_total
+ttl 86400
+force em
+lat 51.507
+lon -0.127
+url https://musicbrainz.org/ws/2/release?query=*&limit=1&fmt=json
+field releases.0.id biosphere_music_releases_total
+
+source nasa_fermi_gamma_ray_sources_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://heasarc.gsfc.nasa.gov/db-perl/W3Browse/w3query.pl?tablehead=name%3Dfermigtrig&Action=More+Options&ResultRange=1&order=desc&field=from&field=0+1+2+3
+last_line exosphere_fermi_gamma_ray_sources_total
+
+source nasa_modis_vegetation_ndvi_global
+ttl 86400
+force em
+lat 0
+lon 0
+url https://modis.gsfc.nasa.gov/data/dataprod/mod13.php
+last_line biosphere_global_ndvi
+
+source nlm_assembly_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=assembly&retmax=0
+field eSearchResult.Count molecular_genome_assemblies_total
+
+source nlm_bioproject_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=bioproject&retmax=0
+field eSearchResult.Count molecular_bioprojects_total
+
+source nlm_biosample_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=biosample&retmax=0
+field eSearchResult.Count molecular_biosamples_total
+
+source nlm_books_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=books&retmax=0
+field eSearchResult.Count biosphere_nlm_books_total
+
+source nlm_clinical_trials_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinicaltrials&retmax=0
+field eSearchResult.Count biosphere_clinical_trials_total
+
+source nlm_clinvar_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinvar&retmax=0
+field eSearchResult.Count biosphere_clinic_variants_total
+
+source nlm_gap_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gap&retmax=0
+field eSearchResult.Count biosphere_dbgap_studies_total
+
+source nlm_gene_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&retmax=0
+field eSearchResult.Count molecular_genbank_genes_total
+
+source nlm_genome_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=genome&retmax=0
+field eSearchResult.Count molecular_genome_total
+
+source nlm_mesh_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=mesh&retmax=0
+field eSearchResult.Count biosphere_mesh_terms_total
+
+source nlm_nucleotide_total
+ttl 86400
+force gravity
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nucleotide&retmax=0
+field eSearchResult.Count molecular_nucleotide_sequences_total
+
+source nlm_omim_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=omim&retmax=0
+field eSearchResult.Count biosphere_mendelian_disorders_total
+
+source nlm_pmc_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&retmax=0
+field eSearchResult.Count biosphere_pmc_articles_total
+
+source nlm_protein_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=protein&retmax=0
+field eSearchResult.Count molecular_protein_sequences_total
+
+source nlm_pubmed_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=0
+field eSearchResult.Count biosphere_pubmed_articles_total
+
+source nlm_snp_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=snp&retmax=0
+field eSearchResult.Count molecular_snp_total
+
+source nlm_sra_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&retmax=0
+field eSearchResult.Count molecular_sequencing_runs_total
+
+source nlm_taxonomy_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&retmax=0
+field eSearchResult.Count biosphere_taxonomy_total
+
+source npm_packages_total
+ttl 86400
+force em
+lat 37.774
+lon -122.419
+url https://registry.npmjs.org/-/v1/search?text=*&size=1
+field total biosphere_npm_packages_total
+
+source openfda_adverse_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://api.fda.gov/drug/event.json?limit=1
+field meta.results.total biosphere_fda_adverse_events_total
+
+source openfda_device_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://api.fda.gov/device/510k.json?limit=1
+field meta.results.total biosphere_fda_devices_total
+
+source openfda_drug_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://api.fda.gov/drug/drugsfda.json?limit=1
+field meta.results.total biosphere_fda_drugs_total
+
+source openfda_recalls_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://api.fda.gov/drug/enforcement.json?limit=1
+field meta.results.total biosphere_fda_recalls_total
+
+source openfoodfacts_products_count
+ttl 86400
+force em
+lat 48.8566
+lon 2.3522
+url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
+field count biosphere_food_product_count_openfoodfacts
+
+source openlibrary_authors_total
+ttl 86400
+force em
+lat 40.712
+lon -74.006
+url https://openlibrary.org/authors.json?limit=1
+field size biosphere_openlibrary_authors_total
+
+source openlibrary_books_total
+ttl 86400
+force em
+lat 40.712
+lon -74.006
+url https://openlibrary.org/books.json?limit=1
+field size biosphere_openlibrary_books_total
+
+source openneuro_datasets_total
+ttl 86400
+force em
+lat 42.365
+lon -71.105
+url https://openneuro.org/api/v1/datasets
+field page.totalCount biosphere_openneuro_datasets_total

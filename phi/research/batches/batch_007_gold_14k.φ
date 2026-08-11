@@ -1,0 +1,474 @@
+source atmosphere_wind_heights
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_speed_180m,wind_direction_10m,wind_direction_80m,wind_direction_120m,wind_direction_180m,wind_gusts_10m,temperature_80m,temperature_120m,temperature_180m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,uv_index,uv_index_clear_sky,dew_point_2m,pressure_msl,surface_pressure&timezone=auto
+path current.wind_speed_80m atmosphere_wind_80m_kmh
+path current.wind_speed_120m atmosphere_wind_120m_kmh
+path current.wind_speed_180m atmosphere_wind_180m_kmh
+path current.wind_direction_80m atmosphere_winddir_80m_deg
+path current.wind_direction_120m atmosphere_winddir_120m_deg
+path current.wind_direction_180m atmosphere_winddir_180m_deg
+path current.temperature_80m atmosphere_temp_80m_c
+path current.temperature_120m atmosphere_temp_120m_c
+path current.temperature_180m atmosphere_temp_180m_c
+path current.cloud_cover_low atmosphere_cloud_low_pct
+path current.cloud_cover_mid atmosphere_cloud_mid_pct
+path current.cloud_cover_high atmosphere_cloud_high_pct
+path current.uv_index atmosphere_uv_index
+path current.uv_index_clear_sky atmosphere_uv_clearsky
+path current.dew_point_2m atmosphere_dewpoint_c
+path current.pressure_msl atmosphere_pressure_msl_hpa
+
+source biosphere_gbif_nearby_species
+ttl 600
+force em
+url https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species biosphere_species_nearby
+
+source biosphere_gbif_recent_birds
+ttl 600
+force em
+lat 55.685000
+lon 12.571000
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=1
+field count biosphere_bird_count
+
+source biosphere_inaturalist_nearby
+ttl 600
+force em
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&per_page=20&order=desc&order_by=observed_on
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in species_guess biosphere_inaturalist_nearby
+
+source biosphere_inaturalist_observations_count
+ttl 600
+force em
+terra 1
+url https://api.inaturalist.org/v1/observations?per_page=1
+path total_results biosphere_inaturalist_observations_total
+
+source biosphere_open_notify_astronauts
+ttl 600
+force em
+terra 1
+url https://api.open-notify.org/astros.json
+count people biosphere_humans_in_space
+
+source biosphere_open_notify_astros
+ttl 600
+force em
+terra 1
+url https://api.open-notify.org/astros.json
+field number orbital_humans_in_space_count
+
+source biosphere_open_sense_map
+ttl 600
+force em
+url https://api.opensensemap.org/boxes?limit=1000
+map .
+lat_key currentLocation.coordinates.1
+lon_key currentLocation.coordinates.0
+field_in sensors.0.lastMeasurement.value biosphere_sensebox_value
+
+source cryosphere_snow_depth
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snow_depth&timezone=auto
+field current.snow_depth cryosphere_snow_depth_m
+
+source cryosphere_snowfall
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth,temperature_2m,precipitation,cloud_cover,wind_speed_10m&timezone=auto
+path current.snowfall cryosphere_snowfall_cm
+path current.snow_depth cryosphere_snow_depth_m
+
+source geosphere_earthquakes_2_5_weekly
+ttl 600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_earthquake_mag
+field_in properties.sig geosphere_earthquake_significance
+
+source geosphere_earthquakes_4_5_weekly
+ttl 600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_earthquake_mag
+field_in properties.sig geosphere_earthquake_significance
+
+source geosphere_earthquakes_cenc
+ttl 600
+force seismic-surface
+lat 39.9
+lon 116.4
+url https://www.ceic.ac.cn/speedsearch?time=1&type=2&page=1
+count lines geosphere_earthquakes_cenc_count
+
+source geosphere_earthquakes_jma
+ttl 600
+force seismic-surface
+lat 35.68
+lon 139.69
+url https://www.jma.go.jp/bosai/quake/data/list.json
+last_line geosphere_earthquakes_jma_recent_mag
+
+source geosphere_earthquakes_m1_day
+ttl 600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_m1_week
+ttl 600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
+source geosphere_earthquakes_m2_5_day
+ttl 600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_m4_5_day
+ttl 600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_significant_week
+ttl 600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+field_in properties.sig geosphere_quake_sig
+
+source geosphere_earthquakes_weekly
+ttl 600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={week_ago}&endtime={today}&minmagnitude=2.5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_soil_current
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto
+path current.soil_temperature_0cm geosphere_soil_temp_0cm_c
+path current.soil_temperature_6cm geosphere_soil_temp_6cm_c
+path current.soil_temperature_18cm geosphere_soil_temp_18cm_c
+path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
+path current.soil_moisture_0_to_1cm geosphere_soil_moisture_0cm_m3m3
+path current.soil_moisture_9_to_27cm geosphere_soil_moisture_18cm_m3m3
+path current.soil_moisture_27_to_81cm geosphere_soil_moisture_54cm_m3m3
+
+source hydrosphere_global_evapotranspiration_mm
+ttl 600
+force em
+lat 0.0
+lon 0.0
+url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto
+last hourly.evapotranspiration hydrosphere_global_evapotranspiration_mm
+
+source hydrosphere_marine
+ttl 600
+force em
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period&timezone=auto
+field current.wave_height hydrosphere_wave_height_m
+field current.wave_direction hydrosphere_wave_direction_deg
+field current.wave_period hydrosphere_wave_period_s
+
+source hydrosphere_marine_ocean
+ttl 600
+force em
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=sea_surface_temperature,ocean_current_velocity,ocean_current_direction,sea_level_height_msl&timezone=auto
+path current.sea_surface_temperature hydrosphere_sst_c
+path current.ocean_current_velocity hydrosphere_current_velocity_kmh
+path current.ocean_current_direction hydrosphere_current_direction_deg
+path current.sea_level_height_msl hydrosphere_sea_level_msl_m
+
+source hydrosphere_marine_waves
+ttl 600
+force em
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto
+path current.wind_wave_height hydrosphere_wind_wave_m
+path current.wind_wave_direction hydrosphere_wind_wave_dir_deg
+path current.wind_wave_period hydrosphere_wind_wave_period_s
+path current.swell_wave_height hydrosphere_swell_m
+path current.swell_wave_direction hydrosphere_swell_dir_deg
+path current.swell_wave_period hydrosphere_swell_period_s
+
+source magnetosphere_intermagnet_bou
+ttl 600
+force em
+lat 40.100
+lon -105.200
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+field X magnetosphere_x_bou_nt
+field Y magnetosphere_y_bou_nt
+field Z magnetosphere_z_bou_nt
+
+source magnetosphere_intermagnet_s
+ttl 600
+force em
+lat 55.3
+lon -3.2
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=ESK&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+path S.0 magnetosphere_s_esk_nt
+
+source physics_gcn_ligo_circulars
+ttl 600
+force em
+terra 1
+url https://gcn.nasa.gov/circulars?query=IceCube%20LVK
+header User-Agent "omegaflow"
+regex ("totalItems":...,) cosmic_neutrino_gravwave_coincidence_count
+
+source physics_ligo_gracedb_events
+ttl 600
+force em
+terra 1
+url https://gracedb.ligo.org/api/superevents/?count=10&category=production
+count superevents cosmic_gravitational_wave_event_count
+first superevents.0.superevent_id cosmic_gravitational_wave_latest_id
+
+source solar_euv
+ttl 600
+force em
+lat 0.0
+lon -75.2
+alt 35786023
+url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
+last value solar_euv_flux_wm2
+
+source solar_surface_radiation
+ttl 600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto
+path current.shortwave_radiation atmosphere_sw_radiation_wm2
+path current.direct_radiation atmosphere_direct_rad_wm2
+path current.diffuse_radiation atmosphere_diffuse_rad_wm2
+path current.direct_normal_irradiance atmosphere_dni_wm2
+path current.vapour_pressure_deficit atmosphere_vpd_kpa
+path current.cape atmosphere_cape_jkg
+path current.evapotranspiration atmosphere_evapotranspiration_mm
+path current.et0_fao_evapotranspiration atmosphere_et0_mm
+path current.visibility atmosphere_visibility_m
+path current.freezing_level_height atmosphere_freezing_level_m
+path current.snow_depth atmosphere_snow_depth_m
+path current.precipitation_probability atmosphere_precip_probability_pct
+path current.weather_code atmosphere_wmo_code
+
+source technosphere_bitcoin_blocks
+ttl 600
+force em
+lat 0
+lon 0
+url https://blockchain.info/q/getblockcount
+last_line technosphere_bitcoin_block_count
+
+source hydrosphere_usgs_arkansas_littlerock
+ttl 900
+force seismic-surface
+lat 34.74
+lon -92.27
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07263295&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_arkansas_littlerock
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_arkansas_littlerock
+
+source hydrosphere_usgs_colorado_leesferry
+ttl 900
+force seismic-surface
+lat 36.86
+lon -111.59
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09380000&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_colorado_leesferry
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_colorado_leesferry
+
+source hydrosphere_usgs_columbia_thedalles
+ttl 900
+force seismic-surface
+lat 45.61
+lon -121.19
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=14105700&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_columbia_thedalles
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_columbia_thedalles
+
+source hydrosphere_usgs_grant_burton
+ttl 900
+force seismic-surface
+lat 42.72
+lon -90.82
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05413500&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_grant_burton
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_grant_burton
+
+source hydrosphere_usgs_hudson_albany
+ttl 900
+force seismic-surface
+lat 42.66
+lon -73.75
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01358000&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_hudson_albany
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_hudson_albany
+
+source hydrosphere_usgs_mississippi_stlouis
+ttl 900
+force seismic-surface
+lat 38.87
+lon -90.18
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07010000&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_mississippi_stlouis
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_mississippi_stlouis
+
+source hydrosphere_usgs_mississippi_vicksburg
+ttl 900
+force seismic-surface
+lat 32.35
+lon -90.89
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07289000&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_mississippi_vicksburg
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_mississippi_vicksburg
+
+source hydrosphere_usgs_missouri_bismarck
+ttl 900
+force seismic-surface
+lat 46.85
+lon -100.78
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06342500&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_missouri_bismarck
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_missouri_bismarck
+
+source hydrosphere_usgs_missouri_hermann
+ttl 900
+force seismic-surface
+lat 38.71
+lon -91.44
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06934500&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_missouri_hermann
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_missouri_hermann
+
+source hydrosphere_usgs_ohio_louisville
+ttl 900
+force seismic-surface
+lat 38.26
+lon -85.66
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03294500&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_ohio_louisville
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_ohio_louisville
+
+source hydrosphere_usgs_potomac_washingtondc
+ttl 900
+force seismic-surface
+lat 38.95
+lon -77.13
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_potomac_washingtondc
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_potomac_washingtondc
+
+source hydrosphere_usgs_riogrande_elpaso
+ttl 900
+force seismic-surface
+lat 31.80
+lon -106.53
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08371000&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_riogrande_elpaso
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_riogrande_elpaso
+
+source hydrosphere_usgs_tennessee_chattanooga
+ttl 900
+force seismic-surface
+lat 35.04
+lon -85.31
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03565500&parameterCd=00060,00065
+field value.timeSeries.0.values.0.value.0.value hydrosphere_streamflow_cfs_tennessee_chattanooga
+field value.timeSeries.1.values.0.value.0.value hydrosphere_gage_height_ft_tennessee_chattanooga
+
+source ionosphere_total_electron_content
+ttl 900
+force em
+lat 0
+lon 0
+url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json
+field data.grid.features.0.properties.vtec_assimilated_tecu ionosphere_tec_assimilated_tecu
+field data.grid.features.0.properties.vtec_rms_tecu ionosphere_tec_rms_tecu
+
+source geosphere_earthquakes_m1_month
+ttl 1800
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
+source geosphere_usgs_earthquakes_day
+ttl 1800
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in geometry.coordinates.2 geosphere_quake_depth_km
+field_in properties.mag geosphere_quake_magnitude
+
+source orbital_celestrak_debris
+ttl 1800
+force em
+terra 1
+url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=IRIDIUM+33
+field totalItems orbital_debris_iridium33
+
+source orbital_celestrak_gps
+ttl 1800
+force em
+terra 1
+url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=NAVSTAR
+field totalItems orbital_gps_count

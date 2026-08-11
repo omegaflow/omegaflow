@@ -1,0 +1,142 @@
+# ── Block 1: iss_position ──
+# Old: pos orbital_iss_lat orbital_iss_lon orbital_iss_alt_km 1000.0 | force em | ttl 10
+# New: map-based dynamic position (single-object API — see curation note)
+
+url https://api.wheretheiss.at/v1/satellites/25544
+ttl 10
+at earth
+map
+  lat_key latitude
+  lon_key longitude
+  alt_key altitude
+  field iss_presence ISS_Presence inverse-square em 1 1.0 0.0 0.0
+
+# ── Block 2: universe_iss_history ──
+# Old: pos universe_iss_history_lat universe_iss_history_lon universe_iss_history_alt 1000 | force em | ttl 10
+# New: map-based dynamic position (native array response)
+
+url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
+ttl 10
+at earth
+map
+  lat_key latitude
+  lon_key longitude
+  alt_key altitude
+  field iss_history ISS_History_Presence inverse-square em 1 1.0 0.0 0.0
+
+# ── Block 3: anu_quantum_entropy ──
+# Old: lat -35.2809 lon 149.1300 | force em | ttl 60 | path data.0 quantum_entropy_anu
+# New: fixed surface frame, field extract
+
+url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
+ttl 60
+on earth -35.2809 149.1300 0
+field data.0 anu_quantum_entropy inverse-square em count 6.0 0.0 0.0
+
+# ── Block 4: biosphere_etf_africa_broad ──
+# Old: lat 40.7128 lon -74.006 | force em | ttl 60 | field chart.result... (Yahoo Finance)
+# New: fixed surface frame, field extract (FORCE GATE — see curation note)
+
+url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_africa_price inverse-square em USD 6.0 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_africa_prev_close inverse-square em USD 6.0 0.0 0.0
+
+# ── Block 5: biosphere_etf_brazil ──
+# Old: lat 40.7128 lon -74.006 | force em | ttl 60 | field chart.result... (Yahoo Finance)
+# New: fixed surface frame, field extract (FORCE GATE — see curation note)
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/126.0.0.0 Safari/537.36"
+field chart.result.0.meta.regularMarketPrice biosphere_brazil_price inverse-square em USD 6.0 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_brazil_prev_close inverse-square em USD 6.0 0.0 0.0
+
+# ═══════════════════════════════════════════════════════════════════════
+# CURATION NOTES
+# ═══════════════════════════════════════════════════════════════════════
+
+# Block 1: iss_position
+# ──────────────────────────────────────────────────────────────────────
+# Kernel choice: inverse-square (0). Force is em — radar/optical
+#   tracking of the ISS. EM radiation propagates via inverse-square law.
+# Tau choice: TTL 10 / 10 = 1.0 s. The ISS position is updated every few
+#   seconds; a 1 s temporal extent reflects the freshness of a 10 s TTL
+#   measurement.
+# Absorption: 0.0 — EM propagation through near-vacuum LEO has negligible
+#   absorption at these ranges.
+# Advection: 0.0 — the ISS position measurement has no advective component.
+# Force Gate: PASSES. Radar ranging IS an electromagnetic measurement.
+#   An organism could evolve echolocation-like sensing at these wavelengths.
+# PARSER CONCERN: The wheretheiss.at API returns a SINGLE flat object
+#   {"latitude":..., "longitude":..., "altitude":...}, NOT an array.
+#   The `map` extractor iterates arrays (JsonVal::Arr); a single object
+#   will yield zero samples (parser-def). The ISS position is now covered
+#   by JPL Horizons ephemeris (phi/sources.φ line 160: at iss, format
+#   ephemeris_binary). Recommended disposition: DECLINE (superseded by
+#   ephemeris).
+# ALTITUDE SCALE CONCERN: Old `pos ... 1000.0` scaled km→m. The new `map`
+#   extractor has no alt_scale directive (only alt_sign, default 1.0).
+#   If retained, altitude would be in km, not m.
+
+# Block 2: universe_iss_history
+# ──────────────────────────────────────────────────────────────────────
+# Kernel: inverse-square (0), same rationale as Block 1.
+# Tau: 1.0 s (TTL 10/10).
+# Force Gate: PASSES (same as Block 1 — EM radar tracking).
+# This API returns an array of historical positions, so `map` can iterate
+#   natively. Old `field 0.latitude` with numeric prefix mapped first element;
+#   `map` iterates all elements — remove the `0.` prefix, use bare keys.
+# Recommended disposition: ACCEPT (if ISS ephemeris is insufficient for
+#   historical positions). Otherwise DECLINE (superseded by ephemeris).
+
+# Block 3: anu_quantum_entropy
+# ──────────────────────────────────────────────────────────────────────
+# Kernel: inverse-square (0). The ANU Quantum Random Number Generator
+#   measures photon arrival times in a quantum optics setup. The photons
+#   are electromagnetic; the measurement IS EM. Inverse-square governs
+#   photon flux from the source.
+# Tau: 6.0 s (TTL 60/10). Quantum entropy refreshes per API call; a 60 s
+#   TTL gives 6 s of temporal certainty.
+# Absorption: 0.0 — optical photons in lab conditions.
+# Advection: 0.0 — no advective transport.
+# Force Gate: PASSES. Photon counting in a quantum optics experiment IS an
+#   EM measurement. An organism with single-photon sensitivity (like some
+#   nocturnal animals) could detect this.
+# Unit: "count" — dimensionless integer count of photons/counts.
+# Frame: on earth -35.2809 149.1300 0 — ANU campus, Canberra.
+# Old `path data.0 quantum_entropy_anu` → new `field data.0 ...` (the
+#   `field` extractor handles scalar extraction from JSON paths).
+# Recommended disposition: ACCEPT.
+
+# Block 4: biosphere_etf_africa_broad (Yahoo Finance AFK)
+# ──────────────────────────────────────────────────────────────────────
+# Kernel: inverse-square (0) per force em mapping.
+# Tau: 6.0 s (TTL 60/10).
+# Force Gate: FAILS. The measured quantity is a stock exchange-traded fund
+#   price, delivered over HTTP. The Force Gate litmus test — "could a
+#   non-human organism evolve a sensory organ for this measurement?" — fails.
+#   No organism can detect a Yahoo Finance stock price. The measurement is
+#   not electromagnetic radiation; it is an abstraction of human economic
+#   activity. HTTP is the delivery medium, not the physical force.
+#   Classification per docs/source_curation.md: DECLINE (no physical force).
+# Frame: on earth 40.7128 -74.006 0 — New York City (NYSE/NASDAQ origin).
+# Unit: USD (US Dollars) — descriptive unit for the price value.
+# HEADER CONCERN: The parser splits on whitespace; the User-Agent header
+#   value contains spaces. Only the first word ("Mozilla/5.0") would be
+#   captured by `parts[2]`. Quoted-string support needed in parser for
+#   multi-word header values.
+# Recommended disposition: DECLINE (Force Gate — no physical force).
+
+# Block 5: biosphere_etf_brazil (Yahoo Finance EWZ)
+# ──────────────────────────────────────────────────────────────────────
+# Same analysis as Block 4. Force Gate FAILS — stock price has no
+#   physical propagation mechanism. Litmus test fails.
+# All technical parameters identical (kernel 0, tau 6.0, absorption 0.0,
+#   advection 0.0, frame on earth 40.7128 -74.006 0).
+# Unit: USD.
+# HEADER CONCERN: Same multi-word User-Agent quoting issue as Block 4.
+# Recommended disposition: DECLINE (Force Gate — no physical force).

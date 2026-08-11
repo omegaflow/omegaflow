@@ -1,0 +1,534 @@
+source lidar_gmrt_elevation
+ttl 86400
+force em
+url https://www.gmrt.org/services/PointServer?longitude={lon}&latitude={lat}&format=json
+field elevation lidar_gmrt_elevation_m
+
+source lidar_lola_moon_elevation
+ttl 86400
+force em
+lat 0
+lon 0
+url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1
+field features.0.properties.pc:statistics.2.average lidar_lola_moon_z_mean_m
+field features.0.properties.pc:statistics.2.minimum lidar_lola_moon_z_min_m
+field features.0.properties.pc:statistics.2.maximum lidar_lola_moon_z_max_m
+
+source lidar_lola_moon_point_cloud
+ttl 86400
+force em
+lat 0
+lon 0
+url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1
+field features.0.properties.pc:count lidar_lola_moon_point_count
+field features.0.properties.pc:density lidar_lola_moon_point_density_per_km2
+
+source lidar_mola_mars_megdr_count
+ttl 86400
+force em
+lat 0
+lon 0
+url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=MEGDR&output=XML
+regex <Count>([0-9]+)</Count> lidar_mola_mars_megdr_product_count
+
+source lidar_mola_mars_pedr_count
+ttl 86400
+force em
+lat 0
+lon 0
+url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=PEDR&output=XML
+regex <Count>([0-9]+)</Count> lidar_mola_mars_pedr_product_count
+
+source magnetosphere_abg
+ttl 86400
+force em
+lat 18.638
+lon 72.872
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_abg_x_nt
+path 1.1 magnetosphere_abg_y_nt
+path 1.2 magnetosphere_abg_z_nt
+path 2 magnetosphere_abg_s_nt
+
+source magnetosphere_abk
+ttl 86400
+force em
+lat 68.358
+lon 18.823
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_abk_x_nt
+path 1.1 magnetosphere_abk_y_nt
+path 1.2 magnetosphere_abk_z_nt
+path 2 magnetosphere_abk_s_nt
+
+source magnetosphere_abk_hapi
+ttl 86400
+force em
+lat 68.358
+lon 18.823
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_abk_x_nt
+path 1.1 magnetosphere_abk_y_nt
+path 1.2 magnetosphere_abk_z_nt
+path 2 magnetosphere_abk_f_nt
+
+source magnetosphere_aia
+ttl 86400
+force em
+lat -65.245
+lon -64.25799999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_aia_x_nt
+path 1.1 magnetosphere_aia_y_nt
+path 1.2 magnetosphere_aia_z_nt
+path 2 magnetosphere_aia_s_nt
+
+source magnetosphere_ars
+ttl 86400
+force em
+lat 56.433
+lon 58.567
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ars_x_nt
+path 1.1 magnetosphere_ars_y_nt
+path 1.2 magnetosphere_ars_z_nt
+path 2 magnetosphere_ars_s_nt
+
+source magnetosphere_asp
+ttl 86400
+force em
+lat -23.762
+lon 133.883
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_asp_x_nt
+path 1.1 magnetosphere_asp_y_nt
+path 1.2 magnetosphere_asp_z_nt
+path 2 magnetosphere_asp_s_nt
+
+source magnetosphere_asp_hapi
+ttl 86400
+force em
+lat -23.762
+lon 133.883
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_asp_x_nt
+path 1.1 magnetosphere_asp_y_nt
+path 1.2 magnetosphere_asp_z_nt
+path 2 magnetosphere_asp_f_nt
+
+source magnetosphere_bdv
+ttl 86400
+force em
+lat 49.08
+lon 14.02
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bdv_x_nt
+path 1.1 magnetosphere_bdv_y_nt
+path 1.2 magnetosphere_bdv_z_nt
+path 2 magnetosphere_bdv_s_nt
+
+source magnetosphere_bdv_hapi
+ttl 86400
+force em
+lat 49.08
+lon 14.02
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bdv_x_nt
+path 1.1 magnetosphere_bdv_y_nt
+path 1.2 magnetosphere_bdv_z_nt
+path 2 magnetosphere_bdv_f_nt
+
+source magnetosphere_bel
+ttl 86400
+force em
+lat 51.836
+lon 20.789
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bel_x_nt
+path 1.1 magnetosphere_bel_y_nt
+path 1.2 magnetosphere_bel_z_nt
+path 2 magnetosphere_bel_s_nt
+
+source magnetosphere_bel_hapi
+ttl 86400
+force em
+lat 51.836
+lon 20.789
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bel_x_nt
+path 1.1 magnetosphere_bel_y_nt
+path 1.2 magnetosphere_bel_z_nt
+path 2 magnetosphere_bel_f_nt
+
+source magnetosphere_bfo
+ttl 86400
+force em
+lat 48.331
+lon 8.325
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bfo_x_nt
+path 1.1 magnetosphere_bfo_y_nt
+path 1.2 magnetosphere_bfo_z_nt
+path 2 magnetosphere_bfo_s_nt
+
+source magnetosphere_bfo_hapi
+ttl 86400
+force em
+lat 48.331
+lon 8.325
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bfo_x_nt
+path 1.1 magnetosphere_bfo_y_nt
+path 1.2 magnetosphere_bfo_z_nt
+path 2 magnetosphere_bfo_f_nt
+
+source magnetosphere_bou
+ttl 86400
+force em
+lat 40.14
+lon -105.233
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bou_x_nt
+path 1.1 magnetosphere_bou_y_nt
+path 1.2 magnetosphere_bou_z_nt
+path 2 magnetosphere_bou_s_nt
+
+source magnetosphere_bou_hapi
+ttl 86400
+force em
+lat 40.14
+lon -105.233
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bou_x_nt
+path 1.1 magnetosphere_bou_y_nt
+path 1.2 magnetosphere_bou_z_nt
+path 2 magnetosphere_bou_f_nt
+
+source magnetosphere_brw
+ttl 86400
+force em
+lat 71.32
+lon -156.62
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_brw_x_nt
+path 1.1 magnetosphere_brw_y_nt
+path 1.2 magnetosphere_brw_z_nt
+path 2 magnetosphere_brw_s_nt
+
+source magnetosphere_brw_hapi
+ttl 86400
+force em
+lat 71.32
+lon -156.62
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_brw_x_nt
+path 1.1 magnetosphere_brw_y_nt
+path 1.2 magnetosphere_brw_z_nt
+path 2 magnetosphere_brw_f_nt
+
+source magnetosphere_bsl
+ttl 86400
+force em
+lat 30.35
+lon -89.63999999999999
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bsl_x_nt
+path 1.1 magnetosphere_bsl_y_nt
+path 1.2 magnetosphere_bsl_z_nt
+path 2 magnetosphere_bsl_s_nt
+
+source magnetosphere_bsl_hapi
+ttl 86400
+force em
+lat 30.35
+lon -89.63999999999999
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_bsl_x_nt
+path 1.1 magnetosphere_bsl_y_nt
+path 1.2 magnetosphere_bsl_z_nt
+path 2 magnetosphere_bsl_f_nt
+
+source magnetosphere_cki
+ttl 86400
+force em
+lat -12.188
+lon 96.834
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cki_x_nt
+path 1.1 magnetosphere_cki_y_nt
+path 1.2 magnetosphere_cki_z_nt
+path 2 magnetosphere_cki_s_nt
+
+source magnetosphere_cki_hapi
+ttl 86400
+force em
+lat -12.188
+lon 96.834
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cki_x_nt
+path 1.1 magnetosphere_cki_y_nt
+path 1.2 magnetosphere_cki_z_nt
+path 2 magnetosphere_cki_f_nt
+
+source magnetosphere_clf
+ttl 86400
+force em
+lat 48.025
+lon 2.26
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_clf_x_nt
+path 1.1 magnetosphere_clf_y_nt
+path 1.2 magnetosphere_clf_z_nt
+path 2 magnetosphere_clf_s_nt
+
+source magnetosphere_clf_hapi
+ttl 86400
+force em
+lat 48.025
+lon 2.26
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_clf_x_nt
+path 1.1 magnetosphere_clf_y_nt
+path 1.2 magnetosphere_clf_z_nt
+path 2 magnetosphere_clf_f_nt
+
+source magnetosphere_cmo
+ttl 86400
+force em
+lat 64.87
+lon -147.86
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cmo_x_nt
+path 1.1 magnetosphere_cmo_y_nt
+path 1.2 magnetosphere_cmo_z_nt
+path 2 magnetosphere_cmo_s_nt
+
+source magnetosphere_cmo_hapi
+ttl 86400
+force em
+lat 64.87
+lon -147.86
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cmo_x_nt
+path 1.1 magnetosphere_cmo_y_nt
+path 1.2 magnetosphere_cmo_z_nt
+path 2 magnetosphere_cmo_f_nt
+
+source magnetosphere_cnb
+ttl 86400
+force em
+lat -35.32
+lon 149.36
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cnb_x_nt
+path 1.1 magnetosphere_cnb_y_nt
+path 1.2 magnetosphere_cnb_z_nt
+path 2 magnetosphere_cnb_s_nt
+
+source magnetosphere_cnb_hapi
+ttl 86400
+force em
+lat -35.32
+lon 149.36
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cnb_x_nt
+path 1.1 magnetosphere_cnb_y_nt
+path 1.2 magnetosphere_cnb_z_nt
+path 2 magnetosphere_cnb_f_nt
+
+source magnetosphere_cpL
+ttl 86400
+force em
+lat 17.294
+lon 78.919
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cpl_x_nt
+path 1.1 magnetosphere_cpl_y_nt
+path 2 magnetosphere_cpl_s_nt
+
+source magnetosphere_csy
+ttl 86400
+force em
+lat -66.283
+lon 110.533
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_csy_x_nt
+path 1.1 magnetosphere_csy_y_nt
+path 1.2 magnetosphere_csy_z_nt
+path 2 magnetosphere_csy_s_nt
+
+source magnetosphere_csy_hapi
+ttl 86400
+force em
+lat -66.283
+lon 110.533
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_csy_x_nt
+path 1.1 magnetosphere_csy_y_nt
+path 1.2 magnetosphere_csy_z_nt
+path 2 magnetosphere_csy_f_nt
+
+source magnetosphere_cta
+ttl 86400
+force em
+lat -20.09
+lon 146.264
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cta_x_nt
+path 1.1 magnetosphere_cta_y_nt
+path 1.2 magnetosphere_cta_z_nt
+path 2 magnetosphere_cta_s_nt
+
+source magnetosphere_cta_hapi
+ttl 86400
+force em
+lat -20.09
+lon 146.264
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cta_x_nt
+path 1.1 magnetosphere_cta_y_nt
+path 1.2 magnetosphere_cta_z_nt
+path 2 magnetosphere_cta_f_nt
+
+source magnetosphere_cyg
+ttl 86400
+force em
+lat 36.37
+lon 126.854
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cyg_x_nt
+path 1.1 magnetosphere_cyg_y_nt
+path 1.2 magnetosphere_cyg_z_nt
+path 2 magnetosphere_cyg_s_nt
+
+source magnetosphere_cyg_hapi
+ttl 86400
+force em
+lat 36.37
+lon 126.854
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_cyg_x_nt
+path 1.1 magnetosphere_cyg_y_nt
+path 1.2 magnetosphere_cyg_z_nt
+path 2 magnetosphere_cyg_f_nt
+
+source magnetosphere_ded
+ttl 86400
+force em
+lon -148.79
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ded_x_nt
+path 1.1 magnetosphere_ded_y_nt
+path 1.2 magnetosphere_ded_z_nt
+path 2 magnetosphere_ded_s_nt
+lat 70.36
+
+source magnetosphere_ded_hapi
+ttl 86400
+force em
+lat 70.36
+lon -148.79
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ded_x_nt
+path 1.1 magnetosphere_ded_y_nt
+path 1.2 magnetosphere_ded_z_nt
+path 2 magnetosphere_ded_f_nt
+
+source magnetosphere_dlt
+ttl 86400
+force em
+lat 11.95
+lon 108.48
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dlt_x_nt
+path 1.1 magnetosphere_dlt_y_nt
+path 1.2 magnetosphere_dlt_z_nt
+path 2 magnetosphere_dlt_s_nt
+
+source magnetosphere_dlt_hapi
+ttl 86400
+force em
+lat 11.95
+lon 108.48
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dlt_x_nt
+path 1.1 magnetosphere_dlt_y_nt
+path 1.2 magnetosphere_dlt_z_nt
+path 2 magnetosphere_dlt_f_nt
+
+source magnetosphere_dou
+ttl 86400
+force em
+lat 50.1
+lon 4.6
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dou_x_nt
+path 1.1 magnetosphere_dou_y_nt
+path 1.2 magnetosphere_dou_z_nt
+path 2 magnetosphere_dou_s_nt
+
+source magnetosphere_dou_hapi
+ttl 86400
+force em
+lat 50.1
+lon 4.6
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dou_x_nt
+path 1.1 magnetosphere_dou_y_nt
+path 1.2 magnetosphere_dou_z_nt
+path 2 magnetosphere_dou_f_nt
+
+source magnetosphere_dur
+ttl 86400
+force em
+lat 41.65
+lon 14.47
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dur_x_nt
+path 1.1 magnetosphere_dur_y_nt
+path 1.2 magnetosphere_dur_z_nt
+path 2 magnetosphere_dur_s_nt
+
+source magnetosphere_dur_hapi
+ttl 86400
+force em
+lat 41.65
+lon 14.47
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_dur_x_nt
+path 1.1 magnetosphere_dur_y_nt
+path 1.2 magnetosphere_dur_z_nt
+path 2 magnetosphere_dur_f_nt
+
+source magnetosphere_ebr
+ttl 86400
+force em
+lat 40.957
+lon 0.333
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ebr_x_nt
+path 1.1 magnetosphere_ebr_y_nt
+path 1.2 magnetosphere_ebr_z_nt
+path 2 magnetosphere_ebr_s_nt
+
+source magnetosphere_ebr_hapi
+ttl 86400
+force em
+lat 40.957
+lon 0.333
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ebr_x_nt
+path 1.1 magnetosphere_ebr_y_nt
+path 1.2 magnetosphere_ebr_z_nt
+path 2 magnetosphere_ebr_f_nt
+
+source magnetosphere_eyr
+ttl 86400
+force em
+lat -43.474
+lon 172.393
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_eyr_x_nt
+path 1.1 magnetosphere_eyr_y_nt
+path 1.2 magnetosphere_eyr_z_nt
+path 2 magnetosphere_eyr_s_nt

@@ -1,0 +1,244 @@
+# Block 1: iss_position — SKIP (superseded by ephemeris_iss.bin in CDN)
+decline superseded-by-ephemeris
+url https://api.wheretheiss.at/v1/satellites/25544
+note ISS position now available via ephemeris_iss.bin (ssd.jpl.nasa.gov), at iss
+
+# Block 2: universe_iss_history — SKIP (superseded by ephemeris_iss.bin)
+decline superseded-by-ephemeris
+url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
+note ISS history now available via ephemeris_iss.bin CDN, at iss
+
+# Block 4: biosphere_etf_africa_broad — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
+note Force Gate: stock price is an economic abstraction, HTTP is delivery medium not physical force. ETF Africa (AFK).
+
+# Block 5: biosphere_etf_brazil — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
+note Force Gate: stock price, no physical force. ETF Brazil (EWZ).
+
+# Block 6: biosphere_etf_china — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d
+note Force Gate: stock price, no physical force. ETF China (FXI).
+
+# Block 7: biosphere_etf_dollar_index — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d
+note Force Gate: financial index, no physical force. Dollar Index (DX-Y.NYB).
+
+# Block 8: biosphere_etf_dry_bulk_shipping — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Dry Bulk Shipping ETF (BDRY).
+
+# Block 9: biosphere_etf_emerging_markets — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Emerging Markets ETF (EEM).
+
+# Block 10: biosphere_etf_europe — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Europe ETF (VGK).
+
+# Block 11: biosphere_etf_frontier_markets — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Frontier Markets ETF (FM).
+
+# Block 12: biosphere_etf_germany — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Germany ETF (EWG).
+
+# Block 13: biosphere_etf_gold — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d
+note Force Gate: commodity futures price, no physical force. Gold Futures (GC=F).
+
+# Block 14: biosphere_etf_india — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d
+note Force Gate: stock price, no physical force. India ETF (INDA).
+
+# Block 15: biosphere_etf_japan — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Japan ETF (EWJ).
+
+# Block 16: biosphere_etf_latin_america_broad — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Latin America ETF (ILF).
+
+# Block 17: biosphere_etf_mexico — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Mexico ETF (EWW).
+
+# Block 18: biosphere_etf_middle_east — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Middle East ETF (KSA).
+
+# Block 19: biosphere_etf_oil — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d
+note Force Gate: commodity futures price, no physical force. Crude Oil Futures (CL=F).
+
+# Block 20: biosphere_etf_sector_communication — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Communication Sector ETF (XLC).
+
+# Block 21: biosphere_etf_sector_consumer_discretionary — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Consumer Discretionary ETF (XLY).
+
+# Block 22: biosphere_etf_sector_consumer_staples — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Consumer Staples ETF (XLP).
+
+# Block 23: biosphere_etf_sector_energy — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Energy Sector ETF (XLE).
+
+# Block 24: biosphere_etf_sector_financials — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Financials ETF (XLF).
+
+# Block 25: biosphere_etf_sector_healthcare — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Healthcare ETF (XLV).
+
+# Block 26: biosphere_etf_sector_industrials — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Industrials ETF (XLI).
+
+# Block 27: biosphere_etf_sector_materials — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Materials ETF (XLB).
+
+# Block 28: biosphere_etf_sector_real_estate — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Real Estate ETF (XLRE).
+
+# Block 29: biosphere_etf_sector_technology — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Technology ETF (XLK).
+
+# Block 30: biosphere_etf_sector_utilities — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Utilities ETF (XLU).
+
+# Block 31: biosphere_etf_semiconductors — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Semiconductor ETF (SOXX).
+
+# Block 32: biosphere_etf_south_africa — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d
+note Force Gate: stock price, no physical force. South Africa ETF (EZA).
+
+# Block 33: biosphere_etf_southeast_asia — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Southeast Asia ETF (ASEA).
+
+# Block 34: biosphere_etf_transportation — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Transportation ETF (IYT).
+
+# Block 35: biosphere_etf_treasury_yield_10y — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1d
+note Force Gate: interest rate is an economic abstraction, no physical force. 10Y Treasury Yield (^TNX).
+
+# Block 36: biosphere_etf_usa — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d
+note Force Gate: stock price, no physical force. S&P 500 ETF (SPY).
+
+# Block 37: biosphere_etf_volatility — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
+note Force Gate: volatility index is a derived financial metric, no physical force. VIX (^VIX).
+
+# Block 38: biosphere_etf_world_all_country — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d
+note Force Gate: stock price, no physical force. All Country World ETF (ACWI).
+
+# Block 39: biosphere_etf_world_developed — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/URTH?interval=1d&range=1d
+note Force Gate: stock price, no physical force. Developed World ETF (URTH).
+
+# Block 40: biosphere_github_public_events — DECLINE (bare count)
+decline bare-count
+url https://api.github.com/events?per_page=100
+note Force Gate: count of GitHub API events, bare count with no physical force. HTTP is delivery medium.
+
+# Block 41: biosphere_inex_traffic — DECLINE (derived information metric)
+decline no-physical-force
+url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
+note Force Gate: internet traffic measured in bits/s is decoded information throughput, not raw EM field strength. EM carrier is real but the measurement is of information content, not physical field.
+
+# Block 42: biosphere_irail_belgium — DECLINE (bare count)
+decline bare-count
+url https://api.irail.be/liveboard/?station=Brussels&format=json
+note Force Gate: count of train departures, bare count with no physical force.
+
+# Block 43: biosphere_irish_rail_realtime — DECLINE (bare count)
+decline bare-count
+url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
+note Force Gate: count of train station entries, bare count with no physical force.
+
+# Block 44: biosphere_ripe_bgp_default_route — DECLINE (bare count, no physical force)
+decline bare-count
+url https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0
+note Force Gate: count of BGP routing table entries, bare count with no physical force. Routing data is information, not physics.
+
+# Block 45: biosphere_ripe_bgp_updates — DECLINE (bare count, no physical force)
+decline no-physical-force
+url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today}
+note Force Gate: count of BGP routing updates, derived information metric with no physical force.
+
+# Block 46: biosphere_transport_bern_departures — DECLINE (bare count)
+decline bare-count
+url https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10
+note Force Gate: count of transport departures, bare count with no physical force.
+
+# Block 47: biosphere_transport_zurich_departures — DECLINE (bare count)
+decline bare-count
+url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
+note Force Gate: count of transport departures, bare count with no physical force.
+
+# Block 48: biosphere_wiener_linien_realtime — DECLINE (bare count)
+decline bare-count
+url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
+note Force Gate: count of transport lines, bare count with no physical force.
+
+# Block 49: biosphere_yahoo_finance_markets — DECLINE (no physical force)
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d
+note Force Gate: stock price is an economic abstraction, HTTP is delivery medium not physical force. AAPL.
+
+# Block 50: cosmic_radiation_jung — DECLINE (model forecast)
+decline model-forecast
+url https://api.open-meteo.com/v1/forecast?latitude=46.95&longitude=7.86&current=shortwave_radiation,uv_index&timezone=auto
+note Open-Meteo forecast API returns model-derived values (GFS/ERA5 based), not direct physical measurements. Model forecasts are declined per curation protocol.

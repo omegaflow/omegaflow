@@ -1,0 +1,403 @@
+source biosphere_inaturalist_verified
+ttl 3600
+force em
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
+field total_results biosphere_verified_observations
+
+source biosphere_launch_library
+ttl 3600
+force em
+terra 1
+url https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1
+field count orbital_upcoming_launches
+
+source biosphere_overpass_charging_stations
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="charging_station"](around:5000,{lat},{lon});out%20count;
+deep total technosphere_ev_charging_5km
+
+source biosphere_overpass_restaurants
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="restaurant"](around:1000,{lat},{lon});out%20count;
+deep total anthroposphere_restaurants_1km
+
+source biosphere_overpass_shops
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count;
+deep total technosphere_shops_5km
+
+source biosphere_tor_relays_running
+ttl 3600
+force em
+terra 1
+url https://onionoo.torproject.org/summary?running=true
+field relays_published biosphere_tor_relay_count
+
+source biosphere_uv_index_global
+ttl 3600
+force em
+lat 0.0
+lon 0.0
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start={year}&end={year}&format=JSON
+path properties.parameter.ALLSKY_SFC_UV_INDEX.0 biosphere_uv_index_global
+
+source biosphere_wikipedia_pageviews_total
+ttl 3600
+force em
+terra 1
+url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
+path items.0.views social_wikipedia_pageviews_daily
+
+source biosphere_wildfires
+ttl 3600
+force em
+terra 1
+url https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires
+count events biosphere_eonet_wildfire_count
+
+source cosmos_asteroids_numbered
+ttl 86400
+force em
+terra 0
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
+count data cosmos_asteroids_numbered_total
+
+source cosmos_asteroids_positions
+ttl 86400
+force em
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
+kepler_map data
+a_key a
+e_key e
+i_key i
+om_key om
+w_key w
+ma_key ma
+epoch_key epoch
+field_in H cosmic_asteroid_h_mag
+
+source cosmos_gaia_dr3_sample
+ttl 86400
+force em
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+200+ra,dec,parallax,phot_rp_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>10
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 mag_rp
+
+source cosmos_neo_close_approaches
+ttl 3600
+force em
+terra 0
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+count data cosmos_neo_count
+field data.0.4 cosmos_neo_first_dist_au
+field data.0.7 cosmos_neo_first_v_kms
+field data.0.10 cosmos_neo_first_h_mag
+
+source dockerhub_alpine_pulls
+ttl 3600
+force em
+lat 37.7749
+lon -122.4194
+url https://hub.docker.com/v2/repositories/library/alpine
+field pull_count biosphere_software_alpine_pulls_dockerhub
+
+source dockerhub_node_pulls
+ttl 3600
+force em
+lat 37.7749
+lon -122.4194
+url https://hub.docker.com/v2/repositories/library/node
+field pull_count biosphere_software_node_pulls_dockerhub
+
+source dockerhub_python_pulls
+ttl 3600
+force em
+lat 37.7749
+lon -122.4194
+url https://hub.docker.com/v2/repositories/library/python
+field pull_count biosphere_software_python_pulls_dockerhub
+
+source dockerhub_ubuntu_pulls
+ttl 3600
+force em
+lat 37.7749
+lon -122.4194
+url https://hub.docker.com/v2/repositories/library/ubuntu
+field pull_count biosphere_software_ubuntu_pulls_dockerhub
+
+source earth_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris orbital_earth_distance
+
+source enceladus_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_enceladus_distance
+
+source encke_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_encke_distance
+
+source eris_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_eris_distance
+
+source europa_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_europa_distance
+
+source exosphere_ace_magnetometer
+ttl 3600
+force em
+lat 0
+lon 0
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+field 0.gsm_bx exosphere_ace_bx_gsm_nt
+field 0.gsm_by exosphere_ace_by_gsm_nt
+field 0.gsm_bz exosphere_ace_bz_gsm_nt
+field 0.bt exosphere_ace_bt_nt
+
+source exosphere_ace_solar_wind
+ttl 3600
+force em
+lat 0
+lon 0
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+field 0.speed exosphere_ace_speed_kms
+field 0.dens exosphere_ace_dens_ncc
+field 0.temperature exosphere_ace_temp_k
+
+source exosphere_aurora_oval
+ttl 3600
+force em
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat_key 1
+lon_key 0
+field_in 0 atmosphere_aurora_power_gw
+field_in 2 atmosphere_aurora_probability_pct
+
+source exosphere_dst_index
+ttl 3600
+force em
+lat 0
+lon 0
+url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
+last dst exosphere_dst_nt
+
+source exosphere_interstellar_object_tracking
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris cosmic_interstellar_object_distance
+
+source exosphere_kp_index
+ttl 3600
+force em
+lat 0
+lon 0
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+last estimated_kp exosphere_kp_estimated
+
+source exosphere_satnogs_radio_observations
+ttl 3600
+force em
+terra 1
+url https://network.satnogs.org/api/observations/?format=json&limit=1
+count items biosphere_satnogs_observations
+
+source ganymede_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_ganymede_distance
+
+source gbif
+ttl 3600
+force em
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
+field count biosphere_species_count
+
+source geosphere_atms
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="atm"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_atm_id
+
+source geosphere_banks
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bank"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_bank_id
+
+source geosphere_bus_stops
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="bus_stop"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_bus_stop_id
+
+source geosphere_castles
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="castle"](around:500000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_castle_id
+
+source geosphere_copernicus_sentinel2_count
+ttl 3600
+force em
+terra 1
+url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$top=1&$count=true
+path @odata.count technosphere_copernicus_s2_products_total
+
+source geosphere_earthquakes_ingv
+ttl 3600
+force seismic-surface
+lat 40.0
+lon 15.0
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_m3_monthly
+ttl 3600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_significant_month
+ttl 3600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag geosphere_quake_mag
+
+source geosphere_effis_fires
+ttl 3600
+force em
+lat 45.803
+lon 8.624
+url https://ies-ows.jrc.ec.europa.eu/effis?service=WFS&request=GetFeature&typeName=ms:modis.hs&outputFormat=application/json&maxFeatures=1
+field features biosphere_effis_fire_feature_count
+
+source geosphere_ev_charging_points
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="charging_station"](around:100000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.sockets geosphere_ev_charging_sockets
+
+source geosphere_fire_stations
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fire_station"](around:100000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_fire_station_id
+
+source geosphere_fuel_stations
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fuel"](around:100000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_fuel_station_id
+
+source geosphere_gdacs_disasters
+ttl 3600
+force em
+url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?alertlevel=red;orange;green
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.eventtype geosphere_disaster_type
+field_in properties.alertlevel geosphere_disaster_alert_level
+field_in properties.severitydata.severity geosphere_disaster_severity
+
+source geosphere_gdacs_disasters_total
+ttl 3600
+force em
+lat 38.9072
+lon -77.0369
+url https://gdacs.org/xml/rss.xml
+xml_count item geosphere_disasters_gdacs
+
+source geosphere_hospitals
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="hospital"](around:200000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_hospital_id
+
+source geosphere_libraries
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="library"](around:100000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_library_id
+
+source geosphere_lighthouses
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="lighthouse"](around:500000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.ele geosphere_lighthouse_elevation_m
+
+source geosphere_mast_towers
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="mast"](around:200000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.height geosphere_mast_height_m
+
+source geosphere_memorials
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="memorial"](around:100000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_memorial_id

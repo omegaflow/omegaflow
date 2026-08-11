@@ -1,0 +1,384 @@
+source orbit_celestrak_active
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+count lines orbital_active_satellites_celestrak
+
+source orbit_celestrak_active_satellites
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+count lines orbital_active_satellites_celestrak
+
+source orbit_celestrak_all_satellites
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+count lines orbital_satellites_active_celestrak
+
+source orbit_celestrak_cubesats
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=JSON
+count lines orbital_cubesats_celestrak
+
+source orbit_celestrak_debris
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
+count lines orbital_debris_tracked_celestrak
+
+source orbit_celestrak_debris_analyst
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
+count lines orbital_debris_tracked_celestrak
+
+source orbit_celestrak_engineering_sats
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=engineering&FORMAT=JSON
+count lines orbital_engineering_sats_celestrak
+
+source orbit_celestrak_glonass
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=glonass-ops&FORMAT=JSON
+count lines orbital_glonass_satellites_celestrak
+
+source orbit_celestrak_gps
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=JSON
+count lines orbital_gps_satellites_celestrak
+
+source orbit_celestrak_navigation_sats
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=gnss&FORMAT=JSON
+count lines orbital_navigation_sats_celestrak
+
+source orbit_celestrak_oneweb
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=oneweb&FORMAT=JSON
+count lines orbital_oneweb_satellites_celestrak
+
+source orbit_celestrak_science_sats
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=JSON
+count lines orbital_science_sats_celestrak
+
+source orbit_celestrak_space_stations
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=JSON
+count lines orbital_space_stations_celestrak
+
+source orbit_celestrak_starlink
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=JSON
+count lines orbital_starlink_satellites_celestrak
+
+source orbit_celestrak_weather_sats
+ttl 86400
+force em
+terra 1
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=JSON
+count lines orbital_weather_sats_celestrak
+
+source orbital_apophis_vectors
+ttl 86400
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_apophis_distance
+
+source orbital_bennu_vectors
+ttl 86400
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_bennu_distance
+
+source orbital_celestrak_earth_orientation
+ttl 86400
+force em
+format csv
+lat 40.034
+lon -75.630
+terra 1
+url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
+header User-Agent "omegaflow"
+last line geosphere_earth_orientation_raw
+
+source orbital_ceres_vectors
+ttl 86400
+force em
+lat 34.201
+lon -118.171
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_ceres_distance
+
+source orbital_earth_mass
+ttl 86400
+force em
+lat 0
+lon 0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=399&OBJ_DATA=YES
+regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
+
+source orbital_jpl_atmospheric_fireballs
+ttl 86400
+force em
+lat 34.201
+lon -118.171
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
+field count cosmic_fireball_count
+
+source orbital_jupiter_mass
+ttl 86400
+force em
+lat 0
+lon 0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=599&OBJ_DATA=YES
+regex \(kg\).\W*([0-9.]+) orbital_jupiter_mass_x10_24_kg
+
+source orbital_mars_mass
+ttl 86400
+force em
+lat 0
+lon 0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=499&OBJ_DATA=YES
+regex \(kg\).\W*([0-9.]+) orbital_mars_mass_x10_24_kg
+
+source orbital_mercury_mass
+ttl 86400
+force em
+lat 0
+lon 0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=199&OBJ_DATA=YES
+regex \(kg\).\W*([0-9.]+) orbital_mercury_mass_x10_24_kg
+
+source orbital_neptune_mass
+ttl 86400
+force em
+lat 0
+lon 0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=899&OBJ_DATA=YES
+regex \(kg\).\W*([0-9.]+) orbital_neptune_mass_x10_24_kg
+
+source orbital_saturn_mass
+ttl 86400
+force em
+lat 0
+lon 0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=699&OBJ_DATA=YES
+regex \(kg\).\W*([0-9.]+) orbital_saturn_mass_x10_24_kg
+
+source orbital_sentry_objects
+ttl 86400
+force em
+lat 34.201
+lon -118.171
+url https://ssd-api.jpl.nasa.gov/sentry.api
+field count nasa_sentry_risk_object_count
+
+source orbital_uranus_mass
+ttl 86400
+force em
+lat 0
+lon 0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=799&OBJ_DATA=YES
+regex \(kg\).\W*([0-9.]+) orbital_uranus_mass_x10_24_kg
+
+source orbital_venus_mass
+ttl 86400
+force em
+lat 0
+lon 0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=299&OBJ_DATA=YES
+regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg
+
+source paleobiology_pbdb_paleobiology
+ttl 86400
+force em
+lat 43.073
+lon -89.401
+url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
+field records_returned paleobiology_pbdb_occurrence_count
+
+source paleoclimate_neotoma_paleoecology
+ttl 86400
+force em
+lat 43.073
+lon -89.401
+url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
+field total paleoclimate_neotoma_occurrences
+
+source particle_physics_papers_total
+ttl 86400
+force em
+lat 46.233
+lon 6.056
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=find+tc&fields=titles,citation_count
+field hits.total subatomic_papers_total
+
+source physics_crossref_dois
+ttl 86400
+force em
+lat 42.530
+lon -71.048
+url https://api.crossref.org/works?rows=0
+field message.total-results biosphere_crossref_doi_count
+
+source physics_crossref_jwst_high_z_papers
+ttl 86400
+force em
+lat 39.328
+lon -76.620
+url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
+field message.total-results cosmic_jwst_high_z_discovery_papers
+
+source physics_inspirehep_iter_fusion_papers
+ttl 86400
+force em
+lat 43.709
+lon 5.777
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_fusion_research_citations
+
+source physics_openalex_works
+ttl 86400
+force em
+lat 42.373
+lon -71.110
+url https://api.openalex.org/works?per-page=1
+field meta.count biosphere_openalex_work_count
+
+source pubchem_compounds_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/compounds/count/JSON
+field PC_Compounds.0.properties.0.count molecular_compounds_total
+
+source pubchem_substances_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/substances/count/JSON
+field PC_Substances.0.properties.0.count molecular_substances_total
+
+source pypi_packages_total
+ttl 86400
+force em
+lat 37.774
+lon -122.419
+url https://pypi.org/stats/packages/
+field total biosphere_pypi_packages_total
+
+source rcsb_pdb_structures_total
+ttl 86400
+force em
+lat 40.444
+lon -74.494
+url https://data.rcsb.org/graphql?query={graphStatistics{totalEntries}}
+field data.graphStatistics.totalEntries molecular_pdb_structures_total
+
+source solar_historical_surface
+ttl 86400
+force em
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto
+last shortwave_radiation atmosphere_hist_solar_radiation_wm2
+last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
+
+source stackoverflow_questions_total
+ttl 86400
+force em
+lat 37.774
+lon -122.419
+url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
+field total biosphere_stackoverflow_questions_total
+
+source subatomare_particles
+ttl 86400
+force em
+terra 0
+format csv
+url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
+last_row ID subatomare_last_pdg_id
+last_row Mass subatomare_last_mass_mev
+last_row Charge subatomare_last_charge
+
+source sunspot_number_global
+ttl 86400
+force em
+terra 0
+url https://www.sidc.be/silso/DATA/SN_d_tot_V2.0.txt
+last_line solar_sunspot_number_silso
+
+source sunspot_number_monthly
+ttl 86400
+force em
+terra 0
+url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
+last_line solar_sunspot_number_silso
+
+source technosphere_stackoverflow_questions
+ttl 86400
+force em
+lat 40.712
+lon -74.006
+url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
+path items.0.count technosphere_stackoverflow_questions_total
+
+source tess_exoplanet_candidates_total
+ttl 86400
+force em
+lat 42.365
+lon -71.105
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
+last_line exosphere_tess_candidates_total
+
+source tns_supernovae_total
+ttl 86400
+force em
+lat 32.0
+lon -110.0
+url https://www.wis-tns.org/statistics
+last_line exosphere_tns_supernovae_total
+
+source uniprot_proteins_total
+ttl 86400
+force em
+lat 46.233
+lon 6.056
+url https://rest.uniprot.org/uniprotkb/statistics
+field statistics.0.value molecular_proteins_total
+
+source universe_exoplanet_hosts
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,pl_name,sy_dist+FROM+ps+ORDER+BY+sy_dist&format=json
+cmap .
+ra_key ra
+dec_key dec
+dist_key 3 3.085677581e16
+field_in sy_dist universe_exoplanet_distance_pc
