@@ -470,8 +470,10 @@ fn presence_probe() {
     if (dist > 1.0) { discard; }
 
     let d2 = in.d_mag * in.d_mag;
-    let global_scale = vp.surface.w;
-    let intensity = field_spatial(d2, in.d_mag, in.extent, in.kernel_id, global_scale, in.absorption);
+    let soft = max(in.extent, 1e-6);
+    let intensity_raw = field_spatial(d2, in.d_mag, in.extent, in.kernel_id, soft, in.absorption);
+    let norm = field_spatial(0.0, 0.0, in.extent, in.kernel_id, soft, in.absorption);
+    let intensity = intensity_raw / max(norm, 1e-30);
 
     let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
     let analog_intensity = intensity * (0.9 + noise * 0.1);
@@ -569,7 +571,7 @@ fn presence_probe() {
             let c = fieldCap > 0 ? fieldCap : 256;
             while (c < n) c <<= 1;
             const maxBuf = gpu.limits.maxBufferSize || 268435456;
-            while (c * 32 > maxBuf) c >>= 1;
+            while (c * 48 > maxBuf) c >>= 1;
             if (c < 256) c = 256;
             if (c < fieldCap >> 1 && stableTick > 0) {
                 const displayFreq = 60;
@@ -579,7 +581,7 @@ fn presence_probe() {
             if (fieldBuf) fieldBuf.destroy();
             if (metaBuf) metaBuf.destroy();
             try {
-                fieldBuf = gpu.createBuffer({ size: fieldCap * 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+                fieldBuf = gpu.createBuffer({ size: fieldCap * 48, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
                 metaBuf = gpu.createBuffer({ size: fieldCap * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
                 if (!fieldBuf || !metaBuf) { reportState('gpu', 'ensureFieldCapacity: fieldBuf/metaBuf null'); return; }
                 fieldBind = gpu.createBindGroup({ layout: fieldLayout, entries: [
@@ -634,14 +636,20 @@ fn presence_probe() {
             fieldCount = n;
             ensureFieldCapacity(n);
             if (!autoZoomed && n > 0) {
-                const exts = [];
+                const raw = rawWindowResponse.field;
+                const dists = [];
                 for (let i = 0; i < n; i++) {
-                    const e = rawWindowResponse.meta[i * 4];
-                    if (e > 0) exts.push(e);
+                    const fx = raw[i * 12];
+                    const fy = raw[i * 12 + 1];
+                    const fz = raw[i * 12 + 2];
+                    const d = Math.sqrt(fx * fx + fy * fy + fz * fz);
+                    if (d > 0) dists.push(d);
                 }
-                if (exts.length > 0) {
-                    exts.sort((a, b) => a - b);
-                    gridStep = exts[exts.length >> 1];
+                if (dists.length > 0) {
+                    dists.sort((a, b) => a - b);
+                    const medianDist = dists[dists.length >> 1];
+                    const w = Math.max(RX, RY);
+                    gridStep = (2 * medianDist) / w;
                     autoZoomed = true;
                 }
             }
@@ -652,9 +660,9 @@ fn presence_probe() {
                 const fref = new Float64Array(9);
                 const ft_vals = [[], [], [], [], [], [], [], [], []];
                 for (let i = 0; i < n; i++) {
-                    const ft = raw[i * 8 + 6] | 0;
+                    const ft = raw[i * 12 + 6] | 0;
                     if (ft < 9) {
-                        const av = Math.abs(raw[i * 8 + 3]);
+                        const av = Math.abs(raw[i * 12 + 3]);
                         if (av > 0 && isFinite(av)) ft_vals[ft].push(av);
                     }
                 }
@@ -665,7 +673,7 @@ fn presence_probe() {
                     }
                 }
                 try {
-                    gpu.queue.writeBuffer(fieldBuf, 0, raw.subarray(0, n * 8));
+                    gpu.queue.writeBuffer(fieldBuf, 0, raw.subarray(0, n * 12));
                     gpu.queue.writeBuffer(metaBuf, 0, rawm.subarray(0, n * 4));
                     uploadCount++;
                 } catch { uploadErrors++; }
