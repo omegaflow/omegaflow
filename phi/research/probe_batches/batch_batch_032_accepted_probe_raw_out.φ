@@ -1,0 +1,12 @@
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
+ttl 2592000
+on earth -77.319 39.703 0.0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
+ttl 2592000
+on earth -75.1 123.35 0.0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
+ttl 2592000
+on earth -78.464 106.833 0.0
+
