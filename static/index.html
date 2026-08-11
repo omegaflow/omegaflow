@@ -284,7 +284,7 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 
-struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) kernel_id: u32, @location(3) @interpolate(flat) absorption: f32, @location(4) @interpolate(flat) force_type: u32, @location(5) @interpolate(flat) advection: f32 };
+struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f, @location(2) @interpolate(flat) kernel_id: u32, @location(3) @interpolate(flat) absorption: f32, @location(4) @interpolate(flat) force_type: u32, @location(5) @interpolate(flat) advection: f32, @location(6) @interpolate(flat) d_mag: f32, @location(7) @interpolate(flat) extent: f32 };
 
 const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
 
@@ -355,6 +355,8 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
 
     let d_mag = length(d);
     let phys_extent = mt.x;
+    out.d_mag = d_mag;
+    out.extent = phys_extent;
     let w_f = max(w, h);
     var point_size_px = clamp(phys_extent / scale, 0.5, w_f);
     
@@ -456,7 +458,10 @@ fn presence_probe() {
     let dist = length(in.uv);
     if (dist > 1.0) { discard; }
 
-    let intensity = 0.02 / (dist * dist + 0.02);
+    let d2 = in.d_mag * in.d_mag;
+    let global_scale = vp.surface.w;
+    let intensity = field_spatial(d2, in.d_mag, in.extent, in.kernel_id, global_scale, in.absorption);
+
     let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
     let analog_intensity = intensity * (0.9 + noise * 0.1);
 
