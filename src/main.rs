@@ -6038,6 +6038,22 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
             }
             out.push_str(&format!("field {} {} {}\n", prefix, force, unit));
         }
+        JsonVal::Str(s) => {
+            if let Ok(n) = s.parse::<f64>() {
+                let key = match prefix.rfind('.') {
+                    Some(pos) => &prefix[pos + 1..],
+                    None => prefix,
+                };
+                if is_drop_key(key) || is_coord_key(key) {
+                    return;
+                }
+                let (force, unit) = classify_field(key, n);
+                if unit == "DROP" {
+                    return;
+                }
+                out.push_str(&format!("field {} {} {}\n", prefix, force, unit));
+            }
+        }
         _ => {}
     }
 }
@@ -6217,6 +6233,18 @@ fn classify_field(key: &str, val: f64) -> (&'static str, &'static str) {
         ("em", "km")
     } else if kl == "proton_density" || kl.contains("density") {
         ("diffusion", "p/cm3")
+    } else if kl == "v" && val > 0.0 && val < 100.0 {
+        ("gravity", "m")
+    } else if kl == "s" && val > 0.0 && val < 100.0 {
+        ("gravity", "m")
+    } else if kl == "p" && val > 900.0 {
+        ("advective", "hPa")
+    } else if kl == "rh" {
+        ("diffusion", "%")
+    } else if kl.contains("rain") || kl.contains("rrr") || kl.contains("prcp") {
+        ("acoustic", "mm")
+    } else if kl.contains("vis") {
+        ("em", "km")
     } else {
         ("DROP", "DROP")
     }
