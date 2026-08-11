@@ -1,0 +1,209 @@
+# ── Batch 028: Declined Sources ──
+# Format: decline <reason> \n url <url> \n note <Force Gate explanation>
+# All 50 blocks declined under the skip directive (economic data).
+# World Bank GDP growth (NY.GDP.MKTP.KD.ZG) is an economic aggregate
+# delivered over HTTP. The old grammar declares `force em`, but the
+# measured quantity has no physical propagation — the transmission
+# medium of the API is not the force of the quantity. Litmus test:
+# could a non-human organism evolve a sensory organ for GDP growth?
+# No. Forceless sources are refused at load.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/BTN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Bhutan), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/BOL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Bolivia), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/BIH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Bosnia and Herzegovina), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/BWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Botswana), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/BRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Brazil), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/VGB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (British Virgin Islands), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/BRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Brunei Darussalam), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/BGR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Bulgaria), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/BFA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Burkina Faso), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/BDI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Burundi), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CPV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Cabo Verde), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/KHM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Cambodia), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Cameroon), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Canada), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CYM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Cayman Islands), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Central African Republic), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/TCD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Chad), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CHI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Channel Islands), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Chile), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CHN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (China), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/COL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Colombia), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/COM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Comoros), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/COD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Congo), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/COG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Congo Republic), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Costa Rica), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CIV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Cote d'Ivoire), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/HRV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Croatia), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CUB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Cuba), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CUW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Curacao), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CYP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Cyprus), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/CZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Czechia), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Denmark), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/DJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Djibouti), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/DMA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Dominica), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/DOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Dominican Republic), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/ECU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Ecuador), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/EGY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Egypt), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/SLV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (El Salvador), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/GNQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Equatorial Guinea), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/ERI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Eritrea), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/EST/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Estonia), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/SWZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Eswatini), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/ETH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Ethiopia), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/FRO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Faroe Islands), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/FJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Fiji), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/FIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Finland), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/FRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (France), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/PYF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (French Polynesia), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/GAB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Gabon), economic aggregate over HTTP, no physical force.
+
+decline economic-data
+url https://api.worldbank.org/v2/country/GMB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: World Bank GDP growth (Gambia), economic aggregate over HTTP, no physical force.

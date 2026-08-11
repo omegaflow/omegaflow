@@ -1,0 +1,8 @@
+# Block 30: magnetosphere_schumann_resonance
+# DECLINE: Static dataset file, not a live measurement stream. The source is a fixed CSV artifact
+# (zenodo.org/records/15225820/files/NiNo_SR_params_2024.csv) — one research record of Schumann
+# resonance parameters. `last_line atmos_schumann_last_val` extracts the last row of a file that
+# never changes; it produces a single frozen oscillator with no temporal flow. Schumann resonance
+# itself IS physical EM (a non-human organism could sense ELF), but this delivery is a catalog of
+# recorded values, not a live sensor. Force Gate: decline (catalog / static dataset).
+# Old block: https://zenodo.org/records/15225820/files/NiNo_SR_params_2024.csv | force em | ttl 86400

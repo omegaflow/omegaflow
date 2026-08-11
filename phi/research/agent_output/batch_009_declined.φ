@@ -1,0 +1,208 @@
+# Block 1: biosphere_inaturalist_verified
+# DECLINE: Bare count without individual events. `field total_results` extracts the total
+# number of research-grade observations in a registry, not individual observations with
+# spatial positions and measurements. Catalog/registry metadata fails the Force Gate.
+# Old block: https://api.inaturalist.org/v1/observations... | force em | ttl 3600
+
+# Block 2: biosphere_launch_library
+# DECLINE: Registry of scheduled launches. `field count` extracts the number of upcoming
+# launches — a schedule count, not a physical measurement. No organism evolves a sensory
+# organ for a calendar of future rocket launches.
+# Old block: https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1 | force em | ttl 3600
+
+# Block 3: biosphere_overpass_charging_stations
+# DECLINE: Bare count of OSM registry nodes. `deep total` counts charging_station nodes
+# within 5 km without producing individual oscillators with positions. Registry count.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 4: biosphere_overpass_restaurants
+# DECLINE: Bare count of OSM registry nodes (restaurants within 1 km). Registry count,
+# no physical measurement, no individual oscillators.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 5: biosphere_overpass_shops
+# DECLINE: Bare count of OSM registry nodes (shops within 5 km). Registry count,
+# no physical measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 6: biosphere_tor_relays_running
+# DECLINE: No physical force. `field relays_published` extracts the count of running Tor
+# relays — a network registry statistic. An organism cannot sense an onion-router count.
+# Old block: https://onionoo.torproject.org/summary?running=true | force em | ttl 3600
+
+# Block 8: biosphere_wikipedia_pageviews_total
+# DECLINE: No physical force. `path items.0.views` extracts a daily pageview count —
+# a text/attention statistic delivered over HTTP, not a physical measurement.
+# Old block: https://wikimedia.org/api/rest_v1/metrics/pageviews/... | force em | ttl 3600
+
+# Block 9: biosphere_wildfires
+# DECLINE: Bare count without individual events. `count events` counts EONET wildfire
+# events without extracting individual fire positions or thermal power — a scalar count,
+# no individual oscillators. Each event IS physically sensible, but the extraction is a count.
+# Old block: https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires | force em | ttl 3600
+
+# Block 10: cosmos_asteroids_numbered
+# DECLINE: Bare count of catalog entries. `count data` extracts the total number of numbered
+# asteroids from the JPL SBDB catalog. Catalog registry, no physical measurement.
+# Old block: https://ssd-api.jpl.nasa.gov/sbdb_query.api?... | force em | ttl 86400
+
+# Block 11: cosmos_asteroids_positions
+# DECLINE: Ephemeris catalog. `kepler_map` extracts osculating orbital elements (a, e, i, om,
+# w, ma, epoch) for a sample of 10,000 asteroids — a static ephemeris catalog, not a live
+# physical measurement. Orbital elements are not directly sensible; the field H (absolute
+# magnitude) is a catalog property of a remote object, not a measured signal at the presence.
+# Old block: https://ssd-api.jpl.nasa.gov/sbdb_query.api?... | force em | ttl 86400
+
+# Block 12: cosmos_gaia_dr3_sample
+# DECLINE: Star catalog. `cmap` extracts ra/dec/parallax/magnitude for a static sample of 200
+# Gaia DR3 stars. A catalog, not a live measurement — the Force Gate declines station lists
+# and catalogs. Parallax/magnitude of a fixed sample carries no live flux.
+# Old block: https://gea.esac.esa.int/tap-server/tap/sync?... | force em | ttl 86400
+
+# Block 13: cosmos_neo_close_approaches
+# DECLINE: Ephemeris + bare count. `count data` counts NEO close-approach rows, and the
+# field lines extract distance/velocity/H of the first row — a close-approach ephemeris
+# catalog for near-Earth objects, superseded by the ephemeris CDN for named bodies.
+# Old block: https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD | force em | ttl 3600
+
+# Block 14: dockerhub_alpine_pulls
+# DECLINE: No physical force. `field pull_count` extracts a Docker Hub registry pull count
+# for the alpine image. Software registry statistic, not a physical measurement.
+# Old block: https://hub.docker.com/v2/repositories/library/alpine | force em | ttl 3600
+
+# Block 15: dockerhub_node_pulls
+# DECLINE: No physical force. Docker Hub pull count for the node image — registry statistic.
+# Old block: https://hub.docker.com/v2/repositories/library/node | force em | ttl 3600
+
+# Block 16: dockerhub_python_pulls
+# DECLINE: No physical force. Docker Hub pull count for the python image — registry statistic.
+# Old block: https://hub.docker.com/v2/repositories/library/python | force em | ttl 3600
+
+# Block 17: dockerhub_ubuntu_pulls
+# DECLINE: No physical force. Docker Hub pull count for the ubuntu image — registry statistic.
+# Old block: https://hub.docker.com/v2/repositories/library/ubuntu | force em | ttl 3600
+
+# Block 18: earth_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Earth (399) — orbital ephemeris already
+# served by the ephemeris CDN (ephemeris_earth.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 19: enceladus_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Enceladus (602) — served by ephemeris CDN.
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 20: encke_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for comet Encke — served by ephemeris CDN.
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 21: eris_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Eris — served by ephemeris CDN.
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 22: europa_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Europa (502) — served by ephemeris CDN.
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 25: exosphere_aurora_oval
+# DECLINE: Model forecast, not a live measurement. The OVATION aurora oval is a real-time
+# model estimate (DMSP-derived aurora power/probability), not a direct sensor reading.
+# The Force Gate requires a physical measurement by a sensory organ, not a model output.
+# Old block: https://services.swpc.noaa.gov/json/ovation_aurora_latest.json | force em | ttl 3600
+
+# Block 27: exosphere_interstellar_object_tracking
+# SKIP: ephemeris-superseded. Horizons VECTORS for interstellar object 3I — an orbital
+# ephemeris, served by the ephemeris CDN infrastructure.
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 29: exosphere_satnogs_radio_observations
+# DECLINE: Bare count without individual events. `count items` extracts the count of SatNOGS
+# radio observation records — a scalar count of registry rows without individual oscillator
+# positions or measurements. Each observation IS a physical radio detection, but the block
+# extracts only the count.
+# Old block: https://network.satnogs.org/api/observations/?format=json&limit=1 | force em | ttl 3600
+
+# Block 30: ganymede_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Ganymede (503) — served by ephemeris CDN.
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 31: gbif
+# DECLINE: Bare count without individual events. `field count` extracts the total number of
+# GBIF occurrence records near the presence — a registry count, not individual observations
+# with spatial positions. Same disposition as the iNaturalist block (batch_003).
+# Old block: https://api.gbif.org/v1/occurrence/search?... | force em | ttl 3600
+
+# Block 32: geosphere_atms
+# DECLINE: Registry map. OSM ATM nodes with `field_in id` — a station list of identifiers,
+# not a physical measurement. The extracted field is an OSM element id, not a quantity an
+# organism could sense.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 33: geosphere_banks
+# DECLINE: Registry map. OSM bank nodes with `field_in id` — station list, identifier field.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 34: geosphere_bus_stops
+# DECLINE: Registry map. OSM bus_stop nodes with `field_in id` — station list, identifier field.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 35: geosphere_castles
+# DECLINE: Registry map. OSM castle nodes with `field_in id` — station list, identifier field.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 36: geosphere_copernicus_sentinel2_count
+# DECLINE: Bare count of catalog products. `path @odata.count` extracts the total number of
+# Sentinel-2 products in the Copernicus Data Space catalog. Catalog registry count, no
+# physical measurement at a location.
+# Old block: https://catalogue.dataspace.copernicus.eu/odata/v1/Products?... | force em | ttl 3600
+
+# Block 40: geosphere_effis_fires
+# DECLINE: Bare count without individual events. `field features` extracts the number of
+# active-fire features returned, without individual fire positions or radiative power —
+# a scalar count, no individual oscillators.
+# Old block: https://ies-ows.jrc.ec.europa.eu/effis?... | force em | ttl 3600
+
+# Block 41: geosphere_ev_charging_points
+# DECLINE: Registry map. OSM charging_station nodes with `field_in tags.sockets` — a count of
+# sockets per station, a registry attribute of a station list, not a physical measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 42: geosphere_fire_stations
+# DECLINE: Registry map. OSM fire_station nodes with `field_in id` — station list, identifier field.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 43: geosphere_fuel_stations
+# DECLINE: Registry map. OSM fuel nodes with `field_in id` — station list, identifier field.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 44: geosphere_gdacs_disasters
+# DECLINE: Text warnings and categorical labels. `field_in` extracts eventtype, alertlevel,
+# and severity — categorical text classifications of disaster alerts, not physical quantities.
+# Alert text fails the Force Gate.
+# Old block: https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?... | force em | ttl 3600
+
+# Block 45: geosphere_gdacs_disasters_total
+# DECLINE: Bare count. `xml_count item` counts GDACS RSS alert items — a bare count of text
+# alert entries, no individual oscillators, no physical measurement.
+# Old block: https://gdacs.org/xml/rss.xml | force em | ttl 3600
+
+# Block 46: geosphere_hospitals
+# DECLINE: Registry map. OSM hospital nodes with `field_in id` — station list, identifier field.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 47: geosphere_libraries
+# DECLINE: Registry map. OSM library nodes with `field_in id` — station list, identifier field.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 48: geosphere_lighthouses
+# DECLINE: Registry map. OSM lighthouse nodes with `field_in tags.ele` — a static elevation
+# attribute of a station list. A registry attribute, not a live physical measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 49: geosphere_mast_towers
+# DECLINE: Registry map. OSM mast nodes with `field_in tags.height` — a static height attribute
+# of a station list. A registry attribute, not a live physical measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600
+
+# Block 50: geosphere_memorials
+# DECLINE: Registry map. OSM memorial nodes with `field_in id` — station list, identifier field.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter... | force em | ttl 3600

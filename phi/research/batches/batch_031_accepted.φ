@@ -1,0 +1,9 @@
+# ── Batch 031: Accepted Sources ──
+# 0 honored: all 50 blocks in batch_031_gold_14k.φ are World Bank economic
+# and demographic aggregates (GDP growth per country, life expectancy,
+# median age, population, population density, urban share) plus one
+# bibliometric count (dark-matter literature citations from INSPIRE-HEP).
+# Per the skip directive (ephemeris/model/counts/catalogs) and the Force
+# Gate, none pass — an economic indicator or a citation count has no
+# physical propagation mechanism. All dispositions recorded in
+# batch_031_declined.φ.

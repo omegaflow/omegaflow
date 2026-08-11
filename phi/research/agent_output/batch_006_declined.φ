@@ -1,0 +1,95 @@
+# Block 24: iris_seismic_events_day
+# DECLINE: Bare count without individual events. `count lines` on the IRIS FDSN event CSV
+# produces a scalar line-count, not individual earthquake oscillators with their hypocenters.
+# The measurement exists (seismic events are physical) but a bare line count is not a sensor
+# reading — no organism senses "number of CSV rows".
+# Old block: https://service.iris.edu/fdsnws/event/1/query?format=geocsv&starttime={hour_ago}&endtime={today}&minmagnitude=2.5&orderby=time | force seismic-surface | ttl 300
+
+# Block 30: magnetosphere_noaa_swpc_solar_wind
+# DECLINE: Model forecast, not a measurement. `geospace/propagated-solar-wind-1-hour.json` is
+# SWPC's propagation forecast — the L1 in-situ readings run through an arrival-prediction model.
+# No organism senses a propagation model's output; the raw solar wind measurement is already
+# covered by the accepted solar_wind_speed block (summary/solar-wind-speed.json).
+# Old block: https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json | force em | ttl 300
+
+# Block 31: physics_gcn_icecube_circulars
+# DECLINE: Bare count of catalog entries. The regex `("totalItems":...,)` extracts the count of
+# GCN circulars matching a text query — a registry tally of human-written notices, not a physical
+# measurement. Even the neutrino alerts they describe arrive as text; no numeric field is sensed.
+# Old block: https://gcn.nasa.gov/circulars?query=icecube | force em | ttl 300 | lat -90.0 lon 0.0 alt 2835
+
+# Block 35: atmosphere_air_quality_full
+# DECLINE: Model reanalysis/forecast. The open-meteo air-quality API serves CAMS model output
+# (Copernicus Atmosphere Monitoring Service assimilation), not a live sensor reading. No organism
+# senses a model's output. Chemical sensors pass the Force Gate only when they are instruments
+# measuring a present field (see accepted sensor.community blocks).
+# Old block: https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,... | force em | ttl 600
+
+# Block 36: atmosphere_air_quality_trace
+# DECLINE: Model reanalysis/forecast. Same CAMS-model open-meteo product; the trace-gas fields
+# (ammonia, dust, formaldehyde, aerosol optical depth) are model-assimilated, not measured by a
+# present instrument. No organism senses a model's output.
+# Old block: https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=ammonia,dust,... | force em | ttl 600
+
+# Block 37: atmosphere_air_quality_us
+# DECLINE: Model forecast + derived index. open-meteo AQI is a CAMS-model composite index of the
+# same forecast; an index is a human aggregation, and a non-human organism senses neither the
+# index nor the model that produced it.
+# Old block: https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto | force em | ttl 600
+
+# Block 38: atmosphere_jetstream_250hpa
+# DECLINE: Model forecast. 250 hPa wind from the open-meteo forecast API is NWP model output
+# (ECMWF/GFS), not an anemometer reading. No organism senses a model's output.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa | force em | ttl 600
+
+# Block 39: atmosphere_lightning
+# DECLINE: Model forecast. `minutely_15.lightning_potential` is a forecast index of likely
+# lightning from the open-meteo NWP product, not a strike detected by a sensor network.
+# No organism senses a model's output.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto | force em | ttl 600
+
+# Block 41: atmosphere_pressure_levels
+# DECLINE: Model forecast. Temperature and geopotential height at 500/850 hPa come from the
+# open-meteo NWP forecast, not from radiosondes present at the field point. No organism senses
+# a model's output.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto | force em | ttl 600
+
+# Block 44: atmosphere_sigmet
+# DECLINE: Text warning. AIRSIGMET is the aviation significant-meteorology advisory — a human
+# text bulletin describing hazards (turbulence, icing, convection) with altitudes and movement
+# vectors. It is a warning message, not a measurement; the Force Gate explicitly declines
+# SIGMET/TAF text warnings.
+# Old block: https://aviationweather.gov/api/data/airsigmet?format=json | force em | ttl 600
+
+# Block 45: atmosphere_thunderstorm
+# DECLINE: Model forecast. `daily.cape_max` and `wind_gusts_10m_max` are open-meteo NWP forecast
+# fields, not a measurement of a present thunderstorm. No organism senses a model's output.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=cape_max,wind_gusts_10m_max&timezone=auto | force em | ttl 600
+
+# Block 46: atmosphere_visibility
+# DECLINE: Model forecast. Visibility, sunshine duration and is_day from the open-meteo forecast
+# API are model fields, not a present measurement. No organism senses a model's output.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=visibility,sunshine_duration,is_day&timezone=auto | force em | ttl 600
+
+# Block 47: atmosphere_weather
+# DECLINE: Model forecast. open-meteo current-weather fields (temp, humidity, pressure, wind,
+# precipitation, cloud cover) are NWP model output at the nearest grid cell, not a live station
+# reading. The Force Gate declines open-meteo forecast products; live surface observations are
+# covered by the accepted METAR block.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,... | force em | ttl 600
+
+# Block 48: atmosphere_weather_alerts
+# DECLINE: Model forecast + text warning. weather_code is an NWP classification and the alerts
+# payload is text bulletins. No organism senses a model's output or a text advisory.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=weather_code&alerts=1&timezone=auto | force em | ttl 600
+
+# Block 49: atmosphere_weather_current
+# DECLINE: Model forecast. Same open-meteo NWP current-weather product as the weather block;
+# no live instrument at the point. No organism senses a model's output.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,wind_speed_10m,wind_direction_10m&timezone=auto | force em | ttl 600
+
+# Block 50: atmosphere_weather_evapotranspiration
+# DECLINE: Model forecast. ET0 FAO evapotranspiration, vapor-pressure deficit and dew point are
+# open-meteo NWP model fields, not measurements of a present atmosphere. No organism senses a
+# model's output.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=et0_fao_evapotranspiration,vapor_pressure_deficit,dew_point_2m,weather_code,is_day,rain,showers&timezone=auto | force em | ttl 600

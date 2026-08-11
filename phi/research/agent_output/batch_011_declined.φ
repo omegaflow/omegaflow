@@ -1,0 +1,257 @@
+# Block 1: geosphere_overpass_greengrocers
+# DECLINE: Location catalog — Overpass query returns OSM nodes tagged
+# shop=greengrocer; `field_in id` extracts the node id, a registry key with no
+# physical quantity. A greengrocer is human infrastructure, not a measurement;
+# no organism senses a shop's presence or its id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="greengrocer"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 2: geosphere_overpass_grocery_stores
+# DECLINE: Location catalog — shop=grocery nodes; `field_in id` extracts a
+# registry key, not a measurement. No force propagates a shop's node id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="grocery"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 3: geosphere_overpass_guest_houses
+# DECLINE: Location catalog — tourism=guest_house nodes; `field_in id` extracts
+# a registry key. A lodging is infrastructure, not a sensed quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="guest_house"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 4: geosphere_overpass_hairdressers
+# DECLINE: Location catalog — shop=hairdresser nodes; `field_in id` extracts a
+# registry key. A salon is human infrastructure, not a measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="hairdresser"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 5: geosphere_overpass_hardware_stores
+# DECLINE: Location catalog — shop=hardware nodes; `field_in id` extracts a
+# registry key, not a physical quantity. No organism senses a shop.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="hardware"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 6: geosphere_overpass_hostels
+# DECLINE: Location catalog — tourism=hostel nodes; `field_in id` extracts a
+# registry key. Lodging is infrastructure, not a sensed measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="hostel"](around:100000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 7: geosphere_overpass_hotels
+# DECLINE: Location catalog — tourism=hotel nodes; `field_in id` extracts a
+# registry key, not a measurement. No force propagates a hotel's node id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="hotel"](around:100000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 8: geosphere_overpass_hunting_stands
+# DECLINE: Location catalog — amenity=hunting_stand nodes; `field_in id`
+# extracts a registry key. A structure's presence is not a sensed quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="hunting_stand"](around:200000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 9: geosphere_overpass_ice_cream_parlours
+# DECLINE: Location catalog — amenity=ice_cream nodes; `field_in id` extracts a
+# registry key, not a measurement. No organism senses an ice-cream shop.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="ice_cream"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 10: geosphere_overpass_information_centres
+# DECLINE: Location catalog — tourism=information nodes; `field_in id` extracts
+# a registry key. A visitor centre is infrastructure, not a sensed quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="information"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 11: geosphere_overpass_jewelry_shops
+# DECLINE: Location catalog — shop=jewelry nodes; `field_in id` extracts a
+# registry key, not a physical quantity. No force carries a shop's node id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="jewelry"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 12: geosphere_overpass_kindergartens
+# DECLINE: Location catalog — amenity=kindergarten nodes; `field_in id`
+# extracts a registry key. A building is infrastructure, not a measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="kindergarten"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 13: geosphere_overpass_kiosks
+# DECLINE: Location catalog — shop=kiosk nodes; `field_in id` extracts a
+# registry key, not a measurement. No organism senses a kiosk.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="kiosk"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 14: geosphere_overpass_laundries
+# DECLINE: Location catalog — shop=laundry nodes; `field_in id` extracts a
+# registry key. A laundrette is human infrastructure, not a sensed quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="laundry"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 15: geosphere_overpass_malls
+# DECLINE: Location catalog — shop=mall nodes; `field_in id` extracts a
+# registry key, not a measurement. No force propagates a mall's node id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="mall"](around:100000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 16: geosphere_overpass_manors
+# DECLINE: Location catalog — historic=manor nodes; `field_in id` extracts a
+# registry key. A historic building is infrastructure, not a sensed quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="manor"](around:500000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 17: geosphere_overpass_marinas
+# DECLINE: Location catalog — leisure=marina nodes; `field_in id` extracts a
+# registry key, not a measurement. No organism senses a marina.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="marina"](around:200000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 18: geosphere_overpass_memorials_war
+# DECLINE: Location catalog — historic=memorial nodes; `field_in id` extracts a
+# registry key. A monument's presence is not a physical measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="memorial"](around:100000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 19: geosphere_overpass_milestones
+# DECLINE: Location catalog — historic=milestone nodes; `field_in id` extracts
+# a registry key, not a measured quantity. No force carries a milestone's id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="milestone"](around:200000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 20: geosphere_overpass_monasteries
+# DECLINE: Location catalog — amenity=monastery nodes; `field_in id` extracts a
+# registry key. A building is infrastructure, not a sensed measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="monastery"](around:500000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 21: geosphere_overpass_monuments
+# DECLINE: Location catalog — historic=monument nodes; `field_in id` extracts a
+# registry key. A monument is human infrastructure, not a physical quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="monument"](around:200000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 22: geosphere_overpass_motorcycle_parkings
+# DECLINE: Location catalog — amenity=motorcycle_parking nodes; `field_in id`
+# extracts a registry key. Parking is infrastructure, not a measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="motorcycle_parking"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 23: geosphere_overpass_music_venues
+# DECLINE: Location catalog — amenity=music_venue nodes; `field_in id` extracts
+# a registry key, not a measured quantity. No organism senses a venue.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="music_venue"](around:100000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 24: geosphere_overpass_nature_reserves
+# DECLINE: Location catalog — leisure=nature_reserve nodes; `field_in id`
+# extracts a registry key. A reserve boundary is a mapping artifact, not a
+# sensed physical quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="nature_reserve"](around:500000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 25: geosphere_overpass_opticians
+# DECLINE: Location catalog — shop=optician nodes; `field_in id` extracts a
+# registry key, not a measurement. No force propagates a shop's node id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="optician"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 26: geosphere_overpass_palaeontological_sites
+# DECLINE: Location catalog — geological=palaeontological_site nodes; `field_in
+# id` extracts a registry key. A site designation is a mapping label, not a
+# measured physical quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["geological"="palaeontological_site"](around:500000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 27: geosphere_overpass_parking_lots
+# DECLINE: Location catalog — amenity=parking nodes; `field_in id` extracts a
+# registry key. Parking is infrastructure, not a sensed measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="parking"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 28: geosphere_overpass_parks
+# DECLINE: Location catalog — leisure=park nodes; `field_in id` extracts a
+# registry key. A park is a mapping region, not a physical measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="park"](around:100000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 29: geosphere_overpass_pet_shops
+# DECLINE: Location catalog — shop=pet nodes; `field_in id` extracts a registry
+# key, not a measurement. No organism senses a pet shop.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="pet"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 30: geosphere_overpass_pharmacies
+# DECLINE: Location catalog — amenity=pharmacy nodes; `field_in id` extracts a
+# registry key. A pharmacy is human infrastructure, not a sensed quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="pharmacy"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 31: geosphere_overpass_pharmacies_shop
+# DECLINE: Location catalog — shop=chemist nodes; `field_in id` extracts a
+# registry key, not a physical quantity. No force carries a shop's node id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="chemist"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 32: geosphere_overpass_picnic_sites
+# DECLINE: Location catalog — tourism=picnic_site nodes; `field_in id` extracts
+# a registry key. A picnic site is infrastructure, not a measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="picnic_site"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 33: geosphere_overpass_places_of_worship
+# DECLINE: Location catalog — amenity=place_of_worship nodes; `field_in id`
+# extracts a registry key, not a sensed quantity. No organism senses a building.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="place_of_worship"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 34: geosphere_overpass_playgrounds
+# DECLINE: Location catalog — leisure=playground nodes; `field_in id` extracts
+# a registry key. A playground is infrastructure, not a physical measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="playground"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 35: geosphere_overpass_post_boxes
+# DECLINE: Location catalog — amenity=post_box nodes; `field_in id` extracts a
+# registry key, not a measurement. No force propagates a post box's node id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="post_box"](around:10000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 36: geosphere_overpass_post_offices
+# DECLINE: Location catalog — amenity=post_office nodes; `field_in id` extracts
+# a registry key. A post office is human infrastructure, not a sensed quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="post_office"](around:100000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 37: geosphere_overpass_power_towers
+# DECLINE: Location catalog — power=tower nodes; `field_in id` extracts a
+# registry key. Though tags.height exists, the block's sole extracted field is
+# the node id; a tower's static presence is infrastructure, not a measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["power"="tower"](around:200000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 38: geosphere_overpass_prisons
+# DECLINE: Location catalog — amenity=prison nodes; `field_in id` extracts a
+# registry key, not a physical quantity. No organism senses a prison.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="prison"](around:500000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 39: geosphere_overpass_public_bookcases
+# DECLINE: Location catalog — amenity=public_bookcase nodes; `field_in id`
+# extracts a registry key. A bookcase is infrastructure, not a measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="public_bookcase"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 40: geosphere_overpass_pubs
+# DECLINE: Location catalog — amenity=pub nodes; `field_in id` extracts a
+# registry key, not a measured quantity. No force carries a pub's node id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="pub"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 41: geosphere_overpass_radio_telescopes
+# DECLINE: Location catalog — man_made=observatory nodes; `field_in id`
+# extracts a registry key. The instrument's telescope observations are not
+# delivered here; only the station's presence, which is infrastructure, not
+# a measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="observatory"](around:500000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 42: geosphere_overpass_railway_stations
+# DECLINE: Location catalog — railway=station nodes; `field_in id` extracts a
+# registry key. A station is infrastructure, not a sensed physical quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["railway"="station"](around:200000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 43: geosphere_overpass_recycling
+# DECLINE: Location catalog — amenity=recycling nodes; `field_in id` extracts
+# a registry key, not a measurement. No organism senses a recycling point.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="recycling"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 44: geosphere_overpass_ruins
+# DECLINE: Location catalog — historic=ruins nodes; `field_in id` extracts a
+# registry key. A ruin's static presence is not a physical measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="ruins"](around:200000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 45: geosphere_overpass_schools
+# DECLINE: Location catalog — amenity=school nodes; `field_in id` extracts a
+# registry key. A school building is infrastructure, not a sensed quantity.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="school"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 46: geosphere_overpass_shelters
+# DECLINE: Location catalog — amenity=shelter nodes; `field_in id` extracts a
+# registry key, not a measurement. No force propagates a shelter's node id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="shelter"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 47: geosphere_overpass_sports_centres
+# DECLINE: Location catalog — leisure=sports_centre nodes; `field_in id`
+# extracts a registry key. A centre is human infrastructure, not a measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="sports_centre"](around:100000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 48: geosphere_overpass_sports_pitches
+# DECLINE: Location catalog — leisure=pitch nodes; `field_in id` extracts a
+# registry key, not a physical quantity. No organism senses a sports pitch.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="pitch"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 49: geosphere_overpass_sports_shops
+# DECLINE: Location catalog — shop=sports nodes; `field_in id` extracts a
+# registry key, not a measurement. No force carries a shop's node id.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="sports"](around:50000,{lat},{lon});out%20100; | force em | ttl 3600
+
+# Block 50: geosphere_overpass_springs
+# DECLINE: Location catalog — natural=spring nodes; `field_in id` extracts a
+# registry key. Though a spring's water is physical, the block delivers only
+# the node id — a mapping label, not a flow or temperature measurement.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="spring"](around:200000,{lat},{lon});out%20100; | force em | ttl 3600

@@ -1,0 +1,211 @@
+# ── Batch 030: Declined Sources ──
+# Format: decline <reason> \n url <url> \n note <Force Gate explanation>
+# All 50 blocks declined under the Force Gate: World Bank GDP growth
+# (NY.GDP.MKTP.KD.ZG) is an economic aggregate. The old grammar's
+# `force em` is fabricated — HTTP is the delivery medium, not a physical
+# force. Litmus test: could a non-human organism evolve a sensory organ
+# for gross domestic product growth? No. No physical propagation.
+
+# ── Blocks 1-50: biosphere_worldbank_gdp_growth_* ──
+# Force Gate: annual GDP growth percent per country, delivered over HTTP
+# from api.worldbank.org. Economic data, skip category: economic data.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Marshall Islands.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MRT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Mauritania.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Mauritius.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MEX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Mexico.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/FSM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Micronesia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MDA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Moldova.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MCO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Monaco.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MNG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Mongolia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MNE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Montenegro.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MAR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Morocco.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MOZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Mozambique.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Myanmar.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/NAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Namibia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/NRU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Nauru.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/NPL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Nepal.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/NLD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Netherlands.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/NCL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. New Caledonia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/NZL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. New Zealand.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/NIC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Nicaragua.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/NER/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Niger.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/NGA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Nigeria.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/PRK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. North Korea.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MKD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. North Macedonia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MNP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Northern Mariana Islands.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/NOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Norway.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/OMN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Oman.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/PAK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Pakistan.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/PLW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Palau.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/PAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Panama.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/PNG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Papua New Guinea.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/PRY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Paraguay.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/PER/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Peru.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/PHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Philippines.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/POL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Poland.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/PRT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Portugal.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/PRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Puerto Rico.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/QAT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Qatar.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/ROU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Romania.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/RUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Russian Federation.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/RWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Rwanda.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/WSM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Samoa.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/SMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. San Marino.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/STP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Sao Tome and Principe.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/SAU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Saudi Arabia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/SEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Senegal.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/SRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Serbia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/SYC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Seychelles.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/SLE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Sierra Leone.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/SGP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Singapore.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/SXM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth is an economic aggregate with no physical propagation mechanism. Sint Maarten (Dutch part).

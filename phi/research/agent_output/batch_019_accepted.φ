@@ -1,0 +1,387 @@
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 64.612 18.748 0
+field data.-1.1.0 magnetosphere_lyc_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_lyc_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_lyc_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_lyc_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.298 5.682 0
+field data.-1.1.0 magnetosphere_mab_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_mab_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_mab_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_mab_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.298 5.682 0
+field data.-1.1.0 magnetosphere_mab_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_mab_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_mab_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_mab_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -67.6 62.88 0
+field data.-1.1.0 magnetosphere_maw_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_maw_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_maw_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_maw_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best
+ttl 86400
+on earth -67.6 62.88 0
+field data.-1.1.0 magnetosphere_maw_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_maw_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_maw_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_maw_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -54.5 158.95 0
+field data.-1.1.0 magnetosphere_mcg_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_mcg_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_mcg_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_mcg_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -54.5 158.95 0
+field data.-1.1.0 magnetosphere_mcq_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_mcqg_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_mcq_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_mcqg_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 43.91 144.19 0
+field data.-1.1.0 magnetosphere_mmb_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_mmb_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_mmb_z_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 43.91 144.19 0
+field data.-1.1.0 magnetosphere_mmb_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_mmb_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_mmb_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_mmb_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 61.167 -45.433 0
+field data.-1.1.0 magnetosphere_nag_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_nag_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_nag_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_nag_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.63 16.72 0
+field data.-1.1.0 magnetosphere_nck_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_nck_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_nck_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_nck_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.27 -117.12 0
+field data.-1.1.0 magnetosphere_new_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_new_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_new_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_new_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.27 -117.12 0
+field data.-1.1.0 magnetosphere_new_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_new_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_new_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_new_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.07 12.68 0
+field data.-1.1.0 magnetosphere_ngk_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_ngk_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_ngk_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_ngk_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.07 12.68 0
+field data.-1.1.0 magnetosphere_ngk_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_ngk_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_ngk_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_ngk_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 60.51 24.66 0
+field data.-1.1.0 magnetosphere_nur_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_nur_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_nur_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_nur_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 54.85 83.23 0
+field data.-1.1.0 magnetosphere_nvs_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_nvs_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_nvs_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_nvs_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -60.737 -44.737 0
+field data.-1.1.0 magnetosphere_orc_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_orc_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_orc_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_orc_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 42.515 24.177 0
+field data.-1.1.0 magnetosphere_pag_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_pag_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_pag_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_pag_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 42.515 24.177 0
+field data.-1.1.0 magnetosphere_pag_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_pag_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_pag_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_pag_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 38.1 23.9 0
+field data.-1.1.0 magnetosphere_peg_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_peg_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_peg_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_peg_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 21.03 105.96 0
+field data.-1.1.0 magnetosphere_phu_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_phu_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_phu_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_phu_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 21.03 105.96 0
+field data.-1.1.0 magnetosphere_phu_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_phu_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_phu_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_phu_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -31.667 -63.881 0
+field data.-1.1.0 magnetosphere_pil_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_pil_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_pil_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_pil_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -17.567 -149.574 0
+field data.-1.1.0 magnetosphere_ppt_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_ppt_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_ppt_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_ppt_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -17.567 -149.574 0
+field data.-1.1.0 magnetosphere_ppt_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_ppt_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_ppt_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_ppt_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -21.206 55.576 0
+field data.-1.1.0 magnetosphere_reu_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_reu_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_reu_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_reu_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -21.206 55.576 0
+field data.-1.1.0 magnetosphere_reu_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_reu_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_reu_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_reu_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -77.829 166.671 0
+field data.-1.1.0 magnetosphere_sba_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_sba_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_sba_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_sba_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.667 -5.945 0
+field data.-1.1.0 magnetosphere_sfs_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_sfs_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_sfs_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_sfs_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.667 -5.945 0
+field data.-1.1.0 magnetosphere_sfs_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_sfs_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_sfs_z inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_sfs_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -15.961 -5.747 0
+field data.-1.1.0 magnetosphere_she_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_she_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_she_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_she_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.35 -160.46 0
+field data.-1.1.0 magnetosphere_shu_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_shu_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_shu_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_shu_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.35 -160.46 0
+field data.-1.1.0 magnetosphere_shu_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_shu_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_shu_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_shu_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 57.06 -135.33 0
+field data.-1.1.0 magnetosphere_sit_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_sit_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_sit_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_sit_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 57.06 -135.33 0
+field data.-1.1.0 magnetosphere_sit_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_sit_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_sit_z inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_sit_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 18.11 -66.15 0
+field data.-1.1.0 magnetosphere_sjg_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_sjg_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_sjg_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_sjg_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 18.11 -66.15 0
+field data.-1.1.0 magnetosphere_sjg_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_sjg_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_sjg_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_sjg_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 67.37 26.63 0
+field data.-1.1.0 magnetosphere_sod_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_sod_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_sod_z_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 39.55 -4.35 0
+field data.-1.1.0 magnetosphere_spt_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_spt_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_spt_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 39.55 -4.35 0
+field data.-1.1.0 magnetosphere_spt_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_spt_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_spt_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_spt_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.68 26.25 0
+field data.-1.1.0 magnetosphere_sua_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_sua_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_sua_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_sua_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.68 26.25 0
+field data.-1.1.0 magnetosphere_sua_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_sua_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_sua_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_sua_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -37.067 -12.316 0
+field data.-1.1.0 magnetosphere_tdc_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_tdc_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_tdc_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_tdc_f_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 77.47 -69.227 0
+field data.-1.1.1 magnetosphere_thl_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_thl_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_thl_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 46.9 17.89 0
+field data.-1.1.0 magnetosphere_thy_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_thy_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_thy_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_thy_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.22 114.1 0
+field data.-1.1.0 magnetosphere_lrm_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_ltrm_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_trm_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_ltrm_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 45.408 16.659 0
+field data.-1.1.0 magnetosphere_lon_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_lon_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_lon_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_lon_s_nt inverse-square em nT 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -19.202 17.584 0
+field data.-1.1.0 magnetosphere_tsu_x_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.1 magnetosphere_tsu_y_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.1.2 magnetosphere_tsu_z_nt inverse-square em nT 8640.0 0.0 0.0
+field data.-1.2 magnetosphere_tsu_s_nt inverse-square em nT 8640.0 0.0 0.0

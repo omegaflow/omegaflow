@@ -1,0 +1,261 @@
+# Block 1: universe_simbad_galaxy_clusters
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/redshift/
+# plx_value for otype=ClG galaxy clusters. Static catalog rows; no live flux.
+# Same disposition as batch_022 SIMBAD blocks (40-50).
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27ClG%27+AND+rvz_redshift+IS+NOT+NULL | force em | ttl 86400
+
+# Block 2: universe_simbad_gamma_bursts
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=gam gamma-ray bursts. Static catalog rows, not live
+# burst events.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27gam%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 3: universe_simbad_giant_stars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=HB* horizontal-branch giant stars. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27HB*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 4: universe_simbad_globular_clusters
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# redshift/plx_value for otype=GlC globular clusters. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27GlC%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 5: universe_simbad_gravitational_lenses
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=GravLens gravitational lenses. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27GravLens%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 6: universe_simbad_herbig_haro
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=HH Herbig-Haro objects. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27HH%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 7: universe_simbad_hvc
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/plx_value
+# for otype=HVC high-velocity clouds. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20100%20ra%2Cdec%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27HVC%27 | force em | ttl 86400
+
+# Block 8: universe_simbad_interstellar_medium
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=ISM interstellar-medium objects. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27ISM%27%20AND%20flux_V%20IS%20NOT%20NULL | force em | ttl 86400
+
+# Block 9: universe_simbad_ir_sources
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=Ir* infrared sources. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27Ir%2A%27%20AND%20flux_V%20IS%20NOT%20NULL | force em | ttl 86400
+
+# Block 10: universe_simbad_ism
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=ISM. Static catalog rows; same object class as Block 8.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27ISM%27 | force em | ttl 86400
+
+# Block 11: universe_simbad_long_period
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=LP* long-period variables. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27LP%2A%27%20AND%20flux_V%20IS%20NOT%20NULL | force em | ttl 86400
+
+# Block 12: universe_simbad_masers
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=Mas masers. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Mas%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 13: universe_simbad_microquasars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=MQO microquasars. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27MQO%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 14: universe_simbad_millisecond_pulsars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=ms* millisecond pulsars. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27ms*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 15: universe_simbad_mira_variables
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=Mi* Mira variables. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Mi*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 16: universe_simbad_molecule_clouds
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=MolC molecular clouds. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27MolC%27 | force em | ttl 86400
+
+# Block 17: universe_simbad_nebulae
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/redshift/
+# flux_V/plx_value for otype Neb/PN/HII/SNR/MolC nebulae. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype+IN+(%27Neb%27,%27PN%27,%27HII%27,%27SNR%27,%27MolC%27)+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 18: universe_simbad_novae
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=Nova novae. Static catalog rows, not live outbursts.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Nova%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 19: universe_simbad_oh_maser
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=OH* OH masers. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27OH%2A%27%20AND%20flux_V%20IS%20NOT%20NULL | force em | ttl 86400
+
+# Block 20: universe_simbad_oh_masers
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=OH* OH masers. Static catalog rows; same object class
+# as Block 19.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27OH*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 21: universe_simbad_pre_ms_stars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=pr* pre-main-sequence stars. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27pr*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 22: universe_simbad_proper_motion
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=PM* proper-motion stars. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27PM*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 23: universe_simbad_pulsars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/redshift/
+# flux_V/plx_value for otype=Pulsar pulsars. Static catalog rows, not live
+# pulse trains.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27Pulsar%27 | force em | ttl 86400
+
+# Block 24: universe_simbad_quasars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/redshift/
+# flux_V/plx_value for otype=QSO quasars. Static catalog rows, not live flux.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27QSO%27 | force em | ttl 86400
+
+# Block 25: universe_simbad_red_giants
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=RG* red giants. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RG*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 26: universe_simbad_red_supergiants
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=sg* red supergiants. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27sg*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 27: universe_simbad_reflection_nebulae
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=RNeb reflection nebulae. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RNeb%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 28: universe_simbad_rr_lyrae
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=RR* RR Lyrae variables. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RR*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 29: universe_simbad_s_stars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=S* S-type stars. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27S%2A%27%20AND%20flux_V%20IS%20NOT%20NULL | force em | ttl 86400
+
+# Block 30: universe_simbad_stellar_associations
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=Asoc* stellar associations. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Asoc*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 31: universe_simbad_supernova_remnants
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=SNR supernova remnants. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27SNR%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 32: universe_simbad_supernovae
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# redshift/plx_value for otype=SN supernovae. Static catalog rows, not live
+# outbursts.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27SN%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 33: universe_simbad_symbiotic_stars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=Sy* symbiotic stars. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Sy*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 34: universe_simbad_ttauri_stars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=TT* T Tauri stars. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27TT*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 35: universe_simbad_variable_stars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/redshift/
+# plx_value for otype=V* variable stars. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27V*%27+AND+rvz_redshift+IS+NOT+NULL | force em | ttl 86400
+
+# Block 36: universe_simbad_white_dwarfs
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=WD* white dwarfs. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27WD*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 37: universe_simbad_wolf_rayet_stars
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=WR* Wolf-Rayet stars. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27WR*%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 38: universe_simbad_xray_sources
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=X X-ray sources. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27X%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 39: universe_simbad_young_stellar_objects
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=S*Y young stellar objects. Static catalog rows.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27S*Y%27+AND+flux_V+IS+NOT+NULL | force em | ttl 86400
+
+# Block 40: universe_simbad_yso
+# DECLINE: Star catalog — SIMBAD TAP, `cmap data` extracts ra/dec/flux_V/
+# plx_value for otype=YSO young stellar objects. Static catalog rows; same
+# object class as Block 39.
+# Old block: https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27YSO%27%20AND%20flux_V%20IS%20NOT%20NULL | force em | ttl 86400
+
+# Block 41: universe_vizier_2mass
+# DECLINE: Star catalog — Gaia DR3/2MASS crossmatch TAP, `cmap data` extracts
+# ra/dec/parallax/G for TOP 500 2MASS-associated sources. Static catalog rows.
+# Same disposition as batch_022 Gaia DR3 blocks.
+# Old block: https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14 | force em | ttl 86400
+
+# Block 42: universe_vizier_apass
+# DECLINE: Star catalog — Gaia DR3/APASS crossmatch TAP, `cmap data` extracts
+# ra/dec/parallax/B/V for TOP 500 APASS-associated sources. Static catalog rows.
+# Old block: https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,e.bmag,e.vmag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.apassdr9_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.apassdr9+AS+e+ON+x.clean_apassdr9_oid=e.recno+WHERE+g.parallax+>+0+AND+e.bmag+<+13 | force em | ttl 86400
+
+# Block 43: universe_vizier_panstarrs
+# DECLINE: Star catalog — Gaia DR3/Pan-STARRS crossmatch TAP, `cmap data`
+# extracts ra/dec/parallax/G for TOP 500 Pan-STARRS-associated sources.
+# Static catalog rows.
+# Old block: https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17 | force em | ttl 86400
+
+# Block 44: uspto_patents_total
+# DECLINE: Bare count — `field totalResults` ships the USPTO patent-search
+# tally; a legal registry count, no physical force. No organism senses a
+# patent count.
+# Old block: https://developer.uspto.gov/ptab-api/v2/patents?limit=1 | force em | ttl 86400
+
+# Block 45: wikidata_entities_total
+# DECLINE: Bare count — `field query.statistics.articles` ships a Wikidata
+# entity total; a knowledge-graph registry tally, no physical measurement.
+# Old block: https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json | force em | ttl 86400
+
+# Block 46: wikipedia_articles_total
+# DECLINE: Bare count — `field query.statistics.articles` ships the Wikipedia
+# article total; an encyclopedia registry tally, no physical measurement.
+# Old block: https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json | force em | ttl 86400
+
+# Block 47: wikipedia_edits_total
+# DECLINE: Bare count — `field query.statistics.edits` ships the Wikipedia
+# edit total; a registry tally, no physical measurement.
+# Old block: https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json | force em | ttl 86400
+
+# Block 48: wikipedia_pages_total
+# DECLINE: Bare count — `field query.statistics.pages` ships the Wikipedia
+# page total; a registry tally, no physical measurement.
+# Old block: https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json | force em | ttl 86400
+
+# Block 49: world_open_brewery_db
+# DECLINE: Catalog — `map .` extracts brewery registry rows (id, lat, lon)
+# from OpenBreweryDB; a station list of breweries, not a measurement of any
+# physical field.
+# Old block: https://api.openbrewerydb.org/v1/breweries?per_page=200 | force em | ttl 86400
+
+# Block 50: xeno_canto_recordings_total
+# DECLINE: Bare count — `field numRecordings` ships a recording tally for the
+# grp:birds query. The underlying xeno-canto recordings are acoustic, but this
+# block delivers only the count, not the sound. Same disposition as batch_024
+# block 1 (xeno_canto_species_total).
+# Old block: https://xeno-canto.org/api/2/recordings?query=grp:birds | force em | ttl 86400

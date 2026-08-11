@@ -1,0 +1,271 @@
+# Block 1: ionosphere_tec_global
+# DECLINE: Bare count without individual events. `count .` tallies TEC grid
+# nodes; the block delivers no oscillator at any node. Total electron content
+# is physically sensible (radio propagation delay) but the block ships only a
+# node census, not the TEC values themselves.
+# Old block: https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json | force em | ttl 3600
+
+# Block 2: juno_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Juno — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_juno.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 3: jupiter_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Jupiter — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_jupiter.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 4: jwst_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for JWST — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_jwst.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 5: magnetosphere_aurora_forecast
+# DECLINE: Model forecast — the OVATION aurora product is a model prediction of
+# auroral power derived from solar wind input, not an optical observation. The
+# block also extracts only `count coordinates`, a bare grid-node census.
+# Old block: https://services.swpc.noaa.gov/json/ovation_aurora_latest.json | force em | ttl 3600
+
+# Block 6: magnetosphere_aurora_nowcast_north
+# DECLINE: Model forecast — the OVATION nowcast is the same modeled auroral
+# output; `count coordinates` extracts a bare grid-node census, not an auroral
+# luminance measurement.
+# Old block: https://services.swpc.noaa.gov/json/ovation_aurora_latest.json | force em | ttl 3600
+
+# Block 7: magnetosphere_geomagnetic_storms
+# DECLINE: Bare count without individual events. `count gst` tallies DONKI
+# storm reports over 24h with no oscillator at any event; a registry count.
+# Old block: https://api.nasa.gov/DONKI/GST?startDate={yesterday}&api_key={nasa_key} | force em | ttl 3600
+
+# Block 8: magnetosphere_magnetopause_crossings
+# DECLINE: Bare count without individual events. `count mpc` tallies DONKI
+# magnetopause crossing reports; a registry count with no event positions.
+# Old block: https://api.nasa.gov/DONKI/MPC?startDate={yesterday}&api_key={nasa_key} | force em | ttl 3600
+
+# Block 9: magnetosphere_solar_regions
+# DECLINE: Catalog — NOAA solar_regions is a registry of numbered active
+# regions; `field_in region` extracts the region identifier and `spot_class` /
+# `mag_class` are text classifications. A region catalog, not a live
+# measurement of the sunspot field.
+# Old block: https://services.swpc.noaa.gov/json/solar_regions.json | force em | ttl 3600
+
+# Block 10: makemake_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Makemake — orbital
+# ephemeris already served by the ephemeris CDN (ephemeris_makemake.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 11: mars_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Mars — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_mars.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 12: mercury_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Mercury — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_mercury.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 13: moon_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for the Moon — orbital
+# ephemeris already served by the ephemeris CDN (ephemeris_moon.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 14: nasa_power_solar_radiation
+# DECLINE: Reanalysis/model — NASA POWER is a model-derived climate product
+# (MERRA-2 assimilation), not a radiometer reading; `obj_last value` extracts a
+# single monthly mean at the presence point. The Force Gate declines model
+# products.
+# Old block: https://power.larc.nasa.gov/api/temporal/monthly/point?... | force em | ttl 3600
+
+# Block 15: neptune_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Neptune — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_neptune.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 16: new_horizons_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for New Horizons — orbital
+# ephemeris already served by the ephemeris CDN (ephemeris_new_horizons.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 17: nvd_cve_count
+# DECLINE: Bare count without physical force. `field totalResults` counts CVE
+# vulnerability records — a registry census with no physical quantity; no
+# organism senses a vulnerability database.
+# Old block: https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=1 | force em | ttl 3600
+
+# Block 18: orbital_atlas_3i_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Atlas 3I — orbital
+# ephemeris already served by the ephemeris CDN (ephemeris_atlas_3i.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 19: orbital_celestrak_starlink
+# DECLINE: Bare count + catalog. `field totalItems` tallies Starlink TLE
+# records — a satellite registry count, not a measurement of any satellite's
+# signal.
+# Old block: https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=STARLINK | force em | ttl 3600
+
+# Block 20: orbital_cneos_asteroids_inside_lunar_orbit
+# DECLINE: Bare count without individual events. `field count` tallies close
+# approaches within 1 lunar distance; no oscillator at any asteroid.
+# Old block: https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today} | force em | ttl 3600
+
+# Block 21: orbital_cneos_close_approaches
+# DECLINE: Bare count without individual events. `field count` extracts a
+# scalar approach census; the CAD records carry positions but the block ships
+# only the tally.
+# Old block: https://ssd-api.jpl.nasa.gov/cad.api | force em | ttl 3600
+
+# Block 22: orbital_dsn_status
+# DECLINE: Bare count + infrastructure status. `count dsn` tallies active DSN
+# antenna assignments — a ground-station register, not a measurement of the
+# spacecraft signals themselves.
+# Old block: https://eyes.nasa.gov/dsn-now/dsn.json | force em | ttl 3600
+
+# Block 23: orbital_fireballs
+# DECLINE: Bare count without individual events. `field count` extracts the
+# fireball census; the records carry lat/lon/energy but the block ships only
+# the tally, no oscillator at any bolide.
+# Old block: https://ssd-api.jpl.nasa.gov/fireball.api | force em | ttl 3600
+
+# Block 24: orbital_near_earth_objects
+# DECLINE: Bare count + catalog. `count near_earth_objects.{today}` tallies NEO
+# registry entries and the path lines read diameter/miss-distance of the first
+# record only — a registry census, not individual object oscillators.
+# Old block: https://api.nasa.gov/neo/rest/v1/feed?start_date={today}&end_date={today}&api_key={nasa_key} | force em | ttl 3600
+
+# Block 25: orbital_vesta_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Vesta — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_vesta.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 26: paleoclimate_recent
+# DECLINE: Reanalysis/model — open-meteo daily values (past_days=1) are NWP
+# model output, not station measurements; temperature/radiation fields served
+# from a model. The Force Gate declines model products.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,shortwave_radiation_sum&past_days=1&forecast_days=0&timezone=auto | force em | ttl 3600
+
+# Block 27: parker_solar_probe_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Parker Solar Probe — orbital
+# ephemeris already served by the ephemeris CDN
+# (ephemeris_parker_solar_probe.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 28: pluto_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Pluto — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_pluto.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 29: radiation_belt_enhancements
+# DECLINE: Bare count without individual events. `count rbe` tallies DONKI
+# radiation belt enhancement reports over 24h; a registry count with no event
+# positions.
+# Old block: https://api.nasa.gov/DONKI/RBE?startDate={yesterday}&api_key={nasa_key} | force em | ttl 3600
+
+# Block 30: radiation_safecast — ACCEPT (live geiger counter measurements with
+# per-measurement position). See batch_013_accepted.φ.
+
+# Block 31: radiation_solar_shortwave
+# DECLINE: Model forecast — open-meteo /v1/forecast `current` values are NWP
+# model output, not a pyranometer reading. No organism senses a model's output.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation | force em | ttl 3600
+
+# Block 32: radiation_solar_uv_index
+# DECLINE: Model forecast — open-meteo uv_index is NWP model output, not an
+# ultraviolet photometer reading.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=uv_index | force em | ttl 3600
+
+# Block 33: saturn_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Saturn — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_saturn.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 34: solar_callisto_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Callisto — orbital
+# ephemeris already served by the ephemeris CDN (ephemeris_callisto.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 35: solar_cme
+# DECLINE: Bare count + text identifier. `count cme` tallies CME reports and
+# `deep activityID` extracts a registry string. No oscillator at any ejection;
+# the coronagraph flux a sensor could see is not delivered.
+# Old block: https://api.nasa.gov/DONKI/CME?startDate={yesterday}&api_key={nasa_key} | force em | ttl 3600
+
+# Block 36: solar_energetic_particles
+# DECLINE: Bare count without individual events. `count sep` tallies SEP event
+# reports over 24h; a registry count with no event oscillators.
+# Old block: https://api.nasa.gov/DONKI/SEP?startDate={yesterday}&api_key={nasa_key} | force em | ttl 3600
+
+# Block 37: solar_flares
+# DECLINE: Bare count + text labels. `count flares` tallies flare reports while
+# `last classType` / `peakTime` extract a classification string and a timestamp
+# — no oscillator at any flare's position with its X-ray flux.
+# Old block: https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&api_key={nasa_key} | force em | ttl 3600
+
+# Block 38: solar_high_speed_streams
+# DECLINE: Bare count without individual events. `count hss` tallies HSS
+# reports over 24h; a registry count.
+# Old block: https://api.nasa.gov/DONKI/HSS?startDate={yesterday}&api_key={nasa_key} | force em | ttl 3600
+
+# Block 39: solar_interplanetary_shocks
+# DECLINE: Bare count without individual events. `count ips` tallies shock
+# reports over 24h; a registry count with no oscillator at any shock front.
+# Old block: https://api.nasa.gov/DONKI/IPS?startDate={yesterday}&api_key={nasa_key} | force em | ttl 3600
+
+# Block 40: solar_noaa_swpc_flare_count
+# DECLINE: Bare count without individual events. `count .` on the SWPC flare
+# feed tallies entries; the GOES X-ray records carry flux but the block ships
+# only the tally.
+# Old block: https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json | force em | ttl 3600
+
+# Block 41: solar_noaa_swpc_flares
+# DECLINE: Bare count without individual events — duplicate of block 40;
+# `count .` extracts the same flare tally, no individual flare oscillators.
+# Old block: https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json | force em | ttl 3600
+
+# Block 42: solar_orbiter_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Solar Orbiter — orbital
+# ephemeris already served by the ephemeris CDN (ephemeris_solar_orbiter.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 43: solar_xclass_flares
+# DECLINE: Bare count without individual events. `count flares` tallies X-class
+# flare reports; a filtered registry count.
+# Old block: https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&classType=X&api_key={nasa_key} | force em | ttl 3600
+
+# Block 44: sun_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for the Sun — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_sun.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 45: technosphere_npm_downloads
+# DECLINE: No physical force. `field downloads` reads an npm package download
+# tally — an economic registry census with no force medium. The Force Gate
+# refuses forceless sources.
+# Old block: https://api.npmjs.org/downloads/point/last-day/lodash | force em | ttl 3600
+
+# Block 46: technosphere_wikipedia_views
+# DECLINE: No physical force + bare identifier. `field query.random.0.id`
+# extracts a random Wikipedia page id — a registry key, not a measurement; no
+# organism senses a page identifier.
+# Old block: https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json | force em | ttl 3600
+
+# Block 47: titan_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Titan — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_titan.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 48: triton_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Triton — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_triton.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600
+
+# Block 49: universe_dscovr_epic
+# DECLINE: Catalog — the EPIC API lists Earth imagery entries; `field_in
+# version` / `identifier` extract registry strings, not a measurement of the
+# reflected light the images contain. A catalog of images, not the image
+# signal.
+# Old block: https://epic.gsfc.nasa.gov/api/natural/images | force em | ttl 3600
+
+# Block 50: uranus_vectors
+# SKIP: ephemeris-superseded. Horizons VECTORS for Uranus — orbital ephemeris
+# already served by the ephemeris CDN (ephemeris_uranus.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 3600

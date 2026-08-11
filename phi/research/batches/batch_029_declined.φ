@@ -1,0 +1,207 @@
+# ── Batch 029: Declined Sources ──
+# Format: decline <reason> \n url <url> \n note <Force Gate explanation>
+# All 50 blocks declined under the Force Gate: World Bank GDP growth
+# per country. Economic aggregates — no physical propagation of the
+# measured quantity. HTTP is the delivery medium, not the force.
+# Litmus: no non-human organism evolves a sensory organ for GDP growth.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GEO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_georgia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_germany.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GHA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_ghana.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GIB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_gibraltar.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GRC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_greece.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_greenland.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GRD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_grenada.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GUM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_guam.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GTM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_guatemala.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_guinea.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GNB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_guinea_bissau.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/GUY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_guyana.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/HTI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_haiti.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/HND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_honduras.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/HKG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_hong_kong_sar.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/HUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_hungary.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/ISL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_iceland.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_india.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/IDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_indonesia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/IRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_iran.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/IRQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_iraq.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/IRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_ireland.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/ISR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_israel.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/ITA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_italy.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/JAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_jamaica.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/JPN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_japan.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/JOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_jordan.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/KAZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_kazakhstan.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/KEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_kenya.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/KIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_kiribati.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/KOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_korea.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/XKX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_kosovo.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/KWT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_kuwait.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/KGZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_kyrgyz_republic.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/LAO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_lao_pdr.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/LVA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_latvia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/LBN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_lebanon.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/LSO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_lesotho.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/LBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_liberia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/LBY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_libya.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/LIE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_liechtenstein.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/LTU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_lithuania.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/LUX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_luxembourg.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MAC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_macao_sar.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MDG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_madagascar.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MWI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_malawi.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MYS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_malaysia.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MDV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_maldives.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MLI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_mali.
+
+decline no-physical-force
+url https://api.worldbank.org/v2/country/MLT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+note Force Gate: GDP growth rate is an economic index aggregated from national accounts; no organism senses it. HTTP is delivery medium, not physical force. Block: biosphere_worldbank_gdp_growth_malta.
+

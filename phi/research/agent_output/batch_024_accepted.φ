@@ -1,0 +1,6 @@
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+ttl 604800
+on earth 19.5362 -155.5763 3397
+regex 2000\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2000_ppm gaussian-inverse-square diffusion ppm 60480.0 0.0 0.0
+regex 2020\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2020_ppm gaussian-inverse-square diffusion ppm 60480.0 0.0 0.0
+regex 2025\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2025_ppm gaussian-inverse-square diffusion ppm 60480.0 0.0 0.0

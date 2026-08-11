@@ -1,0 +1,186 @@
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+ttl 86400
+on earth 71.29 -156.57 0
+rows
+field 9 cryosphere_permafrost_temp_barrow_c exponential-decay thermal C 8640.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+ttl 86400
+on earth 0 0 0
+field 0.flux exosphere_f107_sfu inverse-square em sfu 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4.5&limit=300
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 8640.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 8640.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_ch4_ppb_global gaussian-inverse-square diffusion ppb 8640.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow mean atmosphere_co2_annual_mean_global gaussian-inverse-square diffusion ppm 8640.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_co2_ppm_mlo_monthly gaussian-inverse-square diffusion ppm 8640.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_n2o_ppb_global gaussian-inverse-square diffusion ppb 8640.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_sf6_ppt_global gaussian-inverse-square diffusion ppt 8640.0 0.0 0.0
+
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+ttl 86400
+format csv
+on earth 46.05 -125.0 0
+lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
+ttl 86400
+format csv
+on earth 47.606 -122.335 0
+last line hydrosphere_pmel_co2_mooring_raw gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?station_id,longitude,latitude,time,pCO2_sw,pH_sw&orderByMax(%22station_id%2Ctime%22)
+ttl 86400
+format csv
+on earth 47.6062 -122.3321 0
+lastrow pCO2_sw hydrosphere_pco2_pmel_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+lastrow pH_sw hydrosphere_ph_pmel gaussian-inverse-square diffusion 1 8640.0 0.0 0.0

@@ -1,0 +1,167 @@
+# Block 1: lidar_gmrt_elevation
+# DECLINE: Terrain DEM — the GMRT (Global Multi-Resolution Topography)
+# PointServer returns seafloor depth at a queried lon/lat from a compiled
+# multibeam-sonar synthesis grid, not a live measurement stream. Geographic
+# infrastructure (terrain DEM) fails the Force Gate; the block also declares
+# no frame, so the parser would refuse it.
+# Old block: https://www.gmrt.org/services/PointServer?longitude={lon}&latitude={lat}&format=json | force em | ttl 86400
+
+# Block 2: lidar_lola_moon_elevation
+# DECLINE: Derived point-cloud product — the STAC query returns LOLA tile
+# statistics (pc:statistics.2 mean/min/max), a compiled lunar DEM summary,
+# not individual laser returns. Derived topography products fail the Force
+# Gate; the 0 0 lat/lon is a query footprint on the moon, not a terrestrial
+# frame.
+# Old block: https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1 | force em | ttl 86400
+
+# Block 3: lidar_lola_moon_point_cloud
+# DECLINE: Bare count — pc:count is the number of points in a tile and
+# pc:density a derived per-area ratio; no individual laser events. Bare
+# counts without individual events fail the Force Gate.
+# Old block: https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1 | force em | ttl 86400
+
+# Block 4: lidar_mola_mars_megdr_count
+# DECLINE: Bare count — regex <Count> extracts the tally of MOLA MEGDR
+# products in a PDS archive. A catalog count with no individual measurements;
+# no organism senses an archive tally.
+# Old block: https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=MEGDR&output=XML | force em | ttl 86400
+
+# Block 5: lidar_mola_mars_pedr_count
+# DECLINE: Bare count — regex <Count> extracts the tally of MOLA PEDR
+# products in a PDS archive. A catalog count with no individual measurements.
+# Old block: https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=PEDR&output=XML | force em | ttl 86400
+
+# Block 6: magnetosphere_abg — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 7: magnetosphere_abk — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 8: magnetosphere_abk_hapi — ACCEPT (total-field F variant of ABK).
+# See batch_017_accepted.φ.
+
+# Block 9: magnetosphere_aia — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 10: magnetosphere_ars — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 11: magnetosphere_asp — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 12: magnetosphere_asp_hapi — ACCEPT (total-field F variant of ASP).
+# See batch_017_accepted.φ.
+
+# Block 13: magnetosphere_bdv — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 14: magnetosphere_bdv_hapi — ACCEPT (total-field F variant of BDV).
+# See batch_017_accepted.φ.
+
+# Block 15: magnetosphere_bel — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 16: magnetosphere_bel_hapi — ACCEPT (total-field F variant of BEL).
+# See batch_017_accepted.φ.
+
+# Block 17: magnetosphere_bfo — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 18: magnetosphere_bfo_hapi — ACCEPT (total-field F variant of BFO).
+# See batch_017_accepted.φ.
+
+# Block 19: magnetosphere_bou — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 20: magnetosphere_bou_hapi — ACCEPT (total-field F variant of BOU).
+# See batch_017_accepted.φ.
+
+# Block 21: magnetosphere_brw — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 22: magnetosphere_brw_hapi — ACCEPT (total-field F variant of BRW).
+# See batch_017_accepted.φ.
+
+# Block 23: magnetosphere_bsl — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 24: magnetosphere_bsl_hapi — ACCEPT (total-field F variant of BSL).
+# See batch_017_accepted.φ.
+
+# Block 25: magnetosphere_cki — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 26: magnetosphere_cki_hapi — ACCEPT (total-field F variant of CKI).
+# See batch_017_accepted.φ.
+
+# Block 27: magnetosphere_clf — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 28: magnetosphere_clf_hapi — ACCEPT (total-field F variant of CLF).
+# See batch_017_accepted.φ.
+
+# Block 29: magnetosphere_cmo — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 30: magnetosphere_cmo_hapi — ACCEPT (total-field F variant of CMO).
+# See batch_017_accepted.φ.
+
+# Block 31: magnetosphere_cnb — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 32: magnetosphere_cnb_hapi — ACCEPT (total-field F variant of CNB).
+# See batch_017_accepted.φ.
+
+# Block 33: magnetosphere_cpL — ACCEPT (ground observatory vector magnetometer,
+# X/Y + total field S; block carries no Z component). See batch_017_accepted.φ.
+
+# Block 34: magnetosphere_csy — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 35: magnetosphere_csy_hapi — ACCEPT (total-field F variant of CSY).
+# See batch_017_accepted.φ.
+
+# Block 36: magnetosphere_cta — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 37: magnetosphere_cta_hapi — ACCEPT (total-field F variant of CTA).
+# See batch_017_accepted.φ.
+
+# Block 38: magnetosphere_cyg — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 39: magnetosphere_cyg_hapi — ACCEPT (total-field F variant of CYG).
+# See batch_017_accepted.φ.
+
+# Block 40: magnetosphere_ded — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 41: magnetosphere_ded_hapi — ACCEPT (total-field F variant of DED).
+# See batch_017_accepted.φ.
+
+# Block 42: magnetosphere_dlt — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 43: magnetosphere_dlt_hapi — ACCEPT (total-field F variant of DLT).
+# See batch_017_accepted.φ.
+
+# Block 44: magnetosphere_dou — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 45: magnetosphere_dou_hapi — ACCEPT (total-field F variant of DOU).
+# See batch_017_accepted.φ.
+
+# Block 46: magnetosphere_dur — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 47: magnetosphere_dur_hapi — ACCEPT (total-field F variant of DUR).
+# See batch_017_accepted.φ.
+
+# Block 48: magnetosphere_ebr — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.
+
+# Block 49: magnetosphere_ebr_hapi — ACCEPT (total-field F variant of EBR).
+# See batch_017_accepted.φ.
+
+# Block 50: magnetosphere_eyr — ACCEPT (ground observatory vector magnetometer,
+# nT). See batch_017_accepted.φ.

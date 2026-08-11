@@ -1,0 +1,55 @@
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start={year}&end={year}&format=JSON
+ttl 3600
+on earth 0 0 0
+field properties.parameter.ALLSKY_SFC_UV_INDEX.0 biosphere_uv_index_global inverse-square em 1 360.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+at earth 0.99
+field 0.gsm_bx exosphere_ace_bx_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.gsm_by exosphere_ace_by_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.gsm_bz exosphere_ace_bz_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.bt exosphere_ace_bt_nt inverse-square em nT 360.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+ttl 3600
+at earth 0.99
+field 0.speed exosphere_ace_speed_kms inverse-square em km/s 360.0 0.0 0.0
+field 0.dens exosphere_ace_dens_ncc inverse-square em n/cc 360.0 0.0 0.0
+field 0.temperature exosphere_ace_temp_k inverse-square em K 360.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
+ttl 3600
+on earth 0 0 0
+field last.dst exosphere_dst_nt inverse-square em nT 360.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+ttl 3600
+on earth 0 0 0
+field last.estimated_kp exosphere_kp_estimated inverse-square em 1 360.0 0.0 0.0
+
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+ttl 3600
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_m erfc seismic-surface km 360.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 360.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+ttl 3600
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_m erfc seismic-surface km 360.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 360.0 0.0 0.0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+ttl 3600
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag geosphere_quake_mag erfc seismic-surface Mw 360.0 0.0 0.0

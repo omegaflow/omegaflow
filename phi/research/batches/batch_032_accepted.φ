@@ -1,0 +1,30 @@
+# ── Batch 032: Accepted Sources ──
+# 3 of 32 blocks pass the Force Gate: Antarctic ice-core atmospheric CO2
+# records (Dome Fuji, EPICA Dome C, Vostok). Direct instrumental
+# measurement of CO2 concentration in trapped air via gas chromatography —
+# a chemical sensor (plant stomata, insect chemoreception) can sense CO2,
+# so the litmus test passes. Force: diffusion (chemical concentration),
+# kernel: gaussian-inverse-square (diffusion default). Frame: on earth at
+# the drill site. Rows extract, one CO2 channel per row; the age/depth
+# columns are the time axis, not a field value, so they carry no oscillator.
+# Tau = TTL (stable source, per agent_prompt: tau = TTL for geology).
+# The other 29 blocks are counts, catalogs, terrain DEMs, or model
+# products — declined in batch_032_declined.φ.
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
+ttl 2592000
+on earth -77.3190 39.7030 0
+rows
+field 1 paleoclimate_domefuji_co2_ppm gaussian-inverse-square diffusion ppm 2592000.0 0.0 0.0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
+ttl 2592000
+on earth -75.100 123.350 0
+rows
+field 4 paleoclimate_epica_co2_ppm gaussian-inverse-square diffusion ppm 2592000.0 0.0 0.0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
+ttl 2592000
+on earth -78.464 106.833 0
+rows
+field 2 paleoclimate_vostok_co2_ppm gaussian-inverse-square diffusion ppm 2592000.0 0.0 0.0

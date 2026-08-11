@@ -1,0 +1,153 @@
+# ── Batch 032: Declined Sources ──
+# Format: <category> <reason> \n url <url> \n note <Force Gate explanation>
+# 29 of 32 blocks declined under the skip directive (counts, catalogs,
+# terrain DEMs, model products).
+
+# ── Blocks 1, 2, 4, 6, 7, 13: bare counts / dataset registries ──
+# Force Gate: counts of nearby Wikipedia pages, dataset-search hits, STAC
+# collection counts, Macrostrat unit / timescale counts. Bare counts with
+# no individual event records — a count of documents is not a physical
+# quantity. No organism evolves a sensory organ for a registry total.
+
+decline bare-count
+url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
+note Force Gate: count of Wikipedia pages within 10 km — document registry census, no physical propagation.
+
+decline bare-count
+url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1
+note Force Gate: count of CCI datasets in a search index — registry total, no physical force.
+
+decline bare-count
+url https://stac.eoapi.dev/collections
+note Force Gate: count of STAC collections — data-registry census, no physical force.
+
+decline bare-count
+url https://macrostrat.org/api/v2/units?format=json
+note Force Gate: count of Macrostrat geological units — catalog total, no physical force.
+
+decline bare-count
+url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
+note Force Gate: count of ICS timescale intervals — catalog total, no physical force.
+
+decline bare-count
+url https://planetarycomputer.microsoft.com/api/stac/v1/collections
+note Force Gate: count of Planetary Computer collections — registry total, no physical force.
+
+# ── Blocks 3, 8-12, 18: terrain DEM elevation / bathymetry ──
+# Force Gate: static elevation surfaces (SRTM, EUDEM, Mapzen, USGS EPQS,
+# open-meteo, GEBCO bathymetry). Geographic infrastructure — a DEM is a
+# static geometry, not a live measurement with physical propagation. The
+# old grammar's `force em` / `force seismic-surface` are fabricated.
+
+decline terrain-dem
+url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+note Force Gate: single-point elevation lookup, static terrain DEM, geographic infrastructure not a physical signal.
+
+decline terrain-dem
+url https://api.open-elevation.com/api/v1/lookup?locations={grid}
+note Force Gate: SRTM elevation grid — static terrain DEM, no physical propagation of the measured quantity.
+
+decline terrain-dem
+url https://api.opentopodata.org/v1/eudem25m?locations={grid}
+note Force Gate: EUDEM 25m elevation — static terrain model, geographic infrastructure.
+
+decline terrain-dem
+url https://api.opentopodata.org/v1/gebco2020?locations={grid}
+note Force Gate: GEBCO bathymetry grid — static seafloor model, geographic infrastructure.
+
+decline terrain-dem
+url https://api.opentopodata.org/v1/mapzen?locations={grid}
+note Force Gate: Mapzen terrain model — static DEM, no physical signal.
+
+decline terrain-dem
+url https://api.opentopodata.org/v1/srtm30m?locations={grid}
+note Force Gate: SRTM30m elevation — static terrain DEM, geographic infrastructure.
+
+decline terrain-dem
+url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&wkid=4326
+note Force Gate: USGS EPQS point elevation — static DEM lookup; old force seismic-surface is fabricated (elevation is not a seismic measurement).
+
+# ── Block 5: geoid height reference model ──
+# Force Gate: EGM2008 geoid undulation at a point. A geoid is a geodetic
+# datum / gravity equipotential reference, computed from a static model —
+# a reference constant, not a measurement an organism could sense.
+
+decline model-product
+url https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf
+note Force Gate: EGM2008 geoid undulation — static geodetic reference model, not a live physical measurement.
+
+# ── Blocks 14-17: SoilGrids model predictions ──
+# Force Gate: clay / pH / sand / organic-carbon percentages returned by
+# SoilGrids. These are machine-learned model predictions interpolated from
+# sparse lab samples, not live in-situ measurements. Skip: model product.
+
+decline model-product
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
+note Force Gate: SoilGrids clay prediction — model-interpolated soil property, not a live measurement.
+
+decline model-product
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
+note Force Gate: SoilGrids pH prediction — model product, not a live measurement.
+
+decline model-product
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=sand&depth=0-5cm&value=mean
+note Force Gate: SoilGrids sand prediction — model product, not a live measurement.
+
+decline model-product
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
+note Force Gate: SoilGrids organic-carbon prediction — model product, not a live measurement.
+
+# ── Blocks 19-22: static plate-tectonic feature catalogs ──
+# Force Gate: GEM active-fault traces, PB2002 plate boundaries, orogens,
+# plate polygons as GeoJSON feature sets. Static geographic geometry —
+# boundary lines are infrastructure, not measurements with a force.
+
+decline static-catalog
+url https://raw.githubusercontent.com/cossatot/gem-global-active-faults/master/geojson/gem_active_faults_harmonized.geojson
+note Force Gate: GEM active-fault trace catalog — static geometry registry, no live measurement.
+
+decline static-catalog
+url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json
+note Force Gate: PB2002 plate-boundary lines — static geographic geometry.
+
+decline static-catalog
+url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_orogens.json
+note Force Gate: PB2002 orogen polygons — static geographic geometry.
+
+decline static-catalog
+url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json
+note Force Gate: PB2002 plate polygons — static geographic geometry, no physical force.
+
+# ── Blocks 23, 27-32: literature citation / record counts ──
+# Force Gate: citation counts of papers (neutrinoless double-beta limits,
+# CMB anomaly, vacuum metastability, XENONnT dark-matter) and open-data
+# record totals. A citation count is a bibliographic census — no physical
+# force propagates a citation number.
+
+decline bare-count
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrinoless+double+beta+decay+limit&fields=titles,citation_count
+note Force Gate: citation count of a paper — bibliographic census, no physical propagation.
+
+decline bare-count
+url https://opendata.cern.ch/api/records/?size=1&page=1
+note Force Gate: total count of CERN open-data records — registry total, no physical force.
+
+decline bare-count
+url https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0
+note Force Gate: count of biophoton research papers — literature census, no physical force.
+
+decline bare-count
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count
+note Force Gate: citation count of a paper — bibliographic census, no physical propagation.
+
+decline bare-count
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count
+note Force Gate: citation count of a paper — bibliographic census, no physical propagation.
+
+decline bare-count
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+matter&fields=titles,citation_count
+note Force Gate: citation count of a paper — bibliographic census, no physical propagation.
+
+decline bare-count
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Lorentz+invariance+violation+quantum+gravity&fields=titles,citation_count
+note Force Gate: citation count of a paper — bibliographic census, no physical propagation.

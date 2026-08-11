@@ -1,0 +1,66 @@
+# Block 2: solar_xray_flares (count/class portions)
+# DECLINE: `count . solar_flare_count_7d` is a bare count of flare events over 7 days —
+# no individual oscillators at spatial positions. `last max_class solar_flare_class_7d`
+# is a categorical event-type label (X/M/C class), not a physical quantity. The peak
+# X-ray intensity (`last max_xrlong`) IS a physical EM measurement and is kept in the
+# accepted file as solar_flare_xray_intensity.
+# Old block: https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json | force em | ttl 60
+
+# Block 5: atmosphere_open_meteo_current
+# DECLINE: Model forecast, not a live measurement. open-meteo /v1/forecast returns a
+# weather-model prediction, not a sensor observation. The Force Gate requires a direct
+# physical measurement by a sensory organ; no organism senses a model's output.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon} | force acoustic | ttl 300
+
+# Block 6: atmosphere_rain_radar
+# DECLINE: Extracts only the radar tile generation timestamp (`field generated
+# hydrosphere_rain_radar_generated_time`), a metadata clock reading, not a measurement
+# of precipitation. The rainviewer weather-maps.json response is a tile catalog; the
+# declared field is a timestamp, and the block carries no spatial frame.
+# Old block: https://api.rainviewer.com/public/weather-maps.json | force acoustic | ttl 300
+
+# Block 7: atmosphere_waqi_air_quality
+# DECLINE: Measurement point is the operator's presence window, not a fixed geodetic
+# point. The URL template geo:{lat};{lon} substitutes the presence window at query time,
+# but the scalar field would manifest at the source's static frame position — a
+# mismatch the frame grammar cannot express. A particulate measurement is physical, but
+# its position is presence-relative, so no honest frame can be declared.
+# Old block: https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo | force diffusion | ttl 300
+
+# Block 8: biosphere_energy_charts_renewable
+# DECLINE: No physical force. Renewable energy share percentage is a grid/economics
+# statistic — the measurement is a fraction of electrical generation, not a physical
+# quantity an organism could evolve a sensory organ for.
+# Old block: https://api.energy-charts.info/ren_share | force em | ttl 300
+
+# Block 9: biosphere_inaturalist_observations
+# DECLINE: Bare count without individual events. `field total_results` counts the total
+# number of observations in a registry; a scalar count does not manifest individual
+# oscillators at their spatial positions. Catalog/registry metadata.
+# Old block: https://api.inaturalist.org/v1/observations?per_page=1 | force em | ttl 300
+
+# Block 11: biosphere_uk_carbon_intensity
+# DECLINE: No physical force. Grid carbon intensity (gCO2/kWh) is an electricity-system
+# statistic derived from generation mix, not a physical measurement at a location. An
+# organism senses CO2 concentration, not a national grid average.
+# Old block: https://api.carbonintensity.org.uk/intensity | force em | ttl 300
+
+# Block 14: geosphere_nws_alerts
+# DECLINE: Text warnings. `count features` counts active NWS alert messages — textual
+# warning products, not physical measurements. Alert text fails the Force Gate.
+# Old block: https://api.weather.gov/alerts/active | force em | ttl 300
+
+# Block 15: geosphere_nws_tsunami_warnings
+# DECLINE: Text warnings. `count features` counts active tsunami warning messages —
+# textual products, not physical measurements of the ocean surface.
+# Old block: https://api.weather.gov/alerts/active?event=Tsunami%20Warning | force gravity | ttl 300
+
+# Block 16: geosphere_tsunami_alerts_ntwc
+# DECLINE: Text warnings. `xml_count entry` counts tsunami alert entries in the NTWC
+# ATOM feed — textual advisory products, not physical measurements. Positionless.
+# Old block: https://www.tsunami.gov/events/xml/PAAQAtom.xml | force gravity | ttl 300
+
+# Block 17: geosphere_tsunami_alerts_ptwc
+# DECLINE: Text warnings. `xml_count entry` counts tsunami alert entries in the PTWC
+# ATOM feed — textual advisory products, not physical measurements. Positionless.
+# Old block: https://www.tsunami.gov/events/xml/PHEBAtom.xml | force gravity | ttl 300

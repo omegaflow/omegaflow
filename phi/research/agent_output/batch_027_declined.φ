@@ -1,0 +1,252 @@
+# batch_027: 50 blocks, 0 accepted. PDG particle masses (10), airport/cable
+# catalogs (2), model climate projections (1), aggregate global temperature
+# index (1), paleoclimate ice-core reconstruction (1), derived satellite
+# product (1), overpass bare counts (8), and World Bank economic/demographic
+# statistics (26). All fail the Force Gate — none is a live measurement a
+# non-human organism could sense. Per-block disposition below.
+
+# Block 1: subatomic_pdg_w_boson_mass
+# DECLINE: Reference constant — PDG W-boson mass is a fixed published value
+# (reviewed world-average), not a live measurement. Reference constants fail
+# the Force Gate. Same disposition as batch_021 block 43 (PDG particle catalog).
+# Old block: https://pdgapi.lbl.gov/summaries/S043M | force em | ttl 604800
+
+# Block 2: subatomic_pdg_xi_c_plus_mass
+# DECLINE: Reference constant — PDG Xi_c+ mass (S045M) is a fixed world-average
+# constant, not a live measurement. Reference constants fail the Force Gate.
+# Old block: https://pdgapi.lbl.gov/summaries/S045M | force em | ttl 604800
+
+# Block 3: subatomic_pdg_xi_c_prime_plus_mass
+# DECLINE: Reference constant — PDG Xi_c'+ mass (S058M) is a fixed published
+# constant, not a live measurement. Reference constants fail the Force Gate.
+# Old block: https://pdgapi.lbl.gov/summaries/S058M | force em | ttl 604800
+
+# Block 4: subatomic_pdg_xi_c_prime_zero_mass
+# DECLINE: Reference constant — PDG Xi_c'0 mass (S059M) is a fixed published
+# constant, not a live measurement. Reference constants fail the Force Gate.
+# Old block: https://pdgapi.lbl.gov/summaries/S059M | force em | ttl 604800
+
+# Block 5: subatomic_pdg_xi_c_zero_mass
+# DECLINE: Reference constant — PDG Xi_c0 mass (S048M) is a fixed published
+# constant, not a live measurement. Reference constants fail the Force Gate.
+# Old block: https://pdgapi.lbl.gov/summaries/S048M | force em | ttl 604800
+
+# Block 6: subatomic_pdg_xi_cc_plus_mass
+# DECLINE: Reference constant — PDG Xi_cc+ mass (S065M) is a fixed published
+# constant, not a live measurement. Reference constants fail the Force Gate.
+# Old block: https://pdgapi.lbl.gov/summaries/S065M | force em | ttl 604800
+
+# Block 7: subatomic_pdg_xi_cc_plusplus_mass
+# DECLINE: Reference constant — PDG Xi_cc++ mass (S068M) is a fixed published
+# constant, not a live measurement. Reference constants fail the Force Gate.
+# Old block: https://pdgapi.lbl.gov/summaries/S068M | force em | ttl 604800
+
+# Block 8: subatomic_pdg_xi_minus_mass
+# DECLINE: Reference constant — PDG Xi- mass (S022M) is a fixed published
+# constant, not a live measurement. Reference constants fail the Force Gate.
+# Old block: https://pdgapi.lbl.gov/summaries/S022M | force em | ttl 604800
+
+# Block 9: subatomic_pdg_xi_zero_mass
+# DECLINE: Reference constant — PDG Xi0 mass (S023M) is a fixed published
+# constant, not a live measurement. Reference constants fail the Force Gate.
+# Old block: https://pdgapi.lbl.gov/summaries/S023M | force em | ttl 604800
+
+# Block 10: subatomic_pdg_z_boson_mass
+# DECLINE: Reference constant — PDG Z-boson mass (S044M) is a fixed published
+# constant, not a live measurement. Reference constants fail the Force Gate.
+# Old block: https://pdgapi.lbl.gov/summaries/S044M | force em | ttl 604800
+
+# Block 11: technosphere_global_airports
+# DECLINE: Location catalog — a registry of airports with elevation; `map .`
+# extracts registry rows, not a measurement. No force carries an airport
+# elevation. Same disposition as batch_010 block 6 (overpass airports).
+# Old block: https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/master/airports.json | force em | ttl 604800
+
+# Block 12: technosphere_submarine_cables
+# DECLINE: Infrastructure catalog — a GeoJSON of cable routes; `flatten features`
+# ships line geometry and cable names, not the signals they carry. Same
+# disposition as batch_015 block 32 (submarine cables).
+# Old block: https://github.com/lifewinning/submarine-cable-taps/raw/master/data/submarine_cables.geojson | force em | ttl 604800
+
+# Block 13: atmosphere_climate_projection
+# DECLINE: Model forecast — climate-api.open-meteo.com serves CMIP climate-model
+# projections of temperature and precipitation, not instrument measurements.
+# No organism senses a model's output.
+# Old block: https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum | force em | ttl 2592000
+
+# Block 14: atmosphere_hadcrut5_temp
+# DECLINE: Aggregate climate index — `last line` of the HadCRUT.5 global annual
+# summary ships a global-mean temperature anomaly, a single scalar with no
+# position. Aggregate climate indices are auto-declined; no organism senses a
+# multi-region average. Same disposition as batch_014 block 13 (ONI).
+# Old block: https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv | force em | ttl 2592000
+
+# Block 15: atmosphere_lawdome_co2
+# DECLINE: Paleoclimate reconstruction archive — Law Dome ice-core CO2 is a
+# static historical gas record ending 2004, not a live measurement stream.
+# The value does not change with time; no oscillator carries a present field.
+# Old block: https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/law/law2006co2.txt | force em | ttl 2592000
+
+# Block 16: biosphere_globalforestwatch_tree_cover_loss
+# DECLINE: Derived satellite product — UMD tree-cover-loss is a satellite-
+# retrieved deforestation estimate, not a direct measurement. Derived
+# satellite products are auto-declined (source_curation.md).
+# Old block: https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest | force em | ttl 2592000
+
+# Block 17: biosphere_overpass_farmland
+# DECLINE: Bare count — `deep ways` tallies OSM farmland ways within 10 km; a
+# registry tally with no individual events and no physical force. Same
+# disposition as batch_024 overpass blocks.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["landuse"="farmland"](around:10000,{lat},{lon});out%20count; | force em | ttl 2592000
+
+# Block 18: biosphere_overpass_history_buildings_2yr
+# DECLINE: Bare count — `deep ways` tallies OSM buildings at the 2024-01-01
+# historical date; a registry tally, not a measurement. No organism senses a
+# building count.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2024-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count; | force em | ttl 2592000
+
+# Block 19: biosphere_overpass_history_buildings_5yr
+# DECLINE: Bare count — `deep ways` tallies OSM buildings at the 2021-01-01
+# historical date; a registry tally, not a measurement. No organism senses a
+# building count.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count; | force em | ttl 2592000
+
+# Block 20: biosphere_overpass_history_hospitals_5yr
+# DECLINE: Bare count — `deep total` tallies OSM hospital nodes at the 2021
+# historical date; a registry tally, not a measurement. No organism senses a
+# hospital count.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20count; | force em | ttl 2592000
+
+# Block 21: biosphere_overpass_history_schools_5yr
+# DECLINE: Bare count — `deep total` tallies OSM school nodes at the 2021
+# historical date; a registry tally, not a measurement. No organism senses a
+# school count.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20count; | force em | ttl 2592000
+
+# Block 22: biosphere_overpass_history_shops_5yr
+# DECLINE: Bare count — `deep total` tallies OSM shop nodes at the 2021
+# historical date; a registry tally, not a measurement. No organism senses a
+# shop count.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count; | force em | ttl 2592000
+
+# Block 23: biosphere_overpass_history_streets_5yr
+# DECLINE: Bare count — `deep ways` tallies OSM highway ways at the 2021
+# historical date; a registry tally, not a measurement. No organism senses a
+# street count.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20count; | force em | ttl 2592000
+
+# Block 24: biosphere_overpass_memorials
+# DECLINE: Bare count — `deep total` tallies OSM memorial nodes within 5 km; a
+# registry tally, not a measurement. No organism senses a memorial count.
+# Old block: https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20count; | force em | ttl 2592000
+
+# Block 25: biosphere_worldbank_birth_rate
+# DECLINE: No physical force — a World Bank birth-rate statistic (births per
+# 1000) is a demographic registry value. HTTP is the delivery medium, not a
+# physical propagation of the measured quantity.
+# Old block: https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CBRT.IN?format=json&date=2023&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 26: biosphere_worldbank_co2_emissions
+# DECLINE: No physical force — a national CO2-emissions estimate (Mt) is an
+# accounting statistic, not a measurement of the CO2 field. No organism senses
+# a national emissions ledger.
+# Old block: https://api.worldbank.org/v2/country/WLD/indicator/EN.GHG.CO2.MT.CE.AR5?format=json | force em | ttl 2592000
+
+# Block 27: biosphere_worldbank_death_rate
+# DECLINE: No physical force — a World Bank death-rate statistic (deaths per
+# 1000) is a demographic registry value. No organism senses a registry rate.
+# Old block: https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 28: biosphere_worldbank_gdp_growth_DEU
+# DECLINE: No physical force — GDP growth percent is economic data. Litmus test
+# fails: no organism senses a market statistic.
+# Old block: https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json | force em | ttl 2592000
+
+# Block 29: biosphere_worldbank_gdp_growth_afghanistan
+# DECLINE: No physical force — GDP growth percent is economic data. Same
+# disposition as Block 28.
+# Old block: https://api.worldbank.org/v2/country/AFG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 30: biosphere_worldbank_gdp_growth_albania
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/ALB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 31: biosphere_worldbank_gdp_growth_algeria
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/DZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 32: biosphere_worldbank_gdp_growth_american_samoa
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/ASM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 33: biosphere_worldbank_gdp_growth_andorra
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/AND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 34: biosphere_worldbank_gdp_growth_angola
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/AGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 35: biosphere_worldbank_gdp_growth_antigua_and_barbuda
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/ATG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 36: biosphere_worldbank_gdp_growth_argentina
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/ARG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 37: biosphere_worldbank_gdp_growth_armenia
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/ARM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 38: biosphere_worldbank_gdp_growth_aruba
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/ABW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 39: biosphere_worldbank_gdp_growth_australia
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/AUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 40: biosphere_worldbank_gdp_growth_austria
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/AUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 41: biosphere_worldbank_gdp_growth_azerbaijan
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/AZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 42: biosphere_worldbank_gdp_growth_bahamas
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/BHS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 43: biosphere_worldbank_gdp_growth_bahrain
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/BHR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 44: biosphere_worldbank_gdp_growth_bangladesh
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/BGD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 45: biosphere_worldbank_gdp_growth_barbados
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/BRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 46: biosphere_worldbank_gdp_growth_belarus
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/BLR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 47: biosphere_worldbank_gdp_growth_belgium
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/BEL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 48: biosphere_worldbank_gdp_growth_belize
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/BLZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 49: biosphere_worldbank_gdp_growth_benin
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/BEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000
+
+# Block 50: biosphere_worldbank_gdp_growth_bermuda
+# DECLINE: No physical force — GDP growth percent is economic data.
+# Old block: https://api.worldbank.org/v2/country/BMU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 | force em | ttl 2592000

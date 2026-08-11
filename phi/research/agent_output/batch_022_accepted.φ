@@ -1,0 +1,6 @@
+# batch_022: 50 blocks, 0 accepted. All 50 are celestial cmap catalogs
+# (Gaia DR3, SIMBAD, SDSS, NASA Exoplanet Archive). Declined under the
+# Force Gate: catalogs are static astrometric/photometric registry rows,
+# not live measurements of a physical field. Precedent: batch_009 block 12
+# (cosmos_gaia_dr3_sample), batch_016 blocks 15/17 (Exoplanet Archive).
+# Per-block disposition in batch_022_declined.φ.

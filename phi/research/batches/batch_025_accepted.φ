@@ -1,0 +1,6 @@
+# ── Batch 025: Accepted Sources ──
+# 0 honored: all 50 blocks in batch_025_gold_14k.φ are bare counts
+# (Overpass out count) or static catalogs (Gaia/SDSS/Simbad TAP,
+# impact-crater / meteorite-landing / populated-places geojson).
+# Per the skip directive (ephemeris/model/counts/catalogs), none pass
+# the Force Gate. All dispositions recorded in batch_025_declined.φ.

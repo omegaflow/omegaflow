@@ -1,0 +1,98 @@
+# Block 3: magnetosphere_frd_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_frd
+# (block 2). The F-field path name differs only in suffix (`f_nt` vs `s_nt`). One
+# oscillator set per station; FRD is accepted as magnetosphere_frd.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 5: magnetosphere_frn_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_frn
+# (block 4). One oscillator set per station; FRN is accepted as magnetosphere_frn.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 7: magnetosphere_fur_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_fur
+# (block 6). The old block also carries a trailing `V` artifact on the lon line.
+# FUR is accepted as magnetosphere_fur.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 9: magnetosphere_gan_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_gan
+# (block 8). One oscillator set per station; GAN is accepted as magnetosphere_gan.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 13: magnetosphere_gng_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_gng
+# (block 12). One oscillator set per station; GNG is accepted as magnetosphere_gng.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 15: magnetosphere_gua_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_gua
+# (block 14). One oscillator set per station; GUA is accepted as magnetosphere_gua.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 17: magnetosphere_gui_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_gui
+# (block 16). One oscillator set per station; GUI is accepted as magnetosphere_gui.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 21: magnetosphere_hlp_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_hlp
+# (block 20). One oscillator set per station; HLP is accepted as magnetosphere_hlp.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 23: magnetosphere_hon_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_hon
+# (block 22). One oscillator set per station; HON is accepted as magnetosphere_hon.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 25: magnetosphere_hrb_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_hrb
+# (block 24). One oscillator set per station; HRB is accepted as magnetosphere_hrb.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 27: magnetosphere_hrn_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_hrn
+# (block 26). One oscillator set per station; HRN is accepted as magnetosphere_hrn.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 30: magnetosphere_hyb_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_hyb
+# (block 29). One oscillator set per station; HYB is accepted as magnetosphere_hyb.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 32: magnetosphere_ipm_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_ipm
+# (block 31). One oscillator set per station; IPM is accepted as magnetosphere_ipm.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 35: magnetosphere_izn_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_izn
+# (block 34). One oscillator set per station; IZN is accepted as magnetosphere_izn.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 38: magnetosphere_kak_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_kak
+# (block 37). One oscillator set per station; KAK is accepted as magnetosphere_kak.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 40: magnetosphere_kdu_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_kdu
+# (block 39). The non-hapi block carries a trailing `Vv` artifact on the lon line,
+# cleaned in the accepted conversion. One oscillator set per station; KDU is
+# accepted as magnetosphere_kdu.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 42: magnetosphere_kir_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_kir
+# (block 41). One oscillator set per station; KIR is accepted as magnetosphere_kir.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 45: magnetosphere_kny_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_kny
+# (block 44). One oscillator set per station; KNY is accepted as magnetosphere_kny.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400
+
+# Block 47: magnetosphere_kou_hapi
+# DECLINE: Duplicate station — identical URL and coordinates to magnetosphere_kou
+# (block 46). One oscillator set per station; KOU is accepted as magnetosphere_kou.
+# Old block: https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json | force em | ttl 86400

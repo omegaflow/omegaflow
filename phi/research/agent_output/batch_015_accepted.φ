@@ -1,0 +1,6 @@
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+ttl 86400
+on mars -4.5895 137.4417 0
+field soles.0.min_temp cosmos_mars_min_temp_c exponential-decay thermal C 1.0 0.0 0.0
+field soles.0.max_temp cosmos_mars_max_temp_c exponential-decay thermal C 1.0 0.0 0.0
+field soles.0.pressure cosmos_mars_pressure_pa gaussian-inverse-square acoustic Pa 1.0 0.0 0.0

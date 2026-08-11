@@ -1,0 +1,181 @@
+# Block 1: cryosphere_nsidc_sea_ice_north
+# DECLINE: Derived satellite product — sea-ice extent is a passive-microwave
+# satellite retrieval aggregated over the whole hemisphere; a single scalar
+# with no position. Same NSIDC G02135 extent feed declined in batch_015
+# (blocks 46-50).
+# Old block: https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv | force em | ttl 86400
+
+# Block 2: cryosphere_nsidc_sea_ice_south
+# DECLINE: Derived satellite product — sea-ice extent v4 CSV is a satellite
+# retrieval aggregated hemisphere-wide; a single scalar with no position.
+# Old block: https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv | force em | ttl 86400
+
+# Block 3: cryosphere_permafrost_barrow — ACCEPT (in-situ air temperature at
+# Barrow, Alaska, NOAA GML BRW station). See batch_016_accepted.φ.
+# Extraction: GML met files are headerless fixed-width; `rows` + field index 9
+# (air temperature) iterates the hourly series. Old `last_row 8` targeted the
+# pressure column mislabeled as temperature.
+
+# Block 4: cryosphere_sea_ice_north
+# DECLINE: Derived satellite product — `last_row extent` extracts the same
+# hemisphere-wide passive-microwave retrieval as Block 1; no position.
+# Old block: https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv | force em | ttl 86400
+
+# Block 5: cryosphere_sea_ice_south
+# DECLINE: Derived satellite product — `last_row extent` extracts the
+# hemisphere-wide satellite retrieval; single scalar, no position.
+# Old block: https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv | force em | ttl 86400
+
+# Block 6: desi_galaxy_redshifts_total
+# DECLINE: Bare count — `last_line` reads a galaxy-redshift total from a DESI
+# papers landing page (HTML). A catalog tally with no position and no individual
+# events; no organism senses a papers page count.
+# Old block: https://data.desi.lbl.gov/public/papers/ | force em | ttl 86400
+
+# Block 7: exoplanet_confirmed_total
+# DECLINE: Bare count — `SELECT COUNT(*)` extracts a scalar total of confirmed
+# exoplanets. A registry tally, no physical force.
+# Old block: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json | force em | ttl 86400
+
+# Block 8: exosphere_donki_cme
+# DECLINE: Bare count — `count lines` tallies DONKI CME reports over 2024. No
+# oscillator at any ejection; the coronagraph flux is not delivered.
+# Old block: https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME/?startDate=2024-01-01&endDate=2024-12-31 | force em | ttl 86400
+
+# Block 9: exosphere_donki_flares
+# DECLINE: Bare count — `count lines` tallies DONKI flare reports; a registry
+# count with no event oscillators.
+# Old block: https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR/?startDate=2024-01-01&endDate=2024-12-31 | force em | ttl 86400
+
+# Block 10: exosphere_donki_gst
+# DECLINE: Bare count — `count lines` tallies DONKI geomagnetic storm reports;
+# a registry count with no oscillator at any storm.
+# Old block: https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/GST/?startDate=2024-01-01&endDate=2024-12-31 | force em | ttl 86400
+
+# Block 11: exosphere_donki_hss
+# DECLINE: Bare count — `count lines` tallies DONKI high-speed stream reports.
+# Old block: https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS/?startDate=2024-01-01&endDate=2024-12-31 | force em | ttl 86400
+
+# Block 12: exosphere_donki_ips
+# DECLINE: Bare count — `count lines` tallies DONKI interplanetary shock
+# reports; no oscillator at any shock front.
+# Old block: https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS/?startDate=2024-01-01&endDate=2024-12-31 | force em | ttl 86400
+
+# Block 13: exosphere_donki_mpc
+# DECLINE: Bare count — `count lines` tallies DONKI magnetopause crossing
+# reports; a registry count with no event positions.
+# Old block: https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/MPC/?startDate=2024-01-01&endDate=2024-12-31 | force em | ttl 86400
+
+# Block 14: exosphere_donki_sep
+# DECLINE: Bare count — `count lines` tallies DONKI solar energetic particle
+# event reports; no oscillator at any SEP event.
+# Old block: https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP/?startDate=2024-01-01&endDate=2024-12-31 | force em | ttl 86400
+
+# Block 15: exosphere_exoplanet_count
+# DECLINE: Catalog — cmap extracts confirmed-exoplanet parameters (equilibrium
+# temperature, radius, period, mass). These are catalog-derived quantities
+# computed from transit/stellar models, not measurements of a physical field an
+# organism senses. A catalog fails the Force Gate.
+# Old block: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?... | force em | ttl 86400
+
+# Block 16: exosphere_f107_flux — ACCEPT (SWPC F10.7 cm solar radio flux, a
+# live EM emission measurement). See batch_016_accepted.φ.
+
+# Block 17: exosphere_hot_jupiters
+# DECLINE: Catalog — cmap extracts hot-Jupiter equilibrium temperature and
+# period; catalog-derived parameters with no direct measurement.
+# Old block: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?... | force em | ttl 86400
+
+# Block 18-31: geosphere_earthquakes_2015_M5 .. usgs_m4plus_decade — ACCEPT
+# (USGS fdsnws GeoJSON earthquake events with magnitude and depth at position).
+# See batch_016_accepted.φ. Force seismic-surface, kernel erfc.
+
+# Block 32: geosphere_historical_soil
+# DECLINE: Reanalysis — archive-api.open-meteo.com serves ERA5 reanalysis
+# soil temperature/moisture fields, not in-situ sensor readings. No organism
+# senses a reanalysis product.
+# Old block: https://archive-api.open-meteo.com/v1/archive?... | force em | ttl 86400
+
+# Block 33: geosphere_noaa_ch4_global — ACCEPT (in-situ global CH4 network
+# monthly mean, diffusion). See batch_016_accepted.φ.
+
+# Block 34: geosphere_noaa_co2_annual_mean — ACCEPT (in-situ global annual CO2
+# mean, diffusion). See batch_016_accepted.φ. Extraction uses `lastrow mean`
+# because `last_line` would read the trailing uncertainty column.
+
+# Block 35: geosphere_noaa_co2_mlo_monthly — ACCEPT (Mauna Loa monthly CO2
+# flask record, diffusion). See batch_016_accepted.φ.
+
+# Block 36: geosphere_noaa_n2o_global — ACCEPT (in-situ global N2O network
+# monthly mean, diffusion). See batch_016_accepted.φ.
+
+# Block 37: geosphere_noaa_sea_level_rise
+# DECLINE: Derived satellite product — global mean sea level from satellite
+# altimetry; a single aggregate scalar with no position. Derived products fail
+# the Force Gate.
+# Old block: https://www.star.nesdis.noaa.gov/sod/lsa/SeaLevelRise/slr/slr_sla_gbl_keep_tab.txt | force em | ttl 86400
+
+# Block 38: geosphere_noaa_sf6_global — ACCEPT (in-situ global SF6 network
+# monthly mean, diffusion). See batch_016_accepted.φ.
+
+# Block 39: geosphere_usdm_conus_drought
+# DECLINE: Derived index — DSCI is a composite drought severity index computed
+# from multiple inputs; no physical propagation mechanism. No organism senses a
+# derived severity index.
+# Old block: https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?... | force em | ttl 86400
+
+# Block 40: geosphere_usgs_volcanoes_hans
+# DECLINE: Catalog — HANS getUSVolcanoes is a static registry of US volcanoes
+# with elevation and vnum attributes. A station catalog, not a measurement.
+# Old block: https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes | force em | ttl 86400
+
+# Block 41: github_repos_total
+# DECLINE: Bare count — `field total_count` reads a GitHub repository census. A
+# registry count with no physical force.
+# Old block: https://api.github.com/search/repositories?q=stars:>0&per_page=1 | force em | ttl 86400
+
+# Block 42: github_users_total
+# DECLINE: Bare count — `field total_count` reads a GitHub user census. A
+# registry count with no physical force.
+# Old block: https://api.github.com/search/users?q=type:user&per_page=1 | force em | ttl 86400
+
+# Block 43: halley_vectors
+# DECLINE: Ephemeris-model product — Horizons VECTORS orbit integration for
+# comet Halley. Halley is not among the ephemeris-CDN body set, but the block
+# delivers a model-derived orbital distance, not a field measurement; the old
+# `ephemeris` extract has no 9-part field form. If Halley coverage is wanted it
+# belongs in the ephemeris CDN pipeline (ephemeris_halley.bin).
+# Old block: https://ssd.jpl.nasa.gov/api/horizons.api?... | force em | ttl 86400
+
+# Block 44: hydrosphere_emodnet_vessel_density
+# DECLINE: Bare count — `count features` tallies a vessel-density WFS polygon
+# set. An infrastructure density layer, not a measurement of ship traffic the
+# block could radiate.
+# Old block: https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&... | force em | ttl 86400
+
+# Block 45: hydrosphere_ooi_ga01sumo_pco2 — ACCEPT (in-situ OOI mooring pCO2
+# and SST, diffusion + thermal). See batch_016_accepted.φ.
+
+# Block 46: hydrosphere_oisst_sst
+# DECLINE: Reanalysis/derived analysis — OISST is an optimum-interpolation
+# analysis blending satellite and in-situ observations into a gridded field.
+# A derived product, not a direct measurement.
+# Old block: https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?... | force em | ttl 86400
+
+# Block 47: hydrosphere_pmel_co2_air — ACCEPT (in-situ mooring air pCO2,
+# diffusion). See batch_016_accepted.φ.
+
+# Block 48: hydrosphere_pmel_co2_ph — ACCEPT (in-situ mooring seawater pCO2 and
+# pH, diffusion). See batch_016_accepted.φ.
+
+# Block 49: iers_ut1_utc
+# DECLINE: No physical force — UT1-UTC is a time-scale offset derived from
+# Earth-rotation monitoring. A reference constant; no organism senses a time
+# correction.
+# Old block: https://maia.usno.navy.mil/ser7/finals2000A.daily | force em | ttl 86400
+
+# Block 50: lidar_3dep_elevation
+# DECLINE: Geographic infrastructure — 3DEP elevation is a static terrain DEM
+# served per query point. A mapped surface, not a dynamic measurement; derived
+# geographic products fail the Force Gate.
+# Old block: https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&output=json | force em | ttl 86400
