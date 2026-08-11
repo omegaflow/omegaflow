@@ -901,11 +901,13 @@ fn parse_iso_utc(s: &str) -> Option<u64> {
     let mut tp = time_core.split(':');
     let hh: u32 = tp.next()?.parse().ok()?;
     let mm: u32 = tp.next()?.parse().ok()?;
-    let s2 = match tp.next() {
-        Some(s) => s,
-        None => return None,
+    let ss: u32 = match tp.next() {
+        Some(s) => match s.parse::<u32>() {
+            Ok(v) => v,
+            Err(_) => return None,
+        },
+        None => 0,
     };
-    let ss: u32 = s2.parse().ok()?;
     let days = ymd_to_days(y, m, d)? as i64;
     let unix = days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + (ss as i64);
     Some(unix as u64)
@@ -7003,8 +7005,38 @@ fn main() {
                 .fetched = now;
             if let Some((name, eph)) = res.eph_update {
                 let mut eph_map = (*archive.body_ephemerides).clone();
-                eph_map.insert(name, eph);
+                eph_map.insert(name.clone(), eph);
                 archive.body_ephemerides = Arc::new(eph_map);
+                let fc = FieldConfig {
+                    key: name.clone(),
+                    name: name.clone(),
+                    kernel: 0,
+                    force: 1,
+                    tau: 86400.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                };
+                let channel = Channel {
+                    name: name.clone(),
+                    value: 1.0,
+                    position: Position::Source,
+                    epoch: now,
+                };
+                let frame = Frame::Barycenter {
+                    body_name: name.clone(),
+                    scale: 1.0,
+                };
+                if let Some(osc) = anchor(
+                    &channel,
+                    &fc,
+                    86400.0,
+                    Some(0),
+                    Some(&frame),
+                    None,
+                    &archive.body_ephemerides,
+                ) {
+                    fetched_oscillators.push(osc);
+                }
             }
             let src = &archive.sources[res.source_idx];
             for (channel, sensor) in &res.channels {
