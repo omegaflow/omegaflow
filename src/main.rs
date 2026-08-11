@@ -2082,6 +2082,12 @@ struct FieldConfig {
     advection: f64,
 }
 
+struct BrowserSensor {
+    key: String,
+    force: u8,
+    kernel: u8,
+}
+
 fn force_id_of(name: &str) -> Option<u8> {
     match name {
         "em" => Some(0),
@@ -2096,7 +2102,7 @@ fn force_id_of(name: &str) -> Option<u8> {
     }
 }
 
-fn sensor_config(name: &str) -> Option<FieldConfig> {
+fn sensor_config(name: &str) -> Option<BrowserSensor> {
     let kl = name.to_lowercase();
     let (force, kernel, _unit) = if kl.contains("temperature")
         || kl.contains("temp")
@@ -2155,14 +2161,10 @@ fn sensor_config(name: &str) -> Option<FieldConfig> {
     } else {
         return None;
     };
-    Some(FieldConfig {
+    Some(BrowserSensor {
         key: name.into(),
-        name: name.into(),
-        kernel,
         force,
-        tau: 0.0,
-        absorption: 0.0,
-        advection: 0.0,
+        kernel,
     })
 }
 
@@ -2869,7 +2871,16 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     };
                     let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
                     for (name, value) in &field_values {
-                        if let Some(fc) = sensor_config(name) {
+                        if let Some(bs) = sensor_config(name) {
+                            let fc = FieldConfig {
+                                key: bs.key.clone(),
+                                name: bs.key.clone(),
+                                kernel: bs.kernel,
+                                force: bs.force,
+                                tau: 0.0,
+                                absorption: 0.0,
+                                advection: 0.0,
+                            };
                             if value.is_finite() {
                                 channels.push((
                                     Channel {
@@ -2878,7 +2889,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                         name: fc.name.clone(),
                                         value: *value,
                                     },
-                                    fc.clone(),
+                                    fc,
                                 ));
                             }
                         }
