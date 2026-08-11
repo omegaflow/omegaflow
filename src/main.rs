@@ -2097,37 +2097,73 @@ fn force_id_of(name: &str) -> Option<u8> {
 }
 
 fn sensor_config(name: &str) -> Option<FieldConfig> {
-    match name {
-        "lat" | "lon" | "alt" | "acc" | "spd" | "hdg" | "body" => None,
-        "mic" => Some(FieldConfig {
-            key: name.into(),
-            name: name.into(),
-            kernel: 2,
-            force: 2,
-            tau: 0.0,
-            absorption: 0.0,
-            advection: 0.0,
-        }),
-        "battery.level" => Some(FieldConfig {
-            key: name.into(),
-            name: name.into(),
-            kernel: 0,
-            force: 5,
-            tau: 0.0,
-            absorption: 0.0,
-            advection: 0.0,
-        }),
-        "battery.charging" => Some(FieldConfig {
-            key: name.into(),
-            name: name.into(),
-            kernel: 0,
-            force: 5,
-            tau: 0.0,
-            absorption: 0.0,
-            advection: 0.0,
-        }),
-        _ => None,
-    }
+    let kl = name.to_lowercase();
+    let (force, kernel, _unit) = if kl.contains("temperature")
+        || kl.contains("temp")
+        || kl == "thermistor"
+    {
+        (5, kernel_for_force(5), "C")
+    } else if kl.contains("pressure") || kl.contains("baro") || kl == "pres" {
+        (6, kernel_for_force(6), "hPa")
+    } else if kl.contains("humidity") || kl.contains("humid") || kl == "rh" || kl == "moisture" {
+        (5, kernel_for_force(5), "%")
+    } else if kl.contains("wind") && kl.contains("speed") || kl == "windspeed" || kl == "anemometer"
+    {
+        (6, kernel_for_force(6), "m/s")
+    } else if (kl.contains("wind") && kl.contains("dir"))
+        || kl == "winddirection"
+        || kl == "winddir"
+        || kl == "vane"
+    {
+        (6, kernel_for_force(6), "deg")
+    } else if kl.contains("mic")
+        || kl.contains("audio")
+        || kl.contains("sound")
+        || kl.contains("noise")
+        || kl == "spl"
+    {
+        (2, kernel_for_force(2), "Pa")
+    } else if kl.contains("light")
+        || kl.contains("lux")
+        || kl.contains("lumin")
+        || kl.contains("irradiance")
+    {
+        (0, kernel_for_force(0), "lx")
+    } else if kl.contains("battery")
+        && (kl.contains("level") || kl.contains("pct") || kl.contains("soc"))
+    {
+        (5, kernel_for_force(5), "%")
+    } else if kl.contains("battery") && (kl.contains("volt") || kl == "voltage") {
+        (8, kernel_for_force(8), "V")
+    } else if kl.contains("battery") && kl.contains("current") {
+        (8, kernel_for_force(8), "A")
+    } else if kl.contains("co2")
+        || kl.contains("voc")
+        || kl.contains("pm2")
+        || kl.contains("pm10")
+        || kl.contains("gas")
+    {
+        (5, kernel_for_force(5), "ppm")
+    } else if kl.contains("magnet") || kl.contains("compass") || kl.contains("b_field") {
+        (0, 0, "nT")
+    } else if kl.contains("accelerometer") || kl.contains("acc") || kl.contains("vibration") {
+        (3, kernel_for_force(3), "m/s2")
+    } else if kl.contains("gyro") {
+        (3, kernel_for_force(3), "rad/s")
+    } else if kl.contains("gps") || kl.contains("gnss") {
+        return None;
+    } else {
+        return None;
+    };
+    Some(FieldConfig {
+        key: name.into(),
+        name: name.into(),
+        kernel,
+        force,
+        tau: 0.0,
+        absorption: 0.0,
+        advection: 0.0,
+    })
 }
 
 #[derive(Clone)]
