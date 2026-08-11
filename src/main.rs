@@ -3502,6 +3502,44 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_extracts.push(Extract::Field(fc.clone()));
                 }
             }
+            "field" if parts.len() == 5 => {
+                let f = match force_id_of(parts[2]) {
+                    Some(f) => f,
+                    None => continue,
+                };
+                let tau: f64 = match parts[4].parse() {
+                    Ok(v) if v > 0.0 => v,
+                    _ => continue,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[1].to_string(),
+                    kernel: kernel_for_force(f),
+                    force: f,
+                    tau,
+                    absorption: 0.0,
+                    advection: 0.0,
+                };
+                if let Some(ext) = cur_extracts.last_mut() {
+                    let fields: Option<&mut Vec<FieldConfig>> = match ext {
+                        Extract::Map { fields, .. } => Some(fields),
+                        Extract::CelestialMap { fields, .. } => Some(fields),
+                        Extract::Rows { fields, .. } => Some(fields),
+                        Extract::Flatten { fields, .. } => Some(fields),
+                        Extract::CmrPolygon { fields, .. } => Some(fields),
+                        Extract::CelestialPolygon { fields, .. } => Some(fields),
+                        Extract::KeplerMap { fields, .. } => Some(fields),
+                        _ => None,
+                    };
+                    if let Some(flds) = fields {
+                        flds.push(fc);
+                    } else {
+                        cur_extracts.push(Extract::Field(fc.clone()));
+                    }
+                } else {
+                    cur_extracts.push(Extract::Field(fc.clone()));
+                }
+            }
             "field" if parts.len() == 3 => {
                 if let Some(ext) = cur_extracts.last_mut() {
                     if let Some(f) = cur_force {
