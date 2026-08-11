@@ -83,6 +83,39 @@ jobs:
           --body "Pages health check failed. https://omegaflow.space/ may be down." \
           --label health
 
+  probe-smoke:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo run --release -- --probe phi/research/probe_batches/batch_003.φ
+    - uses: actions/upload-artifact@v4
+      with:
+        name: probe-output
+        path: probe_output.φ
+
+  probe-full:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: |
+        mkdir -p probe-results
+        for f in phi/research/probe_batches/*_probe.φ; do
+          [ -f "$f" ] || continue
+          echo "=== probing $(basename $f) ==="
+          timeout 120 cargo run --release -- --probe "$f" 2>&1 | tail -3
+          fields=$(grep -c '^#.*= ' probe_output.φ 2>/dev/null || echo 0)
+          out="probe-results/$(basename $f .φ)_out.φ"
+          mv probe_output.φ "$out" 2>/dev/null
+          echo "  $fields fields"
+        done
+    - uses: actions/upload-artifact@v4
+      with:
+        name: probe-full-results
+        path: probe-results/
+
   sources-package:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest

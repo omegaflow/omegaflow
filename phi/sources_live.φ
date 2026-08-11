@@ -1,7 +1,5 @@
 # ── Accepted: anu_quantum_entropy ──
 # ANU Quantum Random Number Generator
-# Photon arrival times via quantum optics. Force: EM, kernel: inverse-square.
-# Frame: ANU campus, Canberra (-35.2809, 149.1300)
 
 url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
 ttl 60
