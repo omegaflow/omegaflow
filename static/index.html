@@ -36,8 +36,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
 
         const oscillators = [];
         const indexMap = new Map();
-        let flatRings = new Float32Array(1024).fill(Number.EPSILON);
+        let flatRings = new Float32Array(1024);
         let CAPTURE_RING_SIZE = 32;
+        const GRID_TO_ANGLE = Math.pow(2, 62);
         let lastTs = 0, debugEl = null, lastDebug = 0;
         let lastManifestTime = 0;
         let stableTick = 0;
@@ -157,7 +158,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             });
             ws.addEventListener('open', () => {
                 reconnectAttempts = 0;
-                syncFrame([], [{ t: tPresence, x: xPresence, y: yPresence, z: zPresence }]).then(response => {
+                syncFrame([], [{ t: tPresence, x: xPresence, y: yPresence, z: zPresence }], { x: xPresence, y: yPresence, z: zPresence, t: tPresence, range: Math.max(window.innerWidth, window.innerHeight) * gridStep * 2 }).then(response => {
                     if (response && response.count > 0) rawWindowResponse = response;
                 }).catch(() => { console.warn('stream empty'); });
             });
@@ -203,7 +204,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     if (!indexMap.has('lat')) {
                         registerOscillator('lat', c.latitude, 1.0);
                         registerOscillator('lon', c.longitude, 1.0);
-                        registerOscillator('alt', c.altitude || 0, 1.0);
+                        if (c.altitude != null) registerOscillator('alt', c.altitude, 1.0);
                         registerOscillator('acc', c.accuracy, 1.0);
                         const hash = window.location.hash.replace('#', '');
                         for (const part of hash.split('&')) {
@@ -231,7 +232,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                     }
                     recordSample('lat', c.latitude);
                     recordSample('lon', c.longitude);
-                    recordSample('alt', c.altitude || 0);
+                    if (c.altitude != null) recordSample('alt', c.altitude);
                     recordSample('acc', c.accuracy);
                     if (stationBodyId) {
                         recordSample('body', stationBodyId);
@@ -256,18 +257,21 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         
         const fieldShader = `
 struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, presence: vec4f };
-const PROPAGATION_SPEED: array<f32, 8> = array<f32, 8>(
-    299792458.0,
-    299792458.0,
-    343.0,
+const C_VACUUM: f32 = 299792458.0;
+const AUDIO_SPEED_AIR: f32 = 343.0;
+const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
+    C_VACUUM,
+    C_VACUUM,
+    AUDIO_SPEED_AIR,
     6000.0,
     3000.0,
     0.0,
     0.0,
     0.0,
+    C_VACUUM,
 );
 fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v: f32) -> f32 {
-    let v_const = PROPAGATION_SPEED[min(force_type, 7u)];
+    let v_const = PROPAGATION_SPEED[force_type];
     let v = select(v_const, advective_v, force_type == 7u && advective_v > 0.0);
     let temporal = abs(vp.presence.w - t);
     let retarded = select(temporal - d_mag / v, temporal, v == 0.0 || d_mag == 0.0);
@@ -343,7 +347,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.pos = vec4f(clip, 0.0, 1.0);
     out.uv = quad[vid];
 
-    let k_id = min(u32(mt.z), 6u);
+    let k_id = u32(mt.z);
     out.kernel_id = k_id;
     out.absorption = f32(tm.w);
     out.advection = fm.x;
@@ -354,7 +358,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let hue_center = fract(log2(max(tau, 1.0)) / 16.0 + f32(k_id) * 0.125);
     let tau_freq = 1.0 / max(tau, exp2(-32.0));
     let color_shift = clamp(log2(tau_freq) / 8.0, -0.25, 0.25);
-    let hue = fract(hue_center + color_shift + f32(u32(tm.z)) * 0.125);
+    let hue = fract(hue_center + color_shift + f32(u32(tm.z)) / 9.0);
     let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y, u32(tm.z), fm.x)) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
     let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
     out.color = rgb;
@@ -572,8 +576,8 @@ fn presence_probe() {
                 await gpu.queue.onSubmittedWorkDone();
                 await probeRead.mapAsync(GPUMapMode.READ);
                 const data = new Float32Array(probeRead.getMappedRange());
-                probedOmegas = [data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]];
-                probedOmega = data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8];
+                probedOmegas = [data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]];
+                probedOmega = data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7];
                 probeRead.unmap();
             } catch { console.warn('position stream empty'); } finally { probePending = false; }
         }
@@ -601,18 +605,18 @@ fn presence_probe() {
                 const raw = rawWindowResponse.field;
                 const rawm = rawWindowResponse.meta;
                 const fref = new Float64Array(7);
-                const ft_vals = [[], [], [], [], [], [], [], [], []];
+                const kid_vals = [[], [], [], [], [], [], []];
                 for (let i = 0; i < n; i++) {
-                    const ft = rawm[i * 4 + 2] | 0;
-                    if (ft >= 0 && ft < 7) {
+                    const kid = rawm[i * 4 + 2] | 0;
+                    if (kid < 7) {
                         const av = Math.abs(raw[i * 8 + 3]);
-                        if (av > 0 && isFinite(av)) ft_vals[ft].push(av);
+                        if (av > 0 && isFinite(av)) kid_vals[kid].push(av);
                     }
                 }
-                for (let ft = 0; ft < 7; ft++) {
-                    if (ft_vals[ft].length > 0) {
-                        ft_vals[ft].sort((a, b) => Math.log10(Math.max(a, 1e-30)) - Math.log10(Math.max(b, 1e-30)));
-                        cachedFref[ft] = ft_vals[ft][ft_vals[ft].length >> 1];
+                for (let k = 0; k < 7; k++) {
+                    if (kid_vals[k].length > 0) {
+                        kid_vals[k].sort((a, b) => Math.log10(Math.max(a, 1e-30)) - Math.log10(Math.max(b, 1e-30)));
+                        cachedFref[k] = kid_vals[k][kid_vals[k].length >> 1];
                     }
                 }
                 try {
@@ -685,7 +689,7 @@ fn presence_probe() {
         let fieldCount = 0;
         const cachedFref = new Float64Array(7);
         async function syncField(transmitList, queries) {
-            const response = await syncFrame(transmitList, queries, { x: xPresence, y: yPresence, z: zPresence, t: tPresence });
+            const response = await syncFrame(transmitList, queries, { x: xPresence, y: yPresence, z: zPresence, t: tPresence, range: Math.max(evalW, evalH) * gridStep * 2 });
             rawWindowResponse = response || rawWindowResponse;
         }
 
@@ -1131,7 +1135,7 @@ fn presence_probe() {
                     "Connection\n" +
                     `  WebSocket: ${transport.socket ? 'open' : 'closed'}\n` +
                     `  Round trip: ${transport.rtt.toFixed(0)}ms\n\n` +
-                    "Browser sensors\n" +
+                    "Device sensors\n" +
                     (topLines || "  Waiting for interaction...");
                 debugFontCnt++;
                 if (debugFontCnt % 30 === 0) {
@@ -1202,8 +1206,8 @@ fn presence_probe() {
             const [fr, fu, ff] = orientationFrame();
             if (pointers.size === 1) {
                 if (p.button === 2) {
-                    if (dx !== 0) qOrientation = qNorm(qMul(qAxisAngle(fu, dx * gridStep / 4611686018427387904), qOrientation));
-                    if (dy !== 0) qOrientation = qNorm(qMul(qAxisAngle(fr, dy * gridStep / 4611686018427387904), qOrientation));
+                    if (dx !== 0) qOrientation = qNorm(qMul(qAxisAngle(fu, dx * gridStep / GRID_TO_ANGLE), qOrientation));
+                    if (dy !== 0) qOrientation = qNorm(qMul(qAxisAngle(fr, dy * gridStep / GRID_TO_ANGLE), qOrientation));
                 } else if (Math.abs(e.clientX - p.bx) > 10 || Math.abs(e.clientY - p.by) > 10) {
                     const totalDx = e.clientX - p.bx;
                     const totalDy = e.clientY - p.by;

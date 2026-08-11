@@ -21,8 +21,8 @@ export async function syncFrame(inputs, queries, presence) {
     if (inputs.length === 0 && queries.length === 0) return emptyResp;
 
     let inputBytes = 0;
-    for (const inp of inputs) inputBytes += 9 + new TextEncoder().encode(inp.name).length;
-    const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32);
+    for (const inp of inputs) inputBytes += 17 + new TextEncoder().encode(inp.name).length;
+    const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32 + 40);
     const dv = new DataView(buf);
     const id = ++transport.seq;
     dv.setUint32(0, id, true);
@@ -33,6 +33,7 @@ export async function syncFrame(inputs, queries, presence) {
         const nameBytes = new TextEncoder().encode(inp.name);
         dv.setUint8(off, nameBytes.length); off += 1;
         new Uint8Array(buf, off, nameBytes.length).set(nameBytes); off += nameBytes.length;
+        dv.setFloat64(off, inp.tau || 0, true); off += 8;
     }
     dv.setUint32(off, queries.length, true); off += 4;
     for (const q of queries) {
@@ -41,6 +42,11 @@ export async function syncFrame(inputs, queries, presence) {
         dv.setFloat64(off, q.y, true); off += 8;
         dv.setFloat64(off, q.z, true); off += 8;
     }
+    dv.setFloat64(off, presence.x, true); off += 8;
+    dv.setFloat64(off, presence.y, true); off += 8;
+    dv.setFloat64(off, presence.z, true); off += 8;
+    dv.setFloat64(off, presence.t, true); off += 8;
+    dv.setFloat64(off, presence.range, true); off += 8;
 
     const startTime = performance.now();
     if (!transport.socket || transport.socket.readyState !== WebSocket.OPEN) return emptyResp;

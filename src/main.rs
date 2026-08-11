@@ -48,7 +48,6 @@ const SONIFICATION_ROOT_FREQ: f32 = 220.0;
 const SONIFICATION_KERNEL_STEP: f32 = 110.0;
 const SONIFICATION_FORCE_STEP: f32 = 55.0;
 const SURFACE_MOTION_DT: f64 = 0.01;
-const KEPLER_ECCENTRICITY_MAX: f64 = 0.999;
 
 #[derive(Clone)]
 struct BodyProperties {
@@ -440,7 +439,8 @@ impl Motion {
 #[derive(Clone)]
 enum OscillatorSource {
     Api(u32),
-    Browser,
+    Device,
+    Body,
 }
 
 #[derive(Clone)]
@@ -2041,14 +2041,10 @@ fn kernel_id_of(name: &str) -> Option<u8> {
     }
 }
 
-fn kernel_for_force(force: u8) -> u8 {
-    match force {
-        0 | 1 => 0,
-        5 | 6 => 3,
-        4 => 1,
-        8 => 5,
-        _ => 1,
-    }
+const FORCE_KERNEL: [u8; 9] = [0, 0, 1, 1, 1, 3, 3, 1, 5];
+
+fn kernel_for_force(force: u8) -> Option<u8> {
+    FORCE_KERNEL.get(force as usize).copied()
 }
 
 fn extract_fields(ext: &Extract) -> &[FieldConfig] {
@@ -2141,54 +2137,54 @@ fn sensor_config(name: &str) -> Option<BrowserSensor> {
         || kl.contains("temp")
         || kl == "thermistor"
     {
-        (5, kernel_for_force(5), 60.0)
+        (5, 3, 60.0)
     } else if kl.contains("pressure") || kl.contains("baro") || kl == "pres" {
-        (6, kernel_for_force(6), 60.0)
+        (6, 3, 60.0)
     } else if kl.contains("humidity") || kl.contains("humid") || kl == "rh" || kl == "moisture" {
-        (5, kernel_for_force(5), 300.0)
+        (5, 3, 300.0)
     } else if kl.contains("wind") && kl.contains("speed") || kl == "windspeed" || kl == "anemometer"
     {
-        (6, kernel_for_force(6), 10.0)
+        (6, 3, 10.0)
     } else if (kl.contains("wind") && kl.contains("dir"))
         || kl == "winddirection"
         || kl == "winddir"
         || kl == "vane"
     {
-        (6, kernel_for_force(6), 10.0)
+        (6, 3, 10.0)
     } else if kl.contains("mic")
         || kl.contains("audio")
         || kl.contains("sound")
         || kl.contains("noise")
         || kl == "spl"
     {
-        (2, kernel_for_force(2), 0.01)
+        (2, 1, 0.01)
     } else if kl.contains("light")
         || kl.contains("lux")
         || kl.contains("lumin")
         || kl.contains("irradiance")
     {
-        (0, kernel_for_force(0), 10.0)
+        (0, 0, 10.0)
     } else if kl.contains("battery")
         && (kl.contains("level") || kl.contains("pct") || kl.contains("soc"))
     {
-        (5, kernel_for_force(5), 60.0)
+        (5, 3, 60.0)
     } else if kl.contains("battery") && (kl.contains("volt") || kl == "voltage") {
-        (8, kernel_for_force(8), 60.0)
+        (8, 5, 60.0)
     } else if kl.contains("battery") && kl.contains("current") {
-        (8, kernel_for_force(8), 10.0)
+        (8, 5, 10.0)
     } else if kl.contains("co2")
         || kl.contains("voc")
         || kl.contains("pm2")
         || kl.contains("pm10")
         || kl.contains("gas")
     {
-        (5, kernel_for_force(5), 300.0)
+        (5, 3, 300.0)
     } else if kl.contains("magnet") || kl.contains("compass") || kl.contains("b_field") {
         (0, 0, 10.0)
     } else if kl.contains("accelerometer") || kl.contains("acc") || kl.contains("vibration") {
-        (3, kernel_for_force(3), 1.0)
+        (3, 1, 1.0)
     } else if kl.contains("gyro") {
-        (3, kernel_for_force(3), 1.0)
+        (3, 1, 1.0)
     } else if kl.contains("gps") || kl.contains("gnss") {
         return None;
     } else {
@@ -2259,6 +2255,7 @@ struct WsConfig {
     constants_js: Vec<u8>,
     field_rx: mpsc::Receiver<Arc<Buffer>>,
     osc_tx: mpsc::Sender<Vec<Oscillator>>,
+    presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
 }
 
 trait Radiator: Send + Sync {
@@ -2280,6 +2277,7 @@ impl TcpRadiator {
         index_html: Vec<u8>,
         constants_js: Vec<u8>,
         osc_tx: mpsc::Sender<Vec<Oscillator>>,
+        presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
     ) -> Self {
         let (field_tx, field_rx) = mpsc::channel::<Arc<Buffer>>();
         let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
@@ -2319,6 +2317,7 @@ impl TcpRadiator {
                         constants_js: constants_js.clone(),
                         field_rx: frx,
                         osc_tx: osc_tx.clone(),
+                        presence_tx: presence_tx.clone(),
                     };
                     thread::spawn(move || handle_ingress(stream, cfg));
                 }
@@ -2351,6 +2350,7 @@ impl Drop for TcpRadiator {
         self.shutdown.store(true, Ordering::SeqCst);
     }
 }
+const AUDIO_SAMPLE_RATE: u32 = 44100;
 
 struct AudioRadiator {
     name: &'static str,
@@ -2377,10 +2377,7 @@ impl Radiator for AudioRadiator {
         {
             for v in hash.cells.values() {
                 for s in v {
-                    let tau_u32 = s.tau as u32;
-                    if tau_u32 == 0 {
-                        continue;
-                    }
+                    let tau_u32 = (s.tau as u64).min(u32::MAX as u64) as u32;
                     let amp = (s.val as f32).clamp(0.0, 1.0);
                     let dur = tau_u32.min(self.sample_rate);
                     let freq = SONIFICATION_ROOT_FREQ
@@ -2402,9 +2399,11 @@ impl Radiator for AudioRadiator {
             }
         }
         if !samples.is_empty() {
-            let _ = out.write_all(unsafe {
-                std::slice::from_raw_parts(samples.as_ptr() as *const u8, samples.len() * 4)
-            });
+            let mut bytes = Vec::with_capacity(samples.len() * 4);
+            for s in &samples {
+                bytes.extend_from_slice(&s.to_le_bytes());
+            }
+            let _ = out.write_all(&bytes);
             let _ = out.flush();
         }
     }
@@ -2419,8 +2418,9 @@ impl Radiator for StderrRadiator {
     fn accept(&self, field: Arc<Buffer>) {
         let mut per_field: std::collections::HashMap<&str, f64> = std::collections::HashMap::new();
         let mut osc_count = 0usize;
-        let mut browser_count = 0usize;
+        let mut device_count = 0usize;
         let mut api_count = 0usize;
+        let mut body_count = 0usize;
         for (body_name, hash) in &field.bodies {
             for cell in hash.cells.values() {
                 for osc in cell {
@@ -2429,8 +2429,9 @@ impl Radiator for StderrRadiator {
                     *per_field.entry(body_name.as_str()).or_insert(0.0) += v;
                     *per_field.entry(osc.name.as_str()).or_insert(0.0) += v;
                     match osc.source {
-                        OscillatorSource::Browser => browser_count += 1,
+                        OscillatorSource::Device => device_count += 1,
                         OscillatorSource::Api(_) => api_count += 1,
+                        OscillatorSource::Body => body_count += 1,
                     }
                 }
             }
@@ -2441,8 +2442,9 @@ impl Radiator for StderrRadiator {
                 osc_count += 1;
                 *per_field.entry(osc.name.as_str()).or_insert(0.0) += v;
                 match osc.source {
-                    OscillatorSource::Browser => browser_count += 1,
+                    OscillatorSource::Device => device_count += 1,
                     OscillatorSource::Api(_) => api_count += 1,
+                    OscillatorSource::Body => body_count += 1,
                 }
             }
         }
@@ -2451,10 +2453,11 @@ impl Radiator for StderrRadiator {
         }
         let _ = writeln!(
             std::io::stderr(),
-            "{} oscs | {} browser {} api | {}",
+            "{} oscs | {} device {} api {} body | {}",
             osc_count,
-            browser_count,
+            device_count,
             api_count,
+            body_count,
             per_field
                 .iter()
                 .map(|(k, v)| format!(
@@ -2699,155 +2702,137 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
         let mut cur = signal;
         loop {
             let path = parse_path(&cur);
-            if path.starts_with("/crash") {
-                let body_start = cur.find("\r\n\r\n").map(|i| &cur[i + 4..]).unwrap_or("");
-                let log = format!(
-                    "[{}] ASYNC_LOG: {}\n",
-                    match SystemTime::now().duration_since(UNIX_EPOCH) {
-                        Ok(d) => d.as_secs(),
-                        Err(_) => {
-                            eprintln!("system clock reads epoch prior to 1970-01-01T00:00:00Z, timestamp 0 recorded");
-                            0
-                        }
-                    },
-                    body_start.trim()
-                );
-                println!("{}", log.trim());
-                let _ = std::fs::OpenOptions::new()
-                    .create(true)
-                    .append(true)
-                    .open("crash.log")
-                    .and_then(|mut f| f.write_all(log.as_bytes()));
-                emit(&mut s, "200 OK", "text/plain", b"ok");
-            } else {
-                match path.as_str() {
-                    "/" => {
-                        let page = std::fs::read(resolve_asset("static/index.html"))
-                            .unwrap_or_else(|_| cfg.index_html.clone());
-                        emit(&mut s, "200 OK", "text/html", &page);
-                    }
-                    "/time" => {
-                        let tdb = tdb_now();
-                        emit(&mut s, "200 OK", "text/plain", tdb.to_string().as_bytes());
-                    }
-                    "/station" => {
-                        let now = tdb_now();
-                        let result = {
-                            let buf = {
-                                if let Ok(f) = cfg.field_rx.try_recv() {
-                                    last_field = f;
-                                }
-                                last_field.clone()
-                            };
-                            let eph_map = cfg.eph.clone();
-                            let mut station_sample: Option<Oscillator> = None;
-                            for v in buf.inertial.cells.values() {
-                                for osc in v {
-                                    if matches!(osc.source, OscillatorSource::Browser) {
-                                        station_sample = Some(osc.clone());
-                                    }
-                                }
-                            }
-                            station_sample.and_then(|osc| {
-                                let p0 = osc.motion.at(now, osc.epoch, &eph_map)?;
-                                let p1 = osc.motion.at(now + 1.0, osc.epoch, &eph_map)?;
-                                Some((p0, [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]]))
-                            })
-                        };
-                        match result {
-                            Some((p, v)) => emit(
-                                &mut s,
-                                "200 OK",
-                                "text/plain",
-                                format!("{} {} {} {} {} {}", p[0], p[1], p[2], v[0], v[1], v[2])
-                                    .as_bytes(),
-                            ),
-                            None => {
-                                emit_void(&mut s);
-                                break;
-                            }
-                        }
-                    }
-                    _ if path.starts_with("/jump/") => {
-                        let body: &str = &path[6..];
-                        let eph = cfg.eph.clone();
-                        match body_barycenter_position(body, tdb_now(), &eph) {
-                            Some([x, y, z]) => emit(
-                                &mut s,
-                                "200 OK",
-                                "text/plain",
-                                format!("{} {} {}", x, y, z).as_bytes(),
-                            ),
-                            None => {
-                                emit_void(&mut s);
-                                break;
-                            }
-                        }
-                    }
-                    "/field" => {
+            match path.as_str() {
+                "/" => {
+                    let page = std::fs::read(resolve_asset("static/index.html"))
+                        .unwrap_or_else(|_| cfg.index_html.clone());
+                    emit(&mut s, "200 OK", "text/html", &page);
+                }
+                "/time" => {
+                    let tdb = tdb_now();
+                    emit(&mut s, "200 OK", "text/plain", tdb.to_string().as_bytes());
+                }
+                "/device" => {
+                    let now = tdb_now();
+                    let result = {
                         let buf = {
                             if let Ok(f) = cfg.field_rx.try_recv() {
                                 last_field = f;
                             }
                             last_field.clone()
                         };
-                        let mut report = String::new();
-                        let mut hashes: Vec<(&str, &SpatialHash)> =
-                            buf.bodies.iter().map(|(k, v)| (k.as_str(), v)).collect();
-                        hashes.push(("inertial", &buf.inertial));
-                        for (fname, hash) in hashes {
-                            let mut n = 0usize;
-                            let mut field_names: std::collections::HashSet<&str> =
-                                std::collections::HashSet::new();
-                            for v in hash.cells.values() {
-                                for osc in v {
-                                    n += 1;
-                                    field_names.insert(osc.name.as_str());
-                                    if let OscillatorSource::Api(id) = osc.source {
-                                        let _ = id;
-                                    }
+                        let eph_map = cfg.eph.clone();
+                        let mut device_sample: Option<Oscillator> = None;
+                        for v in buf.inertial.cells.values() {
+                            for osc in v {
+                                if matches!(osc.source, OscillatorSource::Device) {
+                                    device_sample = Some(osc.clone());
                                 }
                             }
-                            report.push_str(&format!(
-                                "{} samples={} cells={} rmax={:.3e} vmax={:.3e} epoch_min={:.1}\n",
-                                fname,
-                                n,
-                                hash.cells.len(),
-                                hash.rmax,
-                                hash.vmax,
-                                hash.epoch_min
-                            ));
-                            let mut names: Vec<&str> = field_names.into_iter().collect();
-                            names.sort();
-                            report.push_str(&format!("{} fields: {}\n", fname, names.len()));
-                            for nm in names {
-                                report.push_str(&format!("  {}\n", nm));
+                        }
+                        device_sample.and_then(|osc| {
+                            let p0 = osc.motion.at(now, osc.epoch, &eph_map)?;
+                            let p1 = osc.motion.at(now + 1.0, osc.epoch, &eph_map)?;
+                            Some((p0, [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]]))
+                        })
+                    };
+                    match result {
+                        Some((p, v)) => emit(
+                            &mut s,
+                            "200 OK",
+                            "text/plain",
+                            format!("{} {} {} {} {} {}", p[0], p[1], p[2], v[0], v[1], v[2])
+                                .as_bytes(),
+                        ),
+                        None => {
+                            emit_void(&mut s);
+                            break;
+                        }
+                    }
+                }
+                _ if path.starts_with("/jump/") => {
+                    let body: &str = &path[6..];
+                    let eph = cfg.eph.clone();
+                    match body_barycenter_position(body, tdb_now(), &eph) {
+                        Some([x, y, z]) => emit(
+                            &mut s,
+                            "200 OK",
+                            "text/plain",
+                            format!("{} {} {}", x, y, z).as_bytes(),
+                        ),
+                        None => {
+                            emit_void(&mut s);
+                            break;
+                        }
+                    }
+                }
+                "/field" => {
+                    let buf = {
+                        if let Ok(f) = cfg.field_rx.try_recv() {
+                            last_field = f;
+                        }
+                        last_field.clone()
+                    };
+                    let mut report = String::new();
+                    let mut hashes: Vec<(&str, &SpatialHash)> =
+                        buf.bodies.iter().map(|(k, v)| (k.as_str(), v)).collect();
+                    hashes.push(("inertial", &buf.inertial));
+                    for (fname, hash) in hashes {
+                        let mut n = 0usize;
+                        let mut field_names: std::collections::HashSet<&str> =
+                            std::collections::HashSet::new();
+                        let mut src_ids: std::collections::HashSet<u32> =
+                            std::collections::HashSet::new();
+                        for v in hash.cells.values() {
+                            for osc in v {
+                                n += 1;
+                                field_names.insert(osc.name.as_str());
+                                match osc.source {
+                                    OscillatorSource::Api(id) => {
+                                        src_ids.insert(id);
+                                    }
+                                    _ => {}
+                                };
                             }
                         }
-                        let origins_n = 0;
-                        let presence_n = 0;
-                        report
-                            .push_str(&format!("origins={} presence={}\n", origins_n, presence_n));
-                        emit(&mut s, "200 OK", "text/plain", report.as_bytes());
-                    }
-                    "/constants.js" => {
-                        let mut page = std::fs::read(resolve_asset("static/constants.js"))
-                            .unwrap_or_else(|_| cfg.constants_js.clone());
-                        let mut extra = String::from("\nexport const BODY_REGISTRY = {");
-                        let eph = cfg.eph.clone();
-                        let mut keys: Vec<&String> = eph.keys().collect();
-                        keys.sort();
-                        for (i, name) in keys.iter().enumerate() {
-                            extra.push_str(&format!("{}:\"{}\",", i + 1, name));
+                        report.push_str(&format!(
+                            "{} samples={} cells={} rmax={:.3e} vmax={:.3e} epoch_min={:.1}\n",
+                            fname,
+                            n,
+                            hash.cells.len(),
+                            hash.rmax,
+                            hash.vmax,
+                            hash.epoch_min
+                        ));
+                        let mut names: Vec<&str> = field_names.into_iter().collect();
+                        names.sort();
+                        report.push_str(&format!("{} fields: {}\n", fname, names.len()));
+                        for nm in names {
+                            report.push_str(&format!("  {}\n", nm));
                         }
-                        extra.push_str("};\n");
-                        page.extend_from_slice(extra.as_bytes());
-                        emit(&mut s, "200 OK", "application/javascript", &page);
                     }
-                    _ => {
-                        emit_void(&mut s);
-                        break;
+                    let origins_n = 0;
+                    let presence_n = 0;
+                    report.push_str(&format!("origins={} presence={}\n", origins_n, presence_n));
+                    emit(&mut s, "200 OK", "text/plain", report.as_bytes());
+                }
+                "/constants.js" => {
+                    let mut page = std::fs::read(resolve_asset("static/constants.js"))
+                        .unwrap_or_else(|_| cfg.constants_js.clone());
+                    let mut extra = String::from("\nexport const BODY_REGISTRY = {");
+                    let eph = cfg.eph.clone();
+                    let mut keys: Vec<&String> = eph.keys().collect();
+                    keys.sort();
+                    for (i, name) in keys.iter().enumerate() {
+                        extra.push_str(&format!("{}:\"{}\",", i + 1, name));
                     }
+                    extra.push_str("};\n");
+                    page.extend_from_slice(extra.as_bytes());
+                    emit(&mut s, "200 OK", "application/javascript", &page);
+                }
+                _ => {
+                    emit_void(&mut s);
+                    break;
                 }
             }
             match read_signal(&mut s) {
@@ -2902,7 +2887,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
             }
             let oscillator_count = u32::from_le_bytes(buf4) as usize;
 
-            let mut browser: Vec<(String, f64)> = Vec::with_capacity(oscillator_count);
+            let mut browser: Vec<(String, f64, f64)> = Vec::with_capacity(oscillator_count);
             {
                 for _ in 0..oscillator_count {
                     let mut val_buf = [0u8; 8];
@@ -2921,8 +2906,14 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         break;
                     }
                     let name = String::from_utf8_lossy(&name_bytes).to_string();
+                    let mut tau_buf = [0u8; 8];
+                    let tau = if cursor.read_exact(&mut tau_buf).is_ok() {
+                        f64::from_le_bytes(tau_buf)
+                    } else {
+                        0.0
+                    };
 
-                    browser.push((name, value));
+                    browser.push((name, value, tau));
                 }
             }
 
@@ -2930,24 +2921,50 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 continue;
             }
             let query_count = u32::from_le_bytes(buf4) as usize;
+            for _ in 0..query_count {
+                let mut qbuf = [0u8; 32];
+                if cursor.read_exact(&mut qbuf).is_err() {
+                    break;
+                }
+            }
+            {
+                let mut pb8 = [0u8; 8];
+                if cursor.read_exact(&mut pb8).is_ok() {
+                    let px = f64::from_le_bytes(pb8);
+                    if cursor.read_exact(&mut pb8).is_ok() {
+                        let py = f64::from_le_bytes(pb8);
+                        if cursor.read_exact(&mut pb8).is_ok() {
+                            let pz = f64::from_le_bytes(pb8);
+                            if cursor.read_exact(&mut pb8).is_ok() {
+                                let pt = f64::from_le_bytes(pb8);
+                                if cursor.read_exact(&mut pb8).is_ok() {
+                                    let pr = f64::from_le_bytes(pb8);
+                                    let _ = cfg.presence_tx.send((pt, px, py, pz, pr));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             let now = tdb_now();
             let (mut st_lat, mut st_lon, mut st_alt, mut st_body) = (None, None, None, None::<u32>);
-            let mut field_values: Vec<(String, f64)> = Vec::new();
-            for (name, value) in &browser {
+            let mut field_values: Vec<(String, f64, f64)> = Vec::new();
+            for (name, value, tau) in &browser {
+                let tau = *tau;
                 match name.as_str() {
                     "lat" => st_lat = Some(*value),
                     "lon" => st_lon = Some(*value),
                     "alt" => st_alt = Some(*value),
                     "body" => {
-                        st_body = if *value > 0.0 {
+                        st_body = if *value > 0.0 && *value <= u32::MAX as f64 {
                             Some(*value as u32)
                         } else {
                             None
                         }
                     }
                     _ => {
-                        field_values.push((name.clone(), *value));
+                        field_values.push((name.clone(), *value, tau));
                     }
                 }
             }
@@ -2969,15 +2986,16 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         alt,
                     };
                     let mut channels: Vec<(Channel, FieldConfig, f64)> = Vec::new();
-                    for (name, value) in &field_values {
+                    for (name, value, tau) in &field_values {
                         if let Some(bs) = sensor_config(name) {
                             let sensor_ttl = bs.ttl;
+                            let effective_tau = if *tau > 0.0 { *tau } else { bs.ttl };
                             let fc = FieldConfig {
                                 key: bs.key.clone(),
                                 name: bs.key.clone(),
                                 kernel: bs.kernel,
                                 force: bs.force,
-                                tau: 0.0,
+                                tau: effective_tau,
                                 absorption: 0.0,
                                 advection: 0.0,
                             };
@@ -3019,15 +3037,16 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 };
                 let pos = Position::Source;
                 let mut channels: Vec<(Channel, FieldConfig, f64)> = Vec::new();
-                for (name, value) in &field_values {
+                for (name, value, tau) in &field_values {
                     if let Some(bs) = sensor_config(name) {
                         let sensor_ttl = bs.ttl;
+                        let effective_tau = if *tau > 0.0 { *tau } else { bs.ttl };
                         let fc = FieldConfig {
                             key: bs.key.clone(),
                             name: bs.key.clone(),
                             kernel: bs.kernel,
                             force: bs.force,
-                            tau: 0.0,
+                            tau: effective_tau,
                             absorption: 0.0,
                             advection: 0.0,
                         };
@@ -3674,7 +3693,10 @@ fn load_sources() -> Vec<SourceConfig> {
                 };
                 let k = match kernel_id_of(parts[5]) {
                     Some(k) => k,
-                    None => kernel_for_force(f),
+                    None => match kernel_for_force(f) {
+                        Some(k) => k,
+                        None => continue,
+                    },
                 };
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
@@ -3717,7 +3739,10 @@ fn load_sources() -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[1].to_string(),
-                    kernel: kernel_for_force(f),
+                    kernel: match kernel_for_force(f) {
+                        Some(k) => k,
+                        None => continue,
+                    },
                     force: f,
                     tau,
                     absorption: 0.0,
@@ -3748,8 +3773,11 @@ fn load_sources() -> Vec<SourceConfig> {
                     if let Some(f) = cur_force {
                         let fc = FieldConfig {
                             key: parts[1].to_string(),
-                            name: parts[1].to_string(),
-                            kernel: kernel_for_force(f),
+                            name: parts[3].to_string(),
+                            kernel: match kernel_for_force(f) {
+                                Some(k) => k,
+                                None => continue,
+                            },
                             force: f,
                             tau: 0.0,
                             absorption: 0.0,
@@ -3778,8 +3806,8 @@ fn load_sources() -> Vec<SourceConfig> {
                     None => continue,
                 };
                 let tau: f64 = match parts[6].parse() {
-                    Ok(v) => v,
-                    Err(_) => continue,
+                    Ok(v) if v > 0.0 => v,
+                    _ => continue,
                 };
                 let absorption: f64 = match parts[7].parse() {
                     Ok(v) => v,
@@ -4095,8 +4123,8 @@ fn render_url(
         url = url
             .replace("{lat}", &lat_str)
             .replace("{lon}", &lon_str)
-            .replace("{lat_int}", &format!("{}", lat as i32))
-            .replace("{lon_int}", &format!("{}", lon as i32));
+            .replace("{lat_int}", &format!("{:.0}", lat))
+            .replace("{lon_int}", &format!("{:.0}", lon));
         if radius_m > 0.0 {
             let m_per_deg =
                 std::f64::consts::PI * radius_m / 180.0 * lat.to_radians().cos().max(0.0);
@@ -4716,8 +4744,8 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                             key: n.clone(),
                                             name: n.clone(),
                                             kernel: 0,
-                                            force: 0,
-                                            tau: src.ttl as f64,
+                                            force: 1,
+                                            tau: 86400.0 * 365.0,
                                             absorption: 0.0,
                                             advection: 0.0,
                                         },
@@ -4812,7 +4840,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             let lat = jpath(v, &eff_lat_key);
                             let lon = jpath(v, &eff_lon_key);
                             let alt = if alt_key.is_empty() {
-                                Some(0.0)
+                                None
                             } else {
                                 jpath(v, alt_key).map(|a| a * alt_sign)
                             };
@@ -4865,7 +4893,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     }
                                 };
                                 let epoch = if eff_epoch_key.is_empty() {
-                                    now
+                                    continue;
                                 } else if let Some(ev) = jpath_val(v, &eff_epoch_key) {
                                     match ev {
                                         JsonVal::Str(s) => {
@@ -4940,14 +4968,17 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     None => continue,
                                 }
                             } else {
-                                now
+                                continue;
                             };
-                            for (lon, lat) in vertices {
+                            for (lon, lat, z) in vertices {
                                 let position = Position::Surface {
                                     body_name: frame_body_name(&src.frame),
                                     lat,
                                     lon,
-                                    alt: 0.0,
+                                    alt: match z {
+                                        Some(a) => a,
+                                        None => continue,
+                                    },
                                 };
                                 for fc in fields {
                                     let mut raw = jpath(v, &fc.key);
@@ -5014,7 +5045,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 continue;
                             }
                             let epoch = if epoch_key.is_empty() {
-                                now
+                                continue;
                             } else if let Some(ev) = jpath_val(v, epoch_key) {
                                 match ev {
                                     JsonVal::Str(s) => {
@@ -5031,10 +5062,10 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 continue;
                             };
                             let alt = match alt_key {
-                                k if k.is_empty() => 0.0,
+                                k if k.is_empty() => continue,
                                 _ => match jpath(v, alt_key) {
                                     Some(a) => a,
-                                    None => 0.0,
+                                    None => continue,
                                 },
                             };
                             for fc in fields {
@@ -5103,7 +5134,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     None => continue,
                                 }
                             } else {
-                                now
+                                continue;
                             };
                             for fc in fields {
                                 if !val_key.is_empty() && fc.name != *val_key {
@@ -5122,7 +5153,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 if val.is_nan() {
                                     continue;
                                 }
-                                for (ra_deg, dec_deg) in &vertices {
+                                for (ra_deg, dec_deg, _z) in &vertices {
                                     let ra = ra_deg.to_radians();
                                     let dec = dec_deg.to_radians();
                                     let (sa, ca) = ra.sin_cos();
@@ -5279,7 +5310,10 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             let a_au = a_val;
                             let n = GAUSS_K * (1.0 / (a_au * a_au * a_au)).sqrt();
                             let m = ma_val.to_radians() + n * (jd_now - epoch_val);
-                            let e = e_val.clamp(0.0, KEPLER_ECCENTRICITY_MAX);
+                            let e = e_val;
+                            if e >= 1.0 || e < 0.0 {
+                                continue;
+                            }
                             let mut e_anom = m;
                             for _ in 0..5 {
                                 e_anom = e_anom
@@ -5418,21 +5452,21 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             let p_hat = [cd * ca, cd * sa, sd];
                             let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
                             let mu_a = if pmra_key.is_empty() {
-                                0.0
+                                continue;
                             } else if let Some(v) = jpath(v, pmra_key) {
                                 v * MAS_YR_TO_RAD_S
                             } else {
                                 continue;
                             };
                             let mu_d = if pmdec_key.is_empty() {
-                                0.0
+                                continue;
                             } else if let Some(v) = jpath(v, pmdec_key) {
                                 v * MAS_YR_TO_RAD_S
                             } else {
                                 continue;
                             };
                             let vr = if rv_key.is_empty() {
-                                0.0
+                                continue;
                             } else if let Some(v) = jpath(v, rv_key) {
                                 v * rv_scale
                             } else {
@@ -5696,6 +5730,9 @@ fn anchor(
     mut origin_state: Option<&mut OriginState>,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<Oscillator> {
+    if sensor.tau <= 0.0 {
+        return None;
+    }
     let motion = match &channel.position {
         Position::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
         Position::Surface {
@@ -5810,7 +5847,7 @@ fn anchor(
     Some(Oscillator {
         source: match source_idx {
             Some(idx) => OscillatorSource::Api(idx),
-            None => OscillatorSource::Browser,
+            None => OscillatorSource::Device,
         },
         epoch: channel.epoch,
         ttl: source_ttl,
@@ -5874,7 +5911,7 @@ fn source_name_from_url(url: &str) -> String {
     }
 }
 
-fn probe_mode(path: &str, precise: bool) -> i32 {
+fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64) -> i32 {
     let content = match std::fs::read_to_string(path) {
         Ok(c) => c,
         Err(e) => {
@@ -5918,8 +5955,8 @@ fn probe_mode(path: &str, precise: bool) -> i32 {
             .replace("{yday}", "223")
             .replace("{hour}", "04")
             .replace("{minute}", "00")
-            .replace("{lat}", "35.000000")
-            .replace("{lon}", "139.000000")
+            .replace("{lat}", &format!("{:.6}", lat))
+            .replace("{lon}", &format!("{:.6}", lon))
             .replace("{x}", "0.0")
             .replace("{y}", "0.0")
             .replace("{z}", "0.0");
@@ -6938,8 +6975,25 @@ fn main() {
                     std::process::exit(1);
                 }
             };
-            let precise = args.len() > 3 && args[3] == "--precise";
-            std::process::exit(probe_mode(path, precise));
+            let precise = args.iter().any(|a| a == "--precise");
+            let mut lat = 35.0;
+            let mut lon = 139.0;
+            let mut i = 2;
+            while i < args.len() {
+                if args[i] == "--lat" {
+                    if let Some(v) = args.get(i + 1).and_then(|s| s.parse::<f64>().ok()) {
+                        lat = v;
+                        i += 1;
+                    }
+                } else if args[i] == "--lon" {
+                    if let Some(v) = args.get(i + 1).and_then(|s| s.parse::<f64>().ok()) {
+                        lon = v;
+                        i += 1;
+                    }
+                }
+                i += 1;
+            }
+            std::process::exit(probe_mode(path, precise, lat, lon));
         }
     }
     let loaded = load_sources();
@@ -6949,6 +7003,7 @@ fn main() {
     };
     let (fetch_tx, fetch_rx) = mpsc::channel::<FetchResult>();
     let (osc_tx, osc_rx) = mpsc::channel::<Vec<Oscillator>>();
+    let (presence_tx, presence_rx) = mpsc::channel::<(f64, f64, f64, f64, f64)>();
     let body_ephemerides = Arc::new(HashMap::new());
     let index_html = match std::fs::read(resolve_asset("static/index.html")) {
         Ok(v) => v,
@@ -6971,10 +7026,6 @@ fn main() {
         presence: HashMap::new(),
         origins: HashMap::new(),
     };
-    archive.presence.insert(
-        "0_0_0".to_string(),
-        (tdb_now(), 0.0, 0.0, 0.0, f64::INFINITY),
-    );
     let mut radiators: Vec<Box<dyn Radiator>> = Vec::new();
     let sr = TcpRadiator::new(
         port,
@@ -6982,9 +7033,10 @@ fn main() {
         index_html.clone(),
         constants_js.clone(),
         osc_tx.clone(),
+        presence_tx,
     );
     radiators.push(Box::new(sr));
-    radiators.push(Box::new(AudioRadiator::new(44100)));
+    radiators.push(Box::new(AudioRadiator::new(AUDIO_SAMPLE_RATE)));
     radiators.push(Box::new(StderrRadiator));
     let cadence = 1.0;
     loop {
@@ -6995,8 +7047,8 @@ fn main() {
                 .origins
                 .entry((res.source_idx as u32, 0, 0))
                 .or_insert(OriginState {
-                    fetched: 0.0,
-                    prev_epoch: 0.0,
+                    fetched: now,
+                    prev_epoch: now,
                     prev_abs: [0.0, 0.0, 0.0],
                     prev_motion: None,
                     resid_ema: 0.0,
@@ -7005,38 +7057,8 @@ fn main() {
                 .fetched = now;
             if let Some((name, eph)) = res.eph_update {
                 let mut eph_map = (*archive.body_ephemerides).clone();
-                eph_map.insert(name.clone(), eph);
+                eph_map.insert(name, eph);
                 archive.body_ephemerides = Arc::new(eph_map);
-                let fc = FieldConfig {
-                    key: name.clone(),
-                    name: name.clone(),
-                    kernel: 0,
-                    force: 1,
-                    tau: 86400.0,
-                    absorption: 0.0,
-                    advection: 0.0,
-                };
-                let channel = Channel {
-                    name: name.clone(),
-                    value: 1.0,
-                    position: Position::Source,
-                    epoch: now,
-                };
-                let frame = Frame::Barycenter {
-                    body_name: name.clone(),
-                    scale: 1.0,
-                };
-                if let Some(osc) = anchor(
-                    &channel,
-                    &fc,
-                    86400.0,
-                    Some(0),
-                    Some(&frame),
-                    None,
-                    &archive.body_ephemerides,
-                ) {
-                    fetched_oscillators.push(osc);
-                }
             }
             let src = &archive.sources[res.source_idx];
             for (channel, sensor) in &res.channels {
@@ -7062,6 +7084,11 @@ fn main() {
         while let Ok(oscs) = osc_rx.try_recv() {
             fetched_oscillators.extend(oscs);
         }
+        while let Ok((pt, px, py, pz, pr)) = presence_rx.try_recv() {
+            archive
+                .presence
+                .insert("device".to_string(), (pt, px, py, pz, pr));
+        }
         for i in 0..archive.sources.len() {
             let origin = (i as u32, 0, 0);
             if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
@@ -7072,16 +7099,20 @@ fn main() {
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
-                let body_name = src_clone.body.clone().unwrap_or_default();
+                let body_log = match &src_clone.body {
+                    Some(b) => b.as_str(),
+                    None => "",
+                };
+                eprintln!("loading {}", body_log);
                 archive.origins.entry(origin).or_insert(OriginState {
                     fetched: now,
-                    prev_epoch: 0.0,
+                    prev_epoch: now,
                     prev_abs: [0.0; 3],
                     prev_motion: None,
                     resid_ema: 0.0,
                     has_prev: false,
                 });
-                eprintln!("loading {}", body_name);
+                eprintln!("loading {}", body_log);
                 thread::spawn(move || {
                     let tmp_path = match &src_clone.body {
                         Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
@@ -7096,11 +7127,14 @@ fn main() {
                             return;
                         }
                     }
-                    let body_loaded = src_clone.body.clone().unwrap_or_default();
+                    let body_log = match &src_clone.body {
+                        Some(b) => b.as_str(),
+                        None => "",
+                    };
                     if let ExtractResult::WithEphemeris(_, eph) =
                         extract(&src_clone, &tmp_path, tdb_now())
                     {
-                        eprintln!("loaded {}", body_loaded);
+                        eprintln!("loaded {}", body_log);
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels: Vec::new(),
@@ -7241,8 +7275,41 @@ fn main() {
             for hash in hashes {
                 for v in hash.cells.values() {
                     for s in v {
+                        if matches!(s.source, OscillatorSource::Body) {
+                            continue;
+                        }
                         if (now - s.epoch).abs() <= s.ttl * 64.0 {
                             all.push(s.clone());
+                        }
+                    }
+                }
+            }
+            for (name, eph) in archive.body_ephemerides.iter() {
+                if let Some(props) = &eph.props {
+                    if props.radius_m > 0.0 {
+                        if let Some([bx, by, bz]) =
+                            body_barycenter_position(name, now, &archive.body_ephemerides)
+                        {
+                            all.push(Oscillator {
+                                source: OscillatorSource::Body,
+                                epoch: now,
+                                ttl: cadence,
+                                extent: props.radius_m,
+                                tau: f64::INFINITY,
+                                kernel_id: 0.0,
+                                force_type: 1.0,
+                                absorption: 0.0,
+                                advection: 0.0,
+                                vmax: 0.0,
+                                amax: 0.0,
+                                p0f: [bx, by, bz],
+                                motion: Motion::Barycenter {
+                                    body_name: name.clone(),
+                                    scale: 1.0,
+                                },
+                                val: 1.0,
+                                name: name.clone(),
+                            });
                         }
                     }
                 }
@@ -7280,11 +7347,16 @@ fn ecliptic_to_field(v: [f64; 3]) -> [f64; 3] {
     [v[0], v[1] * c - v[2] * s, v[1] * s + v[2] * c]
 }
 
-fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64)> {
+fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64, Option<f64>)> {
     if let Some(JsonVal::Num(_)) = val.first() {
         if val.len() >= 2 {
             if let (Some(lon), Some(lat)) = (scalar_of(&val[0]), scalar_of(&val[1])) {
-                return vec![(lon, lat)];
+                let z = if val.len() >= 3 {
+                    scalar_of(&val[2])
+                } else {
+                    None
+                };
+                return vec![(lon, lat, z)];
             }
         }
         return Vec::new();
