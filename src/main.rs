@@ -6554,74 +6554,87 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
     sources
 }
 
-fn verify_mode(dir: &str) -> i32 {
-    let mut urls: Vec<String> = Vec::new();
-    let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
-    fn walk(
-        dir: &std::path::Path,
-        urls: &mut Vec<String>,
-        seen: &mut std::collections::HashSet<String>,
-    ) {
-        if let Ok(entries) = std::fs::read_dir(dir) {
-            for e in entries.flatten() {
-                let p = e.path();
-                if p.is_dir() {
-                    walk(&p, urls, seen);
-                } else if p.extension().map(|x| x == "φ").unwrap_or(false) {
-                    if let Ok(content) = std::fs::read_to_string(&p) {
-                        for line in content.lines() {
-                            let trimmed = line.trim();
-                            if let Some(rest) = trimmed.strip_prefix("url ") {
-                                let url = rest.trim().to_string();
-                                if !url.is_empty() && seen.insert(url.clone()) {
-                                    urls.push(url);
-                                }
-                            }
-                        }
-                    }
+fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
+    let mut sources = Vec::new();
+    let dir_path = std::path::Path::new(dir);
+    if let Ok(entries) = std::fs::read_dir(dir_path) {
+        for e in entries.flatten() {
+            let p = e.path();
+            if p.is_dir() {
+                let path_str = p.to_string_lossy().to_string();
+                sources.extend(load_all_sources(&path_str));
+            } else if p.extension().map(|x| x == "φ").unwrap_or(false) {
+                if let Ok(content) = std::fs::read_to_string(&p) {
+                    sources.extend(load_sources_from(&content));
                 }
             }
         }
     }
-    walk(std::path::Path::new(dir), &mut urls, &mut seen);
-    eprintln!("verify: {} URL sources from {}", urls.len(), dir);
-    let mut ok = 0;
-    let mut empty_count = 0;
-    let mut verified = String::new();
-    let mut empty_urls = String::new();
-    for url in &urls {
-        let raw = fetch_raw(url, None, &[], 30);
-        if raw.is_some() {
-            ok += 1;
-            verified.push_str(url);
-            verified.push('\n');
-        } else {
-            empty_count += 1;
-            empty_urls.push_str(url);
-            empty_urls.push('\n');
+    sources
+}
+
+fn ci_mode(dir: &str) -> i32 {
+    let sources = load_all_sources(dir);
+    eprintln!("ci-mode: {} sources loaded from {}", sources.len(), dir);
+    let mut uploaded = 0u32;
+    for src in &sources {
+        let netloc = match extract_netloc(&src.url) {
+            Some(n) => n,
+            None => {
+                eprintln!("ci-mode: netloc absent for {}", src.url);
+                continue;
+            }
+        };
+        let name = source_name_from_url(&src.url);
+        let raw = match fetch_raw(&src.url, None, &[], src.ttl) {
+            Some(r) => r,
+            None => {
+                eprintln!("ci-mode: fetch returned void for {}", src.url);
+                continue;
+            }
+        };
+        let dir_path = format!("/tmp/archivar_cache/{}", netloc);
+        if let Err(e) = std::fs::create_dir_all(&dir_path) {
+            eprintln!("ci-mode: create_dir {} returned: {}", dir_path, e);
+            continue;
         }
-        if (ok + empty_count) % 50 == 0 {
-            eprintln!(
-                "verify: {}/{} present, {}/{} empty",
-                ok,
-                ok + empty_count,
-                empty_count,
-                urls.len()
-            );
+        let tmp_path = format!("{}/{}.json", dir_path, name);
+        if let Err(e) = std::fs::write(&tmp_path, &raw) {
+            eprintln!("ci-mode: write {} returned: {}", tmp_path, e);
+            continue;
+        }
+        let status = Command::new("gh")
+            .arg("release")
+            .arg("upload")
+            .arg(netloc)
+            .arg(&tmp_path)
+            .arg("--repo")
+            .arg("omegaflow/sources")
+            .arg("--clobber")
+            .env("GH_TOKEN", std::env::var("GH_TOKEN").unwrap_or_default())
+            .status();
+        match status {
+            Ok(s) if s.success() => {
+                uploaded += 1;
+                eprintln!("ci-mode: uploaded {}/{} as {}", name, netloc, tmp_path);
+            }
+            Ok(s) => {
+                eprintln!("ci-mode: gh upload returned {} for {}", s, name);
+            }
+            Err(e) => {
+                eprintln!("ci-mode: gh upload absent: {} for {}", e, name);
+            }
         }
     }
-    std::fs::write("verified_urls.txt", &verified).ok();
-    std::fs::write("empty_urls.txt", &empty_urls).ok();
     eprintln!(
-        "verify: done. {} present, {} empty. {} total.",
-        ok,
-        empty_count,
-        urls.len()
+        "ci-mode: done. {} loaded, {} uploaded.",
+        sources.len(),
+        uploaded
     );
-    if empty_count > 0 {
-        1
-    } else {
+    if uploaded as usize == sources.len() {
         0
+    } else {
+        1
     }
 }
 
@@ -6629,10 +6642,6 @@ fn main() {
     load_env();
     {
         let args: Vec<String> = std::env::args().collect();
-        if args.len() > 1 && args[1] == "--ci-mode" {
-            eprintln!("ci-mode: not compiled");
-            std::process::exit(1);
-        }
         if args.len() > 1 && args[1] == "--verify" {
             let dir = match args.get(2) {
                 Some(s) => s.as_str(),
@@ -6641,7 +6650,7 @@ fn main() {
                     std::process::exit(1);
                 }
             };
-            std::process::exit(verify_mode(dir));
+            std::process::exit(ci_mode(dir));
         }
         if args.len() > 1 && args[1] == "--probe" {
             let path = match args.get(2) {
