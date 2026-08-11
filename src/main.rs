@@ -5741,14 +5741,32 @@ fn extract_netloc(url: &str) -> Option<&str> {
 }
 
 fn source_name_from_url(url: &str) -> String {
-    let path = url.split('?').next().unwrap_or(url);
-    let last = path.rsplit('/').next().unwrap_or("");
-    let stripped = last.strip_suffix(".json").unwrap_or(last);
-    stripped
+    let without_scheme = url
+        .strip_prefix("https://")
+        .unwrap_or(url)
+        .strip_prefix("http://")
+        .unwrap_or(url);
+    let path_and_query = without_scheme
+        .strip_prefix("www.")
+        .unwrap_or(without_scheme);
+    let after_domain: Vec<&str> = path_and_query.splitn(2, '/').collect();
+    if after_domain.len() < 2 {
+        return "index".to_string();
+    }
+    let segments = after_domain[1]
         .chars()
-        .filter(|c| c.is_ascii_alphanumeric() || *c == '_' || *c == '-' || *c == '.')
-        .take(64)
-        .collect()
+        .map(|c| match c {
+            '/' | '?' | '&' | '=' => '_',
+            c if c.is_ascii_alphanumeric() || c == '-' || c == '.' || c == '_' => c,
+            _ => '_',
+        })
+        .take(128)
+        .collect::<String>();
+    if segments.is_empty() {
+        "index".to_string()
+    } else {
+        segments
+    }
 }
 
 fn probe_mode(path: &str, precise: bool) -> i32 {
