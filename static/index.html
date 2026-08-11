@@ -469,11 +469,7 @@ fn presence_probe() {
     let dist = length(in.uv);
     if (dist > 1.0) { discard; }
 
-    let d2 = in.d_mag * in.d_mag;
-    let soft = max(in.extent, 1e-6);
-    let intensity_raw = field_spatial(d2, in.d_mag, in.extent, in.kernel_id, soft, in.absorption);
-    let norm = field_spatial(0.0, 0.0, in.extent, in.kernel_id, soft, in.absorption);
-    let intensity = intensity_raw / max(norm, 1e-30);
+    let intensity = 1.0 - dist * dist;
 
     let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
     let analog_intensity = intensity * (0.9 + noise * 0.1);
