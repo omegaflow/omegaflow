@@ -1,0 +1,150 @@
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -27.171 -109.42 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.17 104.45 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.5 29.72 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 26.92 75.8 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.232 140.186 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -12.69 132.47 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 67.843 20.42 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -26.54 18.11 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 31.42 130.88 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 5.21 -52.73 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.22 114.1 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.9 23.75 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 64.612 18.748 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 64.612 18.748 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.298 5.682 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.298 5.682 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -67.6 62.88 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best
+ttl 86400
+on earth -67.6 62.88 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -54.5 158.95 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -54.5 158.95 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 43.91 144.19 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 43.91 144.19 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 61.167 -45.433 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.63 16.72 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.27 -117.12 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.27 -117.12 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.07 12.68 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.07 12.68 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 60.51 24.66 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 54.85 83.23 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -60.737 -44.737 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 42.515 24.177 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 42.515 24.177 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 38.1 23.9 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 21.03 105.96 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 21.03 105.96 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -31.667 -63.881 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -17.567 -149.574 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -17.567 -149.574 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -21.206 55.576 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -21.206 55.576 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -77.829 166.671 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.667 -5.945 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.667 -5.945 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -15.961 -5.747 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.35 -160.46 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.35 -160.46 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 57.06 -135.33 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 57.06 -135.33 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 18.11 -66.15 0

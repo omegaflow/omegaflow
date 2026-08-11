@@ -1,0 +1,78 @@
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 18.11 -66.15 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 67.37 26.63 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 39.55 -4.35 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 39.55 -4.35 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.68 26.25 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.68 26.25 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -37.067 -12.316 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 77.47 -69.227 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 46.9 17.89 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.22 114.1 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 45.408 16.659 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -19.202 17.584 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -1.205 -48.51299999999998 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -1.205 -48.51299999999998 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 32.17 -110.72999999999999 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 32.17 -110.72999999999999 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 59.903 17.353 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51.933 -10.25 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -70.683 -8.281999999999982 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -78.464 106.835 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.4 -43.64999999999998 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.931 15.866 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.931 15.866 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 53.725 9.053 0
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 53.725 9.053 0
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+ttl 604800
+on earth 19.5362 -155.5763 3397

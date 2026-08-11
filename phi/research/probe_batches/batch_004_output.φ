@@ -1,0 +1,298 @@
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075014&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.8464 -82.6431 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075065&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 45.063 -83.4286 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075080&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 45.7772 -84.7211 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087023&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.9474 -86.4415 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087031&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.7733 -86.2128 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.7297 -87.5383 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087057&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.002 -87.8876 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087068&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.4639 -87.501 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099018&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 46.5456 -87.3786 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 46.874443 -89.324165 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099064&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 46.7758 -92.092 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099090&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 47.7486 -90.3413 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410170&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 32.7156 -117.1767 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410660&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 33.72 -118.27 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9411340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 34.4046 -119.6925 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9412110&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 35.1689 -120.7542 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9413450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 36.6089 -121.8914 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 37.8063 -122.4659 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416131&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 38.5622 -121.5463 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416841&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 38.9146 -123.7111 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9418767&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 40.7669 -124.2173 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9419750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.7456 -124.1844 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9431647&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.739 -124.498 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9435380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.6254 -124.0449 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9437540&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 45.5545 -123.9189 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 46.7075 -123.9669 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9442396&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 47.9128 -124.6357 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444900&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 48.1112 -122.7597 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9450460&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 55.3319 -131.6261 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451054&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 56.2467 -134.647 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 58.2988 -134.4106 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 59.4508 -135.328 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452634&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 58.1947 -136.3469 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9453220&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 59.5485 -139.7334 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9454050&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 60.5583 -145.753 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455090&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 60.1193 -149.4281 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455500&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 59.4405 -151.7199 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455760&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 60.6833 -151.398 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455920&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 61.2375 -149.8904 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457292&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 57.7317 -152.512 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457804&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 56.8974 -154.248 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 55.3317 -160.5043 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459881&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 55.0599 -162.3261 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 51.8606 -176.6376 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461710&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 52.2319 -174.1725 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 52.9406 -168.8713 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462620&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 53.8792 -166.5403 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9464212&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 57.1253 -170.2852 0
+lat metadata.lat deg
+lon metadata.lon deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468333&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 63.875 -160.788 0
+lon metadata.lon deg
+lat metadata.lat deg
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468756&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 64.4946 -165.4396 0
+lat metadata.lat deg
+lon metadata.lon deg
+

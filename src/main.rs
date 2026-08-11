@@ -5631,7 +5631,42 @@ fn probe_mode(path: &str) -> i32 {
     );
     let mut out = String::new();
     for src in &sources {
-        let raw = fetch_raw(&src.url, None, &[], src.ttl);
+        let url = src
+            .url
+            .replace("{today}", "2026-08-11")
+            .replace("{yesterday}", "2026-08-10")
+            .replace("{tomorrow}", "2026-08-12")
+            .replace("{today_yyyymmdd}", "20260811")
+            .replace("{today_ymd}", "20260811")
+            .replace("{today_nodashes}", "20260811")
+            .replace("{yesterday_nodashes}", "20260810")
+            .replace("{tomorrow_nodashes}", "20260812")
+            .replace("{t_start}", "2026-08-10")
+            .replace("{t_end}", "2026-08-11")
+            .replace("{hour_ago}", "2026-08-11T03:00:00Z")
+            .replace("{now}", "2026-08-11T04:00:00Z")
+            .replace("{now_minus_1}", "2026-08-11T04:00:00Z")
+            .replace("{now_minus_2}", "2026-08-11T04:00:00Z")
+            .replace("{week_ago}", "2026-08-04T04:00:00Z")
+            .replace("{week_ago_nodashes}", "20260804")
+            .replace("{today_plus_365}", "2027-08-11")
+            .replace("{unix_now}", "1754913600")
+            .replace("{unix_now_plus_3600}", "1754917200")
+            .replace("{year}", "2026")
+            .replace("{year2}", "26")
+            .replace("{month}", "08")
+            .replace("{day}", "11")
+            .replace("{yday}", "223")
+            .replace("{hour}", "04")
+            .replace("{minute}", "00")
+            .replace("{lat}", "35.000000")
+            .replace("{lon}", "139.000000")
+            .replace("{x}", "0.0")
+            .replace("{y}", "0.0")
+            .replace("{z}", "0.0");
+        let url = resolve_secret(&url);
+        let url = url.replace("ZZ", "Z").replace("  ", " ");
+        let raw = fetch_raw(&url, None, &[], src.ttl);
         let parsed = raw.as_ref().and_then(|r| parse_json(r));
         let auto_ttl = raw.as_ref().and_then(|r| probe_ttl(r));
         out.push_str(&format!("url {}\n", src.url));
@@ -5842,6 +5877,8 @@ fn is_drop_key(key: &str) -> bool {
         || kl == "classtype"
         || kl == "ra"
         || kl == "dec"
+        || kl == "sample_size"
+        || kl.ends_with("_size")
 }
 
 fn is_coord_key(key: &str) -> bool {
@@ -6039,10 +6076,20 @@ fn classify_field(key: &str, val: f64) -> (&'static str, &'static str) {
         || kl == "bx"
         || kl == "by"
         || kl == "bz"
+        || kl == "bt"
+        || kl == "bx_gse"
+        || kl == "by_gse"
+        || kl == "bz_gse"
         || kl == "b_rtn"
+        || kl == "hcomp"
+        || kl == "he"
+        || kl == "hp"
+        || kl == "hn"
         || kl.ends_with("_f")
         || kl.contains("mag_")
         || kl.contains("_b_")
+        || kl == "dst"
+        || (kl == "total" && val < 1000.0)
     {
         ("em", "nT")
     } else if kl.ends_with("_wm2")
@@ -6060,6 +6107,8 @@ fn classify_field(key: &str, val: f64) -> (&'static str, &'static str) {
         || kl.ends_with("_gev")
     {
         ("em", "eV")
+    } else if kl == "proton_temperature" {
+        ("thermal", "K")
     } else if kl.contains("temp")
         || kl.ends_with("_c")
         || kl.ends_with("_k")
@@ -6084,7 +6133,7 @@ fn classify_field(key: &str, val: f64) -> (&'static str, &'static str) {
         ("advective", "hPa")
     } else if kl.contains("spd")
         || kl == "speed"
-        || kl.ends_with("_speed")
+        || (kl.ends_with("_speed") && kl != "proton_speed")
         || kl.ends_with("_ms")
         || kl.ends_with("_km_s")
         || kl.ends_with("_kmh")
@@ -6119,7 +6168,7 @@ fn classify_field(key: &str, val: f64) -> (&'static str, &'static str) {
         ("seismic-body", "km")
     } else if kl.ends_with("_km") && !kl.contains("speed") && !kl.contains("vel") {
         ("seismic-body", "km")
-    } else if kl.contains("vel") || kl.contains("vlct") {
+    } else if kl.contains("vel") || kl.contains("vlct") || kl == "proton_speed" {
         ("advective", "km/s")
     } else if kl.contains("conc")
         || kl.contains("ppm")
@@ -6166,8 +6215,8 @@ fn classify_field(key: &str, val: f64) -> (&'static str, &'static str) {
         ("DROP", "DROP")
     } else if kl == "footprint" {
         ("em", "km")
-    } else if val.fract() == 0.0 && val.abs() < 100000.0 {
-        ("DROP", "DROP")
+    } else if kl == "proton_density" || kl.contains("density") {
+        ("diffusion", "p/cm3")
     } else {
         ("DROP", "DROP")
     }

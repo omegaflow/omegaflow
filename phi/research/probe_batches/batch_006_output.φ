@@ -1,0 +1,273 @@
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+at earth
+field bt em nT
+
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+ttl 3600
+at earth
+field speed advective m/s
+field temperature thermal C
+
+url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
+ttl 3600
+on earth 0 0 0
+field dst em nT
+
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+ttl 3600
+on earth 0 0 0
+
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+ttl 3600
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+ttl 3600
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+ttl 3600
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+ttl 3600
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+ttl 3600
+on earth 0 0 0
+
+url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
+ttl 3600
+on earth 53.13 -9.27 0
+
+url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
+ttl 3600
+on earth 0 0 0
+
+url https://api.safecast.org/en-US/measurements.json?limit=100
+ttl 3600
+on earth 0 0 0
+lon longitude deg
+lat latitude deg
+
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+ttl 86400
+on mars -4.5895 137.4417 0
+
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+ttl 86400
+on earth 71.29 -156.57 0
+
+url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+ttl 86400
+on earth 0 0 0
+field flux em W/m2
+field frequency em Hz
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4.5&limit=300
+ttl 86400
+on earth 0 0 0
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 86400
+on earth 19.5362 -155.5763 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+ttl 86400
+on earth 19.5362 -155.5763 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+ttl 86400
+on earth 19.5362 -155.5763 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 86400
+on earth 19.5362 -155.5763 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+ttl 86400
+on earth 19.5362 -155.5763 0
+
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+ttl 86400
+on earth 46.05 -125 0
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
+ttl 86400
+on earth 47.606 -122.335 0
+# fetch returned void
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?station_id,longitude,latitude,time,pCO2_sw,pH_sw&orderByMax(%22station_id%2Ctime%22)
+ttl 86400
+on earth 47.6062 -122.3321 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 18.638 72.872 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 68.358 18.823 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 68.358 18.823 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -65.245 -64.25799999999998 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 56.433 58.567 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -23.762 133.883 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -23.762 133.883 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.08 14.02 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.08 14.02 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51.836 20.789 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51.836 20.789 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.331 8.325 0
+# fetch returned void
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.331 8.325 0
+# fetch returned void
+
