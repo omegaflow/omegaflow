@@ -2405,9 +2405,7 @@ struct StderrRadiator;
 
 impl Radiator for StderrRadiator {
     fn accept(&self, field: Arc<Buffer>) {
-        let mut total: f64 = 0.0;
         let mut per_field: std::collections::HashMap<&str, f64> = std::collections::HashMap::new();
-        let mut per_body: std::collections::HashMap<&str, f64> = std::collections::HashMap::new();
         let mut osc_count = 0usize;
         let mut browser_count = 0usize;
         let mut api_count = 0usize;
@@ -2415,9 +2413,8 @@ impl Radiator for StderrRadiator {
             for cell in hash.cells.values() {
                 for osc in cell {
                     let v = osc.val.abs();
-                    total += v;
                     osc_count += 1;
-                    *per_body.entry(body_name.as_str()).or_insert(0.0) += v;
+                    *per_field.entry(body_name.as_str()).or_insert(0.0) += v;
                     *per_field.entry(osc.name.as_str()).or_insert(0.0) += v;
                     match osc.source {
                         OscillatorSource::Browser => browser_count += 1,
@@ -2429,9 +2426,7 @@ impl Radiator for StderrRadiator {
         for cell in field.inertial.cells.values() {
             for osc in cell {
                 let v = osc.val.abs();
-                total += v;
                 osc_count += 1;
-                *per_body.entry("inertial").or_insert(0.0) += v;
                 *per_field.entry(osc.name.as_str()).or_insert(0.0) += v;
                 match osc.source {
                     OscillatorSource::Browser => browser_count += 1,
@@ -2439,22 +2434,17 @@ impl Radiator for StderrRadiator {
                 }
             }
         }
+        if osc_count == 0 {
+            return;
+        }
         let _ = writeln!(
             std::io::stderr(),
-            "{} oscs: {} browser {} api | int:{:.3} | fields:[{}] | bodies:[{}]",
+            "{} oscs | {} browser {} api | {}",
             osc_count,
             browser_count,
             api_count,
-            total,
             per_field
                 .iter()
-                .take(5)
-                .map(|(k, v)| format!("{}:{:.1}", k, v))
-                .collect::<Vec<_>>()
-                .join(" "),
-            per_body
-                .iter()
-                .take(5)
                 .map(|(k, v)| format!("{}:{:.1}", k, v))
                 .collect::<Vec<_>>()
                 .join(" "),
