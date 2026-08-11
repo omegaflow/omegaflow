@@ -631,7 +631,7 @@ fn presence_probe() {
             const n = rawWindowResponse.count;
             fieldCount = n;
             ensureFieldCapacity(n);
-            if (!autoZoomed && n > 0) {
+            if (!autoZoomed && n >= 5) {
                 const raw = rawWindowResponse.field;
                 const dists = [];
                 for (let i = 0; i < n; i++) {
@@ -641,11 +641,11 @@ fn presence_probe() {
                     const d = Math.sqrt(fx * fx + fy * fy + fz * fz);
                     if (d > 0) dists.push(d);
                 }
-                if (dists.length > 0) {
+                if (dists.length >= 5) {
                     dists.sort((a, b) => a - b);
-                    const medianDist = dists[dists.length >> 1];
+                    const p90 = dists[Math.floor(dists.length * 0.9)];
                     const w = Math.max(RX, RY);
-                    gridStep = (2 * medianDist) / w;
+                    gridStep = Math.max((2 * p90) / w, Math.pow(2, 28));
                     autoZoomed = true;
                 }
             }
