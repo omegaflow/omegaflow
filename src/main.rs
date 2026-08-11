@@ -2455,7 +2455,14 @@ impl Radiator for StderrRadiator {
             api_count,
             per_field
                 .iter()
-                .map(|(k, v)| format!("{}:{:.1}", k, v))
+                .map(|(k, v)| format!(
+                    "{}:{:.1}",
+                    k.chars()
+                        .filter(|c| c.is_ascii_graphic() || *c == ' ')
+                        .take(32)
+                        .collect::<String>(),
+                    v
+                ))
                 .collect::<Vec<_>>()
                 .join(" "),
         );
@@ -7185,13 +7192,11 @@ fn main() {
                         },
                         None => Vec::new(),
                     };
-                    if !channels.is_empty() {
-                        let _ = ftx.send(FetchResult {
-                            source_idx: src_idx,
-                            channels,
-                            eph_update: None,
-                        });
-                    }
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                    });
                 }
             });
         }

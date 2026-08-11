@@ -21,6 +21,9 @@ AGENTS.md is the primary constraint matrix. Git is the history. Pending work onl
 - Archaeology consolidated: `archeology/` (56 φ sources, 370+ research docs), `docs/omegaflow_archeology.zip`
 - GitHub cleanup: 22 issues closed, ~80 failed runs deleted, mirror-cdn cron disabled
 - Probe auto-curation: `probe_classify` (23 force rules → DROP or field decl), field output in `walk_json_probe` (Num + Str arms) and `probe_csv`
+- `unwrap_or(0.0)` eliminated: lat/lon parse failure → `continue` (skip source line); alt absent → explicit `None => 0.0`; alt unparseable → `continue`
+- `unwrap_or(0)` eliminated: seconds absent in ISO 8601 → `return None`
+- `_ => 0.0` wildcard eliminated from `kernel_extent`: 7 kernels use explicit `if kernel_id == N { return ... }` chain, unknown → implicit `0.0` at function end
 
 ## Source Curation (next)
 
@@ -37,12 +40,9 @@ AGENTS.md is the primary constraint matrix. Git is the history. Pending work onl
 - `archeology/foundation/gaps.md` — domain coverage gaps
 - `archeology/foundation/collection.md` — curated collection state
 
-### Residual Defaults
-- `unwrap_or(0.0)` 3× in `load_sources_from` `on` handler: lat, lon, alt (:6666-6668)
-- `_ => 0.0` in `kernel_extent` wildcard arm (:2088)
-- `unwrap_or(0)` at :904
+### Code Hygiene
 - 3-part `field` form hardcodes `tau: 0.0` with no gate (:3735)
-- `kernel_for_force` has arm `8 => 5` referencing non-existent force id 8 (:2038-2046)
+- `kernel_for_force` has unreachable arm `8 => 5` referencing non-existent force id 8 (:2038-2046)
 
 ### Validation
 - `--verify` CLI exists (tests URL reachability), no sources loaded yet
