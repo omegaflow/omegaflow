@@ -284,8 +284,9 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 @group(0) @binding(4) var field_grid: texture_storage_2d<rgba16float, write>;
-@group(0) @binding(5) var field_grid_tex: texture_2d<f32>;
-@group(0) @binding(6) var field_grid_smp: sampler;
+@group(1) @binding(0) var<uniform> vp_render: VP;
+@group(1) @binding(1) var field_grid_tex: texture_2d<f32>;
+@group(1) @binding(2) var field_grid_smp: sampler;
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 
@@ -431,10 +432,10 @@ fn presence_probe() {
 }
 
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
-    let count = u32(vp.surface.z);
+    let count = u32(vp_render.surface.z);
     if (count == 0u) { discard; }
 
-    let scale = vp.surface.w;
+    let scale = vp_render.surface.w;
     let omega = textureSample(field_grid_tex, field_grid_smp, in.uv).r;
     let aw = abs(omega);
     if (aw < 1e-30) { discard; }
@@ -460,7 +461,7 @@ fn presence_probe() {
                 lvls0: kernelExpose[0], gridStepLog2: Math.round(Math.log2(gridStep))
             });
         };
-        let gpu = null, fieldCtx = null, fieldPipe = null, fieldGridPipe = null, fieldLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, fieldGridTex = null, fieldGridSmp = null, fieldCap = 0, fieldFrames = 0;
+        let gpu = null, fieldCtx = null, fieldPipe = null, fieldGridPipe = null, fieldLayout = null, renderLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, renderBind = null, fieldGridTex = null, fieldGridSmp = null, fieldCap = 0, fieldFrames = 0;
         let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0];
         let gpuInitPromise = null;
         let gpuStatus = 'WebGPU: awaiting config';
@@ -478,9 +479,9 @@ fn presence_probe() {
                     gpuStatus = 'WebGPU: active (' + (adapter.info ? (adapter.info.vendor || '') + ' ' + (adapter.info.architecture || '') : 'Renderer') + ')';
                     device.lost.then((info) => {
                         gpu = null;
-                        fieldCtx = null; fieldPipe = null; fieldGridPipe = null; fieldLayout = null; probePipe = null;
+                        fieldCtx = null; fieldPipe = null; fieldGridPipe = null; fieldLayout = null; renderLayout = null; probePipe = null;
                         vpBuf = null; fieldBuf = null; metaBuf = null; probeBuf = null; probeRead = null;
-                        fieldBind = null; fieldCap = 0; gpuInitPromise = null;
+                        fieldBind = null; renderBind = null; fieldCap = 0; gpuInitPromise = null;
                         reportState('gpu', 'device.lost: ' + (info && info.reason ? info.reason : 'unknown'));
                     });
                     fieldCtx = fieldCanvas.getContext('webgpu');
@@ -492,14 +493,17 @@ fn presence_probe() {
                     fieldLayout = device.createBindGroupLayout({ entries: [
                         { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
                         { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
-                        { binding: 2, visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
+                        { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
                         { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
-                        { binding: 4, visibility: GPUShaderStage.COMPUTE, storageTexture: { format: 'rgba16float' } },
-                        { binding: 5, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
-                        { binding: 6, visibility: GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } }
+                        { binding: 4, visibility: GPUShaderStage.COMPUTE, storageTexture: { format: 'rgba16float' } }
+                    ] });
+                    renderLayout = device.createBindGroupLayout({ entries: [
+                        { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
+                        { binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
+                        { binding: 2, visibility: GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } }
                     ] });
                     fieldPipe = device.createRenderPipeline({
-                        layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
+                        layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout, renderLayout] }),
                         vertex: { module, entryPoint: 'vs' },
                         fragment: {
                             module, entryPoint: 'fs',
@@ -558,9 +562,12 @@ fn presence_probe() {
                     { binding: 1, resource: { buffer: metaBuf } },
                     { binding: 2, resource: { buffer: vpBuf } },
                     { binding: 3, resource: { buffer: probeBuf } },
-                    { binding: 4, resource: fieldGridTex.createView() },
-                    { binding: 5, resource: fieldGridTex.createView() },
-                    { binding: 6, resource: fieldGridSmp }
+                    { binding: 4, resource: fieldGridTex.createView() }
+                ] });
+                renderBind = gpu.createBindGroup({ layout: renderLayout, entries: [
+                    { binding: 0, resource: { buffer: vpBuf } },
+                    { binding: 1, resource: fieldGridTex.createView() },
+                    { binding: 2, resource: fieldGridSmp }
                 ] });
             } catch (e) {
                 fieldCap = 0;
@@ -658,6 +665,7 @@ fn presence_probe() {
                     const pass = renderEncoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
                     pass.setPipeline(fieldPipe);
                     pass.setBindGroup(0, fieldBind);
+                    pass.setBindGroup(1, renderBind);
                     pass.draw(6);
                     pass.end();
                     gpu.queue.submit([renderEncoder.finish()]);
