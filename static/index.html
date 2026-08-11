@@ -120,6 +120,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         });
 
         let gridStep = Math.pow(2, 54);
+        let autoZoomed = false;
         let RX = window.innerWidth, RY = window.innerHeight;
         function windowQueries() {
             const [r, u] = orientationFrame();
@@ -632,6 +633,18 @@ fn presence_probe() {
             const n = rawWindowResponse.count;
             fieldCount = n;
             ensureFieldCapacity(n);
+            if (!autoZoomed && n > 0) {
+                const exts = [];
+                for (let i = 0; i < n; i++) {
+                    const e = rawWindowResponse.meta[i * 4];
+                    if (e > 0) exts.push(e);
+                }
+                if (exts.length > 0) {
+                    exts.sort((a, b) => a - b);
+                    gridStep = exts[exts.length >> 1];
+                    autoZoomed = true;
+                }
+            }
             if (lastFoldResp !== rawWindowResponse) {
                 lastFoldResp = rawWindowResponse;
                 const raw = rawWindowResponse.field;
