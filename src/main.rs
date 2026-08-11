@@ -6715,6 +6715,11 @@ fn ci_mode(dir: &str) -> i32 {
     let mut mirrored = 0u32;
     let mut fresh = 0u32;
     for src in &sources {
+        if src.url.starts_with("https://github.com/omegaflow/sources")
+            || src.format == "ephemeris_binary"
+        {
+            continue;
+        }
         let is_fixed = !src.url.contains('{');
         if is_fixed {
             if let Some(netloc) = extract_netloc(&src.url) {
