@@ -30,6 +30,7 @@ jobs:
         run: |
           mkdir -p kernels
           declare -A KERNEL_URLS=(
+            ["de442.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de442.bsp"
             ["de440.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp"
             ["jup365.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/jup365.bsp"
             ["sat441.bsp"]="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp"
@@ -50,7 +51,7 @@ jobs:
       - name: Compile ephemerides from SPK
         run: |
           cargo run --release --bin ephemeris_compiler -- \
-            kernels/de440.bsp \
+            kernels/de442.bsp \
             kernels/jup365.bsp \
             kernels/sat441.bsp \
             kernels/mar099s.bsp \
