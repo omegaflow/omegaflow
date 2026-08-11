@@ -887,6 +887,24 @@ fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
     }
 }
 
+fn parse_iso_utc(s: &str) -> Option<u64> {
+    let s = s.trim();
+    let (date, time_rest) = s.split_once('T')?;
+    let time = time_rest.trim_end_matches('Z').trim_end_matches('z');
+    let time_core = time.split(|c: char| c == '.').next()?;
+    let mut dp = date.split('-');
+    let y: i64 = dp.next()?.parse().ok()?;
+    let m: u32 = dp.next()?.parse().ok()?;
+    let d: u32 = dp.next()?.parse().ok()?;
+    let mut tp = time_core.split(':');
+    let hh: u32 = tp.next()?.parse().ok()?;
+    let mm: u32 = tp.next()?.parse().ok()?;
+    let ss: u32 = tp.next().and_then(|s2| s2.parse().ok()).unwrap_or(0);
+    let days = ymd_to_days(y, m, d)? as i64;
+    let unix = days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + (ss as i64);
+    Some(unix as u64)
+}
+
 #[derive(Clone)]
 struct OriginState {
     fetched: f64,
@@ -2575,17 +2593,50 @@ fn fetch_one(
         if let Some(netloc) = extract_netloc(url) {
             let name = source_name_from_url(url);
             if !name.is_empty() {
+                let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+                if let Some(cached) = read_cache_if_fresh(&cache_path, ttl) {
+                    return Some(cached);
+                }
                 let cdn_url = format!(
                     "https://github.com/omegaflow/sources/releases/download/{}/{}.json",
                     netloc, name
                 );
                 if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl) {
+                    let _ = std::fs::create_dir_all(
+                        std::path::Path::new(&cache_path).parent().unwrap(),
+                    );
+                    let _ = std::fs::write(&cache_path, cdn_body.as_bytes());
                     return Some(cdn_body);
                 }
             }
         }
     }
-    fetch_raw(url, body, headers, ttl)
+    let live = fetch_raw(url, body, headers, ttl);
+    if let Some(ref r) = live {
+        if let Some(netloc) = extract_netloc(url) {
+            let name = source_name_from_url(url);
+            if !name.is_empty() {
+                let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+                let _ =
+                    std::fs::create_dir_all(std::path::Path::new(&cache_path).parent().unwrap());
+                let _ = std::fs::write(&cache_path, r.as_bytes());
+            }
+        }
+    }
+    live
+}
+
+fn read_cache_if_fresh(path: &str, ttl: u64) -> Option<String> {
+    let meta = std::fs::metadata(path).ok()?;
+    let age = std::time::SystemTime::now()
+        .duration_since(meta.modified().ok()?)
+        .ok()?
+        .as_secs();
+    if age < ttl {
+        std::fs::read_to_string(path).ok()
+    } else {
+        None
+    }
 }
 
 fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
@@ -6581,13 +6632,99 @@ fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
     sources
 }
 
+fn cdn_asset_fresh(netloc: &str, name: &str, ttl: u64) -> bool {
+    let gh_token = match std::env::var("GH_TOKEN") {
+        Ok(t) => t,
+        Err(_) => return false,
+    };
+    let url = format!(
+        "https://api.github.com/repos/omegaflow/sources/releases/tags/{}",
+        netloc
+    );
+    let asset_name = format!("{}.json", name);
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-S")
+        .arg("-f")
+        .arg("-L")
+        .arg("--max-time")
+        .arg("15")
+        .arg("-H")
+        .arg(format!("Authorization: Bearer {}", gh_token))
+        .arg("-H")
+        .arg("Accept: application/vnd.github+json")
+        .arg(&url);
+    let output = match cmd.output() {
+        Ok(o) => o,
+        Err(_) => return false,
+    };
+    if !output.status.success() {
+        return false;
+    }
+    let body = String::from_utf8_lossy(&output.stdout).to_string();
+    let json = match parse_json(&body) {
+        Some(j) => j,
+        None => return false,
+    };
+    let assets = match &json {
+        JsonVal::Obj(map) => match map.get("assets") {
+            Some(JsonVal::Arr(arr)) => arr,
+            _ => return false,
+        },
+        _ => return false,
+    };
+    for asset in assets {
+        if let JsonVal::Obj(amap) = asset {
+            let found = amap.get("name").and_then(|v| {
+                if let JsonVal::Str(s) = v {
+                    Some(s.as_str())
+                } else {
+                    None
+                }
+            });
+            if found != Some(asset_name.as_str()) {
+                continue;
+            }
+            let updated = amap.get("updated_at").and_then(|v| {
+                if let JsonVal::Str(s) = v {
+                    Some(s.as_str())
+                } else {
+                    None
+                }
+            });
+            if let Some(ts) = updated {
+                if let Some(asset_ts) = parse_iso_utc(ts) {
+                    let now = match SystemTime::now().duration_since(UNIX_EPOCH) {
+                        Ok(d) => d.as_secs(),
+                        Err(_) => return false,
+                    };
+                    let age = now.saturating_sub(asset_ts);
+                    return age < ttl;
+                }
+            }
+        }
+    }
+    false
+}
+
 fn ci_mode(dir: &str) -> i32 {
     let sources = load_all_sources(dir);
     let total = sources.len();
     let mut reachable = 0usize;
     let mut dead = 0usize;
     let mut mirrored = 0u32;
+    let mut fresh = 0u32;
     for src in &sources {
+        let is_fixed = !src.url.contains('{');
+        if is_fixed {
+            if let Some(netloc) = extract_netloc(&src.url) {
+                let name = source_name_from_url(&src.url);
+                if !name.is_empty() && cdn_asset_fresh(netloc, &name, src.ttl) {
+                    fresh += 1;
+                    continue;
+                }
+            }
+        }
         let raw = match fetch_raw(&src.url, None, &[], src.ttl) {
             Some(r) => r,
             None => {
@@ -6599,7 +6736,6 @@ fn ci_mode(dir: &str) -> i32 {
         if parse_json(&raw).is_some() {
             reachable += 1;
             eprintln!("ci-mode: {} JSON ok", src.url);
-            let is_fixed = !src.url.contains('{');
             if is_fixed {
                 if let Some(netloc) = extract_netloc(&src.url) {
                     let name = source_name_from_url(&src.url);
@@ -6633,8 +6769,8 @@ fn ci_mode(dir: &str) -> i32 {
         }
     }
     eprintln!(
-        "ci-mode: {}/{} reachable, {} dead, {} mirrored to CDN",
-        reachable, total, dead, mirrored
+        "ci-mode: {}/{} reachable, {} dead, {} mirrored to CDN, {} fresh (CDN < TTL)",
+        reachable, total, dead, mirrored, fresh
     );
     if dead == 0 {
         0
