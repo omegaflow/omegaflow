@@ -2910,6 +2910,61 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         let _ = cfg.osc_tx.send(oscillators);
                     }
                 }
+            } else if let Some(body_id) = st_body {
+                let eph_map = cfg.eph.clone();
+                let body_name = match body_id_to_name(&eph_map, body_id) {
+                    Some(n) => n,
+                    None => continue,
+                };
+                let frame = Frame::Barycenter {
+                    body_name: body_name.clone(),
+                    scale: 1.0,
+                };
+                let pos = Position::Source;
+                let mut channels: Vec<(Channel, FieldConfig, f64)> = Vec::new();
+                for (name, value) in &field_values {
+                    if let Some(bs) = sensor_config(name) {
+                        let sensor_ttl = bs.ttl;
+                        let fc = FieldConfig {
+                            key: bs.key.clone(),
+                            name: bs.key.clone(),
+                            kernel: bs.kernel,
+                            force: bs.force,
+                            tau: 0.0,
+                            absorption: 0.0,
+                            advection: 0.0,
+                        };
+                        if value.is_finite() {
+                            channels.push((
+                                Channel {
+                                    epoch: now,
+                                    position: pos.clone(),
+                                    name: fc.name.clone(),
+                                    value: *value,
+                                },
+                                fc,
+                                sensor_ttl,
+                            ));
+                        }
+                    }
+                }
+                let mut oscillators = Vec::new();
+                for (channel, sensor, sensor_ttl) in channels {
+                    if let Some(osc) = anchor(
+                        &channel,
+                        &sensor,
+                        sensor_ttl,
+                        None,
+                        Some(&frame),
+                        None,
+                        &eph_map,
+                    ) {
+                        oscillators.push(osc);
+                    }
+                }
+                if !oscillators.is_empty() {
+                    let _ = cfg.osc_tx.send(oscillators);
+                }
             }
             let field = {
                 if let Ok(f) = cfg.field_rx.try_recv() {
