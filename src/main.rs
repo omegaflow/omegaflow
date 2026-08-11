@@ -2086,6 +2086,7 @@ struct BrowserSensor {
     key: String,
     force: u8,
     kernel: u8,
+    ttl: f64,
 }
 
 fn force_id_of(name: &str) -> Option<u8> {
@@ -2104,58 +2105,58 @@ fn force_id_of(name: &str) -> Option<u8> {
 
 fn sensor_config(name: &str) -> Option<BrowserSensor> {
     let kl = name.to_lowercase();
-    let (force, kernel, _unit) = if kl.contains("temperature")
+    let (force, kernel, ttl) = if kl.contains("temperature")
         || kl.contains("temp")
         || kl == "thermistor"
     {
-        (5, kernel_for_force(5), "C")
+        (5, kernel_for_force(5), 60.0)
     } else if kl.contains("pressure") || kl.contains("baro") || kl == "pres" {
-        (6, kernel_for_force(6), "hPa")
+        (6, kernel_for_force(6), 60.0)
     } else if kl.contains("humidity") || kl.contains("humid") || kl == "rh" || kl == "moisture" {
-        (5, kernel_for_force(5), "%")
+        (5, kernel_for_force(5), 300.0)
     } else if kl.contains("wind") && kl.contains("speed") || kl == "windspeed" || kl == "anemometer"
     {
-        (6, kernel_for_force(6), "m/s")
+        (6, kernel_for_force(6), 10.0)
     } else if (kl.contains("wind") && kl.contains("dir"))
         || kl == "winddirection"
         || kl == "winddir"
         || kl == "vane"
     {
-        (6, kernel_for_force(6), "deg")
+        (6, kernel_for_force(6), 10.0)
     } else if kl.contains("mic")
         || kl.contains("audio")
         || kl.contains("sound")
         || kl.contains("noise")
         || kl == "spl"
     {
-        (2, kernel_for_force(2), "Pa")
+        (2, kernel_for_force(2), 0.01)
     } else if kl.contains("light")
         || kl.contains("lux")
         || kl.contains("lumin")
         || kl.contains("irradiance")
     {
-        (0, kernel_for_force(0), "lx")
+        (0, kernel_for_force(0), 10.0)
     } else if kl.contains("battery")
         && (kl.contains("level") || kl.contains("pct") || kl.contains("soc"))
     {
-        (5, kernel_for_force(5), "%")
+        (5, kernel_for_force(5), 60.0)
     } else if kl.contains("battery") && (kl.contains("volt") || kl == "voltage") {
-        (8, kernel_for_force(8), "V")
+        (8, kernel_for_force(8), 60.0)
     } else if kl.contains("battery") && kl.contains("current") {
-        (8, kernel_for_force(8), "A")
+        (8, kernel_for_force(8), 10.0)
     } else if kl.contains("co2")
         || kl.contains("voc")
         || kl.contains("pm2")
         || kl.contains("pm10")
         || kl.contains("gas")
     {
-        (5, kernel_for_force(5), "ppm")
+        (5, kernel_for_force(5), 300.0)
     } else if kl.contains("magnet") || kl.contains("compass") || kl.contains("b_field") {
-        (0, 0, "nT")
+        (0, 0, 10.0)
     } else if kl.contains("accelerometer") || kl.contains("acc") || kl.contains("vibration") {
-        (3, kernel_for_force(3), "m/s2")
+        (3, kernel_for_force(3), 1.0)
     } else if kl.contains("gyro") {
-        (3, kernel_for_force(3), "rad/s")
+        (3, kernel_for_force(3), 1.0)
     } else if kl.contains("gps") || kl.contains("gnss") {
         return None;
     } else {
@@ -2165,6 +2166,7 @@ fn sensor_config(name: &str) -> Option<BrowserSensor> {
         key: name.into(),
         force,
         kernel,
+        ttl,
     })
 }
 
@@ -2869,9 +2871,10 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         lon,
                         alt,
                     };
-                    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+                    let mut channels: Vec<(Channel, FieldConfig, f64)> = Vec::new();
                     for (name, value) in &field_values {
                         if let Some(bs) = sensor_config(name) {
+                            let sensor_ttl = bs.ttl;
                             let fc = FieldConfig {
                                 key: bs.key.clone(),
                                 name: bs.key.clone(),
@@ -2890,14 +2893,15 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                         value: *value,
                                     },
                                     fc,
+                                    sensor_ttl,
                                 ));
                             }
                         }
                     }
                     let mut oscillators = Vec::new();
-                    for (channel, sensor) in channels {
+                    for (channel, sensor, sensor_ttl) in channels {
                         if let Some(osc) =
-                            anchor(&channel, &sensor, 0.0, None, None, None, &eph_map)
+                            anchor(&channel, &sensor, sensor_ttl, None, None, None, &eph_map)
                         {
                             oscillators.push(osc);
                         }
