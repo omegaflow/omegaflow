@@ -17,7 +17,7 @@ h1 {
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 200; letter-spacing: 0.15em;
   color: #f0e8d8; margin-bottom: 1rem;
-  text-shadow: 0 0 40px rgba(168,152,120,0.08);
+  text-shadow: 0 0 40px rgba(130,120,180,0.10), 0 0 80px rgba(130,120,180,0.05);
   animation: titleIn 2s ease;
 }
 
@@ -49,29 +49,29 @@ a.glyph:hover { transform: scale(1.08); }
 a.glyph:hover::before { opacity: 1; }
 
 a#btn-φ {
-  color: #a89878; border: 1.5px solid rgba(168,152,120,0.3);
-  box-shadow: 0 0 30px rgba(168,152,120,0.06), 0 0 60px rgba(168,152,120,0.03);
+  color: #c4a45a; border: 1.5px solid rgba(196,164,90,0.3);
+  box-shadow: 0 0 30px rgba(196,164,90,0.06), 0 0 60px rgba(196,164,90,0.03);
 }
 a#btn-φ:hover {
-  box-shadow: 0 0 40px rgba(168,152,120,0.15), 0 0 80px rgba(168,152,120,0.06);
-  border-color: rgba(168,152,120,0.5);
+  box-shadow: 0 0 40px rgba(196,164,90,0.15), 0 0 80px rgba(196,164,90,0.06);
+  border-color: rgba(196,164,90,0.5);
 }
-a#btn-φ::before { box-shadow: 0 0 50px rgba(168,152,120,0.12); }
+a#btn-φ::before { box-shadow: 0 0 50px rgba(196,164,90,0.12); }
 
 a#btn-Φ {
-  color: #f0e8d8; border: 1.5px solid rgba(240,232,216,0.3);
-  box-shadow: 0 0 40px rgba(240,232,216,0.08), 0 0 80px rgba(240,232,216,0.04);
+  color: #b8a0d8; border: 1.5px solid rgba(184,160,216,0.3);
+  box-shadow: 0 0 40px rgba(184,160,216,0.08), 0 0 80px rgba(184,160,216,0.04);
 }
 a#btn-Φ:hover {
-  box-shadow: 0 0 50px rgba(240,232,216,0.2), 0 0 100px rgba(240,232,216,0.08);
-  border-color: rgba(240,232,216,0.5);
+  box-shadow: 0 0 50px rgba(184,160,216,0.2), 0 0 100px rgba(184,160,216,0.08);
+  border-color: rgba(184,160,216,0.5);
 }
-a#btn-Φ::before { box-shadow: 0 0 60px rgba(240,232,216,0.15); }
+a#btn-Φ::before { box-shadow: 0 0 60px rgba(184,160,216,0.15); }
 
 .pulse { animation: pulse 4s ease-in-out infinite; }
 @keyframes pulse {
   0%, 100% { box-shadow: inherit; }
-  50% { box-shadow: 0 0 60px rgba(240,232,216,0.12), 0 0 120px rgba(240,232,216,0.04); }
+  50% { box-shadow: 0 0 60px rgba(184,160,216,0.12), 0 0 120px rgba(184,160,216,0.04); }
 }
 
 .labels { display: flex; gap: 3rem; text-align: center; margin-bottom: 0.3rem; }
@@ -87,7 +87,7 @@ a#btn-Φ::before { box-shadow: 0 0 60px rgba(240,232,216,0.15); }
 </head>
 <body>
 
-<h1>&phi;(<span style="color:#a89878">x</span>,<span style="color:#a89878">y</span>,<span style="color:#a89878">z</span>,<span style="color:#a89878">t</span>)</h1>
+<h1>&phi;(<span style="color:#c4a45a">x</span>,<span style="color:#b8a0d8">y</span>,<span style="color:#c4a45a">z</span>,<span style="color:#b8a0d8">t</span>)</h1>
 
 <div class="info" id="info"></div>
 
