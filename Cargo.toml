@@ -7,5 +7,6 @@ license = "CC-BY-NC-SA-4.0"
 description = "φ(x,y,z,t)"
 repository = "https://github.com/omegaflow/omegaflow"
 homepage = "https://omegaflow.space"
+default-run = "omegaflow"
 
 [dependencies]
