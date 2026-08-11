@@ -1,0 +1,293 @@
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9491094&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 67.5758 -164.0644 0
+lon metadata.lon deg
+lat metadata.lat deg
+field data.v gravity m
+field data.s gravity m
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9497645&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 70.4114 -148.5317 0
+lon metadata.lon deg
+lat metadata.lat deg
+field data.v gravity m
+field data.s gravity m
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751364&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 17.7477 -64.6984 0
+lon metadata.lon deg
+lat metadata.lat deg
+field data.v gravity m
+field data.s gravity m
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 18.335278 -65.63111 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 18.480528 -66.70236 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759938&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 18.0893 -67.9382 0
+lat metadata.lat deg
+lon metadata.lon deg
+field data.s gravity m
+field data.v gravity m
+
+url https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
+ttl 300
+on earth 0 0 0
+lat items.lat deg
+
+url https://services.swpc.noaa.gov/products/summary/solar-wind-mag-field.json
+ttl 300
+at earth
+field bt em nT
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+ttl 300
+at earth
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+ttl 300
+at earth
+field flux em W/m2
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+ttl 300
+at earth
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+ttl 300
+at earth
+field flux em W/m2
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+ttl 300
+at earth
+field observed_flux em W/m2
+field flux em W/m2
+
+url https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json
+ttl 300
+at earth
+field proton_speed advective km/s
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
+ttl 600
+on earth 38.99 -76.84 0
+
+url https://aviationweather.gov/api/data/metar?format=json&bbox=-180,-90,180,90
+ttl 600
+on earth 0 0 0
+lat lat deg
+lon lon deg
+field dewp thermal C
+field wspd advective m/s
+field wdir advective deg
+field temp thermal C
+
+url https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10
+ttl 600
+on earth 0 0 0
+
+url https://data.sensor.community/static/v1/data.json
+ttl 600
+on earth 0 0 0
+lat location.latitude deg
+alt location.altitude km
+lon location.longitude deg
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
+ttl 600
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
+ttl 600
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://www.jma.go.jp/bosai/quake/data/list.json
+ttl 600
+on earth 35.68 139.69 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
+ttl 600
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
+ttl 600
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+ttl 600
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
+ttl 600
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
+ttl 600
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={week_ago}&endtime={today}&minmagnitude=2.5&limit=200
+ttl 600
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+ttl 600
+on earth 40.1 -105.2 0
+alt @info.altitude km
+lat @info.latitude deg
+lon @info.longitude deg
+
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=ESK&samplesPerDay=1440&dataStartDate={today}&dataDuration=1
+ttl 600
+on earth 55.3 -3.2 0
+lon @info.longitude deg
+lat @info.latitude deg
+alt @info.altitude km
+
+url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
+ttl 600
+on earth 0 -75.2 35786023
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07263295&parameterCd=00060,00065
+ttl 900
+on earth 34.74 -92.27 0
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09380000&parameterCd=00060,00065
+ttl 900
+on earth 36.86 -111.59 0
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=14105700&parameterCd=00060,00065
+ttl 900
+on earth 45.61 -121.19 0
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05413500&parameterCd=00060,00065
+ttl 900
+on earth 42.72 -90.82 0
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01358000&parameterCd=00060,00065
+ttl 900
+on earth 42.66 -73.75 0
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07010000&parameterCd=00060,00065
+ttl 900
+on earth 38.87 -90.18 0
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07289000&parameterCd=00060,00065
+ttl 900
+on earth 32.35 -90.89 0
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06342500&parameterCd=00060,00065
+ttl 900
+on earth 46.85 -100.78 0
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06934500&parameterCd=00060,00065
+ttl 900
+on earth 38.71 -91.44 0
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03294500&parameterCd=00060,00065
+ttl 900
+on earth 38.26 -85.66 0
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060,00065
+ttl 900
+on earth 38.95 -77.13 0
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08371000&parameterCd=00060,00065
+ttl 900
+on earth 31.8 -106.53 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03565500&parameterCd=00060,00065
+ttl 900
+on earth 35.04 -85.31 0
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
+ttl 1800
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+ttl 1800
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
+ttl 3600
+on earth 19.5362 -155.5763 3397
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 3600
+at earth
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 3600
+at earth
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+ttl 3600
+at earth
+
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start={year}&end={year}&format=JSON
+ttl 3600
+on earth 0 0 0
+# fetch returned void
+

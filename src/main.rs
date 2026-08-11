@@ -3476,6 +3476,44 @@ fn load_sources() -> Vec<SourceConfig> {
             "vectors" if parts.len() >= 2 => {
                 cur_extracts.push(Extract::Vectors(parts[1].to_string()));
             }
+            "field" if parts.len() == 5 => {
+                let f = match force_id_of(parts[2]) {
+                    Some(f) => f,
+                    None => continue,
+                };
+                let tau: f64 = match parts[4].parse() {
+                    Ok(v) if v > 0.0 => v,
+                    _ => tau_for_force(f),
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[1].to_string(),
+                    kernel: kernel_for_force(f),
+                    force: f,
+                    tau,
+                    absorption: 0.0,
+                    advection: 0.0,
+                };
+                if let Some(ext) = cur_extracts.last_mut() {
+                    let fields: Option<&mut Vec<FieldConfig>> = match ext {
+                        Extract::Map { fields, .. } => Some(fields),
+                        Extract::CelestialMap { fields, .. } => Some(fields),
+                        Extract::Rows { fields, .. } => Some(fields),
+                        Extract::Flatten { fields, .. } => Some(fields),
+                        Extract::CmrPolygon { fields, .. } => Some(fields),
+                        Extract::CelestialPolygon { fields, .. } => Some(fields),
+                        Extract::KeplerMap { fields, .. } => Some(fields),
+                        _ => None,
+                    };
+                    if let Some(flds) = fields {
+                        flds.push(fc);
+                    } else {
+                        cur_extracts.push(Extract::Field(fc.clone()));
+                    }
+                } else {
+                    cur_extracts.push(Extract::Field(fc.clone()));
+                }
+            }
             "field" if parts.len() == 4 => {
                 let f = match force_id_of(parts[2]) {
                     Some(f) => f,
@@ -5923,7 +5961,8 @@ fn probe_csv(raw: &str) -> Option<String> {
         if force == "DROP" {
             continue;
         }
-        out.push_str(&format!("field {} {} {}\n", col, force, unit));
+        let tau = force_id_of(force).map(tau_for_force).unwrap_or(1.0);
+        out.push_str(&format!("field {} {} {} {}\n", col, force, unit, tau));
     }
     if out.is_empty() {
         None
@@ -6036,7 +6075,8 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
             if unit == "DROP" {
                 return;
             }
-            out.push_str(&format!("field {} {} {}\n", prefix, force, unit));
+            let tau = force_id_of(force).map(tau_for_force).unwrap_or(1.0);
+            out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
         }
         JsonVal::Str(s) => {
             if let Ok(n) = s.parse::<f64>() {
@@ -6051,7 +6091,8 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
                 if unit == "DROP" {
                     return;
                 }
-                out.push_str(&format!("field {} {} {}\n", prefix, force, unit));
+                let tau = force_id_of(force).map(tau_for_force).unwrap_or(1.0);
+                out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
             }
         }
         _ => {}
