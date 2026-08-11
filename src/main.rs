@@ -6860,11 +6860,11 @@ fn main() {
     radiators.push(Box::new(sr));
     radiators.push(Box::new(AudioRadiator::new(44100)));
     radiators.push(Box::new(StderrRadiator {
-        name: "stderr-i",
+        name: "field-int",
         mode: StderrMode::Intensity,
     }));
     radiators.push(Box::new(StderrRadiator {
-        name: "stderr-c",
+        name: "osc-count",
         mode: StderrMode::Count,
     }));
     let cadence = 1.0;
