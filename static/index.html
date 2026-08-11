@@ -283,10 +283,9 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
-@group(0) @binding(4) var field_grid: texture_storage_2d<rgba16float, write>;
+@group(0) @binding(4) var<storage, read_write> grid_out: array<f32>;
 @group(1) @binding(0) var<uniform> vp_render: VP;
-@group(1) @binding(1) var field_grid_tex: texture_2d<f32>;
-@group(1) @binding(2) var field_grid_smp: sampler;
+@group(1) @binding(1) var<storage, read> grid_in: array<f32>;
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 
@@ -363,18 +362,19 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
 @compute @workgroup_size(8, 8)
 fn build_field_grid(@builtin(global_invocation_id) gid: vec3u) {
     let count = u32(vp.surface.z);
-    let dims = textureDimensions(field_grid);
-    if (gid.x >= dims.x || gid.y >= dims.y) { return; }
+    let GRID = 128u;
+    if (gid.x >= GRID || gid.y >= GRID) { return; }
+    let idx = gid.y * GRID + gid.x;
     if (count == 0u) {
-        textureStore(field_grid, vec2u(gid.xy), vec4f(0.0));
+        grid_out[idx] = 0.0;
         return;
     }
 
     let w = vp.surface.x;
     let h = vp.surface.y;
     let scale = vp.surface.w;
-    let gx = f32(gid.x) / f32(dims.x);
-    let gy = f32(gid.y) / f32(dims.y);
+    let gx = f32(gid.x) / f32(GRID);
+    let gy = f32(gid.y) / f32(GRID);
     let pixel_rel = (gx - 0.5) * w * scale * vp.right.xyz
         + (0.5 - gy) * h * scale * vp.up.xyz;
 
@@ -391,7 +391,7 @@ fn build_field_grid(@builtin(global_invocation_id) gid: vec3u) {
         let sk = field_spatial(d2, d_mag, mt.x, u32(mt.z), scale, f32(tm.w));
         omega += val_eff * sk;
     }
-    textureStore(field_grid, vec2u(gid.xy), vec4f(omega, 0.0, 0.0, 1.0));
+    grid_out[idx] = omega;
 }
 
 @compute @workgroup_size(1)
@@ -431,12 +431,28 @@ fn presence_probe() {
     }
 }
 
+fn sample_grid(uv: vec2f) -> f32 {
+    let GRID = 128u;
+    let gx = uv.x * f32(GRID) - 0.5;
+    let gy = uv.y * f32(GRID) - 0.5;
+    let ix = u32(clamp(gx, 0.0, f32(GRID - 1u)));
+    let iy = u32(clamp(gy, 0.0, f32(GRID - 1u)));
+    let nx = min(ix + 1u, GRID - 1u);
+    let ny = min(iy + 1u, GRID - 1u);
+    let fx = fract(gx);
+    let fy = fract(gy);
+    let v00 = grid_in[iy * GRID + ix];
+    let v10 = grid_in[iy * GRID + nx];
+    let v01 = grid_in[ny * GRID + ix];
+    let v11 = grid_in[ny * GRID + nx];
+    return mix(mix(v00, v10, fx), mix(v01, v11, fx), fy);
+}
+
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
     let count = u32(vp_render.surface.z);
     if (count == 0u) { discard; }
-
     let scale = vp_render.surface.w;
-    let omega = textureSample(field_grid_tex, field_grid_smp, in.uv).r;
+    let omega = sample_grid(in.uv);
     let aw = abs(omega);
     if (aw < 1e-30) { discard; }
     let lum = clamp(log2(aw + 1.0) / 16.0, 0.0, 1.0);
@@ -461,7 +477,7 @@ fn presence_probe() {
                 lvls0: kernelExpose[0], gridStepLog2: Math.round(Math.log2(gridStep))
             });
         };
-        let gpu = null, fieldCtx = null, fieldPipe = null, fieldGridPipe = null, fieldLayout = null, renderLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, renderBind = null, fieldGridTex = null, fieldGridSmp = null, fieldCap = 0, fieldFrames = 0;
+        let gpu = null, fieldCtx = null, fieldPipe = null, fieldGridPipe = null, fieldLayout = null, renderLayout = null, probePipe = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, renderBind = null, gridBuf = null, fieldCap = 0, fieldFrames = 0;
         let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0];
         let gpuInitPromise = null;
         let gpuStatus = 'WebGPU: awaiting config';
@@ -480,7 +496,7 @@ fn presence_probe() {
                     device.lost.then((info) => {
                         gpu = null;
                         fieldCtx = null; fieldPipe = null; fieldGridPipe = null; fieldLayout = null; renderLayout = null; probePipe = null;
-                        vpBuf = null; fieldBuf = null; metaBuf = null; probeBuf = null; probeRead = null;
+                        vpBuf = null; fieldBuf = null; metaBuf = null; probeBuf = null; probeRead = null; gridBuf = null;
                         fieldBind = null; renderBind = null; fieldCap = 0; gpuInitPromise = null;
                         reportState('gpu', 'device.lost: ' + (info && info.reason ? info.reason : 'unknown'));
                     });
@@ -495,12 +511,11 @@ fn presence_probe() {
                         { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
                         { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
                         { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
-                        { binding: 4, visibility: GPUShaderStage.COMPUTE, storageTexture: { format: 'rgba16float' } }
+                        { binding: 4, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
                     ] });
                     renderLayout = device.createBindGroupLayout({ entries: [
                         { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
-                        { binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
-                        { binding: 2, visibility: GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } }
+                        { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } }
                     ] });
                     fieldPipe = device.createRenderPipeline({
                         layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout, renderLayout] }),
@@ -524,8 +539,7 @@ fn presence_probe() {
                     probeBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
                     probeRead = device.createBuffer({ size: 32, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
                     vpBuf = device.createBuffer({ size: 128, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
-                    fieldGridTex = device.createTexture({ size: [128, 128], format: 'rgba16float', usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING });
-                    fieldGridSmp = device.createSampler({ magFilter: 'linear', minFilter: 'linear' });
+                    gridBuf = device.createBuffer({ size: 128 * 128 * 4, usage: GPUBufferUsage.STORAGE });
                     fieldGridPipe = device.createComputePipeline({
                         layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
                         compute: { module, entryPoint: 'build_field_grid' }
@@ -562,12 +576,11 @@ fn presence_probe() {
                     { binding: 1, resource: { buffer: metaBuf } },
                     { binding: 2, resource: { buffer: vpBuf } },
                     { binding: 3, resource: { buffer: probeBuf } },
-                    { binding: 4, resource: fieldGridTex.createView() }
+                    { binding: 4, resource: { buffer: gridBuf } }
                 ] });
                 renderBind = gpu.createBindGroup({ layout: renderLayout, entries: [
                     { binding: 0, resource: { buffer: vpBuf } },
-                    { binding: 1, resource: fieldGridTex.createView() },
-                    { binding: 2, resource: fieldGridSmp }
+                    { binding: 1, resource: { buffer: gridBuf } }
                 ] });
             } catch (e) {
                 fieldCap = 0;
