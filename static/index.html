@@ -359,7 +359,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.d_mag = d_mag;
     out.extent = phys_extent;
     let w_f = max(w, h);
-    var point_size_px = clamp(phys_extent / scale, 0.5, max(w_f * 0.2, 1.0));
+    var point_size_px = clamp(phys_extent / scale, 0.5, w_f);
     
     clip.x += (quad[vid].x * point_size_px) / w * 2.0;
     clip.y += (quad[vid].y * point_size_px) / h * 2.0;
