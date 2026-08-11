@@ -197,5 +197,61 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephe
 format ephemeris_binary
 at atlas_3i
 ttl 86400
-# ── Accepted: anu_quantum_entropy ──
-# ANU Quantum Random Number Generator
+
+# ── Live API: USGS Earthquakes (seismic-surface) ──
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+ttl 60
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+
+# ── Live API: SWPC GOES X-ray Flux (em, solar) ──
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+ttl 60
+at sun
+last flux noaa_goes_xray_flux_w_m2 inverse-square em W/m2 6.0 0.0 0.0
+
+# ── Live API: SWPC Solar Wind 1-min (em, near-Earth) ──
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+ttl 60
+at earth
+last proton_speed solar_wind_speed_km_s inverse-square em km/s 6.0 0.0 0.0
+last proton_density solar_wind_density_cm3 inverse-square em 1/cm3 6.0 0.0 0.0
+last proton_temperature solar_wind_temp_k inverse-square em K 6.0 0.0 0.0
+
+# ── Live API: SWPC Interplanetary Magnetic Field (em, near-Earth) ──
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+ttl 60
+at earth
+last bt magnetosphere_imf_bt_nt inverse-square em nT 6.0 0.0 0.0
+last bz_gsm magnetosphere_imf_bz_nt inverse-square em nT 6.0 0.0 0.0
+
+# ── Live API: NOAA GOES Magnetometer (em, geostationary) ──
+url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last Hp magnetosphere_hp_nt inverse-square em nT 6.0 0.0 0.0
+last He magnetosphere_he_nt inverse-square em nT 6.0 0.0 0.0
+last total magnetosphere_bt_nt inverse-square em nT 6.0 0.0 0.0
+
+# ── Live API: FDSN Earthquake Query (seismic-surface, presence-window) ──
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
+ttl 60
+on earth 0 0 0
+geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
+
+# ── Live API: AviationWeather METAR (acoustic, surface stations) ──
+url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
+ttl 300
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field temp atmosphere_metar_temp_c gaussian-inverse-square acoustic C 30.0 0.0 0.0
+field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square acoustic C 30.0 0.0 0.0
+field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square acoustic kt 30.0 0.0 0.0
+field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square acoustic deg 30.0 0.0 0.0

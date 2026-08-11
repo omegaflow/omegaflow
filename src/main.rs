@@ -7766,7 +7766,16 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
         };
-        let url = render_source_url(&src, 0.0, 0.0, 0.0, 0.0, 1000.0, &HashMap::new());
+        let url = render_source_url(
+            &src,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1000.0,
+            &HashMap::new(),
+            &HashMap::new(),
+        );
         assert!(url.contains("Ceres"));
         assert!(url.contains("fp_psc"));
         assert!(!url.contains("{target}"));
