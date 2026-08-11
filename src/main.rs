@@ -6268,6 +6268,10 @@ fn probe_csv(raw: &str) -> Option<String> {
             continue;
         }
         out.push_str(&format!("# {}\n", col));
+        let (force, unit, tau) = probe_classify(col);
+        if force != "DROP" {
+            out.push_str(&format!("field {} {} {} {}\n", col, force, unit, tau));
+        }
     }
     if out.is_empty() {
         None
@@ -6299,6 +6303,70 @@ fn is_unit_name(name: &str) -> bool {
         || kl == "knots"
         || kl == "m/sec"
         || kl == "deg"
+}
+
+fn probe_classify(key: &str) -> (&str, &str, f64) {
+    let kl = key.to_lowercase();
+    if kl.contains("temp") || kl.contains("atmp") || kl.contains("wtmp") || kl.contains("dewp") {
+        ("thermal", "C", 3600.0)
+    } else if kl.contains("pres") || kl.contains("baro") {
+        ("advective", "hPa", 60.0)
+    } else if kl.contains("spd")
+        || kl.contains("gust")
+        || (kl.contains("wind") && !kl.contains("dir"))
+    {
+        ("advective", "m/s", 60.0)
+    } else if kl.contains("dir") || kl.contains("heading") {
+        ("advective", "deg", 60.0)
+    } else if kl.contains("wave") || kl.contains("wvht") || kl.contains("swell") {
+        ("acoustic", "m", 10.0)
+    } else if kl.contains("depth") {
+        ("seismic-body", "km", 10.0)
+    } else if kl.contains("flux") {
+        ("em", "W/m2", 3600.0)
+    } else if kl == "bx"
+        || kl == "by"
+        || kl == "bz"
+        || kl == "bt"
+        || kl == "dst"
+        || kl.contains("mag_")
+        || kl.contains("_b_")
+    {
+        ("em", "nT", 60.0)
+    } else if kl.contains("hum") || kl.contains("rh") || kl == "rel_hum" {
+        ("diffusion", "%", 86400.0)
+    } else if kl.contains("rain") || kl.contains("prcp") {
+        ("acoustic", "mm", 60.0)
+    } else if kl.contains("vis") {
+        ("em", "km", 60.0)
+    } else if kl.contains("co2")
+        || kl.contains("ch4")
+        || kl.contains("o3")
+        || kl.contains("no2")
+        || kl.contains("so2")
+    {
+        ("diffusion", "ppm", 86400.0)
+    } else if kl.contains("vel") || kl.contains("vlct") {
+        ("advective", "km/s", 60.0)
+    } else if kl.contains("freq") || kl.ends_with("_hz") {
+        ("em", "Hz", 60.0)
+    } else if kl.contains("dens") {
+        ("diffusion", "p/cm3", 3600.0)
+    } else if kl.contains("conc") || kl.contains("salinity") {
+        ("diffusion", "PSU", 86400.0)
+    } else if kl == "db" || kl.ends_with("_db") {
+        ("acoustic", "dB", 60.0)
+    } else if kl.contains("discharge") {
+        ("advective", "m3/s", 60.0)
+    } else if kl == "v" || kl == "s" {
+        ("gravity", "m", 3600.0)
+    } else if kl.contains("footprint") {
+        ("em", "km", 60.0)
+    } else if kl.contains("sample") || kl.contains("sort") || kl.contains("order") {
+        ("DROP", "", 0.0)
+    } else {
+        ("DROP", "", 0.0)
+    }
 }
 
 fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut String) {
@@ -6377,6 +6445,10 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
                 return;
             }
             out.push_str(&format!("# {} = {:?}\n", prefix, n));
+            let (force, unit, tau) = probe_classify(key);
+            if force != "DROP" {
+                out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
+            }
         }
         JsonVal::Str(s) => {
             if let Ok(n) = s.parse::<f64>() {
@@ -6388,6 +6460,10 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
                     return;
                 }
                 out.push_str(&format!("# {} = {:?} (str)\n", prefix, n));
+                let (force, unit, tau) = probe_classify(key);
+                if force != "DROP" {
+                    out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
+                }
             }
         }
         _ => {}
