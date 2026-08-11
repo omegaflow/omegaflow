@@ -6,108 +6,157 @@
 <title>omegaflow</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; background: #0a0908; color: #c4b9a8; font-family: system-ui, monospace; }
-body { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-h1 { font-size: 2.5rem; font-weight: 200; letter-spacing: 0.15em; color: #f0e8d8; margin-bottom: 0.5rem; }
-.buttons { display: flex; gap: 1.5rem; margin-top: 1.5rem; }
-a.button { color: #a89878; text-decoration: none; font-size: 1.2rem; padding: 0.6rem 1.8rem; border: 1px solid #3a3630; display: inline-block; min-width: 4rem; text-align: center; letter-spacing: 0.05em; }
-a.button:hover { background: #141210; }
-a.button.recommended { border-color: #a89878; border-width: 2px; font-weight: bold; }
-a.button.alt { opacity: 0.5; font-size: 0.9rem; padding: 0.4rem 1rem; }
-.recommendation { font-size: 0.7rem; color: #5a5550; margin-top: 0.5rem; max-width: 20rem; text-align: center; }
-.platforms { font-size: 0.65rem; color: #3a3630; margin-top: 2rem; }
-.platforms a { color: #5a5550; }
+html, body { height: 100%; background: #0a0908; color: #c4b9a8; font-family: system-ui, monospace; overflow: hidden; }
+
+body {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, #141210 0%, #0a0908 100%);
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 200; letter-spacing: 0.15em;
+  color: #f0e8d8; margin-bottom: 1rem;
+  text-shadow: 0 0 40px rgba(168,152,120,0.08);
+  animation: titleIn 2s ease;
+}
+
+@keyframes titleIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+
+.buttons {
+  display: flex; gap: 3rem; margin: 2rem 0 1.5rem;
+  animation: buttonsIn 2.5s ease;
+}
+@keyframes buttonsIn { 0% { opacity: 0; } 60% { opacity: 0; } 100% { opacity: 1; } }
+
+a.glyph {
+  display: flex; align-items: center; justify-content: center;
+  width: clamp(3.5rem, 8vw, 5rem);
+  height: clamp(3.5rem, 8vw, 5rem);
+  border-radius: 50%;
+  text-decoration: none;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 200;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+a.glyph::before {
+  content: ''; position: absolute; inset: -6px; border-radius: 50%;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+a.glyph:hover { transform: scale(1.08); }
+a.glyph:hover::before { opacity: 1; }
+
+a#btn-φ {
+  color: #a89878; border: 1.5px solid rgba(168,152,120,0.3);
+  box-shadow: 0 0 30px rgba(168,152,120,0.06), 0 0 60px rgba(168,152,120,0.03);
+}
+a#btn-φ:hover {
+  box-shadow: 0 0 40px rgba(168,152,120,0.15), 0 0 80px rgba(168,152,120,0.06);
+  border-color: rgba(168,152,120,0.5);
+}
+a#btn-φ::before { box-shadow: 0 0 50px rgba(168,152,120,0.12); }
+
+a#btn-Φ {
+  color: #f0e8d8; border: 1.5px solid rgba(240,232,216,0.3);
+  box-shadow: 0 0 40px rgba(240,232,216,0.08), 0 0 80px rgba(240,232,216,0.04);
+}
+a#btn-Φ:hover {
+  box-shadow: 0 0 50px rgba(240,232,216,0.2), 0 0 100px rgba(240,232,216,0.08);
+  border-color: rgba(240,232,216,0.5);
+}
+a#btn-Φ::before { box-shadow: 0 0 60px rgba(240,232,216,0.15); }
+
+.pulse { animation: pulse 4s ease-in-out infinite; }
+@keyframes pulse {
+  0%, 100% { box-shadow: inherit; }
+  50% { box-shadow: 0 0 60px rgba(240,232,216,0.12), 0 0 120px rgba(240,232,216,0.04); }
+}
+
+.labels { display: flex; gap: 3rem; text-align: center; margin-bottom: 0.3rem; }
+.labels span { width: clamp(3.5rem, 8vw, 5rem); font-size: 0.6rem; color: #5a5550; }
+.labels span b { display: block; font-weight: 400; color: #8a8270; font-size: 0.7rem; }
+
+.info { font-size: 0.65rem; color: #5a5550; max-width: 22rem; text-align: center; line-height: 1.5; margin-bottom: 0.5rem; }
+
+.platforms { font-size: 0.6rem; color: #3a3630; margin-top: 1.5rem; }
+.platforms a { color: #5a5550; text-decoration: none; }
+.platforms a:hover { color: #8a8270; }
 </style>
 </head>
 <body>
-<h1>&phi;(x,y,z,t)</h1>
-<div class="recommendation" id="rec"></div>
+
+<h1>&phi;(<span style="color:#a89878">x</span>,<span style="color:#a89878">y</span>,<span style="color:#a89878">z</span>,<span style="color:#a89878">t</span>)</h1>
+
+<div class="info" id="info"></div>
+
 <div class="buttons">
-  <a id="btn-φ" class="button recommended" href="#" aria-label="omegaflow standalone">&phi;</a>
-  <a id="btn-Φ" class="button alt" href="#" aria-label="omegaflow full">&Phi;</a>
+  <a id="btn-φ" class="glyph" href="#" aria-label="omegaflow standalone">&phi;</a>
+  <a id="btn-Φ" class="glyph pulse" href="#" aria-label="omegaflow full">&Phi;</a>
 </div>
+<div class="labels">
+  <span><b>standalone</b>~1 MB</span>
+  <span><b>full</b>~130 MB</span>
+</div>
+
 <div class="platforms" id="platforms"></div>
+
 <script>
 const φ = document.getElementById('btn-φ');
 const Φ = document.getElementById('btn-Φ');
-const rec = document.getElementById('rec');
+const info = document.getElementById('info');
 const platforms = document.getElementById('platforms');
 
 const ua = navigator.userAgent;
-const plat = navigator.platform || '';
 const isMobile = /Android|iPhone|iPad|iPod|Mobi/i.test(ua);
-const isWin = /Win/i.test(ua);
 const isMac = /Mac/i.test(ua) || /iPhone|iPad|iPod/i.test(ua);
+const isWin = /Win/i.test(ua);
 const isLinux = /Linux/i.test(ua) && !/Android/i.test(ua);
 const isArm = /arm|aarch/i.test(ua) || /Apple.*ARM|Mac.*ARM/i.test(ua);
 
-let binary = '';
-let binaryName = '';
-if (isMac) {
-    binary = isArm ? 'omegaflow_macos_arm64' : 'omegaflow_macos_intel';
-    binaryName = isArm ? 'macOS (Apple Silicon)' : 'macOS (Intel)';
-} else if (isWin) {
-    binary = 'omegaflow_windows.exe';
-    binaryName = 'Windows (x64)';
-} else if (isLinux && !isMobile) {
-    binary = 'omegaflow_linux';
-    binaryName = 'Linux (x64)';
-} else {
-    binary = 'omegaflow_linux';
-    binaryName = 'Linux (x64)';
-}
-
-const base = '';
-const standaloneUrl = base + '/' + binary;
-const sourcesUrl = base + '/omegaflow_sources.tar.gz';
+let binary = 'omegaflow_linux';
+if (isMac) binary = isArm ? 'omegaflow_macos_arm64' : 'omegaflow_macos_intel';
+else if (isWin) binary = 'omegaflow_windows.exe';
 
 if (isMobile) {
     φ.href = 'https://github.com/omegaflow/omegaflow';
     Φ.href = 'https://github.com/omegaflow/omegaflow';
-    rec.textContent = 'mobile — run omegaflow on a server to access the field';
+    info.textContent = 'run on a server — the field is not mobile yet';
+    Φ.classList.remove('pulse');
 } else {
-    φ.href = standaloneUrl;
-    Φ.href = sourcesUrl;
-    rec.textContent = 'detecting bandwidth…';
+    φ.href = binary;
+    Φ.href = 'omegaflow_sources.tar.gz';
+    info.textContent = 'detecting…';
 }
 
 const allLinks = [
-    { name: 'Linux (x64)',      file: 'omegaflow_linux' },
-    { name: 'macOS (Apple Silicon)', file: 'omegaflow_macos_arm64' },
-    { name: 'macOS (Intel)',    file: 'omegaflow_macos_intel' },
-    { name: 'Windows (x64)',    file: 'omegaflow_windows.exe' },
+    ['Linux (x64)', 'omegaflow_linux'],
+    ['macOS (Apple Silicon)', 'omegaflow_macos_arm64'],
+    ['macOS (Intel)', 'omegaflow_macos_intel'],
+    ['Windows (x64)', 'omegaflow_windows.exe'],
 ];
-platforms.innerHTML = 'also: ' + allLinks.map(l =>
-    `<a href="${base}/${l.file}">${l.name}</a>`
-).join(' · ');
+platforms.innerHTML = allLinks.map(l => `<a href="${l[1]}">${l[0]}</a>`).join(' · ');
 
 (function probe() {
+    if (isMobile) return;
     const start = performance.now();
     const img = new Image();
     img.onload = () => {
-        const elapsed = performance.now() - start;
-        const kbps = (64 * 8) / (elapsed / 1000);
-        const isFast = kbps > 500;
-        if (isFast) {
-            rec.textContent = 'Φ empfohlen — binary + alle Ephemeriden (~130 MB)';
-            Φ.className = 'button recommended';
-            φ.className = 'button alt';
-            Φ.href = sourcesUrl;
-            φ.href = standaloneUrl;
+        const kbps = (64 * 8) / ((performance.now() - start) / 1000);
+        if (kbps > 500) {
+            info.textContent = 'Φ empfohlen — binary + alle Ephemeriden';
+            Φ.classList.add('pulse');
         } else {
-            rec.textContent = 'φ empfohlen — nur das Binary (~1 MB), Quellen bei Bedarf vom CDN';
-            φ.className = 'button recommended';
-            Φ.className = 'button alt';
-            φ.href = standaloneUrl;
-            Φ.href = sourcesUrl;
+            info.textContent = 'φ empfohlen — binary only, Quellen bei Bedarf vom CDN';
+            Φ.classList.remove('pulse');
         }
     };
     img.onerror = () => {
-        rec.textContent = 'φ empfohlen — Binary (~1 MB)';
-        φ.className = 'button recommended';
-        Φ.className = 'button alt';
+        info.textContent = 'φ — binary only (~1 MB)';
+        Φ.classList.remove('pulse');
     };
-    img.src = base + '/probe_64k.bin?' + Date.now();
+    img.src = 'probe_64k.bin?' + Date.now();
 })();
 </script>
 </body>

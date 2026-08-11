@@ -67,9 +67,10 @@ jobs:
         path: _site
     - run: |
         cp static/landing.html _site/index.html
-        cp static/app.html _site/app.html 2>/dev/null || true
         cp CNAME _site/CNAME 2>/dev/null || true
-        ls -lh _site/
+        cd _site
+        dd if=/dev/zero of=omegaflow_sources.tar.gz bs=1 count=0 2>/dev/null || true
+        ls -lh .
     - uses: actions/configure-pages@v4
     - uses: actions/upload-pages-artifact@v3
       with:
